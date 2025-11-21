@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:automato_theme/automato_theme.dart';
 import 'package:yp_launcher/providers/app_state.dart';
+import 'package:yp_launcher/services/logging_service.dart';
 
 class DirectorySelector extends ConsumerWidget {
   const DirectorySelector({super.key});
@@ -134,6 +135,7 @@ class DirectorySelector extends ConsumerWidget {
 
   Future<void> _selectDirectory(AppStateController controller) async {
     try {
+      await LoggingService.log('Opening file picker for NieR:Automata executable...');
       final result = await FilePicker.platform.pickFiles(
         dialogTitle: 'Select NieR:Automata Executable',
         type: FileType.custom,
@@ -142,30 +144,36 @@ class DirectorySelector extends ConsumerWidget {
 
       if (result != null && result.files.single.path != null) {
         final filePath = result.files.single.path!;
+        await LoggingService.log('Selected file: $filePath');
         final file = File(filePath);
 
         if (await file.exists()) {
+          await LoggingService.log('Validating NieR:Automata executable...');
           // Validate in background isolate
           final isValid = await compute(_validateNierExeInIsolate, filePath);
 
           if (isValid) {
             // Get the directory containing the executable
             final directory = file.parent.path;
-            debugPrint('Setting directory: $directory');
+            await LoggingService.log('Validation successful, setting directory: $directory');
             await controller.setDirectory(directory);
-            debugPrint('Directory saved successfully');
           } else {
+            await LoggingService.log('Validation failed: Not a NieR:Automata executable');
             controller.setError(
               'This is not NieR:Automata executable',
             );
           }
         } else {
+          await LoggingService.log('Error: Selected file does not exist');
           controller.setError(
             'Selected file does not exist',
           );
         }
+      } else {
+        await LoggingService.log('File picker cancelled or no file selected');
       }
     } catch (e) {
+      await LoggingService.logError('Failed to select file', e);
       controller.setError('Failed to select file: $e');
     }
   }

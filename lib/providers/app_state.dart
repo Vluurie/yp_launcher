@@ -1,6 +1,6 @@
-import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:yp_launcher/services/logging_service.dart';
 
 part 'app_state.g.dart';
 
@@ -53,10 +53,10 @@ class AppStateController extends _$AppStateController {
       final savedDir = prefs.getString('nier_directory');
       if (savedDir != null && savedDir.isNotEmpty) {
         state = state.copyWith(selectedDirectory: savedDir);
-        debugPrint('Loaded saved directory: $savedDir');
+        await LoggingService.log('Loaded saved directory: $savedDir');
       }
     } catch (e) {
-      debugPrint('Failed to load saved directory: $e');
+      await LoggingService.logError('Failed to load saved directory', e);
     }
   }
 
@@ -66,9 +66,9 @@ class AppStateController extends _$AppStateController {
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('nier_directory', path);
-      debugPrint('Directory persisted: $path');
+      await LoggingService.log('Directory persisted: $path');
     } catch (e) {
-      debugPrint('Failed to save directory: $e');
+      await LoggingService.logError('Failed to save directory', e);
     }
   }
 
