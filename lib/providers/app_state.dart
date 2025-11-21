@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:yp_launcher/providers/settings_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 part 'app_state.g.dart';
 
@@ -48,31 +48,25 @@ class AppStateController extends _$AppStateController {
   }
 
   Future<void> _loadSavedDirectory() async {
-    final settingsAsync = ref.read(settingsServiceProvider);
-    settingsAsync.whenData((settings) {
-      final savedDir = settings.nierDirectory;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final savedDir = prefs.getString('nier_directory');
       if (savedDir != null && savedDir.isNotEmpty) {
         state = state.copyWith(selectedDirectory: savedDir);
+        debugPrint('Loaded saved directory: $savedDir');
       }
-    });
+    } catch (e) {
+      debugPrint('Failed to load saved directory: $e');
+    }
   }
 
   Future<void> setDirectory(String path) async {
     state = state.copyWith(selectedDirectory: path, errorMessage: null);
 
-    // Save to settings
     try {
-      final settingsAsync = ref.read(settingsServiceProvider);
-      await settingsAsync.when(
-        data: (settings) async {
-          await settings.setNierDirectory(path);
-          debugPrint('Directory persisted: $path');
-        },
-        loading: () async {},
-        error: (e, stack) async {
-          debugPrint('Failed to save directory: $e');
-        },
-      );
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('nier_directory', path);
+      debugPrint('Directory persisted: $path');
     } catch (e) {
       debugPrint('Failed to save directory: $e');
     }
