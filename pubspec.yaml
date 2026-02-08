@@ -60,6 +60,13 @@ dependencies:
   # Persistent storage
   shared_preferences: ^2.3.5
 
+  # URL launcher for external links
+  url_launcher: ^6.2.5
+
+  # Custom window title bar for Windows
+  window_manager: ^0.4.3
+  font_awesome_flutter: ^10.8.0
+
 dev_dependencies:
   # Riverpod code generation
   build_runner: ^2.4.13
@@ -68,6 +75,14 @@ dev_dependencies:
   riverpod_lint: ^2.6.2
   flutter_test:
     sdk: flutter
+
+  # Icon generation
+  flutter_launcher_icons: ^0.14.3
+
+flutter_launcher_icons:
+  windows:
+    generate: true
+    image_path: "assets/icon/app_icon.png"
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

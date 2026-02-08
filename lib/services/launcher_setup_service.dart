@@ -2,35 +2,28 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
-import 'package:yp_launcher/services/settings_service.dart';
+import 'package:yp_launcher/constants/app_strings.dart';
 import 'package:yp_launcher/services/platform_detection_service.dart';
-import 'package:yp_launcher/services/logging_service.dart';
 
 class LauncherSetupService {
-  static const String launcherDirName = 'YorHaProtocolLauncher';
-
   static Future<String> getLauncherDirectory() async {
     if (Platform.isWindows) {
       final appData = Platform.environment['APPDATA'];
       if (appData == null) {
-        throw Exception('APPDATA environment variable not found');
+        throw Exception(AppStrings.errorAppDataNotFound);
       }
-      return path.join(appData, launcherDirName);
+      return path.join(appData, AppStrings.launcherDirName);
     } else if (PlatformDetectionService.isWine) {
       final winePrefix = PlatformDetectionService.getWinePrefix();
       if (winePrefix == null) {
-        throw Exception(
-          'Wine prefix not found. Please set WINEPREFIX environment variable.',
-        );
+        throw Exception(AppStrings.errorWinePrefixNotFound);
       }
 
       final driveC = path.join(winePrefix, 'drive_c');
       final usersDir = Directory(path.join(driveC, 'users'));
 
       if (!await usersDir.exists()) {
-        throw Exception(
-          'Wine drive_c/users directory not found in $winePrefix',
-        );
+        throw Exception(AppStrings.errorWineUsersNotFound(winePrefix));
       }
 
       final users = await usersDir
@@ -39,7 +32,7 @@ class LauncherSetupService {
           .toList();
 
       if (users.isEmpty) {
-        throw Exception('No user directory found in Wine prefix');
+        throw Exception(AppStrings.errorNoWineUser);
       }
 
       final userDir = users.first.path;
@@ -50,25 +43,19 @@ class LauncherSetupService {
         await appDataDir.create(recursive: true);
       }
 
-      final launcherPath = path.join(appDataRoaming, launcherDirName);
-      await LoggingService.log('Using Wine AppData path: $launcherPath');
-      return launcherPath;
+      return path.join(appDataRoaming, AppStrings.launcherDirName);
     } else if (Platform.isMacOS) {
       final appSupport = await getApplicationSupportDirectory();
-      final launcherPath = path.join(appSupport.path, launcherDirName);
-      await LoggingService.log('Using macOS launcher path: $launcherPath');
-      return launcherPath;
+      return path.join(appSupport.path, AppStrings.launcherDirName);
     } else if (Platform.isLinux) {
       final home = Platform.environment['HOME'];
       if (home == null) {
-        throw Exception('HOME environment variable not found');
+        throw Exception(AppStrings.errorHomeNotFound);
       }
-      final launcherPath = path.join(home, '.local', 'share', launcherDirName);
-      await LoggingService.log('Using Linux launcher path: $launcherPath');
-      return launcherPath;
+      return path.join(home, '.local', 'share', AppStrings.launcherDirName);
     } else {
       throw UnsupportedError(
-        'Platform ${Platform.operatingSystem} is not supported',
+        AppStrings.errorPlatformNotSupported(Platform.operatingSystem),
       );
     }
   }
@@ -107,28 +94,22 @@ class LauncherSetupService {
   }
 
   static Future<Map<String, String>> setupLauncher() async {
-    await LoggingService.log('Setting up launcher files...');
     final launcherDir = await ensureLauncherDirectory();
 
-    await LoggingService.log('Copying launch_nier.exe...');
     final launcherExe = await copyAssetToLauncher(
-      'assets/bins/launch_nier.exe',
-      'launch_nier.exe',
+      AppStrings.assetLauncherExe,
+      AppStrings.launcherExeName,
     );
 
-    await LoggingService.log('Copying modloader.dll...');
     final modloaderDll = await copyAssetToLauncher(
-      'assets/bins/modloader.dll',
-      'modloader.dll',
+      AppStrings.assetModloaderDll,
+      AppStrings.modloaderDllName,
     );
 
-    await LoggingService.log('Copying yorha_protocol.dll...');
     final yorhaDll = await copyAssetToLauncher(
-      'assets/bins/yorha_protocol.dll',
-      'yorha_protocol.dll',
+      AppStrings.assetYorhaDll,
+      AppStrings.yorhaDllName,
     );
-
-    await LoggingService.log('All launcher files copied successfully');
 
     return {
       'launcherDir': launcherDir.path,
@@ -147,14 +128,14 @@ class LauncherSetupService {
         return false;
       }
 
-      final launcherExe = File(path.join(launcherDir, 'launch_nier.exe'));
-      final modloaderDll = File(path.join(launcherDir, 'modloader.dll'));
-      final yorhaDll = File(path.join(launcherDir, 'yorha_protocol.dll'));
+      final launcherExe = File(path.join(launcherDir, AppStrings.launcherExeName));
+      final modloaderDll = File(path.join(launcherDir, AppStrings.modloaderDllName));
+      final yorhaDll = File(path.join(launcherDir, AppStrings.yorhaDllName));
 
       return await launcherExe.exists() &&
           await modloaderDll.exists() &&
           await yorhaDll.exists();
-    } catch (e) {
+    } catch (_) {
       return false;
     }
   }
@@ -164,24 +145,9 @@ class LauncherSetupService {
 
     return {
       'launcherDir': launcherDir,
-      'launcherExe': path.join(launcherDir, 'launch_nier.exe'),
-      'modloaderDll': path.join(launcherDir, 'modloader.dll'),
-      'yorhaDll': path.join(launcherDir, 'yorha_protocol.dll'),
-    };
-  }
-
-  static Future<Map<String, String>> getLauncherPathsWithOverrides(
-    SettingsService settings,
-  ) async {
-    final defaultPaths = await getLauncherPaths();
-
-    return {
-      'launcherDir': defaultPaths['launcherDir']!,
-      'launcherExe':
-          settings.launcherExeOverride ?? defaultPaths['launcherExe']!,
-      'modloaderDll':
-          settings.modloaderDllOverride ?? defaultPaths['modloaderDll']!,
-      'yorhaDll': settings.yorhaDllOverride ?? defaultPaths['yorhaDll']!,
+      'launcherExe': path.join(launcherDir, AppStrings.launcherExeName),
+      'modloaderDll': path.join(launcherDir, AppStrings.modloaderDllName),
+      'yorhaDll': path.join(launcherDir, AppStrings.yorhaDllName),
     };
   }
 }

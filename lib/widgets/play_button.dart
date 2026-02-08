@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:automato_theme/automato_theme.dart';
+import 'package:yp_launcher/constants/app_strings.dart';
 import 'package:yp_launcher/providers/app_state.dart';
-import 'package:yp_launcher/providers/settings_provider.dart';
 import 'package:yp_launcher/services/process_service.dart';
+import 'package:yp_launcher/theme/app_colors.dart';
 
 class PlayButton extends ConsumerWidget {
   const PlayButton({super.key});
@@ -13,26 +14,28 @@ class PlayButton extends ConsumerWidget {
     final appState = ref.watch(appStateControllerProvider);
     final controller = ref.read(appStateControllerProvider.notifier);
 
+    final buttonColor = _getButtonColor(appState);
+    final bgColor = _getBackgroundColor(appState);
+
     return SizedBox(
-      width: 200,
-      height: 70,
+      width: 160,
+      height: 50,
       child: TextButton(
         onPressed: appState.canPlay
             ? () => _handlePlayButton(ref, controller, appState)
             : null,
         style: TextButton.styleFrom(
-          foregroundColor: _getButtonColor(ref, appState),
-          backgroundColor: AutomatoThemeColors.darkBrown(ref),
-          disabledBackgroundColor:
-              AutomatoThemeColors.darkBrown(ref).withOpacity(0.5),
+          foregroundColor: buttonColor,
+          backgroundColor: bgColor,
+          disabledBackgroundColor: AppColors.surfaceLight.withValues(alpha: 0.5),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8.0),
+            borderRadius: BorderRadius.circular(6.0),
             side: BorderSide(
-              color: _getButtonColor(ref, appState),
-              width: 2,
+              color: buttonColor,
+              width: 1.5,
             ),
           ),
-          padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
+          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 20.0),
         ),
         child: _buildButtonContent(ref, appState),
       ),
@@ -42,33 +45,44 @@ class PlayButton extends ConsumerWidget {
   Widget _buildButtonContent(WidgetRef ref, AppState appState) {
     if (appState.playButtonState == PlayButtonState.loading) {
       return SizedBox(
-        width: 40,
-        height: 40,
+        width: 28,
+        height: 28,
         child: AutomatoLoading(
-          color: AutomatoThemeColors.bright(ref),
+          color: AppColors.accentPrimary,
           translateX: 0,
           svgString: AutomatoSvgStrings.automatoSvgStrHead,
         ),
       );
     }
 
+    final buttonColor = _getButtonColor(appState);
     return Text(
-      appState.playButtonState == PlayButtonState.running ? 'STOP' : 'PLAY',
+      appState.playButtonState == PlayButtonState.running
+          ? AppStrings.stopButton
+          : AppStrings.playButton,
       style: TextStyle(
-        fontSize: 32.0,
+        fontSize: 22.0,
         fontWeight: FontWeight.bold,
-        color: _getButtonColor(ref, appState),
+        color: buttonColor,
       ),
     );
   }
 
-  Color _getButtonColor(WidgetRef ref, AppState appState) {
+  Color _getButtonColor(AppState appState) {
     if (appState.playButtonState == PlayButtonState.running) {
-      return AutomatoThemeColors.dangerZone(ref);
+      return AppColors.error;
     } else if (!appState.canPlay) {
-      return AutomatoThemeColors.primaryColor(ref).withOpacity(0.3);
+      return AppColors.textMuted;
     } else {
-      return AutomatoThemeColors.primaryColor(ref);
+      return AppColors.success;
+    }
+  }
+
+  Color _getBackgroundColor(AppState appState) {
+    if (appState.playButtonState == PlayButtonState.running) {
+      return AppColors.surfaceLight;
+    } else {
+      return AppColors.surfaceLight;
     }
   }
 
@@ -79,42 +93,44 @@ class PlayButton extends ConsumerWidget {
   ) async {
     if (appState.playButtonState == PlayButtonState.idle) {
       controller.setPlayButtonState(PlayButtonState.loading);
+      controller.setStatus(AppStrings.statusPreparing);
 
       try {
-        // Get settings service
-        final settingsAsync = ref.read(settingsServiceProvider);
-        final settings = settingsAsync.maybeWhen(
-          data: (value) => value,
-          orElse: () => null,
-        );
+        controller.setStatus(AppStrings.statusLaunching);
 
         final started = await ProcessService.startNierAutomata(
           installDirectory: appState.selectedDirectory,
           onProcessStopped: () {
             controller.setPlayButtonState(PlayButtonState.idle);
+            controller.setStatus(AppStrings.statusStopped);
           },
-          settings: settings,
         );
 
         if (started) {
           controller.setPlayButtonState(PlayButtonState.running);
+          controller.setStatus(AppStrings.statusRunning);
         } else {
-          controller.setError('Failed to start NieR:Automata');
+          controller.setError(AppStrings.errorStartFailed);
           controller.setPlayButtonState(PlayButtonState.idle);
+          controller.setStatus(null);
         }
       } catch (e) {
         controller.setError(e.toString());
         controller.setPlayButtonState(PlayButtonState.idle);
+        controller.setStatus(null);
       }
     } else if (appState.playButtonState == PlayButtonState.running) {
       controller.setPlayButtonState(PlayButtonState.loading);
+      controller.setStatus(AppStrings.statusStopping);
 
       final success = ProcessService.terminateNierAutomata();
       if (success) {
         controller.setPlayButtonState(PlayButtonState.idle);
+        controller.setStatus(AppStrings.statusStopped);
       } else {
-        controller.setError('Failed to stop NieR:Automata');
+        controller.setError(AppStrings.errorStopFailed);
         controller.setPlayButtonState(PlayButtonState.running);
+        controller.setStatus(null);
       }
     }
   }

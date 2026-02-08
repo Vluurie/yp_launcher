@@ -4,45 +4,28 @@ import 'dart:io';
 import 'package:ffi/ffi.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as path;
+import 'package:yp_launcher/constants/app_strings.dart';
 import 'package:yp_launcher/services/launcher_setup_service.dart';
-import 'package:yp_launcher/services/settings_service.dart';
 import 'package:yp_launcher/services/platform_detection_service.dart';
-import 'package:yp_launcher/services/logging_service.dart';
-
 import 'package:win32/win32.dart' if (dart.library.html) '';
 
 class ProcessService {
   static Future<bool> startNierAutomata({
     required String installDirectory,
     required VoidCallback onProcessStopped,
-    SettingsService? settings,
   }) async {
     try {
-      await LoggingService.logSection('Starting NieR:Automata');
-      await LoggingService.log('Install directory: $installDirectory');
-
       final isSetup = await LauncherSetupService.isLauncherSetup();
-      if (!isSetup && (settings == null || !settings.hasOverrides)) {
-        await LoggingService.log('Launcher not set up, copying files...');
+      if (!isSetup) {
         await LauncherSetupService.setupLauncher();
-        await LoggingService.log('Launcher setup complete');
-      } else {
-        await LoggingService.log('Launcher already set up');
       }
 
-      final launcherPaths = settings != null
-          ? await LauncherSetupService.getLauncherPathsWithOverrides(settings)
-          : await LauncherSetupService.getLauncherPaths();
+      final launcherPaths = await LauncherSetupService.getLauncherPaths();
 
-      if (settings != null && settings.hasOverrides) {
-        await LoggingService.log('Using custom file overrides');
-      }
-
-      final nierExePath = path.join(installDirectory, 'NierAutomata.exe');
+      final nierExePath = path.join(installDirectory, AppStrings.gameExeName);
       if (!await File(nierExePath).exists()) {
-        await LoggingService.logError('NierAutomata.exe not found in $installDirectory');
         throw ProcessException(
-          'NierAutomata.exe not found in $installDirectory',
+          AppStrings.errorExeNotFound(installDirectory),
         );
       }
 
@@ -51,42 +34,27 @@ class ProcessService {
         yorhaDllPath: launcherPaths['yorhaDll']!,
       );
 
-      await LoggingService.log('Launcher executable: ${launcherPaths['launcherExe']}');
-      await LoggingService.log('Arguments: $arguments');
-      await LoggingService.log('Working directory: $installDirectory');
-
       final process = await Process.start(
         launcherPaths['launcherExe']!,
         arguments,
         workingDirectory: installDirectory,
+        mode: ProcessStartMode.detachedWithStdio,
       );
 
-      await LoggingService.log('Process started, PID: ${process.pid}');
+      process.stdout.transform(const SystemEncoding().decoder).listen((_) {});
+      process.stderr.transform(const SystemEncoding().decoder).listen((_) {});
 
-      process.stdout.transform(const SystemEncoding().decoder).listen((data) {
-        LoggingService.log('Launcher stdout: $data');
-      });
-
-      process.stderr.transform(const SystemEncoding().decoder).listen((data) {
-        LoggingService.log('Launcher stderr: $data');
-      });
-
-      await LoggingService.log('Waiting for NieR:Automata process to start...');
       final started = await _waitForProcessStart(
-        'NierAutomata.exe',
+        AppStrings.gameExeName,
         timeout: const Duration(seconds: 60),
       );
 
       if (started) {
-        await LoggingService.log('NieR:Automata process started successfully');
-        unawaited(_monitorProcess('NierAutomata.exe', onProcessStopped));
-      } else {
-        await LoggingService.log('NieR:Automata process did not start within timeout period');
+        unawaited(_monitorProcess(AppStrings.gameExeName, onProcessStopped));
       }
 
       return started;
-    } catch (e, stackTrace) {
-      await LoggingService.logError('Error starting NieR:Automata', e, stackTrace);
+    } catch (_) {
       return false;
     }
   }
@@ -99,7 +67,6 @@ class ProcessService {
       if (Platform.isWindows) {
         return filePath.replaceAll('/', '\\');
       } else if (PlatformDetectionService.isWine) {
-        // When running under Wine, convert Unix paths to Windows-style paths
         return PlatformDetectionService.unixToWinePath(filePath);
       } else {
         final normalizedPath = filePath.replaceAll('\\', '/');
@@ -111,44 +78,33 @@ class ProcessService {
     }
 
     return [
-      '--modloader-dll',
+      AppStrings.argModloaderDll,
       formatPath(modloaderDllPath),
-      '--mod-dll',
+      AppStrings.argModDll,
       formatPath(yorhaDllPath),
     ];
   }
 
   static bool terminateNierAutomata() {
-    LoggingService.log('Attempting to terminate NieR:Automata...');
     if (Platform.isWindows) {
-      final result = _terminateProcessByName('NierAutomata.exe');
-      LoggingService.log('Termination result (Windows): $result');
-      return result;
+      return _terminateProcessByName(AppStrings.gameExeName);
     } else if (PlatformDetectionService.isWine) {
-      // Use wineserver to kill the process
       try {
-        final result = Process.runSync('wineserver', ['-k']);
-        LoggingService.log('Killed Wine processes via wineserver: ${result.exitCode}');
+        Process.runSync('wineserver', ['-k']);
         return true;
-      } catch (e) {
-        LoggingService.log('Error terminating via wineserver: $e');
-        // Fallback to pkill
+      } catch (_) {
         try {
-          final result = Process.runSync('pkill', ['-f', 'NierAutomata.exe']);
-          LoggingService.log('pkill result: ${result.exitCode}');
+          final result = Process.runSync('pkill', ['-f', AppStrings.gameExeName]);
           return result.exitCode == 0;
-        } catch (e2) {
-          LoggingService.logError('Error terminating NieR:Automata', e2);
+        } catch (_) {
           return false;
         }
       }
     } else {
       try {
-        final result = Process.runSync('pkill', ['-f', 'NierAutomata.exe']);
-        LoggingService.log('pkill result: ${result.exitCode}');
+        final result = Process.runSync('pkill', ['-f', AppStrings.gameExeName]);
         return result.exitCode == 0;
-      } catch (e) {
-        LoggingService.logError('Error terminating NieR:Automata', e);
+      } catch (_) {
         return false;
       }
     }
@@ -156,20 +112,12 @@ class ProcessService {
 
   static bool isNierAutomataRunning() {
     if (Platform.isWindows) {
-      return _isProcessRunning('NierAutomata.exe');
-    } else if (PlatformDetectionService.isWine) {
-      // Check for Wine processes
-      try {
-        final result = Process.runSync('pgrep', ['-f', 'NierAutomata.exe']);
-        return result.exitCode == 0;
-      } catch (e) {
-        return false;
-      }
+      return _isProcessRunning(AppStrings.gameExeName);
     } else {
       try {
-        final result = Process.runSync('pgrep', ['-f', 'NierAutomata.exe']);
+        final result = Process.runSync('pgrep', ['-f', AppStrings.gameExeName]);
         return result.exitCode == 0;
-      } catch (e) {
+      } catch (_) {
         return false;
       }
     }
@@ -213,7 +161,6 @@ class ProcessService {
 
         if (!isNierAutomataRunning()) {
           timer.cancel();
-          await LoggingService.log('NieR:Automata process stopped');
           onStopped();
         }
       }
@@ -258,8 +205,8 @@ class ProcessService {
           }
         }
       }
-    } catch (e) {
-      LoggingService.logError('Error checking process', e);
+    } catch (_) {
+      // ignore
     } finally {
       free(processIds);
       free(cbNeeded);
@@ -299,7 +246,6 @@ class ProcessService {
               final currentName = exeName.toDartString().toLowerCase();
               if (currentName == targetName) {
                 final terminated = TerminateProcess(processHandle, 0) != 0;
-                LoggingService.log('Terminated process $currentName: $terminated');
                 return terminated;
               }
             }
@@ -309,8 +255,8 @@ class ProcessService {
           }
         }
       }
-    } catch (e) {
-      LoggingService.logError('Error terminating process', e);
+    } catch (_) {
+      // ignore
     } finally {
       free(processIds);
       free(cbNeeded);

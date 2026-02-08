@@ -3,9 +3,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:automato_theme/automato_theme.dart';
+import 'package:yp_launcher/constants/app_strings.dart';
 import 'package:yp_launcher/providers/app_state.dart';
-import 'package:yp_launcher/services/logging_service.dart';
+import 'package:yp_launcher/theme/app_colors.dart';
 
 class DirectorySelector extends ConsumerWidget {
   const DirectorySelector({super.key});
@@ -16,118 +16,67 @@ class DirectorySelector extends ConsumerWidget {
     final controller = ref.read(appStateControllerProvider.notifier);
 
     return Container(
-      padding: const EdgeInsets.all(24.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
       decoration: BoxDecoration(
-        color: AutomatoThemeColors.darkBrown(ref).withValues(alpha: 0.3),
-        borderRadius: BorderRadius.circular(12.0),
-        border: Border.all(
-          color: AutomatoThemeColors.primaryColor(ref).withValues(alpha: 0.3),
-          width: 2,
-        ),
+        color: AppColors.backgroundCard,
+        borderRadius: BorderRadius.circular(8.0),
+        border: Border.all(color: AppColors.borderLight),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            'NieR:Automata Executable',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: AutomatoThemeColors.bright(ref),
-            ),
-          ),
-          const SizedBox(height: 16),
           Row(
             children: [
               Expanded(
                 child: Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 16.0,
-                    vertical: 12.0,
+                    horizontal: 12.0,
+                    vertical: 8.0,
                   ),
                   decoration: BoxDecoration(
-                    color: AutomatoThemeColors.darkBrown(ref),
-                    borderRadius: BorderRadius.circular(8.0),
+                    color: AppColors.inputBackground,
+                    borderRadius: BorderRadius.circular(6.0),
                     border: Border.all(
                       color: appState.isDirectorySelected
-                          ? AutomatoThemeColors.saveZone(ref)
-                          : AutomatoThemeColors.primaryColor(ref)
-                              .withValues(alpha: 0.5),
-                      width: 2,
+                          ? AppColors.success
+                          : AppColors.borderMedium,
                     ),
                   ),
-                  child: Text(
+                  child: SelectableText(
                     appState.isDirectorySelected
                         ? appState.selectedDirectory
-                        : 'No file selected',
+                        : AppStrings.noFileSelected,
                     style: TextStyle(
                       color: appState.isDirectorySelected
-                          ? AutomatoThemeColors.bright(ref)
-                          : AutomatoThemeColors.primaryColor(ref)
-                              .withValues(alpha: 0.5),
-                      fontSize: 14,
+                          ? AppColors.textPrimary
+                          : AppColors.textMuted,
+                      fontSize: 12,
                     ),
-                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
                   ),
                 ),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 10),
               ElevatedButton(
                 onPressed: () => _selectDirectory(controller),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AutomatoThemeColors.primaryColor(ref),
-                  foregroundColor: AutomatoThemeColors.darkBrown(ref),
+                  backgroundColor: AppColors.buttonBackground,
+                  foregroundColor: AppColors.buttonText,
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 24.0,
-                    vertical: 16.0,
+                    horizontal: 16.0,
+                    vertical: 10.0,
                   ),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0),
+                    borderRadius: BorderRadius.circular(6.0),
                   ),
                 ),
                 child: const Text(
-                  'SELECT',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  AppStrings.selectButton,
+                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
                 ),
               ),
             ],
           ),
-          if (appState.errorMessage != null) ...[
-            const SizedBox(height: 12),
-            Container(
-              padding: const EdgeInsets.all(12.0),
-              decoration: BoxDecoration(
-                color: AutomatoThemeColors.dangerZone(ref).withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(8.0),
-                border: Border.all(
-                  color: AutomatoThemeColors.dangerZone(ref),
-                  width: 1,
-                ),
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.error_outline,
-                    color: AutomatoThemeColors.dangerZone(ref),
-                    size: 20,
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      appState.errorMessage!,
-                      style: TextStyle(
-                        color: AutomatoThemeColors.dangerZone(ref),
-                        fontSize: 14,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
         ],
       ),
     );
@@ -135,66 +84,47 @@ class DirectorySelector extends ConsumerWidget {
 
   Future<void> _selectDirectory(AppStateController controller) async {
     try {
-      await LoggingService.log('Opening file picker for NieR:Automata executable...');
       final result = await FilePicker.platform.pickFiles(
-        dialogTitle: 'Select NieR:Automata Executable',
+        dialogTitle: AppStrings.filePickerTitle,
         type: FileType.custom,
-        allowedExtensions: ['exe'],
+        allowedExtensions: [AppStrings.allowedExtension],
       );
 
       if (result != null && result.files.single.path != null) {
         final filePath = result.files.single.path!;
-        await LoggingService.log('Selected file: $filePath');
         final file = File(filePath);
 
         if (await file.exists()) {
-          await LoggingService.log('Validating NieR:Automata executable...');
-          // Validate in background isolate
           final isValid = await compute(_validateNierExeInIsolate, filePath);
 
           if (isValid) {
-            // Get the directory containing the executable
             final directory = file.parent.path;
-            await LoggingService.log('Validation successful, setting directory: $directory');
             await controller.setDirectory(directory);
           } else {
-            await LoggingService.log('Validation failed: Not a NieR:Automata executable');
-            controller.setError(
-              'This is not NieR:Automata executable',
-            );
+            controller.setError(AppStrings.errorInvalidExe);
           }
         } else {
-          await LoggingService.log('Error: Selected file does not exist');
-          controller.setError(
-            'Selected file does not exist',
-          );
+          controller.setError(AppStrings.errorFileNotExist);
         }
-      } else {
-        await LoggingService.log('File picker cancelled or no file selected');
       }
     } catch (e) {
-      await LoggingService.logError('Failed to select file', e);
-      controller.setError('Failed to select file: $e');
+      controller.setError('${AppStrings.errorSelectFailed}: $e');
     }
   }
-
 }
 
-// Top-level function for isolate
 Future<bool> _validateNierExeInIsolate(String filePath) async {
   try {
     final file = File(filePath);
     final raf = await file.open();
     try {
-      // Check PE signature
       final header = await raf.read(2);
       if (header.length < 2 || header[0] != 0x4D || header[1] != 0x5A) {
         return false;
       }
 
-      // Read file in 64KB chunks and search for PRJ_028
       const chunkSize = 65536;
-      final searchBytes = 'PRJ_028'.codeUnits;
+      final searchBytes = AppStrings.gameSignature.codeUnits;
       int position = 0;
 
       while (true) {
@@ -203,7 +133,6 @@ Future<bool> _validateNierExeInIsolate(String filePath) async {
 
         if (chunk.isEmpty) break;
 
-        // Simple byte search
         for (int i = 0; i <= chunk.length - searchBytes.length; i++) {
           if (chunk[i] == searchBytes[0]) {
             bool match = true;
