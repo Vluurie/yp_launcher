@@ -34,13 +34,13 @@ void main() async {
       overrides: [
         automatoThemeNotifierProvider.overrideWith((ref) => themeNotifier),
       ],
-      child: const YorHaProtocolLauncher(),
+      child: const YoRHaProtocolLauncher(),
     ),
   );
 }
 
-class YorHaProtocolLauncher extends ConsumerWidget {
-  const YorHaProtocolLauncher({super.key});
+class YoRHaProtocolLauncher extends ConsumerWidget {
+  const YoRHaProtocolLauncher({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

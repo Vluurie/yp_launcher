@@ -2,17 +2,17 @@ class AppStrings {
   AppStrings._();
 
   // App
-  static const String appTitle = 'YorHa Protocol Launcher';
+  static const String appTitle = 'YoRHa Protocol Launcher';
  
   // URLs
   static const String githubUrl = 'https://github.com/Vluurie/yp_launcher';
   static const String guideUrl =
-      'https://github.com/Vluurie/yp_launcher#readme';
-  static const String discordUrl = 'https://discord.gg/Rrr2EH4gBE';
+      'https://gitlab.yasupa.de/nams/yp-docs/-/blob/master/YoRHa_Protocol_Documentation.md';
+  static const String discordUrl = 'https://discord.gg/Z5spWtF8qs';
   static const String naoLauncherUrl =
-      'https://github.com/TODO/nao-launcher'; // TODO: replace
+      'https://www.nexusmods.com/nierautomata/mods/772?tab=files'; 
   static const String cliDocsUrl =
-      'https://github.com/TODO/cli-docs'; // TODO: replace
+      'https://gitlab.yasupa.de/nams/yp-docs/-/blob/master/YorHa_Protocol_Documentation.md#how-to-start-via-command-line';
 
   // Tooltips
   static const String tooltipSourceCode = 'Source Code';
@@ -69,7 +69,7 @@ class AppStrings {
   static const String gameSignature = 'PRJ_028';
 
   // Launcher files
-  static const String launcherDirName = 'YorHaProtocolLauncher';
+  static const String launcherDirName = 'YoRHaProtocolLauncher';
   static const String launcherExeName = 'launch_nier.exe';
   static const String modloaderDllName = 'modloader.dll';
   static const String yorhaDllName = 'yorha_protocol.dll';

@@ -5,6 +5,7 @@ project(yp_launcher LANGUAGES CXX)
 # The name of the executable created for the application. Change this to change
 # the on-disk name of your application.
 set(BINARY_NAME "yp_launcher")
+set(BINARY_OUTPUT_NAME "YoRHa Protocol Launcher")
 
 # Explicitly opt in to modern CMake behaviors to avoid warnings with recent
 # versions of CMake.
@@ -52,6 +53,8 @@ add_subdirectory(${FLUTTER_MANAGED_DIR})
 # Application build; see runner/CMakeLists.txt.
 add_subdirectory("runner")
 
+# Set the output executable name (allows spaces in the .exe filename).
+set_target_properties(${BINARY_NAME} PROPERTIES OUTPUT_NAME "${BINARY_OUTPUT_NAME}")
 
 # Generated plugin build rules, which manage building the plugins and adding
 # them to the application.

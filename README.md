@@ -1,12 +1,12 @@
-# YorHa Protocol Launcher
+# YoRHa Protocol Launcher
 
-A cross-platform launcher for the YorHa Protocol mod for NieR:Automata.
+A Windows launcher for the YoRHa Protocol mod for NieR:Automata, built with Flutter. Also supports macOS and Linux via Wine/CrossOver.
 
 ## Requirements
 
-- Flutter SDK 3.9.2 or higher
-- NieR:Automata installation
-- Windows, macOS, or Linux
+- Flutter SDK ^3.9.2
+- NieR:Automata (latest Steam version)
+- Windows (native), or macOS/Linux with Wine or CrossOver
 
 ## Setup
 
@@ -16,7 +16,7 @@ A cross-platform launcher for the YorHa Protocol mod for NieR:Automata.
 flutter pub get
 ```
 
-### 2. Generate Code
+### 2. Generate Riverpod Code
 
 ```bash
 dart run build_runner build --delete-conflicting-outputs
@@ -24,60 +24,35 @@ dart run build_runner build --delete-conflicting-outputs
 
 ### 3. Add Required Files
 
-Place the following files in the `assets/bins/` directory:
+Place the following files in `assets/bins/`:
 
 - `launch_nier.exe` - Launcher executable
 - `modloader.dll` - Modloader library
-- `yorha_protocol.dll` - YorHa Protocol mod library
-
-Place the YorHa Protocol logo image in `assets/images/`:
-
-- `yp_logo.jpg` - Launcher logo image
+- `yorha_protocol.dll` - YoRHa Protocol mod library
 
 ## Building
-
-### Windows
 
 ```bash
 flutter build windows
 ```
 
-### macOS
-
-```bash
-flutter build macos
-```
-
-### Linux
-
-```bash
-flutter build linux
-```
-
 ## Usage
 
 1. Launch the application
-2. Click SELECT to choose your NieR:Automata.exe file
-3. The launcher will validate the executable
-4. Click PLAY to start NieR:Automata with the YorHa Protocol mod
-5. Click STOP to terminate the game
-
-## Configuration
-
-Click the settings icon in the top right corner to override default mod files with custom versions.
-
-You can override:
-- Launcher executable path
-- Modloader DLL path
-- YorHa Protocol DLL path
+2. Click **SELECT** to choose your `NieR:Automata.exe` file
+3. The launcher validates the executable (checks for the `PRJ_028` signature)
+4. Click **PLAY** to start NieR:Automata with the YoRHa Protocol mod
+5. Click **STOP** to terminate the game
 
 ## How It Works
 
-The launcher copies the required mod files to a launcher directory:
+On first launch, mod files are copied from bundled assets to a launcher directory:
 
-- Windows: `%APPDATA%\YorHaProtocolLauncher`
-- macOS: `~/Library/Application Support/YorHaProtocolLauncher`
-- Linux: `~/.local/share/YorHaProtocolLauncher`
+- **Windows:** `%APPDATA%\YoRHaProtocolLauncher`
+- **macOS (CrossOver):** `~/Library/Application Support/CrossOver/Bottles/<bottle>/drive_c/users/<user>/AppData/Roaming/YoRHaProtocolLauncher`
+- **Linux (Wine):** `~/.wine/drive_c/users/<user>/AppData/Roaming/YoRHaProtocolLauncher`
+- **macOS (native):** `~/Library/Application Support/YoRHaProtocolLauncher`
+- **Linux (native):** `~/.local/share/YoRHaProtocolLauncher`
 
 When you click PLAY, the launcher executes:
 
@@ -87,44 +62,9 @@ launch_nier.exe --modloader-dll <path> --mod-dll <path>
 
 The working directory is set to your NieR:Automata installation folder.
 
-## Technical Details
+## Links
 
-### Dependencies
-
-- automato_theme - UI theme library
-- flutter_riverpod - State management
-- file_picker - File selection dialogs
-- shared_preferences - Settings persistence
-- path_provider - Cross-platform paths
-- win32 - Windows process management
-- ffi - Foreign function interface
-
-### State Management
-
-Uses Riverpod with code generation for type-safe state management.
-
-### Process Management
-
-- Windows: Uses Win32 API for process enumeration and control
-- macOS/Linux: Uses pkill and pgrep utilities
-
-### Performance
-
-- File validation runs in background isolates
-- File copying operations run in background isolates
-- UI remains responsive during all operations
-
-## Troubleshooting
-
-Check the debug console for detailed logging:
-
-- Launcher executable path
-- Command line arguments
-- Working directory
-- Process output and errors
-
-The launcher validates NieR:Automata executables by searching for the PRJ_028 signature.
-
-## License
-
-This project is provided as-is without warranty.
+- [Source Code](https://github.com/Vluurie/yp_launcher)
+- [Guide / Documentation](https://gitlab.yasupa.de/nams/yp-docs/-/blob/master/YoRHa_Protocol_Documentation.md)
+- [Discord](https://discord.gg/Z5spWtF8qs)
+- [NAO Launcher (alternative)](https://www.nexusmods.com/nierautomata/mods/772?tab=files)

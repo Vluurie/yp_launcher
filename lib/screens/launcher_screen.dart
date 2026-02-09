@@ -20,6 +20,8 @@ class LauncherScreen extends ConsumerStatefulWidget {
 }
 
 class _LauncherScreenState extends ConsumerState<LauncherScreen> with WindowListener {
+  bool _isClosing = false;
+
   @override
   void initState() {
     super.initState();
@@ -31,15 +33,17 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen> with WindowList
 
   @override
   void dispose() {
-    if (Platform.isWindows) {
+    if (Platform.isWindows && !_isClosing) {
       windowManager.removeListener(this);
     }
     super.dispose();
   }
 
   @override
-  void onWindowClose() async {
-    await windowManager.destroy();
+  void onWindowClose() {
+    if (_isClosing) return;
+    _isClosing = true;
+    windowManager.destroy();
   }
 
   @override

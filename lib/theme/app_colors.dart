@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Centralized color constants for the YorHa Protocol Launcher
+/// Centralized color constants for the YoRHa Protocol Launcher
 /// Using bright, warm beige/cream tones for a friendly, trustworthy appearance
 class AppColors {
   AppColors._();
