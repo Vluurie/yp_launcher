@@ -6,6 +6,7 @@ class AppStrings {
  
   // URLs
   static const String githubUrl = 'https://github.com/Vluurie/yp_launcher';
+  static const String namsGitlabUrl = 'https://gitlab.yasupa.de/nams/nams-rs/-/tree/master/mods/yorha_protocol?ref_type=heads';
   static const String guideUrl =
       'https://gitlab.yasupa.de/nams/yp-docs/-/blob/master/YoRHa_Protocol_Documentation.md';
   static const String discordUrl = 'https://discord.gg/Z5spWtF8qs';
@@ -15,7 +16,8 @@ class AppStrings {
       'https://gitlab.yasupa.de/nams/yp-docs/-/blob/master/YorHa_Protocol_Documentation.md#how-to-start-via-command-line';
 
   // Tooltips
-  static const String tooltipSourceCode = 'Source Code';
+  static const String tooltipLauncherSource = 'Launcher Source Code';
+  static const String tooltipNamsSource = 'NAMS Project Source';
   static const String tooltipGuide = 'Guide';
   static const String tooltipDiscord = 'Discord';
   static const String tooltipMinimize = 'Minimize';
@@ -81,6 +83,18 @@ class AppStrings {
   static const String argModloaderDll = '--modloader-dll';
   static const String argModDll = '--mod-dll';
 
+  // Feature info
+  static const String featureReshade =
+      'ReShade \u2014 Already installed? YP picks it up automatically.';
+  static const String featureTextures =
+      'HD Textures \u2014 Drop textures into nams/inject/textures/ or they get picked up from SK_Res/ and wax/mods/. Having multiple texture mods in wax/mods/ may cause issues.';
+  static const String featureLodMod =
+      'LOD Mod \u2014 Built-in visual tweaks like shadows, details and pop-in. Off by default.';
+
+  // Tooltips for action buttons
+  static const String tooltipEditConfigs = 'Change visual settings without editing files';
+  static const String tooltipOpenLogs = 'Open the logs folder in Explorer';
+
   // Platform error messages
   static const String errorAppDataNotFound =
       'APPDATA environment variable not found';
@@ -98,4 +112,21 @@ class AppStrings {
 
   static String errorExeNotFound(String dir) =>
       '${AppStrings.gameExeName} not found in $dir';
+
+  // Notification banners
+  static const String notifyLodModMigrated =
+      'Found your old LodMod.ini settings \u2014 imported into lodmod.toml and enabled LodMod.';
+  static const String notifyReShadeDetected =
+      'ReShade detected \u2014 will load automatically on launch.';
+  static String notifyTexturesDetected(String folder) =>
+      'HD textures found in $folder \u2014 will load on launch.';
+
+  // Desktop shortcut
+  static const String tooltipCreateShortcut =
+      'Create a desktop shortcut to launch with YoRHa Protocol';
+  static const String shortcutName = 'NieR Automata (YoRHa Protocol)';
+  static const String shortcutDescription =
+      'Launch NieR:Automata with YoRHa Protocol';
+  static const String notifyShortcutCreated = 'Desktop shortcut created!';
+  static const String notifyShortcutFailed = 'Failed to create desktop shortcut.';
 }

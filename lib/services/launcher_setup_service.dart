@@ -128,16 +128,46 @@ class LauncherSetupService {
         return false;
       }
 
-      final launcherExe = File(path.join(launcherDir, AppStrings.launcherExeName));
-      final modloaderDll = File(path.join(launcherDir, AppStrings.modloaderDllName));
-      final yorhaDll = File(path.join(launcherDir, AppStrings.yorhaDllName));
+      final files = [
+        (AppStrings.assetLauncherExe, AppStrings.launcherExeName),
+        (AppStrings.assetModloaderDll, AppStrings.modloaderDllName),
+        (AppStrings.assetYorhaDll, AppStrings.yorhaDllName),
+      ];
 
-      return await launcherExe.exists() &&
-          await modloaderDll.exists() &&
-          await yorhaDll.exists();
+      for (final (assetPath, fileName) in files) {
+        final cachedFile = File(path.join(launcherDir, fileName));
+        if (!await cachedFile.exists()) return false;
+
+        if (!await _assetMatchesCached(assetPath, cachedFile)) {
+          await Directory(launcherDir).delete(recursive: true);
+          return false;
+        }
+      }
+
+      return true;
     } catch (_) {
       return false;
     }
+  }
+
+  static Future<bool> _assetMatchesCached(
+    String assetPath,
+    File cachedFile,
+  ) async {
+    final byteData = await rootBundle.load(assetPath);
+    final assetBytes = byteData.buffer.asUint8List(
+      byteData.offsetInBytes,
+      byteData.lengthInBytes,
+    );
+    final cachedBytes = await cachedFile.readAsBytes();
+
+    if (assetBytes.length != cachedBytes.length) return false;
+
+    for (int i = 0; i < assetBytes.length; i++) {
+      if (assetBytes[i] != cachedBytes[i]) return false;
+    }
+
+    return true;
   }
 
   static Future<Map<String, String>> getLauncherPaths() async {

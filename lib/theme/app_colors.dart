@@ -17,7 +17,7 @@ class AppColors {
   // Text colors - darker for better contrast
   static const Color textPrimary = Color(0xFF2D2D2D);          // Darker gray
   static const Color textSecondary = Color(0xFF505050);        // Medium dark gray
-  static const Color textMuted = Color(0xFF808080);            // Medium gray
+  static const Color textMuted = Color(0xFF686868);            // Medium gray (darkened for readability)
 
   // Accent colors - warm gold/amber tones (slightly darker)
   static const Color accentPrimary = Color(0xFFC49664);        // Warm gold/tan

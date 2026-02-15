@@ -5,6 +5,7 @@ import 'package:yp_launcher/constants/app_strings.dart';
 import 'package:yp_launcher/providers/app_state.dart';
 import 'package:yp_launcher/services/process_service.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
+import 'package:yp_launcher/theme/app_sizes.dart';
 
 class PlayButton extends ConsumerWidget {
   const PlayButton({super.key});
@@ -18,8 +19,8 @@ class PlayButton extends ConsumerWidget {
     final bgColor = _getBackgroundColor(appState);
 
     return SizedBox(
-      width: 160,
-      height: 50,
+      width: AppSizes.playButtonWidth,
+      height: AppSizes.playButtonHeight,
       child: TextButton(
         onPressed: appState.canPlay
             ? () => _handlePlayButton(ref, controller, appState)
@@ -45,8 +46,8 @@ class PlayButton extends ConsumerWidget {
   Widget _buildButtonContent(WidgetRef ref, AppState appState) {
     if (appState.playButtonState == PlayButtonState.loading) {
       return SizedBox(
-        width: 28,
-        height: 28,
+        width: AppSizes.playButtonLoadingSize,
+        height: AppSizes.playButtonLoadingSize,
         child: AutomatoLoading(
           color: AppColors.accentPrimary,
           translateX: 0,
@@ -61,7 +62,7 @@ class PlayButton extends ConsumerWidget {
           ? AppStrings.stopButton
           : AppStrings.playButton,
       style: TextStyle(
-        fontSize: 22.0,
+        fontSize: AppSizes.fontXXL,
         fontWeight: FontWeight.bold,
         color: buttonColor,
       ),

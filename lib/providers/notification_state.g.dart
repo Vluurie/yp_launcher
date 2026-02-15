@@ -1,27 +1,30 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'app_state.dart';
+part of 'notification_state.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$appStateControllerHash() =>
-    r'bc7a3f4a667a5268bfed855e3a684cae7dfcdfab';
+String _$notificationStateControllerHash() =>
+    r'592e93000cd308d479cf975e7d6ecc5779c46aa4';
 
-/// See also [AppStateController].
-@ProviderFor(AppStateController)
-final appStateControllerProvider =
-    AutoDisposeNotifierProvider<AppStateController, AppState>.internal(
-      AppStateController.new,
-      name: r'appStateControllerProvider',
+/// See also [NotificationStateController].
+@ProviderFor(NotificationStateController)
+final notificationStateControllerProvider =
+    NotifierProvider<
+      NotificationStateController,
+      List<NotificationItem>
+    >.internal(
+      NotificationStateController.new,
+      name: r'notificationStateControllerProvider',
       debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
           ? null
-          : _$appStateControllerHash,
+          : _$notificationStateControllerHash,
       dependencies: null,
       allTransitiveDependencies: null,
     );
 
-typedef _$AppStateController = AutoDisposeNotifier<AppState>;
+typedef _$NotificationStateController = Notifier<List<NotificationItem>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

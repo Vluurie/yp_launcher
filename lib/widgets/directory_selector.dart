@@ -5,7 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:yp_launcher/constants/app_strings.dart';
 import 'package:yp_launcher/providers/app_state.dart';
+import 'package:yp_launcher/providers/notification_state.dart';
+import 'package:yp_launcher/services/nams_config_service.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
+import 'package:yp_launcher/theme/app_sizes.dart';
 
 class DirectorySelector extends ConsumerWidget {
   const DirectorySelector({super.key});
@@ -50,7 +53,7 @@ class DirectorySelector extends ConsumerWidget {
                       color: appState.isDirectorySelected
                           ? AppColors.textPrimary
                           : AppColors.textMuted,
-                      fontSize: 12,
+                      fontSize: AppSizes.fontLG,
                     ),
                     maxLines: 1,
                   ),
@@ -58,7 +61,7 @@ class DirectorySelector extends ConsumerWidget {
               ),
               const SizedBox(width: 10),
               ElevatedButton(
-                onPressed: () => _selectDirectory(controller),
+                onPressed: () => _selectDirectory(controller, ref),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.buttonBackground,
                   foregroundColor: AppColors.buttonText,
@@ -70,9 +73,9 @@ class DirectorySelector extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(6.0),
                   ),
                 ),
-                child: const Text(
+                child: Text(
                   AppStrings.selectButton,
-                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: AppSizes.fontXL, fontWeight: FontWeight.bold),
                 ),
               ),
             ],
@@ -82,7 +85,7 @@ class DirectorySelector extends ConsumerWidget {
     );
   }
 
-  Future<void> _selectDirectory(AppStateController controller) async {
+  Future<void> _selectDirectory(AppStateController controller, WidgetRef ref) async {
     try {
       final result = await FilePicker.platform.pickFiles(
         dialogTitle: AppStrings.filePickerTitle,
@@ -100,6 +103,8 @@ class DirectorySelector extends ConsumerWidget {
           if (isValid) {
             final directory = file.parent.path;
             await controller.setDirectory(directory);
+            await NamsConfigService.ensureConfigs(directory);
+            ref.read(notificationStateControllerProvider.notifier).runDetections(directory);
           } else {
             controller.setError(AppStrings.errorInvalidExe);
           }

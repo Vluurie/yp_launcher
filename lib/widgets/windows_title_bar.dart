@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:yp_launcher/constants/app_strings.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
+import 'package:yp_launcher/theme/app_sizes.dart';
 
 class WindowsTitleBar extends StatelessWidget {
   const WindowsTitleBar({super.key});
@@ -14,7 +15,7 @@ class WindowsTitleBar extends StatelessWidget {
     }
 
     return Container(
-      height: 32,
+      height: AppSizes.titleBarHeight,
       decoration: BoxDecoration(
         color: AppColors.surfaceMedium,
         border: Border(
@@ -41,14 +42,14 @@ class WindowsTitleBar extends StatelessWidget {
                   children: [
                     Icon(
                       Icons.sports_esports,
-                      size: 16,
+                      size: AppSizes.iconMD,
                       color: AppColors.accentPrimary,
                     ),
                     const SizedBox(width: 8),
                     Text(
                       AppStrings.appTitle,
                       style: TextStyle(
-                        fontSize: 12,
+                        fontSize: AppSizes.fontLG,
                         color: AppColors.textPrimary,
                         fontWeight: FontWeight.w500,
                       ),
@@ -67,7 +68,7 @@ class WindowsTitleBar extends StatelessWidget {
           _MaximizeButton(),
           _WindowButton(
             icon: Icons.close,
-            onPressed: () => windowManager.close(),
+            onPressed: () => exit(0),
             tooltip: AppStrings.tooltipClose,
             isClose: true,
           ),
@@ -107,14 +108,14 @@ class _WindowButtonState extends State<_WindowButton> {
         child: GestureDetector(
           onTap: widget.onPressed,
           child: Container(
-            width: 46,
-            height: 32,
+            width: AppSizes.titleBarButtonWidth,
+            height: AppSizes.titleBarHeight,
             color: _isHovered
                 ? (widget.isClose ? AppColors.error : AppColors.borderLight)
                 : Colors.transparent,
             child: Icon(
               widget.icon,
-              size: 16,
+              size: AppSizes.iconMD,
               color: _isHovered && widget.isClose
                   ? Colors.white
                   : AppColors.textPrimary,
@@ -165,12 +166,12 @@ class _MaximizeButtonState extends State<_MaximizeButton> {
             _checkMaximized();
           },
           child: Container(
-            width: 46,
-            height: 32,
+            width: AppSizes.titleBarButtonWidth,
+            height: AppSizes.titleBarHeight,
             color: _isHovered ? AppColors.borderLight : Colors.transparent,
             child: Icon(
               _isMaximized ? Icons.filter_none : Icons.crop_square,
-              size: 14,
+              size: AppSizes.iconSM,
               color: AppColors.textPrimary,
             ),
           ),

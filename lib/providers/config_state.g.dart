@@ -1,27 +1,27 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'app_state.dart';
+part of 'config_state.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$appStateControllerHash() =>
-    r'bc7a3f4a667a5268bfed855e3a684cae7dfcdfab';
+String _$configStateControllerHash() =>
+    r'fc087064ee706ebbce712dc22fa8c166ba0b357f';
 
-/// See also [AppStateController].
-@ProviderFor(AppStateController)
-final appStateControllerProvider =
-    AutoDisposeNotifierProvider<AppStateController, AppState>.internal(
-      AppStateController.new,
-      name: r'appStateControllerProvider',
+/// See also [ConfigStateController].
+@ProviderFor(ConfigStateController)
+final configStateControllerProvider =
+    NotifierProvider<ConfigStateController, ConfigData>.internal(
+      ConfigStateController.new,
+      name: r'configStateControllerProvider',
       debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
           ? null
-          : _$appStateControllerHash,
+          : _$configStateControllerHash,
       dependencies: null,
       allTransitiveDependencies: null,
     );
 
-typedef _$AppStateController = AutoDisposeNotifier<AppState>;
+typedef _$ConfigStateController = Notifier<ConfigData>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

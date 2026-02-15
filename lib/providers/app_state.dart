@@ -1,6 +1,8 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yp_launcher/constants/app_strings.dart';
+import 'package:yp_launcher/providers/notification_state.dart';
+import 'package:yp_launcher/services/nams_config_service.dart';
 
 part 'app_state.g.dart';
 
@@ -56,6 +58,8 @@ class AppStateController extends _$AppStateController {
       final savedDir = prefs.getString(AppStrings.prefKeyDirectory);
       if (savedDir != null && savedDir.isNotEmpty) {
         state = state.copyWith(selectedDirectory: savedDir);
+        await NamsConfigService.ensureConfigs(savedDir);
+        ref.read(notificationStateControllerProvider.notifier).runDetections(savedDir);
       }
     } catch (_) {}
   }
