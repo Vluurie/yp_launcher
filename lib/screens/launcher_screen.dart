@@ -72,7 +72,6 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen> {
                         const PlayButton(),
                         const SizedBox(height: 8),
                         _buildStatusLine(),
-                        _buildFeatureInfo(),
                       ],
                     ),
                   ),
@@ -96,11 +95,13 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen> {
                 ),
                 // Notification banners
                 Positioned(
-                  bottom: 40,
+                  top: 44,
                   left: 12,
                   right: 12,
                   child: NotificationBanners(),
                 ),
+                // Info bar
+                _buildInfoBar(),
                 // Top-right: social links
                 Positioned(
                   top: 10,
@@ -247,78 +248,101 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen> {
     );
   }
 
-  Widget _buildFeatureInfo() {
+  Widget _buildInfoBar() {
     final appState = ref.watch(appStateControllerProvider);
     if (!appState.isDirectorySelected) return const SizedBox.shrink();
 
     final gameDir = appState.selectedDirectory;
 
-    return Padding(
-      padding: const EdgeInsets.only(top: 8),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _buildFeatureLine(AppStrings.featureReshade),
-          _buildFeatureLine(AppStrings.featureTextures),
-          _buildFeatureLine(AppStrings.featureLodMod),
-          const SizedBox(height: 4),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Configs: ',
-                style: TextStyle(fontSize: AppSizes.fontSM, color: AppColors.textMuted),
+    return Positioned(
+      bottom: 40,
+      left: 12,
+      right: 12,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: AppColors.backgroundCard,
+          borderRadius: BorderRadius.circular(6),
+          border: Border.all(color: AppColors.borderLight),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildFeatureLine(AppStrings.featureReshade),
+                  _buildFeatureLine(AppStrings.featureTextures),
+                  _buildFeatureLine(AppStrings.featureLodMod),
+                  const SizedBox(height: 4),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Configs: ',
+                        style: TextStyle(fontSize: AppSizes.fontXS, color: AppColors.textMuted),
+                      ),
+                      _HoverTextLink(
+                        label: '$gameDir\\nams\\',
+                        url: Uri.directory('$gameDir\\nams').toString(),
+                        isLocalPath: true,
+                      ),
+                    ],
+                  ),
+                ],
               ),
-              _HoverTextLink(
-                label: '$gameDir\\nams\\',
-                url: Uri.directory('$gameDir\\nams').toString(),
-                isLocalPath: true,
-              ),
-              const SizedBox(width: 8),
-              _HoverActionButton(
-                label: 'EDIT',
-                tooltip: AppStrings.tooltipEditConfigs,
-                onTap: () {
-                  ref.read(configPanelOpenProvider.notifier).state = true;
-                  ref.read(configStateControllerProvider.notifier).loadConfigs(gameDir);
-                },
-              ),
-              const SizedBox(width: 6),
-              _HoverActionButton(
-                label: 'LOGS',
-                tooltip: AppStrings.tooltipOpenLogs,
-                onTap: () {
-                  ref.read(logPanelOpenProvider.notifier).state = true;
-                  ref.read(logStateControllerProvider.notifier).loadLogs();
-                },
-              ),
-              if (Platform.isWindows) ...[
-                const SizedBox(width: 6),
+            ),
+            const SizedBox(width: 12),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
                 _HoverActionButton(
-                  label: 'SHORTCUT',
-                  tooltip: AppStrings.tooltipCreateShortcut,
-                  onTap: () async {
-                    final success = await ShortcutService.createDesktopShortcut(
-                      gameDirectory: gameDir,
-                    );
-                    final notifier = ref.read(
-                      notificationStateControllerProvider.notifier,
-                    );
-                    notifier.addNotification(NotificationItem(
-                      id: 'shortcut_${DateTime.now().millisecondsSinceEpoch}',
-                      message: success
-                          ? AppStrings.notifyShortcutCreated
-                          : AppStrings.notifyShortcutFailed,
-                      icon: success ? Icons.check_circle : Icons.error_outline,
-                      color: success ? AppColors.success : AppColors.error,
-                      type: NotificationType.shortcut,
-                    ));
+                  label: 'EDIT',
+                  tooltip: AppStrings.tooltipEditConfigs,
+                  onTap: () {
+                    ref.read(configPanelOpenProvider.notifier).state = true;
+                    ref.read(configStateControllerProvider.notifier).loadConfigs(gameDir);
                   },
                 ),
+                const SizedBox(width: 6),
+                _HoverActionButton(
+                  label: 'LOGS',
+                  tooltip: AppStrings.tooltipOpenLogs,
+                  onTap: () {
+                    ref.read(logPanelOpenProvider.notifier).state = true;
+                    ref.read(logStateControllerProvider.notifier).loadLogs();
+                  },
+                ),
+                if (Platform.isWindows) ...[
+                  const SizedBox(width: 6),
+                  _HoverActionButton(
+                    label: 'SHORTCUT',
+                    tooltip: AppStrings.tooltipCreateShortcut,
+                    onTap: () async {
+                      final success = await ShortcutService.createDesktopShortcut(
+                        gameDirectory: gameDir,
+                      );
+                      final notifier = ref.read(
+                        notificationStateControllerProvider.notifier,
+                      );
+                      notifier.addNotification(NotificationItem(
+                        id: 'shortcut_${DateTime.now().millisecondsSinceEpoch}',
+                        message: success
+                            ? AppStrings.notifyShortcutCreated
+                            : AppStrings.notifyShortcutFailed,
+                        icon: success ? Icons.check_circle : Icons.error_outline,
+                        color: success ? AppColors.success : AppColors.error,
+                        type: NotificationType.shortcut,
+                      ));
+                    },
+                  ),
+                ],
               ],
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -328,8 +352,7 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen> {
       padding: const EdgeInsets.symmetric(vertical: 1),
       child: Text(
         text,
-        style: TextStyle(fontSize: AppSizes.fontSM, color: AppColors.textMuted),
-        textAlign: TextAlign.center,
+        style: TextStyle(fontSize: AppSizes.fontXS, color: AppColors.textMuted),
       ),
     );
   }

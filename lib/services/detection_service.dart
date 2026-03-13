@@ -62,11 +62,6 @@ class DetectionService {
       found.add('SK_Res/');
     }
 
-    final waxMods = Directory(path.join(gameDir, 'wax', 'mods'));
-    if (await waxMods.exists() && await _isNonEmpty(waxMods)) {
-      found.add('wax/mods/');
-    }
-
     return found;
   }
 

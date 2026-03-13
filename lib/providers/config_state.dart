@@ -9,16 +9,20 @@ part 'config_state.g.dart';
 final configPanelOpenProvider = StateProvider<bool>((ref) => false);
 
 class ConfigData {
+  final Map<String, dynamic> namsValues;
   final Map<String, dynamic> lodmodValues;
   final Map<String, dynamic> textureInjectionValues;
+  final String namsRawContent;
   final String lodmodRawContent;
   final String textureInjectionRawContent;
   final bool isLoading;
   final bool hasUnsavedChanges;
 
   const ConfigData({
+    this.namsValues = const {},
     this.lodmodValues = const {},
     this.textureInjectionValues = const {},
+    this.namsRawContent = '',
     this.lodmodRawContent = '',
     this.textureInjectionRawContent = '',
     this.isLoading = false,
@@ -26,17 +30,21 @@ class ConfigData {
   });
 
   ConfigData copyWith({
+    Map<String, dynamic>? namsValues,
     Map<String, dynamic>? lodmodValues,
     Map<String, dynamic>? textureInjectionValues,
+    String? namsRawContent,
     String? lodmodRawContent,
     String? textureInjectionRawContent,
     bool? isLoading,
     bool? hasUnsavedChanges,
   }) {
     return ConfigData(
+      namsValues: namsValues ?? this.namsValues,
       lodmodValues: lodmodValues ?? this.lodmodValues,
       textureInjectionValues:
           textureInjectionValues ?? this.textureInjectionValues,
+      namsRawContent: namsRawContent ?? this.namsRawContent,
       lodmodRawContent: lodmodRawContent ?? this.lodmodRawContent,
       textureInjectionRawContent:
           textureInjectionRawContent ?? this.textureInjectionRawContent,
@@ -58,18 +66,28 @@ class ConfigStateController extends _$ConfigStateController {
 
     await NamsConfigService.ensureConfigs(gameDir);
 
+    final namsPath = path.join(gameDir, 'nams', 'nams.toml');
     final lodmodPath = path.join(gameDir, 'nams', 'lodmod.toml');
     final texturePath = path.join(gameDir, 'nams', 'texture_injection.toml');
 
+    final namsRaw = await TomlService.readTomlFile(namsPath);
     final lodmodRaw = await TomlService.readTomlFile(lodmodPath);
     final textureRaw = await TomlService.readTomlFile(texturePath);
 
     state = ConfigData(
+      namsValues: TomlService.parse(namsRaw),
       lodmodValues: TomlService.parse(lodmodRaw),
       textureInjectionValues: TomlService.parse(textureRaw),
+      namsRawContent: namsRaw,
       lodmodRawContent: lodmodRaw,
       textureInjectionRawContent: textureRaw,
     );
+  }
+
+  void updateNams(String key, dynamic value) {
+    final updated = Map<String, dynamic>.from(state.namsValues);
+    updated[key] = value;
+    state = state.copyWith(namsValues: updated, hasUnsavedChanges: true);
   }
 
   void updateLodmod(String key, dynamic value) {
@@ -88,9 +106,14 @@ class ConfigStateController extends _$ConfigStateController {
   }
 
   Future<void> saveConfigs(String gameDir) async {
+    final namsPath = path.join(gameDir, 'nams', 'nams.toml');
     final lodmodPath = path.join(gameDir, 'nams', 'lodmod.toml');
     final texturePath = path.join(gameDir, 'nams', 'texture_injection.toml');
 
+    final updatedNams = TomlService.updateToml(
+      state.namsRawContent,
+      state.namsValues,
+    );
     final updatedLodmod = TomlService.updateToml(
       state.lodmodRawContent,
       state.lodmodValues,
@@ -100,10 +123,12 @@ class ConfigStateController extends _$ConfigStateController {
       state.textureInjectionValues,
     );
 
+    await TomlService.writeTomlFile(namsPath, updatedNams);
     await TomlService.writeTomlFile(lodmodPath, updatedLodmod);
     await TomlService.writeTomlFile(texturePath, updatedTexture);
 
     state = state.copyWith(
+      namsRawContent: updatedNams,
       lodmodRawContent: updatedLodmod,
       textureInjectionRawContent: updatedTexture,
       hasUnsavedChanges: false,

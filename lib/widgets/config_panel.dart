@@ -166,6 +166,7 @@ class ConfigPanelState extends ConsumerState<ConfigPanel>
   }
 
   Widget _buildForm(ConfigData config, ConfigStateController notifier) {
+    final nams = config.namsValues;
     final lod = config.lodmodValues;
     final tex = config.textureInjectionValues;
 
@@ -174,6 +175,19 @@ class ConfigPanelState extends ConsumerState<ConfigPanel>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // NAMS General
+        ConfigSection(title: 'NAMS', children: [
+          ConfigFieldBool(
+            label: 'Validate Model Data',
+            value: nams['validate_model_data'] == true,
+            onChanged: (v) => notifier.updateNams('validate_model_data', v),
+            tooltip: 'The game validates model data when loading. Normally it silently fails '
+                'and continues with broken data, which can cause invisible models or glitches. '
+                'When enabled, NAMS surfaces the validation result as a dialog '
+                'so you can see exactly which model failed and why.',
+          ),
+        ]),
+
         // Texture Injection
         ConfigSection(title: 'TEXTURE INJECTION', children: [
           ConfigFieldDropdown(

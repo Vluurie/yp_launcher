@@ -87,7 +87,7 @@ class AppStrings {
   static const String featureReshade =
       'ReShade \u2014 Already installed? YP picks it up automatically.';
   static const String featureTextures =
-      'HD Textures \u2014 Drop textures into nams/inject/textures/ or they get picked up from SK_Res/ and wax/mods/. Having multiple texture mods in wax/mods/ may cause issues.';
+      'HD Textures \u2014 Drop textures into nams/inject/textures/ or they get picked up from SK_Res/.';
   static const String featureLodMod =
       'LOD Mod \u2014 Built-in visual tweaks like shadows, details and pop-in. Off by default.';
 

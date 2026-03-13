@@ -44,6 +44,16 @@ disable_vignette = false
 disable_fake_hdr = false
 ''';
 
+  static const _namsToml = '''# NAMS General Config. Restart game after changes.
+
+# The game itself validates model data when loading. Normally it silently fails
+# and continues with broken data, which can cause invisible models or glitches.
+# When enabled, NAMS surfaces the game's own validation result as a dialog
+# so you (or the mod author) can see exactly which model failed and why.
+# Set to false if you want the original silent behavior.
+validate_model_data = true
+''';
+
   static const _textureInjectionToml = '''# NAMS Texture Injection - Controls how modded textures are loaded. Restart game after changes.
 
 # Max texture size to preload into RAM at startup (bigger = longer loading, less stutter)
@@ -60,6 +70,7 @@ preload_all = false
       await namsDir.create(recursive: true);
     }
 
+    await _writeIfMissing(path.join(namsDir.path, 'nams.toml'), _namsToml);
     await _writeIfMissing(path.join(namsDir.path, 'lodmod.toml'), _lodmodToml);
     await _writeIfMissing(
       path.join(namsDir.path, 'texture_injection.toml'),

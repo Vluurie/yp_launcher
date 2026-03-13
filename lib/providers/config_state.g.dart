@@ -7,7 +7,7 @@ part of 'config_state.dart';
 // **************************************************************************
 
 String _$configStateControllerHash() =>
-    r'fc087064ee706ebbce712dc22fa8c166ba0b357f';
+    r'44f14abb1cf5a80a206506a181769bb814b651cf';
 
 /// See also [ConfigStateController].
 @ProviderFor(ConfigStateController)
