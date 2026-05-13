@@ -53,7 +53,7 @@ add_subdirectory(${FLUTTER_MANAGED_DIR})
 # Application build; see runner/CMakeLists.txt.
 add_subdirectory("runner")
 
-# Set the output executable name (allows spaces in the .exe filename).
+# Rename the exe to "YoRHa Protocol Launcher.exe"
 set_target_properties(${BINARY_NAME} PROPERTIES OUTPUT_NAME "${BINARY_OUTPUT_NAME}")
 
 # Generated plugin build rules, which manage building the plugins and adding
@@ -77,6 +77,7 @@ set(INSTALL_BUNDLE_LIB_DIR "${CMAKE_INSTALL_PREFIX}")
 
 install(TARGETS ${BINARY_NAME} RUNTIME DESTINATION "${CMAKE_INSTALL_PREFIX}"
   COMPONENT Runtime)
+
 
 install(FILES "${FLUTTER_ICU_DATA_FILE}" DESTINATION "${INSTALL_BUNDLE_DATA_DIR}"
   COMPONENT Runtime)

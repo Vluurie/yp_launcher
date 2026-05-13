@@ -1,0 +1,6 @@
+{
+  "arb-editor.suppressedWarnings": [
+    "missing_metadata_for_key"
+  ],
+  "cmake.sourceDirectory": "F:/YP_Launcher/yp_launcher/linux"
+}

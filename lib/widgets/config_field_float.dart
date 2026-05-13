@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:yp_launcher/l10n/app_localizations.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
 
@@ -23,6 +24,7 @@ class ConfigFieldFloat extends StatefulWidget {
 class _ConfigFieldFloatState extends State<ConfigFieldFloat> {
   late TextEditingController _controller;
   bool _isValid = true;
+  bool _hovered = false;
 
   @override
   void initState() {
@@ -57,76 +59,104 @@ class _ConfigFieldFloatState extends State<ConfigFieldFloat> {
 
   @override
   Widget build(BuildContext context) {
-    final row = Padding(
-      padding: const EdgeInsets.symmetric(vertical: 3),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              widget.label,
-              style: const TextStyle(
-                fontSize: AppSizes.fontMD,
-                color: AppColors.textPrimary,
-              ),
-            ),
-          ),
-          const SizedBox(width: 8),
-          SizedBox(
-            width: AppSizes.configInputWidth,
-            child: Container(
-              decoration: BoxDecoration(
-                color: AppColors.inputBackground,
-                borderRadius: BorderRadius.circular(4),
-                border: Border.all(
-                  color: _isValid ? AppColors.borderMedium : AppColors.error,
-                ),
-              ),
-              child: TextField(
-                controller: _controller,
-                keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true),
-                style: const TextStyle(
-                  fontSize: AppSizes.fontMD,
-                  color: AppColors.textPrimary,
-                ),
-                decoration: const InputDecoration(
-                  isDense: true,
-                  contentPadding:
-                      EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                  border: InputBorder.none,
-                ),
-                onChanged: (text) {
-                  final parsed = double.tryParse(text);
-                  setState(() => _isValid = parsed != null);
-                  if (parsed != null) {
-                    widget.onChanged(parsed);
-                  }
-                },
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-
-    if (widget.tooltip != null) {
-      return Tooltip(
-        richMessage: WidgetSpan(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 280),
-            child: Text(
-              widget.tooltip!,
-              style: const TextStyle(fontSize: AppSizes.fontXS, color: Colors.white),
-            ),
-          ),
-        ),
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+        margin: const EdgeInsets.symmetric(vertical: 2),
         decoration: BoxDecoration(
-          color: const Color(0xE6303030),
+          color: _hovered ? AppColors.surfaceLight : Colors.transparent,
           borderRadius: BorderRadius.circular(6),
         ),
-        child: row,
-      );
-    }
-    return row;
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.label,
+                    style: TextStyle(
+                      fontSize: AppSizes.fontMD(context),
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  if (widget.tooltip != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 3),
+                      child: Text(
+                        widget.tooltip!,
+                        style: TextStyle(
+                          fontSize: AppSizes.fontXS(context),
+                          color: AppColors.textMuted,
+                          height: 1.3,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 12),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                SizedBox(
+                  width: AppSizes.configInputWidth(context),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.inputBackground,
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(
+                        color: _isValid
+                            ? AppColors.borderMedium
+                            : AppColors.error,
+                      ),
+                    ),
+                    child: TextField(
+                      controller: _controller,
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
+                      style: TextStyle(
+                        fontSize: AppSizes.fontMD(context),
+                        color: AppColors.textPrimary,
+                      ),
+                      decoration: const InputDecoration(
+                        isDense: true,
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 10,
+                        ),
+                        border: InputBorder.none,
+                      ),
+                      onChanged: (text) {
+                        final parsed = double.tryParse(text);
+                        setState(() => _isValid = parsed != null);
+                        if (parsed != null) {
+                          widget.onChanged(parsed);
+                        }
+                      },
+                    ),
+                  ),
+                ),
+                if (!_isValid)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 3),
+                    child: Text(
+                      AppLocalizations.of(context)!.enterValidNumber,
+                      style: TextStyle(
+                        fontSize: AppSizes.fontXS(context),
+                        color: AppColors.error,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

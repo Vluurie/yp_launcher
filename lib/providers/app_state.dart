@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yp_launcher/constants/app_strings.dart';
@@ -6,11 +7,30 @@ import 'package:yp_launcher/services/nams_config_service.dart';
 
 part 'app_state.g.dart';
 
-enum PlayButtonState {
-  idle,
-  loading,
-  running,
+final autoSearchingProvider = StateProvider<bool>((ref) => false);
+final activeTabProvider = StateProvider<int>((ref) => 0);
+final detectionRefreshProvider = StateProvider<int>((ref) => 0);
+final texturesBusyProvider = StateProvider<bool>((ref) => false);
+
+/// One-shot cross-tab selection request. When a widget on tab A wants to
+/// open tab B and pre-select an item there, it sets this value and switches
+/// the active tab. Tab B reads it once on build, applies the selection, and
+/// clears it (returns null).
+final pendingTabSelectionProvider =
+    StateProvider<TabSelectionRequest?>((ref) => null);
+
+class TabSelectionRequest {
+  final int tabIndex;
+  final String key;
+  const TabSelectionRequest({required this.tabIndex, required this.key});
 }
+
+/// Global refcount of in-progress destructive/long-running operations
+/// (installs, deletes, extractions, etc). The window close handler checks
+/// this and warns the user before exiting if non-zero.
+final busyOperationsProvider = StateProvider<int>((ref) => 0);
+
+enum PlayButtonState { idle, loading, running }
 
 class AppState {
   final String selectedDirectory;
@@ -59,7 +79,9 @@ class AppStateController extends _$AppStateController {
       if (savedDir != null && savedDir.isNotEmpty) {
         state = state.copyWith(selectedDirectory: savedDir);
         await NamsConfigService.ensureConfigs(savedDir);
-        ref.read(notificationStateControllerProvider.notifier).runDetections(savedDir);
+        ref
+            .read(notificationStateControllerProvider.notifier)
+            .runDetections(savedDir);
       }
     } catch (_) {}
   }

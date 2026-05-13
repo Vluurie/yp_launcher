@@ -1,16 +1,21 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:window_manager/window_manager.dart';
-import 'package:yp_launcher/constants/app_strings.dart';
+import 'package:yp_launcher/l10n/app_localizations.dart';
+import 'package:yp_launcher/providers/app_state.dart';
+import 'package:yp_launcher/providers/config_state.dart';
+import 'package:yp_launcher/providers/nams_settings_state.dart';
+import 'package:yp_launcher/services/platform_gate.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
 
-class WindowsTitleBar extends StatelessWidget {
+class WindowsTitleBar extends ConsumerWidget {
   const WindowsTitleBar({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    if (!Platform.isWindows) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (!PlatformGate.isWindows) {
       return const SizedBox.shrink();
     }
 
@@ -42,14 +47,14 @@ class WindowsTitleBar extends StatelessWidget {
                   children: [
                     Icon(
                       Icons.sports_esports,
-                      size: AppSizes.iconMD,
+                      size: AppSizes.iconMD(context),
                       color: AppColors.accentPrimary,
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      AppStrings.appTitle,
+                      'YP',
                       style: TextStyle(
-                        fontSize: AppSizes.fontLG,
+                        fontSize: AppSizes.fontLG(context),
                         color: AppColors.textPrimary,
                         fontWeight: FontWeight.w500,
                       ),
@@ -63,15 +68,72 @@ class WindowsTitleBar extends StatelessWidget {
           _WindowButton(
             icon: Icons.remove,
             onPressed: () => windowManager.minimize(),
-            tooltip: AppStrings.tooltipMinimize,
+            tooltip: AppLocalizations.of(context)!.tooltipMinimize,
           ),
           _MaximizeButton(),
           _WindowButton(
             icon: Icons.close,
-            onPressed: () => exit(0),
-            tooltip: AppStrings.tooltipClose,
+            onPressed: () => _handleClose(context, ref),
+            tooltip: AppLocalizations.of(context)!.tooltipClose,
             isClose: true,
           ),
+        ],
+      ),
+    );
+  }
+
+  void _handleClose(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final busyCount = ref.read(busyOperationsProvider);
+    if (busyCount > 0) {
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          backgroundColor: AppColors.backgroundCard,
+          title: Text(
+            l10n.busyCloseTitle,
+            style: TextStyle(
+                fontSize: AppSizes.fontXL(ctx), color: AppColors.warning),
+          ),
+          content: Text(
+            l10n.busyCloseBody,
+            style: TextStyle(
+                fontSize: AppSizes.fontMD(ctx), color: AppColors.textSecondary),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: Text(l10n.stay,
+                  style: const TextStyle(color: AppColors.textMuted)),
+            ),
+            TextButton(
+              onPressed: () => exit(0),
+              child: Text(l10n.busyCloseForce,
+                  style: const TextStyle(
+                      color: AppColors.error, fontWeight: FontWeight.bold)),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    final configUnsaved = ref.read(configStateControllerProvider).hasUnsavedChanges;
+    final settingsUnsaved = ref.read(namsSettingsStateControllerProvider).hasUnsavedChanges;
+
+    if (!configUnsaved && !settingsUnsaved) {
+      exit(0);
+    }
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.backgroundCard,
+        title: Text(l10n.unsavedChangesTitle, style: TextStyle(fontSize: AppSizes.fontXL(ctx), color: AppColors.textPrimary)),
+        content: Text(l10n.unsavedChangesMessage, style: TextStyle(fontSize: AppSizes.fontMD(ctx), color: AppColors.textSecondary)),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(ctx).pop(), child: Text(l10n.stay, style: const TextStyle(color: AppColors.textMuted))),
+          TextButton(onPressed: () => exit(0), child: Text(l10n.discard, style: const TextStyle(color: AppColors.error, fontWeight: FontWeight.bold))),
         ],
       ),
     );
@@ -115,7 +177,7 @@ class _WindowButtonState extends State<_WindowButton> {
                 : Colors.transparent,
             child: Icon(
               widget.icon,
-              size: AppSizes.iconMD,
+              size: AppSizes.iconMD(context),
               color: _isHovered && widget.isClose
                   ? Colors.white
                   : AppColors.textPrimary,
@@ -155,7 +217,9 @@ class _MaximizeButtonState extends State<_MaximizeButton> {
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
       child: Tooltip(
-        message: _isMaximized ? AppStrings.tooltipRestore : AppStrings.tooltipMaximize,
+        message: _isMaximized
+            ? AppLocalizations.of(context)!.tooltipRestore
+            : AppLocalizations.of(context)!.tooltipMaximize,
         child: GestureDetector(
           onTap: () async {
             if (_isMaximized) {
@@ -171,7 +235,7 @@ class _MaximizeButtonState extends State<_MaximizeButton> {
             color: _isHovered ? AppColors.borderLight : Colors.transparent,
             child: Icon(
               _isMaximized ? Icons.filter_none : Icons.crop_square,
-              size: AppSizes.iconSM,
+              size: AppSizes.iconSM(context),
               color: AppColors.textPrimary,
             ),
           ),

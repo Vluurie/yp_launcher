@@ -18,11 +18,12 @@ class ShortcutService {
       final desktopPath = _getDesktopPath();
       if (desktopPath == null) return false;
 
-      final shortcutPath =
-          path.join(desktopPath, '${AppStrings.shortcutName}.lnk');
+      final shortcutPath = path.join(
+        desktopPath,
+        '${AppStrings.shortcutName}.lnk',
+      );
 
-      final gameExePath =
-          path.join(gameDirectory, AppStrings.gameExeName);
+      final gameExePath = path.join(gameDirectory, AppStrings.gameExeName);
 
       return _createShortcut(
         shortcutPath: shortcutPath,
@@ -38,6 +39,23 @@ class ShortcutService {
   }
 
   static String? _getDesktopPath() {
+    try {
+      final desktopGuid = GUIDFromString(
+        '{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}',
+      );
+      final ppszPath = calloc<Pointer<Utf16>>();
+      final hr = SHGetKnownFolderPath(desktopGuid, 0, NULL, ppszPath);
+      free(desktopGuid);
+      if (SUCCEEDED(hr)) {
+        final desktopPath = ppszPath.value.toDartString();
+        CoTaskMemFree(ppszPath.value);
+        free(ppszPath);
+        if (Directory(desktopPath).existsSync()) return desktopPath;
+      } else {
+        free(ppszPath);
+      }
+    } catch (_) {}
+
     final userProfile = Platform.environment['USERPROFILE'];
     if (userProfile == null) return null;
     final desktop = path.join(userProfile, 'Desktop');

@@ -13,54 +13,67 @@ class NotificationBanners extends ConsumerWidget {
     if (notifications.isEmpty) return const SizedBox.shrink();
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+      crossAxisAlignment: CrossAxisAlignment.end,
       mainAxisSize: MainAxisSize.min,
-      verticalDirection: VerticalDirection.up,
       children: notifications
-          .map((item) => _NotificationBannerItem(
-                item: item,
-                onDismiss: () => ref
-                    .read(notificationStateControllerProvider.notifier)
-                    .dismiss(item.id),
-              ))
+          .map(
+            (item) => _ToastItem(
+              item: item,
+              onDismiss: () => ref
+                  .read(notificationStateControllerProvider.notifier)
+                  .dismiss(item.id),
+            ),
+          )
           .toList(),
     );
   }
 }
 
-class _NotificationBannerItem extends StatefulWidget {
+class _ToastItem extends StatefulWidget {
   final NotificationItem item;
   final VoidCallback onDismiss;
 
-  const _NotificationBannerItem({
-    required this.item,
-    required this.onDismiss,
-  });
+  const _ToastItem({required this.item, required this.onDismiss});
 
   @override
-  State<_NotificationBannerItem> createState() =>
-      _NotificationBannerItemState();
+  State<_ToastItem> createState() => _ToastItemState();
 }
 
-class _NotificationBannerItemState extends State<_NotificationBannerItem>
+class _ToastItemState extends State<_ToastItem>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
+  late Animation<double> _fadeAnimation;
+  bool _hovered = false;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 250),
     );
-    _fadeAnimation = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
     _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.5),
+      begin: const Offset(1.0, 0),
       end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
     _controller.forward();
+    _startAutoDismiss();
+  }
+
+  Duration get _readDuration {
+    final ms = (widget.item.message.length * 55).clamp(4000, 12000);
+    return Duration(milliseconds: ms);
+  }
+
+  void _startAutoDismiss() {
+    Future.delayed(_readDuration, () {
+      if (mounted && !_hovered) _dismiss();
+    });
   }
 
   @override
@@ -70,71 +83,73 @@ class _NotificationBannerItemState extends State<_NotificationBannerItem>
   }
 
   Future<void> _dismiss() async {
+    if (!mounted) return;
     await _controller.reverse();
-    widget.onDismiss();
+    if (mounted) widget.onDismiss();
   }
 
   @override
   Widget build(BuildContext context) {
-    return FadeTransition(
-      opacity: _fadeAnimation,
-      child: SlideTransition(
-        position: _slideAnimation,
-        child: Padding(
-          padding: const EdgeInsets.only(top: 4),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            decoration: BoxDecoration(
-              color: AppColors.backgroundCard,
-              borderRadius: BorderRadius.circular(6),
-              border: Border.all(color: AppColors.borderLight),
-              boxShadow: const [
-                BoxShadow(
-                  color: AppColors.shadow,
-                  blurRadius: 4,
-                  offset: Offset(0, 1),
+    return SlideTransition(
+      position: _slideAnimation,
+      child: FadeTransition(
+        opacity: _fadeAnimation,
+        child: MouseRegion(
+          onEnter: (_) => setState(() => _hovered = true),
+          onExit: (_) {
+            setState(() => _hovered = false);
+            Future.delayed(const Duration(seconds: 2), () {
+              if (mounted && !_hovered) _dismiss();
+            });
+          },
+          child: GestureDetector(
+            onTap: _dismiss,
+            child: Container(
+              margin: const EdgeInsets.only(bottom: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              constraints: BoxConstraints(
+                maxWidth: (MediaQuery.of(context).size.width - 80)
+                    .clamp(280.0, 720.0),
+              ),
+              decoration: BoxDecoration(
+                color: AppColors.backgroundCard.withValues(alpha: 0.95),
+                borderRadius: BorderRadius.circular(6),
+                border: Border.all(
+                  color: widget.item.color.withValues(alpha: 0.3),
                 ),
-              ],
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 3,
-                  height: 20,
-                  margin: const EdgeInsets.only(right: 8),
-                  decoration: BoxDecoration(
-                    color: widget.item.color,
-                    borderRadius: BorderRadius.circular(2),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.3),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
                   ),
-                ),
-                Icon(
-                  widget.item.icon,
-                  size: AppSizes.iconMD,
-                  color: widget.item.color,
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    widget.item.message,
-                    style: TextStyle(
-                      fontSize: AppSizes.fontSM,
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                ),
-                InkWell(
-                  onTap: _dismiss,
-                  borderRadius: BorderRadius.circular(4),
-                  child: Padding(
-                    padding: const EdgeInsets.all(4),
+                ],
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 2),
                     child: Icon(
-                      Icons.close,
-                      size: AppSizes.iconSM,
-                      color: AppColors.textMuted,
+                      widget.item.icon,
+                      size: 16,
+                      color: widget.item.color,
                     ),
                   ),
-                ),
-              ],
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: Text(
+                      widget.item.message,
+                      style: TextStyle(
+                        fontSize: AppSizes.fontSM(context),
+                        color: AppColors.textPrimary,
+                        height: 1.35,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

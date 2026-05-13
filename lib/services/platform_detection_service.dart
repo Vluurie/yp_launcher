@@ -40,7 +40,9 @@ class PlatformDetectionService {
     final home = Platform.environment['HOME'];
     if (home != null) {
       if (Platform.isMacOS) {
-        final crossoverBottles = Directory('$home/Library/Application Support/CrossOver/Bottles');
+        final crossoverBottles = Directory(
+          '$home/Library/Application Support/CrossOver/Bottles',
+        );
         if (crossoverBottles.existsSync()) {
           final bottles = crossoverBottles.listSync();
           if (bottles.isNotEmpty) {

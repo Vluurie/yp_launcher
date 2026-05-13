@@ -1,48 +1,37 @@
 import 'package:flutter/material.dart';
 
-/// Centralized color constants for the YoRHa Protocol Launcher
-/// Using bright, warm beige/cream tones for a friendly, trustworthy appearance
 class AppColors {
   AppColors._();
 
-  // Primary background colors - warm beige tones (less bright)
-  static const Color backgroundPrimary = Color(0xFFE8E4D4);    // Muted beige
-  static const Color backgroundSecondary = Color(0xFFDDD8C8);  // Warmer cream
-  static const Color backgroundCard = Color(0xFFF0EDE3);       // Soft cream
+  static const Color backgroundPrimary = Color(0xFF18181C);
+  static const Color backgroundSecondary = Color(0xFF141418);
+  static const Color backgroundCard = Color(0xFF222228);
 
-  // Surface colors
-  static const Color surfaceLight = Color(0xFFF5F2E8);         // Soft warm white
-  static const Color surfaceMedium = Color(0xFFE5E0D3);        // Light tan
+  static const Color surfaceLight = Color(0xFF2C2C34);
+  static const Color surfaceMedium = Color(0xFF1E1E24);
 
-  // Text colors - darker for better contrast
-  static const Color textPrimary = Color(0xFF2D2D2D);          // Darker gray
-  static const Color textSecondary = Color(0xFF505050);        // Medium dark gray
-  static const Color textMuted = Color(0xFF686868);            // Medium gray (darkened for readability)
+  static const Color textPrimary = Color(0xFFFFFFFF);
+  static const Color textSecondary = Color(0xFFD4D0C8);
+  static const Color textMuted = Color(0xFF9E9A90);
 
-  // Accent colors - warm gold/amber tones (slightly darker)
-  static const Color accentPrimary = Color(0xFFC49664);        // Warm gold/tan
-  static const Color accentSecondary = Color(0xFFB89860);      // Golden beige
-  static const Color accentHighlight = Color(0xFFD4B87B);      // Bright gold
+  static const Color accentPrimary = Color(0xFFD4A86A);
+  static const Color accentSecondary = Color(0xFFB89860);
+  static const Color accentHighlight = Color(0xFFE4C88B);
 
-  // Border colors
-  static const Color borderLight = Color(0xFFC4B599);          // Tan border
-  static const Color borderMedium = Color(0xFFA8987A);         // Medium tan border
+  static const Color borderLight = Color(0xFF3A3A42);
+  static const Color borderMedium = Color(0xFF4E4E58);
 
-  // Status colors
-  static const Color success = Color(0xFF7CB342);              // Soft green
-  static const Color error = Color(0xFFE57373);                // Soft red
-  static const Color warning = Color(0xFFFFB74D);              // Soft orange
+  static const Color success = Color(0xFF8BC34A);
+  static const Color error = Color(0xFFEF5350);
+  static const Color warning = Color(0xFFFFB74D);
 
-  // Special UI elements
-  static const Color buttonBackground = Color(0xFFC49664);     // Gold button
-  static const Color buttonText = Color(0xFFFFFDF7);           // Light text on buttons
-  static const Color inputBackground = Color(0xFFF0EDE3);      // Input field bg
+  static const Color buttonBackground = Color(0xFFD4A86A);
+  static const Color buttonText = Color(0xFF1A1A1E);
+  static const Color inputBackground = Color(0xFF2A2A32);
 
-  // Shadow color
-  static const Color shadow = Color(0x33000000);               // Slightly stronger shadow
+  static const Color shadow = Color(0x55000000);
 
-  // Activity log specific
-  static const Color logBackground = Color(0xFFF0EDE3);        // Soft cream log bg
-  static const Color logHeaderBackground = Color(0xFFE5E0D3);  // Slightly darker header
-  static const Color logText = Color(0xFF404040);              // Darker log text for readability
+  static const Color logBackground = Color(0xFF222228);
+  static const Color logHeaderBackground = Color(0xFF1E1E24);
+  static const Color logText = Color(0xFFD4D0C8);
 }

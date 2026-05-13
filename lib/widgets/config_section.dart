@@ -6,11 +6,7 @@ class ConfigSection extends StatelessWidget {
   final String title;
   final List<Widget> children;
 
-  const ConfigSection({
-    super.key,
-    required this.title,
-    required this.children,
-  });
+  const ConfigSection({super.key, required this.title, required this.children});
 
   @override
   Widget build(BuildContext context) {
@@ -21,8 +17,8 @@ class ConfigSection extends StatelessWidget {
         children: [
           Text(
             title,
-            style: const TextStyle(
-              fontSize: AppSizes.fontSM,
+            style: TextStyle(
+              fontSize: AppSizes.fontSM(context),
               fontWeight: FontWeight.bold,
               color: AppColors.accentPrimary,
               letterSpacing: 1.0,

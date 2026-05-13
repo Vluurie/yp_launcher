@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:yp_launcher/services/log_service.dart';
@@ -11,12 +13,14 @@ class LogData {
   final List<LogEntry> yorhaEntries;
   final bool isLoading;
   final String activeTab;
+  final String searchQuery;
 
   const LogData({
     this.modloaderEntries = const [],
     this.yorhaEntries = const [],
     this.isLoading = false,
     this.activeTab = 'modloader',
+    this.searchQuery = '',
   });
 
   LogData copyWith({
@@ -24,41 +28,101 @@ class LogData {
     List<LogEntry>? yorhaEntries,
     bool? isLoading,
     String? activeTab,
+    String? searchQuery,
   }) {
     return LogData(
       modloaderEntries: modloaderEntries ?? this.modloaderEntries,
       yorhaEntries: yorhaEntries ?? this.yorhaEntries,
       isLoading: isLoading ?? this.isLoading,
       activeTab: activeTab ?? this.activeTab,
+      searchQuery: searchQuery ?? this.searchQuery,
     );
   }
 
   List<LogEntry> get activeEntries =>
       activeTab == 'modloader' ? modloaderEntries : yorhaEntries;
+
+  /// Active entries with the search query applied (case-insensitive,
+  /// matches level / module / message).
+  List<LogEntry> get filteredEntries {
+    final q = searchQuery.trim().toLowerCase();
+    if (q.isEmpty) return activeEntries;
+    return activeEntries.where((e) {
+      return e.level.toLowerCase().contains(q) ||
+          e.module.toLowerCase().contains(q) ||
+          e.message.toLowerCase().contains(q);
+    }).toList();
+  }
 }
 
 @Riverpod(keepAlive: true)
 class LogStateController extends _$LogStateController {
+  StreamSubscription<List<LogEntry>>? _modloaderSub;
+  StreamSubscription<List<LogEntry>>? _yorhaSub;
+
   @override
-  LogData build() => const LogData();
+  LogData build() {
+    ref.onDispose(() {
+      _modloaderSub?.cancel();
+      _yorhaSub?.cancel();
+    });
+    return const LogData();
+  }
 
   Future<void> loadLogs() async {
-    state = state.copyWith(isLoading: true);
-
-    final modloader = await LogService.readLog('modloader.log');
-    final yorha = await LogService.readLog('yorha_protocol.log');
-
-    state = LogData(
-      modloaderEntries: modloader,
-      yorhaEntries: yorha,
+    // Watcher's first emission contains the full current file. Reset state
+    // and let the stream populate everything in order.
+    state = state.copyWith(
+      modloaderEntries: const [],
+      yorhaEntries: const [],
+      isLoading: true,
     );
+    startStreaming();
+    state = state.copyWith(isLoading: false);
+  }
+
+  /// Begin tailing both log files. The watcher's first emission contains
+  /// the entire existing file content; subsequent emissions are appended.
+  void startStreaming() {
+    _modloaderSub?.cancel();
+    _yorhaSub?.cancel();
+    _modloaderSub = LogService.watchLog('modloader.log').listen((newEntries) {
+      if (newEntries.isEmpty) {
+        state = state.copyWith(modloaderEntries: const []);
+      } else {
+        state = state.copyWith(
+          modloaderEntries: [...state.modloaderEntries, ...newEntries],
+        );
+      }
+    });
+    _yorhaSub = LogService.watchLog('yorha_protocol.log').listen((newEntries) {
+      if (newEntries.isEmpty) {
+        state = state.copyWith(yorhaEntries: const []);
+      } else {
+        state = state.copyWith(
+          yorhaEntries: [...state.yorhaEntries, ...newEntries],
+        );
+      }
+    });
+  }
+
+  void stopStreaming() {
+    _modloaderSub?.cancel();
+    _yorhaSub?.cancel();
+    _modloaderSub = null;
+    _yorhaSub = null;
   }
 
   void setActiveTab(String tab) {
     state = state.copyWith(activeTab: tab);
   }
 
+  void setSearchQuery(String query) {
+    state = state.copyWith(searchQuery: query);
+  }
+
   Future<void> refresh() async {
+    stopStreaming();
     await loadLogs();
   }
 }

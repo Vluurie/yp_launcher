@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:path/path.dart' as path;
 import 'package:yp_launcher/constants/app_strings.dart';
@@ -23,7 +24,12 @@ class LogService {
 
   static String get logsDirectory {
     final appData = Platform.environment['APPDATA'] ?? '';
-    return path.join(appData, AppStrings.launcherDirName, 'nierdecrypt', 'logs');
+    return path.join(
+      appData,
+      AppStrings.launcherDirName,
+      'nierdecrypt',
+      'logs',
+    );
   }
 
   static Future<List<LogEntry>> readLog(String filename) async {
@@ -52,6 +58,78 @@ class LogService {
       module: match.group(3)!,
       message: match.group(4)!,
     );
+  }
+
+  /// Watch a log file for new entries. Emits a list of newly-parsed
+  /// entries each tick. Uses size-based tailing (reliable across platforms,
+  /// where Directory.watch on actively-written files is flaky on Windows).
+  ///
+  /// The first emission contains the full current file content. Subsequent
+  /// emissions contain only entries appended since the previous read.
+  /// When the file is truncated or replaced, we restart from the beginning.
+  static Stream<List<LogEntry>> watchLog(
+    String filename, {
+    Duration interval = const Duration(milliseconds: 750),
+  }) {
+    final filePath = path.join(logsDirectory, filename);
+    final controller = StreamController<List<LogEntry>>();
+    Timer? timer;
+    var lastSize = 0;
+    var leftover = '';
+
+    Future<void> tick() async {
+      try {
+        final file = File(filePath);
+        if (!await file.exists()) {
+          if (lastSize != 0 || leftover.isNotEmpty) {
+            lastSize = 0;
+            leftover = '';
+            controller.add(const []);
+          }
+          return;
+        }
+        final size = await file.length();
+        if (size < lastSize) {
+          lastSize = 0;
+          leftover = '';
+        }
+        if (size == lastSize) return;
+
+        final raf = await file.open();
+        try {
+          await raf.setPosition(lastSize);
+          final bytes = await raf.read(size - lastSize);
+          lastSize = size;
+          final text = leftover + String.fromCharCodes(bytes);
+          final newlineIdx = text.lastIndexOf('\n');
+          final consumable = newlineIdx == -1 ? '' : text.substring(0, newlineIdx);
+          leftover = newlineIdx == -1 ? text : text.substring(newlineIdx + 1);
+          if (consumable.isEmpty) return;
+          final entries = consumable
+              .split('\n')
+              .where((l) => l.trim().isNotEmpty)
+              .map(_parseLine)
+              .whereType<LogEntry>()
+              .toList();
+          if (entries.isNotEmpty && !controller.isClosed) {
+            controller.add(entries);
+          }
+        } finally {
+          await raf.close();
+        }
+      } catch (_) {}
+    }
+
+    controller.onListen = () {
+      tick();
+      timer = Timer.periodic(interval, (_) => tick());
+    };
+    controller.onCancel = () async {
+      timer?.cancel();
+      timer = null;
+      await controller.close();
+    };
+    return controller.stream;
   }
 
   static String _formatTimestamp(String iso) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:yp_launcher/l10n/app_localizations.dart';
 import 'package:yp_launcher/providers/app_state.dart';
 import 'package:yp_launcher/providers/config_state.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
@@ -8,6 +9,7 @@ import 'package:yp_launcher/widgets/config_field_bool.dart';
 import 'package:yp_launcher/widgets/config_field_dropdown.dart';
 import 'package:yp_launcher/widgets/config_field_float.dart';
 import 'package:yp_launcher/widgets/config_section.dart';
+import 'package:yp_launcher/models/config_fields.dart';
 
 class ConfigPanel extends ConsumerStatefulWidget {
   final VoidCallback onClose;
@@ -57,7 +59,7 @@ class ConfigPanelState extends ConsumerState<ConfigPanel>
     return SlideTransition(
       position: _slideAnimation,
       child: Container(
-        width: AppSizes.configPanelWidth,
+        width: AppSizes.titleBarButtonWidth,
         decoration: const BoxDecoration(
           color: AppColors.backgroundCard,
           border: Border(
@@ -73,7 +75,7 @@ class ConfigPanelState extends ConsumerState<ConfigPanel>
         ),
         child: Column(
           children: [
-            _buildHeader(config, configNotifier, gameDir),
+            _buildHeader(context, config, configNotifier, gameDir),
             Expanded(
               child: config.isLoading
                   ? const Center(
@@ -83,7 +85,7 @@ class ConfigPanelState extends ConsumerState<ConfigPanel>
                     )
                   : SingleChildScrollView(
                       padding: const EdgeInsets.all(16),
-                      child: _buildForm(config, configNotifier),
+                      child: _buildForm(context, config, configNotifier),
                     ),
             ),
           ],
@@ -93,6 +95,7 @@ class ConfigPanelState extends ConsumerState<ConfigPanel>
   }
 
   Widget _buildHeader(
+    BuildContext context,
     ConfigData config,
     ConfigStateController notifier,
     String gameDir,
@@ -101,16 +104,14 @@ class ConfigPanelState extends ConsumerState<ConfigPanel>
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: const BoxDecoration(
         color: AppColors.surfaceMedium,
-        border: Border(
-          bottom: BorderSide(color: AppColors.borderLight),
-        ),
+        border: Border(bottom: BorderSide(color: AppColors.borderLight)),
       ),
       child: Row(
         children: [
           Text(
-            'CONFIG EDITOR',
+            AppLocalizations.of(context)!.configEditorTitle,
             style: TextStyle(
-              fontSize: AppSizes.fontXL,
+              fontSize: AppSizes.fontXL(context),
               fontWeight: FontWeight.bold,
               color: AppColors.textPrimary,
               letterSpacing: 1.0,
@@ -122,7 +123,7 @@ class ConfigPanelState extends ConsumerState<ConfigPanel>
               child: Text(
                 '*',
                 style: TextStyle(
-                  fontSize: AppSizes.fontXL,
+                  fontSize: AppSizes.fontXL(context),
                   fontWeight: FontWeight.bold,
                   color: AppColors.warning,
                 ),
@@ -131,13 +132,15 @@ class ConfigPanelState extends ConsumerState<ConfigPanel>
           const Spacer(),
           if (config.hasUnsavedChanges) ...[
             _buildHeaderButton(
-              'SAVE',
+              context,
+              AppLocalizations.of(context)!.buttonSave,
               AppColors.success,
               () => notifier.saveConfigs(gameDir),
             ),
             const SizedBox(width: 4),
             _buildHeaderButton(
-              'DISCARD',
+              context,
+              AppLocalizations.of(context)!.buttonDiscard,
               AppColors.textMuted,
               () => notifier.discardChanges(gameDir),
             ),
@@ -147,7 +150,12 @@ class ConfigPanelState extends ConsumerState<ConfigPanel>
     );
   }
 
-  Widget _buildHeaderButton(String label, Color color, VoidCallback onPressed) {
+  Widget _buildHeaderButton(
+    BuildContext context,
+    String label,
+    Color color,
+    VoidCallback onPressed,
+  ) {
     return InkWell(
       onTap: onPressed,
       borderRadius: BorderRadius.circular(4),
@@ -159,224 +167,282 @@ class ConfigPanelState extends ConsumerState<ConfigPanel>
         ),
         child: Text(
           label,
-          style: TextStyle(fontSize: AppSizes.fontSM, color: color, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontSize: AppSizes.fontSM(context),
+            color: color,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildForm(ConfigData config, ConfigStateController notifier) {
+  Widget _buildForm(
+    BuildContext context,
+    ConfigData config,
+    ConfigStateController notifier,
+  ) {
+    final l10n = AppLocalizations.of(context)!;
     final nams = config.namsValues;
     final lod = config.lodmodValues;
     final tex = config.textureInjectionValues;
 
-    final lodEnabled = lod['enabled'] == true;
+    final lodEnabled = lod[LodModFields.enabled.key] == true;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // NAMS General
-        ConfigSection(title: 'NAMS', children: [
-          ConfigFieldBool(
-            label: 'Validate Model Data',
-            value: nams['validate_model_data'] == true,
-            onChanged: (v) => notifier.updateNams('validate_model_data', v),
-            tooltip: 'The game validates model data when loading. Normally it silently fails '
-                'and continues with broken data, which can cause invisible models or glitches. '
-                'When enabled, NAMS surfaces the validation result as a dialog '
-                'so you can see exactly which model failed and why.',
-          ),
-        ]),
-
-        // Texture Injection
-        ConfigSection(title: 'TEXTURE INJECTION', children: [
-          ConfigFieldDropdown(
-            label: 'Preload Max Dimension',
-            value: (tex['preload_max_dimension'] as int?) ?? 2048,
-            options: const [2048, 4096, 16384],
-            onChanged: (v) => notifier.updateTextureInjection('preload_max_dimension', v),
-            tooltip: 'Max texture size to preload into RAM at startup. '
-                '2048 = default, 4096 = preload up to 4K textures, '
-                '16384 = preload everything. Higher = longer loading but less stutter in-game.',
-          ),
-          ConfigFieldBool(
-            label: 'Preload All Textures',
-            value: tex['preload_all'] == true,
-            onChanged: (v) => notifier.updateTextureInjection('preload_all', v),
-            tooltip: 'Preload ALL textures into RAM regardless of size. '
-                'Eliminates all texture pop-in stutter but needs 32GB+ RAM '
-                'and makes startup significantly slower.',
-          ),
-        ]),
-
-        // LodMod toggle
-        ConfigSection(title: 'LOD MOD', children: [
-          ConfigFieldBool(
-            label: 'Enable LodMod',
-            value: lodEnabled,
-            onChanged: (v) => notifier.updateLodmod('enabled', v),
-            tooltip: 'Master toggle for all LodMod visual patches below. '
-                'YP only uses the faster loading screen feature from LodMod. '
-                'SkipIntroMovies/SkipBootingScreens are not included — they can cause softlocks and are not recommended. '
-                'Other original LodMod.ini features not available: '
-                'DLL chainloading/Wrapper (YP uses its own injection), '
-                'CommunicationScreenResolution, HQMapSlots, Buffers, Movies.',
-          ),
-        ]),
-
-        // Only show LodMod settings when enabled
-        if (lodEnabled) ...[
-          // Level of Detail
-          ConfigSection(title: 'LEVEL OF DETAIL', children: [
-            ConfigFieldFloat(
-              label: 'LOD Multiplier',
-              value: (lod['lod_multiplier'] as num?)?.toDouble() ?? 0.0,
-              onChanged: (v) => notifier.updateLodmod('lod_multiplier', v),
-              tooltip: 'Controls LOD (Level of Detail) draw distances. '
-                  '0 = LODs disabled (best quality, no pop-in). '
-                  '1 = vanilla. 10+ helps reduce AO bleed without fully disabling LODs. '
-                  'Lower values = better visuals but may cost performance.',
-            ),
+        ConfigSection(
+          title: l10n.sectionNams,
+          children: [
             ConfigFieldBool(
-              label: 'Disable Manual Culling',
-              value: lod['disable_manual_culling'] == true,
-              onChanged: (v) => notifier.updateLodmod('disable_manual_culling', v),
-              tooltip: 'Prevents models/geometry from randomly disappearing at certain '
-                  'distances or camera angles. Fixes things like the mall interior vanishing '
-                  'after crossing the bridge, buildings outside camp disappearing, etc. '
-                  'Rare ugly LOD models that would show up are filtered out.',
+              label: NamsFields.validateModelData.label(l10n),
+              value: nams[NamsFields.validateModelData.key] == true,
+              onChanged: (v) =>
+                  notifier.updateNams(NamsFields.validateModelData.key, v),
+              tooltip: l10n.tooltipValidateModelData,
             ),
-          ]),
+          ],
+        ),
 
-          // Ambient Occlusion
-          ConfigSection(title: 'AMBIENT OCCLUSION', children: [
-            ConfigFieldFloat(
-              label: 'AO Width',
-              value: (lod['ao_multiplier_width'] as num?)?.toDouble() ?? 1.0,
-              onChanged: (v) => notifier.updateLodmod('ao_multiplier_width', v),
-              tooltip: 'Multiplier for AO horizontal resolution. Vanilla AO runs at 1/4 '
-                  'screen res. 2.0 = half screen res (crisper AO but heavy). '
-                  '1.5 is a good balance. Range: 0.1 - 2.0. '
-                  'Setting only one axis to 2 can be a lighter alternative.',
-            ),
-            ConfigFieldFloat(
-              label: 'AO Height',
-              value: (lod['ao_multiplier_height'] as num?)?.toDouble() ?? 1.0,
-              onChanged: (v) => notifier.updateLodmod('ao_multiplier_height', v),
-              tooltip: 'Multiplier for AO vertical resolution. Vanilla AO runs at 1/4 '
-                  'screen res. 2.0 = half screen res (crisper AO but heavy). '
-                  '1.5 is a good balance. Range: 0.1 - 2.0. '
-                  'Both at 2.0 can cost ~10 FPS in worst case.',
-            ),
-          ]),
-
-          // Shadows
-          ConfigSection(title: 'SHADOWS', children: [
+        ConfigSection(
+          title: l10n.sectionTextureInjection,
+          children: [
             ConfigFieldDropdown(
-              label: 'Shadow Resolution',
-              value: (lod['shadow_resolution'] as int?) ?? 2048,
-              options: const [2048, 4096, 8192],
-              onChanged: (v) => notifier.updateLodmod('shadow_resolution', v),
-              tooltip: 'Shadow map texture size. Higher = sharper shadows but heavier on GPU. '
-                  '2048 = vanilla, 4096 = good upgrade, 8192 = very sharp. '
-                  'Must be power of 2. Sharpness depends on both resolution and distance '
-                  '(larger distance = more area to fit, so quality decreases).',
-            ),
-            ConfigFieldFloat(
-              label: 'Distance Multiplier',
-              value: (lod['shadow_distance_multiplier'] as num?)?.toDouble() ?? 1.0,
-              onChanged: (v) => notifier.updateLodmod('shadow_distance_multiplier', v),
-              tooltip: 'Multiplies the per-scene shadow draw distance. '
-                  '2.0 = shadows visible twice as far. Vanilla: 1.0. '
-                  'Disable Min/Max below for this to work properly, '
-                  'or use them to restrict the range this multiplier sets.',
-            ),
-            ConfigFieldFloat(
-              label: 'Distance Minimum',
-              value: (lod['shadow_distance_minimum'] as num?)?.toDouble() ?? 0.0,
-              onChanged: (v) => notifier.updateLodmod('shadow_distance_minimum', v),
-              tooltip: 'Minimum shadow draw distance clamp. 0 = off (no minimum). '
-                  'Setting to ~70 with 8192 resolution matches vanilla quality '
-                  'while greatly increasing shadow distance.',
-            ),
-            ConfigFieldFloat(
-              label: 'Distance Maximum',
-              value: (lod['shadow_distance_maximum'] as num?)?.toDouble() ?? 0.0,
-              onChanged: (v) => notifier.updateLodmod('shadow_distance_maximum', v),
-              tooltip: 'Maximum shadow draw distance clamp. 0 = off (no maximum). '
-                  'Only worth setting if the default game distances cause performance issues.',
-            ),
-            ConfigFieldFloat(
-              label: 'Distance PSS',
-              value: (lod['shadow_distance_pss'] as num?)?.toDouble() ?? 0.0,
-              onChanged: (v) => notifier.updateLodmod('shadow_distance_pss', v),
-              tooltip: 'Enables PSS shadow distribution for more even shadow quality. '
-                  '0 = off. Good values: 0.5 - 0.9. Looks great in some areas '
-                  'but may appear blurry in others. Should be set much larger than '
-                  'other distance values (~1500 for large open areas).',
-            ),
-            ConfigFieldFloat(
-              label: 'Filter Strength Bias',
-              value: (lod['shadow_filter_strength_bias'] as num?)?.toDouble() ?? 0.0,
-              onChanged: (v) => notifier.updateLodmod('shadow_filter_strength_bias', v),
-              tooltip: 'Adjusts shadow blur filter strength per-scene. 0 = off. '
-                  '-1 = sharper shadows. Positive = softer. '
-                  'Different areas use different strengths (forest = softer). '
-                  'Can be combined with Min/Max to restrict the range.',
-            ),
-            ConfigFieldFloat(
-              label: 'Filter Strength Min',
-              value: (lod['shadow_filter_strength_minimum'] as num?)?.toDouble() ?? 0.0,
-              onChanged: (v) => notifier.updateLodmod('shadow_filter_strength_minimum', v),
-              tooltip: 'Forces a minimum shadow filter strength across all areas. '
-                  '0 = off. Game default varies per scene (usually ~4). '
-                  'Use to prevent shadows from being too sharp in any area.',
-            ),
-            ConfigFieldFloat(
-              label: 'Filter Strength Max',
-              value: (lod['shadow_filter_strength_maximum'] as num?)?.toDouble() ?? 0.0,
-              onChanged: (v) => notifier.updateLodmod('shadow_filter_strength_maximum', v),
-              tooltip: 'Forces a maximum shadow filter strength across all areas. '
-                  '0 = off. Game default varies per scene (usually ~4). '
-                  'Use to prevent shadows from being too blurry in any area.',
+              label: l10n.labelVramBudget,
+              value:
+                  (tex[TextureInjectionFields.vramBudgetMb.key]
+                      as int?) ??
+                  TextureInjectionFields.vramBudgetMb.defaultValue,
+              options: const [0, 1024, 2048, 4096, 8192],
+              labels: const {0: 'Auto'},
+              onChanged: (v) => notifier.updateTextureInjection(
+                TextureInjectionFields.vramBudgetMb.key,
+                v,
+              ),
+              tooltip: l10n.tooltipVramBudget,
             ),
             ConfigFieldBool(
-              label: 'HQ Shadow Models',
-              value: lod['shadow_model_hq'] == true,
-              onChanged: (v) => notifier.updateLodmod('shadow_model_hq', v),
-              tooltip: 'Uses real-time HQ models for shadows instead of static LQ models. '
-                  'Tree shadows will sway with the wind instead of being frozen. '
-                  'Experimental \u2014 works well in city ruins, could cause issues in rare areas.',
+              label: l10n.labelStreamingEnabled,
+              value: tex[TextureInjectionFields.streamingEnabled.key] != false,
+              onChanged: (v) => notifier.updateTextureInjection(
+                TextureInjectionFields.streamingEnabled.key,
+                v,
+              ),
+              tooltip: l10n.tooltipStreamingEnabled,
             ),
             ConfigFieldBool(
-              label: 'Force All Shadow Models',
-              value: lod['shadow_model_force_all'] == true,
-              onChanged: (v) => notifier.updateLodmod('shadow_model_force_all', v),
-              tooltip: 'Forces all models to cast shadows, including small objects like rocks '
-                  'and grass. Experimental \u2014 may rarely cause invisible models to cast '
-                  'shadows. No issues noticed so far.',
+              label: l10n.labelLoadOnlyRelevant,
+              value: tex[TextureInjectionFields.loadOnlyRelevant.key] == true,
+              onChanged: (v) => notifier.updateTextureInjection(
+                TextureInjectionFields.loadOnlyRelevant.key,
+                v,
+              ),
+              tooltip: l10n.tooltipLoadOnlyRelevant,
             ),
-          ]),
+          ],
+        ),
 
-          // Post-Processing
-          ConfigSection(title: 'POST-PROCESSING', children: [
+        ConfigSection(
+          title: l10n.sectionLodMod,
+          children: [
             ConfigFieldBool(
-              label: 'Disable Vignette',
-              value: lod['disable_vignette'] == true,
-              onChanged: (v) => notifier.updateLodmod('disable_vignette', v),
-              tooltip: 'Removes the dark vignette effect on screen edges. '
-                  'Some loading screens may still have it baked into textures.',
+              label: LodModFields.enabled.label(l10n),
+              value: lodEnabled,
+              onChanged: (v) =>
+                  notifier.updateLodmod(LodModFields.enabled.key, v),
+              tooltip: LodModFields.enabled.tooltip!(l10n),
             ),
-            ConfigFieldBool(
-              label: 'Disable Fake HDR',
-              value: lod['disable_fake_hdr'] == true,
-              onChanged: (v) => notifier.updateLodmod('disable_fake_hdr', v),
-              tooltip: 'Disables the pseudo-HDR mode added in the 2021 update. '
-                  'The 2021 HDR is basically SDR inside an HDR container. '
-                  'Disabling gives a cleaner image for proper color grading. '
-                  'Note: YP does not support loading Special K.',
-            ),
-          ]),
+          ],
+        ),
+
+        if (lodEnabled) ...[
+          ConfigSection(
+            title: l10n.sectionLevelOfDetail,
+            children: [
+              ConfigFieldFloat(
+                label: LodModFields.lodMultiplier.label(l10n),
+                value:
+                    (lod[LodModFields.lodMultiplier.key] as num?)?.toDouble() ??
+                    LodModFields.lodMultiplier.defaultValue,
+                onChanged: (v) =>
+                    notifier.updateLodmod(LodModFields.lodMultiplier.key, v),
+                tooltip: LodModFields.lodMultiplier.tooltip!(l10n),
+              ),
+              ConfigFieldBool(
+                label: LodModFields.disableManualCulling.label(l10n),
+                value: lod[LodModFields.disableManualCulling.key] == true,
+                onChanged: (v) => notifier.updateLodmod(
+                  LodModFields.disableManualCulling.key,
+                  v,
+                ),
+                tooltip: LodModFields.disableManualCulling.tooltip!(l10n),
+              ),
+            ],
+          ),
+
+          ConfigSection(
+            title: l10n.sectionAmbientOcclusion,
+            children: [
+              ConfigFieldFloat(
+                label: LodModFields.aoMultiplierWidth.label(l10n),
+                value:
+                    (lod[LodModFields.aoMultiplierWidth.key] as num?)
+                        ?.toDouble() ??
+                    LodModFields.aoMultiplierWidth.defaultValue,
+                onChanged: (v) => notifier.updateLodmod(
+                  LodModFields.aoMultiplierWidth.key,
+                  v,
+                ),
+                tooltip: LodModFields.aoMultiplierWidth.tooltip!(l10n),
+              ),
+              ConfigFieldFloat(
+                label: LodModFields.aoMultiplierHeight.label(l10n),
+                value:
+                    (lod[LodModFields.aoMultiplierHeight.key] as num?)
+                        ?.toDouble() ??
+                    LodModFields.aoMultiplierHeight.defaultValue,
+                onChanged: (v) => notifier.updateLodmod(
+                  LodModFields.aoMultiplierHeight.key,
+                  v,
+                ),
+                tooltip: LodModFields.aoMultiplierHeight.tooltip!(l10n),
+              ),
+            ],
+          ),
+
+          ConfigSection(
+            title: l10n.sectionShadows,
+            children: [
+              ConfigFieldDropdown(
+                label: LodModFields.shadowResolution.label(l10n),
+                value:
+                    (lod[LodModFields.shadowResolution.key] as int?) ??
+                    LodModFields.shadowResolution.defaultValue,
+                options: const [2048, 4096, 8192],
+                onChanged: (v) =>
+                    notifier.updateLodmod(LodModFields.shadowResolution.key, v),
+                tooltip: LodModFields.shadowResolution.tooltip!(l10n),
+              ),
+              ConfigFieldFloat(
+                label: LodModFields.shadowDistanceMultiplier.label(l10n),
+                value:
+                    (lod[LodModFields.shadowDistanceMultiplier.key] as num?)
+                        ?.toDouble() ??
+                    LodModFields.shadowDistanceMultiplier.defaultValue,
+                onChanged: (v) => notifier.updateLodmod(
+                  LodModFields.shadowDistanceMultiplier.key,
+                  v,
+                ),
+                tooltip: LodModFields.shadowDistanceMultiplier.tooltip!(l10n),
+              ),
+              ConfigFieldFloat(
+                label: LodModFields.shadowDistanceMinimum.label(l10n),
+                value:
+                    (lod[LodModFields.shadowDistanceMinimum.key] as num?)
+                        ?.toDouble() ??
+                    LodModFields.shadowDistanceMinimum.defaultValue,
+                onChanged: (v) => notifier.updateLodmod(
+                  LodModFields.shadowDistanceMinimum.key,
+                  v,
+                ),
+                tooltip: LodModFields.shadowDistanceMinimum.tooltip!(l10n),
+              ),
+              ConfigFieldFloat(
+                label: LodModFields.shadowDistanceMaximum.label(l10n),
+                value:
+                    (lod[LodModFields.shadowDistanceMaximum.key] as num?)
+                        ?.toDouble() ??
+                    LodModFields.shadowDistanceMaximum.defaultValue,
+                onChanged: (v) => notifier.updateLodmod(
+                  LodModFields.shadowDistanceMaximum.key,
+                  v,
+                ),
+                tooltip: LodModFields.shadowDistanceMaximum.tooltip!(l10n),
+              ),
+              ConfigFieldFloat(
+                label: LodModFields.shadowDistancePss.label(l10n),
+                value:
+                    (lod[LodModFields.shadowDistancePss.key] as num?)
+                        ?.toDouble() ??
+                    LodModFields.shadowDistancePss.defaultValue,
+                onChanged: (v) => notifier.updateLodmod(
+                  LodModFields.shadowDistancePss.key,
+                  v,
+                ),
+                tooltip: LodModFields.shadowDistancePss.tooltip!(l10n),
+              ),
+              ConfigFieldFloat(
+                label: LodModFields.shadowFilterStrengthBias.label(l10n),
+                value:
+                    (lod[LodModFields.shadowFilterStrengthBias.key] as num?)
+                        ?.toDouble() ??
+                    LodModFields.shadowFilterStrengthBias.defaultValue,
+                onChanged: (v) => notifier.updateLodmod(
+                  LodModFields.shadowFilterStrengthBias.key,
+                  v,
+                ),
+                tooltip: LodModFields.shadowFilterStrengthBias.tooltip!(l10n),
+              ),
+              ConfigFieldFloat(
+                label: LodModFields.shadowFilterStrengthMinimum.label(l10n),
+                value:
+                    (lod[LodModFields.shadowFilterStrengthMinimum.key] as num?)
+                        ?.toDouble() ??
+                    LodModFields.shadowFilterStrengthMinimum.defaultValue,
+                onChanged: (v) => notifier.updateLodmod(
+                  LodModFields.shadowFilterStrengthMinimum.key,
+                  v,
+                ),
+                tooltip: LodModFields.shadowFilterStrengthMinimum.tooltip!(
+                  l10n,
+                ),
+              ),
+              ConfigFieldFloat(
+                label: LodModFields.shadowFilterStrengthMaximum.label(l10n),
+                value:
+                    (lod[LodModFields.shadowFilterStrengthMaximum.key] as num?)
+                        ?.toDouble() ??
+                    LodModFields.shadowFilterStrengthMaximum.defaultValue,
+                onChanged: (v) => notifier.updateLodmod(
+                  LodModFields.shadowFilterStrengthMaximum.key,
+                  v,
+                ),
+                tooltip: LodModFields.shadowFilterStrengthMaximum.tooltip!(
+                  l10n,
+                ),
+              ),
+              ConfigFieldBool(
+                label: LodModFields.shadowModelHq.label(l10n),
+                value: lod[LodModFields.shadowModelHq.key] == true,
+                onChanged: (v) =>
+                    notifier.updateLodmod(LodModFields.shadowModelHq.key, v),
+                tooltip: LodModFields.shadowModelHq.tooltip!(l10n),
+              ),
+              ConfigFieldBool(
+                label: LodModFields.shadowModelForceAll.label(l10n),
+                value: lod[LodModFields.shadowModelForceAll.key] == true,
+                onChanged: (v) => notifier.updateLodmod(
+                  LodModFields.shadowModelForceAll.key,
+                  v,
+                ),
+                tooltip: LodModFields.shadowModelForceAll.tooltip!(l10n),
+              ),
+            ],
+          ),
+
+          ConfigSection(
+            title: l10n.sectionPostProcessing,
+            children: [
+              ConfigFieldBool(
+                label: LodModFields.disableVignette.label(l10n),
+                value: lod[LodModFields.disableVignette.key] == true,
+                onChanged: (v) =>
+                    notifier.updateLodmod(LodModFields.disableVignette.key, v),
+                tooltip: LodModFields.disableVignette.tooltip!(l10n),
+              ),
+            ],
+          ),
         ],
       ],
     );

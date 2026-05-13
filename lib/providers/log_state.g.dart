@@ -7,7 +7,7 @@ part of 'log_state.dart';
 // **************************************************************************
 
 String _$logStateControllerHash() =>
-    r'989a5332cd6630c663ea30e2306a0adc63abe98a';
+    r'584e7837743d7d8ec9e1e1cb50fc235d267a0480';
 
 /// See also [LogStateController].
 @ProviderFor(LogStateController)
