@@ -436,6 +436,12 @@ class _TexturesViewState extends ConsumerState<TexturesView> {
     await _handleDrop(paths);
   }
 
+  Future<void> _handleBrowseFolder() async {
+    final result = await FilePicker.platform.getDirectoryPath();
+    if (result == null) return;
+    await _handleDrop([result]);
+  }
+
   void _notify(String message, IconData icon, Color color) {
     ref
         .read(notificationStateControllerProvider.notifier)
@@ -515,6 +521,7 @@ class _TexturesViewState extends ConsumerState<TexturesView> {
                                         _handleDrop(paths);
                                       },
                                       onBrowse: _handleBrowse,
+                                      onBrowseFolder: _handleBrowseFolder,
                                     ),
                                   ],
                                 ),

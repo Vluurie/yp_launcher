@@ -245,9 +245,7 @@ class LodModFields {
     defaultValue: 0.0,
     label: (l) => l.labelLodMultiplier,
     tooltip: (l) => l.tooltipLodMultiplier,
-    min: 0.0,
-    max: 10.0,
-    step: 0.1,
+    allowedValues: const [0.0, 1.0, 10.0],
     restartRequired: true,
   );
 
@@ -302,7 +300,7 @@ class LodModFields {
     defaultValue: 1.0,
     label: (l) => l.labelDistanceMultiplier,
     tooltip: (l) => l.tooltipDistanceMultiplier,
-    min: 0.1,
+    min: 1.0,
     max: 10.0,
     step: 0.1,
   );
@@ -420,6 +418,15 @@ class LodModFields {
     defaultValue: false,
     label: (l) => l.labelFpsUncapInGameplay,
     tooltip: (l) => l.tooltipFpsUncapInGameplay,
+  );
+
+  static final fpsLimit = ConfigField<int>(
+    key: 'fps_limit',
+    defaultValue: 0,
+    label: (l) => l.labelFpsLimit,
+    tooltip: (l) => l.tooltipFpsLimit,
+    min: 0,
+    max: 1000,
   );
 }
 

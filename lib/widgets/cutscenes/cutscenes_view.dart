@@ -157,6 +157,8 @@ class _CutscenesViewState extends ConsumerState<CutscenesView> {
                                         _installService.handleDrop(paths);
                                       },
                                       onBrowse: _installService.handleBrowse,
+                                      onBrowseFolder:
+                                          _installService.handleBrowseFolder,
                                     ),
                                     const SizedBox(height: 16),
                                     const CutsceneInfoCard(),

@@ -202,10 +202,11 @@ class ConfigStateController extends _$ConfigStateController {
     LodModFields.giMinLightExtent,
     LodModFields.fpsUncapInMenus,
     LodModFields.fpsUncapInGameplay,
+    LodModFields.fpsLimit,
   ];
 
   Timer? _lodmodAutosaveTimer;
-  static const _lodmodAutosaveDelay = Duration(milliseconds: 250);
+  static const _lodmodAutosaveDelay = Duration(milliseconds: 100);
 
   void updateLodmodLive(String gameDir, String key, dynamic value) {
     final updated = Map<String, dynamic>.from(state.lodmodValues);

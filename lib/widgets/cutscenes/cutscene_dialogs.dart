@@ -16,7 +16,10 @@ Future<String?> showCutsceneMergeDialog(
       insetPadding: const EdgeInsets.all(40),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 420),
+        constraints: BoxConstraints(
+          maxWidth: 420,
+          maxHeight: MediaQuery.of(ctx).size.height - 120,
+        ),
         child: Padding(
           padding: const EdgeInsets.all(24),
           child: Column(
@@ -33,23 +36,34 @@ Future<String?> showCutsceneMergeDialog(
                 style: TextStyle(fontSize: AppSizes.fontSM(ctx), color: AppColors.textSecondary),
               ),
               SizedBox(height: AppSizes.paddingLG(ctx)),
-              ...mods.map((mod) => Padding(
-                padding: EdgeInsets.only(bottom: AppSizes.spacingSM(ctx)),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton.icon(
-                    onPressed: () => Navigator.of(ctx).pop(mod.name),
-                    icon: const Icon(Icons.merge_type, size: 16),
-                    label: Text(l10n.cutsceneMergeAddTo(mod.name)),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColors.accentPrimary,
-                      side: const BorderSide(color: AppColors.accentPrimary),
-                      padding: EdgeInsets.symmetric(vertical: AppSizes.paddingMD(ctx), horizontal: AppSizes.paddingLG(ctx)),
-                      alignment: Alignment.centerLeft,
+              Flexible(
+                child: Scrollbar(
+                  thumbVisibility: true,
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.only(right: 12),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        ...mods.map((mod) => Padding(
+                          padding: EdgeInsets.only(bottom: AppSizes.spacingSM(ctx)),
+                          child: OutlinedButton.icon(
+                            onPressed: () => Navigator.of(ctx).pop(mod.name),
+                            icon: const Icon(Icons.merge_type, size: 16),
+                            label: Text(l10n.cutsceneMergeAddTo(mod.name)),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: AppColors.accentPrimary,
+                              side: const BorderSide(color: AppColors.accentPrimary),
+                              padding: EdgeInsets.symmetric(vertical: AppSizes.paddingMD(ctx), horizontal: AppSizes.paddingLG(ctx)),
+                              alignment: Alignment.centerLeft,
+                            ),
+                          ),
+                        )),
+                      ],
                     ),
                   ),
                 ),
-              )),
+              ),
               SizedBox(height: AppSizes.spacingSM(ctx)),
               SizedBox(
                 width: double.infinity,

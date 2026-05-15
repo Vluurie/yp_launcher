@@ -2800,6 +2800,12 @@ abstract class AppLocalizations {
   /// **'Applies instantly (live)'**
   String get configAppliesLive;
 
+  /// No description provided for @dropZoneBrowseFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Or pick a folder'**
+  String get dropZoneBrowseFolder;
+
   /// No description provided for @labelGiEnabled.
   ///
   /// In en, this message translates to:
@@ -2907,6 +2913,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Removes the 60 FPS lock during gameplay. WARNING: NieR:Automata\'s physics, animations, and cutscene timing are tied to the 60 FPS lock. Uncapping causes broken physics (jumping height, dodge i-frames), animation speed changes, audio desync in cutscenes, and softlocks in scripted sequences. Use only if you know exactly what trade-offs you\'re accepting.\n\nLive-toggleable if it was enabled at game launch. If it was disabled at launch, toggling it on later requires a restart.'**
   String get tooltipFpsUncapInGameplay;
+
+  /// No description provided for @labelFpsLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'FPS Limit'**
+  String get labelFpsLimit;
+
+  /// No description provided for @tooltipFpsLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'FPS cap applied when uncap is active. 0 = unlimited. Otherwise 60-1000 (NAMS clamps values out of range). Values below 60 are clamped because the game\'s internal spin-wait loop ignores frametimes longer than the vanilla 60fps target. Tip: capping at half your monitor\'s refresh rate gives smoother motion than vanilla 60 (e.g. 72 on 144Hz, 82 on 165Hz, 120 on 240Hz).'**
+  String get tooltipFpsLimit;
 
   /// No description provided for @tutorialValidateModel.
   ///

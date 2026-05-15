@@ -12,6 +12,7 @@ class TextureDropZone extends StatefulWidget {
   final String Function(AppLocalizations l10n) buildProgressText;
   final void Function(List<String> paths) onDrop;
   final VoidCallback onBrowse;
+  final VoidCallback? onBrowseFolder;
 
   const TextureDropZone({
     super.key,
@@ -21,6 +22,7 @@ class TextureDropZone extends StatefulWidget {
     required this.buildProgressText,
     required this.onDrop,
     required this.onBrowse,
+    this.onBrowseFolder,
   });
 
   @override
@@ -111,6 +113,10 @@ class _TextureDropZoneState extends State<TextureDropZone> {
                     color: AppColors.textMuted,
                   ),
                 ),
+                if (widget.onBrowseFolder != null) ...[
+                  const SizedBox(height: 6),
+                  _TextureFolderButton(onTap: widget.onBrowseFolder!),
+                ],
                 SizedBox(height: AppSizes.spacingMD(context)),
                 Text(
                   l10n.installedToTextures,
@@ -122,6 +128,57 @@ class _TextureDropZoneState extends State<TextureDropZone> {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _TextureFolderButton extends StatefulWidget {
+  final VoidCallback onTap;
+  const _TextureFolderButton({required this.onTap});
+
+  @override
+  State<_TextureFolderButton> createState() => _TextureFolderButtonState();
+}
+
+class _TextureFolderButtonState extends State<_TextureFolderButton> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        behavior: HitTestBehavior.opaque,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.folder_open,
+              size: 14,
+              color: _hovered
+                  ? AppColors.accentPrimary
+                  : AppColors.textMuted,
+            ),
+            const SizedBox(width: 6),
+            Text(
+              l10n.dropZoneBrowseFolder,
+              style: TextStyle(
+                fontSize: AppSizes.fontSM(context),
+                color: _hovered
+                    ? AppColors.accentPrimary
+                    : AppColors.textMuted,
+                decoration:
+                    _hovered ? TextDecoration.underline : TextDecoration.none,
+                decorationColor: AppColors.accentPrimary,
+              ),
+            ),
+          ],
         ),
       ),
     );

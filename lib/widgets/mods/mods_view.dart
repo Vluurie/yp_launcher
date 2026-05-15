@@ -117,7 +117,17 @@ class _ModsViewState extends ConsumerState<ModsView> {
     await _installFromPath(paths.first);
   }
 
-  Future<void> _handleBrowse() async {
+  Future<void> _handleBrowseFile() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: const ['zip', '7z', 'rar'],
+    );
+    final picked = result?.files.single.path;
+    if (picked == null) return;
+    await _installFromPath(picked);
+  }
+
+  Future<void> _handleBrowseFolder() async {
     final result = await FilePicker.platform.getDirectoryPath();
     if (result == null) return;
     await _installFromPath(result);
@@ -515,7 +525,8 @@ class _ModsViewState extends ConsumerState<ModsView> {
                           key: _dropZoneKey,
                           child: ModDropZone(
                             onDrop: _handleDrop,
-                            onBrowse: _handleBrowse,
+                            onBrowse: _handleBrowseFile,
+                            onBrowseFolder: _handleBrowseFolder,
                           ),
                         ),
                       ),

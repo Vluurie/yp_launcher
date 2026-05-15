@@ -8,6 +8,7 @@ import 'package:yp_launcher/theme/app_sizes.dart';
 import 'package:path/path.dart' as p;
 import 'package:yp_launcher/widgets/config_field_bool.dart';
 import 'package:yp_launcher/widgets/config_field_dropdown.dart';
+import 'package:yp_launcher/widgets/config_field_int.dart';
 import 'package:yp_launcher/widgets/config_field_slider.dart';
 import 'package:yp_launcher/widgets/header_info_icon.dart';
 import 'package:yp_launcher/widgets/hover_button.dart';
@@ -169,6 +170,48 @@ class _LodmodViewState extends ConsumerState<LodmodView> {
       showApplyMarker: true,
       value: config.lodmodValues[field.key] == true,
       onChanged: (v) => notifier.updateLodmodLive(gameDir, field.key, v),
+    );
+  }
+
+  Widget _int(
+    ConfigData config,
+    ConfigStateController notifier,
+    String gameDir,
+    AppLocalizations l10n,
+    ConfigField<int> field,
+  ) {
+    return ConfigFieldInt(
+      label: field.label(l10n),
+      tooltip: field.tooltip?.call(l10n),
+      restartRequired: field.restartRequired,
+      showApplyMarker: true,
+      min: field.min?.toInt(),
+      max: field.max?.toInt(),
+      value: (config.lodmodValues[field.key] as int?) ?? field.defaultValue,
+      onChanged: (v) => notifier.updateLodmodLive(gameDir, field.key, v),
+    );
+  }
+
+  Widget _lodMultiplierDropdown(
+    ConfigData config,
+    ConfigStateController notifier,
+    String gameDir,
+    AppLocalizations l10n,
+  ) {
+    final field = LodModFields.lodMultiplier;
+    final current =
+        (config.lodmodValues[field.key] as num?)?.toDouble() ??
+            field.defaultValue;
+    final options = field.allowedValues!.map((n) => n.toInt()).toList();
+    return ConfigFieldDropdown(
+      label: field.label(l10n),
+      tooltip: field.tooltip?.call(l10n),
+      restartRequired: field.restartRequired,
+      showApplyMarker: true,
+      value: current.round(),
+      options: options,
+      onChanged: (v) =>
+          notifier.updateLodmodLive(gameDir, field.key, v.toDouble()),
     );
   }
 
@@ -392,8 +435,8 @@ class _LodmodViewState extends ConsumerState<LodmodView> {
                     child: Column(
                       children: [
                         _card(context, l10n.cardLevelOfDetail, [
-                          _slider(config, notifier, gameDir, l10n,
-                              LodModFields.lodMultiplier, decimals: 1),
+                          _lodMultiplierDropdown(
+                              config, notifier, gameDir, l10n),
                           _bool(config, notifier, gameDir, l10n,
                               LodModFields.disableManualCulling),
                         ]),
@@ -515,6 +558,8 @@ class _LodmodViewState extends ConsumerState<LodmodView> {
                               LodModFields.fpsUncapInMenus),
                           _bool(config, notifier, gameDir, l10n,
                               LodModFields.fpsUncapInGameplay),
+                          _int(config, notifier, gameDir, l10n,
+                              LodModFields.fpsLimit),
                         ]),
                       ],
                     ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
+import 'package:yp_launcher/widgets/config_apply_marker.dart';
 
 class ConfigFieldInt extends StatefulWidget {
   final String label;
@@ -8,6 +9,10 @@ class ConfigFieldInt extends StatefulWidget {
   final ValueChanged<int> onChanged;
   final String? tooltip;
   final bool hex;
+  final int? min;
+  final int? max;
+  final bool restartRequired;
+  final bool showApplyMarker;
 
   const ConfigFieldInt({
     super.key,
@@ -16,6 +21,10 @@ class ConfigFieldInt extends StatefulWidget {
     required this.onChanged,
     this.tooltip,
     this.hex = false,
+    this.min,
+    this.max,
+    this.restartRequired = false,
+    this.showApplyMarker = false,
   });
 
   @override
@@ -68,12 +77,24 @@ class _ConfigFieldIntState extends State<ConfigFieldInt> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  widget.label,
-                  style: TextStyle(
-                    fontSize: AppSizes.fontMD(context),
-                    color: AppColors.textPrimary,
-                  ),
+                Row(
+                  children: [
+                    Flexible(
+                      child: Text(
+                        widget.label,
+                        style: TextStyle(
+                          fontSize: AppSizes.fontMD(context),
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                    ),
+                    if (widget.showApplyMarker) ...[
+                      const SizedBox(width: 6),
+                      ConfigApplyMarker(
+                        restartRequired: widget.restartRequired,
+                      ),
+                    ],
+                  ],
                 ),
                 if (widget.tooltip != null)
                   Padding(
@@ -117,10 +138,16 @@ class _ConfigFieldIntState extends State<ConfigFieldInt> {
                   border: InputBorder.none,
                 ),
                 onChanged: (text) {
-                  final parsed = int.tryParse(text);
+                  var parsed = int.tryParse(text);
                   setState(() => _isValid = parsed != null);
                   if (parsed != null) {
-                    widget.onChanged(parsed);
+                    if (widget.min != null && parsed < widget.min!) {
+                      parsed = widget.min;
+                    }
+                    if (widget.max != null && parsed! > widget.max!) {
+                      parsed = widget.max;
+                    }
+                    widget.onChanged(parsed!);
                   }
                 },
               ),

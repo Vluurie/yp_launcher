@@ -10,6 +10,7 @@ class CutsceneDropZone extends StatefulWidget {
   final double progressPercent;
   final void Function(List<String> paths) onDrop;
   final VoidCallback onBrowse;
+  final VoidCallback? onBrowseFolder;
 
   const CutsceneDropZone({
     super.key,
@@ -18,6 +19,7 @@ class CutsceneDropZone extends StatefulWidget {
     required this.progressPercent,
     required this.onDrop,
     required this.onBrowse,
+    this.onBrowseFolder,
   });
 
   @override
@@ -137,6 +139,10 @@ class _CutsceneDropZoneState extends State<CutsceneDropZone> {
                     color: AppColors.textMuted,
                   ),
                 ),
+                if (widget.onBrowseFolder != null) ...[
+                  const SizedBox(height: 6),
+                  _CutsceneFolderButton(onTap: widget.onBrowseFolder!),
+                ],
                 const SizedBox(height: 8),
                 Text(
                   AppLocalizations.of(context)!.cutsceneMovieHint,
@@ -148,6 +154,57 @@ class _CutsceneDropZoneState extends State<CutsceneDropZone> {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _CutsceneFolderButton extends StatefulWidget {
+  final VoidCallback onTap;
+  const _CutsceneFolderButton({required this.onTap});
+
+  @override
+  State<_CutsceneFolderButton> createState() => _CutsceneFolderButtonState();
+}
+
+class _CutsceneFolderButtonState extends State<_CutsceneFolderButton> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        behavior: HitTestBehavior.opaque,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.folder_open,
+              size: 14,
+              color: _hovered
+                  ? AppColors.accentPrimary
+                  : AppColors.textMuted,
+            ),
+            const SizedBox(width: 6),
+            Text(
+              l10n.dropZoneBrowseFolder,
+              style: TextStyle(
+                fontSize: AppSizes.fontSM(context),
+                color: _hovered
+                    ? AppColors.accentPrimary
+                    : AppColors.textMuted,
+                decoration:
+                    _hovered ? TextDecoration.underline : TextDecoration.none,
+                decorationColor: AppColors.accentPrimary,
+              ),
+            ),
+          ],
         ),
       ),
     );
