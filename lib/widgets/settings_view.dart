@@ -387,6 +387,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
       NamsFields.contentEffectsApplier,
       NamsFields.contentEquipTracker,
       NamsFields.contentMcd,
+      NamsFields.contentBuddyRubySelector,
     ];
     return fields.map((f) {
       return ConfigFieldBool(

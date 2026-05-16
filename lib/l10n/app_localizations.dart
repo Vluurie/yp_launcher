@@ -3088,6 +3088,18 @@ abstract class AppLocalizations {
   /// **'In-game text customization (custom item names, descriptions, dialogue strings supplied by mods).'**
   String get tooltipContentMcd;
 
+  /// No description provided for @labelContentBuddyRubySelector.
+  ///
+  /// In en, this message translates to:
+  /// **'Buddy Outfit Selector (experimental)'**
+  String get labelContentBuddyRubySelector;
+
+  /// No description provided for @tooltipContentBuddyRubySelector.
+  ///
+  /// In en, this message translates to:
+  /// **'Patches the global buddy conversation script to add a \"Change outfit\" entry that lists modded buddy outfits. Disable if the patched conversation script causes instability or interferes with other script mods.'**
+  String get tooltipContentBuddyRubySelector;
+
   /// No description provided for @cardContentFeatures.
   ///
   /// In en, this message translates to:

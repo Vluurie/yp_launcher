@@ -710,6 +710,8 @@
   "tooltipContentEquipTracker": "Detection of weapon equip / unequip changes. Drives effect rules and equip-time SDK callbacks.",
   "labelContentMcd": "Custom Text",
   "tooltipContentMcd": "In-game text customization (custom item names, descriptions, dialogue strings supplied by mods).",
+  "labelContentBuddyRubySelector": "Buddy Outfit Selector (experimental)",
+  "tooltipContentBuddyRubySelector": "Patches the global buddy conversation script to add a \"Change outfit\" entry that lists modded buddy outfits. Disable if the patched conversation script causes instability or interferes with other script mods.",
   "cardContentFeatures": "CONTENT FEATURES",
   "contentFeaturesDescription": "Per-feature toggles for the content layer. All default to ON. Useful for narrowing a problem down to a specific subsystem. Requires a game restart.",
   "labelDisableReShadeLoading": "Disable ReShade Loading",

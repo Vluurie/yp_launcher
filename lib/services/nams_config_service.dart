@@ -64,6 +64,7 @@ content_quest_integration = true
 content_effects_applier = true
 content_equip_tracker = true
 content_mcd = true
+content_buddy_ruby_selector = true
 
 disable_reshade_loading = false
 disable_texture_injection = false
@@ -228,6 +229,7 @@ enable_h264 = false
       NamsFields.contentEffectsApplier.key,
       NamsFields.contentEquipTracker.key,
       NamsFields.contentMcd.key,
+      NamsFields.contentBuddyRubySelector.key,
     ];
     final missingContent = contentToggleKeys.where((k) => !content.contains(k)).toList();
     if (missingContent.isNotEmpty) {

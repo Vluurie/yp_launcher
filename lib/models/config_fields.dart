@@ -118,6 +118,13 @@ class NamsFields {
     tooltip: (l) => l.tooltipContentMcd,
   );
 
+  static final contentBuddyRubySelector = ConfigField<bool>(
+    key: 'content_buddy_ruby_selector',
+    defaultValue: true,
+    label: (l) => l.labelContentBuddyRubySelector,
+    tooltip: (l) => l.tooltipContentBuddyRubySelector,
+  );
+
   static final disableReShadeLoading = ConfigField<bool>(
     key: 'disable_reshade_loading',
     defaultValue: false,

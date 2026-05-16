@@ -1716,6 +1716,14 @@ class AppLocalizationsEn extends AppLocalizations {
       'In-game text customization (custom item names, descriptions, dialogue strings supplied by mods).';
 
   @override
+  String get labelContentBuddyRubySelector =>
+      'Buddy Outfit Selector (experimental)';
+
+  @override
+  String get tooltipContentBuddyRubySelector =>
+      'Patches the global buddy conversation script to add a \"Change outfit\" entry that lists modded buddy outfits. Disable if the patched conversation script causes instability or interferes with other script mods.';
+
+  @override
   String get cardContentFeatures => 'CONTENT FEATURES';
 
   @override
