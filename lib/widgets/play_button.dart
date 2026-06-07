@@ -131,6 +131,7 @@ class PlayButton extends ConsumerWidget {
 
       ProcessService.startNierAutomata(
             installDirectory: appState.selectedDirectory,
+            l10n: l10n,
             onProcessStopped: () async {
               controller.setPlayButtonState(PlayButtonState.idle);
               controller.setStatus(l10n.statusStopped);

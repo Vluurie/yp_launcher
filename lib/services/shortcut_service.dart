@@ -1,10 +1,10 @@
-import 'dart:ffi';
 import 'dart:io';
 
 import 'package:ffi/ffi.dart';
 import 'package:path/path.dart' as path;
 import 'package:win32/win32.dart';
 import 'package:yp_launcher/constants/app_strings.dart';
+import 'package:yp_launcher/services/launcher_setup_service.dart';
 
 class ShortcutService {
   static Future<bool> createDesktopShortcut({
@@ -13,7 +13,9 @@ class ShortcutService {
     if (!Platform.isWindows) return false;
 
     try {
-      final launcherExe = Platform.resolvedExecutable;
+      final paths = await LauncherSetupService.getLauncherPaths();
+      final namsExe = paths['namsExe']!;
+      final launcherDir = paths['launcherDir']!;
 
       final desktopPath = _getDesktopPath();
       if (desktopPath == null) return false;
@@ -24,12 +26,14 @@ class ShortcutService {
       );
 
       final gameExePath = path.join(gameDirectory, AppStrings.gameExeName);
+      final arguments =
+          '${AppStrings.argRun} ${AppStrings.argNierPath} "$gameDirectory"';
 
       return _createShortcut(
         shortcutPath: shortcutPath,
-        targetPath: launcherExe,
-        arguments: '--launch',
-        workingDirectory: path.dirname(launcherExe),
+        targetPath: namsExe,
+        arguments: arguments,
+        workingDirectory: launcherDir,
         iconPath: gameExePath,
         description: AppStrings.shortcutDescription,
       );
@@ -39,27 +43,11 @@ class ShortcutService {
   }
 
   static String? _getDesktopPath() {
-    try {
-      final desktopGuid = GUIDFromString(
-        '{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}',
-      );
-      final ppszPath = calloc<Pointer<Utf16>>();
-      final hr = SHGetKnownFolderPath(desktopGuid, 0, NULL, ppszPath);
-      free(desktopGuid);
-      if (SUCCEEDED(hr)) {
-        final desktopPath = ppszPath.value.toDartString();
-        CoTaskMemFree(ppszPath.value);
-        free(ppszPath);
-        if (Directory(desktopPath).existsSync()) return desktopPath;
-      } else {
-        free(ppszPath);
-      }
-    } catch (_) {}
-
     final userProfile = Platform.environment['USERPROFILE'];
-    if (userProfile == null) return null;
-    final desktop = path.join(userProfile, 'Desktop');
-    if (Directory(desktop).existsSync()) return desktop;
+    if (userProfile != null) {
+      final desktop = path.join(userProfile, 'Desktop');
+      if (Directory(desktop).existsSync()) return desktop;
+    }
     return null;
   }
 
@@ -71,18 +59,18 @@ class ShortcutService {
     required String iconPath,
     required String description,
   }) {
-    final hr = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
+    final hr = CoInitializeEx(COINIT_APARTMENTTHREADED);
     if (FAILED(hr) && hr != RPC_E_CHANGED_MODE) return false;
 
+    final pTarget = PCWSTR(targetPath.toNativeUtf16());
+    final pArgs = PCWSTR(arguments.toNativeUtf16());
+    final pWorkDir = PCWSTR(workingDirectory.toNativeUtf16());
+    final pIcon = PCWSTR(iconPath.toNativeUtf16());
+    final pDesc = PCWSTR(description.toNativeUtf16());
+    final pShortcutPath = PCWSTR(shortcutPath.toNativeUtf16());
+
     try {
-      final shellLink = ShellLink.createInstance();
-
-      final pTarget = targetPath.toNativeUtf16();
-      final pArgs = arguments.toNativeUtf16();
-      final pWorkDir = workingDirectory.toNativeUtf16();
-      final pIcon = iconPath.toNativeUtf16();
-      final pDesc = description.toNativeUtf16();
-
+      final shellLink = createInstance<IShellLink>(ShellLink);
       try {
         shellLink.setPath(pTarget);
         shellLink.setArguments(pArgs);
@@ -91,24 +79,24 @@ class ShortcutService {
         shellLink.setDescription(pDesc);
 
         final persistFile = IPersistFile.from(shellLink);
-        final pShortcutPath = shortcutPath.toNativeUtf16();
-
         try {
-          final saveResult = persistFile.save(pShortcutPath, TRUE);
-          return SUCCEEDED(saveResult);
+          persistFile.save(pShortcutPath, true);
+          return File(shortcutPath).existsSync();
         } finally {
-          free(pShortcutPath);
+          persistFile.release();
         }
       } finally {
-        free(pTarget);
-        free(pArgs);
-        free(pWorkDir);
-        free(pIcon);
-        free(pDesc);
+        shellLink.release();
       }
     } catch (_) {
       return false;
     } finally {
+      free(pTarget);
+      free(pArgs);
+      free(pWorkDir);
+      free(pIcon);
+      free(pDesc);
+      free(pShortcutPath);
       CoUninitialize();
     }
   }

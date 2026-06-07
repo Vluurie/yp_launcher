@@ -72,18 +72,17 @@ class AppStrings {
   static const String gameExeName = 'NierAutomata.exe';
   static const String gameSignature = 'PRJ_028';
 
-  // Launcher files
-  static const String launcherDirName = 'YoRHaProtocolLauncher';
-  static const String launcherExeName = 'launch_nier.exe';
-  static const String modloaderDllName = 'modloader.dll';
+  // Launcher files (shipped next to the launcher exe — never copied)
+  static const String namsExeName = 'NAMS.exe';
   static const String yorhaDllName = 'yorha_protocol.dll';
-  static const String assetLauncherExe = 'assets/bins/launch_nier.exe';
-  static const String assetModloaderDll = 'assets/bins/modloader.dll';
-  static const String assetYorhaDll = 'assets/bins/yorha_protocol.dll';
+  static const String pluginsDirName = 'plugins';
+  static const String pluginsDisabledDirName = 'plugins_disabled';
+  static const String logsDirName = 'logs';
+  static const String namsLogName = 'nams.log';
 
-  // CLI arguments
-  static const String argModloaderDll = '--modloader-dll';
-  static const String argModDll = '--mod-dll';
+  // NAMS CLI arguments
+  static const String argRun = 'run';
+  static const String argNierPath = '--nier-path';
 
   // Feature info
   static const String featureReshade =
@@ -117,10 +116,10 @@ class AppStrings {
       '${AppStrings.gameExeName} not found in $dir';
 
   static String errorFilesQuarantined(String files) =>
-      'Missing launcher files: $files. This is often caused by antivirus software. We use DLL injection to load mods at runtime \u2014 this is standard for game modding but can trigger false positives. Restore the files from quarantine or re-download the launcher, then add an exclusion for the launcher install folder and %APPDATA%/YoRHaProtocolLauncher/.';
+      'Missing launcher files: $files. This is often caused by antivirus software. We load mods at runtime \u2014 standard for game modding but it can trigger false positives. Restore the files from quarantine or re-download the launcher, then add an exclusion for the launcher install folder (the folder containing NAMS.exe).';
 
   static const String notifyFilesQuarantined =
-      'Missing launcher files detected. This is often caused by antivirus software. We use DLL injection to load mods, which is normal for game modding but may trigger false positives. Restore the files from quarantine or re-download the launcher, then add an exclusion for the launcher install folder and %APPDATA%/YoRHaProtocolLauncher/.';
+      'Missing launcher files detected. This is often caused by antivirus software. We load mods at runtime, which is normal for game modding but may trigger false positives. Restore the files from quarantine or re-download the launcher, then add an exclusion for the launcher install folder (the folder containing NAMS.exe).';
 
   // Notification banners
   static const String notifyLodModMigrated =
@@ -242,7 +241,7 @@ class AppStrings {
   static const String noTextures = 'No textures';
   static const String noTexturesInstalled = 'No textures installed';
   static const String textureConflictHint =
-      'Both mods are loaded. They change some of the same things. Put the one you care about more at the bottom.';
+      'Both mods are loaded. They change some of the same things. Put the one you care about more at the top.';
   static const String noConflictsFound =
       'No conflicts found. All mods load independently.';
   static const String selectTextureFiles = 'Select Texture Files or Archives';

@@ -113,12 +113,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String errorFilesQuarantined(String files) {
-    return 'Missing launcher files: $files. This is often caused by antivirus software. We use DLL injection to load mods at runtime — this is standard for game modding but can trigger false positives. Restore the files from quarantine or re-download the launcher, then add an exclusion for the launcher install folder and %APPDATA%/YoRHaProtocolLauncher/.';
+    return 'Missing launcher files: $files. This is often caused by antivirus software. We load mods at runtime — standard for game modding but it can trigger false positives. Restore the files from quarantine or re-download the launcher, then add an exclusion for the launcher install folder (the folder containing NAMS.exe).';
   }
 
   @override
   String get notifyFilesQuarantined =>
-      'Missing launcher files detected. This is often caused by antivirus software. We use DLL injection to load mods, which is normal for game modding but may trigger false positives. Restore the files from quarantine or re-download the launcher, then add an exclusion for the launcher install folder and %APPDATA%/YoRHaProtocolLauncher/.';
+      'Missing launcher files detected. This is often caused by antivirus software. We load mods at runtime, which is normal for game modding but may trigger false positives. Restore the files from quarantine or re-download the launcher, then add an exclusion for the launcher install folder (the folder containing NAMS.exe).';
 
   @override
   String get featureReshade =>
@@ -198,6 +198,22 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String errorExeNotFound(String dir) {
     return 'NierAutomata.exe not found in $dir';
+  }
+
+  @override
+  String get errorDirNotWritable => 'Launcher folder is read-only';
+
+  @override
+  String errorDirNotWritableBody(String dir) {
+    return 'The YP Launcher folder cannot be written to:\n$dir\n\nNAMS writes its runtime cache, plugins and logs next to NAMS.exe, so the launcher folder must be writable.\n\nHow to fix it:\n1. Close the launcher.\n2. Move the whole extracted YP Launcher folder out of Program Files (or any protected location) into a normal folder you own — for example Desktop, Documents, or D:\\Games\\YP Launcher.\n3. Start the launcher again from the new location.\n\nAlternative: right-click the launcher .exe and choose \"Run as administrator\" to allow writing in the current location.';
+  }
+
+  @override
+  String get errorGameDirNotWritable => 'Game folder is read-only';
+
+  @override
+  String errorGameDirNotWritableBody(String gameDir, String namsDir) {
+    return 'The game folder cannot be written to:\n$gameDir\n\nNAMS writes mods and configs into:\n$namsDir\nbut it cannot create files there. NieR is probably installed under C:\\Program Files (x86)\\Steam, which Windows protects.\n\nHow to fix it (recommended — move the Steam library off Program Files):\n1. Open Steam > Settings > Storage.\n2. Click the drive dropdown > \"Add Drive\" and pick a folder on another drive (for example D:\\SteamLibrary).\n3. Go to your Library, right-click NieR:Automata > Properties > Installed Files > \"Move install folder\", and move it to the new library.\n4. Re-select the game in this launcher and press Play again.\n\nQuick alternative: right-click the launcher .exe and choose \"Run as administrator\" so it can write into Program Files. Moving the library is the cleaner long-term fix.';
   }
 
   @override
@@ -1204,7 +1220,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get modsTutorialEcosystemStep2Body =>
-      '**NAMS is the modloader.** It\'s not a proxy DLL hijacking `dxgi.dll` or `d3d11.dll` like older tools did — that\'s the very mechanism that caused the conflicts in the first place.\n\nInstead, NAMS ships as `modloader.dll` and is **injected at startup by `launch_nier.exe`**, a small bootstrapper that takes responsibility for the load. NAMS doesn\'t compete with the system DLLs — it sits inside the game\'s own process from the first frame, with full control over what\'s about to load.\n\nFrom there, NAMS does two big things:\n\n**1. Reimplements the features other tools used to provide** — LodMod, Limit Break, texture injection, fast loading — natively, in one coordinated layer. Mods plug into NAMS APIs instead of fighting over which DLL hook gets called first.\n\n**2. Provides a virtual file system (VFS):**\n\n- Every mod lives in its own folder under `nams/mods/<modId>/` — never overwriting real game files.\n- At runtime NAMS overlays active mods into the engine\'s view of `data/`.\n- Your vanilla `data/*.cpk` and `NieRAutomata.exe` are **never modified**, so launching unmodded through Steam still works exactly as before.\n\nMods declare what they change in a manifest. NAMS validates and loads them in a defined order, so you finally get **clean enable/disable per mod** and **knowable conflict detection** — neither was possible with the old drop-files-into-`data` approach.\n\n### How this fits together\n\nThis launcher is **not** built directly on top of NieR:Automata. It doesn\'t reverse-engineer the game, hook engine functions, or know anything about `.dat`/`.dtt` formats on its own. The order is:\n\n1. **NieR:Automata** — the game, untouched.\n2. **NAMS** — the modloader, designed first to make scalable modding possible at all (engine reimplementation, VFS, plugin host, content framework).\n3. **This launcher** — built on top of NAMS as the helper. It reads NAMS\'s TOML configs, writes into NAMS\'s folder layout, and talks to NAMS\'s APIs. That\'s it.\n\nThe practical consequence: NAMS is the load-bearing layer. The launcher is just a friendly UI in front of it, and could be replaced by a different UI (or the command line) without your mods caring.\n\n### And it has been\n\nThis isn\'t theoretical. **The NAO Launcher by Rustukun** is a separate launcher built on the same foundation — a different UI, different design choices, talks to the same NAMS underneath. Your mods, your `nams/mods/<modId>/` folders, your `disabled_mods.toml` — all of it works the same regardless of which launcher you\'re using.\n\nThat\'s the proof that NAMS is the platform and any launcher (this one, NAO, a future one nobody\'s written yet) is just a frontend choice. Pick whichever fits your workflow; your mod library doesn\'t have to move.';
+      '**NAMS is the modloader.** It\'s not a proxy DLL hijacking `dxgi.dll` or `d3d11.dll` like older tools did — that\'s the very mechanism that caused the conflicts in the first place.\n\nInstead, NAMS runs as its own host process: it loads NieR:Automata as a library inside that process (the game\'s exe transformed into a loadable `game.bin`) and initializes the modloader before the game starts. Nothing is injected into another process — NAMS *is* the process the game runs in, with full control over what\'s about to load.\n\nFrom there, NAMS does two big things:\n\n**1. Reimplements the features other tools used to provide** — LodMod, Limit Break, texture injection, fast loading — natively, in one coordinated layer. Mods plug into NAMS APIs instead of fighting over which DLL hook gets called first.\n\n**2. Provides a virtual file system (VFS):**\n\n- Every mod lives in its own folder under `nams/mods/<modId>/` — never overwriting real game files.\n- At runtime NAMS overlays active mods into the engine\'s view of `data/`.\n- Your vanilla `data/*.cpk` and `NieRAutomata.exe` are **never modified**, so launching unmodded through Steam still works exactly as before.\n\nMods declare what they change in a manifest. NAMS validates and loads them in a defined order, so you finally get **clean enable/disable per mod** and **knowable conflict detection** — neither was possible with the old drop-files-into-`data` approach.\n\n### How this fits together\n\nThis launcher is **not** built directly on top of NieR:Automata. It doesn\'t reverse-engineer the game, hook engine functions, or know anything about `.dat`/`.dtt` formats on its own. The order is:\n\n1. **NieR:Automata** — the game, untouched.\n2. **NAMS** — the modloader, designed first to make scalable modding possible at all (engine reimplementation, VFS, plugin host, content framework).\n3. **This launcher** — built on top of NAMS as the helper. It reads NAMS\'s TOML configs, writes into NAMS\'s folder layout, and talks to NAMS\'s APIs. That\'s it.\n\nThe practical consequence: NAMS is the load-bearing layer. The launcher is just a friendly UI in front of it, and could be replaced by a different UI (or the command line) without your mods caring.\n\n### And it has been\n\nThis isn\'t theoretical. **The NAO Launcher by Rustukun** is a separate launcher built on the same foundation — a different UI, different design choices, talks to the same NAMS underneath. Your mods, your `nams/mods/<modId>/` folders, your `disabled_mods.toml` — all of it works the same regardless of which launcher you\'re using.\n\nThat\'s the proof that NAMS is the platform and any launcher (this one, NAO, a future one nobody\'s written yet) is just a frontend choice. Pick whichever fits your workflow; your mod library doesn\'t have to move.';
 
   @override
   String get modsTutorialEcosystemStep3Title =>
@@ -2731,7 +2747,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pluginIntroBody =>
-      'NAMS is the modding SDK; plugins are Rust-built .dll modules that hook into it for custom native logic. YoRHa Protocol itself is one such plugin. Drop a plugin DLL here and the launcher copies it into %APPDATA%/YoRHaProtocolLauncher/nierdecrypt/devmods/, then passes every enabled plugin to launch_nier.exe via --mod-dll on the next launch. Toggle a plugin off to skip loading it without deleting it.';
+      'NAMS is the modding SDK; plugins are Rust-built .dll modules that hook into it for custom native logic. YoRHa Protocol itself is one such plugin. Drop a plugin DLL here and the launcher copies it into the plugins/ folder next to NAMS; NAMS auto-loads every plugin there on the next launch. Toggling a plugin off moves it aside so it isn\'t loaded, without deleting it.';
 
   @override
   String get pluginDropHere => 'Drop plugin DLL here';

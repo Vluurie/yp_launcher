@@ -118,7 +118,7 @@ class _ModsViewState extends ConsumerState<ModsView> {
   }
 
   Future<void> _handleBrowseFile() async {
-    final result = await FilePicker.platform.pickFiles(
+    final result = await FilePicker.pickFiles(
       type: FileType.custom,
       allowedExtensions: const ['zip', '7z', 'rar'],
     );
@@ -128,7 +128,7 @@ class _ModsViewState extends ConsumerState<ModsView> {
   }
 
   Future<void> _handleBrowseFolder() async {
-    final result = await FilePicker.platform.getDirectoryPath();
+    final result = await FilePicker.getDirectoryPath();
     if (result == null) return;
     await _installFromPath(result);
   }

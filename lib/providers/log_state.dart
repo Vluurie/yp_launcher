@@ -2,9 +2,19 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:yp_launcher/constants/app_strings.dart';
 import 'package:yp_launcher/services/log_service.dart';
 
 part 'log_state.g.dart';
+
+bool _isModloaderModule(String module) {
+  final m = module.toLowerCase();
+  return m.startsWith('modloader') ||
+      m.startsWith('nams') ||
+      m.startsWith('nier') ||
+      m.startsWith('wgpu') ||
+      m.startsWith('naga');
+}
 
 final logPanelOpenProvider = StateProvider<bool>((ref) => false);
 
@@ -58,13 +68,11 @@ class LogData {
 @Riverpod(keepAlive: true)
 class LogStateController extends _$LogStateController {
   StreamSubscription<List<LogEntry>>? _modloaderSub;
-  StreamSubscription<List<LogEntry>>? _yorhaSub;
 
   @override
   LogData build() {
     ref.onDispose(() {
       _modloaderSub?.cancel();
-      _yorhaSub?.cancel();
     });
     return const LogData();
   }
@@ -85,32 +93,31 @@ class LogStateController extends _$LogStateController {
   /// the entire existing file content; subsequent emissions are appended.
   void startStreaming() {
     _modloaderSub?.cancel();
-    _yorhaSub?.cancel();
-    _modloaderSub = LogService.watchLog('modloader.log').listen((newEntries) {
+    _modloaderSub = LogService.watchLog(AppStrings.namsLogName).listen((
+      newEntries,
+    ) {
       if (newEntries.isEmpty) {
-        state = state.copyWith(modloaderEntries: const []);
-      } else {
         state = state.copyWith(
-          modloaderEntries: [...state.modloaderEntries, ...newEntries],
+          modloaderEntries: const [],
+          yorhaEntries: const [],
         );
+        return;
       }
-    });
-    _yorhaSub = LogService.watchLog('yorha_protocol.log').listen((newEntries) {
-      if (newEntries.isEmpty) {
-        state = state.copyWith(yorhaEntries: const []);
-      } else {
-        state = state.copyWith(
-          yorhaEntries: [...state.yorhaEntries, ...newEntries],
-        );
+      final modloader = <LogEntry>[];
+      final yorha = <LogEntry>[];
+      for (final e in newEntries) {
+        (_isModloaderModule(e.module) ? modloader : yorha).add(e);
       }
+      state = state.copyWith(
+        modloaderEntries: [...state.modloaderEntries, ...modloader],
+        yorhaEntries: [...state.yorhaEntries, ...yorha],
+      );
     });
   }
 
   void stopStreaming() {
     _modloaderSub?.cancel();
-    _yorhaSub?.cancel();
     _modloaderSub = null;
-    _yorhaSub = null;
   }
 
   void setActiveTab(String tab) {

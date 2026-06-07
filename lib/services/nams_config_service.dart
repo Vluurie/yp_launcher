@@ -115,11 +115,11 @@ streaming_enabled = true
 load_only_relevant = false
 
 # Load order for texture pack folders inside nams/inject/textures/.
-# Later entries override earlier ones when the same texture hash exists in multiple packs.
-# Loose .dds files directly in nams/inject/textures/ always have the lowest priority.
+# Earlier entries win when the same texture hash exists in multiple packs.
+# Loose .dds files directly in nams/inject/textures/ win over the packs below.
 #
-# Example:
-#   load_order = ["GPUnity HD Pack", "Androids Remastered"]
+# Example (Androids Remastered wins over GPUnity HD Pack):
+#   load_order = ["Androids Remastered", "GPUnity HD Pack"]
 load_order = []
 ''';
 

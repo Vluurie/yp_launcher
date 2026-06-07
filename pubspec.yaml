@@ -44,11 +44,11 @@ dependencies:
   flutter_riverpod: ^2.6.1
 
   # File Picker
-  file_picker: ^8.1.6
+  file_picker: ^12.0.0-beta.5
 
   # Windows API
   ffi: ^2.1.3
-  win32: ^5.9.0
+  win32: ^6.3.0
 
   # Riverpod code generation
   riverpod_annotation: ^2.6.1
@@ -64,14 +64,13 @@ dependencies:
   url_launcher: ^6.2.5
 
   # Custom window title bar for Windows
-  window_manager: ^0.4.3
-  font_awesome_flutter: ^10.8.0
+  window_manager: ^0.5.1
 
   # Fonts
-  google_fonts: ^6.2.1
+  google_fonts: ^8.1.0
 
   # Drag and drop support
-  desktop_drop: ^0.5.0
+  desktop_drop: ^0.7.1
 
   # Archive extraction
   archive: ^4.0.2
@@ -126,6 +125,7 @@ flutter:
     - assets/images/
     - assets/images/config/
     - assets/bins/
+    - assets/bins/plugins/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

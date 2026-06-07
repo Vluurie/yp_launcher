@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:path/path.dart' as path;
 import 'package:yp_launcher/constants/app_strings.dart';
+import 'package:yp_launcher/services/launcher_setup_service.dart';
 
 class LogEntry {
   final String timestamp;
@@ -23,12 +24,9 @@ class LogService {
   static final _ansiRegex = RegExp(r'\x1B\[[0-9;]*m');
 
   static String get logsDirectory {
-    final appData = Platform.environment['APPDATA'] ?? '';
     return path.join(
-      appData,
-      AppStrings.launcherDirName,
-      'nierdecrypt',
-      'logs',
+      LauncherSetupService.launcherDirectory,
+      AppStrings.logsDirName,
     );
   }
 

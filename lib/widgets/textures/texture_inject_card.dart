@@ -160,19 +160,17 @@ class TextureInjectCard extends StatelessWidget {
                       itemCount: loadOrder.length,
                       proxyDecorator: (child, index, animation) =>
                           Material(color: Colors.transparent, child: child),
-                      onReorder: (oldIndex, newIndex) {
-                        if (newIndex > oldIndex) newIndex--;
-                        final reversed = loadOrder.reversed.toList();
-                        final item = reversed.removeAt(oldIndex);
-                        reversed.insert(newIndex, item);
+                      onReorderItem: (oldIndex, newIndex) {
+                        final updated = List<String>.from(loadOrder);
+                        final item = updated.removeAt(oldIndex);
+                        updated.insert(newIndex, item);
                         notifier.updateTextureInjection(
                           TextureInjectionFields.loadOrder.key,
-                          reversed.reversed.toList(),
+                          updated,
                         );
                       },
                       itemBuilder: (context, index) {
-                        final reversedIndex = loadOrder.length - 1 - index;
-                        final folder = loadOrder[reversedIndex];
+                        final folder = loadOrder[index];
                         final exists = detectedFolders.contains(folder);
                         return LoadOrderItem(
                           key: ValueKey(folder),

@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:automato_theme/automato_theme.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:window_manager/window_manager.dart';
 import 'package:yp_launcher/constants/app_strings.dart';
 import 'package:yp_launcher/l10n/app_localizations.dart';
 import 'package:yp_launcher/widgets/directory_selector.dart';
@@ -34,7 +34,6 @@ import 'package:yp_launcher/widgets/onboarding_wizard.dart';
 import 'package:yp_launcher/widgets/info_bar.dart';
 import 'package:yp_launcher/widgets/launcher_sidebar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:window_manager/window_manager.dart';
 
 class LauncherScreen extends ConsumerStatefulWidget {
   const LauncherScreen({super.key});
@@ -433,31 +432,31 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
                     .isDirectorySelected) ...[
                   _buildIconAction(
                     Icons.terminal,
-                    'Copy launch_nier.exe command to clipboard so you can paste it into a terminal and start the game manually.',
+                    'Copy the NAMS command to clipboard so you can paste it into a terminal and start the game manually.',
                     () => _copyLaunchCommand(),
                   ),
                   SizedBox(width: AppSizes.spacingSM(context)),
                 ],
                 _buildLinkIcon(
-                  FontAwesomeIcons.github,
+                  Icons.code,
                   l10n.tooltipLauncherSource,
                   AppStrings.githubUrl,
                 ),
                 SizedBox(width: AppSizes.spacingSM(context)),
                 _buildLinkIcon(
-                  FontAwesomeIcons.gitlab,
+                  Icons.merge_type,
                   l10n.tooltipNamsSource,
                   AppStrings.namsGitlabUrl,
                 ),
                 SizedBox(width: AppSizes.spacingSM(context)),
                 _buildLinkIcon(
-                  FontAwesomeIcons.book,
+                  Icons.menu_book,
                   l10n.tooltipGuide,
                   AppStrings.guideUrl,
                 ),
                 SizedBox(width: AppSizes.spacingSM(context)),
                 _buildLinkIcon(
-                  FontAwesomeIcons.discord,
+                  Icons.forum,
                   l10n.tooltipDiscord,
                   AppStrings.discordUrl,
                 ),
@@ -633,7 +632,7 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
           await launchUrl(uri, mode: LaunchMode.externalApplication);
         }
       },
-      icon: FaIcon(
+      icon: Icon(
         icon,
         size: AppSizes.iconMD(context),
         color: AppColors.accentPrimary,

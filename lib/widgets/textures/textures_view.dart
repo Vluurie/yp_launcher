@@ -423,9 +423,8 @@ class _TexturesViewState extends ConsumerState<TexturesView> {
 
   Future<void> _handleBrowse() async {
     final l10n = AppLocalizations.of(context)!;
-    final result = await FilePicker.platform.pickFiles(
+    final result = await FilePicker.pickFiles(
       dialogTitle: l10n.selectTextureFiles,
-      allowMultiple: true,
       type: FileType.any,
     );
     if (result == null || result.files.isEmpty) return;
@@ -437,7 +436,7 @@ class _TexturesViewState extends ConsumerState<TexturesView> {
   }
 
   Future<void> _handleBrowseFolder() async {
-    final result = await FilePicker.platform.getDirectoryPath();
+    final result = await FilePicker.getDirectoryPath();
     if (result == null) return;
     await _handleDrop([result]);
   }
@@ -665,7 +664,7 @@ class _TexturesViewState extends ConsumerState<TexturesView> {
                                   if (_waxTextures.isNotEmpty)
                                     _buildExternalSourceCard(
                                       title: 'wax/mods/ (${_waxTextures.length})',
-                                      priority: AppLocalizations.of(context)!.priorityLowest,
+                                      priority: AppLocalizations.of(context)!.priorityHighest,
                                       entries: _waxTextures,
                                       folderOf: (name) => path.join(
                                         _gameDir,

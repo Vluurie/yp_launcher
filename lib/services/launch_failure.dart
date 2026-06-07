@@ -1,4 +1,3 @@
-/// Structured failure information parsed from launch_nier.exe output.
 class LaunchFailure {
   final int? code;
   final bool panic;
@@ -22,9 +21,8 @@ class LaunchFailure {
     this.capturedLogPath,
   });
 
-  /// User-facing 1-line summary.
   String friendlyTitle() {
-    if (panic) return 'launch_nier crashed (panic)';
+    if (panic) return 'NAMS crashed';
     final c = code;
     if (c == null) return 'Game launch failed';
     return _categoryFor(c).title;
@@ -32,7 +30,7 @@ class LaunchFailure {
 
   String friendlyExplanation() {
     if (panic) {
-      return 'launch_nier hit an unrecoverable error before the game could start. '
+      return 'NAMS hit an unrecoverable error before the game could start. '
           'This is almost always a bug — please share the report below with the maintainer.';
     }
     final c = code;
@@ -50,7 +48,7 @@ class LaunchFailure {
     final c = code;
     if (c == null) {
       return const [
-        'launch_nier seems to have spawned but the game window never appeared.',
+        'NAMS seems to have spawned but the game window never appeared.',
         'Check Task Manager — is NieRAutomata.exe running but invisible? Kill it and retry.',
         'Make sure no other launcher / DRM tool is holding the exe (FAR, Special K, etc).',
       ];
@@ -61,121 +59,104 @@ class LaunchFailure {
 
   static _Category _categoryFor(int code) {
     switch (code) {
-      case 10:
+      case 1:
         return const _Category(
-          title: 'Bad arguments / working directory',
+          title: 'NAMS reported a failure',
           explanation:
-              'launch_nier could not figure out where to run from. The launcher passed paths it cannot use.',
+              'A NAMS check failed before the game could run. See the report below for details.',
+          extraHints: [
+            'Copy the full report below and share it for diagnosis.',
+          ],
+        );
+      case 2:
+        return const _Category(
+          title: 'NieR:Automata install not found',
+          explanation:
+              'NAMS could not resolve your NieR:Automata install. The saved path may be wrong, or Steam autodetect failed.',
           extraHints: [
             'Re-pick your game directory in the launcher to refresh the saved path.',
+            'Verify game files in Steam (Library → NieR:Automata → Properties → Local Files → Verify).',
           ],
         );
-      case 11:
+      case 3:
         return const _Category(
-          title: 'Could not create the nierdecrypt working folder',
+          title: 'Could not create a needed folder',
           explanation:
-              'launch_nier needs to create %APPDATA%\\YoRHaProtocolLauncher\\nierdecrypt\\ but Windows refused.',
+              'NAMS could not create a directory next to NAMS.exe. The install folder may be read-only.',
           extraHints: [
-            'Make sure %APPDATA%\\YoRHaProtocolLauncher\\ is writable.',
-            'If %APPDATA% is OneDrive-synced, right-click the folder → "Always keep on this device".',
+            'Make sure the launcher install folder (where NAMS.exe lives) is writable.',
+            'If it is in Program Files or OneDrive-synced, move the launcher to a normal folder or right-click → "Always keep on this device".',
           ],
         );
-      case 12:
+      case 4:
         return const _Category(
-          title: 'modloader.dll missing or unreadable',
+          title: 'Runtime preparation failed',
           explanation:
-              'modloader.dll is gone or zero bytes. Antivirus probably quarantined or wiped it.',
+              'NAMS could not prepare its runtime (game.bin / steam_api64.dll). This is usually a writability or antivirus problem.',
           extraHints: [
-            'Open %APPDATA%\\YoRHaProtocolLauncher\\ and verify modloader.dll exists and is several hundred KB.',
-            'Add %APPDATA%\\YoRHaProtocolLauncher\\ to your antivirus exclusions, then restart the launcher.',
+            'Add the launcher install folder AND your game folder to your antivirus exclusions, then retry.',
+            'Make sure the install folder is writable so the runtime cache can be built.',
           ],
         );
-      case 13:
+      case 5:
+      case 6:
+      case 7:
+      case 8:
+      case 9:
         return const _Category(
-          title: 'A plugin DLL is missing',
+          title: 'NAMS host failure',
           explanation:
-              'One of the --mod-dll files (yorha_protocol or a user plugin) is gone or empty.',
+              'NAMS could not load and start the game host (game.bin). This is usually an environment or corruption issue.',
           extraHints: [
-            'Open the Plugins tab and see if anything shows as missing.',
-            'Restart the launcher — it re-extracts yorha_protocol.dll on startup.',
+            'Reboot and try again — sometimes a stale handle clears itself.',
+            'Add the launcher install folder AND your game folder to your antivirus exclusions.',
+            'If it persists, copy the full report and send it to the maintainer.',
           ],
         );
       case 20:
         return const _Category(
-          title: 'NieRAutomata.exe not found / unreadable',
+          title: 'Steam not running / not logged in',
           explanation:
-              'The game executable is missing, zero-byte, or quarantined.',
+              'NAMS could not reach a logged-in Steam session. Steam must be running and signed in.',
           extraHints: [
-            'Verify game files in Steam (Library → NieR:Automata → Properties → Local Files → Verify).',
-            'Add your game directory to your antivirus exclusions.',
+            'Start Steam and sign in, then launch again.',
           ],
         );
       case 21:
         return const _Category(
-          title: 'Decryption step failed',
+          title: 'Steam account does not own NieR:Automata',
           explanation:
-              'launch_nier could not decrypt the Steam exe. .NET runtime may be missing, or AV blocked the helper.',
+              'The signed-in Steam account does not own NieR:Automata.',
           extraHints: [
-            'Install the .NET Desktop Runtime (https://dotnet.microsoft.com/download).',
-            'Add %APPDATA%\\YoRHaProtocolLauncher\\nierdecrypt\\ to your AV exclusions.',
+            'Sign into the Steam account that owns NieR:Automata.',
           ],
         );
-      case 30:
+      case 22:
         return const _Category(
-          title: 'Windows refused to start the game process',
+          title: 'Steam check failed',
           explanation:
-              'CreateProcessW failed. The most common reason is that an antivirus / EDR product blocked the spawn.',
+              'NAMS hit an internal error while verifying Steam ownership.',
           extraHints: [
-            'Try double-clicking NieRAutomata.exe directly. If that also fails, the exe itself is the problem.',
-            'Add the launcher folder AND the game folder to your antivirus exclusions.',
-            'Make sure NieRAutomata.exe is not already running (Task Manager).',
+            'Restart Steam and the launcher, then try again.',
+            'If it persists, copy the full report and send it to the maintainer.',
           ],
         );
-      case 31:
+      case 64:
         return const _Category(
-          title: 'Modloader injection blocked',
+          title: 'Invalid launch arguments',
           explanation:
-              'Windows let the game spawn but blocked launch_nier from injecting modloader.dll. AV / anti-cheat behavior.',
+              'The launcher passed arguments NAMS could not parse. This is a launcher bug.',
           extraHints: [
-            'Disable any anti-cheat or "process protection" feature in your AV temporarily.',
-            'Whitelist launch_nier.exe and modloader.dll explicitly.',
+            'Copy the full report below and send it to the maintainer.',
           ],
         );
-      case 32:
-        return const _Category(
-          title: 'modloader.dll loaded but reported failure',
-          explanation:
-              'The modloader started but reported an error during init. See the report below for details.',
-          extraHints: [
-            'Check the modloader log at %APPDATA%\\YoRHaProtocolLauncher\\nierdecrypt\\logs\\modloader.log',
-          ],
-        );
-      case 40:
-        return const _Category(
-          title: 'Could not write steam_appid.txt',
-          explanation:
-              'The nierdecrypt directory rejected a write. AV or read-only attribute.',
-          extraHints: [
-            'Make sure %APPDATA%\\YoRHaProtocolLauncher\\nierdecrypt\\ is writable.',
-            'Add it to your AV exclusions.',
-          ],
-        );
-      case 90:
-        return const _Category(
-          title: 'launch_nier crashed (panic)',
-          explanation:
-              'An internal error in launch_nier itself. Please share the report.',
-          extraHints: [
-            'Copy the full report and send it to the maintainer.',
-          ],
-        );
-      case 99:
       default:
         return const _Category(
-          title: 'Unknown launch failure',
+          title: 'Game exited unexpectedly',
           explanation:
-              'launch_nier exited with an unrecognised error.',
+              'NAMS started the game but it exited with a non-zero code. The game may have crashed.',
           extraHints: [
+            'Check the in-app log viewer (nams.log) for the crash details.',
             'Copy the full report below and share it for diagnosis.',
           ],
         );
@@ -194,8 +175,6 @@ class _Category {
   });
 }
 
-/// Parses the structured ERROR[N]/PANIC[N] block emitted by our launch_nier
-/// build. Falls back to "no error block found" gracefully.
 class LaunchFailureParser {
   static final _errorHeader = RegExp(r'^ERROR\[(\d+)\]\s+(.+)$', multiLine: true);
   static final _panicHeader = RegExp(r'^PANIC\[(\d+)\]\s+(.+)$', multiLine: true);
@@ -214,7 +193,7 @@ class LaunchFailureParser {
       return LaunchFailure(
         code: int.tryParse(panic.group(1) ?? ''),
         panic: true,
-        headline: panic.group(2)?.trim() ?? 'launch_nier panicked',
+        headline: panic.group(2)?.trim() ?? 'NAMS panicked',
         phase: _phaseLine.firstMatch(combinedOutput)?.group(1)?.trim(),
         osError: _osErrorLine.firstMatch(combinedOutput)?.group(1)?.trim(),
         cause: _causeLine.firstMatch(combinedOutput)?.group(1)?.trim(),
@@ -228,7 +207,7 @@ class LaunchFailureParser {
       return LaunchFailure(
         code: int.tryParse(err.group(1) ?? ''),
         panic: false,
-        headline: err.group(2)?.trim() ?? 'launch_nier reported a failure',
+        headline: err.group(2)?.trim() ?? 'NAMS reported a failure',
         phase: _phaseLine.firstMatch(combinedOutput)?.group(1)?.trim(),
         osError: _osErrorLine.firstMatch(combinedOutput)?.group(1)?.trim(),
         cause: _causeLine.firstMatch(combinedOutput)?.group(1)?.trim(),

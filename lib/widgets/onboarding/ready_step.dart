@@ -239,6 +239,7 @@ class _ReadyStepState extends ConsumerState<ReadyStep> {
 
     ProcessService.startNierAutomata(
       installDirectory: widget.selectedPath!,
+      l10n: AppLocalizations.of(context)!,
       onProcessStopped: () async {
         controller.setPlayButtonState(PlayButtonState.idle);
         controller.setStatus(AppStrings.statusStopped);

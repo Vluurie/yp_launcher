@@ -274,14 +274,14 @@ class _ModsStepState extends ConsumerState<ModsStep> {
 
   Future<void> _pickAndInstall() async {
     final l = AppLocalizations.of(context)!;
-    final result = await FilePicker.platform.pickFiles(
+    final result = await FilePicker.pickFiles(
       dialogTitle: l.onboardingModInstallPickerTitle,
       type: FileType.custom,
       allowedExtensions: const ['zip', '7z'],
     );
     if (result == null || result.files.isEmpty) {
       if (!mounted) return;
-      final dir = await FilePicker.platform.getDirectoryPath(
+      final dir = await FilePicker.getDirectoryPath(
         dialogTitle: l.onboardingModInstallFolderPickerTitle,
       );
       if (dir == null) return;
