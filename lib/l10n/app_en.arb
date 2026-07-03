@@ -1438,6 +1438,33 @@
   "modEnableTooltip": "Mod is loaded by NAMS. Click to disable without removing the files.",
   "modDisableNotice": "Disabled — takes effect on next game start.",
   "modEnableNotice": "Enabled — takes effect on next game start.",
+  "modGroupAddButton": "Add group",
+  "modGroupNewDialogTitle": "New group",
+  "modGroupRenameDialogTitle": "Rename group",
+  "modGroupUngrouped": "Ungrouped",
+  "modGroupRename": "Rename group",
+  "modGroupDelete": "Delete group",
+  "modGroupDeleteConfirmTitle": "Delete group?",
+  "modGroupDeleteConfirmBody": "Mods in \"{name}\" move back to Ungrouped. Nothing is deleted from disk.",
+  "@modGroupDeleteConfirmBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "modGroupCountLabel": "{count} mods",
+  "@modGroupCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "modGroupDropHint": "Drop to move here",
+  "modRename": "Rename",
+  "modRenameDialogTitle": "Rename mod",
+  "modMoveToGroup": "Move to group",
   "modUninstall": "Uninstall",
   "modUninstallConfirmTitle": "Uninstall mod?",
   "modUninstallConfirmBody": "This will permanently delete the mod folder \"{id}\".",

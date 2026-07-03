@@ -6,22 +6,59 @@ part of 'config_state.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
+@ProviderFor(ConfigStateController)
+const configStateControllerProvider = ConfigStateControllerProvider._();
+
+final class ConfigStateControllerProvider
+    extends $NotifierProvider<ConfigStateController, ConfigData> {
+  const ConfigStateControllerProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'configStateControllerProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$configStateControllerHash();
+
+  @$internal
+  @override
+  ConfigStateController create() => ConfigStateController();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(ConfigData value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<ConfigData>(value),
+    );
+  }
+}
+
 String _$configStateControllerHash() =>
     r'b2ba3ac701539caeb863820c28309a92f15036b8';
 
-/// See also [ConfigStateController].
-@ProviderFor(ConfigStateController)
-final configStateControllerProvider =
-    NotifierProvider<ConfigStateController, ConfigData>.internal(
-      ConfigStateController.new,
-      name: r'configStateControllerProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$configStateControllerHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
-
-typedef _$ConfigStateController = Notifier<ConfigData>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+abstract class _$ConfigStateController extends $Notifier<ConfigData> {
+  ConfigData build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<ConfigData, ConfigData>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<ConfigData, ConfigData>,
+              ConfigData,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}

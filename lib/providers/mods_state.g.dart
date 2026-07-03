@@ -6,22 +6,59 @@ part of 'mods_state.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
+@ProviderFor(ModsStateController)
+const modsStateControllerProvider = ModsStateControllerProvider._();
+
+final class ModsStateControllerProvider
+    extends $NotifierProvider<ModsStateController, ModsData> {
+  const ModsStateControllerProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'modsStateControllerProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$modsStateControllerHash();
+
+  @$internal
+  @override
+  ModsStateController create() => ModsStateController();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(ModsData value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<ModsData>(value),
+    );
+  }
+}
+
 String _$modsStateControllerHash() =>
     r'21a68a0fc3388c116eb16f76a09754c306716b14';
 
-/// See also [ModsStateController].
-@ProviderFor(ModsStateController)
-final modsStateControllerProvider =
-    NotifierProvider<ModsStateController, ModsData>.internal(
-      ModsStateController.new,
-      name: r'modsStateControllerProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$modsStateControllerHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
-
-typedef _$ModsStateController = Notifier<ModsData>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+abstract class _$ModsStateController extends $Notifier<ModsData> {
+  ModsData build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<ModsData, ModsData>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<ModsData, ModsData>,
+              ModsData,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}

@@ -37,11 +37,10 @@ dependencies:
 
   # Automato Theme
   automato_theme:
-    git:
-      url: https://github.com/Vluurie/automato_theme.git
+    path: ../automato_theme
 
   # State Management
-  flutter_riverpod: ^2.6.1
+  flutter_riverpod: ^3.0.0
 
   # File Picker
   file_picker: ^12.0.0-beta.5
@@ -51,7 +50,7 @@ dependencies:
   win32: ^6.3.0
 
   # Riverpod code generation
-  riverpod_annotation: ^2.6.1
+  riverpod_annotation: ^3.0.0
 
   # Path provider for cross-platform paths
   path_provider: ^2.1.5
@@ -87,9 +86,9 @@ dependencies:
 dev_dependencies:
   # Riverpod code generation
   build_runner: ^2.4.13
-  riverpod_generator: ^2.6.2
-  custom_lint: ^0.7.0
-  riverpod_lint: ^2.6.2
+  riverpod_generator: ^3.0.0
+  custom_lint: ^0.8.1
+  riverpod_lint: ^3.0.0
   flutter_test:
     sdk: flutter
 

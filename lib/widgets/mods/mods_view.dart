@@ -6,8 +6,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as p;
 import 'package:yp_launcher/l10n/app_localizations.dart';
 import 'package:yp_launcher/models/installed_mod.dart';
+import 'package:yp_launcher/models/mod_group.dart';
 import 'package:yp_launcher/providers/app_state.dart';
 import 'package:yp_launcher/providers/disabled_mods_state.dart';
+import 'package:yp_launcher/providers/mod_groups_state.dart';
 import 'package:yp_launcher/providers/mod_profiles_state.dart';
 import 'package:yp_launcher/widgets/mods/mod_naming.dart';
 import 'package:yp_launcher/widgets/mods/mod_profile_selector.dart';
@@ -79,6 +81,7 @@ class _ModsViewState extends ConsumerState<ModsView> {
     ref.read(modProfilesStateControllerProvider.notifier).load(dir);
     ref.read(modsStateControllerProvider.notifier).loadMods(dir);
     ref.read(disabledModsStateControllerProvider.notifier).load(dir);
+    ref.read(modGroupsStateControllerProvider.notifier).load(dir);
     _restartWatcher(dir);
   }
 
@@ -433,6 +436,7 @@ class _ModsViewState extends ConsumerState<ModsView> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final data = ref.watch(modsStateControllerProvider);
+    final groupsData = ref.watch(modGroupsStateControllerProvider);
 
     final pending = ref.watch(pendingTabSelectionProvider);
     if (pending != null && pending.tabIndex == 5) {
@@ -494,6 +498,8 @@ class _ModsViewState extends ConsumerState<ModsView> {
                                 ),
                               ),
                               SizedBox(width: AppSizes.spacingSM(context)),
+                              _addGroupButton(l10n),
+                              SizedBox(width: AppSizes.spacingSM(context)),
                               _helpIconButton(l10n),
                             ],
                           ),
@@ -505,7 +511,8 @@ class _ModsViewState extends ConsumerState<ModsView> {
                           Expanded(
                             child: KeyedSubtree(
                               key: _listKey,
-                              child: _list(filtered, data.isLoading, l10n),
+                              child: _list(
+                                  filtered, data.isLoading, groupsData, l10n),
                             ),
                           ),
                         ],
@@ -689,7 +696,85 @@ class _ModsViewState extends ConsumerState<ModsView> {
     );
   }
 
-  Widget _list(List<InstalledMod> mods, bool loading, AppLocalizations l10n) {
+  Widget _addGroupButton(AppLocalizations l10n) {
+    return _HoverIconButton(
+      tooltip: l10n.modGroupAddButton,
+      icon: Icons.create_new_folder_outlined,
+      size: AppSizes.iconLG(context),
+      padding: AppSizes.paddingXS(context),
+      onTap: _onAddGroup,
+    );
+  }
+
+  Future<void> _onAddGroup() async {
+    final l10n = AppLocalizations.of(context)!;
+    final name = await showModNamingDialog(
+      context,
+      initial: '',
+      title: l10n.modGroupNewDialogTitle,
+    );
+    if (name == null) return;
+    await ref
+        .read(modGroupsStateControllerProvider.notifier)
+        .addGroup(_gameDir, name);
+  }
+
+  Future<void> _onRenameGroup(ModGroup g) async {
+    final l10n = AppLocalizations.of(context)!;
+    final name = await showModNamingDialog(
+      context,
+      initial: g.name,
+      title: l10n.modGroupRenameDialogTitle,
+    );
+    if (name == null) return;
+    await ref
+        .read(modGroupsStateControllerProvider.notifier)
+        .renameGroup(_gameDir, g.id, name);
+  }
+
+  Future<void> _onDeleteGroup(ModGroup g) async {
+    final l10n = AppLocalizations.of(context)!;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.backgroundCard,
+        title: Text(
+          l10n.modGroupDeleteConfirmTitle,
+          style: TextStyle(
+              color: AppColors.textPrimary, fontSize: AppSizes.fontLG(ctx)),
+        ),
+        content: Text(
+          l10n.modGroupDeleteConfirmBody(g.name),
+          style: TextStyle(
+              color: AppColors.textSecondary, fontSize: AppSizes.fontMD(ctx)),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(l10n.buttonCancel,
+                style: const TextStyle(color: AppColors.textMuted)),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: Text(l10n.modGroupDelete,
+                style: const TextStyle(
+                    color: AppColors.error, fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+    await ref
+        .read(modGroupsStateControllerProvider.notifier)
+        .deleteGroup(_gameDir, g.id);
+  }
+
+  Widget _list(
+    List<InstalledMod> mods,
+    bool loading,
+    ModGroupsData groupsData,
+    AppLocalizations l10n,
+  ) {
     if (loading && mods.isEmpty) {
       return Center(
         child: SizedBox(
@@ -699,7 +784,7 @@ class _ModsViewState extends ConsumerState<ModsView> {
         ),
       );
     }
-    if (mods.isEmpty) {
+    if (mods.isEmpty && groupsData.groups.isEmpty) {
       return Center(
         child: Padding(
           padding: EdgeInsets.all(AppSizes.paddingLG(context)),
@@ -725,6 +810,38 @@ class _ModsViewState extends ConsumerState<ModsView> {
         ),
       );
     }
+
+    final children = <Widget>[];
+
+    if (_filter.isNotEmpty) {
+      // Flat filtered list, grouping ignored while searching.
+      for (final m in mods) {
+        children.add(_row(m));
+      }
+    } else {
+      final groups = groupsData.sortedGroups;
+      for (final g in groups) {
+        final groupMods =
+            mods.where((m) => groupsData.groupIdOf(m.id) == g.id).toList();
+        children.add(_groupHeader(g, groupMods.length, l10n));
+        if (!g.collapsed) {
+          for (final m in groupMods) {
+            children.add(_row(m));
+          }
+        }
+      }
+      final ungrouped = mods.where((m) {
+        final gid = groupsData.groupIdOf(m.id);
+        return gid == null || !groups.any((g) => g.id == gid);
+      }).toList();
+      if (groups.isNotEmpty || ungrouped.isNotEmpty) {
+        children.add(_ungroupedHeader(ungrouped.length, l10n));
+        for (final m in ungrouped) {
+          children.add(_row(m));
+        }
+      }
+    }
+
     return Container(
       decoration: BoxDecoration(
         color: AppColors.backgroundCard,
@@ -734,25 +851,79 @@ class _ModsViewState extends ConsumerState<ModsView> {
       child: Scrollbar(
         controller: _listScrollController,
         thumbVisibility: true,
-        child: ListView.separated(
+        child: ListView(
           controller: _listScrollController,
           padding: EdgeInsets.zero,
-          itemCount: mods.length,
-          separatorBuilder: (_, __) => Divider(
-            height: 1,
-            thickness: 1,
-            color: AppColors.borderLight.withValues(alpha: 0.4),
-          ),
-          itemBuilder: (_, i) {
-            final m = mods[i];
-            return ModListRow(
-              mod: m,
-              selected: m.id == _selectedId,
-              onTap: () => setState(() => _selectedId = m.id),
-            );
-          },
+          children: children,
         ),
       ),
+    );
+  }
+
+  Widget _row(InstalledMod m) {
+    return ModListRow(
+      key: ValueKey('row_${m.id}'),
+      mod: m,
+      selected: m.id == _selectedId,
+      onTap: () => setState(() => _selectedId = m.id),
+    );
+  }
+
+  Widget _groupHeader(ModGroup g, int count, AppLocalizations l10n) {
+    return DragTarget<String>(
+      onAcceptWithDetails: (details) {
+        ref
+            .read(modGroupsStateControllerProvider.notifier)
+            .assignMod(_gameDir, details.data, g.id);
+      },
+      builder: (context, candidate, rejected) {
+        final hovering = candidate.isNotEmpty;
+        return _GroupHeaderBar(
+          icon: g.collapsed ? Icons.chevron_right : Icons.expand_more,
+          label: g.name,
+          count: count,
+          hovering: hovering,
+          onTap: () => ref
+              .read(modGroupsStateControllerProvider.notifier)
+              .setGroupCollapsed(_gameDir, g.id, !g.collapsed),
+          actions: [
+            _headerAction(Icons.edit_outlined, l10n.modGroupRename,
+                () => _onRenameGroup(g)),
+            _headerAction(Icons.delete_outline, l10n.modGroupDelete,
+                () => _onDeleteGroup(g)),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _ungroupedHeader(int count, AppLocalizations l10n) {
+    return DragTarget<String>(
+      onAcceptWithDetails: (details) {
+        ref
+            .read(modGroupsStateControllerProvider.notifier)
+            .assignMod(_gameDir, details.data, null);
+      },
+      builder: (context, candidate, rejected) {
+        return _GroupHeaderBar(
+          icon: Icons.folder_open_outlined,
+          label: l10n.modGroupUngrouped,
+          count: count,
+          hovering: candidate.isNotEmpty,
+          onTap: null,
+          actions: const [],
+        );
+      },
+    );
+  }
+
+  Widget _headerAction(IconData icon, String tooltip, VoidCallback onTap) {
+    return _HoverIconButton(
+      tooltip: tooltip,
+      icon: icon,
+      size: AppSizes.iconSM(context),
+      padding: AppSizes.paddingXS(context),
+      onTap: onTap,
     );
   }
 
@@ -774,6 +945,148 @@ class _ModsViewState extends ConsumerState<ModsView> {
       return IsolateService.run(_dirLooksLikeModSync, sourcePath);
     }
     return const _ModDropClassification(valid: false);
+  }
+}
+
+class _HoverIconButton extends StatefulWidget {
+  final String tooltip;
+  final IconData icon;
+  final double size;
+  final double padding;
+  final VoidCallback onTap;
+
+  const _HoverIconButton({
+    required this.tooltip,
+    required this.icon,
+    required this.size,
+    required this.padding,
+    required this.onTap,
+  });
+
+  @override
+  State<_HoverIconButton> createState() => _HoverIconButtonState();
+}
+
+class _HoverIconButtonState extends State<_HoverIconButton> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: widget.tooltip,
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        onEnter: (_) => setState(() => _hovered = true),
+        onExit: (_) => setState(() => _hovered = false),
+        child: GestureDetector(
+          onTap: widget.onTap,
+          child: Container(
+            padding: EdgeInsets.all(widget.padding),
+            decoration: BoxDecoration(
+              color: _hovered
+                  ? AppColors.surfaceLight
+                  : Colors.transparent,
+              borderRadius:
+                  BorderRadius.circular(AppSizes.borderRadius(context)),
+            ),
+            child: Icon(
+              widget.icon,
+              size: widget.size,
+              color: _hovered ? AppColors.accentPrimary : AppColors.textMuted,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _GroupHeaderBar extends StatefulWidget {
+  final IconData icon;
+  final String label;
+  final int count;
+  final bool hovering;
+  final VoidCallback? onTap;
+  final List<Widget> actions;
+
+  const _GroupHeaderBar({
+    required this.icon,
+    required this.label,
+    required this.count,
+    required this.hovering,
+    required this.onTap,
+    required this.actions,
+  });
+
+  @override
+  State<_GroupHeaderBar> createState() => _GroupHeaderBarState();
+}
+
+class _GroupHeaderBarState extends State<_GroupHeaderBar> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: widget.onTap != null
+          ? SystemMouseCursors.click
+          : MouseCursor.defer,
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: AppSizes.cardPaddingH(context),
+            vertical: AppSizes.cardPaddingV(context) - 2,
+          ),
+          decoration: BoxDecoration(
+            color: widget.hovering
+                ? AppColors.accentPrimary.withValues(alpha: 0.14)
+                : AppColors.surfaceMedium.withValues(alpha: 0.6),
+            border: Border(
+              bottom: BorderSide(
+                color: widget.hovering
+                    ? AppColors.accentPrimary
+                    : AppColors.borderLight.withValues(alpha: 0.4),
+              ),
+            ),
+          ),
+          child: Row(
+            children: [
+              Icon(
+                widget.icon,
+                size: AppSizes.iconMD(context),
+                color: AppColors.textMuted,
+              ),
+              SizedBox(width: AppSizes.spacingSM(context)),
+              Flexible(
+                child: Text(
+                  widget.label,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: AppColors.textSecondary,
+                    fontSize: AppSizes.fontSM(context),
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ),
+              SizedBox(width: AppSizes.spacingSM(context)),
+              Text(
+                '${widget.count}',
+                style: TextStyle(
+                  color: AppColors.textMuted,
+                  fontSize: AppSizes.fontXS(context),
+                ),
+              ),
+              const Spacer(),
+              if (_hovered) ...widget.actions,
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 

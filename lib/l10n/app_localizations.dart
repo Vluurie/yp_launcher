@@ -5115,6 +5115,84 @@ abstract class AppLocalizations {
   /// **'Enabled — takes effect on next game start.'**
   String get modEnableNotice;
 
+  /// No description provided for @modGroupAddButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Add group'**
+  String get modGroupAddButton;
+
+  /// No description provided for @modGroupNewDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New group'**
+  String get modGroupNewDialogTitle;
+
+  /// No description provided for @modGroupRenameDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename group'**
+  String get modGroupRenameDialogTitle;
+
+  /// No description provided for @modGroupUngrouped.
+  ///
+  /// In en, this message translates to:
+  /// **'Ungrouped'**
+  String get modGroupUngrouped;
+
+  /// No description provided for @modGroupRename.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename group'**
+  String get modGroupRename;
+
+  /// No description provided for @modGroupDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete group'**
+  String get modGroupDelete;
+
+  /// No description provided for @modGroupDeleteConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete group?'**
+  String get modGroupDeleteConfirmTitle;
+
+  /// No description provided for @modGroupDeleteConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Mods in \"{name}\" move back to Ungrouped. Nothing is deleted from disk.'**
+  String modGroupDeleteConfirmBody(String name);
+
+  /// No description provided for @modGroupCountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} mods'**
+  String modGroupCountLabel(int count);
+
+  /// No description provided for @modGroupDropHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Drop to move here'**
+  String get modGroupDropHint;
+
+  /// No description provided for @modRename.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename'**
+  String get modRename;
+
+  /// No description provided for @modRenameDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename mod'**
+  String get modRenameDialogTitle;
+
+  /// No description provided for @modMoveToGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Move to group'**
+  String get modMoveToGroup;
+
   /// No description provided for @modUninstall.
   ///
   /// In en, this message translates to:

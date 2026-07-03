@@ -2941,6 +2941,49 @@ class AppLocalizationsEn extends AppLocalizations {
   String get modEnableNotice => 'Enabled — takes effect on next game start.';
 
   @override
+  String get modGroupAddButton => 'Add group';
+
+  @override
+  String get modGroupNewDialogTitle => 'New group';
+
+  @override
+  String get modGroupRenameDialogTitle => 'Rename group';
+
+  @override
+  String get modGroupUngrouped => 'Ungrouped';
+
+  @override
+  String get modGroupRename => 'Rename group';
+
+  @override
+  String get modGroupDelete => 'Delete group';
+
+  @override
+  String get modGroupDeleteConfirmTitle => 'Delete group?';
+
+  @override
+  String modGroupDeleteConfirmBody(String name) {
+    return 'Mods in \"$name\" move back to Ungrouped. Nothing is deleted from disk.';
+  }
+
+  @override
+  String modGroupCountLabel(int count) {
+    return '$count mods';
+  }
+
+  @override
+  String get modGroupDropHint => 'Drop to move here';
+
+  @override
+  String get modRename => 'Rename';
+
+  @override
+  String get modRenameDialogTitle => 'Rename mod';
+
+  @override
+  String get modMoveToGroup => 'Move to group';
+
+  @override
   String get modUninstall => 'Uninstall';
 
   @override
