@@ -12,6 +12,7 @@ import 'package:yp_launcher/providers/disabled_mods_state.dart';
 import 'package:yp_launcher/providers/mod_groups_state.dart';
 import 'package:yp_launcher/providers/mod_profiles_state.dart';
 import 'package:yp_launcher/widgets/mods/mod_naming.dart';
+import 'package:yp_launcher/widgets/mods/mod_variant_dialog.dart';
 import 'package:yp_launcher/widgets/mods/mod_profile_selector.dart';
 import 'package:yp_launcher/providers/mods_state.dart';
 import 'package:yp_launcher/services/archive_service.dart';
@@ -185,6 +186,11 @@ class _ModsViewState extends ConsumerState<ModsView> {
     if (!mounted) return;
     setState(() => _busy = false);
 
+    if (detect.hasVariants) {
+      await _installVariants(sourcePath, detect, notifier, notif, l10n);
+      return;
+    }
+
     if (detect.kind == ModKind.unknown) {
       notif.addNotification(NotificationItem(
         id: 'mod_install_fail_${DateTime.now().millisecondsSinceEpoch}',
@@ -295,12 +301,105 @@ class _ModsViewState extends ConsumerState<ModsView> {
     }
   }
 
+  Future<void> _installVariants(
+    String sourcePath,
+    DetectedDrop detect,
+    dynamic notifier,
+    dynamic notif,
+    AppLocalizations l10n,
+  ) async {
+    final chosen = await showModVariantDialog(context, variants: detect.variants);
+    if (chosen == null || chosen.isEmpty || !mounted) return;
+
+    final base = await showModNamingDialog(
+      context,
+      initial: prettifyModId(detect.suggestedId),
+    );
+    if (base == null || !mounted) return;
+
+    void onExtract(double percent, String? currentFile) {
+      if (!mounted) return;
+      setState(() {
+        _busyMessage = currentFile == null || currentFile.isEmpty
+            ? l10n.extractingArchivePercent((percent * 100).round())
+            : l10n.extractingArchivePercentFile(
+                (percent * 100).round(), currentFile);
+      });
+    }
+
+    var installed = 0;
+    String? lastId;
+    final failures = <String>[];
+
+    for (final variant in chosen) {
+      if (!mounted) return;
+      setState(() {
+        _busy = true;
+        _busyMessage = l10n.modInstallBusy;
+      });
+      var name = '$base - ${variant.label}';
+      InstallResult result;
+      var attempt = 1;
+      while (true) {
+        result = await withBusyGuard(
+          ref,
+          () => notifier.installMod(
+            _gameDir,
+            sourcePath,
+            requestedName: name,
+            variantSubPath: variant.subPath,
+            onExtractProgress: onExtract,
+          ),
+        );
+        if (result.success ||
+            result.errorMessage?.startsWith('exists:') != true) {
+          break;
+        }
+        attempt++;
+        name = '$base - ${variant.label} $attempt';
+      }
+      if (result.success) {
+        installed++;
+        lastId = result.installedId;
+      } else {
+        failures.add('${variant.label}: '
+            '${_localizeReason(l10n, result.errorMessage ?? 'unknown')}');
+      }
+    }
+
+    if (!mounted) return;
+    setState(() {
+      _busy = false;
+      if (lastId != null) _selectedId = lastId;
+    });
+
+    if (installed > 0) {
+      notif.addNotification(NotificationItem(
+        id: 'mod_variants_${DateTime.now().millisecondsSinceEpoch}',
+        message: l10n.modVariantInstalledToast(installed),
+        icon: Icons.check_circle,
+        color: AppColors.success,
+        type: NotificationType.general,
+      ));
+    }
+    for (final f in failures) {
+      notif.addNotification(NotificationItem(
+        id: 'mod_variant_fail_${DateTime.now().millisecondsSinceEpoch}_$f',
+        message: l10n.modInstallFailed(f),
+        icon: Icons.error_outline,
+        color: AppColors.error,
+        type: NotificationType.general,
+      ));
+    }
+  }
+
   String _localizeReason(AppLocalizations l10n, String code) {
     switch (code) {
       case 'unknown_drop': return l10n.modInstallReasonUnknownDrop;
       case 'invalid_mixed': return l10n.modInstallReasonInvalidMixed;
       case 'native_empty': return l10n.modInstallReasonNativeEmpty;
       case 'data_empty': return l10n.modInstallReasonDataEmpty;
+      case 'texture_only': return l10n.modInstallReasonTextureOnly;
       case 'archive_extract_failed': return l10n.modInstallReasonArchiveExtractFailed;
       default:
         if (code.startsWith('move_failed')) return l10n.modInstallReasonMoveFailed;
@@ -1149,6 +1248,32 @@ _ModDropClassification _classifyEntryPaths(Iterable<String> rawEntries) {
     final segments = entry.split('/');
     final first = segments[0];
     if (first.isEmpty) continue;
+
+    // Nested variant signals: a pl model file, a mod.toml, a .dds texture,
+    // or a data/<subdir> anywhere below the root means at least one installable
+    // variant exists. detectDrop resolves which; here we just don't reject.
+    final last = segments.last;
+    if (_isLoosePlFile(last) ||
+        last == 'mod.toml' ||
+        last.endsWith('.dds')) {
+      hasRealModSignal = true;
+      continue;
+    }
+    for (var i = 0; i < segments.length - 1; i++) {
+      final seg = segments[i];
+      if (seg == 'entities' || seg == 'wax') {
+        hasRealModSignal = true;
+        break;
+      }
+      if (seg == 'data' &&
+          i + 1 < segments.length &&
+          segments[i + 1] != 'movie' &&
+          _modDataSubdirs.contains(segments[i + 1])) {
+        hasRealModSignal = true;
+        break;
+      }
+    }
+    if (hasRealModSignal) continue;
 
     // Strong NAMS-mod root signals.
     if (first == 'mod.toml' || first == 'entities' || first == 'wax') {

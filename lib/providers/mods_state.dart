@@ -51,12 +51,14 @@ class ModsStateController extends _$ModsStateController {
     String gameDir,
     String sourcePath, {
     String? requestedName,
+    String? variantSubPath,
     void Function(double percent, String? currentFile)? onExtractProgress,
   }) async {
     final result = await ModsService.install(
       gameDir,
       sourcePath,
       requestedName: requestedName,
+      variantSubPath: variantSubPath,
       onExtractProgress: onExtractProgress,
     );
     if (result.success) {

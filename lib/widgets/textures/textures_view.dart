@@ -21,6 +21,9 @@ import 'package:yp_launcher/services/archive_service.dart';
 import 'package:yp_launcher/widgets/config_field_dropdown.dart';
 import 'package:yp_launcher/models/config_fields.dart';
 import 'package:yp_launcher/services/texture_install_service.dart';
+import 'package:yp_launcher/services/mods_service.dart';
+import 'package:yp_launcher/models/installed_mod.dart';
+import 'package:yp_launcher/widgets/mods/mod_variant_dialog.dart';
 import 'package:yp_launcher/widgets/texture_widgets.dart';
 import 'package:yp_launcher/widgets/textures/texture_dialogs.dart';
 import 'package:yp_launcher/widgets/textures/texture_header.dart';
@@ -243,12 +246,41 @@ class _TexturesViewState extends ConsumerState<TexturesView> {
           });
         },
       );
-      if (extracted != null) {
-        effectivePaths.add(extracted);
-        archiveNames[extracted] = path.basenameWithoutExtension(archivePath);
-        tempExtractDirs.add(extracted);
-      } else {
+      if (extracted == null) {
         _notify(l10n.failedToExtractArchive, Icons.error_outline, AppColors.error);
+        continue;
+      }
+      tempExtractDirs.add(extracted);
+
+      final packs = await ModsService.detectTexturePacks(extracted);
+      if (!mounted) return;
+
+      if (packs.length <= 1) {
+        effectivePaths.add(extracted);
+        archiveNames[extracted] = packs.isNotEmpty
+            ? packs.first.label
+            : path.basenameWithoutExtension(archivePath);
+      } else {
+        final chosen = await showModVariantDialog(
+          context,
+          variants: [
+            for (final p in packs)
+              ModVariant(
+                  subPath: p.path,
+                  label: p.label,
+                  kind: ModKind.texture,
+                  textureOnly: true),
+          ],
+        );
+        if (chosen == null || chosen.isEmpty) {
+          setState(() { _installing = false; _installPhase = ''; });
+          ref.read(texturesBusyProvider.notifier).state = false;
+          return;
+        }
+        for (final v in chosen) {
+          effectivePaths.add(v.subPath);
+          archiveNames[v.subPath] = v.label;
+        }
       }
     }
 
@@ -259,7 +291,7 @@ class _TexturesViewState extends ConsumerState<TexturesView> {
     }
 
     try {
-      if (_detectedFolders.isNotEmpty) {
+      if (_detectedFolders.isNotEmpty && effectivePaths.length == 1) {
         final choice = await showTextureMergeDialog(
           context: context,
           detectedFolders: _detectedFolders,

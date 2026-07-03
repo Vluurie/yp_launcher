@@ -20,6 +20,10 @@ class ModsService {
   static String modsDir(String gameDir) =>
       path.join(gameDir, 'nams', 'mods');
 
+  static Future<List<TexturePack>> detectTexturePacks(String root) {
+    return IsolateService.run(_detectTexturePacksParam, root);
+  }
+
   static Future<List<InstalledMod>> listInstalled(String gameDir) {
     return IsolateService.run(
       _listInstalledSync,
@@ -64,6 +68,7 @@ class ModsService {
     String gameDir,
     String sourcePath, {
     String? requestedName,
+    String? variantSubPath,
     void Function(double percent, String? currentFile)? onExtractProgress,
   }) async {
     String workDir = sourcePath;
@@ -89,6 +94,7 @@ class ModsService {
         sourceFolderName: path.basenameWithoutExtension(sourcePath),
         hasDlc: hasDlc,
         activeProfile: activeProfile,
+        variantSubPath: variantSubPath,
       );
       return await IsolateService.run(_installSync, params);
     } finally {
@@ -131,6 +137,7 @@ class _InstallParams {
   final String sourceFolderName;
   final bool hasDlc;
   final String activeProfile;
+  final String? variantSubPath;
   const _InstallParams({
     required this.gameDir,
     required this.workDir,
@@ -138,6 +145,7 @@ class _InstallParams {
     required this.sourceFolderName,
     required this.hasDlc,
     required this.activeProfile,
+    this.variantSubPath,
   });
 }
 
@@ -357,6 +365,8 @@ InstalledMod? _scanInstalledMod(String rootPath, String id, String gameDir) {
   final manifest = ModManifestService.loadSync(contentRoot);
   final kind = _classifyKind(contentRoot);
 
+  final bundledTextures = _readBundledTexturesSidecar(rootPath);
+
   NativeSummary? native;
   DataSummary? data;
 
@@ -386,7 +396,7 @@ InstalledMod? _scanInstalledMod(String rootPath, String id, String gameDir) {
     native: native,
     data: data,
     installedAt: installedAt,
-    bundledTexturePacks: _readBundledTexturesSidecar(rootPath),
+    bundledTexturePacks: bundledTextures,
     bundledCutscenes: _scanBundledCutscenes(rootPath),
   );
 }
@@ -421,6 +431,90 @@ ModKind _classifyKind(String contentRoot) {
     return ModKind.data;
   }
   return ModKind.unknown;
+}
+
+bool _hasNamsPayload(String root) {
+  if (_entitiesHasContent(Directory(path.join(root, 'entities')))) return true;
+  if (Directory(path.join(root, 'wax')).existsSync()) return true;
+  if (_dataHasSubdirs(Directory(path.join(root, 'data')))) return true;
+  if (_hasCompatConfig(root)) return true;
+  if (_hasLooseDataDir(root)) return true;
+  if (_hasLooseDataFiles(root)) return true;
+  return false;
+}
+
+bool _dirHasDds(Directory dir) {
+  if (!dir.existsSync()) return false;
+  for (final f in dir.listSync(recursive: true, followLinks: false)) {
+    if (f is File && f.path.toLowerCase().endsWith('.dds')) return true;
+  }
+  return false;
+}
+
+bool _dirHasDirectDds(Directory dir) {
+  if (!dir.existsSync()) return false;
+  return dir
+      .listSync()
+      .whereType<File>()
+      .any((f) => f.path.toLowerCase().endsWith('.dds'));
+}
+
+bool _isTexturePackRoot(String root) {
+  if (_hasNamsPayload(root)) return false;
+  for (final resName in const ['SK_Res', 'FAR_Res']) {
+    if (Directory(path.join(root, resName, 'inject', 'textures')).existsSync()) {
+      return true;
+    }
+  }
+  if (Directory(path.join(root, 'inject', 'textures')).existsSync()) return true;
+  if (Directory(path.join(root, 'textures')).existsSync() &&
+      _dirHasDds(Directory(path.join(root, 'textures')))) {
+    return true;
+  }
+  if (_dirHasDirectDds(Directory(root))) return true;
+  return _dirHasDds(Directory(root));
+}
+
+ModKind _installableKindAt(String root) {
+  return _classifyKind(root);
+}
+
+List<ModVariant> _detectVariants(String root) {
+  final out = <ModVariant>[];
+  _collectVariants(root, root, '', 0, out);
+  out.sort((a, b) => a.label.toLowerCase().compareTo(b.label.toLowerCase()));
+  return out;
+}
+
+void _collectVariants(
+  String baseRoot,
+  String current,
+  String labelPrefix,
+  int depth,
+  List<ModVariant> out,
+) {
+  if (depth > 4) return;
+  final dir = Directory(current);
+  if (!dir.existsSync()) return;
+  for (final sub in dir.listSync().whereType<Directory>()) {
+    final name = path.basename(sub.path);
+    if (name.startsWith('.') || name.startsWith('_')) continue;
+    final unwrapped = _unwrapSingleChild(sub.path);
+    final label = labelPrefix.isEmpty ? name : '$labelPrefix / $name';
+    final kind = _installableKindAt(unwrapped);
+    if (kind != ModKind.unknown) {
+      final textureOnly =
+          !_hasNamsPayload(unwrapped) && _isTexturePackRoot(unwrapped);
+      out.add(ModVariant(
+        subPath: path.relative(unwrapped, from: baseRoot),
+        label: label,
+        kind: kind,
+        textureOnly: textureOnly,
+      ));
+    } else {
+      _collectVariants(baseRoot, unwrapped, label, depth + 1, out);
+    }
+  }
 }
 
 bool _hasLooseDataDir(String contentRoot) {
@@ -657,11 +751,19 @@ DetectedDrop _detectDropSync(_DetectParams p) {
   NativeSummary? native;
   DataSummary? data;
   String? errorReason;
+  var variants = const <ModVariant>[];
 
   if (kind == ModKind.unknown) {
-    final hasEntities = _entitiesHasContent(Directory(path.join(unwrapped, 'entities')));
-    final hasCompat = _hasCompatConfig(unwrapped);
-    errorReason = (hasEntities && hasCompat) ? 'invalid_mixed' : 'unknown_drop';
+    variants = _detectVariants(unwrapped);
+    if (variants.isEmpty) {
+      if (!_hasNamsPayload(unwrapped) && _isTexturePackRoot(unwrapped)) {
+        errorReason = 'texture_only';
+      } else {
+        final hasEntities = _entitiesHasContent(Directory(path.join(unwrapped, 'entities')));
+        final hasCompat = _hasCompatConfig(unwrapped);
+        errorReason = (hasEntities && hasCompat) ? 'invalid_mixed' : 'unknown_drop';
+      }
+    }
   }
 
   if (kind == ModKind.native) {
@@ -685,6 +787,7 @@ DetectedDrop _detectDropSync(_DetectParams p) {
       unwrappedRoot: unwrapped,
     ),
     errorReason: errorReason,
+    variants: variants,
   );
 }
 
@@ -779,11 +882,18 @@ InstallResult _installSync(_InstallParams p) {
     sourceBaseName: p.sourceFolderName,
   );
   final detect = _detectDropSync(detectParams);
-  if (detect.kind == ModKind.unknown) {
+
+  String workRoot = detect.unwrappedRoot;
+  if (p.variantSubPath != null && p.variantSubPath!.isNotEmpty) {
+    final resolved = path.normalize(path.join(workRoot, p.variantSubPath!));
+    if (!Directory(resolved).existsSync()) {
+      return const InstallResult.fail('variant_missing');
+    }
+    workRoot = resolved;
+  } else if (detect.kind == ModKind.unknown) {
     return InstallResult.fail(detect.errorReason ?? 'unknown_drop');
   }
 
-  String workRoot = detect.unwrappedRoot;
   _normalizeLooseDataDirs(workRoot);
   _normalizeLooseDataFiles(workRoot);
 
@@ -794,6 +904,10 @@ InstallResult _installSync(_InstallParams p) {
   final targetDir = Directory(path.join(modsRoot, targetId));
   if (targetDir.existsSync()) {
     return InstallResult.fail('exists:$targetId');
+  }
+
+  if (!_hasNamsPayload(workRoot) && _isTexturePackRoot(workRoot)) {
+    return const InstallResult.fail('texture_only');
   }
 
   final sideTextures = _extractSideTexturePacks(
@@ -807,10 +921,10 @@ InstallResult _installSync(_InstallParams p) {
     workDir: workRoot,
     sourceBaseName: p.sourceFolderName,
   ));
+
   if (detect2.kind == ModKind.unknown) {
     return InstallResult.fail(detect2.errorReason ?? 'unknown_drop');
   }
-
   switch (detect2.kind) {
     case ModKind.native:
       if ((detect2.native?.totalEntityFiles ?? 0) == 0) {
@@ -820,10 +934,13 @@ InstallResult _installSync(_InstallParams p) {
     case ModKind.data:
       final entries = detect2.data?.entries ?? const [];
       final hasCompat = detect2.data?.hasCompatConfig ?? false;
-      final hasRecognised = entries.any((e) => e.category != DataCategory.other);
+      final hasRecognised =
+          entries.any((e) => e.category != DataCategory.other);
       if (!hasRecognised && !hasCompat && entries.isEmpty) {
         return const InstallResult.fail('data_empty');
       }
+      break;
+    case ModKind.texture:
       break;
     case ModKind.unknown:
       return const InstallResult.fail('unknown_drop');
@@ -942,6 +1059,85 @@ List<String> _readBundledTexturesSidecar(String modDir) {
   return names;
 }
 
+const _textureWrapperDirs = {
+  'sk_res', 'far_res', 'inject', 'textures', 'nierautomata.exe',
+};
+
+bool _isTextureWrapper(String name) =>
+    _textureWrapperDirs.contains(name.toLowerCase());
+
+List<TexturePack> _detectTexturePacksParam(String root) =>
+    _detectTexturePacks(root);
+
+List<TexturePack> _detectTexturePacks(String root) {
+  final packs = <TexturePack>[];
+  final seen = <String>{};
+
+  void addPack(String dir, String label) {
+    if (seen.add(dir)) {
+      packs.add(TexturePack(path: dir, label: label));
+    }
+  }
+
+  // Descend to the actual pack directories. `namedParent` carries the most
+  // recent NON-wrapper directory name seen on the way down; it becomes the
+  // pack label so a `textures`/`inject`/exe wrapper is never used as a name.
+  void scan(Directory dir, String? namedParent) {
+    if (!dir.existsSync()) return;
+    final name = path.basename(dir.path);
+    final label = _isTextureWrapper(name) ? namedParent : name;
+
+    if (_dirHasDirectDds(dir)) {
+      addPack(dir.path, label ?? path.basename(root));
+      return;
+    }
+
+    final ddsSubdirs =
+        dir.listSync().whereType<Directory>().where(_dirHasDds).toList();
+    if (ddsSubdirs.isEmpty) return;
+
+    final namedChildren = ddsSubdirs
+        .where((d) => !_isTextureWrapper(path.basename(d.path)))
+        .toList();
+    final wrapperChildren = ddsSubdirs
+        .where((d) => _isTextureWrapper(path.basename(d.path)))
+        .toList();
+
+    if (namedChildren.isEmpty && label != null) {
+      // Only wrapper children carry the dds. If a wrapper hides a deeper named
+      // folder, descend to it; otherwise this dir is the pack (its dds live
+      // directly under a wrapper, e.g. <pack>/textures/*.dds).
+      final deeperNamed = wrapperChildren.any((w) => w
+          .listSync()
+          .whereType<Directory>()
+          .any((d) => _dirHasDds(d) && !_isTextureWrapper(path.basename(d.path))));
+      if (!deeperNamed) {
+        addPack(dir.path, label);
+        return;
+      }
+    }
+
+    for (final sub in ddsSubdirs) {
+      scan(sub, label);
+    }
+  }
+
+  if (_hasNamsPayload(root)) return const [];
+  final rootDir = Directory(root);
+  if (_dirHasDirectDds(rootDir)) {
+    addPack(root, path.basename(root));
+  } else {
+    for (final child in rootDir.listSync().whereType<Directory>()) {
+      final name = path.basename(child.path);
+      if (name.startsWith('.') || name.startsWith('_')) continue;
+      scan(child, null);
+    }
+  }
+
+  packs.sort((a, b) => a.label.toLowerCase().compareTo(b.label.toLowerCase()));
+  return packs;
+}
+
 /// Mods sometimes ship a Special-K-style texture overlay alongside their
 /// real NAMS payload (`SK_Res/inject/textures/NieRAutomata.exe/<pack>/...`)
 /// or a modern `inject/textures/<pack>/...` layout. We split those texture
@@ -984,28 +1180,71 @@ List<String> _extractSideTexturePacks(
     }
   }
 
-  // Layout 1: SK_Res/inject/textures/<exe>/<pack>/...
-  final skRes = Directory(path.join(workRoot, 'SK_Res', 'inject', 'textures'));
-  if (skRes.existsSync()) {
-    for (final exeDir in skRes.listSync().whereType<Directory>()) {
-      for (final pack in exeDir.listSync().whereType<Directory>()) {
-        movePack(pack);
+  void harvestTexturesDir(Directory texturesDir) {
+    if (!texturesDir.existsSync()) return;
+    final looseDds = texturesDir
+        .listSync()
+        .whereType<File>()
+        .where((f) => f.path.toLowerCase().endsWith('.dds'))
+        .toList();
+    if (looseDds.isNotEmpty) {
+      movePack(texturesDir);
+      return;
+    }
+    for (final child in texturesDir.listSync().whereType<Directory>()) {
+      final childHasDds = child
+          .listSync()
+          .whereType<File>()
+          .any((f) => f.path.toLowerCase().endsWith('.dds'));
+      if (childHasDds) {
+        movePack(child);
+      } else {
+        for (final pack in child.listSync().whereType<Directory>()) {
+          movePack(pack);
+        }
       }
     }
+  }
+
+  // Layout 1: <SK_Res|FAR_Res>/inject/textures/[<exe>/]<pack>/...
+  for (final resName in const ['SK_Res', 'FAR_Res']) {
+    final res = Directory(path.join(workRoot, resName, 'inject', 'textures'));
+    if (!res.existsSync()) continue;
+    harvestTexturesDir(res);
     try {
-      Directory(path.join(workRoot, 'SK_Res')).deleteSync(recursive: true);
+      Directory(path.join(workRoot, resName)).deleteSync(recursive: true);
     } catch (_) {}
   }
 
-  // Layout 2: inject/textures/<pack>/... at the workRoot.
+  // Layout 2: inject/textures/[<exe>/]<pack>/... at the workRoot.
   final inject = Directory(path.join(workRoot, 'inject', 'textures'));
   if (inject.existsSync()) {
-    for (final pack in inject.listSync().whereType<Directory>()) {
-      movePack(pack);
-    }
+    harvestTexturesDir(inject);
     try {
       Directory(path.join(workRoot, 'inject')).deleteSync(recursive: true);
     } catch (_) {}
+  }
+
+  // Layout 3: a bare textures/ dir holding <pack>/*.dds or loose *.dds
+  // (e.g. Nines/textures/Nines/*.dds).
+  final bareTextures = Directory(path.join(workRoot, 'textures'));
+  if (bareTextures.existsSync() && !_hasNamsPayload(workRoot)) {
+    harvestTexturesDir(bareTextures);
+    try {
+      bareTextures.deleteSync(recursive: true);
+    } catch (_) {}
+  }
+
+  // Layout 4: the workRoot itself is a texture pack (loose *.dds, no NAMS
+  // payload, no inject/SK_Res/textures wrapper) — e.g. "2P Heavy Armor/*.dds".
+  if (moved.isEmpty && !_hasNamsPayload(workRoot)) {
+    final rootDds = Directory(workRoot)
+        .listSync()
+        .whereType<File>()
+        .any((f) => f.path.toLowerCase().endsWith('.dds'));
+    if (rootDds) {
+      movePack(Directory(workRoot));
+    }
   }
 
   return moved;

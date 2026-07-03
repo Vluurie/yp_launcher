@@ -1402,6 +1402,8 @@
   "modKindNativeTooltip": "NAMS mod with an entities/ folder. Defines new items, weapons, outfits, accessories, quests etc. via TOML bundles.",
   "modKindData": "DATA",
   "modKindDataTooltip": "The classic mod format - same files that would normally go into NieRAutomata/data/, just managed under nams/mods/ instead keeping original data dir clean",
+  "modKindTexture": "TEXTURES",
+  "modKindTextureTooltip": "A texture pack. Its .dds files were installed to nams/inject/textures/ and are managed from the Textures tab.",
   "modKindUnknown": "UNKNOWN",
   "modKindUnknownTooltip": "The launcher couldn't recognise this folder as a valid mod.",
   "modCompatChip": "wax compat",
@@ -1514,6 +1516,27 @@
   },
   "modInspectBusy": "Inspecting mod…",
   "modInstallBusy": "Installing mod…",
+  "modVariantDialogTitle": "Choose what to install",
+  "modVariantDialogSubtitle": "This archive contains multiple options. Pick the ones you want.",
+  "modVariantSelectAll": "Select all",
+  "modVariantSelectNone": "None",
+  "modVariantInstallSelected": "Install {count}",
+  "@modVariantInstallSelected": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "modVariantTexture": "textures",
+  "modVariantInstalledToast": "Installed {count} option(s)",
+  "@modVariantInstalledToast": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "modUninstallBusy": "Uninstalling mod…",
   "modInstalled": "Installed: {id}",
   "@modInstalled": {
@@ -1537,6 +1560,7 @@
   "modInstallReasonDataEmpty": "No recognisable content found.",
   "modInstallReasonArchiveExtractFailed": "Couldn't extract the archive.",
   "modInstallReasonMoveFailed": "Couldn't move the files into nams/mods/.",
+  "modInstallReasonTextureOnly": "This is a texture pack (only .dds files, no player model). Install it from the Textures tab instead.",
   "modUninstalled": "Removed: {id}",
   "@modUninstalled": {
     "placeholders": {

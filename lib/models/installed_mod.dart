@@ -1,4 +1,4 @@
-enum ModKind { native, data, unknown }
+enum ModKind { native, data, texture, unknown }
 
 enum DataCategory {
   player3d,
@@ -134,6 +134,27 @@ class InstalledMod {
   bool get hasWarnings => conflicts.isNotEmpty || requiresMissing.isNotEmpty;
 }
 
+class ModVariant {
+  final String subPath;
+  final String label;
+  final ModKind kind;
+  final bool textureOnly;
+
+  const ModVariant({
+    required this.subPath,
+    required this.label,
+    required this.kind,
+    this.textureOnly = false,
+  });
+}
+
+class TexturePack {
+  final String path;
+  final String label;
+
+  const TexturePack({required this.path, required this.label});
+}
+
 class DetectedDrop {
   final String unwrappedRoot;
   final ModKind kind;
@@ -142,6 +163,7 @@ class DetectedDrop {
   final DataSummary? data;
   final String suggestedId;
   final String? errorReason;
+  final List<ModVariant> variants;
 
   const DetectedDrop({
     required this.unwrappedRoot,
@@ -151,7 +173,10 @@ class DetectedDrop {
     this.native,
     this.data,
     this.errorReason,
+    this.variants = const [],
   });
+
+  bool get hasVariants => variants.isNotEmpty;
 }
 
 class InstallResult {

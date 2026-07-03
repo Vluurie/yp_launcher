@@ -1,0 +1,203 @@
+import 'package:flutter/material.dart';
+import 'package:yp_launcher/l10n/app_localizations.dart';
+import 'package:yp_launcher/models/installed_mod.dart';
+import 'package:yp_launcher/theme/app_colors.dart';
+import 'package:yp_launcher/theme/app_sizes.dart';
+
+Future<List<ModVariant>?> showModVariantDialog(
+  BuildContext context, {
+  required List<ModVariant> variants,
+}) {
+  return showDialog<List<ModVariant>>(
+    context: context,
+    builder: (ctx) => _ModVariantDialog(variants: variants),
+  );
+}
+
+class _ModVariantDialog extends StatefulWidget {
+  final List<ModVariant> variants;
+
+  const _ModVariantDialog({required this.variants});
+
+  @override
+  State<_ModVariantDialog> createState() => _ModVariantDialogState();
+}
+
+class _ModVariantDialogState extends State<_ModVariantDialog> {
+  late final Set<int> _selected =
+      {for (var i = 0; i < widget.variants.length; i++) i};
+  final _scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return AlertDialog(
+      backgroundColor: AppColors.backgroundCard,
+      title: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            l10n.modVariantDialogTitle,
+            style: TextStyle(
+              color: AppColors.accentPrimary,
+              fontSize: AppSizes.fontLG(context),
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            l10n.modVariantDialogSubtitle,
+            style: TextStyle(
+              color: AppColors.textMuted,
+              fontSize: AppSizes.fontSM(context),
+            ),
+          ),
+        ],
+      ),
+      contentPadding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
+      content: SizedBox(
+        width: 420,
+        height: 380,
+        child: Column(
+          children: [
+            Row(
+              children: [
+                _miniButton(l10n.modVariantSelectAll, () {
+                  setState(() {
+                    _selected
+                      ..clear()
+                      ..addAll(
+                          {for (var i = 0; i < widget.variants.length; i++) i});
+                  });
+                }),
+                const SizedBox(width: 8),
+                _miniButton(l10n.modVariantSelectNone, () {
+                  setState(_selected.clear);
+                }),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Expanded(
+              child: Scrollbar(
+                controller: _scrollController,
+                thumbVisibility: true,
+                child: ListView.builder(
+                  controller: _scrollController,
+                  itemCount: widget.variants.length,
+                  itemBuilder: (_, i) => _variantRow(l10n, i),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text(
+            l10n.buttonCancel,
+            style: TextStyle(
+              color: AppColors.textMuted,
+              fontSize: AppSizes.fontSM(context),
+            ),
+          ),
+        ),
+        TextButton(
+          onPressed: _selected.isEmpty
+              ? null
+              : () => Navigator.of(context)
+                  .pop([for (final i in _selected) widget.variants[i]]),
+          child: Text(
+            l10n.modVariantInstallSelected(_selected.length),
+            style: TextStyle(
+              color: _selected.isEmpty
+                  ? AppColors.textMuted
+                  : AppColors.accentPrimary,
+              fontSize: AppSizes.fontSM(context),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _miniButton(String label, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(AppSizes.borderRadius(context)),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: AppColors.accentPrimary,
+            fontSize: AppSizes.fontXS(context),
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _variantRow(AppLocalizations l10n, int i) {
+    final v = widget.variants[i];
+    final selected = _selected.contains(i);
+    return InkWell(
+      onTap: () => setState(() {
+        if (selected) {
+          _selected.remove(i);
+        } else {
+          _selected.add(i);
+        }
+      }),
+      borderRadius: BorderRadius.circular(AppSizes.borderRadius(context)),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 9),
+        child: Row(
+          children: [
+            Icon(
+              selected ? Icons.check_box : Icons.check_box_outline_blank,
+              size: 20,
+              color: selected ? AppColors.accentPrimary : AppColors.textMuted,
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                v.label,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: AppColors.textPrimary,
+                  fontSize: AppSizes.fontMD(context),
+                ),
+              ),
+            ),
+            if (v.textureOnly) ...[
+              const SizedBox(width: 8),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: AppColors.surfaceLight,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text(
+                  l10n.modVariantTexture,
+                  style: TextStyle(
+                    color: AppColors.textMuted,
+                    fontSize: AppSizes.fontXS(context),
+                  ),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}

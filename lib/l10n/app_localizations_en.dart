@@ -2856,6 +2856,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'The classic mod format - same files that would normally go into NieRAutomata/data/, just managed under nams/mods/ instead keeping original data dir clean';
 
   @override
+  String get modKindTexture => 'TEXTURES';
+
+  @override
+  String get modKindTextureTooltip =>
+      'A texture pack. Its .dds files were installed to nams/inject/textures/ and are managed from the Textures tab.';
+
+  @override
   String get modKindUnknown => 'UNKNOWN';
 
   @override
@@ -3094,6 +3101,32 @@ class AppLocalizationsEn extends AppLocalizations {
   String get modInstallBusy => 'Installing mod…';
 
   @override
+  String get modVariantDialogTitle => 'Choose what to install';
+
+  @override
+  String get modVariantDialogSubtitle =>
+      'This archive contains multiple options. Pick the ones you want.';
+
+  @override
+  String get modVariantSelectAll => 'Select all';
+
+  @override
+  String get modVariantSelectNone => 'None';
+
+  @override
+  String modVariantInstallSelected(int count) {
+    return 'Install $count';
+  }
+
+  @override
+  String get modVariantTexture => 'textures';
+
+  @override
+  String modVariantInstalledToast(int count) {
+    return 'Installed $count option(s)';
+  }
+
+  @override
   String get modUninstallBusy => 'Uninstalling mod…';
 
   @override
@@ -3128,6 +3161,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get modInstallReasonMoveFailed =>
       'Couldn\'t move the files into nams/mods/.';
+
+  @override
+  String get modInstallReasonTextureOnly =>
+      'This is a texture pack (only .dds files, no player model). Install it from the Textures tab instead.';
 
   @override
   String modUninstalled(String id) {

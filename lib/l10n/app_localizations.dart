@@ -4959,6 +4959,18 @@ abstract class AppLocalizations {
   /// **'The classic mod format - same files that would normally go into NieRAutomata/data/, just managed under nams/mods/ instead keeping original data dir clean'**
   String get modKindDataTooltip;
 
+  /// No description provided for @modKindTexture.
+  ///
+  /// In en, this message translates to:
+  /// **'TEXTURES'**
+  String get modKindTexture;
+
+  /// No description provided for @modKindTextureTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'A texture pack. Its .dds files were installed to nams/inject/textures/ and are managed from the Textures tab.'**
+  String get modKindTextureTooltip;
+
   /// No description provided for @modKindUnknown.
   ///
   /// In en, this message translates to:
@@ -5373,6 +5385,48 @@ abstract class AppLocalizations {
   /// **'Installing mod…'**
   String get modInstallBusy;
 
+  /// No description provided for @modVariantDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose what to install'**
+  String get modVariantDialogTitle;
+
+  /// No description provided for @modVariantDialogSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'This archive contains multiple options. Pick the ones you want.'**
+  String get modVariantDialogSubtitle;
+
+  /// No description provided for @modVariantSelectAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Select all'**
+  String get modVariantSelectAll;
+
+  /// No description provided for @modVariantSelectNone.
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get modVariantSelectNone;
+
+  /// No description provided for @modVariantInstallSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'Install {count}'**
+  String modVariantInstallSelected(int count);
+
+  /// No description provided for @modVariantTexture.
+  ///
+  /// In en, this message translates to:
+  /// **'textures'**
+  String get modVariantTexture;
+
+  /// No description provided for @modVariantInstalledToast.
+  ///
+  /// In en, this message translates to:
+  /// **'Installed {count} option(s)'**
+  String modVariantInstalledToast(int count);
+
   /// No description provided for @modUninstallBusy.
   ///
   /// In en, this message translates to:
@@ -5426,6 +5480,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Couldn\'t move the files into nams/mods/.'**
   String get modInstallReasonMoveFailed;
+
+  /// No description provided for @modInstallReasonTextureOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'This is a texture pack (only .dds files, no player model). Install it from the Textures tab instead.'**
+  String get modInstallReasonTextureOnly;
 
   /// No description provided for @modUninstalled.
   ///
