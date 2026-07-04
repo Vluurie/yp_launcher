@@ -27,7 +27,8 @@ class _ClickableNameState extends State<ClickableName> {
       onEnter: (_) => setState(() => _hovered = true),
       onExit: (_) => setState(() => _hovered = false),
       child: GestureDetector(
-        onTap: () => Process.run('explorer.exe', [widget.folderPath]),
+        onTap: () => Process.run(
+            'explorer.exe', [widget.folderPath.replaceAll('/', '\\')]),
         child: Text(
           widget.name,
           style: TextStyle(

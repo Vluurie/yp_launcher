@@ -79,11 +79,14 @@ class _ModsViewState extends ConsumerState<ModsView> {
     final dir = _gameDir;
     if (dir.isEmpty || dir == _loadedForDir) return;
     _loadedForDir = dir;
-    ref.read(modProfilesStateControllerProvider.notifier).load(dir);
-    ref.read(modsStateControllerProvider.notifier).loadMods(dir);
-    ref.read(disabledModsStateControllerProvider.notifier).load(dir);
-    ref.read(modGroupsStateControllerProvider.notifier).load(dir);
-    _restartWatcher(dir);
+    ModsService.migrateBundledTexturesInPlace(dir).whenComplete(() {
+      if (!mounted) return;
+      ref.read(modProfilesStateControllerProvider.notifier).load(dir);
+      ref.read(modsStateControllerProvider.notifier).loadMods(dir);
+      ref.read(disabledModsStateControllerProvider.notifier).load(dir);
+      ref.read(modGroupsStateControllerProvider.notifier).load(dir);
+      _restartWatcher(dir);
+    });
   }
 
   void _restartWatcher(String gameDir) {
@@ -192,14 +195,36 @@ class _ModsViewState extends ConsumerState<ModsView> {
     }
 
     if (detect.kind == ModKind.unknown) {
+      final isTextureOnly = detect.errorReason == 'texture_only';
       notif.addNotification(NotificationItem(
         id: 'mod_install_fail_${DateTime.now().millisecondsSinceEpoch}',
-        message: l10n.modInstallFailed(_localizeReason(l10n, detect.errorReason ?? 'unknown_drop')),
-        icon: Icons.error_outline,
-        color: AppColors.error,
+        message: isTextureOnly
+            ? l10n.modInstallReasonTextureOnly
+            : l10n.modInstallFailed(
+                _localizeReason(l10n, detect.errorReason ?? 'unknown_drop')),
+        icon: isTextureOnly ? Icons.warning_amber : Icons.error_outline,
+        color: isTextureOnly ? AppColors.warning : AppColors.error,
         type: NotificationType.general,
       ));
       return;
+    }
+
+    List<String>? texturePackSubPaths;
+    if (detect.hasTextureVariants) {
+      final chosen = await showModVariantDialog(
+        context,
+        variants: [
+          for (final t in detect.textureVariants)
+            ModVariant(
+              subPath: p.relative(t.path, from: detect.unwrappedRoot),
+              label: t.label,
+              kind: ModKind.texture,
+              textureOnly: true,
+            ),
+        ],
+      );
+      if (chosen == null || chosen.isEmpty || !mounted) return;
+      texturePackSubPaths = [for (final v in chosen) v.subPath];
     }
 
     final manifestId = detect.manifest?.id?.trim();
@@ -237,6 +262,7 @@ class _ModsViewState extends ConsumerState<ModsView> {
           _gameDir,
           sourcePath,
           requestedName: requestedName,
+          texturePackSubPaths: texturePackSubPaths,
           onExtractProgress: onExtract,
         ),
       );
@@ -301,6 +327,38 @@ class _ModsViewState extends ConsumerState<ModsView> {
     }
   }
 
+  // Special edge case for "2P - The Mock Machine - All in One" (Nexus 335).
+  // This mod ships several 2P outfit variants (Classic, Final Fantasy,
+  // Soulcalibur, or-not-2P) plus separate texture-set folders under Textures/.
+  // Per the mod's readme, each outfit uses the shared set ("2P I Shared
+  // Textures") plus its own same-named set (e.g. "2P - Classic" -> "2P I
+  // Classic"). The launcher cannot derive this from the model data because all
+  // variants replace the same pl000d slot with the same vanilla hashes, so the
+  // only authoritative mapping is the author's readme naming. We therefore
+  // bundle, per outfit, the shared set plus the name-matching set only, instead
+  // of dumping all sets into every outfit (which produced 29 colliding dds).
+  List<String> _texturesForOutfit(ModVariant outfit, DetectedDrop detect) {
+    final outfitKey = _outfitMatchKey(outfit.label);
+    final result = <String>[];
+    for (final t in detect.textureVariants) {
+      final label = t.label.toLowerCase();
+      final isShared = label.contains('shared');
+      final matches = _outfitMatchKey(t.label) == outfitKey;
+      if (isShared || matches) {
+        result.add(p.relative(t.path, from: detect.unwrappedRoot));
+      }
+    }
+    return result;
+  }
+
+  String _outfitMatchKey(String label) {
+    var s = label.toLowerCase();
+    for (final noise in ['2p', 'i', '-', '/', 'shared', 'textures', 'outfit']) {
+      s = s.replaceAll(noise, ' ');
+    }
+    return s.replaceAll(RegExp(r'\s+'), ' ').trim();
+  }
+
   Future<void> _installVariants(
     String sourcePath,
     DetectedDrop detect,
@@ -308,7 +366,10 @@ class _ModsViewState extends ConsumerState<ModsView> {
     dynamic notif,
     AppLocalizations l10n,
   ) async {
-    final chosen = await showModVariantDialog(context, variants: detect.variants);
+    final chosen = await showModVariantDialog(
+      context,
+      variants: detect.variants,
+    );
     if (chosen == null || chosen.isEmpty || !mounted) return;
 
     final base = await showModNamingDialog(
@@ -316,6 +377,17 @@ class _ModsViewState extends ConsumerState<ModsView> {
       initial: prettifyModId(detect.suggestedId),
     );
     if (base == null || !mounted) return;
+
+    final requests = [
+      for (final variant in chosen)
+        VariantInstallRequest(
+          requestedName: '$base - ${variant.label}',
+          variantSubPath: variant.subPath,
+          texturePackSubPaths: variant.isWeapon
+              ? const []
+              : _texturesForOutfit(variant, detect),
+        ),
+    ];
 
     void onExtract(double percent, String? currentFile) {
       if (!mounted) return;
@@ -327,47 +399,37 @@ class _ModsViewState extends ConsumerState<ModsView> {
       });
     }
 
+    setState(() {
+      _busy = true;
+      _busyMessage = l10n.modInstallBusy;
+    });
+
+    final results = await withBusyGuard(
+      ref,
+      () => notifier.installVariants(
+        _gameDir,
+        sourcePath,
+        requests,
+        onExtractProgress: onExtract,
+      ),
+    ) as List<InstallResult>;
+
+    if (!mounted) return;
+
     var installed = 0;
     String? lastId;
     final failures = <String>[];
-
-    for (final variant in chosen) {
-      if (!mounted) return;
-      setState(() {
-        _busy = true;
-        _busyMessage = l10n.modInstallBusy;
-      });
-      var name = '$base - ${variant.label}';
-      InstallResult result;
-      var attempt = 1;
-      while (true) {
-        result = await withBusyGuard(
-          ref,
-          () => notifier.installMod(
-            _gameDir,
-            sourcePath,
-            requestedName: name,
-            variantSubPath: variant.subPath,
-            onExtractProgress: onExtract,
-          ),
-        );
-        if (result.success ||
-            result.errorMessage?.startsWith('exists:') != true) {
-          break;
-        }
-        attempt++;
-        name = '$base - ${variant.label} $attempt';
-      }
-      if (result.success) {
+    for (var i = 0; i < results.length; i++) {
+      final r = results[i];
+      if (r.success) {
         installed++;
-        lastId = result.installedId;
+        lastId = r.installedId;
       } else {
-        failures.add('${variant.label}: '
-            '${_localizeReason(l10n, result.errorMessage ?? 'unknown')}');
+        failures.add('${chosen[i].label}: '
+            '${_localizeReason(l10n, r.errorMessage ?? 'unknown')}');
       }
     }
 
-    if (!mounted) return;
     setState(() {
       _busy = false;
       if (lastId != null) _selectedId = lastId;

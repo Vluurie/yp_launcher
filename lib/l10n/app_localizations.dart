@@ -4959,6 +4959,24 @@ abstract class AppLocalizations {
   /// **'The classic mod format - same files that would normally go into NieRAutomata/data/, just managed under nams/mods/ instead keeping original data dir clean'**
   String get modKindDataTooltip;
 
+  /// No description provided for @textureOutfitLinkedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Outfit-linked textures'**
+  String get textureOutfitLinkedTitle;
+
+  /// No description provided for @textureOutfitLinkedSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'These textures live inside their mod folder and load only while that outfit is equipped. NAMS hot-swaps them when you change outfits in-game.'**
+  String get textureOutfitLinkedSubtitle;
+
+  /// No description provided for @textureOutfitLinkedEntry.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} textures — active only with this outfit'**
+  String textureOutfitLinkedEntry(int count);
+
   /// No description provided for @modKindTexture.
   ///
   /// In en, this message translates to:
@@ -5397,6 +5415,120 @@ abstract class AppLocalizations {
   /// **'This archive contains multiple options. Pick the ones you want.'**
   String get modVariantDialogSubtitle;
 
+  /// No description provided for @modOutfitChoiceDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose what to install'**
+  String get modOutfitChoiceDialogTitle;
+
+  /// No description provided for @modOutfitChoiceDialogSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tick everything you want. Each item installs as its own mod. If an outfit ships textures, they come along and you can fine-tune which sets it uses later in the Textures tab.'**
+  String get modOutfitChoiceDialogSubtitle;
+
+  /// No description provided for @variantCatPlayer.
+  ///
+  /// In en, this message translates to:
+  /// **'Outfits'**
+  String get variantCatPlayer;
+
+  /// No description provided for @variantCatWeapon.
+  ///
+  /// In en, this message translates to:
+  /// **'Weapons'**
+  String get variantCatWeapon;
+
+  /// No description provided for @variantCatAccessory.
+  ///
+  /// In en, this message translates to:
+  /// **'Accessories'**
+  String get variantCatAccessory;
+
+  /// No description provided for @variantCatEnemy.
+  ///
+  /// In en, this message translates to:
+  /// **'Enemies'**
+  String get variantCatEnemy;
+
+  /// No description provided for @variantCatModelVariant.
+  ///
+  /// In en, this message translates to:
+  /// **'Model variants'**
+  String get variantCatModelVariant;
+
+  /// No description provided for @variantCatItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Items'**
+  String get variantCatItem;
+
+  /// No description provided for @variantCatWorldProp.
+  ///
+  /// In en, this message translates to:
+  /// **'World props'**
+  String get variantCatWorldProp;
+
+  /// No description provided for @variantCatMap.
+  ///
+  /// In en, this message translates to:
+  /// **'Maps'**
+  String get variantCatMap;
+
+  /// No description provided for @variantCatEffects.
+  ///
+  /// In en, this message translates to:
+  /// **'Effects'**
+  String get variantCatEffects;
+
+  /// No description provided for @variantCatScripting.
+  ///
+  /// In en, this message translates to:
+  /// **'Scripting'**
+  String get variantCatScripting;
+
+  /// No description provided for @variantCatLocalization.
+  ///
+  /// In en, this message translates to:
+  /// **'Localization'**
+  String get variantCatLocalization;
+
+  /// No description provided for @variantCatUi.
+  ///
+  /// In en, this message translates to:
+  /// **'UI'**
+  String get variantCatUi;
+
+  /// No description provided for @variantCatCutscenes.
+  ///
+  /// In en, this message translates to:
+  /// **'Cutscenes'**
+  String get variantCatCutscenes;
+
+  /// No description provided for @variantCatAudio.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio'**
+  String get variantCatAudio;
+
+  /// No description provided for @variantCatMisc.
+  ///
+  /// In en, this message translates to:
+  /// **'Misc'**
+  String get variantCatMisc;
+
+  /// No description provided for @variantCatOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get variantCatOther;
+
+  /// No description provided for @variantPickOneSuffix.
+  ///
+  /// In en, this message translates to:
+  /// **'pick one'**
+  String get variantPickOneSuffix;
+
   /// No description provided for @modVariantSelectAll.
   ///
   /// In en, this message translates to:
@@ -5408,6 +5540,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'None'**
   String get modVariantSelectNone;
+
+  /// No description provided for @modVariantInstall.
+  ///
+  /// In en, this message translates to:
+  /// **'Install'**
+  String get modVariantInstall;
 
   /// No description provided for @modVariantInstallSelected.
   ///
@@ -5484,7 +5622,7 @@ abstract class AppLocalizations {
   /// No description provided for @modInstallReasonTextureOnly.
   ///
   /// In en, this message translates to:
-  /// **'This is a texture pack (only .dds files, no player model). Install it from the Textures tab instead.'**
+  /// **'This is a texture pack (only .dds files). Install it from the Textures tab instead.'**
   String get modInstallReasonTextureOnly;
 
   /// No description provided for @modUninstalled.

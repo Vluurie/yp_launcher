@@ -139,20 +139,60 @@ class ModVariant {
   final String label;
   final ModKind kind;
   final bool textureOnly;
+  final DataCategory? category;
 
   const ModVariant({
     required this.subPath,
     required this.label,
     required this.kind,
     this.textureOnly = false,
+    this.category,
   });
+
+  bool get isOutfit => category == DataCategory.player3d;
+  bool get isWeapon => category == DataCategory.weapon3d;
 }
+
+const List<DataCategory> variantCategoryOrder = [
+  DataCategory.player3d,
+  DataCategory.weapon3d,
+  DataCategory.accessory3d,
+  DataCategory.enemy3d,
+  DataCategory.modelVariant3d,
+  DataCategory.item3d,
+  DataCategory.worldProp3d,
+  DataCategory.map3d,
+  DataCategory.effects,
+  DataCategory.scripting,
+  DataCategory.localization,
+  DataCategory.ui,
+  DataCategory.cutscenes,
+  DataCategory.audio,
+  DataCategory.misc,
+  DataCategory.other,
+];
+
+const Set<DataCategory> mutuallyExclusiveVariantCategories = {
+  DataCategory.weapon3d,
+};
 
 class TexturePack {
   final String path;
   final String label;
 
   const TexturePack({required this.path, required this.label});
+}
+
+class VariantInstallRequest {
+  final String requestedName;
+  final String variantSubPath;
+  final List<String> texturePackSubPaths;
+
+  const VariantInstallRequest({
+    required this.requestedName,
+    required this.variantSubPath,
+    this.texturePackSubPaths = const [],
+  });
 }
 
 class DetectedDrop {
@@ -164,6 +204,7 @@ class DetectedDrop {
   final String suggestedId;
   final String? errorReason;
   final List<ModVariant> variants;
+  final List<TexturePack> textureVariants;
 
   const DetectedDrop({
     required this.unwrappedRoot,
@@ -174,9 +215,11 @@ class DetectedDrop {
     this.data,
     this.errorReason,
     this.variants = const [],
+    this.textureVariants = const [],
   });
 
   bool get hasVariants => variants.isNotEmpty;
+  bool get hasTextureVariants => textureVariants.length > 1;
 }
 
 class InstallResult {

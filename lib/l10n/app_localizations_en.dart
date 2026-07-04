@@ -2856,6 +2856,18 @@ class AppLocalizationsEn extends AppLocalizations {
       'The classic mod format - same files that would normally go into NieRAutomata/data/, just managed under nams/mods/ instead keeping original data dir clean';
 
   @override
+  String get textureOutfitLinkedTitle => 'Outfit-linked textures';
+
+  @override
+  String get textureOutfitLinkedSubtitle =>
+      'These textures live inside their mod folder and load only while that outfit is equipped. NAMS hot-swaps them when you change outfits in-game.';
+
+  @override
+  String textureOutfitLinkedEntry(int count) {
+    return '$count textures — active only with this outfit';
+  }
+
+  @override
   String get modKindTexture => 'TEXTURES';
 
   @override
@@ -3108,10 +3120,71 @@ class AppLocalizationsEn extends AppLocalizations {
       'This archive contains multiple options. Pick the ones you want.';
 
   @override
+  String get modOutfitChoiceDialogTitle => 'Choose what to install';
+
+  @override
+  String get modOutfitChoiceDialogSubtitle =>
+      'Tick everything you want. Each item installs as its own mod. If an outfit ships textures, they come along and you can fine-tune which sets it uses later in the Textures tab.';
+
+  @override
+  String get variantCatPlayer => 'Outfits';
+
+  @override
+  String get variantCatWeapon => 'Weapons';
+
+  @override
+  String get variantCatAccessory => 'Accessories';
+
+  @override
+  String get variantCatEnemy => 'Enemies';
+
+  @override
+  String get variantCatModelVariant => 'Model variants';
+
+  @override
+  String get variantCatItem => 'Items';
+
+  @override
+  String get variantCatWorldProp => 'World props';
+
+  @override
+  String get variantCatMap => 'Maps';
+
+  @override
+  String get variantCatEffects => 'Effects';
+
+  @override
+  String get variantCatScripting => 'Scripting';
+
+  @override
+  String get variantCatLocalization => 'Localization';
+
+  @override
+  String get variantCatUi => 'UI';
+
+  @override
+  String get variantCatCutscenes => 'Cutscenes';
+
+  @override
+  String get variantCatAudio => 'Audio';
+
+  @override
+  String get variantCatMisc => 'Misc';
+
+  @override
+  String get variantCatOther => 'Other';
+
+  @override
+  String get variantPickOneSuffix => 'pick one';
+
+  @override
   String get modVariantSelectAll => 'Select all';
 
   @override
   String get modVariantSelectNone => 'None';
+
+  @override
+  String get modVariantInstall => 'Install';
 
   @override
   String modVariantInstallSelected(int count) {
@@ -3164,7 +3237,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get modInstallReasonTextureOnly =>
-      'This is a texture pack (only .dds files, no player model). Install it from the Textures tab instead.';
+      'This is a texture pack (only .dds files). Install it from the Textures tab instead.';
 
   @override
   String modUninstalled(String id) {

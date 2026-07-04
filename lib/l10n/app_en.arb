@@ -1402,6 +1402,16 @@
   "modKindNativeTooltip": "NAMS mod with an entities/ folder. Defines new items, weapons, outfits, accessories, quests etc. via TOML bundles.",
   "modKindData": "DATA",
   "modKindDataTooltip": "The classic mod format - same files that would normally go into NieRAutomata/data/, just managed under nams/mods/ instead keeping original data dir clean",
+  "textureOutfitLinkedTitle": "Outfit-linked textures",
+  "textureOutfitLinkedSubtitle": "These textures live inside their mod folder and load only while that outfit is equipped. NAMS hot-swaps them when you change outfits in-game.",
+  "textureOutfitLinkedEntry": "{count} textures — active only with this outfit",
+  "@textureOutfitLinkedEntry": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "modKindTexture": "TEXTURES",
   "modKindTextureTooltip": "A texture pack. Its .dds files were installed to nams/inject/textures/ and are managed from the Textures tab.",
   "modKindUnknown": "UNKNOWN",
@@ -1518,8 +1528,28 @@
   "modInstallBusy": "Installing mod…",
   "modVariantDialogTitle": "Choose what to install",
   "modVariantDialogSubtitle": "This archive contains multiple options. Pick the ones you want.",
+  "modOutfitChoiceDialogTitle": "Choose what to install",
+  "modOutfitChoiceDialogSubtitle": "Tick everything you want. Each item installs as its own mod. If an outfit ships textures, they come along and you can fine-tune which sets it uses later in the Textures tab.",
+  "variantCatPlayer": "Outfits",
+  "variantCatWeapon": "Weapons",
+  "variantCatAccessory": "Accessories",
+  "variantCatEnemy": "Enemies",
+  "variantCatModelVariant": "Model variants",
+  "variantCatItem": "Items",
+  "variantCatWorldProp": "World props",
+  "variantCatMap": "Maps",
+  "variantCatEffects": "Effects",
+  "variantCatScripting": "Scripting",
+  "variantCatLocalization": "Localization",
+  "variantCatUi": "UI",
+  "variantCatCutscenes": "Cutscenes",
+  "variantCatAudio": "Audio",
+  "variantCatMisc": "Misc",
+  "variantCatOther": "Other",
+  "variantPickOneSuffix": "pick one",
   "modVariantSelectAll": "Select all",
   "modVariantSelectNone": "None",
+  "modVariantInstall": "Install",
   "modVariantInstallSelected": "Install {count}",
   "@modVariantInstallSelected": {
     "placeholders": {
@@ -1560,7 +1590,7 @@
   "modInstallReasonDataEmpty": "No recognisable content found.",
   "modInstallReasonArchiveExtractFailed": "Couldn't extract the archive.",
   "modInstallReasonMoveFailed": "Couldn't move the files into nams/mods/.",
-  "modInstallReasonTextureOnly": "This is a texture pack (only .dds files, no player model). Install it from the Textures tab instead.",
+  "modInstallReasonTextureOnly": "This is a texture pack (only .dds files). Install it from the Textures tab instead.",
   "modUninstalled": "Removed: {id}",
   "@modUninstalled": {
     "placeholders": {

@@ -52,6 +52,7 @@ class ModsStateController extends _$ModsStateController {
     String sourcePath, {
     String? requestedName,
     String? variantSubPath,
+    List<String>? texturePackSubPaths,
     void Function(double percent, String? currentFile)? onExtractProgress,
   }) async {
     final result = await ModsService.install(
@@ -59,6 +60,7 @@ class ModsStateController extends _$ModsStateController {
       sourcePath,
       requestedName: requestedName,
       variantSubPath: variantSubPath,
+      texturePackSubPaths: texturePackSubPaths,
       onExtractProgress: onExtractProgress,
     );
     if (result.success) {
@@ -69,6 +71,28 @@ class ModsStateController extends _$ModsStateController {
       ref.read(detectionRefreshProvider.notifier).state++;
     }
     return result;
+  }
+
+  Future<List<InstallResult>> installVariants(
+    String gameDir,
+    String sourcePath,
+    List<VariantInstallRequest> requests, {
+    void Function(double percent, String? currentFile)? onExtractProgress,
+  }) async {
+    final results = await ModsService.installVariants(
+      gameDir,
+      sourcePath,
+      requests,
+      onExtractProgress: onExtractProgress,
+    );
+    if (results.any((r) => r.success)) {
+      await loadMods(gameDir);
+      await ref
+          .read(configStateControllerProvider.notifier)
+          .autoDetectCutscenes(gameDir);
+      ref.read(detectionRefreshProvider.notifier).state++;
+    }
+    return results;
   }
 
   Future<void> uninstallMod(
