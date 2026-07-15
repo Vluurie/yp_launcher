@@ -20,6 +20,7 @@ import 'package:yp_launcher/services/archive_service.dart';
 import 'package:yp_launcher/services/isolate_service.dart';
 import 'package:yp_launcher/services/mods_service.dart';
 import 'package:yp_launcher/providers/notification_state.dart';
+import 'package:yp_launcher/widgets/hover_button.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
 import 'package:yp_launcher/widgets/busy_guard.dart';
@@ -668,6 +669,8 @@ class _ModsViewState extends ConsumerState<ModsView> {
                                 ),
                               ),
                               SizedBox(width: AppSizes.spacingSM(context)),
+                              _bulkInstallButton(l10n),
+                              SizedBox(width: AppSizes.spacingSM(context)),
                               _helpIconButton(l10n),
                             ],
                           ),
@@ -733,6 +736,136 @@ class _ModsViewState extends ConsumerState<ModsView> {
         if (_busy) BusyOverlay(message: _busyMessage),
       ],
     );
+  }
+
+  Widget _bulkInstallButton(AppLocalizations l10n) {
+    return HoverIconButton(
+      tooltip: l10n.modBulkInstall,
+      bordered: false,
+      padding: EdgeInsets.all(AppSizes.paddingXS(context)),
+      icon: Icon(
+        Icons.library_add_outlined,
+        size: AppSizes.iconLG(context),
+        color: AppColors.textMuted,
+      ),
+      onTap: _handleBulkInstall,
+    );
+  }
+
+  Future<void> _handleBulkInstall() async {
+    final l10n = AppLocalizations.of(context)!;
+    final notif = ref.read(notificationStateControllerProvider.notifier);
+
+    final folder = await FilePicker.getDirectoryPath();
+    if (folder == null || !mounted) return;
+
+    setState(() {
+      _busy = true;
+      _busyMessage = l10n.modBulkInstallScanning;
+    });
+
+    final archives = await IsolateService.run(_findArchivesSync, folder);
+    if (!mounted) return;
+    if (archives.isEmpty) {
+      setState(() => _busy = false);
+      notif.addNotification(NotificationItem(
+        id: 'bulk_none_${DateTime.now().millisecondsSinceEpoch}',
+        message: l10n.modBulkInstallNone,
+        icon: Icons.info_outline,
+        color: AppColors.warning,
+        type: NotificationType.general,
+      ));
+      return;
+    }
+
+    var installed = 0;
+    final failures = <String>[];
+    try {
+      for (var i = 0; i < archives.length; i++) {
+        if (!mounted) return;
+        final archive = archives[i];
+        final baseName = p.basenameWithoutExtension(archive);
+        setState(() {
+          _busyMessage = l10n.modBulkInstallBusy(i + 1, archives.length, baseName);
+        });
+
+        final result = await withBusyGuard(
+          ref,
+          () => _installOneForBulk(archive, prettifyModId(baseName)),
+        );
+        if (result.success) {
+          installed++;
+        } else {
+          failures.add('$baseName: ${result.errorMessage}');
+        }
+      }
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+    if (!mounted) return;
+
+    await ref.read(modsStateControllerProvider.notifier).loadMods(_gameDir);
+    if (!mounted) return;
+
+    notif.addNotification(NotificationItem(
+      id: 'bulk_done_${DateTime.now().millisecondsSinceEpoch}',
+      message: l10n.modBulkInstallDone(installed, archives.length),
+      icon: Icons.check_circle,
+      color: installed == archives.length ? AppColors.success : AppColors.warning,
+      type: NotificationType.general,
+    ));
+    for (final f in failures) {
+      notif.addNotification(NotificationItem(
+        id: 'bulk_fail_${DateTime.now().millisecondsSinceEpoch}_$f',
+        message: l10n.modInstallFailed(f),
+        icon: Icons.error_outline,
+        color: AppColors.error,
+        type: NotificationType.general,
+      ));
+    }
+  }
+
+  /// Installs one archive without any dialogs: name collisions get a numeric
+  /// suffix, and multi-variant packs install every variant.
+  Future<InstallResult> _installOneForBulk(
+    String archive,
+    String requestedName,
+  ) async {
+    final detect = await ModsService.detectDrop(archive);
+
+    if (detect.hasVariants) {
+      final requests = [
+        for (final v in detect.variants)
+          VariantInstallRequest(
+            requestedName: '$requestedName - ${v.label}',
+            variantSubPath: v.subPath,
+          ),
+      ];
+      final results =
+          await ModsService.installVariants(_gameDir, archive, requests);
+      final ok = results.where((r) => r.success).length;
+      if (ok == 0) {
+        return InstallResult.fail(
+          results.firstOrNull?.errorMessage ?? 'unknown',
+        );
+      }
+      return InstallResult.ok(results.firstWhere((r) => r.success).installedId!);
+    }
+
+    var name = requestedName;
+    for (var attempt = 2; attempt < 100; attempt++) {
+      final result = await ModsService.install(
+        _gameDir,
+        archive,
+        requestedName: name,
+      );
+      if (result.success ||
+          result.errorMessage?.startsWith('exists:') != true) {
+        return result;
+      }
+      name = '$requestedName $attempt';
+    }
+    return const InstallResult.fail('exists');
   }
 
   Widget _helpIconButton(AppLocalizations l10n) {
@@ -983,6 +1116,37 @@ class _ModDropClassification {
   final bool valid;
   final String? misroutedTab;
   const _ModDropClassification({required this.valid, this.misroutedTab});
+}
+
+const _bulkArchiveExts = {'.zip', '.7z', '.rar'};
+
+/// Collects mod archives from a folder and its immediate subfolders, which is
+/// how Nexus downloads are usually laid out (one subfolder per mod page).
+List<String> _findArchivesSync(String root) {
+  final out = <String>[];
+  void scan(Directory dir, int depth) {
+    if (depth > 2) return;
+    List<FileSystemEntity> entries;
+    try {
+      entries = dir.listSync(followLinks: false);
+    } catch (_) {
+      return;
+    }
+    for (final entity in entries) {
+      if (entity is Directory) {
+        scan(entity, depth + 1);
+      } else if (entity is File &&
+          _bulkArchiveExts.contains(p.extension(entity.path).toLowerCase())) {
+        out.add(entity.path);
+      }
+    }
+  }
+
+  final dir = Directory(root);
+  if (!dir.existsSync()) return out;
+  scan(dir, 1);
+  out.sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
+  return out;
 }
 
 /// Subdirs accepted INSIDE a `data/` overlay. Includes everything NAMS

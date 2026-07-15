@@ -1355,6 +1355,24 @@
   "modListEmptyHint": "Drop a mod folder or archive into the box above to install.",
   "modSearchPlaceholder": "Search mods…",
   "modFilterAll": "All",
+  "modBulkInstall": "Bulk install from folder",
+  "modBulkInstallBusy": "Installing {done} of {total}: {name}",
+  "@modBulkInstallBusy": {
+    "placeholders": {
+      "done": { "type": "int" },
+      "total": { "type": "int" },
+      "name": { "type": "String" }
+    }
+  },
+  "modBulkInstallScanning": "Scanning folder for mod archives…",
+  "modBulkInstallNone": "No mod archives (.zip / .7z / .rar) found in that folder.",
+  "modBulkInstallDone": "Installed {installed} of {total} mods.",
+  "@modBulkInstallDone": {
+    "placeholders": {
+      "installed": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
   "modGroup2b": "2B OUTFITS",
   "modGroup9s": "9S OUTFITS",
   "modGroupA2": "A2 OUTFITS",

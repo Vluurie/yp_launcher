@@ -2764,6 +2764,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String get modFilterAll => 'All';
 
   @override
+  String get modBulkInstall => 'Bulk install from folder';
+
+  @override
+  String modBulkInstallBusy(int done, int total, String name) {
+    return 'Installing $done of $total: $name';
+  }
+
+  @override
+  String get modBulkInstallScanning => 'Scanning folder for mod archives…';
+
+  @override
+  String get modBulkInstallNone =>
+      'No mod archives (.zip / .7z / .rar) found in that folder.';
+
+  @override
+  String modBulkInstallDone(int installed, int total) {
+    return 'Installed $installed of $total mods.';
+  }
+
+  @override
   String get modGroup2b => '2B OUTFITS';
 
   @override

@@ -1,10 +1,13 @@
 # YoRHa Protocol Launcher
 
-A Windows launcher for the YoRHa Protocol mod for NieR:Automata, built with Flutter. Also supports macOS and Linux via Wine/CrossOver.
+A Windows launcher for NieR:Automata mods, built with Flutter. It drives
+**NAMS** — the mod system that hosts the game — and manages mods, textures,
+cutscenes and NAMS configuration. Also supports macOS and Linux via
+Wine/CrossOver.
 
 ## Requirements
 
-- Flutter SDK ^3.9.2
+- Flutter SDK (Dart `^3.9.2`)
 - NieR:Automata (latest Steam version)
 - Windows (native), or macOS/Linux with Wine or CrossOver
 
@@ -22,13 +25,19 @@ flutter pub get
 dart run build_runner build --delete-conflicting-outputs
 ```
 
+Re-run this after adding or changing a `@Riverpod` provider.
+
 ### 3. Add Required Files
 
-Place the following files in `assets/bins/`:
+The launcher ships NAMS and its plugins in `assets/bins/`:
 
-- `launch_nier.exe` - Launcher executable
-- `modloader.dll` - Modloader library
-- `yorha_protocol.dll` - YoRHa Protocol mod library
+```
+assets/bins/
+├── NAMS.exe                    # the mod system; hosts and runs the game
+├── 7z.exe, 7z.dll              # archive extraction for mod installs
+└── plugins/
+    └── yorha_protocol.dll      # YoRHa Protocol plugin, loaded by NAMS
+```
 
 ## Building
 
@@ -39,28 +48,50 @@ flutter build windows
 ## Usage
 
 1. Launch the application
-2. Click **SELECT** to choose your `NieR:Automata.exe` file
+2. Click **SELECT** to choose your `NieRAutomata.exe` file
 3. The launcher validates the executable (checks for the `PRJ_028` signature)
-4. Click **PLAY** to start NieR:Automata with the YoRHa Protocol mod
-5. Click **STOP** to terminate the game
+   and remembers the folder it lives in
+4. Click **PLAY** to start the game through NAMS
+5. Click **STOP** to terminate it
 
 ## How It Works
 
-On first launch, mod files are copied from bundled assets to a launcher directory:
-
-- **Windows:** `%APPDATA%\YoRHaProtocolLauncher`
-- **macOS (CrossOver):** `~/Library/Application Support/CrossOver/Bottles/<bottle>/drive_c/users/<user>/AppData/Roaming/YoRHaProtocolLauncher`
-- **Linux (Wine):** `~/.wine/drive_c/users/<user>/AppData/Roaming/YoRHaProtocolLauncher`
-- **macOS (native):** `~/Library/Application Support/YoRHaProtocolLauncher`
-- **Linux (native):** `~/.local/share/YoRHaProtocolLauncher`
-
-When you click PLAY, the launcher executes:
+The launcher is portable — nothing is copied into AppData. NAMS and its plugins
+stay where they ship, which at runtime is:
 
 ```
-launch_nier.exe --modloader-dll <path> --mod-dll <path>
+<launcher exe dir>/data/flutter_assets/assets/bins/
 ```
 
-The working directory is set to your NieR:Automata installation folder.
+That directory is also NAMS's working directory. On **PLAY** the launcher runs:
+
+```
+NAMS.exe run --nier-path <game dir>
+```
+
+The game runs *inside* the NAMS host process via `game.bin` — there is no
+separate `NieRAutomata.exe` process and no DLL injection. Stopping the game
+means terminating `NAMS.exe`.
+
+Plugins are enabled by file presence: NAMS loads whatever sits in
+`bins/plugins/`. `yorha_protocol.dll` is always present there.
+
+### Configuration and mods
+
+Everything the launcher writes lives under your game folder in `nams/`:
+
+| Path | Purpose |
+| --- | --- |
+| `nams/nams.toml` | NAMS engine + content settings |
+| `nams/lodmod.toml` | LodMod visual settings |
+| `nams/texture_injection.toml` | texture pack load order and VRAM budget |
+| `nams/disabled_mods.toml` | mods excluded at boot |
+| `nams/mod_names.json` | custom mod display names (launcher-only) |
+| `nams/mods/` | installed mods |
+| `nams/inject/textures/` | texture packs |
+| `nams/cutscenes/` | cutscene mods |
+
+The one exception is `%APPDATA%/NAMS/settings.json`, which the mod itself owns.
 
 ## Links
 

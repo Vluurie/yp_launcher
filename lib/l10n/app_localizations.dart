@@ -4803,6 +4803,36 @@ abstract class AppLocalizations {
   /// **'All'**
   String get modFilterAll;
 
+  /// No description provided for @modBulkInstall.
+  ///
+  /// In en, this message translates to:
+  /// **'Bulk install from folder'**
+  String get modBulkInstall;
+
+  /// No description provided for @modBulkInstallBusy.
+  ///
+  /// In en, this message translates to:
+  /// **'Installing {done} of {total}: {name}'**
+  String modBulkInstallBusy(int done, int total, String name);
+
+  /// No description provided for @modBulkInstallScanning.
+  ///
+  /// In en, this message translates to:
+  /// **'Scanning folder for mod archives…'**
+  String get modBulkInstallScanning;
+
+  /// No description provided for @modBulkInstallNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No mod archives (.zip / .7z / .rar) found in that folder.'**
+  String get modBulkInstallNone;
+
+  /// No description provided for @modBulkInstallDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Installed {installed} of {total} mods.'**
+  String modBulkInstallDone(int installed, int total);
+
   /// No description provided for @modGroup2b.
   ///
   /// In en, this message translates to:
