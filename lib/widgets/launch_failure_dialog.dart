@@ -208,7 +208,7 @@ class _LaunchFailureDialogState extends State<_LaunchFailureDialog> {
           context,
           accent: accent,
           icon: Icons.report_outlined,
-          title: 'Reported by launch_nier',
+          title: 'Reported by NAMS',
           body: SelectableText(
             failure.headline,
             style: TextStyle(

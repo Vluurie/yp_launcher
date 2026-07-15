@@ -6,7 +6,11 @@ import 'package:yp_launcher/services/isolate_service.dart';
 class ArchiveService {
   static String? _cached7zPath;
 
+  static String? overrideSevenZipPath;
+
   static String _get7zPath() {
+    final override = overrideSevenZipPath;
+    if (override != null && File(override).existsSync()) return override;
     if (_cached7zPath != null) return _cached7zPath!;
     final appDir = File(Platform.resolvedExecutable).parent.path;
     final candidates = [

@@ -125,6 +125,13 @@ class NamsFields {
     tooltip: (l) => l.tooltipContentBuddyRubySelector,
   );
 
+  static final outfitSwapVisualEffects = ConfigField<bool>(
+    key: 'outfit_swap_visual_effects',
+    defaultValue: true,
+    label: (l) => l.labelOutfitSwapVisualEffects,
+    tooltip: (l) => l.tooltipOutfitSwapVisualEffects,
+  );
+
   static final disableReShadeLoading = ConfigField<bool>(
     key: 'disable_reshade_loading',
     defaultValue: false,
@@ -137,6 +144,13 @@ class NamsFields {
     defaultValue: false,
     label: (l) => l.labelDisableTextureInjection,
     tooltip: (l) => l.tooltipDisableTextureInjection,
+  );
+
+  static final disableSplashScreen = ConfigField<bool>(
+    key: 'disable_splash_screen',
+    defaultValue: false,
+    label: (l) => l.labelDisableSplashScreen,
+    tooltip: (l) => l.tooltipDisableSplashScreen,
   );
 
   static final fixCameraAcceleration = ConfigField<bool>(

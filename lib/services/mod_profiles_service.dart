@@ -131,6 +131,37 @@ String _textureInjectionTomlPath(String gameDir) =>
 
 String _modsActiveDir(String gameDir) => path.join(gameDir, 'nams', 'mods');
 
+void _backupOrphan(String gameDir, String from) {
+  final orphan = Directory(_modsInactiveDir(gameDir, from));
+  final orphanDisabled = File(_disabledInactivePath(gameDir, from));
+  if (!orphan.existsSync() && !orphanDisabled.existsSync()) return;
+
+  final backupRoot = Directory(path.join(gameDir, 'nams', '.orphan_backup'));
+  if (!backupRoot.existsSync()) backupRoot.createSync(recursive: true);
+
+  if (orphan.existsSync()) {
+    var n = 1;
+    var dest = path.join(backupRoot.path, '${_profilePrefixName(from)}_$n');
+    while (Directory(dest).existsSync()) {
+      n++;
+      dest = path.join(backupRoot.path, '${_profilePrefixName(from)}_$n');
+    }
+    orphan.renameSync(dest);
+  }
+  if (orphanDisabled.existsSync()) {
+    var n = 1;
+    var dest = path.join(backupRoot.path, 'disabled_${from}_$n.toml');
+    while (File(dest).existsSync()) {
+      n++;
+      dest = path.join(backupRoot.path, 'disabled_${from}_$n.toml');
+    }
+    orphanDisabled.renameSync(dest);
+  }
+}
+
+String _profilePrefixName(String name) =>
+    '${ModProfilesService._profilePrefix}$name';
+
 String _modsInactiveDir(String gameDir, String name) =>
     path.join(gameDir, 'nams', '${ModProfilesService._profilePrefix}$name');
 
@@ -328,15 +359,13 @@ ModProfileState _createProfileSync(_CreateParams p) {
   }
 
   final from = state.activeName;
+  _backupOrphan(p.gameDir, from);
 
   // Step A: park active disabled_mods.toml under from's name.
   final disabledFromTarget = _disabledInactivePath(p.gameDir, from);
   final disabledActiveFile = File(_disabledActivePath(p.gameDir));
   var didMoveDisabled = false;
   if (disabledActiveFile.existsSync()) {
-    if (File(disabledFromTarget).existsSync()) {
-      throw ProfileSwitchException('disabled_collision');
-    }
     disabledActiveFile.renameSync(disabledFromTarget);
     didMoveDisabled = true;
   }
@@ -344,12 +373,6 @@ ModProfileState _createProfileSync(_CreateParams p) {
   // Step B: park current mods/ as mods_profile_<from>/.
   final activeMods = Directory(_modsActiveDir(p.gameDir));
   final fromInactive = Directory(_modsInactiveDir(p.gameDir, from));
-  if (fromInactive.existsSync()) {
-    if (didMoveDisabled) {
-      File(disabledFromTarget).renameSync(_disabledActivePath(p.gameDir));
-    }
-    throw ProfileSwitchException('inactive_collision');
-  }
   try {
     activeMods.renameSync(fromInactive.path);
   } catch (e) {
@@ -397,12 +420,7 @@ ModProfileState _switchProfileSync(_SwitchParams p) {
   if (!Directory(_modsActiveDir(p.gameDir)).existsSync()) {
     throw ProfileSwitchException('active_missing');
   }
-  if (Directory(_modsInactiveDir(p.gameDir, from)).existsSync()) {
-    throw ProfileSwitchException('inactive_collision');
-  }
-  if (File(_disabledInactivePath(p.gameDir, from)).existsSync()) {
-    throw ProfileSwitchException('disabled_collision');
-  }
+  _backupOrphan(p.gameDir, from);
 
   // Step A: park active disabled_mods.toml under from's name.
   var didMoveDisabledFrom = false;

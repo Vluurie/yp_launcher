@@ -5,13 +5,12 @@ import 'package:ffi/ffi.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as path;
 import 'package:yp_launcher/constants/app_strings.dart';
+import 'package:yp_launcher/l10n/app_localizations.dart';
 import 'package:yp_launcher/services/launch_failure.dart';
 import 'package:yp_launcher/services/launcher_setup_service.dart';
 import 'package:yp_launcher/services/log_service.dart';
 import 'package:yp_launcher/services/mods_service.dart';
 import 'package:yp_launcher/services/platform_detection_service.dart';
-import 'package:yp_launcher/services/plugins_service.dart';
-import 'package:yp_launcher/services/steam_service.dart';
 import 'package:win32/win32.dart' if (dart.library.html) '';
 
 class LaunchOutcome {
@@ -27,6 +26,7 @@ class ProcessService {
   static Future<LaunchOutcome> startNierAutomata({
     required String installDirectory,
     required VoidCallback onProcessStopped,
+    required AppLocalizations l10n,
   }) async {
     try {
       await LauncherSetupService.ensureReady();
@@ -38,6 +38,15 @@ class ProcessService {
           rawOutput:
               'Missing required files in launcher directory:\n${missing.join('\n')}\n\n'
               'These files were quarantined or removed by antivirus software.',
+        ));
+      }
+
+      if (!await LauncherSetupService.isLauncherDirWritable()) {
+        return LaunchOutcome.failed(LaunchFailure(
+          headline: l10n.errorDirNotWritable,
+          rawOutput: l10n.errorDirNotWritableBody(
+            LauncherSetupService.launcherDirectory,
+          ),
         ));
       }
 
@@ -54,26 +63,22 @@ class ProcessService {
         ));
       }
 
-      // Best-effort: try to start Steam if it isn't running. If this fails,
-      // we still attempt the game launch — NAMS will surface its own Steam
-      // error if the game can't initialise its Steam connection.
-      await SteamService.ensureRunning();
+      final namsDir = path.join(installDirectory, 'nams');
+      if (!await LauncherSetupService.isDirWritable(namsDir)) {
+        return LaunchOutcome.failed(LaunchFailure(
+          headline: l10n.errorGameDirNotWritable,
+          rawOutput: l10n.errorGameDirNotWritableBody(installDirectory, namsDir),
+        ));
+      }
 
-      await LauncherSetupService.invalidateDecryptCacheIfChanged(nierExePath);
       await ModsService.syncDlcSlots(installDirectory);
 
-      final pluginPaths = await PluginsService.enabledPaths();
-
-      final List<String> arguments = _buildLaunchArguments(
-        modloaderDllPath: launcherPaths['modloaderDll']!,
-        yorhaDllPath: launcherPaths['yorhaDll']!,
-        extraModDllPaths: pluginPaths,
-      );
+      final List<String> arguments = _buildRunArguments(gameDir: installDirectory);
 
       final process = await Process.start(
-        launcherPaths['launcherExe']!,
+        launcherPaths['namsExe']!,
         arguments,
-        workingDirectory: installDirectory,
+        workingDirectory: launcherPaths['launcherDir']!,
         mode: ProcessStartMode.normal,
       );
 
@@ -82,49 +87,32 @@ class ProcessService {
       process.stdout.transform(const SystemEncoding().decoder).listen(stdoutBuf.write);
       process.stderr.transform(const SystemEncoding().decoder).listen(stderrBuf.write);
 
-      // Race: did the game window appear, OR did launch_nier exit early?
       final exitFuture = process.exitCode;
-      final startedFuture = _waitForProcessStart(
-        AppStrings.gameExeName,
-        timeout: const Duration(seconds: 60),
+      final graceFuture = Future<int?>.delayed(
+        const Duration(seconds: 10),
+        () => null,
       );
 
-      final result = await Future.any([
-        exitFuture.then((code) => _RaceResult.exited(code)),
-        startedFuture.then((s) => s
-            ? const _RaceResult.started()
-            : const _RaceResult.timeout()),
-      ]);
+      final exitCode = await Future.any([exitFuture, graceFuture]);
 
-      if (result.kind == _RaceKind.started) {
-        unawaited(_monitorProcess(AppStrings.gameExeName, onProcessStopped));
+      if (exitCode == null) {
+        unawaited(_monitorProcess(AppStrings.namsExeName, onProcessStopped));
         return const LaunchOutcome.started();
       }
 
-      // launch_nier exited early or we timed out. Wait for any remaining
-      // stdio drain so the captured output is complete.
-      try {
-        await exitFuture.timeout(const Duration(milliseconds: 500));
-      } catch (_) {}
-
       final combined = '${stdoutBuf.toString()}${stderrBuf.toString()}';
-      final logPath = await _writeCapturedLog(combined, exitCode: result.exitCode);
+      final logPath = await _writeCapturedLog(combined, exitCode: exitCode);
 
       final parsed = LaunchFailureParser.parse(combined, capturedLogPath: logPath);
       if (parsed != null) {
         return LaunchOutcome.failed(parsed);
       }
 
-      // No structured error block. Synthesise a fallback failure with whatever
-      // info we have.
-      final headline = result.kind == _RaceKind.timeout
-          ? 'Game did not start within 60 seconds'
-          : 'launch_nier exited with code ${result.exitCode ?? "?"}';
       return LaunchOutcome.failed(LaunchFailure(
-        code: result.exitCode,
-        headline: headline,
+        code: exitCode,
+        headline: 'NAMS exited with code $exitCode',
         rawOutput: combined.isEmpty
-            ? '(launch_nier produced no output)'
+            ? '(NAMS produced no output)'
             : combined,
         capturedLogPath: logPath,
       ));
@@ -148,9 +136,9 @@ class ProcessService {
           .toIso8601String()
           .replaceAll(':', '-')
           .replaceAll('.', '-');
-      final out = path.join(dir.path, 'launch_nier_$stamp.log');
+      final out = path.join(dir.path, 'nams_$stamp.log');
       final header = StringBuffer()
-        ..writeln('launch_nier captured output')
+        ..writeln('NAMS captured output')
         ..writeln('Generated: ${DateTime.now().toIso8601String()}')
         ..writeln('Exit code: ${exitCode ?? '<not exited>'}')
         ..writeln('=' * 60)
@@ -162,29 +150,20 @@ class ProcessService {
     }
   }
 
-  /// Builds the exact `cd <gameDir> && <launchExe> <args>` command we'd run.
-  /// Returns null if the launcher binaries haven't been extracted yet.
-  /// Safe to call without launching — used by the failure dialog and
-  /// "Copy launch command" affordances to give users something they can paste
-  /// into a terminal for debugging.
   static Future<String?> buildLaunchCommandPreview({
     required String installDirectory,
   }) async {
     try {
       final paths = await LauncherSetupService.getLauncherPaths();
-      final pluginPaths = await PluginsService.enabledPaths();
-      final args = _buildLaunchArguments(
-        modloaderDllPath: paths['modloaderDll']!,
-        yorhaDllPath: paths['yorhaDll']!,
-        extraModDllPaths: pluginPaths,
-      );
-      final exe = paths['launcherExe']!;
+      final args = _buildRunArguments(gameDir: installDirectory);
+      final exe = paths['namsExe']!;
+      final launcherDir = paths['launcherDir']!;
       final quotedArgs = args.map(_shellQuote).join(' ');
       if (Platform.isWindows) {
-        return 'cd /d ${_shellQuote(installDirectory)}\r\n'
+        return 'cd /d ${_shellQuote(launcherDir)}\r\n'
             '${_shellQuote(exe)} $quotedArgs';
       }
-      return 'cd ${_shellQuote(installDirectory)} && '
+      return 'cd ${_shellQuote(launcherDir)} && '
           '${_shellQuote(exe)} $quotedArgs';
     } catch (_) {
       return null;
@@ -201,11 +180,7 @@ class ProcessService {
     return '"$escaped"';
   }
 
-  static List<String> _buildLaunchArguments({
-    required String modloaderDllPath,
-    required String yorhaDllPath,
-    List<String> extraModDllPaths = const [],
-  }) {
+  static List<String> _buildRunArguments({required String gameDir}) {
     String formatPath(String filePath) {
       if (Platform.isWindows) {
         return filePath.replaceAll('/', '\\');
@@ -220,22 +195,16 @@ class ProcessService {
       }
     }
 
-    final args = <String>[
-      AppStrings.argModloaderDll,
-      formatPath(modloaderDllPath),
-      AppStrings.argModDll,
-      formatPath(yorhaDllPath),
+    return <String>[
+      AppStrings.argRun,
+      AppStrings.argNierPath,
+      formatPath(gameDir),
     ];
-    for (final extra in extraModDllPaths) {
-      args.add(AppStrings.argModDll);
-      args.add(formatPath(extra));
-    }
-    return args;
   }
 
   static bool terminateNierAutomata() {
     if (Platform.isWindows) {
-      return _terminateProcessByName(AppStrings.gameExeName);
+      return _terminateProcessByName(AppStrings.namsExeName);
     } else if (PlatformDetectionService.isWine) {
       try {
         Process.runSync('wineserver', ['-k']);
@@ -244,7 +213,7 @@ class ProcessService {
         try {
           final result = Process.runSync('pkill', [
             '-f',
-            AppStrings.gameExeName,
+            AppStrings.namsExeName,
           ]);
           return result.exitCode == 0;
         } catch (_) {
@@ -253,7 +222,7 @@ class ProcessService {
       }
     } else {
       try {
-        final result = Process.runSync('pkill', ['-f', AppStrings.gameExeName]);
+        final result = Process.runSync('pkill', ['-f', AppStrings.namsExeName]);
         return result.exitCode == 0;
       } catch (_) {
         return false;
@@ -262,7 +231,7 @@ class ProcessService {
   }
 
   static bool isNierAutomataRunning() {
-    return _isProcessRunning(AppStrings.gameExeName);
+    return _isProcessRunning(AppStrings.namsExeName);
   }
 
   static Future<bool> isNierAutomataRunningAsync() async {
@@ -270,38 +239,26 @@ class ProcessService {
       try {
         final result = await Process.run('tasklist', [
           '/FI',
-          'IMAGENAME eq ${AppStrings.gameExeName}',
+          'IMAGENAME eq ${AppStrings.namsExeName}',
           '/NH',
         ]);
         return result.stdout.toString().toLowerCase().contains(
-          AppStrings.gameExeName.toLowerCase(),
+          AppStrings.namsExeName.toLowerCase(),
         );
       } catch (_) {
-        return _isProcessRunning(AppStrings.gameExeName);
+        return _isProcessRunning(AppStrings.namsExeName);
       }
     } else {
       try {
         final result = await Process.run('pgrep', [
           '-f',
-          AppStrings.gameExeName,
+          AppStrings.namsExeName,
         ]);
         return result.exitCode == 0;
       } catch (_) {
         return false;
       }
     }
-  }
-
-  static Future<bool> _waitForProcessStart(
-    String processName, {
-    required Duration timeout,
-  }) async {
-    final deadline = DateTime.now().add(timeout);
-    while (DateTime.now().isBefore(deadline)) {
-      if (await isNierAutomataRunningAsync()) return true;
-      await Future.delayed(const Duration(seconds: 1));
-    }
-    return false;
   }
 
   static Future<void> _monitorProcess(
@@ -328,7 +285,7 @@ class ProcessService {
     final cbNeeded = calloc<Uint32>();
 
     try {
-      if (EnumProcesses(processIds, cb, cbNeeded) == 0) {
+      if (!EnumProcesses(processIds, cb, cbNeeded).value) {
         return false;
       }
 
@@ -338,14 +295,16 @@ class ProcessService {
       for (var i = 0; i < count; i++) {
         final processHandle = OpenProcess(
           PROCESS_QUERY_INFORMATION | PROCESS_VM_READ,
-          FALSE,
+          false,
           processIds[i],
-        );
+        ).value;
 
         if (processHandle != NULL) {
           final exeName = wsalloc(MAX_PATH);
           try {
-            if (GetModuleBaseName(processHandle, NULL, exeName, MAX_PATH) > 0) {
+            if (GetModuleBaseName(processHandle, null, PWSTR(exeName), MAX_PATH)
+                    .value >
+                0) {
               final currentName = exeName.toDartString().toLowerCase();
               if (currentName.startsWith(targetName)) {
                 return true;
@@ -375,7 +334,7 @@ class ProcessService {
     final cbNeeded = calloc<Uint32>();
 
     try {
-      if (EnumProcesses(processIds, cb, cbNeeded) == 0) {
+      if (!EnumProcesses(processIds, cb, cbNeeded).value) {
         return false;
       }
 
@@ -385,17 +344,19 @@ class ProcessService {
       for (var i = 0; i < count; i++) {
         final processHandle = OpenProcess(
           PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_TERMINATE,
-          FALSE,
+          false,
           processIds[i],
-        );
+        ).value;
 
         if (processHandle != NULL) {
           final exeName = wsalloc(MAX_PATH);
           try {
-            if (GetModuleBaseName(processHandle, NULL, exeName, MAX_PATH) > 0) {
+            if (GetModuleBaseName(processHandle, null, PWSTR(exeName), MAX_PATH)
+                    .value >
+                0) {
               final currentName = exeName.toDartString().toLowerCase();
               if (currentName == targetName) {
-                final terminated = TerminateProcess(processHandle, 0) != 0;
+                final terminated = TerminateProcess(processHandle, 0).value;
                 return terminated;
               }
             }
@@ -424,18 +385,4 @@ class ProcessException implements Exception {
 
   @override
   String toString() => message;
-}
-
-enum _RaceKind { started, exited, timeout }
-
-class _RaceResult {
-  final _RaceKind kind;
-  final int? exitCode;
-  const _RaceResult.started()
-      : kind = _RaceKind.started,
-        exitCode = null;
-  const _RaceResult.timeout()
-      : kind = _RaceKind.timeout,
-        exitCode = null;
-  const _RaceResult.exited(this.exitCode) : kind = _RaceKind.exited;
 }

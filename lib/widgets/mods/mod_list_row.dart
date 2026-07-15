@@ -4,9 +4,12 @@ import 'package:yp_launcher/l10n/app_localizations.dart';
 import 'package:yp_launcher/models/installed_mod.dart';
 import 'package:yp_launcher/providers/app_state.dart';
 import 'package:yp_launcher/providers/disabled_mods_state.dart';
+import 'package:yp_launcher/providers/mod_names_state.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
+import 'package:yp_launcher/widgets/hover_button.dart';
 import 'package:yp_launcher/widgets/mods/mod_kind_badge.dart';
+import 'package:yp_launcher/widgets/mods/mod_naming.dart';
 
 class ModListRow extends ConsumerStatefulWidget {
   final InstalledMod mod;
@@ -34,10 +37,13 @@ class _ModListRowState extends ConsumerState<ModListRow> {
     final l10n = AppLocalizations.of(context)!;
     final m = widget.mod;
     final disabled = ref.watch(disabledModsStateControllerProvider).isDisabled(_relPath);
+    final customName =
+        ref.watch(modNamesStateControllerProvider).customNameOf(m.id);
+    final displayName = customName ?? m.displayName;
     final showDataChip = m.kind == ModKind.native && m.hasDataOverlay;
     final showCompatChip = m.data?.hasCompatConfig == true;
 
-    return MouseRegion(
+    final row = MouseRegion(
       cursor: SystemMouseCursors.click,
       onEnter: (_) => setState(() => _hovered = true),
       onExit: (_) => setState(() => _hovered = false),
@@ -64,7 +70,7 @@ class _ModListRowState extends ConsumerState<ModListRow> {
               children: [
                 Expanded(
                   child: Text(
-                    m.displayName,
+                    displayName,
                     style: TextStyle(
                       fontSize: AppSizes.fontMD(context),
                       color: AppColors.textPrimary,
@@ -98,6 +104,18 @@ class _ModListRowState extends ConsumerState<ModListRow> {
                   ),
                 ],
                 SizedBox(width: AppSizes.spacingMD(context)),
+                if (_hovered || widget.selected)
+                  HoverIconButton(
+                    tooltip: l10n.modRename,
+                    bordered: false,
+                    padding: EdgeInsets.all(AppSizes.paddingXS(context)),
+                    icon: Icon(
+                      Icons.edit_outlined,
+                      size: AppSizes.iconSM(context),
+                      color: AppColors.textMuted,
+                    ),
+                    onTap: () => _onRename(l10n, customName),
+                  ),
                 _DisableToggle(
                   disabled: disabled,
                   onTap: () {
@@ -115,6 +133,24 @@ class _ModListRowState extends ConsumerState<ModListRow> {
         ),
       ),
     );
+
+    return row;
+  }
+
+  Future<void> _onRename(AppLocalizations l10n, String? customName) async {
+    final mod = widget.mod;
+    final name = await showModNamingDialog(
+      context,
+      initial: customName ?? mod.displayName,
+      title: l10n.modRenameDialogTitle,
+    );
+    if (name == null || !mounted) return;
+    final gameDir = ref.read(appStateControllerProvider).selectedDirectory;
+    await ref.read(modNamesStateControllerProvider.notifier).rename(
+          gameDir,
+          mod.id,
+          name == mod.displayName ? null : name,
+        );
   }
 }
 

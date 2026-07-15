@@ -187,15 +187,12 @@ void installTexturesWithProgress(TextureInstallProgressParams params) {
   int filesDone = 0;
   int lastReport = 0;
 
-  for (final (file, folderName) in allFiles) {
+  for (final (file, relTarget) in allFiles) {
     final String targetPath;
-    if (folderName.isEmpty) {
+    if (relTarget.isEmpty) {
       targetPath = path.join(params.textureDir, path.basename(file.path));
     } else {
-      final targetDir = Directory(path.join(params.textureDir, folderName));
-      targetDir.createSync(recursive: true);
-      final baseName = path.basename(file.path);
-      targetPath = path.join(targetDir.path, baseName);
+      targetPath = path.join(params.textureDir, relTarget);
     }
 
     File(targetPath).parent.createSync(recursive: true);
@@ -237,13 +234,20 @@ void installTexturesWithProgress(TextureInstallProgressParams params) {
   params.sendPort.send({'type': 'done', 'count': filesDone});
 }
 
+const _textureWrapperSegments = {
+  'sk_res', 'far_res', 'inject', 'textures', 'nierautomata.exe',
+};
+
 void collectTextureFiles(String sourcePath, String folderName, List<(File, String)> result) {
   final sourceDir = Directory(sourcePath);
   if (!sourceDir.existsSync()) return;
   for (final file in sourceDir.listSync(recursive: true)) {
     if (file is! File || !isTexture(file.path)) continue;
     final relativePath = path.relative(file.path, from: sourcePath);
-    final combined = path.join(folderName, relativePath);
+    final segments = path.split(relativePath)
+      ..removeWhere((s) => _textureWrapperSegments.contains(s.toLowerCase()));
+    final cleanRel = segments.isEmpty ? path.basename(file.path) : path.joinAll(segments);
+    final combined = path.join(folderName, cleanRel);
     result.add((file, combined));
   }
 }

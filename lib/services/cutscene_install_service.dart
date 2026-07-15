@@ -75,7 +75,7 @@ class CutsceneInstallService {
   }
 
   Future<void> handleBrowse() async {
-    final result = await FilePicker.platform.pickFiles(
+    final result = await FilePicker.pickFiles(
       type: FileType.custom,
       allowedExtensions: const ['zip', '7z', 'rar'],
     );
@@ -85,7 +85,7 @@ class CutsceneInstallService {
   }
 
   Future<void> handleBrowseFolder() async {
-    final result = await FilePicker.platform.getDirectoryPath(
+    final result = await FilePicker.getDirectoryPath(
       dialogTitle: AppLocalizations.of(context)!.selectCutsceneModFolder,
     );
     if (result == null) return;

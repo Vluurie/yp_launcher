@@ -6,22 +6,59 @@ part of 'log_state.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$logStateControllerHash() =>
-    r'584e7837743d7d8ec9e1e1cb50fc235d267a0480';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// See also [LogStateController].
 @ProviderFor(LogStateController)
-final logStateControllerProvider =
-    NotifierProvider<LogStateController, LogData>.internal(
-      LogStateController.new,
-      name: r'logStateControllerProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$logStateControllerHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+const logStateControllerProvider = LogStateControllerProvider._();
 
-typedef _$LogStateController = Notifier<LogData>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+final class LogStateControllerProvider
+    extends $NotifierProvider<LogStateController, LogData> {
+  const LogStateControllerProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'logStateControllerProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$logStateControllerHash();
+
+  @$internal
+  @override
+  LogStateController create() => LogStateController();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(LogData value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<LogData>(value),
+    );
+  }
+}
+
+String _$logStateControllerHash() =>
+    r'80b238f94da6b13bcc588789f3bffd8dcd6b1803';
+
+abstract class _$LogStateController extends $Notifier<LogData> {
+  LogData build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<LogData, LogData>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<LogData, LogData>,
+              LogData,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}

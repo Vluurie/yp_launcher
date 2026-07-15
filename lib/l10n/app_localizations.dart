@@ -301,13 +301,13 @@ abstract class AppLocalizations {
   /// No description provided for @errorFilesQuarantined.
   ///
   /// In en, this message translates to:
-  /// **'Missing launcher files: {files}. This is often caused by antivirus software. We use DLL injection to load mods at runtime — this is standard for game modding but can trigger false positives. Restore the files from quarantine or re-download the launcher, then add an exclusion for the launcher install folder and %APPDATA%/YoRHaProtocolLauncher/.'**
+  /// **'Missing launcher files: {files}. This is often caused by antivirus software. We load mods at runtime — standard for game modding but it can trigger false positives. Restore the files from quarantine or re-download the launcher, then add an exclusion for the launcher install folder (the folder containing NAMS.exe).'**
   String errorFilesQuarantined(String files);
 
   /// No description provided for @notifyFilesQuarantined.
   ///
   /// In en, this message translates to:
-  /// **'Missing launcher files detected. This is often caused by antivirus software. We use DLL injection to load mods, which is normal for game modding but may trigger false positives. Restore the files from quarantine or re-download the launcher, then add an exclusion for the launcher install folder and %APPDATA%/YoRHaProtocolLauncher/.'**
+  /// **'Missing launcher files detected. This is often caused by antivirus software. We load mods at runtime, which is normal for game modding but may trigger false positives. Restore the files from quarantine or re-download the launcher, then add an exclusion for the launcher install folder (the folder containing NAMS.exe).'**
   String get notifyFilesQuarantined;
 
   /// No description provided for @featureReshade.
@@ -435,6 +435,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'NierAutomata.exe not found in {dir}'**
   String errorExeNotFound(String dir);
+
+  /// No description provided for @errorDirNotWritable.
+  ///
+  /// In en, this message translates to:
+  /// **'Launcher folder is read-only'**
+  String get errorDirNotWritable;
+
+  /// No description provided for @errorDirNotWritableBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The YP Launcher folder cannot be written to:\n{dir}\n\nNAMS writes its runtime cache, plugins and logs next to NAMS.exe, so the launcher folder must be writable.\n\nHow to fix it:\n1. Close the launcher.\n2. Move the whole extracted YP Launcher folder out of Program Files (or any protected location) into a normal folder you own — for example Desktop, Documents, or D:\\Games\\YP Launcher.\n3. Start the launcher again from the new location.\n\nAlternative: right-click the launcher .exe and choose \"Run as administrator\" to allow writing in the current location.'**
+  String errorDirNotWritableBody(String dir);
+
+  /// No description provided for @errorGameDirNotWritable.
+  ///
+  /// In en, this message translates to:
+  /// **'Game folder is read-only'**
+  String get errorGameDirNotWritable;
+
+  /// No description provided for @errorGameDirNotWritableBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The game folder cannot be written to:\n{gameDir}\n\nNAMS writes mods and configs into:\n{namsDir}\nbut it cannot create files there. NieR is probably installed under C:\\Program Files (x86)\\Steam, which Windows protects.\n\nHow to fix it (recommended — move the Steam library off Program Files):\n1. Open Steam > Settings > Storage.\n2. Click the drive dropdown > \"Add Drive\" and pick a folder on another drive (for example D:\\SteamLibrary).\n3. Go to your Library, right-click NieR:Automata > Properties > Installed Files > \"Move install folder\", and move it to the new library.\n4. Re-select the game in this launcher and press Play again.\n\nQuick alternative: right-click the launcher .exe and choose \"Run as administrator\" so it can write into Program Files. Moving the library is the cleaner long-term fix.'**
+  String errorGameDirNotWritableBody(String gameDir, String namsDir);
 
   /// No description provided for @headerNams.
   ///
@@ -1119,18 +1143,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Deleting cutscene mod...'**
   String get busyDeletingCutscene;
-
-  /// No description provided for @busyDeletingPlugin.
-  ///
-  /// In en, this message translates to:
-  /// **'Deleting plugin...'**
-  String get busyDeletingPlugin;
-
-  /// No description provided for @pluginValidatingInstalling.
-  ///
-  /// In en, this message translates to:
-  /// **'Validating and installing plugin...'**
-  String get pluginValidatingInstalling;
 
   /// No description provided for @busyCloseTitle.
   ///
@@ -2221,7 +2233,7 @@ abstract class AppLocalizations {
   /// No description provided for @modsTutorialEcosystemStep2Body.
   ///
   /// In en, this message translates to:
-  /// **'**NAMS is the modloader.** It\'s not a proxy DLL hijacking `dxgi.dll` or `d3d11.dll` like older tools did — that\'s the very mechanism that caused the conflicts in the first place.\n\nInstead, NAMS ships as `modloader.dll` and is **injected at startup by `launch_nier.exe`**, a small bootstrapper that takes responsibility for the load. NAMS doesn\'t compete with the system DLLs — it sits inside the game\'s own process from the first frame, with full control over what\'s about to load.\n\nFrom there, NAMS does two big things:\n\n**1. Reimplements the features other tools used to provide** — LodMod, Limit Break, texture injection, fast loading — natively, in one coordinated layer. Mods plug into NAMS APIs instead of fighting over which DLL hook gets called first.\n\n**2. Provides a virtual file system (VFS):**\n\n- Every mod lives in its own folder under `nams/mods/<modId>/` — never overwriting real game files.\n- At runtime NAMS overlays active mods into the engine\'s view of `data/`.\n- Your vanilla `data/*.cpk` and `NieRAutomata.exe` are **never modified**, so launching unmodded through Steam still works exactly as before.\n\nMods declare what they change in a manifest. NAMS validates and loads them in a defined order, so you finally get **clean enable/disable per mod** and **knowable conflict detection** — neither was possible with the old drop-files-into-`data` approach.\n\n### How this fits together\n\nThis launcher is **not** built directly on top of NieR:Automata. It doesn\'t reverse-engineer the game, hook engine functions, or know anything about `.dat`/`.dtt` formats on its own. The order is:\n\n1. **NieR:Automata** — the game, untouched.\n2. **NAMS** — the modloader, designed first to make scalable modding possible at all (engine reimplementation, VFS, plugin host, content framework).\n3. **This launcher** — built on top of NAMS as the helper. It reads NAMS\'s TOML configs, writes into NAMS\'s folder layout, and talks to NAMS\'s APIs. That\'s it.\n\nThe practical consequence: NAMS is the load-bearing layer. The launcher is just a friendly UI in front of it, and could be replaced by a different UI (or the command line) without your mods caring.\n\n### And it has been\n\nThis isn\'t theoretical. **The NAO Launcher by Rustukun** is a separate launcher built on the same foundation — a different UI, different design choices, talks to the same NAMS underneath. Your mods, your `nams/mods/<modId>/` folders, your `disabled_mods.toml` — all of it works the same regardless of which launcher you\'re using.\n\nThat\'s the proof that NAMS is the platform and any launcher (this one, NAO, a future one nobody\'s written yet) is just a frontend choice. Pick whichever fits your workflow; your mod library doesn\'t have to move.'**
+  /// **'**NAMS is the modloader.** It\'s not a proxy DLL hijacking `dxgi.dll` or `d3d11.dll` like older tools did — that\'s the very mechanism that caused the conflicts in the first place.\n\nInstead, NAMS runs as its own host process: it loads NieR:Automata as a library inside that process (the game\'s exe transformed into a loadable `game.bin`) and initializes the modloader before the game starts. Nothing is injected into another process — NAMS *is* the process the game runs in, with full control over what\'s about to load.\n\nFrom there, NAMS does two big things:\n\n**1. Reimplements the features other tools used to provide** — LodMod, Limit Break, texture injection, fast loading — natively, in one coordinated layer. Mods plug into NAMS APIs instead of fighting over which DLL hook gets called first.\n\n**2. Provides a virtual file system (VFS):**\n\n- Every mod lives in its own folder under `nams/mods/<modId>/` — never overwriting real game files.\n- At runtime NAMS overlays active mods into the engine\'s view of `data/`.\n- Your vanilla `data/*.cpk` and `NieRAutomata.exe` are **never modified**, so launching unmodded through Steam still works exactly as before.\n\nMods declare what they change in a manifest. NAMS validates and loads them in a defined order, so you finally get **clean enable/disable per mod** and **knowable conflict detection** — neither was possible with the old drop-files-into-`data` approach.\n\n### How this fits together\n\nThis launcher is **not** built directly on top of NieR:Automata. It doesn\'t reverse-engineer the game, hook engine functions, or know anything about `.dat`/`.dtt` formats on its own. The order is:\n\n1. **NieR:Automata** — the game, untouched.\n2. **NAMS** — the modloader, designed first to make scalable modding possible at all (engine reimplementation, VFS, plugin host, content framework).\n3. **This launcher** — built on top of NAMS as the helper. It reads NAMS\'s TOML configs, writes into NAMS\'s folder layout, and talks to NAMS\'s APIs. That\'s it.\n\nThe practical consequence: NAMS is the load-bearing layer. The launcher is just a friendly UI in front of it, and could be replaced by a different UI (or the command line) without your mods caring.\n\n### And it has been\n\nThis isn\'t theoretical. **The NAO Launcher by Rustukun** is a separate launcher built on the same foundation — a different UI, different design choices, talks to the same NAMS underneath. Your mods, your `nams/mods/<modId>/` folders, your `disabled_mods.toml` — all of it works the same regardless of which launcher you\'re using.\n\nThat\'s the proof that NAMS is the platform and any launcher (this one, NAO, a future one nobody\'s written yet) is just a frontend choice. Pick whichever fits your workflow; your mod library doesn\'t have to move.'**
   String get modsTutorialEcosystemStep2Body;
 
   /// No description provided for @modsTutorialEcosystemStep3Title.
@@ -3135,6 +3147,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Skip texture injection from the mods folder. Useful for isolating issues or if you don\'t want to use texture mods even though they are installed.'**
   String get tooltipDisableTextureInjection;
+
+  /// No description provided for @labelOutfitSwapVisualEffects.
+  ///
+  /// In en, this message translates to:
+  /// **'Outfit Swap Visual Effects'**
+  String get labelOutfitSwapVisualEffects;
+
+  /// No description provided for @tooltipOutfitSwapVisualEffects.
+  ///
+  /// In en, this message translates to:
+  /// **'Play the visual effects during an outfit hot-swap: the pod spawn-in blinder animation, the curtain, and the hacking-screen glitch filter. Turn off for an instant, effect-free swap — the model still reloads. Takes effect immediately, no restart needed.'**
+  String get tooltipOutfitSwapVisualEffects;
+
+  /// No description provided for @labelDisableSplashScreen.
+  ///
+  /// In en, this message translates to:
+  /// **'Disable Splash Screen'**
+  String get labelDisableSplashScreen;
+
+  /// No description provided for @tooltipDisableSplashScreen.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip the startup splash window shown while the game loads. The original game revealed its window before it was ready, causing resize and flicker artifacts; NAMS finished the splash so the window is only revealed once ready. Turning this on brings those vanilla startup artifacts back.'**
+  String get tooltipDisableSplashScreen;
 
   /// No description provided for @tooltipValidateModelDataSettings.
   ///
@@ -4731,138 +4767,6 @@ abstract class AppLocalizations {
   /// **'[cutscene] enable_h264 in nams.toml — must be true to play H264-encoded cutscenes.'**
   String get cutsceneStatusH264Tooltip;
 
-  /// No description provided for @tabPlugins.
-  ///
-  /// In en, this message translates to:
-  /// **'Plugins'**
-  String get tabPlugins;
-
-  /// No description provided for @headerPlugins.
-  ///
-  /// In en, this message translates to:
-  /// **'PLUGINS'**
-  String get headerPlugins;
-
-  /// No description provided for @pluginIntroTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'NAMS plugins — native Rust extensions on top of the modding SDK'**
-  String get pluginIntroTitle;
-
-  /// No description provided for @pluginIntroBody.
-  ///
-  /// In en, this message translates to:
-  /// **'NAMS is the modding SDK; plugins are Rust-built .dll modules that hook into it for custom native logic. YoRHa Protocol itself is one such plugin. Drop a plugin DLL here and the launcher copies it into %APPDATA%/YoRHaProtocolLauncher/nierdecrypt/devmods/, then passes every enabled plugin to launch_nier.exe via --mod-dll on the next launch. Toggle a plugin off to skip loading it without deleting it.'**
-  String get pluginIntroBody;
-
-  /// No description provided for @pluginDropHere.
-  ///
-  /// In en, this message translates to:
-  /// **'Drop plugin DLL here'**
-  String get pluginDropHere;
-
-  /// No description provided for @pluginDropHereHint.
-  ///
-  /// In en, this message translates to:
-  /// **'or click to browse'**
-  String get pluginDropHereHint;
-
-  /// No description provided for @pluginListEmpty.
-  ///
-  /// In en, this message translates to:
-  /// **'No plugins installed'**
-  String get pluginListEmpty;
-
-  /// No description provided for @pluginInstalled.
-  ///
-  /// In en, this message translates to:
-  /// **'Installed plugin: {name}'**
-  String pluginInstalled(String name);
-
-  /// No description provided for @pluginInstallFailed.
-  ///
-  /// In en, this message translates to:
-  /// **'Plugin install failed'**
-  String get pluginInstallFailed;
-
-  /// No description provided for @pluginDelete.
-  ///
-  /// In en, this message translates to:
-  /// **'Delete'**
-  String get pluginDelete;
-
-  /// No description provided for @pluginDeleteConfirmTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Delete plugin?'**
-  String get pluginDeleteConfirmTitle;
-
-  /// No description provided for @pluginDeleteConfirmBody.
-  ///
-  /// In en, this message translates to:
-  /// **'Permanently remove {name} from the plugins folder? This cannot be undone.'**
-  String pluginDeleteConfirmBody(String name);
-
-  /// No description provided for @pluginReasonMissingExport.
-  ///
-  /// In en, this message translates to:
-  /// **'not a NAMS plugin (missing required get_plugin_register export)'**
-  String get pluginReasonMissingExport;
-
-  /// No description provided for @pluginReasonNotADll.
-  ///
-  /// In en, this message translates to:
-  /// **'not a valid Windows DLL'**
-  String get pluginReasonNotADll;
-
-  /// No description provided for @pluginReasonNot64bit.
-  ///
-  /// In en, this message translates to:
-  /// **'DLL is not 64-bit (NAMS plugins must be x64)'**
-  String get pluginReasonNot64bit;
-
-  /// No description provided for @pluginReasonCorrupt.
-  ///
-  /// In en, this message translates to:
-  /// **'DLL is corrupt or has an invalid PE structure'**
-  String get pluginReasonCorrupt;
-
-  /// No description provided for @pluginReasonNoExports.
-  ///
-  /// In en, this message translates to:
-  /// **'DLL has no export table'**
-  String get pluginReasonNoExports;
-
-  /// No description provided for @pluginReasonReservedName.
-  ///
-  /// In en, this message translates to:
-  /// **'reserved filename — built into the launcher'**
-  String get pluginReasonReservedName;
-
-  /// No description provided for @pluginReasonFileNotFound.
-  ///
-  /// In en, this message translates to:
-  /// **'file not found'**
-  String get pluginReasonFileNotFound;
-
-  /// No description provided for @pluginReasonReadFailed.
-  ///
-  /// In en, this message translates to:
-  /// **'could not read file'**
-  String get pluginReasonReadFailed;
-
-  /// No description provided for @pluginReasonCopyFailed.
-  ///
-  /// In en, this message translates to:
-  /// **'could not copy file into the plugins folder'**
-  String get pluginReasonCopyFailed;
-
-  /// No description provided for @pluginReasonIncompatible.
-  ///
-  /// In en, this message translates to:
-  /// **'looks like {tool}, which is not compatible with the launcher'**
-  String pluginReasonIncompatible(String tool);
-
   /// No description provided for @modIntroTitle.
   ///
   /// In en, this message translates to:
@@ -4899,6 +4803,114 @@ abstract class AppLocalizations {
   /// **'All'**
   String get modFilterAll;
 
+  /// No description provided for @modGroup2b.
+  ///
+  /// In en, this message translates to:
+  /// **'2B OUTFITS'**
+  String get modGroup2b;
+
+  /// No description provided for @modGroup9s.
+  ///
+  /// In en, this message translates to:
+  /// **'9S OUTFITS'**
+  String get modGroup9s;
+
+  /// No description provided for @modGroupA2.
+  ///
+  /// In en, this message translates to:
+  /// **'A2 OUTFITS'**
+  String get modGroupA2;
+
+  /// No description provided for @modGroupOtherOutfits.
+  ///
+  /// In en, this message translates to:
+  /// **'OTHER OUTFITS'**
+  String get modGroupOtherOutfits;
+
+  /// No description provided for @modGroupWeapons.
+  ///
+  /// In en, this message translates to:
+  /// **'WEAPONS'**
+  String get modGroupWeapons;
+
+  /// No description provided for @modGroupEnemies.
+  ///
+  /// In en, this message translates to:
+  /// **'ENEMIES'**
+  String get modGroupEnemies;
+
+  /// No description provided for @modGroupEffects.
+  ///
+  /// In en, this message translates to:
+  /// **'EFFECTS'**
+  String get modGroupEffects;
+
+  /// No description provided for @modGroupScripting.
+  ///
+  /// In en, this message translates to:
+  /// **'SCRIPTS'**
+  String get modGroupScripting;
+
+  /// No description provided for @modGroupLocalization.
+  ///
+  /// In en, this message translates to:
+  /// **'TEXT & LOCALIZATION'**
+  String get modGroupLocalization;
+
+  /// No description provided for @modGroupCutscenes.
+  ///
+  /// In en, this message translates to:
+  /// **'CUTSCENES'**
+  String get modGroupCutscenes;
+
+  /// No description provided for @modGroupAudio.
+  ///
+  /// In en, this message translates to:
+  /// **'AUDIO'**
+  String get modGroupAudio;
+
+  /// No description provided for @modGroupTextures.
+  ///
+  /// In en, this message translates to:
+  /// **'TEXTURES'**
+  String get modGroupTextures;
+
+  /// No description provided for @modGroupNative.
+  ///
+  /// In en, this message translates to:
+  /// **'NATIVE MODS'**
+  String get modGroupNative;
+
+  /// No description provided for @modGroupOther.
+  ///
+  /// In en, this message translates to:
+  /// **'OTHER'**
+  String get modGroupOther;
+
+  /// No description provided for @modGroupMultiHint.
+  ///
+  /// In en, this message translates to:
+  /// **'This mod replaces models for several characters, so it is listed under each of them.'**
+  String get modGroupMultiHint;
+
+  /// No description provided for @modRename.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename'**
+  String get modRename;
+
+  /// No description provided for @modRenameDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename mod'**
+  String get modRenameDialogTitle;
+
+  /// No description provided for @modRenameReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset to original name'**
+  String get modRenameReset;
+
   /// No description provided for @dropModHere.
   ///
   /// In en, this message translates to:
@@ -4934,6 +4946,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The classic mod format - same files that would normally go into NieRAutomata/data/, just managed under nams/mods/ instead keeping original data dir clean'**
   String get modKindDataTooltip;
+
+  /// No description provided for @textureOutfitLinkedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Outfit-linked textures'**
+  String get textureOutfitLinkedTitle;
+
+  /// No description provided for @textureOutfitLinkedSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'These textures live inside their mod folder and load only while that outfit is equipped. NAMS hot-swaps them when you change outfits in-game.'**
+  String get textureOutfitLinkedSubtitle;
+
+  /// No description provided for @textureOutfitLinkedEntry.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} textures — active only with this outfit'**
+  String textureOutfitLinkedEntry(int count);
+
+  /// No description provided for @modKindTexture.
+  ///
+  /// In en, this message translates to:
+  /// **'TEXTURES'**
+  String get modKindTexture;
+
+  /// No description provided for @modKindTextureTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'A texture pack. Its .dds files were installed to nams/inject/textures/ and are managed from the Textures tab.'**
+  String get modKindTextureTooltip;
 
   /// No description provided for @modKindUnknown.
   ///
@@ -5271,6 +5313,168 @@ abstract class AppLocalizations {
   /// **'Installing mod…'**
   String get modInstallBusy;
 
+  /// No description provided for @modVariantDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose what to install'**
+  String get modVariantDialogTitle;
+
+  /// No description provided for @modVariantDialogSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'This archive contains multiple options. Pick the ones you want.'**
+  String get modVariantDialogSubtitle;
+
+  /// No description provided for @modOutfitChoiceDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose what to install'**
+  String get modOutfitChoiceDialogTitle;
+
+  /// No description provided for @modOutfitChoiceDialogSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tick everything you want. Each item installs as its own mod. If an outfit ships textures, they come along and you can fine-tune which sets it uses later in the Textures tab.'**
+  String get modOutfitChoiceDialogSubtitle;
+
+  /// No description provided for @variantCatPlayer.
+  ///
+  /// In en, this message translates to:
+  /// **'Outfits'**
+  String get variantCatPlayer;
+
+  /// No description provided for @variantCatWeapon.
+  ///
+  /// In en, this message translates to:
+  /// **'Weapons'**
+  String get variantCatWeapon;
+
+  /// No description provided for @variantCatAccessory.
+  ///
+  /// In en, this message translates to:
+  /// **'Accessories'**
+  String get variantCatAccessory;
+
+  /// No description provided for @variantCatEnemy.
+  ///
+  /// In en, this message translates to:
+  /// **'Enemies'**
+  String get variantCatEnemy;
+
+  /// No description provided for @variantCatModelVariant.
+  ///
+  /// In en, this message translates to:
+  /// **'Model variants'**
+  String get variantCatModelVariant;
+
+  /// No description provided for @variantCatItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Items'**
+  String get variantCatItem;
+
+  /// No description provided for @variantCatWorldProp.
+  ///
+  /// In en, this message translates to:
+  /// **'World props'**
+  String get variantCatWorldProp;
+
+  /// No description provided for @variantCatMap.
+  ///
+  /// In en, this message translates to:
+  /// **'Maps'**
+  String get variantCatMap;
+
+  /// No description provided for @variantCatEffects.
+  ///
+  /// In en, this message translates to:
+  /// **'Effects'**
+  String get variantCatEffects;
+
+  /// No description provided for @variantCatScripting.
+  ///
+  /// In en, this message translates to:
+  /// **'Scripting'**
+  String get variantCatScripting;
+
+  /// No description provided for @variantCatLocalization.
+  ///
+  /// In en, this message translates to:
+  /// **'Localization'**
+  String get variantCatLocalization;
+
+  /// No description provided for @variantCatUi.
+  ///
+  /// In en, this message translates to:
+  /// **'UI'**
+  String get variantCatUi;
+
+  /// No description provided for @variantCatCutscenes.
+  ///
+  /// In en, this message translates to:
+  /// **'Cutscenes'**
+  String get variantCatCutscenes;
+
+  /// No description provided for @variantCatAudio.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio'**
+  String get variantCatAudio;
+
+  /// No description provided for @variantCatMisc.
+  ///
+  /// In en, this message translates to:
+  /// **'Misc'**
+  String get variantCatMisc;
+
+  /// No description provided for @variantCatOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get variantCatOther;
+
+  /// No description provided for @variantPickOneSuffix.
+  ///
+  /// In en, this message translates to:
+  /// **'pick one'**
+  String get variantPickOneSuffix;
+
+  /// No description provided for @modVariantSelectAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Select all'**
+  String get modVariantSelectAll;
+
+  /// No description provided for @modVariantSelectNone.
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get modVariantSelectNone;
+
+  /// No description provided for @modVariantInstall.
+  ///
+  /// In en, this message translates to:
+  /// **'Install'**
+  String get modVariantInstall;
+
+  /// No description provided for @modVariantInstallSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'Install {count}'**
+  String modVariantInstallSelected(int count);
+
+  /// No description provided for @modVariantTexture.
+  ///
+  /// In en, this message translates to:
+  /// **'textures'**
+  String get modVariantTexture;
+
+  /// No description provided for @modVariantInstalledToast.
+  ///
+  /// In en, this message translates to:
+  /// **'Installed {count} option(s)'**
+  String modVariantInstalledToast(int count);
+
   /// No description provided for @modUninstallBusy.
   ///
   /// In en, this message translates to:
@@ -5324,6 +5528,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Couldn\'t move the files into nams/mods/.'**
   String get modInstallReasonMoveFailed;
+
+  /// No description provided for @modInstallReasonTextureOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'This is a texture pack (only .dds files). Install it from the Textures tab instead.'**
+  String get modInstallReasonTextureOnly;
 
   /// No description provided for @modUninstalled.
   ///

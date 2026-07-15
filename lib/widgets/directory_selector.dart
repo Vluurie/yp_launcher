@@ -722,7 +722,7 @@ class _DirectorySelectorState extends ConsumerState<DirectorySelector> {
   ) async {
     final l10n = AppLocalizations.of(context)!;
     try {
-      final result = await FilePicker.platform.pickFiles(
+      final result = await FilePicker.pickFiles(
         dialogTitle: l10n.filePickerTitle,
         type: FileType.custom,
         allowedExtensions: [AppStrings.allowedExtension],

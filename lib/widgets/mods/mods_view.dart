@@ -6,10 +6,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as p;
 import 'package:yp_launcher/l10n/app_localizations.dart';
 import 'package:yp_launcher/models/installed_mod.dart';
+import 'package:yp_launcher/models/mod_grouping.dart';
 import 'package:yp_launcher/providers/app_state.dart';
 import 'package:yp_launcher/providers/disabled_mods_state.dart';
+import 'package:yp_launcher/providers/mod_names_state.dart';
 import 'package:yp_launcher/providers/mod_profiles_state.dart';
+import 'package:yp_launcher/widgets/mods/mod_group_header.dart';
 import 'package:yp_launcher/widgets/mods/mod_naming.dart';
+import 'package:yp_launcher/widgets/mods/mod_variant_dialog.dart';
 import 'package:yp_launcher/widgets/mods/mod_profile_selector.dart';
 import 'package:yp_launcher/providers/mods_state.dart';
 import 'package:yp_launcher/services/archive_service.dart';
@@ -37,6 +41,7 @@ class _ModsViewState extends ConsumerState<ModsView> {
   String _loadedForDir = '';
   String? _selectedId;
   String _filter = '';
+  final _collapsedGroups = <ModGroupKind>{};
   final _searchController = TextEditingController();
   final _listScrollController = ScrollController();
 
@@ -76,10 +81,14 @@ class _ModsViewState extends ConsumerState<ModsView> {
     final dir = _gameDir;
     if (dir.isEmpty || dir == _loadedForDir) return;
     _loadedForDir = dir;
-    ref.read(modProfilesStateControllerProvider.notifier).load(dir);
-    ref.read(modsStateControllerProvider.notifier).loadMods(dir);
-    ref.read(disabledModsStateControllerProvider.notifier).load(dir);
-    _restartWatcher(dir);
+    ModsService.migrateBundledTexturesInPlace(dir).whenComplete(() {
+      if (!mounted) return;
+      ref.read(modProfilesStateControllerProvider.notifier).load(dir);
+      ref.read(modsStateControllerProvider.notifier).loadMods(dir);
+      ref.read(disabledModsStateControllerProvider.notifier).load(dir);
+      ref.read(modNamesStateControllerProvider.notifier).load(dir);
+      _restartWatcher(dir);
+    });
   }
 
   void _restartWatcher(String gameDir) {
@@ -118,7 +127,7 @@ class _ModsViewState extends ConsumerState<ModsView> {
   }
 
   Future<void> _handleBrowseFile() async {
-    final result = await FilePicker.platform.pickFiles(
+    final result = await FilePicker.pickFiles(
       type: FileType.custom,
       allowedExtensions: const ['zip', '7z', 'rar'],
     );
@@ -128,7 +137,7 @@ class _ModsViewState extends ConsumerState<ModsView> {
   }
 
   Future<void> _handleBrowseFolder() async {
-    final result = await FilePicker.platform.getDirectoryPath();
+    final result = await FilePicker.getDirectoryPath();
     if (result == null) return;
     await _installFromPath(result);
   }
@@ -182,15 +191,42 @@ class _ModsViewState extends ConsumerState<ModsView> {
     if (!mounted) return;
     setState(() => _busy = false);
 
+    if (detect.hasVariants) {
+      await _installVariants(sourcePath, detect, notifier, notif, l10n);
+      return;
+    }
+
     if (detect.kind == ModKind.unknown) {
+      final isTextureOnly = detect.errorReason == 'texture_only';
       notif.addNotification(NotificationItem(
         id: 'mod_install_fail_${DateTime.now().millisecondsSinceEpoch}',
-        message: l10n.modInstallFailed(_localizeReason(l10n, detect.errorReason ?? 'unknown_drop')),
-        icon: Icons.error_outline,
-        color: AppColors.error,
+        message: isTextureOnly
+            ? l10n.modInstallReasonTextureOnly
+            : l10n.modInstallFailed(
+                _localizeReason(l10n, detect.errorReason ?? 'unknown_drop')),
+        icon: isTextureOnly ? Icons.warning_amber : Icons.error_outline,
+        color: isTextureOnly ? AppColors.warning : AppColors.error,
         type: NotificationType.general,
       ));
       return;
+    }
+
+    List<String>? texturePackSubPaths;
+    if (detect.hasTextureVariants) {
+      final chosen = await showModVariantDialog(
+        context,
+        variants: [
+          for (final t in detect.textureVariants)
+            ModVariant(
+              subPath: p.relative(t.path, from: detect.unwrappedRoot),
+              label: t.label,
+              kind: ModKind.texture,
+              textureOnly: true,
+            ),
+        ],
+      );
+      if (chosen == null || chosen.isEmpty || !mounted) return;
+      texturePackSubPaths = [for (final v in chosen) v.subPath];
     }
 
     final manifestId = detect.manifest?.id?.trim();
@@ -228,6 +264,7 @@ class _ModsViewState extends ConsumerState<ModsView> {
           _gameDir,
           sourcePath,
           requestedName: requestedName,
+          texturePackSubPaths: texturePackSubPaths,
           onExtractProgress: onExtract,
         ),
       );
@@ -292,12 +329,141 @@ class _ModsViewState extends ConsumerState<ModsView> {
     }
   }
 
+  // Special edge case for "2P - The Mock Machine - All in One" (Nexus 335).
+  // This mod ships several 2P outfit variants (Classic, Final Fantasy,
+  // Soulcalibur, or-not-2P) plus separate texture-set folders under Textures/.
+  // Per the mod's readme, each outfit uses the shared set ("2P I Shared
+  // Textures") plus its own same-named set (e.g. "2P - Classic" -> "2P I
+  // Classic"). The launcher cannot derive this from the model data because all
+  // variants replace the same pl000d slot with the same vanilla hashes, so the
+  // only authoritative mapping is the author's readme naming. We therefore
+  // bundle, per outfit, the shared set plus the name-matching set only, instead
+  // of dumping all sets into every outfit (which produced 29 colliding dds).
+  List<String> _texturesForOutfit(ModVariant outfit, DetectedDrop detect) {
+    final outfitKey = _outfitMatchKey(outfit.label);
+    final result = <String>[];
+    for (final t in detect.textureVariants) {
+      final label = t.label.toLowerCase();
+      final isShared = label.contains('shared');
+      final matches = _outfitMatchKey(t.label) == outfitKey;
+      if (isShared || matches) {
+        result.add(p.relative(t.path, from: detect.unwrappedRoot));
+      }
+    }
+    return result;
+  }
+
+  String _outfitMatchKey(String label) {
+    var s = label.toLowerCase();
+    for (final noise in ['2p', 'i', '-', '/', 'shared', 'textures', 'outfit']) {
+      s = s.replaceAll(noise, ' ');
+    }
+    return s.replaceAll(RegExp(r'\s+'), ' ').trim();
+  }
+
+  Future<void> _installVariants(
+    String sourcePath,
+    DetectedDrop detect,
+    dynamic notifier,
+    dynamic notif,
+    AppLocalizations l10n,
+  ) async {
+    final chosen = await showModVariantDialog(
+      context,
+      variants: detect.variants,
+    );
+    if (chosen == null || chosen.isEmpty || !mounted) return;
+
+    final base = await showModNamingDialog(
+      context,
+      initial: prettifyModId(detect.suggestedId),
+    );
+    if (base == null || !mounted) return;
+
+    final requests = [
+      for (final variant in chosen)
+        VariantInstallRequest(
+          requestedName: '$base - ${variant.label}',
+          variantSubPath: variant.subPath,
+          texturePackSubPaths: variant.isWeapon
+              ? const []
+              : _texturesForOutfit(variant, detect),
+        ),
+    ];
+
+    void onExtract(double percent, String? currentFile) {
+      if (!mounted) return;
+      setState(() {
+        _busyMessage = currentFile == null || currentFile.isEmpty
+            ? l10n.extractingArchivePercent((percent * 100).round())
+            : l10n.extractingArchivePercentFile(
+                (percent * 100).round(), currentFile);
+      });
+    }
+
+    setState(() {
+      _busy = true;
+      _busyMessage = l10n.modInstallBusy;
+    });
+
+    final results = await withBusyGuard(
+      ref,
+      () => notifier.installVariants(
+        _gameDir,
+        sourcePath,
+        requests,
+        onExtractProgress: onExtract,
+      ),
+    ) as List<InstallResult>;
+
+    if (!mounted) return;
+
+    var installed = 0;
+    String? lastId;
+    final failures = <String>[];
+    for (var i = 0; i < results.length; i++) {
+      final r = results[i];
+      if (r.success) {
+        installed++;
+        lastId = r.installedId;
+      } else {
+        failures.add('${chosen[i].label}: '
+            '${_localizeReason(l10n, r.errorMessage ?? 'unknown')}');
+      }
+    }
+
+    setState(() {
+      _busy = false;
+      if (lastId != null) _selectedId = lastId;
+    });
+
+    if (installed > 0) {
+      notif.addNotification(NotificationItem(
+        id: 'mod_variants_${DateTime.now().millisecondsSinceEpoch}',
+        message: l10n.modVariantInstalledToast(installed),
+        icon: Icons.check_circle,
+        color: AppColors.success,
+        type: NotificationType.general,
+      ));
+    }
+    for (final f in failures) {
+      notif.addNotification(NotificationItem(
+        id: 'mod_variant_fail_${DateTime.now().millisecondsSinceEpoch}_$f',
+        message: l10n.modInstallFailed(f),
+        icon: Icons.error_outline,
+        color: AppColors.error,
+        type: NotificationType.general,
+      ));
+    }
+  }
+
   String _localizeReason(AppLocalizations l10n, String code) {
     switch (code) {
       case 'unknown_drop': return l10n.modInstallReasonUnknownDrop;
       case 'invalid_mixed': return l10n.modInstallReasonInvalidMixed;
       case 'native_empty': return l10n.modInstallReasonNativeEmpty;
       case 'data_empty': return l10n.modInstallReasonDataEmpty;
+      case 'texture_only': return l10n.modInstallReasonTextureOnly;
       case 'archive_extract_failed': return l10n.modInstallReasonArchiveExtractFailed;
       default:
         if (code.startsWith('move_failed')) return l10n.modInstallReasonMoveFailed;
@@ -407,18 +573,25 @@ class _ModsViewState extends ConsumerState<ModsView> {
         ));
   }
 
-  List<InstalledMod> _applyFilter(List<InstalledMod> mods) {
+  List<InstalledMod> _applyFilter(
+    List<InstalledMod> mods,
+    ModNamesData names,
+  ) {
+    String shownName(InstalledMod m) =>
+        names.customNameOf(m.id) ?? m.displayName;
+
     final filtered = _filter.isEmpty
         ? List<InstalledMod>.of(mods)
         : mods.where((m) {
             final f = _filter.toLowerCase();
             return m.id.toLowerCase().contains(f) ||
-                m.displayName.toLowerCase().contains(f);
+                m.displayName.toLowerCase().contains(f) ||
+                shownName(m).toLowerCase().contains(f);
           }).toList();
     filtered.sort((a, b) {
       final tierDiff = _sortTier(a) - _sortTier(b);
       if (tierDiff != 0) return tierDiff;
-      return a.displayName.toLowerCase().compareTo(b.displayName.toLowerCase());
+      return shownName(a).toLowerCase().compareTo(shownName(b).toLowerCase());
     });
     return filtered;
   }
@@ -447,7 +620,8 @@ class _ModsViewState extends ConsumerState<ModsView> {
       });
     }
 
-    final filtered = _applyFilter(data.mods);
+    final names = ref.watch(modNamesStateControllerProvider);
+    final filtered = _applyFilter(data.mods, names);
     InstalledMod? selected;
     if (_selectedId != null) {
       try {
@@ -689,7 +863,11 @@ class _ModsViewState extends ConsumerState<ModsView> {
     );
   }
 
-  Widget _list(List<InstalledMod> mods, bool loading, AppLocalizations l10n) {
+  Widget _list(
+    List<InstalledMod> mods,
+    bool loading,
+    AppLocalizations l10n,
+  ) {
     if (loading && mods.isEmpty) {
       return Center(
         child: SizedBox(
@@ -725,6 +903,7 @@ class _ModsViewState extends ConsumerState<ModsView> {
         ),
       );
     }
+
     return Container(
       decoration: BoxDecoration(
         color: AppColors.backgroundCard,
@@ -734,25 +913,48 @@ class _ModsViewState extends ConsumerState<ModsView> {
       child: Scrollbar(
         controller: _listScrollController,
         thumbVisibility: true,
-        child: ListView.separated(
+        child: ListView(
           controller: _listScrollController,
           padding: EdgeInsets.zero,
-          itemCount: mods.length,
-          separatorBuilder: (_, __) => Divider(
-            height: 1,
-            thickness: 1,
-            color: AppColors.borderLight.withValues(alpha: 0.4),
-          ),
-          itemBuilder: (_, i) {
-            final m = mods[i];
-            return ModListRow(
-              mod: m,
-              selected: m.id == _selectedId,
-              onTap: () => setState(() => _selectedId = m.id),
-            );
-          },
+          children: _listChildren(mods),
         ),
       ),
+    );
+  }
+
+  List<Widget> _listChildren(List<InstalledMod> mods) {
+    if (_filter.isNotEmpty) {
+      return [for (final m in mods) _row(m)];
+    }
+    final grouped = groupMods(mods);
+    final children = <Widget>[];
+    for (final entry in grouped.entries) {
+      final collapsed = _collapsedGroups.contains(entry.key);
+      children.add(ModGroupHeader(
+        key: ValueKey('group_${entry.key.name}'),
+        kind: entry.key,
+        count: entry.value.length,
+        collapsed: collapsed,
+        onTap: () => setState(() {
+          if (!_collapsedGroups.remove(entry.key)) {
+            _collapsedGroups.add(entry.key);
+          }
+        }),
+      ));
+      if (collapsed) continue;
+      for (final m in entry.value) {
+        children.add(_row(m, group: entry.key));
+      }
+    }
+    return children;
+  }
+
+  Widget _row(InstalledMod m, {ModGroupKind? group}) {
+    return ModListRow(
+      key: ValueKey('row_${group?.name ?? 'flat'}_${m.id}'),
+      mod: m,
+      selected: m.id == _selectedId,
+      onTap: () => setState(() => _selectedId = m.id),
     );
   }
 
@@ -793,14 +995,15 @@ const _modDataSubdirs = <String>{
   'effect', 'enlighten', 'font', 'misctex', 'movie', 'sound',
 };
 
-/// Subdirs accepted at the ROOT of a drop (bare-outfit / weapon / etc.
-/// legacy layouts). Excludes generic names like `movie/`, `sound/`,
-/// `font/` that are ambiguous and belong on other tabs (e.g. a loose
+/// Subdirs accepted at the ROOT of a drop (bare-outfit / weapon / effect /
+/// etc. legacy layouts). Excludes generic names like `movie/`, `sound/`,
+/// `font/`, `ui/` that are ambiguous and belong on other tabs (e.g. a loose
 /// `movie/` at the root is a Cutscenes tab drop, not a NAMS mod).
 const _modRootDataSubdirs = <String>{
   'pl', 'wp', 'em', 'ba', 'bg', 'bh', 'et', 'it', 'um',
   'wd1', 'wd2', 'wd3', 'wd4', 'wd5', 'wda',
-  'core', 'ph1', 'ph2', 'ph3', 'phf', 'st1', 'st2', 'st5',
+  'core', 'ph1', 'ph2', 'ph3', 'phf', 'quest', 'st1', 'st2', 'st5',
+  'effect', 'enlighten', 'misctex',
 };
 
 bool _isLoosePlFile(String fileName) {
@@ -836,6 +1039,33 @@ _ModDropClassification _classifyEntryPaths(Iterable<String> rawEntries) {
     final segments = entry.split('/');
     final first = segments[0];
     if (first.isEmpty) continue;
+
+    // Nested variant signals: a pl model file, a mod.toml, a .dds texture,
+    // or a data/<subdir> anywhere below the root means at least one installable
+    // variant exists. detectDrop resolves which; here we just don't reject.
+    final last = segments.last;
+    if (_isLoosePlFile(last) ||
+        last == 'mod.toml' ||
+        last.endsWith('.dds') ||
+        last.endsWith('.cpk')) {
+      hasRealModSignal = true;
+      continue;
+    }
+    for (var i = 0; i < segments.length - 1; i++) {
+      final seg = segments[i];
+      if (seg == 'entities' || seg == 'wax') {
+        hasRealModSignal = true;
+        break;
+      }
+      if (seg == 'data' &&
+          i + 1 < segments.length &&
+          segments[i + 1] != 'movie' &&
+          _modDataSubdirs.contains(segments[i + 1])) {
+        hasRealModSignal = true;
+        break;
+      }
+    }
+    if (hasRealModSignal) continue;
 
     // Strong NAMS-mod root signals.
     if (first == 'mod.toml' || first == 'entities' || first == 'wax') {
@@ -928,6 +1158,7 @@ List<String> _stripOneWrapper(List<String> entries) {
       wrapper == 'data' ||
       wrapper == 'movie' ||
       _modRootDataSubdirs.contains(wrapper) ||
+      wrapper.endsWith('.cpk') ||
       _isLoosePlFile(wrapper)) {
     return entries;
   }

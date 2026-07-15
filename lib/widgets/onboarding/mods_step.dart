@@ -10,6 +10,7 @@ import 'package:yp_launcher/theme/app_colors.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
 import 'package:yp_launcher/widgets/mods/mod_drop_zone.dart';
 import 'package:yp_launcher/widgets/mods/mod_naming.dart';
+import 'package:yp_launcher/widgets/mods/mod_variant_dialog.dart';
 import 'package:yp_launcher/widgets/onboarding/shared.dart';
 
 enum _OutfitHint { none, compat, data }
@@ -274,14 +275,14 @@ class _ModsStepState extends ConsumerState<ModsStep> {
 
   Future<void> _pickAndInstall() async {
     final l = AppLocalizations.of(context)!;
-    final result = await FilePicker.platform.pickFiles(
+    final result = await FilePicker.pickFiles(
       dialogTitle: l.onboardingModInstallPickerTitle,
       type: FileType.custom,
       allowedExtensions: const ['zip', '7z'],
     );
     if (result == null || result.files.isEmpty) {
       if (!mounted) return;
-      final dir = await FilePicker.platform.getDirectoryPath(
+      final dir = await FilePicker.getDirectoryPath(
         dialogTitle: l.onboardingModInstallFolderPickerTitle,
       );
       if (dir == null) return;
@@ -319,6 +320,12 @@ class _ModsStepState extends ConsumerState<ModsStep> {
       },
     );
     if (!mounted) return;
+
+    if (detect.hasVariants) {
+      setState(() => _busy = false);
+      await _installVariants(sourcePath, detect, l);
+      return;
+    }
 
     if (detect.kind == ModKind.unknown) {
       setState(() {
@@ -391,6 +398,58 @@ class _ModsStepState extends ConsumerState<ModsStep> {
       if (hint != _OutfitHint.none) _outfitHint = hint;
     });
 
+    ref.read(modsStateControllerProvider.notifier).loadMods(widget.gameDir!);
+  }
+
+  Future<void> _installVariants(
+    String sourcePath,
+    DetectedDrop detect,
+    AppLocalizations l,
+  ) async {
+    final chosen = await showModVariantDialog(context, variants: detect.variants);
+    if (chosen == null || chosen.isEmpty || !mounted) return;
+
+    final base = await showModNamingDialog(
+      context,
+      initial: prettifyModId(detect.suggestedId),
+    );
+    if (base == null || !mounted) return;
+
+    for (final variant in chosen) {
+      if (!mounted) return;
+      setState(() {
+        _busy = true;
+        _busyMessage = l.onboardingModInstallBusy;
+      });
+      var name = '$base - ${variant.label}';
+      InstallResult result;
+      var attempt = 1;
+      while (true) {
+        result = await ModsService.install(
+          widget.gameDir!,
+          sourcePath,
+          requestedName: name,
+          variantSubPath: variant.subPath,
+        );
+        if (result.success ||
+            result.errorMessage?.startsWith('exists:') != true) {
+          break;
+        }
+        attempt++;
+        name = '$base - ${variant.label} $attempt';
+      }
+      if (!mounted) return;
+      if (result.success) {
+        setState(() => _installedNames.add(name));
+      } else {
+        setState(() => _error = l.onboardingModInstallFailed(
+              result.errorMessage ?? 'unknown error',
+            ));
+      }
+    }
+
+    if (!mounted) return;
+    setState(() => _busy = false);
     ref.read(modsStateControllerProvider.notifier).loadMods(widget.gameDir!);
   }
 

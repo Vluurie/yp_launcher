@@ -16,6 +16,7 @@ class ModKindBadge extends StatelessWidget {
     final (label, color, tooltip) = switch (kind) {
       ModKind.native => (l10n.modKindNative, AppColors.accentPrimary, l10n.modKindNativeTooltip),
       ModKind.data => (l10n.modKindData, AppColors.textMuted, l10n.modKindDataTooltip),
+      ModKind.texture => (l10n.modKindTexture, AppColors.accentPrimary, l10n.modKindTextureTooltip),
       ModKind.unknown => (l10n.modKindUnknown, AppColors.error, l10n.modKindUnknownTooltip),
     };
     return Tooltip(

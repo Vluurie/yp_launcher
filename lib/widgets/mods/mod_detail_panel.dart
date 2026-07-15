@@ -295,6 +295,7 @@ class ModDetailPanel extends ConsumerWidget {
       case DataCategory.misc: return 'Misc textures (misctex)';
       case DataCategory.cutscenes: return 'Cutscenes (movie)';
       case DataCategory.audio: return 'Audio (sound)';
+      case DataCategory.archive: return 'CPK archives';
       case DataCategory.other: return 'Other ($dirName)';
     }
   }

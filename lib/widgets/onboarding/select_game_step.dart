@@ -178,7 +178,7 @@ class _SelectGameStepState extends ConsumerState<SelectGameStep> {
 
   Future<void> _selectManually() async {
     try {
-      final result = await FilePicker.platform.pickFiles(
+      final result = await FilePicker.pickFiles(
         dialogTitle: AppLocalizations.of(context)!.filePickerTitle,
         type: FileType.custom,
         allowedExtensions: [AppStrings.allowedExtension],

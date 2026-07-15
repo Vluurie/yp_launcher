@@ -18,6 +18,7 @@ Future<String?> showModNamingDialog(
   BuildContext context, {
   required String initial,
   String? existsId,
+  String? title,
 }) async {
   final l10n = AppLocalizations.of(context)!;
   final controller = TextEditingController(text: initial);
@@ -27,7 +28,7 @@ Future<String?> showModNamingDialog(
       return AlertDialog(
         backgroundColor: AppColors.backgroundCard,
         title: Text(
-          l10n.modInstallNeedsName,
+          title ?? l10n.modInstallNeedsName,
           style: TextStyle(
             color: AppColors.accentPrimary,
             fontSize: AppSizes.fontLG(ctx),

@@ -21,6 +21,10 @@ import 'package:yp_launcher/services/archive_service.dart';
 import 'package:yp_launcher/widgets/config_field_dropdown.dart';
 import 'package:yp_launcher/models/config_fields.dart';
 import 'package:yp_launcher/services/texture_install_service.dart';
+import 'package:yp_launcher/services/mods_service.dart';
+import 'package:yp_launcher/services/nams_cli_service.dart';
+import 'package:yp_launcher/models/installed_mod.dart';
+import 'package:yp_launcher/widgets/mods/mod_variant_dialog.dart';
 import 'package:yp_launcher/widgets/texture_widgets.dart';
 import 'package:yp_launcher/widgets/textures/texture_dialogs.dart';
 import 'package:yp_launcher/widgets/textures/texture_header.dart';
@@ -49,6 +53,7 @@ class _TexturesViewState extends ConsumerState<TexturesView> {
   List<String> _skResTextures = [];
   List<String> _waxTextures = [];
   List<String> _detectedFolders = [];
+  List<NamsTexturePack> _outfitPacks = [];
   Map<String, List<String>> _conflicts = {};
   bool _loadingTextures = true;
   bool _deleting = false;
@@ -159,12 +164,18 @@ class _TexturesViewState extends ConsumerState<TexturesView> {
       }
     }
 
+    final namsPacks = await NamsCliService.texturesList(_gameDir);
+    if (!mounted) return;
+
     setState(() {
       _installedTextures = result['nams'] as List<String>;
       _skResTextures = result['sk'] as List<String>;
       _waxTextures = (result['wax'] as List<String>?) ?? [];
       _detectedFolders = folders;
       _conflicts = parsedConflicts;
+      _outfitPacks = (namsPacks ?? const [])
+          .where((p) => p.outfitConditional)
+          .toList();
       _loadingTextures = false;
     });
 
@@ -243,12 +254,41 @@ class _TexturesViewState extends ConsumerState<TexturesView> {
           });
         },
       );
-      if (extracted != null) {
-        effectivePaths.add(extracted);
-        archiveNames[extracted] = path.basenameWithoutExtension(archivePath);
-        tempExtractDirs.add(extracted);
-      } else {
+      if (extracted == null) {
         _notify(l10n.failedToExtractArchive, Icons.error_outline, AppColors.error);
+        continue;
+      }
+      tempExtractDirs.add(extracted);
+
+      final packs = await ModsService.detectTexturePacks(extracted);
+      if (!mounted) return;
+
+      if (packs.length <= 1) {
+        effectivePaths.add(extracted);
+        archiveNames[extracted] = packs.isNotEmpty
+            ? packs.first.label
+            : path.basenameWithoutExtension(archivePath);
+      } else {
+        final chosen = await showModVariantDialog(
+          context,
+          variants: [
+            for (final p in packs)
+              ModVariant(
+                  subPath: p.path,
+                  label: p.label,
+                  kind: ModKind.texture,
+                  textureOnly: true),
+          ],
+        );
+        if (chosen == null || chosen.isEmpty) {
+          setState(() { _installing = false; _installPhase = ''; });
+          ref.read(texturesBusyProvider.notifier).state = false;
+          return;
+        }
+        for (final v in chosen) {
+          effectivePaths.add(v.subPath);
+          archiveNames[v.subPath] = v.label;
+        }
       }
     }
 
@@ -259,7 +299,7 @@ class _TexturesViewState extends ConsumerState<TexturesView> {
     }
 
     try {
-      if (_detectedFolders.isNotEmpty) {
+      if (_detectedFolders.isNotEmpty && effectivePaths.length == 1) {
         final choice = await showTextureMergeDialog(
           context: context,
           detectedFolders: _detectedFolders,
@@ -423,9 +463,8 @@ class _TexturesViewState extends ConsumerState<TexturesView> {
 
   Future<void> _handleBrowse() async {
     final l10n = AppLocalizations.of(context)!;
-    final result = await FilePicker.platform.pickFiles(
+    final result = await FilePicker.pickFiles(
       dialogTitle: l10n.selectTextureFiles,
-      allowMultiple: true,
       type: FileType.any,
     );
     if (result == null || result.files.isEmpty) return;
@@ -437,7 +476,7 @@ class _TexturesViewState extends ConsumerState<TexturesView> {
   }
 
   Future<void> _handleBrowseFolder() async {
-    final result = await FilePicker.platform.getDirectoryPath();
+    final result = await FilePicker.getDirectoryPath();
     if (result == null) return;
     await _handleDrop([result]);
   }
@@ -648,6 +687,8 @@ class _TexturesViewState extends ConsumerState<TexturesView> {
                                       bundledOriginByPack: _bundledOriginByPack(),
                                       onDelete: _deleteTexture,
                                     ),
+                                  if (_outfitPacks.isNotEmpty)
+                                    _buildOutfitLinkedCard(),
                                   if (_skResTextures.isNotEmpty)
                                     _buildExternalSourceCard(
                                       title: 'SK_Res/ (${_skResTextures.length})',
@@ -665,7 +706,7 @@ class _TexturesViewState extends ConsumerState<TexturesView> {
                                   if (_waxTextures.isNotEmpty)
                                     _buildExternalSourceCard(
                                       title: 'wax/mods/ (${_waxTextures.length})',
-                                      priority: AppLocalizations.of(context)!.priorityLowest,
+                                      priority: AppLocalizations.of(context)!.priorityHighest,
                                       entries: _waxTextures,
                                       folderOf: (name) => path.join(
                                         _gameDir,
@@ -795,6 +836,101 @@ class _TexturesViewState extends ConsumerState<TexturesView> {
                   ],
                 ),
               )).toList(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOutfitLinkedCard() {
+    final l10n = AppLocalizations.of(context)!;
+    return Container(
+      margin: EdgeInsets.only(bottom: AppSizes.paddingLG(context)),
+      decoration: BoxDecoration(
+        color: AppColors.backgroundCard,
+        borderRadius: BorderRadius.circular(AppSizes.borderRadius(context)),
+        border: Border.all(color: AppColors.borderLight),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(
+              horizontal: AppSizes.cardPaddingH(context),
+              vertical: AppSizes.cardPaddingV(context),
+            ),
+            decoration: BoxDecoration(
+              color: AppColors.surfaceMedium,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(AppSizes.borderRadius(context)),
+                topRight: Radius.circular(AppSizes.borderRadius(context)),
+              ),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.checkroom,
+                  size: AppSizes.iconSM(context),
+                  color: AppColors.accentPrimary,
+                ),
+                SizedBox(width: AppSizes.spacingSM(context)),
+                Expanded(
+                  child: Text(
+                    '${l10n.textureOutfitLinkedTitle} (${_outfitPacks.length})',
+                    style: TextStyle(
+                      fontSize: AppSizes.fontSM(context),
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.accentPrimary,
+                      letterSpacing: 1.0,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(AppSizes.cardPaddingH(context)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.textureOutfitLinkedSubtitle,
+                  style: TextStyle(
+                    fontSize: AppSizes.fontXS(context),
+                    color: AppColors.textMuted,
+                    height: 1.3,
+                  ),
+                ),
+                SizedBox(height: AppSizes.spacingMD(context)),
+                ..._outfitPacks.map((p) => Padding(
+                      padding:
+                          EdgeInsets.only(bottom: AppSizes.paddingXS(context)),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.link,
+                              size: 14, color: AppColors.accentPrimary),
+                          SizedBox(width: AppSizes.spacingMD(context)),
+                          Expanded(
+                            child: ClickableName(
+                              name: p.character != null
+                                  ? '${p.name} (${p.character})'
+                                  : p.name,
+                              folderPath: p.path,
+                            ),
+                          ),
+                          Text(
+                            l10n.textureOutfitLinkedEntry(p.ddsCount),
+                            style: TextStyle(
+                              fontSize: AppSizes.fontXS(context),
+                              color: AppColors.textMuted,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )),
+              ],
             ),
           ),
         ],

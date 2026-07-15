@@ -20,6 +20,10 @@ class ModsService {
   static String modsDir(String gameDir) =>
       path.join(gameDir, 'nams', 'mods');
 
+  static Future<List<TexturePack>> detectTexturePacks(String root) {
+    return IsolateService.run(_detectTexturePacksParam, root);
+  }
+
   static Future<List<InstalledMod>> listInstalled(String gameDir) {
     return IsolateService.run(
       _listInstalledSync,
@@ -64,6 +68,8 @@ class ModsService {
     String gameDir,
     String sourcePath, {
     String? requestedName,
+    String? variantSubPath,
+    List<String>? texturePackSubPaths,
     void Function(double percent, String? currentFile)? onExtractProgress,
   }) async {
     String workDir = sourcePath;
@@ -89,8 +95,51 @@ class ModsService {
         sourceFolderName: path.basenameWithoutExtension(sourcePath),
         hasDlc: hasDlc,
         activeProfile: activeProfile,
+        variantSubPath: variantSubPath,
+        texturePackSubPaths: texturePackSubPaths,
       );
       return await IsolateService.run(_installSync, params);
+    } finally {
+      if (tempDir != null) {
+        try { Directory(tempDir).deleteSync(recursive: true); } catch (_) {}
+      }
+    }
+  }
+
+  static Future<List<InstallResult>> installVariants(
+    String gameDir,
+    String sourcePath,
+    List<VariantInstallRequest> requests, {
+    void Function(double percent, String? currentFile)? onExtractProgress,
+  }) async {
+    String workDir = sourcePath;
+    String? tempDir;
+    if (ArchiveService.isArchive(sourcePath)) {
+      final extracted = await ArchiveService.extract(
+        sourcePath,
+        onProgress: onExtractProgress,
+      );
+      if (extracted == null) {
+        return [
+          for (final _ in requests)
+            const InstallResult.fail('archive_extract_failed')
+        ];
+      }
+      tempDir = extracted;
+      workDir = extracted;
+    }
+    try {
+      final hasDlc = await DetectionService.hasDlc(gameDir);
+      final activeProfile = ModProfilesService.activeNameSync(gameDir);
+      final params = _InstallBatchParams(
+        gameDir: gameDir,
+        workDir: workDir,
+        sourceFolderName: path.basenameWithoutExtension(sourcePath),
+        hasDlc: hasDlc,
+        activeProfile: activeProfile,
+        requests: requests,
+      );
+      return await IsolateService.run(_installBatchSync, params);
     } finally {
       if (tempDir != null) {
         try { Directory(tempDir).deleteSync(recursive: true); } catch (_) {}
@@ -116,6 +165,106 @@ class ModsService {
       _SyncDlcParams(gameDir: gameDir, hasDlc: hasDlc),
     );
   }
+
+  static Future<int> migrateBundledTexturesInPlace(String gameDir) {
+    final activeProfile = ModProfilesService.activeNameSync(gameDir);
+    return IsolateService.run(
+      _migrateBundledTexturesSync,
+      _MigrateTexturesParams(gameDir: gameDir, activeProfile: activeProfile),
+    );
+  }
+}
+
+class _MigrateTexturesParams {
+  final String gameDir;
+  final String activeProfile;
+  const _MigrateTexturesParams({
+    required this.gameDir,
+    required this.activeProfile,
+  });
+}
+
+final _pulledOutPackPattern = RegExp(r'^(.*) \(([^()@]+)@([^()]+?)( \d+)?\)$');
+
+int _migrateBundledTexturesSync(_MigrateTexturesParams p) {
+  final injectRoot =
+      Directory(path.join(p.gameDir, 'nams', 'inject', 'textures'));
+  if (!injectRoot.existsSync()) return 0;
+
+  final migratedNames = <String>[];
+  for (final entity in injectRoot.listSync()) {
+    if (entity is! Directory) continue;
+    final packName = path.basename(entity.path);
+    final m = _pulledOutPackPattern.firstMatch(packName);
+    if (m == null) continue;
+    final base = m.group(1)!;
+    final modId = m.group(2)!;
+    final profile = m.group(3)!;
+
+    final modRoot = profile == p.activeProfile
+        ? path.join(p.gameDir, 'nams', 'mods', modId)
+        : path.join(p.gameDir, 'nams', 'mods_profile_$profile', modId);
+    if (!Directory(modRoot).existsSync()) continue;
+
+    final destDir = Directory(path.join(modRoot, 'textures'));
+    var dest = path.join(destDir.path, base);
+    if (Directory(dest).existsSync() || File(dest).existsSync()) {
+      dest = path.join(destDir.path, packName);
+      if (Directory(dest).existsSync()) continue;
+    }
+    try {
+      destDir.createSync(recursive: true);
+      _moveDirectory(entity.path, dest);
+    } catch (_) {
+      continue;
+    }
+    migratedNames.add(packName);
+
+    try {
+      final sidecar = File(path.join(modRoot, _bundledTexturesSidecarName));
+      if (sidecar.existsSync()) {
+        final raw = jsonDecode(sidecar.readAsStringSync());
+        if (raw is Map && raw['packs'] is List) {
+          final remaining = (raw['packs'] as List)
+              .whereType<String>()
+              .where((s) => s != packName)
+              .toList();
+          if (remaining.isEmpty) {
+            sidecar.deleteSync();
+          } else {
+            sidecar.writeAsStringSync(jsonEncode({'packs': remaining}));
+          }
+        }
+      }
+    } catch (_) {}
+  }
+
+  if (migratedNames.isEmpty) return 0;
+
+  try {
+    final tomlFile =
+        File(path.join(p.gameDir, 'nams', 'texture_injection.toml'));
+    if (tomlFile.existsSync()) {
+      final raw = tomlFile.readAsStringSync();
+      final parsed = TomlService.parse(raw);
+      final updates = <String, dynamic>{};
+      for (final key in ['load_order', 'disabled_packs']) {
+        final list = parsed[key];
+        if (list is List) {
+          final pruned = list
+              .whereType<String>()
+              .where((s) => !migratedNames.contains(s))
+              .toList();
+          if (pruned.length != list.length) updates[key] = pruned;
+        }
+      }
+      if (updates.isNotEmpty) {
+        tomlFile.writeAsStringSync(TomlService.updateToml(raw, updates));
+      }
+    }
+  } catch (_) {}
+
+  return migratedNames.length;
 }
 
 class _DetectParams {
@@ -131,6 +280,8 @@ class _InstallParams {
   final String sourceFolderName;
   final bool hasDlc;
   final String activeProfile;
+  final String? variantSubPath;
+  final List<String>? texturePackSubPaths;
   const _InstallParams({
     required this.gameDir,
     required this.workDir,
@@ -138,6 +289,25 @@ class _InstallParams {
     required this.sourceFolderName,
     required this.hasDlc,
     required this.activeProfile,
+    this.variantSubPath,
+    this.texturePackSubPaths,
+  });
+}
+
+class _InstallBatchParams {
+  final String gameDir;
+  final String workDir;
+  final String sourceFolderName;
+  final bool hasDlc;
+  final String activeProfile;
+  final List<VariantInstallRequest> requests;
+  const _InstallBatchParams({
+    required this.gameDir,
+    required this.workDir,
+    required this.sourceFolderName,
+    required this.hasDlc,
+    required this.activeProfile,
+    required this.requests,
   });
 }
 
@@ -357,6 +527,8 @@ InstalledMod? _scanInstalledMod(String rootPath, String id, String gameDir) {
   final manifest = ModManifestService.loadSync(contentRoot);
   final kind = _classifyKind(contentRoot);
 
+  final bundledTextures = _readBundledTexturesSidecar(rootPath);
+
   NativeSummary? native;
   DataSummary? data;
 
@@ -386,7 +558,7 @@ InstalledMod? _scanInstalledMod(String rootPath, String id, String gameDir) {
     native: native,
     data: data,
     installedAt: installedAt,
-    bundledTexturePacks: _readBundledTexturesSidecar(rootPath),
+    bundledTexturePacks: bundledTextures,
     bundledCutscenes: _scanBundledCutscenes(rootPath),
   );
 }
@@ -403,6 +575,10 @@ String _unwrapSingleChild(String rootPath) {
     if (Directory(path.join(current, 'wax')).existsSync()) return current;
     if (Directory(path.join(current, 'data')).existsSync()) return current;
     if (File(path.join(current, 'mod.toml')).existsSync()) return current;
+    if (dataDirCategoryTable.containsKey(
+        path.basename(dirs.single.path).toLowerCase())) {
+      return current;
+    }
     current = dirs.single.path;
   }
   return current;
@@ -414,13 +590,132 @@ ModKind _classifyKind(String contentRoot) {
   final hasData = _dataHasSubdirs(Directory(path.join(contentRoot, 'data')));
   final hasLooseDataDir = _hasLooseDataDir(contentRoot);
   final hasLooseDataFiles = _hasLooseDataFiles(contentRoot);
+  final hasCpk = _hasCpk(contentRoot);
 
   if (hasEntities && hasCompat) return ModKind.unknown;
   if (hasEntities) return ModKind.native;
-  if (hasData || hasCompat || hasLooseDataDir || hasLooseDataFiles) {
+  if (hasData || hasCompat || hasLooseDataDir || hasLooseDataFiles || hasCpk) {
     return ModKind.data;
   }
   return ModKind.unknown;
+}
+
+bool _hasNamsPayload(String root) {
+  if (_entitiesHasContent(Directory(path.join(root, 'entities')))) return true;
+  if (Directory(path.join(root, 'wax')).existsSync()) return true;
+  if (_dataHasSubdirs(Directory(path.join(root, 'data')))) return true;
+  if (_hasCompatConfig(root)) return true;
+  if (_hasLooseDataDir(root)) return true;
+  if (_hasLooseDataFiles(root)) return true;
+  if (_hasCpk(root)) return true;
+  return false;
+}
+
+bool _dirHasDds(Directory dir) {
+  if (!dir.existsSync()) return false;
+  for (final f in dir.listSync(recursive: true, followLinks: false)) {
+    if (f is File && f.path.toLowerCase().endsWith('.dds')) return true;
+  }
+  return false;
+}
+
+bool _dirHasDirectDds(Directory dir) {
+  if (!dir.existsSync()) return false;
+  return dir
+      .listSync()
+      .whereType<File>()
+      .any((f) => f.path.toLowerCase().endsWith('.dds'));
+}
+
+bool _isTexturePackRoot(String root) {
+  if (_hasNamsPayload(root)) return false;
+  for (final resName in const ['SK_Res', 'FAR_Res']) {
+    if (Directory(path.join(root, resName, 'inject', 'textures')).existsSync()) {
+      return true;
+    }
+  }
+  if (Directory(path.join(root, 'inject', 'textures')).existsSync()) return true;
+  if (Directory(path.join(root, 'textures')).existsSync() &&
+      _dirHasDds(Directory(path.join(root, 'textures')))) {
+    return true;
+  }
+  if (_dirHasDirectDds(Directory(root))) return true;
+  return _dirHasDds(Directory(root));
+}
+
+ModKind _installableKindAt(String root) {
+  return _classifyKind(root);
+}
+
+List<ModVariant> _detectVariants(String root) {
+  final out = <ModVariant>[];
+  _collectVariants(root, root, '', 0, out);
+  out.sort((a, b) => a.label.toLowerCase().compareTo(b.label.toLowerCase()));
+  return out;
+}
+
+void _collectVariants(
+  String baseRoot,
+  String current,
+  String labelPrefix,
+  int depth,
+  List<ModVariant> out,
+) {
+  if (depth > 4) return;
+  final dir = Directory(current);
+  if (!dir.existsSync()) return;
+  for (final sub in dir.listSync().whereType<Directory>()) {
+    final name = path.basename(sub.path);
+    if (name.startsWith('.') || name.startsWith('_')) continue;
+    final unwrapped = _unwrapSingleChild(sub.path);
+    final label = labelPrefix.isEmpty ? name : '$labelPrefix / $name';
+    final kind = _installableKindAt(unwrapped);
+    if (kind != ModKind.unknown) {
+      final textureOnly =
+          !_hasNamsPayload(unwrapped) && _isTexturePackRoot(unwrapped);
+      out.add(ModVariant(
+        subPath: path.relative(unwrapped, from: baseRoot),
+        label: label,
+        kind: kind,
+        textureOnly: textureOnly,
+        category: _primaryDataCategoryAt(unwrapped),
+      ));
+    } else {
+      _collectVariants(baseRoot, unwrapped, label, depth + 1, out);
+    }
+  }
+}
+
+DataCategory? _primaryDataCategoryAt(String contentRoot) {
+  final counts = <DataCategory, int>{};
+  void bump(String dirKey, int n) {
+    final cat = dataDirCategoryTable[dirKey.toLowerCase()];
+    if (cat != null) counts[cat] = (counts[cat] ?? 0) + n;
+  }
+
+  for (final base in [contentRoot, path.join(contentRoot, 'data')]) {
+    final dir = Directory(base);
+    if (!dir.existsSync()) continue;
+    for (final entity in dir.listSync().whereType<Directory>()) {
+      final name = path.basename(entity.path);
+      final files = entity
+          .listSync(recursive: true, followLinks: false)
+          .whereType<File>()
+          .length;
+      bump(name, files > 0 ? files : 1);
+    }
+    for (final f in dir.listSync().whereType<File>()) {
+      final key = _dataDirForLooseFile(path.basename(f.path));
+      if (key != null) bump(key, 1);
+    }
+  }
+
+  if (counts.isEmpty) return null;
+  var best = counts.entries.first;
+  for (final e in counts.entries) {
+    if (e.value > best.value) best = e;
+  }
+  return best.key;
 }
 
 bool _hasLooseDataDir(String contentRoot) {
@@ -438,6 +733,22 @@ bool _hasLooseDataFiles(String contentRoot) {
   if (!dir.existsSync()) return false;
   for (final f in dir.listSync().whereType<File>()) {
     if (_dataDirForLooseFile(path.basename(f.path)) != null) return true;
+  }
+  return false;
+}
+
+bool _isCpkFile(String fileName) => fileName.toLowerCase().endsWith('.cpk');
+
+bool _hasCpk(String contentRoot) {
+  for (final base in [contentRoot, path.join(contentRoot, 'data')]) {
+    final dir = Directory(base);
+    if (!dir.existsSync()) continue;
+    if (dir
+        .listSync()
+        .whereType<File>()
+        .any((f) => _isCpkFile(path.basename(f.path)))) {
+      return true;
+    }
   }
   return false;
 }
@@ -563,6 +874,19 @@ DataSummary _scanData(Directory dataDir, {required bool hasCompatConfig}) {
   final players = <PlayerModelEntry>[];
 
   if (dataDir.existsSync()) {
+    final cpks = dataDir
+        .listSync()
+        .whereType<File>()
+        .where((f) => _isCpkFile(path.basename(f.path)))
+        .toList();
+    if (cpks.isNotEmpty) {
+      entries.add(DataDirEntry(
+        dirName: 'cpk',
+        category: DataCategory.archive,
+        fileCount: cpks.length,
+      ));
+    }
+
     for (final sub in dataDir.listSync().whereType<Directory>()) {
       final dirName = path.basename(sub.path);
       final cat = dataDirCategoryTable[dirName.toLowerCase()] ?? DataCategory.other;
@@ -657,11 +981,19 @@ DetectedDrop _detectDropSync(_DetectParams p) {
   NativeSummary? native;
   DataSummary? data;
   String? errorReason;
+  var variants = const <ModVariant>[];
 
   if (kind == ModKind.unknown) {
-    final hasEntities = _entitiesHasContent(Directory(path.join(unwrapped, 'entities')));
-    final hasCompat = _hasCompatConfig(unwrapped);
-    errorReason = (hasEntities && hasCompat) ? 'invalid_mixed' : 'unknown_drop';
+    variants = _detectVariants(unwrapped);
+    if (variants.isEmpty) {
+      if (!_hasNamsPayload(unwrapped) && _isTexturePackRoot(unwrapped)) {
+        errorReason = 'texture_only';
+      } else {
+        final hasEntities = _entitiesHasContent(Directory(path.join(unwrapped, 'entities')));
+        final hasCompat = _hasCompatConfig(unwrapped);
+        errorReason = (hasEntities && hasCompat) ? 'invalid_mixed' : 'unknown_drop';
+      }
+    }
   }
 
   if (kind == ModKind.native) {
@@ -671,6 +1003,14 @@ DetectedDrop _detectDropSync(_DetectParams p) {
   final hasCompat = _hasCompatConfig(unwrapped);
   if (dataDir.existsSync() || hasCompat) {
     data = _scanData(dataDir, hasCompatConfig: hasCompat);
+  }
+
+  var textureVariants = const <TexturePack>[];
+  {
+    final packs = _detectTexturePacks(unwrapped, ignorePayload: true);
+    if (packs.length > 1) {
+      textureVariants = packs;
+    }
   }
 
   return DetectedDrop(
@@ -685,6 +1025,8 @@ DetectedDrop _detectDropSync(_DetectParams p) {
       unwrappedRoot: unwrapped,
     ),
     errorReason: errorReason,
+    variants: variants,
+    textureVariants: textureVariants,
   );
 }
 
@@ -779,13 +1121,22 @@ InstallResult _installSync(_InstallParams p) {
     sourceBaseName: p.sourceFolderName,
   );
   final detect = _detectDropSync(detectParams);
-  if (detect.kind == ModKind.unknown) {
+
+  final dropRoot = detect.unwrappedRoot;
+  String workRoot = dropRoot;
+  if (p.variantSubPath != null && p.variantSubPath!.isNotEmpty) {
+    final resolved = path.normalize(path.join(workRoot, p.variantSubPath!));
+    if (!Directory(resolved).existsSync()) {
+      return const InstallResult.fail('variant_missing');
+    }
+    workRoot = resolved;
+  } else if (detect.kind == ModKind.unknown) {
     return InstallResult.fail(detect.errorReason ?? 'unknown_drop');
   }
 
-  String workRoot = detect.unwrappedRoot;
   _normalizeLooseDataDirs(workRoot);
   _normalizeLooseDataFiles(workRoot);
+  _normalizeCpks(workRoot);
 
   final modsRoot = ModsService.modsDir(p.gameDir);
   final targetId = _sanitizeId(p.requestedName?.isNotEmpty == true
@@ -796,21 +1147,18 @@ InstallResult _installSync(_InstallParams p) {
     return InstallResult.fail('exists:$targetId');
   }
 
-  final sideTextures = _extractSideTexturePacks(
-    workRoot,
-    p.gameDir,
-    targetId,
-    p.activeProfile,
-  );
+  if (!_hasNamsPayload(workRoot) && _isTexturePackRoot(workRoot)) {
+    return const InstallResult.fail('texture_only');
+  }
 
   final detect2 = _detectDropSync(_DetectParams(
     workDir: workRoot,
     sourceBaseName: p.sourceFolderName,
   ));
+
   if (detect2.kind == ModKind.unknown) {
     return InstallResult.fail(detect2.errorReason ?? 'unknown_drop');
   }
-
   switch (detect2.kind) {
     case ModKind.native:
       if ((detect2.native?.totalEntityFiles ?? 0) == 0) {
@@ -820,10 +1168,16 @@ InstallResult _installSync(_InstallParams p) {
     case ModKind.data:
       final entries = detect2.data?.entries ?? const [];
       final hasCompat = detect2.data?.hasCompatConfig ?? false;
-      final hasRecognised = entries.any((e) => e.category != DataCategory.other);
-      if (!hasRecognised && !hasCompat && entries.isEmpty) {
+      final hasRecognised =
+          entries.any((e) => e.category != DataCategory.other);
+      if (!hasRecognised &&
+          !hasCompat &&
+          entries.isEmpty &&
+          !_hasCpk(workRoot)) {
         return const InstallResult.fail('data_empty');
       }
+      break;
+    case ModKind.texture:
       break;
     case ModKind.unknown:
       return const InstallResult.fail('unknown_drop');
@@ -836,15 +1190,197 @@ InstallResult _installSync(_InstallParams p) {
     return InstallResult.fail('move_failed:$e');
   }
 
+  final localSubPaths = _stageSiblingTextureSets(
+    dropRoot,
+    workRoot,
+    targetDir.path,
+    p.texturePackSubPaths,
+  );
+
+  _normalizeInPlaceTextures(targetDir.path, localSubPaths);
+
   if (!p.hasDlc) {
     _renameDlcSlotsToVanilla(targetDir.path);
   }
 
-  if (sideTextures.isNotEmpty) {
-    _writeBundledTexturesSidecar(targetDir.path, sideTextures);
+  return InstallResult.ok(targetId);
+}
+
+List<InstallResult> _installBatchSync(_InstallBatchParams p) {
+  final detect = _detectDropSync(_DetectParams(
+    workDir: p.workDir,
+    sourceBaseName: p.sourceFolderName,
+  ));
+  final dropRoot = detect.unwrappedRoot;
+  final modsRoot = ModsService.modsDir(p.gameDir);
+  Directory(modsRoot).createSync(recursive: true);
+
+  final results = <InstallResult>[];
+  final usedIds = <String>{};
+
+  for (final req in p.requests) {
+    final variantRoot = path.normalize(path.join(dropRoot, req.variantSubPath));
+    if (!Directory(variantRoot).existsSync()) {
+      results.add(const InstallResult.fail('variant_missing'));
+      continue;
+    }
+
+    var targetId = _sanitizeId(req.requestedName);
+    var attempt = 1;
+    while (usedIds.contains(targetId) ||
+        Directory(path.join(modsRoot, targetId)).existsSync()) {
+      attempt++;
+      targetId = _sanitizeId('${req.requestedName} $attempt');
+    }
+    final targetDir = Directory(path.join(modsRoot, targetId));
+
+    try {
+      _copyDirectory(variantRoot, targetDir.path);
+    } catch (e) {
+      results.add(InstallResult.fail('move_failed:$e'));
+      continue;
+    }
+
+    _normalizeLooseDataDirs(targetDir.path);
+    _normalizeLooseDataFiles(targetDir.path);
+    _normalizeCpks(targetDir.path);
+
+    final localSubPaths = _stageSiblingTextureSets(
+      dropRoot,
+      variantRoot,
+      targetDir.path,
+      req.texturePackSubPaths,
+    );
+    _normalizeInPlaceTextures(targetDir.path, localSubPaths);
+
+    if (!p.hasDlc) {
+      _renameDlcSlotsToVanilla(targetDir.path);
+    }
+
+    usedIds.add(targetId);
+    results.add(InstallResult.ok(targetId));
   }
 
-  return InstallResult.ok(targetId, sideInstalledTexturePacks: sideTextures);
+  return results;
+}
+
+/// Consolidates a mod's inject textures into a single `<mod>/textures/` dir so
+/// NAMS can scan one well-known location. Strips `SK_Res`/`FAR_Res`/`inject`/
+/// `<exe>` wrappers and flattens the .dds files. When the mod shipped several
+/// texture sets (variants), only the one named by [chosenSubPath] is kept; the
+/// rest are removed. Leaves the NAMS payload (data/entities/wax) untouched.
+List<String>? _stageSiblingTextureSets(
+  String dropRoot,
+  String variantRoot,
+  String targetDir,
+  List<String>? chosenSubPaths,
+) {
+  if (chosenSubPaths == null || chosenSubPaths.isEmpty) return chosenSubPaths;
+
+  final local = <String>[];
+  for (final sub in chosenSubPaths) {
+    final abs = path.normalize(path.join(dropRoot, sub));
+    if (path.equals(abs, variantRoot) || path.isWithin(variantRoot, abs)) {
+      final rel = path.relative(abs, from: variantRoot);
+      local.add(rel);
+      continue;
+    }
+    if (!Directory(abs).existsSync()) continue;
+    final destName = _uniqueChildName(targetDir, path.basename(abs));
+    final dest = path.join(targetDir, destName);
+    _copyDirectory(abs, dest);
+    local.add(destName);
+  }
+  return local;
+}
+
+String _uniqueChildName(String parent, String name) {
+  var candidate = name;
+  var n = 2;
+  while (Directory(path.join(parent, candidate)).existsSync() ||
+      File(path.join(parent, candidate)).existsSync()) {
+    candidate = '$name ($n)';
+    n++;
+  }
+  return candidate;
+}
+
+void _copyDirectory(String src, String dest) {
+  final srcDir = Directory(src);
+  Directory(dest).createSync(recursive: true);
+  for (final entity in srcDir.listSync(recursive: true, followLinks: false)) {
+    final rel = path.relative(entity.path, from: src);
+    final target = path.join(dest, rel);
+    if (entity is Directory) {
+      Directory(target).createSync(recursive: true);
+    } else if (entity is File) {
+      Directory(path.dirname(target)).createSync(recursive: true);
+      entity.copySync(target);
+    }
+  }
+}
+
+void _normalizeInPlaceTextures(String modRoot, List<String>? chosenSubPaths) {
+  final packs = _detectTexturePacks(modRoot, ignorePayload: true);
+  if (packs.isEmpty) return;
+
+  final texturesDir = Directory(path.join(modRoot, 'textures'));
+
+  List<TexturePack> selected;
+  if (chosenSubPaths != null && chosenSubPaths.isNotEmpty) {
+    final targets = chosenSubPaths
+        .map((s) => path.normalize(path.join(modRoot, s)))
+        .toList();
+    selected = packs
+        .where((pk) => targets.any((t) => path.equals(pk.path, t)))
+        .toList();
+    if (selected.isEmpty) selected = packs;
+  } else {
+    selected = packs;
+  }
+
+  // Move each selected pack's dds into <mod>/textures/, wrapper-stripped.
+  for (final pack in selected) {
+    final packDir = Directory(pack.path);
+    if (!packDir.existsSync()) continue;
+    if (path.equals(packDir.path, texturesDir.path)) continue;
+    for (final f in packDir.listSync(recursive: true, followLinks: false)) {
+      if (f is! File) continue;
+      if (!f.path.toLowerCase().endsWith('.dds')) continue;
+      final dest = File(path.join(texturesDir.path, path.basename(f.path)));
+      if (dest.existsSync()) continue;
+      try {
+        dest.parent.createSync(recursive: true);
+        f.renameSync(dest.path);
+      } catch (_) {
+        try {
+          f.copySync(dest.path);
+        } catch (_) {}
+      }
+    }
+  }
+
+  // Remove every wrapper/variant dir that isn't the canonical textures/.
+  for (final name in const ['SK_Res', 'FAR_Res', 'inject']) {
+    _deleteDirQuiet(path.join(modRoot, name));
+  }
+  for (final pack in packs) {
+    final packDir = Directory(pack.path);
+    if (!packDir.existsSync()) continue;
+    if (path.equals(packDir.path, texturesDir.path)) continue;
+    if (path.equals(path.dirname(packDir.path), modRoot)) {
+      _deleteDirQuiet(packDir.path);
+    }
+  }
+}
+
+void _deleteDirQuiet(String dir) {
+  final d = Directory(dir);
+  if (d.existsSync()) {
+    try {
+      d.deleteSync(recursive: true);
+    } catch (_) {}
+  }
 }
 
 const Map<String, String> _dlcToVanillaSlot = {
@@ -896,13 +1432,6 @@ void _renameDlcSlotsToVanilla(String modRoot) {
 
 const _bundledTexturesSidecarName = '.bundled_textures.json';
 
-void _writeBundledTexturesSidecar(String modDir, List<String> packNames) {
-  try {
-    final file = File(path.join(modDir, _bundledTexturesSidecarName));
-    file.writeAsStringSync(jsonEncode({'packs': packNames}));
-  } catch (_) {}
-}
-
 List<String> _scanBundledCutscenes(String modDir) {
   try {
     final dir = Directory(path.join(modDir, 'cutscenes'));
@@ -942,87 +1471,82 @@ List<String> _readBundledTexturesSidecar(String modDir) {
   return names;
 }
 
-/// Mods sometimes ship a Special-K-style texture overlay alongside their
-/// real NAMS payload (`SK_Res/inject/textures/NieRAutomata.exe/<pack>/...`)
-/// or a modern `inject/textures/<pack>/...` layout. We split those texture
-/// packs into `<gameDir>/nams/inject/textures/<pack>/` so they actually load
-/// instead of being buried inside the mod folder.
-///
-/// Returns the names of the packs we moved.
-List<String> _extractSideTexturePacks(
-  String workRoot,
-  String gameDir,
-  String modId,
-  String activeProfile,
-) {
-  final moved = <String>[];
-  final injectRoot =
-      Directory(path.join(gameDir, 'nams', 'inject', 'textures'));
+const _textureWrapperDirs = {
+  'sk_res', 'far_res', 'inject', 'textures', 'nierautomata.exe',
+};
 
-  void movePack(Directory pack) {
-    final name = path.basename(pack.path);
-    if (name.isEmpty || name.startsWith('.') || name.startsWith('_')) return;
+bool _isTextureWrapper(String name) =>
+    _textureWrapperDirs.contains(name.toLowerCase());
 
-    var finalName = '$name ($modId@$activeProfile)';
-    var dest = Directory(path.join(injectRoot.path, finalName));
-    var n = 2;
-    while (dest.existsSync()) {
-      finalName = '$name ($modId@$activeProfile $n)';
-      dest = Directory(path.join(injectRoot.path, finalName));
-      n++;
-    }
-    injectRoot.createSync(recursive: true);
-    try {
-      pack.renameSync(dest.path);
-      moved.add(finalName);
-    } catch (_) {
-      try {
-        _copyDirectorySync(pack, dest);
-        pack.deleteSync(recursive: true);
-        moved.add(finalName);
-      } catch (_) {}
+const _modPayloadDirs = {'data', 'entities', 'wax', 'cutscenes'};
+
+List<TexturePack> _detectTexturePacksParam(String root) =>
+    _detectTexturePacks(root);
+
+List<TexturePack> _detectTexturePacks(String root, {bool ignorePayload = false}) {
+  final packs = <TexturePack>[];
+  final seen = <String>{};
+
+  void addPack(String dir, String label) {
+    if (seen.add(dir)) {
+      packs.add(TexturePack(path: dir, label: label));
     }
   }
 
-  // Layout 1: SK_Res/inject/textures/<exe>/<pack>/...
-  final skRes = Directory(path.join(workRoot, 'SK_Res', 'inject', 'textures'));
-  if (skRes.existsSync()) {
-    for (final exeDir in skRes.listSync().whereType<Directory>()) {
-      for (final pack in exeDir.listSync().whereType<Directory>()) {
-        movePack(pack);
+  void scan(Directory dir, String? namedParent) {
+    if (!dir.existsSync()) return;
+    final name = path.basename(dir.path);
+    final label = _isTextureWrapper(name) ? namedParent : name;
+
+    if (_dirHasDirectDds(dir)) {
+      addPack(dir.path, label ?? path.basename(root));
+      return;
+    }
+
+    final ddsSubdirs =
+        dir.listSync().whereType<Directory>().where(_dirHasDds).toList();
+    if (ddsSubdirs.isEmpty) return;
+
+    final namedChildren = ddsSubdirs
+        .where((d) => !_isTextureWrapper(path.basename(d.path)))
+        .toList();
+    final wrapperChildren = ddsSubdirs
+        .where((d) => _isTextureWrapper(path.basename(d.path)))
+        .toList();
+
+    if (namedChildren.isEmpty && label != null) {
+      final deeperNamed = wrapperChildren.any((w) => w
+          .listSync()
+          .whereType<Directory>()
+          .any((d) => _dirHasDds(d) && !_isTextureWrapper(path.basename(d.path))));
+      if (!deeperNamed) {
+        addPack(dir.path, label);
+        return;
       }
     }
-    try {
-      Directory(path.join(workRoot, 'SK_Res')).deleteSync(recursive: true);
-    } catch (_) {}
-  }
 
-  // Layout 2: inject/textures/<pack>/... at the workRoot.
-  final inject = Directory(path.join(workRoot, 'inject', 'textures'));
-  if (inject.existsSync()) {
-    for (final pack in inject.listSync().whereType<Directory>()) {
-      movePack(pack);
-    }
-    try {
-      Directory(path.join(workRoot, 'inject')).deleteSync(recursive: true);
-    } catch (_) {}
-  }
-
-  return moved;
-}
-
-void _copyDirectorySync(Directory src, Directory dest) {
-  dest.createSync(recursive: true);
-  for (final entity in src.listSync(recursive: true, followLinks: false)) {
-    final rel = path.relative(entity.path, from: src.path);
-    final destPath = path.join(dest.path, rel);
-    if (entity is Directory) {
-      Directory(destPath).createSync(recursive: true);
-    } else if (entity is File) {
-      Directory(path.dirname(destPath)).createSync(recursive: true);
-      entity.copySync(destPath);
+    for (final sub in ddsSubdirs) {
+      scan(sub, label);
     }
   }
+
+  if (!ignorePayload && _hasNamsPayload(root)) return const [];
+  final rootDir = Directory(root);
+  if (!ignorePayload && _dirHasDirectDds(rootDir)) {
+    addPack(root, path.basename(root));
+  } else {
+    for (final child in rootDir.listSync().whereType<Directory>()) {
+      final name = path.basename(child.path);
+      if (name.startsWith('.') || name.startsWith('_')) continue;
+      if (ignorePayload && _modPayloadDirs.contains(name.toLowerCase())) {
+        continue;
+      }
+      scan(child, null);
+    }
+  }
+
+  packs.sort((a, b) => a.label.toLowerCase().compareTo(b.label.toLowerCase()));
+  return packs;
 }
 
 void _normalizeLooseDataDirs(String root) {
@@ -1063,6 +1587,32 @@ void _normalizeLooseDataFiles(String root) {
     final destDir = Directory(path.join(root, 'data', entry.value));
     destDir.createSync(recursive: true);
     entry.key.renameSync(path.join(destDir.path, path.basename(entry.key.path)));
+  }
+}
+
+void _normalizeCpks(String root) {
+  final dir = Directory(root);
+  if (!dir.existsSync()) return;
+  final loose = dir
+      .listSync()
+      .whereType<File>()
+      .where((f) => _isCpkFile(path.basename(f.path)))
+      .toList();
+  if (loose.isEmpty) return;
+
+  final dataDir = Directory(path.join(root, 'data'));
+  dataDir.createSync(recursive: true);
+  for (final f in loose) {
+    final dest = path.join(dataDir.path, path.basename(f.path));
+    if (File(dest).existsSync()) continue;
+    try {
+      f.renameSync(dest);
+    } catch (_) {
+      try {
+        f.copySync(dest);
+        f.deleteSync();
+      } catch (_) {}
+    }
   }
 }
 

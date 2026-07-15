@@ -37,21 +37,20 @@ dependencies:
 
   # Automato Theme
   automato_theme:
-    git:
-      url: https://github.com/Vluurie/automato_theme.git
+    path: ../automato_theme
 
   # State Management
-  flutter_riverpod: ^2.6.1
+  flutter_riverpod: ^3.0.0
 
   # File Picker
-  file_picker: ^8.1.6
+  file_picker: ^12.0.0-beta.5
 
   # Windows API
   ffi: ^2.1.3
-  win32: ^5.9.0
+  win32: ^6.3.0
 
   # Riverpod code generation
-  riverpod_annotation: ^2.6.1
+  riverpod_annotation: ^3.0.0
 
   # Path provider for cross-platform paths
   path_provider: ^2.1.5
@@ -64,14 +63,13 @@ dependencies:
   url_launcher: ^6.2.5
 
   # Custom window title bar for Windows
-  window_manager: ^0.4.3
-  font_awesome_flutter: ^10.8.0
+  window_manager: ^0.5.1
 
   # Fonts
-  google_fonts: ^6.2.1
+  google_fonts: ^8.1.0
 
   # Drag and drop support
-  desktop_drop: ^0.5.0
+  desktop_drop: ^0.7.1
 
   # Archive extraction
   archive: ^4.0.2
@@ -88,9 +86,9 @@ dependencies:
 dev_dependencies:
   # Riverpod code generation
   build_runner: ^2.4.13
-  riverpod_generator: ^2.6.2
-  custom_lint: ^0.7.0
-  riverpod_lint: ^2.6.2
+  riverpod_generator: ^3.0.0
+  custom_lint: ^0.8.1
+  riverpod_lint: ^3.0.0
   flutter_test:
     sdk: flutter
 
@@ -126,6 +124,7 @@ flutter:
     - assets/images/
     - assets/images/config/
     - assets/bins/
+    - assets/bins/plugins/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

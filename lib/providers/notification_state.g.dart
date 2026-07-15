@@ -6,25 +6,63 @@ part of 'notification_state.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$notificationStateControllerHash() =>
-    r'f9b75e3d771ea818531e9967bda8146febe00f91';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// See also [NotificationStateController].
 @ProviderFor(NotificationStateController)
-final notificationStateControllerProvider =
-    NotifierProvider<
-      NotificationStateController,
-      List<NotificationItem>
-    >.internal(
-      NotificationStateController.new,
-      name: r'notificationStateControllerProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$notificationStateControllerHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+const notificationStateControllerProvider =
+    NotificationStateControllerProvider._();
 
-typedef _$NotificationStateController = Notifier<List<NotificationItem>>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+final class NotificationStateControllerProvider
+    extends
+        $NotifierProvider<NotificationStateController, List<NotificationItem>> {
+  const NotificationStateControllerProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'notificationStateControllerProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$notificationStateControllerHash();
+
+  @$internal
+  @override
+  NotificationStateController create() => NotificationStateController();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(List<NotificationItem> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<List<NotificationItem>>(value),
+    );
+  }
+}
+
+String _$notificationStateControllerHash() =>
+    r'63996cd932d6b89adfc293e6fa8cdbe0a1b7c90f';
+
+abstract class _$NotificationStateController
+    extends $Notifier<List<NotificationItem>> {
+  List<NotificationItem> build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref =
+        this.ref as $Ref<List<NotificationItem>, List<NotificationItem>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<List<NotificationItem>, List<NotificationItem>>,
+              List<NotificationItem>,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}

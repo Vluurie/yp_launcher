@@ -92,6 +92,8 @@ class _ConfigFieldDropdownState extends State<ConfigFieldDropdown> {
               items: widget.options,
               itemLabel: (v) => widget.labels?[v] ?? '$v',
               onChanged: widget.onChanged,
+              maxWidth: 200,
+              highlight: true,
             ),
           ],
         ),
