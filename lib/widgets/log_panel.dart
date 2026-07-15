@@ -949,9 +949,6 @@ class _DiagnosticsDialogState extends ConsumerState<_DiagnosticsDialog> {
     for (final m in r.mods) {
       modKinds[m.kind] = (modKinds[m.kind] ?? 0) + 1;
     }
-    final enabledPlugins = r.plugins.where((p) => p.enabled).length;
-    final disabledPlugins = r.plugins.length - enabledPlugins;
-
     return [
       _sectionCard(
         context,
@@ -989,30 +986,6 @@ class _DiagnosticsDialogState extends ConsumerState<_DiagnosticsDialog> {
             _mutedLine(context,
                 '${r.disabledModsEntries.length} disabled prefix(es) in disabled_mods.toml'),
           ],
-        ],
-      ),
-      SizedBox(height: AppSizes.spacingMD(context)),
-      _sectionCard(
-        context,
-        icon: Icons.power_outlined,
-        title: 'Plugins',
-        trailing: _countBadge(r.plugins.length),
-        children: [
-          if (r.plugins.isEmpty)
-            _mutedLine(context, 'No user plugins installed.')
-          else
-            Row(
-              children: [
-                _chip(context, '$enabledPlugins enabled', AppColors.success),
-                SizedBox(width: AppSizes.spacingSM(context)),
-                if (disabledPlugins > 0)
-                  _chip(
-                    context,
-                    '$disabledPlugins disabled',
-                    AppColors.textMuted,
-                  ),
-              ],
-            ),
         ],
       ),
       SizedBox(height: AppSizes.spacingMD(context)),

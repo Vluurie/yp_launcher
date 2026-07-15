@@ -55,6 +55,7 @@ bool archiveHasModContent(List<String> entries) {
     if (e.contains('/wax/') || e.startsWith('wax/')) return true;
     if (e.contains('/data/') || e.startsWith('data/')) return true;
     if (e.endsWith('.dds')) return true;
+    if (e.endsWith('.cpk')) return true;
     if (e.endsWith('.dat') || e.endsWith('.dtt')) {
       if (RegExp(r'^(pl|wp|em|bg|ba|bh|et|it|um|wd)').hasMatch(base)) {
         return true;

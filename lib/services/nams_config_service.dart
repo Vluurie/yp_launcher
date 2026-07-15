@@ -66,8 +66,20 @@ content_equip_tracker = true
 content_mcd = true
 content_buddy_ruby_selector = true
 
+# Play the visual effects during an outfit hot-swap: the pod spawn-in blinder
+# animation, the curtain, and the hacking-screen glitch filter. Set to false for
+# an instant, effect-free swap (the model still reloads). Live toggle.
+outfit_swap_visual_effects = true
+
 disable_reshade_loading = false
 disable_texture_injection = false
+
+# Skip the startup splash window shown while the game loads. Vanilla revealed
+# the game window before it was ready, causing resize/flicker artifacts during
+# startup. NAMS finished the implementation so the splash covers startup and
+# only reveals the window once ready. Set to true to bring the artifacts back.
+disable_splash_screen = false
+
 fix_wind_timer_bug = true
 
 [mouse]
@@ -136,6 +148,8 @@ disable_pod_pet = false
 fix_aim_acceleration = false
 # Aim sensitivity for top-down/side-scroll.
 aim_sensitivity = 0.001
+# Raw multiplier applied to aim output after normalization.
+aim_output_multiplier = 15.0
 # Virtual key code for opening the debug menu. 0 = disabled.
 debug_menu_key = 0
 # Virtual key code for dedicated evade/dodge. 0 = disabled.
@@ -197,7 +211,7 @@ enable_h264 = false
           content =
               '${content.substring(0, lineEnd + 1)}\n'
               '# Catch script errors and show a dialog instead of silently crashing.\n'
-              'validate_scripts = true\n'
+              'validate_scripts = false\n'
               '${content.substring(lineEnd + 1)}';
           modified = true;
         }
@@ -257,6 +271,23 @@ enable_h264 = false
       modified = true;
     }
 
+    final topLevelAdditions = <String, String>{
+      NamsFields.outfitSwapVisualEffects.key:
+          '# Play the visual effects during an outfit hot-swap: the pod spawn-in\n'
+          '# blinder animation, the curtain, and the hacking-screen glitch filter.\n'
+          '# Set to false for an instant, effect-free swap. Live toggle.\n'
+          'outfit_swap_visual_effects = true\n',
+      NamsFields.disableSplashScreen.key:
+          '# Skip the startup splash window shown while the game loads. Setting this\n'
+          '# to true brings back the vanilla resize/flicker artifacts on startup.\n'
+          'disable_splash_screen = false\n',
+    };
+    for (final entry in topLevelAdditions.entries) {
+      if (content.contains(entry.key)) continue;
+      content = _insertTopLevelSync(content, entry.value);
+      modified = true;
+    }
+
     if (!content.contains('[mouse]')) {
       content += _mouseSectionDefault;
       modified = true;
@@ -270,6 +301,16 @@ enable_h264 = false
     if (modified) {
       file.writeAsStringSync(content);
     }
+  }
+
+  static String _insertTopLevelSync(String content, String block) {
+    final firstSectionIdx = content.indexOf(RegExp(r'^\[', multiLine: true));
+    final prefix = content.endsWith('\n') || content.isEmpty ? '' : '\n';
+    if (firstSectionIdx == -1) {
+      return '$content$prefix\n$block';
+    }
+    return '${content.substring(0, firstSectionIdx)}$block\n'
+        '${content.substring(firstSectionIdx)}';
   }
 
   static void _migrateTextureInjectionTomlSync(String filePath) {

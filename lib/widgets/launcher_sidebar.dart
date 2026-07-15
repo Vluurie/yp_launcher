@@ -505,11 +505,6 @@ List<SidebarSection> buildLauncherSections(AppLocalizations l10n) {
           label: l10n.tabNaiom,
           icon: Icons.mouse_outlined,
         ),
-        SidebarTabItem(
-          index: 8,
-          label: l10n.tabPlugins,
-          icon: Icons.power_outlined,
-        ),
       ],
     ),
   ];

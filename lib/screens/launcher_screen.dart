@@ -29,7 +29,6 @@ import 'package:yp_launcher/widgets/yorha_protocol_view.dart';
 import 'package:yp_launcher/widgets/mods/mods_view.dart';
 import 'package:yp_launcher/widgets/cutscenes_view.dart';
 import 'package:yp_launcher/widgets/naiom_view.dart';
-import 'package:yp_launcher/widgets/plugins/plugins_view.dart';
 import 'package:yp_launcher/widgets/onboarding_wizard.dart';
 import 'package:yp_launcher/widgets/info_bar.dart';
 import 'package:yp_launcher/widgets/launcher_sidebar.dart';
@@ -323,7 +322,6 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
         const ModsView(),
         const NaiomView(),
         const CutscenesView(),
-        const PluginsView(),
       ],
     );
   }

@@ -594,13 +594,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get busyDeletingCutscene => 'Deleting cutscene mod...';
 
   @override
-  String get busyDeletingPlugin => 'Deleting plugin...';
-
-  @override
-  String get pluginValidatingInstalling =>
-      'Validating and installing plugin...';
-
-  @override
   String get busyCloseTitle => 'Operation in progress';
 
   @override
@@ -1761,6 +1754,20 @@ class AppLocalizationsEn extends AppLocalizations {
       'Skip texture injection from the mods folder. Useful for isolating issues or if you don\'t want to use texture mods even though they are installed.';
 
   @override
+  String get labelOutfitSwapVisualEffects => 'Outfit Swap Visual Effects';
+
+  @override
+  String get tooltipOutfitSwapVisualEffects =>
+      'Play the visual effects during an outfit hot-swap: the pod spawn-in blinder animation, the curtain, and the hacking-screen glitch filter. Turn off for an instant, effect-free swap — the model still reloads. Takes effect immediately, no restart needed.';
+
+  @override
+  String get labelDisableSplashScreen => 'Disable Splash Screen';
+
+  @override
+  String get tooltipDisableSplashScreen =>
+      'Skip the startup splash window shown while the game loads. The original game revealed its window before it was ready, causing resize and flicker artifacts; NAMS finished the splash so the window is only revealed once ready. Turning this on brings those vanilla startup artifacts back.';
+
+  @override
   String get tooltipValidateModelDataSettings =>
       'Surfaces model validation errors as a dialog instead of silent failure.';
 
@@ -2736,85 +2743,6 @@ class AppLocalizationsEn extends AppLocalizations {
       '[cutscene] enable_h264 in nams.toml — must be true to play H264-encoded cutscenes.';
 
   @override
-  String get tabPlugins => 'Plugins';
-
-  @override
-  String get headerPlugins => 'PLUGINS';
-
-  @override
-  String get pluginIntroTitle =>
-      'NAMS plugins — native Rust extensions on top of the modding SDK';
-
-  @override
-  String get pluginIntroBody =>
-      'NAMS is the modding SDK; plugins are Rust-built .dll modules that hook into it for custom native logic. YoRHa Protocol itself is one such plugin. Drop a plugin DLL here and the launcher copies it into the plugins/ folder next to NAMS; NAMS auto-loads every plugin there on the next launch. Toggling a plugin off moves it aside so it isn\'t loaded, without deleting it.';
-
-  @override
-  String get pluginDropHere => 'Drop plugin DLL here';
-
-  @override
-  String get pluginDropHereHint => 'or click to browse';
-
-  @override
-  String get pluginListEmpty => 'No plugins installed';
-
-  @override
-  String pluginInstalled(String name) {
-    return 'Installed plugin: $name';
-  }
-
-  @override
-  String get pluginInstallFailed => 'Plugin install failed';
-
-  @override
-  String get pluginDelete => 'Delete';
-
-  @override
-  String get pluginDeleteConfirmTitle => 'Delete plugin?';
-
-  @override
-  String pluginDeleteConfirmBody(String name) {
-    return 'Permanently remove $name from the plugins folder? This cannot be undone.';
-  }
-
-  @override
-  String get pluginReasonMissingExport =>
-      'not a NAMS plugin (missing required get_plugin_register export)';
-
-  @override
-  String get pluginReasonNotADll => 'not a valid Windows DLL';
-
-  @override
-  String get pluginReasonNot64bit =>
-      'DLL is not 64-bit (NAMS plugins must be x64)';
-
-  @override
-  String get pluginReasonCorrupt =>
-      'DLL is corrupt or has an invalid PE structure';
-
-  @override
-  String get pluginReasonNoExports => 'DLL has no export table';
-
-  @override
-  String get pluginReasonReservedName =>
-      'reserved filename — built into the launcher';
-
-  @override
-  String get pluginReasonFileNotFound => 'file not found';
-
-  @override
-  String get pluginReasonReadFailed => 'could not read file';
-
-  @override
-  String get pluginReasonCopyFailed =>
-      'could not copy file into the plugins folder';
-
-  @override
-  String pluginReasonIncompatible(String tool) {
-    return 'looks like $tool, which is not compatible with the launcher';
-  }
-
-  @override
   String get modIntroTitle =>
       'Powered by NAMS — your data/ folder stays untouched';
 
@@ -2834,6 +2762,61 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get modFilterAll => 'All';
+
+  @override
+  String get modGroup2b => '2B OUTFITS';
+
+  @override
+  String get modGroup9s => '9S OUTFITS';
+
+  @override
+  String get modGroupA2 => 'A2 OUTFITS';
+
+  @override
+  String get modGroupOtherOutfits => 'OTHER OUTFITS';
+
+  @override
+  String get modGroupWeapons => 'WEAPONS';
+
+  @override
+  String get modGroupEnemies => 'ENEMIES';
+
+  @override
+  String get modGroupEffects => 'EFFECTS';
+
+  @override
+  String get modGroupScripting => 'SCRIPTS';
+
+  @override
+  String get modGroupLocalization => 'TEXT & LOCALIZATION';
+
+  @override
+  String get modGroupCutscenes => 'CUTSCENES';
+
+  @override
+  String get modGroupAudio => 'AUDIO';
+
+  @override
+  String get modGroupTextures => 'TEXTURES';
+
+  @override
+  String get modGroupNative => 'NATIVE MODS';
+
+  @override
+  String get modGroupOther => 'OTHER';
+
+  @override
+  String get modGroupMultiHint =>
+      'This mod replaces models for several characters, so it is listed under each of them.';
+
+  @override
+  String get modRename => 'Rename';
+
+  @override
+  String get modRenameDialogTitle => 'Rename mod';
+
+  @override
+  String get modRenameReset => 'Reset to original name';
 
   @override
   String get dropModHere => 'Drop mod here';
@@ -2958,49 +2941,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get modEnableNotice => 'Enabled — takes effect on next game start.';
-
-  @override
-  String get modGroupAddButton => 'Add group';
-
-  @override
-  String get modGroupNewDialogTitle => 'New group';
-
-  @override
-  String get modGroupRenameDialogTitle => 'Rename group';
-
-  @override
-  String get modGroupUngrouped => 'Ungrouped';
-
-  @override
-  String get modGroupRename => 'Rename group';
-
-  @override
-  String get modGroupDelete => 'Delete group';
-
-  @override
-  String get modGroupDeleteConfirmTitle => 'Delete group?';
-
-  @override
-  String modGroupDeleteConfirmBody(String name) {
-    return 'Mods in \"$name\" move back to Ungrouped. Nothing is deleted from disk.';
-  }
-
-  @override
-  String modGroupCountLabel(int count) {
-    return '$count mods';
-  }
-
-  @override
-  String get modGroupDropHint => 'Drop to move here';
-
-  @override
-  String get modRename => 'Rename';
-
-  @override
-  String get modRenameDialogTitle => 'Rename mod';
-
-  @override
-  String get modMoveToGroup => 'Move to group';
 
   @override
   String get modUninstall => 'Uninstall';

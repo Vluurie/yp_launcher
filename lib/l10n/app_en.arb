@@ -316,8 +316,6 @@
   "textureDeleteLabel": "Delete",
   "busyDeletingTexture": "Deleting texture pack...",
   "busyDeletingCutscene": "Deleting cutscene mod...",
-  "busyDeletingPlugin": "Deleting plugin...",
-  "pluginValidatingInstalling": "Validating and installing plugin...",
   "busyCloseTitle": "Operation in progress",
   "busyCloseBody": "The launcher is busy installing, deleting or extracting files. Closing now can leave broken or partial files on disk. Wait until the current operation finishes, or force-close anyway.",
   "busyCloseForce": "Force close",
@@ -739,6 +737,10 @@
   "tooltipDisableReShadeLoading": "Skip automatic ReShade DLL detection from the reshade/ folder and does not load it anymore.",
   "labelDisableTextureInjection": "Disable Texture Injection",
   "tooltipDisableTextureInjection": "Skip texture injection from the mods folder. Useful for isolating issues or if you don't want to use texture mods even though they are installed.",
+  "labelOutfitSwapVisualEffects": "Outfit Swap Visual Effects",
+  "tooltipOutfitSwapVisualEffects": "Play the visual effects during an outfit hot-swap: the pod spawn-in blinder animation, the curtain, and the hacking-screen glitch filter. Turn off for an instant, effect-free swap — the model still reloads. Takes effect immediately, no restart needed.",
+  "labelDisableSplashScreen": "Disable Splash Screen",
+  "tooltipDisableSplashScreen": "Skip the startup splash window shown while the game loads. The original game revealed its window before it was ready, causing resize and flicker artifacts; NAMS finished the splash so the window is only revealed once ready. Turning this on brings those vanilla startup artifacts back.",
   "tooltipValidateModelDataSettings": "Surfaces model validation errors as a dialog instead of silent failure.",
   "heapDefault": "Default",
   "heapPlus16MB": "+16 MB",
@@ -1347,55 +1349,30 @@
   "cutsceneStatusHdTooltip": "[cutscene] hd_cutscenes in nams.toml — must be true for HD cutscene mods to load.",
   "cutsceneStatusH264": "H264",
   "cutsceneStatusH264Tooltip": "[cutscene] enable_h264 in nams.toml — must be true to play H264-encoded cutscenes.",
-  "tabPlugins": "Plugins",
-  "headerPlugins": "PLUGINS",
-  "pluginIntroTitle": "NAMS plugins — native Rust extensions on top of the modding SDK",
-  "pluginIntroBody": "NAMS is the modding SDK; plugins are Rust-built .dll modules that hook into it for custom native logic. YoRHa Protocol itself is one such plugin. Drop a plugin DLL here and the launcher copies it into the plugins/ folder next to NAMS; NAMS auto-loads every plugin there on the next launch. Toggling a plugin off moves it aside so it isn't loaded, without deleting it.",
-  "pluginDropHere": "Drop plugin DLL here",
-  "pluginDropHereHint": "or click to browse",
-  "pluginListEmpty": "No plugins installed",
-  "pluginInstalled": "Installed plugin: {name}",
-  "@pluginInstalled": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "pluginInstallFailed": "Plugin install failed",
-  "pluginDelete": "Delete",
-  "pluginDeleteConfirmTitle": "Delete plugin?",
-  "pluginDeleteConfirmBody": "Permanently remove {name} from the plugins folder? This cannot be undone.",
-  "@pluginDeleteConfirmBody": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "pluginReasonMissingExport": "not a NAMS plugin (missing required get_plugin_register export)",
-  "pluginReasonNotADll": "not a valid Windows DLL",
-  "pluginReasonNot64bit": "DLL is not 64-bit (NAMS plugins must be x64)",
-  "pluginReasonCorrupt": "DLL is corrupt or has an invalid PE structure",
-  "pluginReasonNoExports": "DLL has no export table",
-  "pluginReasonReservedName": "reserved filename — built into the launcher",
-  "pluginReasonFileNotFound": "file not found",
-  "pluginReasonReadFailed": "could not read file",
-  "pluginReasonCopyFailed": "could not copy file into the plugins folder",
-  "pluginReasonIncompatible": "looks like {tool}, which is not compatible with the launcher",
-  "@pluginReasonIncompatible": {
-    "placeholders": {
-      "tool": {
-        "type": "String"
-      }
-    }
-  },
   "modIntroTitle": "Powered by NAMS — your data/ folder stays untouched",
   "modIntroBody": "NAMS loads mods from nams/mods/ through a virtual file system on top of the original game data, so nothing is ever copied or overwritten in data/. Mods can be turned on or off at any time without reinstalling, multiple outfits can coexist for the same character, and uninstalling a mod just removes its folder — the vanilla game is always intact underneath.",
   "modListEmpty": "No mods installed",
   "modListEmptyHint": "Drop a mod folder or archive into the box above to install.",
   "modSearchPlaceholder": "Search mods…",
   "modFilterAll": "All",
+  "modGroup2b": "2B OUTFITS",
+  "modGroup9s": "9S OUTFITS",
+  "modGroupA2": "A2 OUTFITS",
+  "modGroupOtherOutfits": "OTHER OUTFITS",
+  "modGroupWeapons": "WEAPONS",
+  "modGroupEnemies": "ENEMIES",
+  "modGroupEffects": "EFFECTS",
+  "modGroupScripting": "SCRIPTS",
+  "modGroupLocalization": "TEXT & LOCALIZATION",
+  "modGroupCutscenes": "CUTSCENES",
+  "modGroupAudio": "AUDIO",
+  "modGroupTextures": "TEXTURES",
+  "modGroupNative": "NATIVE MODS",
+  "modGroupOther": "OTHER",
+  "modGroupMultiHint": "This mod replaces models for several characters, so it is listed under each of them.",
+  "modRename": "Rename",
+  "modRenameDialogTitle": "Rename mod",
+  "modRenameReset": "Reset to original name",
   "dropModHere": "Drop mod here",
   "dropModHereHint": "or click to browse",
   "modKindNative": "NATIVE",
@@ -1450,33 +1427,6 @@
   "modEnableTooltip": "Mod is loaded by NAMS. Click to disable without removing the files.",
   "modDisableNotice": "Disabled — takes effect on next game start.",
   "modEnableNotice": "Enabled — takes effect on next game start.",
-  "modGroupAddButton": "Add group",
-  "modGroupNewDialogTitle": "New group",
-  "modGroupRenameDialogTitle": "Rename group",
-  "modGroupUngrouped": "Ungrouped",
-  "modGroupRename": "Rename group",
-  "modGroupDelete": "Delete group",
-  "modGroupDeleteConfirmTitle": "Delete group?",
-  "modGroupDeleteConfirmBody": "Mods in \"{name}\" move back to Ungrouped. Nothing is deleted from disk.",
-  "@modGroupDeleteConfirmBody": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "modGroupCountLabel": "{count} mods",
-  "@modGroupCountLabel": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "modGroupDropHint": "Drop to move here",
-  "modRename": "Rename",
-  "modRenameDialogTitle": "Rename mod",
-  "modMoveToGroup": "Move to group",
   "modUninstall": "Uninstall",
   "modUninstallConfirmTitle": "Uninstall mod?",
   "modUninstallConfirmBody": "This will permanently delete the mod folder \"{id}\".",

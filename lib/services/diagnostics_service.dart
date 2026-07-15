@@ -8,7 +8,6 @@ import 'package:yp_launcher/services/isolate_service.dart';
 import 'package:yp_launcher/services/launcher_setup_service.dart';
 import 'package:yp_launcher/services/log_service.dart';
 import 'package:yp_launcher/services/mods_service.dart';
-import 'package:yp_launcher/services/plugins_service.dart';
 import 'package:yp_launcher/services/toml_service.dart';
 import 'package:yp_launcher/widgets/cutscenes/cutscene_isolates.dart';
 
@@ -19,7 +18,6 @@ class DiagnosticsReport {
   final Map<String, String> launcherInfo;
   final List<InstalledMod> mods;
   final List<String> disabledModsEntries;
-  final List<LauncherPlugin> plugins;
   final List<CutsceneMod> cutsceneMods;
   final List<String> directOverrides;
   final CutsceneDetection cutsceneDetection;
@@ -42,7 +40,6 @@ class DiagnosticsReport {
     required this.launcherInfo,
     required this.mods,
     required this.disabledModsEntries,
-    required this.plugins,
     required this.cutsceneMods,
     required this.directOverrides,
     required this.cutsceneDetection,
@@ -70,8 +67,6 @@ class DiagnosticsService {
     final disabled = gameDir.isEmpty
         ? <String>[]
         : await DisabledModsService.list(gameDir);
-    final plugins = await PluginsService.list();
-
     final cutsceneScan = gameDir.isEmpty
         ? const CutsceneDetection()
         : await CutsceneDetectionService.scan(gameDir);
@@ -138,7 +133,6 @@ class DiagnosticsService {
       },
       mods: mods,
       disabledModsEntries: disabled,
-      plugins: plugins,
       cutsceneMods: cutscenes.mods,
       directOverrides: cutscenes.directOverrides,
       cutsceneDetection: cutsceneScan,
@@ -239,9 +233,6 @@ class DiagnosticsService {
               .map((e) => '${e.key.name}=${e.value}')
               .join(', '));
     }
-    final enabledPlugins = r.plugins.where((p) => p.enabled).length;
-    b.writeln(
-        'Plugins: ${r.plugins.length} (${enabledPlugins} enabled)');
     b.writeln('Cutscene mods: ${r.cutsceneMods.length}   '
         'HD: ${r.cutsceneDetection.hasHdCutscenes}   '
         'H264: ${r.cutsceneDetection.needsH264}   '
@@ -425,13 +416,6 @@ class DiagnosticsService {
     section('Disabled mod prefixes (${r.disabledModsEntries.length})');
     for (final e in r.disabledModsEntries) {
       b.writeln('- $e');
-    }
-
-    section('Plugins (${r.plugins.length})');
-    for (final pl in r.plugins) {
-      b.writeln('- ${pl.name}  ${pl.enabled ? "[ENABLED]" : "[DISABLED]"}'
-          '  ${(pl.sizeBytes / 1024).toStringAsFixed(0)} KB');
-      b.writeln('    ${pl.filePath}');
     }
 
     section('Cutscene mods (${r.cutsceneMods.length})');

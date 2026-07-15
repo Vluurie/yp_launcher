@@ -575,6 +575,10 @@ String _unwrapSingleChild(String rootPath) {
     if (Directory(path.join(current, 'wax')).existsSync()) return current;
     if (Directory(path.join(current, 'data')).existsSync()) return current;
     if (File(path.join(current, 'mod.toml')).existsSync()) return current;
+    if (dataDirCategoryTable.containsKey(
+        path.basename(dirs.single.path).toLowerCase())) {
+      return current;
+    }
     current = dirs.single.path;
   }
   return current;
@@ -586,10 +590,11 @@ ModKind _classifyKind(String contentRoot) {
   final hasData = _dataHasSubdirs(Directory(path.join(contentRoot, 'data')));
   final hasLooseDataDir = _hasLooseDataDir(contentRoot);
   final hasLooseDataFiles = _hasLooseDataFiles(contentRoot);
+  final hasCpk = _hasCpk(contentRoot);
 
   if (hasEntities && hasCompat) return ModKind.unknown;
   if (hasEntities) return ModKind.native;
-  if (hasData || hasCompat || hasLooseDataDir || hasLooseDataFiles) {
+  if (hasData || hasCompat || hasLooseDataDir || hasLooseDataFiles || hasCpk) {
     return ModKind.data;
   }
   return ModKind.unknown;
@@ -602,6 +607,7 @@ bool _hasNamsPayload(String root) {
   if (_hasCompatConfig(root)) return true;
   if (_hasLooseDataDir(root)) return true;
   if (_hasLooseDataFiles(root)) return true;
+  if (_hasCpk(root)) return true;
   return false;
 }
 
@@ -731,6 +737,22 @@ bool _hasLooseDataFiles(String contentRoot) {
   return false;
 }
 
+bool _isCpkFile(String fileName) => fileName.toLowerCase().endsWith('.cpk');
+
+bool _hasCpk(String contentRoot) {
+  for (final base in [contentRoot, path.join(contentRoot, 'data')]) {
+    final dir = Directory(base);
+    if (!dir.existsSync()) continue;
+    if (dir
+        .listSync()
+        .whereType<File>()
+        .any((f) => _isCpkFile(path.basename(f.path)))) {
+      return true;
+    }
+  }
+  return false;
+}
+
 String? _dataDirForLooseFile(String fileName) {
   final lower = fileName.toLowerCase();
   if (!lower.endsWith('.dat') && !lower.endsWith('.dtt')) return null;
@@ -852,6 +874,19 @@ DataSummary _scanData(Directory dataDir, {required bool hasCompatConfig}) {
   final players = <PlayerModelEntry>[];
 
   if (dataDir.existsSync()) {
+    final cpks = dataDir
+        .listSync()
+        .whereType<File>()
+        .where((f) => _isCpkFile(path.basename(f.path)))
+        .toList();
+    if (cpks.isNotEmpty) {
+      entries.add(DataDirEntry(
+        dirName: 'cpk',
+        category: DataCategory.archive,
+        fileCount: cpks.length,
+      ));
+    }
+
     for (final sub in dataDir.listSync().whereType<Directory>()) {
       final dirName = path.basename(sub.path);
       final cat = dataDirCategoryTable[dirName.toLowerCase()] ?? DataCategory.other;
@@ -1101,6 +1136,7 @@ InstallResult _installSync(_InstallParams p) {
 
   _normalizeLooseDataDirs(workRoot);
   _normalizeLooseDataFiles(workRoot);
+  _normalizeCpks(workRoot);
 
   final modsRoot = ModsService.modsDir(p.gameDir);
   final targetId = _sanitizeId(p.requestedName?.isNotEmpty == true
@@ -1134,7 +1170,10 @@ InstallResult _installSync(_InstallParams p) {
       final hasCompat = detect2.data?.hasCompatConfig ?? false;
       final hasRecognised =
           entries.any((e) => e.category != DataCategory.other);
-      if (!hasRecognised && !hasCompat && entries.isEmpty) {
+      if (!hasRecognised &&
+          !hasCompat &&
+          entries.isEmpty &&
+          !_hasCpk(workRoot)) {
         return const InstallResult.fail('data_empty');
       }
       break;
@@ -1204,6 +1243,7 @@ List<InstallResult> _installBatchSync(_InstallBatchParams p) {
 
     _normalizeLooseDataDirs(targetDir.path);
     _normalizeLooseDataFiles(targetDir.path);
+    _normalizeCpks(targetDir.path);
 
     final localSubPaths = _stageSiblingTextureSets(
       dropRoot,
@@ -1547,6 +1587,32 @@ void _normalizeLooseDataFiles(String root) {
     final destDir = Directory(path.join(root, 'data', entry.value));
     destDir.createSync(recursive: true);
     entry.key.renameSync(path.join(destDir.path, path.basename(entry.key.path)));
+  }
+}
+
+void _normalizeCpks(String root) {
+  final dir = Directory(root);
+  if (!dir.existsSync()) return;
+  final loose = dir
+      .listSync()
+      .whereType<File>()
+      .where((f) => _isCpkFile(path.basename(f.path)))
+      .toList();
+  if (loose.isEmpty) return;
+
+  final dataDir = Directory(path.join(root, 'data'));
+  dataDir.createSync(recursive: true);
+  for (final f in loose) {
+    final dest = path.join(dataDir.path, path.basename(f.path));
+    if (File(dest).existsSync()) continue;
+    try {
+      f.renameSync(dest);
+    } catch (_) {
+      try {
+        f.copySync(dest);
+        f.deleteSync();
+      } catch (_) {}
+    }
   }
 }
 

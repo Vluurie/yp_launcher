@@ -16,6 +16,7 @@ enum DataCategory {
   misc,
   cutscenes,
   audio,
+  archive,
   other,
 }
 
@@ -168,6 +169,7 @@ const List<DataCategory> variantCategoryOrder = [
   DataCategory.ui,
   DataCategory.cutscenes,
   DataCategory.audio,
+  DataCategory.archive,
   DataCategory.misc,
   DataCategory.other,
 ];

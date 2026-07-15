@@ -76,7 +76,6 @@ class AppStrings {
   static const String namsExeName = 'NAMS.exe';
   static const String yorhaDllName = 'yorha_protocol.dll';
   static const String pluginsDirName = 'plugins';
-  static const String pluginsDisabledDirName = 'plugins_disabled';
   static const String logsDirName = 'logs';
   static const String namsLogName = 'nams.log';
 

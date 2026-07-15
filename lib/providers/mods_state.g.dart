@@ -42,7 +42,7 @@ final class ModsStateControllerProvider
 }
 
 String _$modsStateControllerHash() =>
-    r'21a68a0fc3388c116eb16f76a09754c306716b14';
+    r'a923f6b624577a233b7b84e746e8e7ca25d33acb';
 
 abstract class _$ModsStateController extends $Notifier<ModsData> {
   ModsData build();

@@ -278,6 +278,18 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                             l10n,
                           ),
                         ),
+                        ConfigFieldBool(
+                          label: NamsFields.disableSplashScreen.label(l10n),
+                          value:
+                              nams[NamsFields.disableSplashScreen.key] == true,
+                          onChanged: (v) => notifier.updateNams(
+                            NamsFields.disableSplashScreen.key,
+                            v,
+                          ),
+                          tooltip: NamsFields.disableSplashScreen.tooltip!(
+                            l10n,
+                          ),
+                        ),
                       ]),
                       _card(context, l10n.cardHeapOverrides, [
                         Padding(
@@ -388,6 +400,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
       NamsFields.contentEquipTracker,
       NamsFields.contentMcd,
       NamsFields.contentBuddyRubySelector,
+      NamsFields.outfitSwapVisualEffects,
     ];
     return fields.map((f) {
       return ConfigFieldBool(

@@ -1144,18 +1144,6 @@ abstract class AppLocalizations {
   /// **'Deleting cutscene mod...'**
   String get busyDeletingCutscene;
 
-  /// No description provided for @busyDeletingPlugin.
-  ///
-  /// In en, this message translates to:
-  /// **'Deleting plugin...'**
-  String get busyDeletingPlugin;
-
-  /// No description provided for @pluginValidatingInstalling.
-  ///
-  /// In en, this message translates to:
-  /// **'Validating and installing plugin...'**
-  String get pluginValidatingInstalling;
-
   /// No description provided for @busyCloseTitle.
   ///
   /// In en, this message translates to:
@@ -3160,6 +3148,30 @@ abstract class AppLocalizations {
   /// **'Skip texture injection from the mods folder. Useful for isolating issues or if you don\'t want to use texture mods even though they are installed.'**
   String get tooltipDisableTextureInjection;
 
+  /// No description provided for @labelOutfitSwapVisualEffects.
+  ///
+  /// In en, this message translates to:
+  /// **'Outfit Swap Visual Effects'**
+  String get labelOutfitSwapVisualEffects;
+
+  /// No description provided for @tooltipOutfitSwapVisualEffects.
+  ///
+  /// In en, this message translates to:
+  /// **'Play the visual effects during an outfit hot-swap: the pod spawn-in blinder animation, the curtain, and the hacking-screen glitch filter. Turn off for an instant, effect-free swap — the model still reloads. Takes effect immediately, no restart needed.'**
+  String get tooltipOutfitSwapVisualEffects;
+
+  /// No description provided for @labelDisableSplashScreen.
+  ///
+  /// In en, this message translates to:
+  /// **'Disable Splash Screen'**
+  String get labelDisableSplashScreen;
+
+  /// No description provided for @tooltipDisableSplashScreen.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip the startup splash window shown while the game loads. The original game revealed its window before it was ready, causing resize and flicker artifacts; NAMS finished the splash so the window is only revealed once ready. Turning this on brings those vanilla startup artifacts back.'**
+  String get tooltipDisableSplashScreen;
+
   /// No description provided for @tooltipValidateModelDataSettings.
   ///
   /// In en, this message translates to:
@@ -4755,138 +4767,6 @@ abstract class AppLocalizations {
   /// **'[cutscene] enable_h264 in nams.toml — must be true to play H264-encoded cutscenes.'**
   String get cutsceneStatusH264Tooltip;
 
-  /// No description provided for @tabPlugins.
-  ///
-  /// In en, this message translates to:
-  /// **'Plugins'**
-  String get tabPlugins;
-
-  /// No description provided for @headerPlugins.
-  ///
-  /// In en, this message translates to:
-  /// **'PLUGINS'**
-  String get headerPlugins;
-
-  /// No description provided for @pluginIntroTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'NAMS plugins — native Rust extensions on top of the modding SDK'**
-  String get pluginIntroTitle;
-
-  /// No description provided for @pluginIntroBody.
-  ///
-  /// In en, this message translates to:
-  /// **'NAMS is the modding SDK; plugins are Rust-built .dll modules that hook into it for custom native logic. YoRHa Protocol itself is one such plugin. Drop a plugin DLL here and the launcher copies it into the plugins/ folder next to NAMS; NAMS auto-loads every plugin there on the next launch. Toggling a plugin off moves it aside so it isn\'t loaded, without deleting it.'**
-  String get pluginIntroBody;
-
-  /// No description provided for @pluginDropHere.
-  ///
-  /// In en, this message translates to:
-  /// **'Drop plugin DLL here'**
-  String get pluginDropHere;
-
-  /// No description provided for @pluginDropHereHint.
-  ///
-  /// In en, this message translates to:
-  /// **'or click to browse'**
-  String get pluginDropHereHint;
-
-  /// No description provided for @pluginListEmpty.
-  ///
-  /// In en, this message translates to:
-  /// **'No plugins installed'**
-  String get pluginListEmpty;
-
-  /// No description provided for @pluginInstalled.
-  ///
-  /// In en, this message translates to:
-  /// **'Installed plugin: {name}'**
-  String pluginInstalled(String name);
-
-  /// No description provided for @pluginInstallFailed.
-  ///
-  /// In en, this message translates to:
-  /// **'Plugin install failed'**
-  String get pluginInstallFailed;
-
-  /// No description provided for @pluginDelete.
-  ///
-  /// In en, this message translates to:
-  /// **'Delete'**
-  String get pluginDelete;
-
-  /// No description provided for @pluginDeleteConfirmTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Delete plugin?'**
-  String get pluginDeleteConfirmTitle;
-
-  /// No description provided for @pluginDeleteConfirmBody.
-  ///
-  /// In en, this message translates to:
-  /// **'Permanently remove {name} from the plugins folder? This cannot be undone.'**
-  String pluginDeleteConfirmBody(String name);
-
-  /// No description provided for @pluginReasonMissingExport.
-  ///
-  /// In en, this message translates to:
-  /// **'not a NAMS plugin (missing required get_plugin_register export)'**
-  String get pluginReasonMissingExport;
-
-  /// No description provided for @pluginReasonNotADll.
-  ///
-  /// In en, this message translates to:
-  /// **'not a valid Windows DLL'**
-  String get pluginReasonNotADll;
-
-  /// No description provided for @pluginReasonNot64bit.
-  ///
-  /// In en, this message translates to:
-  /// **'DLL is not 64-bit (NAMS plugins must be x64)'**
-  String get pluginReasonNot64bit;
-
-  /// No description provided for @pluginReasonCorrupt.
-  ///
-  /// In en, this message translates to:
-  /// **'DLL is corrupt or has an invalid PE structure'**
-  String get pluginReasonCorrupt;
-
-  /// No description provided for @pluginReasonNoExports.
-  ///
-  /// In en, this message translates to:
-  /// **'DLL has no export table'**
-  String get pluginReasonNoExports;
-
-  /// No description provided for @pluginReasonReservedName.
-  ///
-  /// In en, this message translates to:
-  /// **'reserved filename — built into the launcher'**
-  String get pluginReasonReservedName;
-
-  /// No description provided for @pluginReasonFileNotFound.
-  ///
-  /// In en, this message translates to:
-  /// **'file not found'**
-  String get pluginReasonFileNotFound;
-
-  /// No description provided for @pluginReasonReadFailed.
-  ///
-  /// In en, this message translates to:
-  /// **'could not read file'**
-  String get pluginReasonReadFailed;
-
-  /// No description provided for @pluginReasonCopyFailed.
-  ///
-  /// In en, this message translates to:
-  /// **'could not copy file into the plugins folder'**
-  String get pluginReasonCopyFailed;
-
-  /// No description provided for @pluginReasonIncompatible.
-  ///
-  /// In en, this message translates to:
-  /// **'looks like {tool}, which is not compatible with the launcher'**
-  String pluginReasonIncompatible(String tool);
-
   /// No description provided for @modIntroTitle.
   ///
   /// In en, this message translates to:
@@ -4922,6 +4802,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'All'**
   String get modFilterAll;
+
+  /// No description provided for @modGroup2b.
+  ///
+  /// In en, this message translates to:
+  /// **'2B OUTFITS'**
+  String get modGroup2b;
+
+  /// No description provided for @modGroup9s.
+  ///
+  /// In en, this message translates to:
+  /// **'9S OUTFITS'**
+  String get modGroup9s;
+
+  /// No description provided for @modGroupA2.
+  ///
+  /// In en, this message translates to:
+  /// **'A2 OUTFITS'**
+  String get modGroupA2;
+
+  /// No description provided for @modGroupOtherOutfits.
+  ///
+  /// In en, this message translates to:
+  /// **'OTHER OUTFITS'**
+  String get modGroupOtherOutfits;
+
+  /// No description provided for @modGroupWeapons.
+  ///
+  /// In en, this message translates to:
+  /// **'WEAPONS'**
+  String get modGroupWeapons;
+
+  /// No description provided for @modGroupEnemies.
+  ///
+  /// In en, this message translates to:
+  /// **'ENEMIES'**
+  String get modGroupEnemies;
+
+  /// No description provided for @modGroupEffects.
+  ///
+  /// In en, this message translates to:
+  /// **'EFFECTS'**
+  String get modGroupEffects;
+
+  /// No description provided for @modGroupScripting.
+  ///
+  /// In en, this message translates to:
+  /// **'SCRIPTS'**
+  String get modGroupScripting;
+
+  /// No description provided for @modGroupLocalization.
+  ///
+  /// In en, this message translates to:
+  /// **'TEXT & LOCALIZATION'**
+  String get modGroupLocalization;
+
+  /// No description provided for @modGroupCutscenes.
+  ///
+  /// In en, this message translates to:
+  /// **'CUTSCENES'**
+  String get modGroupCutscenes;
+
+  /// No description provided for @modGroupAudio.
+  ///
+  /// In en, this message translates to:
+  /// **'AUDIO'**
+  String get modGroupAudio;
+
+  /// No description provided for @modGroupTextures.
+  ///
+  /// In en, this message translates to:
+  /// **'TEXTURES'**
+  String get modGroupTextures;
+
+  /// No description provided for @modGroupNative.
+  ///
+  /// In en, this message translates to:
+  /// **'NATIVE MODS'**
+  String get modGroupNative;
+
+  /// No description provided for @modGroupOther.
+  ///
+  /// In en, this message translates to:
+  /// **'OTHER'**
+  String get modGroupOther;
+
+  /// No description provided for @modGroupMultiHint.
+  ///
+  /// In en, this message translates to:
+  /// **'This mod replaces models for several characters, so it is listed under each of them.'**
+  String get modGroupMultiHint;
+
+  /// No description provided for @modRename.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename'**
+  String get modRename;
+
+  /// No description provided for @modRenameDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename mod'**
+  String get modRenameDialogTitle;
+
+  /// No description provided for @modRenameReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset to original name'**
+  String get modRenameReset;
 
   /// No description provided for @dropModHere.
   ///
@@ -5144,84 +5132,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enabled — takes effect on next game start.'**
   String get modEnableNotice;
-
-  /// No description provided for @modGroupAddButton.
-  ///
-  /// In en, this message translates to:
-  /// **'Add group'**
-  String get modGroupAddButton;
-
-  /// No description provided for @modGroupNewDialogTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'New group'**
-  String get modGroupNewDialogTitle;
-
-  /// No description provided for @modGroupRenameDialogTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Rename group'**
-  String get modGroupRenameDialogTitle;
-
-  /// No description provided for @modGroupUngrouped.
-  ///
-  /// In en, this message translates to:
-  /// **'Ungrouped'**
-  String get modGroupUngrouped;
-
-  /// No description provided for @modGroupRename.
-  ///
-  /// In en, this message translates to:
-  /// **'Rename group'**
-  String get modGroupRename;
-
-  /// No description provided for @modGroupDelete.
-  ///
-  /// In en, this message translates to:
-  /// **'Delete group'**
-  String get modGroupDelete;
-
-  /// No description provided for @modGroupDeleteConfirmTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Delete group?'**
-  String get modGroupDeleteConfirmTitle;
-
-  /// No description provided for @modGroupDeleteConfirmBody.
-  ///
-  /// In en, this message translates to:
-  /// **'Mods in \"{name}\" move back to Ungrouped. Nothing is deleted from disk.'**
-  String modGroupDeleteConfirmBody(String name);
-
-  /// No description provided for @modGroupCountLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'{count} mods'**
-  String modGroupCountLabel(int count);
-
-  /// No description provided for @modGroupDropHint.
-  ///
-  /// In en, this message translates to:
-  /// **'Drop to move here'**
-  String get modGroupDropHint;
-
-  /// No description provided for @modRename.
-  ///
-  /// In en, this message translates to:
-  /// **'Rename'**
-  String get modRename;
-
-  /// No description provided for @modRenameDialogTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Rename mod'**
-  String get modRenameDialogTitle;
-
-  /// No description provided for @modMoveToGroup.
-  ///
-  /// In en, this message translates to:
-  /// **'Move to group'**
-  String get modMoveToGroup;
 
   /// No description provided for @modUninstall.
   ///
