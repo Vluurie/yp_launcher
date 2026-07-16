@@ -111,13 +111,13 @@ class PlayButton extends ConsumerWidget {
     }
   }
 
-  void _handlePlayButton(
+  Future<void> _handlePlayButton(
     BuildContext context,
     WidgetRef ref,
     AppStateController controller,
     AppState appState,
     AppLocalizations l10n,
-  ) {
+  ) async {
     if (appState.playButtonState == PlayButtonState.idle) {
       final nams = ref.read(configStateControllerProvider).namsValues;
       if (nams[NamsFields.disablePluginLoading.key] == true ||
@@ -190,7 +190,7 @@ class PlayButton extends ConsumerWidget {
       controller.setPlayButtonState(PlayButtonState.loading);
       controller.setStatus(l10n.statusStopping);
 
-      final success = ProcessService.terminateNierAutomata();
+      final success = await ProcessService.terminateNierAutomata();
       if (success) {
         controller.setPlayButtonState(PlayButtonState.idle);
         controller.setStatus(l10n.statusStopped);

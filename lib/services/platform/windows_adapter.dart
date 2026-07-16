@@ -12,6 +12,9 @@ class WindowsAdapter extends PlatformAdapter {
   @override
   Future<String> resolveRuntimeDir() async => windowsRuntimeDir;
 
+  @override
+  bool get needsRuntimeExtraction => false;
+
   static String get windowsRuntimeDir => p.join(
         p.dirname(Platform.resolvedExecutable),
         'data',

@@ -49,7 +49,7 @@ class _OnboardingWizardState extends ConsumerState<OnboardingWizard> {
   }
 
   Future<void> _loadFirstPlaythrough() async {
-    final settings = await NamsSettingsService.loadSettings();
+    final settings = await NamsSettingsService.loadSettings(_selectedPath);
     if (mounted) {
       setState(() {
         _firstPlaythrough = settings['firstPlaythrough'] ?? true;
@@ -222,8 +222,9 @@ class _OnboardingWizardState extends ConsumerState<OnboardingWizard> {
         );
       case 2:
         return FirstPlaythroughStep(
+          gameDir: _selectedPath,
           onNext: () {
-            NamsSettingsService.loadSettings().then((settings) {
+            NamsSettingsService.loadSettings(_selectedPath).then((settings) {
               _firstPlaythrough = settings['firstPlaythrough'] ?? true;
               if (mounted) setState(() {});
             });

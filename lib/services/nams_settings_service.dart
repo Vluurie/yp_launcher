@@ -1,14 +1,17 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:path/path.dart' as path;
+import 'package:yp_launcher/services/platform/platform_adapter.dart';
 
 class NamsSettingsService {
-  static String get settingsPath {
-    final appData = Platform.environment['APPDATA'] ?? '';
-    return path.join(appData, 'NAMS', 'settings.json');
-  }
+  /// Null until the location is known, which on a compatibility layer means
+  /// until the game directory identifies the prefix.
+  static Future<String?> resolveSettingsPath(String? gameDir) =>
+      PlatformAdapter.current.resolveNamsSettingsPath(gameDir);
 
-  static Future<Map<String, dynamic>> loadSettings() async {
+  static Future<Map<String, dynamic>> loadSettings(String? gameDir) async {
+    final settingsPath = await resolveSettingsPath(gameDir);
+    if (settingsPath == null) return Map<String, dynamic>.from(_defaultSettings);
+
     final file = File(settingsPath);
     if (!await file.exists()) {
       return Map<String, dynamic>.from(_defaultSettings);
@@ -22,17 +25,22 @@ class NamsSettingsService {
     );
   }
 
-  static Future<void> saveSettings(Map<String, dynamic> settings) async {
-    final file = File(settingsPath);
-    final dir = file.parent;
-    if (!await dir.exists()) {
-      await dir.create(recursive: true);
-    }
-    final encoder = const JsonEncoder.withIndent('  ');
-    await file.writeAsString(encoder.convert(settings));
-  }
+  /// Returns false when the location is unknown; never falls back to a
+  /// relative path, which NAMS would not read.
+  static Future<bool> saveSettings(
+    Map<String, dynamic> settings,
+    String? gameDir,
+  ) async {
+    final settingsPath = await resolveSettingsPath(gameDir);
+    if (settingsPath == null) return false;
 
-  static bool get settingsFileExists => File(settingsPath).existsSync();
+    final file = File(settingsPath);
+    if (!await file.parent.exists()) {
+      await file.parent.create(recursive: true);
+    }
+    await file.writeAsString(const JsonEncoder.withIndent('  ').convert(settings));
+    return true;
+  }
 
   static const Map<String, dynamic> _defaultSettings = {
     'firstPlaythrough': true, 

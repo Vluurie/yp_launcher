@@ -1,4 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:yp_launcher/providers/app_state.dart';
 import 'package:yp_launcher/services/nams_settings_service.dart';
 
 part 'nams_settings_state.g.dart';
@@ -8,21 +9,28 @@ class NamsSettingsData {
   final bool isLoading;
   final bool hasUnsavedChanges;
 
+  /// Null while the location is unknown, e.g. before a game directory
+  /// identifies the Wine prefix.
+  final String? settingsPath;
+
   const NamsSettingsData({
     this.settings = const {},
     this.isLoading = false,
     this.hasUnsavedChanges = false,
+    this.settingsPath,
   });
 
   NamsSettingsData copyWith({
     Map<String, dynamic>? settings,
     bool? isLoading,
     bool? hasUnsavedChanges,
+    String? settingsPath,
   }) {
     return NamsSettingsData(
       settings: settings ?? this.settings,
       isLoading: isLoading ?? this.isLoading,
       hasUnsavedChanges: hasUnsavedChanges ?? this.hasUnsavedChanges,
+      settingsPath: settingsPath ?? this.settingsPath,
     );
   }
 
@@ -62,8 +70,17 @@ class NamsSettingsStateController extends _$NamsSettingsStateController {
 
   Future<void> loadSettings() async {
     state = state.copyWith(isLoading: true);
-    final settings = await NamsSettingsService.loadSettings();
-    state = NamsSettingsData(settings: settings);
+    final gameDir = _gameDir;
+    final settings = await NamsSettingsService.loadSettings(gameDir);
+    state = NamsSettingsData(
+      settings: settings,
+      settingsPath: await NamsSettingsService.resolveSettingsPath(gameDir),
+    );
+  }
+
+  String? get _gameDir {
+    final dir = ref.read(appStateControllerProvider).selectedDirectory;
+    return dir.isEmpty ? null : dir;
   }
 
   void updateKeybind(String category, String action, String key) {
@@ -120,9 +137,10 @@ class NamsSettingsStateController extends _$NamsSettingsStateController {
     state = state.copyWith(settings: updated, hasUnsavedChanges: true);
   }
 
-  Future<void> saveSettings() async {
-    await NamsSettingsService.saveSettings(state.settings);
-    state = state.copyWith(hasUnsavedChanges: false);
+  Future<bool> saveSettings() async {
+    final saved = await NamsSettingsService.saveSettings(state.settings, _gameDir);
+    if (saved) state = state.copyWith(hasUnsavedChanges: false);
+    return saved;
   }
 
   Future<void> discardChanges() async {

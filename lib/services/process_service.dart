@@ -1,7 +1,6 @@
 import 'dart:async';
-import 'dart:ffi';
+import 'dart:convert';
 import 'dart:io';
-import 'package:ffi/ffi.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as path;
 import 'package:yp_launcher/constants/app_strings.dart';
@@ -10,8 +9,8 @@ import 'package:yp_launcher/services/launch_failure.dart';
 import 'package:yp_launcher/services/launcher_setup_service.dart';
 import 'package:yp_launcher/services/log_service.dart';
 import 'package:yp_launcher/services/mods_service.dart';
-import 'package:yp_launcher/services/platform_detection_service.dart';
-import 'package:win32/win32.dart' if (dart.library.html) '';
+import 'package:yp_launcher/services/platform/platform_adapter.dart';
+import 'package:yp_launcher/services/wine/launch_command.dart';
 
 class LaunchOutcome {
   final bool started;
@@ -73,19 +72,34 @@ class ProcessService {
 
       await ModsService.syncDlcSlots(installDirectory);
 
-      final List<String> arguments = _buildRunArguments(gameDir: installDirectory);
+      final LaunchCommand command;
+      try {
+        command = await PlatformAdapter.current.buildLaunchCommand(
+          namsExe: launcherPaths['namsExe']!,
+          gameDir: installDirectory,
+          gameExe: nierExePath,
+          launcherDir: launcherPaths['launcherDir']!,
+          l10n: l10n,
+        );
+      } on LaunchUnavailable catch (e) {
+        return LaunchOutcome.failed(
+          LaunchFailure(headline: e.headline, rawOutput: e.detail),
+        );
+      }
 
       final process = await Process.start(
-        launcherPaths['namsExe']!,
-        arguments,
-        workingDirectory: launcherPaths['launcherDir']!,
+        command.command,
+        command.args,
+        workingDirectory: command.cwd,
+        environment: command.env,
         mode: ProcessStartMode.normal,
       );
 
       final stdoutBuf = StringBuffer();
       final stderrBuf = StringBuffer();
-      process.stdout.transform(const SystemEncoding().decoder).listen(stdoutBuf.write);
-      process.stderr.transform(const SystemEncoding().decoder).listen(stderrBuf.write);
+      const decoder = Utf8Decoder(allowMalformed: true);
+      process.stdout.transform(decoder).listen(stdoutBuf.write);
+      process.stderr.transform(decoder).listen(stderrBuf.write);
 
       final exitFuture = process.exitCode;
       final graceFuture = Future<int?>.delayed(
@@ -96,7 +110,7 @@ class ProcessService {
       final exitCode = await Future.any([exitFuture, graceFuture]);
 
       if (exitCode == null) {
-        unawaited(_monitorProcess(AppStrings.namsExeName, onProcessStopped));
+        unawaited(_monitorProcess(process, onProcessStopped));
         return const LaunchOutcome.started();
       }
 
@@ -152,19 +166,23 @@ class ProcessService {
 
   static Future<String?> buildLaunchCommandPreview({
     required String installDirectory,
+    required AppLocalizations l10n,
   }) async {
     try {
       final paths = await LauncherSetupService.getLauncherPaths();
-      final args = _buildRunArguments(gameDir: installDirectory);
-      final exe = paths['namsExe']!;
-      final launcherDir = paths['launcherDir']!;
-      final quotedArgs = args.map(_shellQuote).join(' ');
+      final command = await PlatformAdapter.current.buildLaunchCommand(
+        namsExe: paths['namsExe']!,
+        gameDir: installDirectory,
+        gameExe: path.join(installDirectory, AppStrings.gameExeName),
+        launcherDir: paths['launcherDir']!,
+        l10n: l10n,
+      );
+
+      final line = [command.command, ...command.args].map(_shellQuote).join(' ');
       if (Platform.isWindows) {
-        return 'cd /d ${_shellQuote(launcherDir)}\r\n'
-            '${_shellQuote(exe)} $quotedArgs';
+        return 'cd /d ${_shellQuote(command.cwd)}\r\n$line';
       }
-      return 'cd ${_shellQuote(launcherDir)} && '
-          '${_shellQuote(exe)} $quotedArgs';
+      return 'cd ${_shellQuote(command.cwd)} && $line';
     } catch (_) {
       return null;
     }
@@ -180,204 +198,22 @@ class ProcessService {
     return '"$escaped"';
   }
 
-  static List<String> _buildRunArguments({required String gameDir}) {
-    String formatPath(String filePath) {
-      if (Platform.isWindows) {
-        return filePath.replaceAll('/', '\\');
-      } else if (PlatformDetectionService.isWine) {
-        return PlatformDetectionService.unixToWinePath(filePath);
-      } else {
-        final normalizedPath = filePath.replaceAll('\\', '/');
-        if (!normalizedPath.startsWith('/')) {
-          return normalizedPath;
-        }
-        return 'Z:$normalizedPath';
-      }
-    }
+  static Future<bool> terminateNierAutomata() =>
+      PlatformAdapter.current.terminateGame();
 
-    return <String>[
-      AppStrings.argRun,
-      AppStrings.argNierPath,
-      formatPath(gameDir),
-    ];
-  }
+  static Future<bool> isNierAutomataRunningAsync() =>
+      PlatformAdapter.current.isGameRunning();
 
-  static bool terminateNierAutomata() {
-    if (Platform.isWindows) {
-      return _terminateProcessByName(AppStrings.namsExeName);
-    } else if (PlatformDetectionService.isWine) {
-      try {
-        Process.runSync('wineserver', ['-k']);
-        return true;
-      } catch (_) {
-        try {
-          final result = Process.runSync('pkill', [
-            '-f',
-            AppStrings.namsExeName,
-          ]);
-          return result.exitCode == 0;
-        } catch (_) {
-          return false;
-        }
-      }
-    } else {
-      try {
-        final result = Process.runSync('pkill', ['-f', AppStrings.namsExeName]);
-        return result.exitCode == 0;
-      } catch (_) {
-        return false;
-      }
-    }
-  }
-
-  static bool isNierAutomataRunning() {
-    return _isProcessRunning(AppStrings.namsExeName);
-  }
-
-  static Future<bool> isNierAutomataRunningAsync() async {
-    if (Platform.isWindows) {
-      try {
-        final result = await Process.run('tasklist', [
-          '/FI',
-          'IMAGENAME eq ${AppStrings.namsExeName}',
-          '/NH',
-        ]);
-        return result.stdout.toString().toLowerCase().contains(
-          AppStrings.namsExeName.toLowerCase(),
-        );
-      } catch (_) {
-        return _isProcessRunning(AppStrings.namsExeName);
-      }
-    } else {
-      try {
-        final result = await Process.run('pgrep', [
-          '-f',
-          AppStrings.namsExeName,
-        ]);
-        return result.exitCode == 0;
-      } catch (_) {
-        return false;
-      }
-    }
-  }
-
+  /// Waits on the handle we already hold rather than polling by name, which
+  /// cannot confuse NAMS with any other process.
   static Future<void> _monitorProcess(
-    String processName,
+    Process process,
     VoidCallback onStopped,
   ) async {
-    while (true) {
-      await Future.delayed(const Duration(seconds: 2));
-      if (!await isNierAutomataRunningAsync()) {
-        await Future.delayed(const Duration(seconds: 2));
-        if (!await isNierAutomataRunningAsync()) {
-          onStopped();
-          return;
-        }
-      }
-    }
-  }
-
-  static bool _isProcessRunning(String processName) {
-    if (!Platform.isWindows) return false;
-
-    final processIds = calloc<Uint32>(1024);
-    final cb = sizeOf<Uint32>() * 1024;
-    final cbNeeded = calloc<Uint32>();
-
-    try {
-      if (!EnumProcesses(processIds, cb, cbNeeded).value) {
-        return false;
-      }
-
-      final count = cbNeeded.value ~/ sizeOf<Uint32>();
-      final targetName = processName.toLowerCase();
-
-      for (var i = 0; i < count; i++) {
-        final processHandle = OpenProcess(
-          PROCESS_QUERY_INFORMATION | PROCESS_VM_READ,
-          false,
-          processIds[i],
-        ).value;
-
-        if (processHandle != NULL) {
-          final exeName = wsalloc(MAX_PATH);
-          try {
-            if (GetModuleBaseName(processHandle, null, PWSTR(exeName), MAX_PATH)
-                    .value >
-                0) {
-              final currentName = exeName.toDartString().toLowerCase();
-              if (currentName.startsWith(targetName)) {
-                return true;
-              }
-            }
-          } finally {
-            free(exeName);
-            CloseHandle(processHandle);
-          }
-        }
-      }
-    } catch (_) {
-      // ignore
-    } finally {
-      free(processIds);
-      free(cbNeeded);
-    }
-
-    return false;
-  }
-
-  static bool _terminateProcessByName(String processName) {
-    if (!Platform.isWindows) return false;
-
-    final processIds = calloc<Uint32>(1024);
-    final cb = sizeOf<Uint32>() * 1024;
-    final cbNeeded = calloc<Uint32>();
-
-    try {
-      if (!EnumProcesses(processIds, cb, cbNeeded).value) {
-        return false;
-      }
-
-      final count = cbNeeded.value ~/ sizeOf<Uint32>();
-      final targetName = processName.toLowerCase();
-
-      for (var i = 0; i < count; i++) {
-        final processHandle = OpenProcess(
-          PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_TERMINATE,
-          false,
-          processIds[i],
-        ).value;
-
-        if (processHandle != NULL) {
-          final exeName = wsalloc(MAX_PATH);
-          try {
-            if (GetModuleBaseName(processHandle, null, PWSTR(exeName), MAX_PATH)
-                    .value >
-                0) {
-              final currentName = exeName.toDartString().toLowerCase();
-              if (currentName == targetName) {
-                final terminated = TerminateProcess(processHandle, 0).value;
-                return terminated;
-              }
-            }
-          } finally {
-            free(exeName);
-            CloseHandle(processHandle);
-          }
-        }
-      }
-    } catch (_) {
-      // ignore
-    } finally {
-      free(processIds);
-      free(cbNeeded);
-    }
-
-    return false;
+    await process.exitCode;
+    onStopped();
   }
 }
-
-Pointer<Utf16> wsalloc(int size) => calloc<Uint16>(size).cast<Utf16>();
 
 class ProcessException implements Exception {
   final String message;

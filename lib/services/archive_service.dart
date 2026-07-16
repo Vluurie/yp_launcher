@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:archive/archive.dart';
 import 'package:path/path.dart' as path;
 import 'package:yp_launcher/services/isolate_service.dart';
+import 'package:yp_launcher/services/launcher_setup_service.dart';
+import 'package:yp_launcher/services/platform/platform_adapter.dart';
 
 class ArchiveService {
   static String? _cached7zPath;
@@ -12,12 +14,9 @@ class ArchiveService {
     final override = overrideSevenZipPath;
     if (override != null && File(override).existsSync()) return override;
     if (_cached7zPath != null) return _cached7zPath!;
-    final appDir = File(Platform.resolvedExecutable).parent.path;
-    final candidates = [
-      path.join(appDir, 'data', 'flutter_assets', 'assets', 'bins', '7z.exe'),
-      path.join(appDir, 'data', 'assets', 'bins', '7z.exe'),
-      path.join(appDir, 'assets', 'bins', '7z.exe'),
-    ];
+
+    final adapter = PlatformAdapter.current;
+    final candidates = adapter.sevenZipCandidates(_runtimeDirOrEmpty());
     for (final p in candidates) {
       if (File(p).existsSync()) {
         _cached7zPath = p;
@@ -25,6 +24,14 @@ class ArchiveService {
       }
     }
     return candidates.first;
+  }
+
+  static String _runtimeDirOrEmpty() {
+    try {
+      return LauncherSetupService.launcherDirectory;
+    } catch (_) {
+      return '';
+    }
   }
 
   static bool isArchive(String filePath) {

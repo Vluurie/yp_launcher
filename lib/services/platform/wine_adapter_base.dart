@@ -98,15 +98,16 @@ abstract class WineAdapterBase extends PlatformAdapter {
     throw LaunchUnavailable(l10n.errorNoZDrive, l10n.errorNoZDriveBody(prefix));
   }
 
-  /// Matches the game, not NAMS.exe: our own wine command line carries the
-  /// NAMS.exe path in its argv and would match itself.
+  /// NAMS hosts the game in-process, so NAMS.exe is what runs and what has to
+  /// be stopped. Wine rewrites argv to the Windows exe path, which is what
+  /// makes this match.
   @override
-  Future<bool> isGameRunning() => _pgrep(AppStrings.gameExeName);
+  Future<bool> isGameRunning() => _pgrep(AppStrings.namsExeName);
 
   @override
   Future<bool> terminateGame() async {
     try {
-      final result = await Process.run('pkill', ['-f', AppStrings.gameExeName]);
+      final result = await Process.run('pkill', ['-f', AppStrings.namsExeName]);
       return result.exitCode == 0;
     } catch (_) {
       return false;

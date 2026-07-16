@@ -8,10 +8,12 @@ import 'package:yp_launcher/widgets/onboarding/shared.dart';
 class FirstPlaythroughStep extends StatefulWidget {
   final VoidCallback onNext;
   final VoidCallback onBack;
+  final String? gameDir;
   const FirstPlaythroughStep({
     super.key,
     required this.onNext,
     required this.onBack,
+    required this.gameDir,
   });
 
   @override
@@ -28,7 +30,7 @@ class _FirstPlaythroughStepState extends State<FirstPlaythroughStep> {
   }
 
   Future<void> _loadExistingConfig() async {
-    final settings = await NamsSettingsService.loadSettings();
+    final settings = await NamsSettingsService.loadSettings(widget.gameDir);
     if (mounted) {
       setState(() {
         _firstPlaythrough = settings['firstPlaythrough'] ?? true;
@@ -37,9 +39,9 @@ class _FirstPlaythroughStepState extends State<FirstPlaythroughStep> {
   }
 
   Future<void> _saveFirstPlaythrough() async {
-    final settings = await NamsSettingsService.loadSettings();
+    final settings = await NamsSettingsService.loadSettings(widget.gameDir);
     settings['firstPlaythrough'] = _firstPlaythrough;
-    await NamsSettingsService.saveSettings(settings);
+    await NamsSettingsService.saveSettings(settings, widget.gameDir);
   }
 
   @override

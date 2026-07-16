@@ -41,6 +41,10 @@ abstract class PlatformAdapter {
   /// Where NAMS.exe, its plugins and 7-Zip live at runtime.
   Future<String> resolveRuntimeDir();
 
+  /// False when the bundle already lays the binaries out at
+  /// [resolveRuntimeDir], so there is nothing to unpack.
+  bool get needsRuntimeExtraction => true;
+
   String get sevenZipExeName;
 
   List<String> sevenZipCandidates(String runtimeDir);

@@ -46,11 +46,15 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
   int _selectedTab = 0;
   final _logPanelKey = GlobalKey<LogPanelState>();
   bool? _onboardingComplete;
+
+  /// Matches the hosts where main() initializes window_manager.
+  static bool get _managesWindow => Platform.isWindows || Platform.isMacOS;
+
   @override
   void initState() {
     super.initState();
     _checkOnboarding();
-    if (Platform.isWindows) {
+    if (_managesWindow) {
       windowManager.addListener(this);
       windowManager.setPreventClose(true);
     }
@@ -80,7 +84,7 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
 
   @override
   void dispose() {
-    if (Platform.isWindows) {
+    if (_managesWindow) {
       windowManager.removeListener(this);
     }
     super.dispose();
@@ -658,6 +662,7 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
     final notifier = ref.read(notificationStateControllerProvider.notifier);
     final cmd = await ProcessService.buildLaunchCommandPreview(
       installDirectory: gameDir,
+      l10n: AppLocalizations.of(context)!,
     );
     if (cmd == null) {
       notifier.addNotification(

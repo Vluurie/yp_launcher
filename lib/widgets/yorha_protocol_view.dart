@@ -4,7 +4,6 @@ import 'package:yp_launcher/l10n/app_localizations.dart';
 import 'package:yp_launcher/providers/nams_settings_state.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
-import 'package:yp_launcher/services/nams_settings_service.dart';
 import 'package:yp_launcher/widgets/config_field_bool.dart';
 import 'package:yp_launcher/widgets/header_info_icon.dart';
 import 'package:yp_launcher/widgets/hover_button.dart';
@@ -101,10 +100,11 @@ class _YorhaProtocolViewState extends ConsumerState<YorhaProtocolView> {
               letterSpacing: 1.0,
             ),
           ),
-          HeaderInfoIcon(
-            tooltip: l10n.tooltipEditsSettingsJson,
-            revealPath: NamsSettingsService.settingsPath,
-          ),
+          if (data.settingsPath != null)
+            HeaderInfoIcon(
+              tooltip: l10n.tooltipEditsSettingsJson,
+              revealPath: data.settingsPath!,
+            ),
           if (data.hasUnsavedChanges)
             Padding(
               padding: EdgeInsets.only(left: AppSizes.spacingMD(context)),

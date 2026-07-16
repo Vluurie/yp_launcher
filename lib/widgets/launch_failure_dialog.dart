@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:yp_launcher/l10n/app_localizations.dart';
 import 'package:yp_launcher/services/launch_failure.dart';
 import 'package:yp_launcher/services/process_service.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
@@ -35,20 +36,24 @@ class _LaunchFailureDialog extends StatefulWidget {
 
 class _LaunchFailureDialogState extends State<_LaunchFailureDialog> {
   String? _command;
+  bool _commandRequested = false;
   final ScrollController _scrollController = ScrollController();
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_commandRequested) return;
     final dir = widget.installDirectory;
-    if (dir != null && dir.isNotEmpty) {
-      ProcessService.buildLaunchCommandPreview(installDirectory: dir).then(
-        (cmd) {
-          if (!mounted) return;
-          setState(() => _command = cmd);
-        },
-      );
-    }
+    if (dir == null || dir.isEmpty) return;
+
+    _commandRequested = true;
+    ProcessService.buildLaunchCommandPreview(
+      installDirectory: dir,
+      l10n: AppLocalizations.of(context)!,
+    ).then((cmd) {
+      if (!mounted) return;
+      setState(() => _command = cmd);
+    });
   }
 
   @override
