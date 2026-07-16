@@ -141,10 +141,7 @@ void main() {
     final fixture = File(p.join('test', 'fixtures', 'cpk_mod_709.zip'));
 
     setUpAll(() {
-      final sevenZip = bundledSevenZipPath();
-      expect(File(sevenZip).existsSync(), isTrue,
-          reason: 'bundled 7z.exe missing at $sevenZip');
-      ArchiveService.overrideSevenZipPath = sevenZip;
+      ArchiveService.overrideSevenZipPath = bundledSevenZipPath();
     });
 
     tearDownAll(() {
@@ -180,5 +177,8 @@ void main() {
         skip: fixture.existsSync()
             ? false
             : 'fixture not present at ${fixture.path}');
-  });
+  },
+      skip: File(bundledSevenZipPath()).existsSync()
+          ? false
+          : '7-Zip not present at ${bundledSevenZipPath()}');
 }

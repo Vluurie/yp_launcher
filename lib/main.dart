@@ -8,6 +8,7 @@ import 'package:yp_launcher/constants/app_strings.dart';
 import 'package:yp_launcher/l10n/app_localizations.dart';
 import 'package:yp_launcher/screens/launcher_screen.dart';
 import 'package:yp_launcher/services/launcher_setup_service.dart';
+import 'package:yp_launcher/services/platform/platform_adapter.dart';
 import 'package:yp_launcher/services/platform_gate.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -22,16 +23,19 @@ void main(List<String> args) async {
     PlatformGate.overrideAs = SimulatedOs.windows;
   }
 
-  if (Platform.isWindows) {
+  if (Platform.isWindows || Platform.isMacOS) {
     await windowManager.ensureInitialized();
 
-    const windowOptions = WindowOptions(
-      size: Size(1300, 750),
-      minimumSize: Size(600, 420),
+    final windowOptions = WindowOptions(
+      size: const Size(1300, 750),
+      minimumSize: const Size(600, 420),
       center: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor:
+          PlatformAdapter.current.usesNativeTitleBar ? null : Colors.transparent,
       skipTaskbar: false,
-      titleBarStyle: TitleBarStyle.hidden,
+      titleBarStyle: PlatformAdapter.current.usesNativeTitleBar
+          ? TitleBarStyle.normal
+          : TitleBarStyle.hidden,
       title: AppStrings.appTitle,
     );
 

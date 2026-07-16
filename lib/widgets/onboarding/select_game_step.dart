@@ -5,10 +5,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:yp_launcher/constants/app_strings.dart';
 import 'package:yp_launcher/l10n/app_localizations.dart';
+import 'package:yp_launcher/models/nier_installation.dart';
 import 'package:yp_launcher/providers/app_state.dart';
 import 'package:yp_launcher/providers/notification_state.dart';
 import 'package:yp_launcher/services/nams_config_service.dart';
-import 'package:yp_launcher/services/nier_finder_service.dart';
+import 'package:yp_launcher/services/platform/platform_adapter.dart';
 import 'package:yp_launcher/services/win10_compat_setup_service.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
@@ -43,7 +44,7 @@ class _SelectGameStepState extends ConsumerState<SelectGameStep> {
     });
 
     try {
-      final fastResults = await NierFinderService.findFast();
+      final fastResults = await PlatformAdapter.current.discoverFast();
       if (!mounted) return;
 
       if (fastResults.isNotEmpty) {
@@ -55,7 +56,7 @@ class _SelectGameStepState extends ConsumerState<SelectGameStep> {
         }
       } else {
         setState(() => _deepSearching = true);
-        final deepResults = await NierFinderService.findDeep();
+        final deepResults = await PlatformAdapter.current.discoverDeep();
         if (!mounted) return;
 
         if (deepResults.isNotEmpty) {
@@ -190,10 +191,29 @@ class _SelectGameStepState extends ConsumerState<SelectGameStep> {
 
         if (await file.exists()) {
           final isValid = await compute(_validateNierExe, filePath);
-          if (isValid) await _applyPath(file.parent.path);
+          if (!isValid || !mounted) return;
+          if (_rejectOutsidePrefix(filePath)) return;
+          await _applyPath(file.parent.path);
         }
       }
     } catch (_) {}
+  }
+
+  bool _rejectOutsidePrefix(String exePath) {
+    final reason = PlatformAdapter.current
+        .rejectGameSelection(exePath, AppLocalizations.of(context)!);
+    if (reason == null) return false;
+
+    ref.read(notificationStateControllerProvider.notifier).addNotification(
+          NotificationItem(
+            id: 'game_outside_prefix',
+            message: reason,
+            icon: Icons.warning_amber,
+            color: AppColors.warning,
+            type: NotificationType.general,
+          ),
+        );
+    return true;
   }
 
   @override

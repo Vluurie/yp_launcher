@@ -197,7 +197,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String errorExeNotFound(String dir) {
-    return 'NierAutomata.exe not found in $dir';
+    return 'NieRAutomata.exe not found in $dir';
   }
 
   @override
@@ -214,6 +214,37 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String errorGameDirNotWritableBody(String gameDir, String namsDir) {
     return 'The game folder cannot be written to:\n$gameDir\n\nNAMS writes mods and configs into:\n$namsDir\nbut it cannot create files there. NieR is probably installed under C:\\Program Files (x86)\\Steam, which Windows protects.\n\nHow to fix it (recommended — move the Steam library off Program Files):\n1. Open Steam > Settings > Storage.\n2. Click the drive dropdown > \"Add Drive\" and pick a folder on another drive (for example D:\\SteamLibrary).\n3. Go to your Library, right-click NieR:Automata > Properties > Installed Files > \"Move install folder\", and move it to the new library.\n4. Re-select the game in this launcher and press Play again.\n\nQuick alternative: right-click the launcher .exe and choose \"Run as administrator\" so it can write into Program Files. Moving the library is the cleaner long-term fix.';
+  }
+
+  @override
+  String get errorNoCompatLayer => 'CrossOver not found';
+
+  @override
+  String get errorNoCompatLayerBody =>
+      'Running NieR:Automata on this system needs CrossOver, which runs Windows programs on macOS. It was not found in /Applications.\n\nWithout it the launcher can still manage mods, textures and configs — only starting the game is unavailable.\n\nHow to fix it:\n1. Install CrossOver from codeweavers.com.\n2. Install Steam and NieR:Automata inside a CrossOver bottle.\n3. Select NieRAutomata.exe from inside that bottle in this launcher.';
+
+  @override
+  String get errorProtonMissing => 'Proton not found';
+
+  @override
+  String errorProtonMissingBody(String path) {
+    return 'The configured Proton runtime is missing at:\n$path\n\nReinstall Proton through Steam, or select the game executable from inside a CrossOver bottle instead.';
+  }
+
+  @override
+  String get errorNoZDrive => 'The Wine prefix has no Z: drive';
+
+  @override
+  String errorNoZDriveBody(String prefix) {
+    return 'Wine maps Z: to the host filesystem, which is how the launcher hands NAMS.exe to the game. This prefix is missing dosdevices/z::\n$prefix\n\nThis is a CrossOver default, so the bottle was probably modified. Creating a new bottle and reinstalling the game there is the quickest fix.';
+  }
+
+  @override
+  String get errorExeOutsidePrefix => 'That executable is not inside a bottle';
+
+  @override
+  String errorExeOutsidePrefixBody(String exeName, String path) {
+    return 'The launcher starts the game through CrossOver, so $exeName has to live inside a CrossOver bottle:\n$path\n\nInstall the game into a bottle, then select the executable from there.';
   }
 
   @override

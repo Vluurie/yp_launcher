@@ -69,7 +69,7 @@ class AppStrings {
   static const String prefKeyMinimizeOnLaunch = 'minimize_on_launch';
 
   // Game
-  static const String gameExeName = 'NierAutomata.exe';
+  static const String gameExeName = 'NieRAutomata.exe';
   static const String gameSignature = 'PRJ_028';
 
   // Launcher files (shipped next to the launcher exe — never copied)
@@ -132,7 +132,7 @@ class AppStrings {
   static const String notifyWolfLimitBreakDetected =
       'Wolf Limit Break NieRAutomata.exe detected. NAMS does not need this patch and was never tested against it. The game may still launch, but performance issues, memory crashes, or mod incompatibilities are possible. For full support, restore the original Steam executable (verify game files in Steam).';
   static String notifyPlatformUnsupported(String platform) =>
-      'YoRHa Protocol Launcher is currently a Windows-only build. Detected: $platform. You can keep going, but this OS is not tested or supported by the author right now. Cross-platform support (Linux/Wine, macOS via CrossOver) was working in the past and will be revisited — expect bugs until then.';
+      'No Windows compatibility layer found on $platform, so the game cannot be started from here. Mods, textures and configs all still work. Install CrossOver and put NieR:Automata in a bottle to enable launching.';
 
   // Desktop shortcut
   static const String tooltipCreateShortcut =

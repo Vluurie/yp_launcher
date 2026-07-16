@@ -37,7 +37,9 @@ dependencies:
 
   # Automato Theme
   automato_theme:
-    path: ../automato_theme
+    git:
+      url: https://github.com/Vluurie/automato_theme.git
+      ref: main 
 
   # State Management
   flutter_riverpod: ^3.0.0
@@ -95,17 +97,20 @@ dev_dependencies:
   # Icon generation
   flutter_launcher_icons: ^0.14.3
 
-flutter_launcher_icons:
-  windows:
-    generate: true
-    image_path: "assets/icon/app_icon.png"
-
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
+
+flutter_launcher_icons:
+  windows:
+    generate: true
+    image_path: "assets/icon/app_icon.png"
+  macos:
+    generate: true
+    image_path: "assets/icon/app_icon.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

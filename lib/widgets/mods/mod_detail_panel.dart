@@ -1,10 +1,10 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yp_launcher/l10n/app_localizations.dart';
 import 'package:yp_launcher/models/installed_mod.dart';
 import 'package:yp_launcher/providers/app_state.dart';
 import 'package:yp_launcher/providers/disabled_mods_state.dart';
+import 'package:yp_launcher/services/reveal_service.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
 import 'package:yp_launcher/widgets/bundled_link_chip.dart';
@@ -488,12 +488,6 @@ class ModDetailPanel extends ConsumerWidget {
   }
 
   void _openFolder(String dirPath) {
-    if (Platform.isWindows) {
-      Process.run('explorer', [dirPath]);
-    } else if (Platform.isMacOS) {
-      Process.run('open', [dirPath]);
-    } else {
-      Process.run('xdg-open', [dirPath]);
-    }
+    revealInFileManager(dirPath);
   }
 }

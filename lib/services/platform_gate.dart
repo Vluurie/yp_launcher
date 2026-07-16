@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:yp_launcher/services/platform_detection_service.dart';
+import 'package:yp_launcher/services/platform/platform_adapter.dart';
 
 /// Simulated platform identity for UI gating only.
 ///
@@ -37,16 +37,12 @@ class PlatformGate {
     return false;
   }
 
-  /// The game and the launcher's process tooling are Windows-native.
-  /// Launching is supported on real Windows, and *experimentally* under Wine
-  /// on Linux/macOS. Native Linux without Wine cannot run the .exe.
-  static bool get canLaunchGame {
-    if (isWindows) return true;
-    return PlatformDetectionService.isWine;
-  }
+  /// The game is Windows-native. Launching works on Windows, and through a
+  /// compatibility layer elsewhere when one is installed.
+  static bool get canLaunchGame => PlatformAdapter.current.canLaunchGame;
 
   /// True when launching works but is not fully validated on this host.
-  static bool get isWineExperimental {
-    return !isWindows && PlatformDetectionService.isWine;
-  }
+  static bool get isWineExperimental =>
+      PlatformAdapter.current.isExperimental &&
+      PlatformAdapter.current.canLaunchGame;
 }

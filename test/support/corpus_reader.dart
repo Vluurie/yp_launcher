@@ -25,12 +25,20 @@ const _archiveExts = {'zip', '7z', 'rar'};
 
 String defaultCorpusRoot() =>
     Platform.environment['YP_CORPUS_DIR'] ??
-    r'E:\all-outfit-mods\downloads';
+    (Platform.isWindows
+        ? r'E:\all-outfit-mods\downloads'
+        : p.join(Platform.environment['HOME'] ?? '', 'yp-corpus'));
 
 String repoRoot() => Directory.current.path;
 
 String bundledSevenZipPath() =>
-    p.join(repoRoot(), 'assets', 'bins', '7z.exe');
+    Platform.environment['YP_7Z_PATH'] ??
+    p.join(
+      repoRoot(),
+      'assets',
+      'bins',
+      Platform.isWindows ? '7z.exe' : '7zz',
+    );
 
 List<String> listArchiveEntries(String archivePath, String sevenZExe) {
   final result = Process.runSync(

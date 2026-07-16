@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yp_launcher/constants/app_strings.dart';
 import 'package:yp_launcher/services/detection_service.dart';
 import 'package:yp_launcher/services/launcher_setup_service.dart';
+import 'package:yp_launcher/services/platform/platform_adapter.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
 
 part 'notification_state.g.dart';
@@ -136,7 +137,7 @@ class NotificationStateController extends _$NotificationStateController {
   void checkPlatformSupport() {
     const id = 'platform_unsupported';
     if (state.any((n) => n.id == id)) return;
-    if (Platform.isWindows) return;
+    if (PlatformAdapter.current.canLaunchGame) return;
     final platformName = Platform.isLinux
         ? 'Linux'
         : Platform.isMacOS

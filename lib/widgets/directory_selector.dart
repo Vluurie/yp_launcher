@@ -6,11 +6,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:yp_launcher/constants/app_strings.dart';
 import 'package:yp_launcher/l10n/app_localizations.dart';
+import 'package:yp_launcher/models/nier_installation.dart';
 import 'package:yp_launcher/providers/app_state.dart';
 import 'package:yp_launcher/providers/notification_state.dart';
 import 'package:yp_launcher/services/mods_service.dart';
 import 'package:yp_launcher/services/nams_config_service.dart';
-import 'package:yp_launcher/services/nier_finder_service.dart';
+import 'package:yp_launcher/services/platform/platform_adapter.dart';
 import 'package:yp_launcher/services/win10_compat_setup_service.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
@@ -186,7 +187,7 @@ class _DirectorySelectorState extends ConsumerState<DirectorySelector> {
     ref.read(autoSearchingProvider.notifier).state = true;
 
     try {
-      final fastResults = await NierFinderService.findFast();
+      final fastResults = await PlatformAdapter.current.discoverFast();
 
       if (!mounted) return;
 
@@ -231,7 +232,7 @@ class _DirectorySelectorState extends ConsumerState<DirectorySelector> {
   }
 
   Future<void> _runDeepSearch() async {
-    final deepResults = await NierFinderService.findDeep();
+    final deepResults = await PlatformAdapter.current.discoverDeep();
     if (!mounted) return;
 
     if (deepResults.isEmpty) {
@@ -735,12 +736,19 @@ class _DirectorySelectorState extends ConsumerState<DirectorySelector> {
         if (await file.exists()) {
           final isValid = await compute(_validateNierExeInIsolate, filePath);
 
-          if (isValid) {
-            final directory = file.parent.path;
-            await _applyDirectory(directory);
-          } else {
+          if (!isValid) {
             controller.setError(l10n.errorInvalidExe);
+            return;
           }
+
+          final rejection =
+              PlatformAdapter.current.rejectGameSelection(filePath, l10n);
+          if (rejection != null) {
+            controller.setError(rejection);
+            return;
+          }
+
+          await _applyDirectory(file.parent.path);
         } else {
           controller.setError(l10n.errorFileNotExist);
         }

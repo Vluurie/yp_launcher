@@ -4,18 +4,14 @@ import 'dart:io';
 import 'dart:isolate';
 
 import 'package:path/path.dart' as path;
+import 'package:yp_launcher/models/nier_installation.dart';
 
-class NierInstallation {
-  final String path;
-  final bool hasData;
-
-  const NierInstallation({required this.path, required this.hasData});
-}
+export 'package:yp_launcher/models/nier_installation.dart';
 
 class NierFinderService {
   static const _steamAppId = '524220';
 
-  static Future<List<NierInstallation>> findFast() async {
+  static Future<List<NierInstallation>> findViaWindowsRegistryAndSteam() async {
     final seen = <String>{};
     final results = <NierInstallation>[];
 
@@ -29,9 +25,7 @@ class NierFinderService {
     return results;
   }
 
-  static Future<List<NierInstallation>> findDeep() async {
-    return _findViaBfs();
-  }
+  static Future<List<NierInstallation>> findViaDriveScan() => _findViaBfs();
 
   static Future<List<NierInstallation>> _findViaRegistry() async {
     try {

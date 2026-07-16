@@ -24,8 +24,7 @@ class ArchiveService {
         return _cached7zPath!;
       }
     }
-    _cached7zPath = candidates.first;
-    return _cached7zPath!;
+    return candidates.first;
   }
 
   static bool isArchive(String filePath) {

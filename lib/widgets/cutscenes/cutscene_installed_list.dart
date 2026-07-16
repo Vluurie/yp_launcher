@@ -1,9 +1,9 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yp_launcher/l10n/app_localizations.dart';
 import 'package:yp_launcher/providers/app_state.dart';
 import 'package:yp_launcher/providers/disabled_mods_state.dart';
+import 'package:yp_launcher/services/reveal_service.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
 import 'package:yp_launcher/widgets/bundled_link_chip.dart';
@@ -126,7 +126,7 @@ class _ClickableNameState extends State<_ClickableName> {
       onEnter: (_) => setState(() => _hovered = true),
       onExit: (_) => setState(() => _hovered = false),
       child: GestureDetector(
-        onTap: () => Process.run('explorer.exe', [widget.folderPath]),
+        onTap: () => revealInFileManager(widget.folderPath),
         child: Text(
           widget.name,
           style: TextStyle(

@@ -84,7 +84,7 @@
       }
     }
   },
-  "errorExeNotFound": "NierAutomata.exe not found in {dir}",
+  "errorExeNotFound": "NieRAutomata.exe not found in {dir}",
   "@errorExeNotFound": {
     "placeholders": {
       "dir": {
@@ -109,6 +109,38 @@
         "type": "String"
       },
       "namsDir": {
+        "type": "String"
+      }
+    }
+  },
+  "errorNoCompatLayer": "CrossOver not found",
+  "errorNoCompatLayerBody": "Running NieR:Automata on this system needs CrossOver, which runs Windows programs on macOS. It was not found in /Applications.\n\nWithout it the launcher can still manage mods, textures and configs — only starting the game is unavailable.\n\nHow to fix it:\n1. Install CrossOver from codeweavers.com.\n2. Install Steam and NieR:Automata inside a CrossOver bottle.\n3. Select NieRAutomata.exe from inside that bottle in this launcher.",
+  "errorProtonMissing": "Proton not found",
+  "errorProtonMissingBody": "The configured Proton runtime is missing at:\n{path}\n\nReinstall Proton through Steam, or select the game executable from inside a CrossOver bottle instead.",
+  "@errorProtonMissingBody": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "errorNoZDrive": "The Wine prefix has no Z: drive",
+  "errorNoZDriveBody": "Wine maps Z: to the host filesystem, which is how the launcher hands NAMS.exe to the game. This prefix is missing dosdevices/z::\n{prefix}\n\nThis is a CrossOver default, so the bottle was probably modified. Creating a new bottle and reinstalling the game there is the quickest fix.",
+  "@errorNoZDriveBody": {
+    "placeholders": {
+      "prefix": {
+        "type": "String"
+      }
+    }
+  },
+  "errorExeOutsidePrefix": "That executable is not inside a bottle",
+  "errorExeOutsidePrefixBody": "The launcher starts the game through CrossOver, so {exeName} has to live inside a CrossOver bottle:\n{path}\n\nInstall the game into a bottle, then select the executable from there.",
+  "@errorExeOutsidePrefixBody": {
+    "placeholders": {
+      "exeName": {
+        "type": "String"
+      },
+      "path": {
         "type": "String"
       }
     }

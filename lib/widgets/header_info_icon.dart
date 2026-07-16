@@ -1,6 +1,5 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart' as p;
+import 'package:yp_launcher/services/reveal_service.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
 
@@ -23,26 +22,8 @@ class HeaderInfoIcon extends StatefulWidget {
 class _HeaderInfoIconState extends State<HeaderInfoIcon> {
   bool _hovered = false;
 
-  Future<void> _reveal() async {
-    final path = widget.revealPath;
-    if (path.isEmpty) return;
-    if (Platform.isWindows) {
-      if (widget.isFile) {
-        await Process.run('explorer', ['/select,', path]);
-      } else {
-        await Process.run('explorer', [path]);
-      }
-    } else if (Platform.isMacOS) {
-      if (widget.isFile) {
-        await Process.run('open', ['-R', path]);
-      } else {
-        await Process.run('open', [path]);
-      }
-    } else {
-      final dir = widget.isFile ? p.dirname(path) : path;
-      await Process.run('xdg-open', [dir]);
-    }
-  }
+  Future<void> _reveal() =>
+      revealInFileManager(widget.revealPath, isFile: widget.isFile);
 
   @override
   Widget build(BuildContext context) {

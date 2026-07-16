@@ -1,0 +1,29 @@
+{
+  "firstPlaythrough": true,
+  "keybinds": {
+    "main": {
+      "yorha_protocol": "F1"
+    },
+    "yorha_protocol": {
+      "freeze_game": "F5",
+      "max_speed": "F6",
+      "free_cam": "F7",
+      "phase_jump": "F8",
+      "toggle_game_input": "F9",
+      "advance_frame": "F10",
+      "dev_mode": "Insert"
+    }
+  },
+  "gameKeybindsGlobal": false,
+  "loadingSpeedupEnabled": true,
+  "shadersEnabled": true,
+  "soundEnabled": true,
+  "randomizerConfig": {
+    "autoStartOnStartup": false,
+    "randomizeGroundEnemies": true,
+    "randomizeFlyingEnemies": true,
+    "allowBigEnemies": true,
+    "includeDlcEnemies": true,
+    "excludedEnemies": []
+  }
+}
