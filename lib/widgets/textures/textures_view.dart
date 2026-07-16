@@ -285,9 +285,12 @@ class _TexturesViewState extends ConsumerState<TexturesView> {
           ref.read(texturesBusyProvider.notifier).state = false;
           return;
         }
+        final packName = chosen.length == 1
+            ? chosen.first.label
+            : path.basenameWithoutExtension(archivePath);
         for (final v in chosen) {
           effectivePaths.add(v.subPath);
-          archiveNames[v.subPath] = v.label;
+          archiveNames[v.subPath] = packName;
         }
       }
     }
