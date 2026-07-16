@@ -10,7 +10,10 @@ class LauncherSetupService {
   static String? _resolvedRuntimeDir;
 
   static Future<void> ensureReady() {
-    return _ensureFuture ??= _runEnsure();
+    return _ensureFuture ??= _runEnsure().onError((error, stack) {
+      _ensureFuture = null;
+      throw error!;
+    });
   }
 
   static Future<void> _runEnsure() async {

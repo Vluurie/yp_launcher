@@ -15,7 +15,12 @@ class RuntimeAssetsService {
 
   static Future<String>? _pending;
 
-  static Future<String> ensureExtracted() => _pending ??= _extract();
+  static Future<String> ensureExtracted() {
+    return _pending ??= _extract().onError((error, stack) {
+      _pending = null;
+      throw error!;
+    });
+  }
 
   static Future<String> _extract() async {
     final adapter = PlatformAdapter.current;
@@ -53,7 +58,11 @@ class RuntimeAssetsService {
       final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
       return manifest
           .listAssets()
-          .where((key) => key.startsWith(_assetPrefix))
+          .where((key) =>
+              key.startsWith(_assetPrefix) &&
+              // Finder metadata ends up in the manifest but is never actually
+              // bundled, so loading it throws.
+              !p.basename(key).startsWith('.'))
           .toList()
         ..sort();
     } catch (_) {
