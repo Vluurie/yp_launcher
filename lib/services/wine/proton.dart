@@ -69,14 +69,47 @@ String? findProtonPath(String steamRoot, String libraryRoot) {
   return candidates.isEmpty ? null : candidates.first;
 }
 
-/// Native Steam install roots. Linux only; macOS resolves the game through a
-/// CrossOver bottle instead.
+/// Native Steam install roots: deb/tarball, Snap and Flatpak.
 List<String> steamRootCandidates() => [
       p.join(_home, '.steam', 'steam'),
       p.join(_home, '.local', 'share', 'Steam'),
+      p.join(_home, 'snap', 'steam', 'common', '.local', 'share', 'Steam'),
       p.join(_home, '.var', 'app', 'com.valvesoftware.Steam', '.local', 'share',
           'Steam'),
     ].where((root) => Directory(root).existsSync()).toList();
+
+/// True when any Steam root has a Proton build.
+bool hasAnyProtonInstall() {
+  for (final root in steamRootCandidates()) {
+    if (findProtonPath(root, root) != null) return true;
+  }
+  return false;
+}
+
+/// The `$HOME` a Proton child needs so lsteamclient finds
+/// `$HOME/.steam/sdk64/steamclient.so`. Null when the real home already has it.
+String? steamHomeForClient(String steamClientInstallPath) {
+  if (_hasSteamClient(_home)) return null;
+  for (final candidate in _steamHomeCandidatesFor(steamClientInstallPath)) {
+    if (_hasSteamClient(candidate)) return candidate;
+  }
+  return null;
+}
+
+bool _hasSteamClient(String home) => home.isNotEmpty &&
+    File(p.join(home, '.steam', 'sdk64', 'steamclient.so')).existsSync();
+
+List<String> _steamHomeCandidatesFor(String steamRoot) {
+  final candidates = <String>[];
+  var dir = steamRoot;
+  for (var i = 0; i < 4; i++) {
+    final parent = p.dirname(dir);
+    if (parent == dir) break;
+    candidates.add(parent);
+    dir = parent;
+  }
+  return candidates;
+}
 
 String get _home => Platform.environment['HOME'] ?? '';
 

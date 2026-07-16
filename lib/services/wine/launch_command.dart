@@ -99,16 +99,20 @@ LaunchCommand? buildProtonLaunchCommand({
     Directory(compatData).createSync(recursive: true);
   } catch (_) {}
 
+  final steamRoot = getProtonSteamRoot(gameExe);
+  final steamHome = steamHomeForClient(steamRoot);
+
   return LaunchCommand(
     command: protonPath,
     args: ['run', namsExe, ..._namsArgs(toWinePath(gameDir))],
     cwd: launcherDir,
     env: {
       ...createWineEnv(),
-      'STEAM_COMPAT_CLIENT_INSTALL_PATH': getProtonSteamRoot(gameExe),
+      'STEAM_COMPAT_CLIENT_INSTALL_PATH': steamRoot,
       'STEAM_COMPAT_DATA_PATH': compatData,
       'SteamAppId': nierSteamAppId,
       'SteamGameId': nierSteamAppId,
+      if (steamHome != null) 'HOME': steamHome,
     },
     label: 'Proton',
   );

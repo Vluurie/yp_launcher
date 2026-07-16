@@ -48,7 +48,8 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
   bool? _onboardingComplete;
 
   /// Matches the hosts where main() initializes window_manager.
-  static bool get _managesWindow => Platform.isWindows || Platform.isMacOS;
+  static bool get _managesWindow =>
+      Platform.isWindows || Platform.isMacOS || Platform.isLinux;
 
   @override
   void initState() {

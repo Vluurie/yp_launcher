@@ -1,0 +1,42 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Linux: Build Tarball",
+            "type": "shell",
+            "command": "./scripts/build_linux_tarball.sh",
+            "problemMatcher": [],
+            "group": "build"
+        },
+        {
+            "label": "Linux: Build AppImage",
+            "type": "shell",
+            "command": "./scripts/build_linux_appimage.sh",
+            "options": {
+                "env": {
+                    "PATH": "${env:HOME}/.local/bin:${env:PATH}",
+                    "APPIMAGE_EXTRACT_AND_RUN": "1"
+                }
+            },
+            "problemMatcher": [],
+            "group": "build"
+        },
+        {
+            "label": "Linux: Build All",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "Linux: Build Tarball",
+                "Linux: Build AppImage"
+            ],
+            "problemMatcher": [],
+            "group": "build"
+        },
+        {
+            "label": "macOS: Build DMG",
+            "type": "shell",
+            "command": "./scripts/build_macos_dmg.sh",
+            "problemMatcher": [],
+            "group": "build"
+        }
+    ]
+}

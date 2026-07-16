@@ -4,10 +4,10 @@ import 'package:path/path.dart' as p;
 import 'package:yp_launcher/constants/app_strings.dart';
 import 'package:yp_launcher/models/nier_installation.dart';
 import 'package:yp_launcher/services/wine/crossover.dart';
+import 'package:yp_launcher/services/wine/steam_vdf.dart';
 
 const _programFilesVariants = ['Program Files (x86)', 'Program Files'];
 
-final _vdfPathEntry = RegExp(r'"path"\s+"([^"]+)"');
 final _windowsDrive = RegExp(r'^([a-zA-Z]):\\');
 
 /// Turns a Windows path out of libraryfolders.vdf into a host path.
@@ -36,8 +36,8 @@ List<String> parseLibraryFoldersInPrefix(String prefix) {
         'steamapps', 'libraryfolders.vdf'));
     if (!vdf.existsSync()) continue;
     try {
-      for (final match in _vdfPathEntry.allMatches(vdf.readAsStringSync())) {
-        libraries.add(normalizeSteamLibraryPath(match.group(1)!, prefix));
+      for (final path in vdfPathEntries(vdf.readAsStringSync())) {
+        libraries.add(normalizeSteamLibraryPath(path, prefix));
       }
     } catch (_) {}
   }

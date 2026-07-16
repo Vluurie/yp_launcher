@@ -631,7 +631,7 @@
   "modsTutorialProfilesStep4Body": "**Per-profile** (changes when you switch):\n\n- Your installed mods\n- Which mods are enabled or disabled\n- Textures that came bundled with a mod\n\n**Shared between all profiles** (never changes):\n\n- Standalone texture packs you installed via the Textures tab\n- Cutscene mods\n- Plugins\n- All your launcher settings\n\nSo profiles only flip what's actually mod-specific. Your global setup follows you everywhere.",
 
   "platformUnsupportedTitle": "Cannot launch on this platform",
-  "platformUnsupportedLinux": "NieR:Automata is a Windows game. Run the launcher through Wine — that has worked in the past, though it has not been re-tested recently. Proton is currently broken because it interferes with the mod's Steam connection. Native Linux without a translation layer cannot run the game.\n\nIf you did get it working somehow, please use the command line directly instead of this launcher.",
+  "platformUnsupportedLinux": "NieR:Automata is a Windows game, so it needs a compatibility layer to run on Linux.\n\nInstall Steam with Proton (the game runs fine under Proton), or install CrossOver/Wine. Once a runtime is present, the launcher can start the game.\n\nNative Linux without a translation layer cannot run the game.",
   "platformUnsupportedMacos": "NieR:Automata is a Windows game. Run the launcher through CrossOver/Wine — that has worked in the past, though it has not been re-tested recently. Native macOS without a translation layer cannot run the game.\n\nIf you did get it working somehow, please use the command line directly instead of this launcher.",
   "playDisabledTooltip": "Launch unavailable on this platform",
   "diagnosticsClose": "Close",

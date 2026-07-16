@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=YoRHa Protocol Launcher
+Comment=Install and manage NieR:Automata mods, then launch the game
+Exec=yp_launcher
+Icon=yp_launcher
+Categories=Game;
+Terminal=false

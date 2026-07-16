@@ -6,6 +6,7 @@ import 'package:yp_launcher/l10n/app_localizations.dart';
 import 'package:yp_launcher/models/nier_installation.dart';
 import 'package:yp_launcher/services/platform/platform_adapter.dart';
 import 'package:yp_launcher/services/wine/launch_command.dart';
+import 'package:yp_launcher/services/wine/proton.dart';
 import 'package:yp_launcher/services/wine/wine_paths.dart';
 import 'package:yp_launcher/services/wine/wine_runtime.dart';
 import 'package:yp_launcher/services/wine/wine_steam.dart';
@@ -93,6 +94,8 @@ abstract class WineAdapterBase extends PlatformAdapter {
     final prefix = runtime.prefix;
     if (prefix == null) return;
     if (!toWinePath(namsExe).startsWith('Z:')) return;
+    // Proton creates the Z: mapping on first run; only enforce an existing pfx.
+    if (!Directory(prefix).existsSync()) return;
     if (Directory(p.join(prefix, 'dosdevices', 'z:')).existsSync()) return;
 
     throw LaunchUnavailable(l10n.errorNoZDrive, l10n.errorNoZDriveBody(prefix));
@@ -123,6 +126,7 @@ abstract class WineAdapterBase extends PlatformAdapter {
   @override
   String? rejectGameSelection(String pickedExePath, AppLocalizations l10n) {
     if (inferWinePrefixFromPath(pickedExePath) != null) return null;
+    if (inferSteamContext(pickedExePath) != null) return null;
     return l10n.errorExeOutsidePrefixBody(
       AppStrings.gameExeName,
       pickedExePath,
@@ -133,8 +137,15 @@ abstract class WineAdapterBase extends PlatformAdapter {
   Future<String?> resolveNamsSettingsPath(String? gameDir) async {
     if (gameDir == null || gameDir.isEmpty) return null;
     final prefix = inferWinePrefixFromPath(gameDir);
-    if (prefix == null) return null;
-    return p.join(getWineRoamingPath(prefix), 'NAMS', 'settings.json');
+    if (prefix != null) {
+      return p.join(getWineRoamingPath(prefix), 'NAMS', 'settings.json');
+    }
+    final steam = inferSteamContext(gameDir);
+    if (steam != null) {
+      final pfx = p.join(steam.compatDataPath, 'pfx');
+      return p.join(getWineRoamingPath(pfx), 'NAMS', 'settings.json');
+    }
+    return null;
   }
 
   Future<bool> _pgrep(String pattern) async {

@@ -2455,7 +2455,7 @@ abstract class AppLocalizations {
   /// No description provided for @platformUnsupportedLinux.
   ///
   /// In en, this message translates to:
-  /// **'NieR:Automata is a Windows game. Run the launcher through Wine — that has worked in the past, though it has not been re-tested recently. Proton is currently broken because it interferes with the mod\'s Steam connection. Native Linux without a translation layer cannot run the game.\n\nIf you did get it working somehow, please use the command line directly instead of this launcher.'**
+  /// **'NieR:Automata is a Windows game, so it needs a compatibility layer to run on Linux.\n\nInstall Steam with Proton (the game runs fine under Proton), or install CrossOver/Wine. Once a runtime is present, the launcher can start the game.\n\nNative Linux without a translation layer cannot run the game.'**
   String get platformUnsupportedLinux;
 
   /// No description provided for @platformUnsupportedMacos.

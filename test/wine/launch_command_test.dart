@@ -1,6 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:path/path.dart' as p;
 import 'package:yp_launcher/services/wine/crossover.dart';
 import 'package:yp_launcher/services/wine/launch_command.dart';
+import 'package:yp_launcher/services/wine/proton.dart';
+
+import 'fake_steam_tree.dart';
 
 const _bottlePath =
     '/Users/d/Library/Application Support/CrossOver/Bottles/Steam';
@@ -123,6 +127,33 @@ void main() {
         ),
         isNull,
       );
+    });
+
+    test('injects the confined HOME when the game is a native Steam install',
+        () {
+      final tree = FakeSteamTree.create();
+      addTearDown(tree.dispose);
+      tree.addSteamRoot();
+      tree.addSteamClient();
+      final gameDir = tree.addNier();
+      final proton = tree.addProton('GE-Proton');
+
+      final gameExe = p.join(gameDir, 'NieRAutomata.exe');
+      final cmd = buildProtonLaunchCommand(
+        namsExe: '/run/bins/NAMS.exe',
+        gameDir: gameDir,
+        gameExe: gameExe,
+        launcherDir: '/run/bins',
+        protonPath: proton,
+      );
+
+      expect(cmd, isNotNull);
+      expect(cmd!.label, 'Proton');
+      expect(cmd.args, ['run', '/run/bins/NAMS.exe', 'run', '--nier-path',
+          'Z:${gameDir.replaceAll('/', '\\')}']);
+      expect(cmd.env!['HOME'], tree.home);
+      expect(cmd.env!['SteamAppId'], nierSteamAppId);
+      expect(cmd.env!['STEAM_COMPAT_DATA_PATH'], endsWith('524220'));
     });
   });
 }

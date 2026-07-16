@@ -78,6 +78,17 @@ Builds, ad-hoc signs and produces `build/YP-Launcher-<version>.dmg`. It is
 **not notarized**, so Gatekeeper will refuse a plain double-click — right-click
 → Open, or `xattr -dr com.apple.quarantine "/Applications/YP Launcher.app"`.
 
+### Linux
+
+Works on Linux; the game runs through Proton (or CrossOver/Wine).
+
+```bash
+./scripts/build_linux_tarball.sh     # → build/yp_launcher-<version>-linux-x64.tar.gz
+./scripts/build_linux_appimage.sh    # → build/yp_launcher-<version>-x86_64.AppImage
+```
+
+`assets/bins/7zz` must be the Linux x86-64 build here (no signing needed).
+
 ## Usage
 
 1. Launch the application

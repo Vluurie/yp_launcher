@@ -7,8 +7,10 @@ import 'package:yp_launcher/services/platform/linux_adapter.dart';
 import 'package:yp_launcher/services/platform/macos_adapter.dart';
 import 'package:yp_launcher/services/platform/platform_adapter.dart';
 import 'package:yp_launcher/services/platform/wine_adapter_base.dart';
+import 'package:yp_launcher/services/wine/native_steam.dart';
 
 import '../wine/fake_bottle.dart';
+import '../wine/fake_steam_tree.dart';
 
 final _l10n = AppLocalizationsEn();
 
@@ -57,6 +59,39 @@ void main() {
     test('is flagged experimental', () {
       expect(LinuxAdapter().isExperimental, isTrue);
       expect(MacOSAdapter().isExperimental, isFalse);
+    });
+
+    test('discoverFast finds a native Steam install', () async {
+      final tree = FakeSteamTree.create();
+      addTearDown(tree.dispose);
+      tree.addSteamRoot();
+      final dir = tree.addNier();
+
+      overrideSteamRoots = [tree.steamRoot];
+      addTearDown(() => overrideSteamRoots = null);
+
+      final found = await LinuxAdapter().discoverFast();
+      expect(found.map((i) => i.path), contains(dir));
+    });
+
+    test('accepts a native Steam exe path', () {
+      expect(
+        LinuxAdapter().rejectGameSelection(
+          '/home/u/.local/share/Steam/steamapps/common/NieRAutomata'
+          '/NieRAutomata.exe',
+          _l10n,
+        ),
+        isNull,
+      );
+    });
+
+    test('resolveNamsSettingsPath lands in the compat prefix', () async {
+      final path = await LinuxAdapter().resolveNamsSettingsPath(
+        '/home/u/.local/share/Steam/steamapps/common/NieRAutomata',
+      );
+
+      expect(path, contains(p.join('steamapps', 'compatdata', '524220', 'pfx')));
+      expect(path, endsWith(p.join('NAMS', 'settings.json')));
     });
   });
 

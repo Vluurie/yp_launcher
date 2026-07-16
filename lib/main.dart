@@ -23,7 +23,7 @@ void main(List<String> args) async {
     PlatformGate.overrideAs = SimulatedOs.windows;
   }
 
-  if (Platform.isWindows || Platform.isMacOS) {
+  if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
     await windowManager.ensureInitialized();
 
     final windowOptions = WindowOptions(

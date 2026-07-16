@@ -82,7 +82,9 @@ WineRuntime? detectWineRuntime({String? gameExePath}) {
 }
 
 bool isWineRuntimeAvailable() =>
-    findCrossOverWine() != null || _findOnPath(const ['wine64', 'wine']) != null;
+    findCrossOverWine() != null ||
+    _findOnPath(const ['wine64', 'wine']) != null ||
+    (Platform.isLinux && hasAnyProtonInstall());
 
 WineRuntime _crossOver(String wine, CrossOverBottle bottle) => WineRuntime(
       binary: wine,
