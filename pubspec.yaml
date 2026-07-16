@@ -22,7 +22,7 @@ dependencies:
 
   # State Management
   flutter_riverpod: ^3.0.0
-k
+  
   # File Picker
   file_picker: ^12.0.0-beta.5
 
