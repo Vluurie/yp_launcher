@@ -40,7 +40,18 @@ jobs:
           Copy-Item 7zdist\7z.exe, 7zdist\7z.dll assets\bins\
           Copy-Item 7zdist\License.txt assets\bins\7z-License.txt
           Remove-Item -Recurse -Force 7zsetup.exe, 7zdist
+      - name: fetch 7zz for tests
+        shell: pwsh
+        run: |
+          curl.exe -fL -o 7z-linux.tar.xz https://github.com/ip7z/7zip/releases/download/26.02/7z2602-linux-x64.tar.xz
+          if ((Get-FileHash 7z-linux.tar.xz -Algorithm SHA256).Hash -ne '41AABA7B1235304AB5AA0624530C67AE829496CD29E875925271EFDCCC28C03E') { throw '7z-linux.tar.xz checksum mismatch' }
+          tar -xf 7z-linux.tar.xz -C assets\bins 7zz
+          Remove-Item 7z-linux.tar.xz
       - run: flutter pub get
+      - run: flutter test
+      - name: remove test-only 7zz
+        shell: pwsh
+        run: Remove-Item assets\bins\7zz
       - run: flutter build windows --release
       - name: package
         shell: pwsh
@@ -74,6 +85,8 @@ jobs:
           codesign --force --sign - /tmp/7zz
           mv /tmp/7zz assets/bins/7zz
           mv /tmp/License.txt assets/bins/7zz-License.txt
+      - run: flutter pub get
+      - run: flutter test
       - run: bash scripts/build_macos_dmg.sh
       - uses: actions/upload-artifact@v4
         with:
@@ -105,6 +118,8 @@ jobs:
         run: |
           sudo curl -fL -o /usr/local/bin/appimagetool https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage
           sudo chmod +x /usr/local/bin/appimagetool
+      - run: flutter pub get
+      - run: flutter test
       - run: bash scripts/build_linux_tarball.sh
       - run: bash scripts/build_linux_appimage.sh
       - uses: actions/upload-artifact@v4
