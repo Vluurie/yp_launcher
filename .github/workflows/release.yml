@@ -68,7 +68,7 @@ jobs:
       - name: fetch 7zz
         run: |
           curl -fL -o /tmp/7z.tar.xz https://github.com/ip7z/7zip/releases/download/26.02/7z2602-mac.tar.xz
-          echo "476a8b94dc2c1427368c0f8f211e403cbe7c8adde219d6e0202e75b5a0470697  /tmp/7z.tar.xz" | shasum -a 256 -c
+          echo "1cf6760579502f87e591ff5c73a005ec50b3e4d6f507e8b038382d563c3175b9  /tmp/7z.tar.xz" | shasum -a 256 -c
           tar -xf /tmp/7z.tar.xz -C /tmp 7zz License.txt
           codesign --force --sign - /tmp/7zz
           mv /tmp/7zz assets/bins/7zz
