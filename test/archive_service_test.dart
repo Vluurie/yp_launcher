@@ -30,7 +30,9 @@ void main() {
 
       final entries = await ArchiveService.listEntries(zipPath);
       expect(entries, isNotNull);
-      expect(entries, containsAll(['mod/info.txt', 'mod/data/a.bin']));
+      final normalized =
+          entries!.map((e) => e.replaceAll('\\', '/')).toList();
+      expect(normalized, containsAll(['mod/info.txt', 'mod/data/a.bin']));
 
       final outDir = await ArchiveService.extract(zipPath);
       expect(outDir, isNotNull, reason: ArchiveService.lastExtractError);

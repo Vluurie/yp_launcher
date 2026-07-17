@@ -4,6 +4,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:yp_launcher/services/wine/wine_paths.dart';
 
+import '../support/posix_only.dart';
+
 const _bottle =
     '/Users/d/Library/Application Support/CrossOver/Bottles/Steam';
 const _gameDir =
@@ -141,7 +143,7 @@ void main() {
         returnsNormally,
       );
     });
-  });
+  }, skip: skipOnWindows);
 
   group('getWineRoamingPath', () {
     test('builds the Roaming path under the resolved user', () {
@@ -159,5 +161,5 @@ void main() {
         p.join(tmp.path, 'drive_c', 'users', 'crossover', 'AppData', 'Roaming'),
       );
     });
-  });
+  }, skip: skipOnWindows);
 }

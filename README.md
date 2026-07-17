@@ -35,13 +35,13 @@ Re-run this after adding or changing a `@Riverpod` provider.
 
 ### 3. Add Required Files
 
-`assets/` is gitignored, so these are fetched out of band:
+The 7-Zip binaries are gitignored and fetched out of band:
 
 ```
 assets/bins/
 ├── NAMS.exe                    # the mod system; hosts and runs the game
-├── 7z.exe, 7z.dll              # archive extraction (Windows)
-├── 7zz                         # archive extraction (macOS/Linux)
+├── 7z.exe, 7z.dll              # archive extraction (Windows, gitignored)
+├── 7zz                         # archive extraction (macOS/Linux, gitignored)
 └── plugins/
     └── yorha_protocol.dll      # YoRHa Protocol plugin, loaded by NAMS
 ```
@@ -57,7 +57,7 @@ mv /tmp/License.txt assets/bins/7zz-License.txt
 ```
 
 Expected: 7-Zip 26.02, universal (`lipo -archs` → `x86_64 arm64`),
-sha256 `476a8b94dc2c1427368c0f8f211e403cbe7c8adde219d6e0202e75b5a0470697`.
+sha256 `1cf6760579502f87e591ff5c73a005ec50b3e4d6f507e8b038382d563c3175b9`.
 The signature matters: without it `codesign --verify` fails and the extracted
 copy cannot be validated. 7-Zip is LGPL + BSD-3-Clause with the unRAR
 restriction on the RAR decoder, so its `License.txt` ships alongside it.

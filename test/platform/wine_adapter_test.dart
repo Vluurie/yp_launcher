@@ -9,6 +9,7 @@ import 'package:yp_launcher/services/platform/platform_adapter.dart';
 import 'package:yp_launcher/services/platform/wine_adapter_base.dart';
 import 'package:yp_launcher/services/wine/native_steam.dart';
 
+import '../support/posix_only.dart';
 import '../wine/fake_bottle.dart';
 import '../wine/fake_steam_tree.dart';
 
@@ -46,7 +47,7 @@ void main() {
         '/usr/local/bin/7zz',
       ]);
     });
-  });
+  }, skip: skipOnWindows);
 
   group('resolveRuntimeDir', () {
     test('linux honours XDG', () async {
@@ -83,7 +84,7 @@ void main() {
         ),
         isNull,
       );
-    });
+    }, skip: skipOnWindows);
 
     test('resolveNamsSettingsPath lands in the compat prefix', () async {
       final path = await LinuxAdapter().resolveNamsSettingsPath(
@@ -92,7 +93,7 @@ void main() {
 
       expect(path, contains(p.join('steamapps', 'compatdata', '524220', 'pfx')));
       expect(path, endsWith(p.join('NAMS', 'settings.json')));
-    });
+    }, skip: skipOnWindows);
   });
 
   group('rejectGameSelection', () {
@@ -134,7 +135,7 @@ void main() {
         p.join(bottle, 'drive_c', 'users', 'crossover', 'AppData', 'Roaming',
             'NAMS', 'settings.json'),
       );
-    });
+    }, skip: skipOnWindows);
 
     test('is null before a game dir is known', () async {
       expect(await adapter.resolveNamsSettingsPath(null), isNull);
@@ -184,7 +185,7 @@ void main() {
       expect(cmd.env!['CX_BOTTLE'], 'Steam');
       expect(cmd.env!['WINEPREFIX'], bottle);
       expect(cmd.label, 'CrossOver Wine (Steam)');
-    });
+    }, skip: skipOnWindows);
 
     test('refuses a prefix without a Z: drive', () async {
       final exe = tree.addNier('Steam');

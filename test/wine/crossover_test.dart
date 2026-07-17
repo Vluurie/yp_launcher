@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:yp_launcher/services/wine/crossover.dart';
 
+import '../support/posix_only.dart';
 import 'fake_bottle.dart';
 
 void main() {
@@ -81,7 +82,7 @@ void main() {
         '/b/Steam/drive_c/Program Files/Steam/steamapps/common'
             '/NieRAutomata/NieRAutomata.exe',
       ]);
-    });
+    }, skip: skipOnWindows);
   });
 
   group('findCrossOverWine', () {

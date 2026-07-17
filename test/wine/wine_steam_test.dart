@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:yp_launcher/services/wine/wine_steam.dart';
 
+import '../support/posix_only.dart';
 import 'fake_bottle.dart';
 
 const _realVdf = '''
@@ -56,7 +57,7 @@ void main() {
         '/b/Steam/drive_c/a"b',
       );
     });
-  });
+  }, skip: skipOnWindows);
 
   group('parseLibraryFoldersInPrefix', () {
     late FakeBottleTree tree;
