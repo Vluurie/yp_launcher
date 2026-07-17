@@ -48,6 +48,7 @@ jobs:
           $version = ((Get-Content pubspec.yaml | Select-String '^version:').Line -replace 'version:\s*', '' -split '\+')[0]
           New-Item -ItemType Directory dist | Out-Null
           Copy-Item -Recurse build\windows\x64\runner\Release "dist\YoRHa Protocol Launcher"
+          Remove-Item "dist\YoRHa Protocol Launcher\yp_launcher.exe"
           Compress-Archive -Path "dist\YoRHa Protocol Launcher" -DestinationPath "dist\YoRHa.Protocol.Launcher.v$version.zip"
           Remove-Item -Recurse -Force "dist\YoRHa Protocol Launcher"
       - uses: actions/upload-artifact@v4
