@@ -35,13 +35,13 @@ Re-run this after adding or changing a `@Riverpod` provider.
 
 ### 3. Add Required Files
 
-`assets/` is gitignored, so these are fetched out of band:
+The 7-Zip binaries are gitignored and fetched out of band:
 
 ```
 assets/bins/
 ├── NAMS.exe                    # the mod system; hosts and runs the game
-├── 7z.exe, 7z.dll              # archive extraction (Windows)
-├── 7zz                         # archive extraction (macOS/Linux)
+├── 7z.exe, 7z.dll              # archive extraction (Windows, gitignored)
+├── 7zz                         # archive extraction (macOS/Linux, gitignored)
 └── plugins/
     └── yorha_protocol.dll      # YoRHa Protocol plugin, loaded by NAMS
 ```

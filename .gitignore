@@ -21,7 +21,11 @@ migrate_working_dir/
 android
 ios
 web
-assets/*
+assets/bins/7z.exe
+assets/bins/7z.dll
+assets/bins/7zz
+assets/bins/7z-License.txt
+assets/bins/7zz-License.txt
 
 # The .vscode folder contains launch configuration and tasks you configure in
 # VS Code which you may wish to be included in version control, so this line
