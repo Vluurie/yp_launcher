@@ -4,6 +4,7 @@ import 'package:yp_launcher/services/wine/crossover.dart';
 import 'package:yp_launcher/services/wine/launch_command.dart';
 import 'package:yp_launcher/services/wine/proton.dart';
 
+import '../support/posix_only.dart';
 import 'fake_steam_tree.dart';
 
 const _bottlePath =
@@ -154,6 +155,6 @@ void main() {
       expect(cmd.env!['HOME'], tree.home);
       expect(cmd.env!['SteamAppId'], nierSteamAppId);
       expect(cmd.env!['STEAM_COMPAT_DATA_PATH'], endsWith('524220'));
-    });
+    }, skip: skipOnWindows);
   });
 }

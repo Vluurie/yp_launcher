@@ -2,9 +2,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:yp_launcher/services/nams_settings_service.dart';
 
+import 'support/posix_only.dart';
 import 'wine/fake_bottle.dart';
 
 void main() {
+  group('NAMS settings resolve inside a wine prefix', () {
   late FakeBottleTree tree;
 
   setUp(() => tree = FakeBottleTree.create());
@@ -54,4 +56,5 @@ void main() {
     expect(loaded['firstPlaythrough'], isFalse);
     expect(loaded['shadersEnabled'], isFalse);
   });
+  }, skip: skipOnWindows);
 }
