@@ -1,162 +1,89 @@
 # YoRHa Protocol Launcher
 
-A launcher for NieR:Automata mods, built with Flutter. It drives **NAMS** — the
-mod system that hosts the game — and manages mods, textures, cutscenes and NAMS
-configuration.
+A friendly launcher for NieR:Automata mods. It installs and manages your mods,
+textures and cutscenes, lets you tweak in-game settings, and starts the game for
+you, all from one window.
 
-Windows runs it natively. macOS runs the game through CrossOver: install
-CrossOver and NieR:Automata into a bottle yourself, then point the launcher at
-`NieRAutomata.exe` *inside* that bottle — everything else (bottle, prefix, Wine
-binary) is derived from that one path. Mods, textures and configs work with or
-without CrossOver; only launching needs it. Linux support is written but
-untested on real hardware.
+Under the hood it runs **NAMS**, the mod system that hosts the game, so you don't
+have to touch any config files or command lines yourself.
 
-## Requirements
+## Download
 
-- Flutter SDK (Dart `^3.9.2`)
-- NieR:Automata (latest Steam version)
-- Windows (native), or macOS 12+ with [CrossOver](https://www.codeweavers.com/crossover)
+Grab the latest build for your system from the
+[**Releases page**](https://github.com/Vluurie/yp_launcher/releases):
 
-## Setup
+- **Windows**: `YoRHa Protocol Launcher.zip`. Unzip it anywhere and run
+  `YoRHa Protocol Launcher.exe`. It's portable, no installer needed.
+- **macOS**: `YP-Launcher.dmg`. Open it and drag the app to Applications.
+  The first time, **right-click the app and choose Open** (it isn't notarized, so
+  a plain double-click will be blocked by Gatekeeper).
+- **Linux**: the `.AppImage` (make it executable and run it) or the `.tar.gz`
+  (unpack and run `yp_launcher`).
 
-### 1. Install Dependencies
+## Getting started
 
-```bash
-flutter pub get
-```
+Select your game, press play, done.
 
-### 2. Generate Riverpod Code
+1. Open the launcher. On the very first run a short setup wizard walks you
+   through picking your game.
+2. Point it at your NieR:Automata install: click **AUTO** to let it find the game
+   for you, or **SELECT** to pick your `NieRAutomata.exe` by hand.
+3. Click **PLAY** to start the game with your mods. The same button turns into
+   **STOP** while the game is running.
 
-```bash
-dart run build_runner build --delete-conflicting-outputs
-```
+That's it. From the sidebar you can drag mod archives in to install them, manage
+textures and cutscenes, and adjust settings from the config panels.
 
-Re-run this after adding or changing a `@Riverpod` provider.
+### Running on macOS and Linux
 
-### 3. Add Required Files
+The game itself is a Windows program, so on macOS and Linux it runs through a
+compatibility layer:
 
-The 7-Zip binaries are gitignored and fetched out of band:
+- **macOS**: needs [CrossOver](https://www.codeweavers.com/crossover). Install
+  CrossOver and NieR:Automata into a bottle, then point the launcher at the
+  `NieRAutomata.exe` *inside* that bottle. Everything else is figured out for you.
+- **Linux**: runs the game through Steam Proton (or CrossOver/Wine). Just point
+  the launcher at your installed `NieRAutomata.exe`.
 
-```
-assets/bins/
-├── NAMS.exe                    # the mod system; hosts and runs the game
-├── 7z.exe, 7z.dll              # archive extraction (Windows, gitignored)
-├── 7zz                         # archive extraction (macOS/Linux, gitignored)
-└── plugins/
-    └── yorha_protocol.dll      # YoRHa Protocol plugin, loaded by NAMS
-```
+Installing mods, textures and configs works the same everywhere.
 
-`7zz` is the official 7-Zip console build. Fetch and sign it with:
+## Where your files go
 
-```bash
-curl -L -o /tmp/7z.tar.xz https://github.com/ip7z/7zip/releases/download/26.02/7z2602-mac.tar.xz
-tar -xf /tmp/7z.tar.xz -C /tmp 7zz License.txt
-codesign --force --sign - /tmp/7zz
-mv /tmp/7zz assets/bins/7zz
-mv /tmp/License.txt assets/bins/7zz-License.txt
-```
-
-Expected: 7-Zip 26.02, universal (`lipo -archs` → `x86_64 arm64`),
-sha256 `1cf6760579502f87e591ff5c73a005ec50b3e4d6f507e8b038382d563c3175b9`.
-The signature matters: without it `codesign --verify` fails and the extracted
-copy cannot be validated. 7-Zip is LGPL + BSD-3-Clause with the unRAR
-restriction on the RAR decoder, so its `License.txt` ships alongside it.
-
-## Building
-
-```bash
-flutter build windows
-```
-
-### macOS
-
-```bash
-./scripts/build_macos_dmg.sh
-```
-
-Builds, ad-hoc signs and produces `build/YP-Launcher-<version>.dmg`. It is
-**not notarized**, so Gatekeeper will refuse a plain double-click — right-click
-→ Open, or `xattr -dr com.apple.quarantine "/Applications/YP Launcher.app"`.
-
-### Linux
-
-Works on Linux; the game runs through Proton (or CrossOver/Wine).
-
-```bash
-./scripts/build_linux_tarball.sh     # → build/yp_launcher-<version>-linux-x64.tar.gz
-./scripts/build_linux_appimage.sh    # → build/yp_launcher-<version>-x86_64.AppImage
-```
-
-`assets/bins/7zz` must be the Linux x86-64 build here (no signing needed).
-
-## Usage
-
-1. Launch the application
-2. Click **SELECT** to choose your `NieRAutomata.exe` file
-3. The launcher validates the executable (checks for the `PRJ_028` signature)
-   and remembers the folder it lives in
-4. Click **PLAY** to start the game through NAMS
-5. Click **STOP** to terminate it
-
-## How It Works
-
-NAMS writes its cache, plugins and logs *next to its own exe*, so that directory
-has to be writable. Where it lives depends on the host:
-
-| Host | NAMS runtime directory |
-| --- | --- |
-| Windows | `<launcher exe dir>/data/flutter_assets/assets/bins/` (portable, as shipped) |
-| macOS | `~/Library/Application Support/com.vluurie.yplauncher/bins/` |
-
-On macOS the app bundle is signed and sealed, so the binaries are unpacked once
-into Application Support and run from there. They are **not** copied into the
-CrossOver bottle — Wine maps the host filesystem to `Z:`, which is how NAMS is
-reached from inside the prefix.
-
-On **PLAY** the launcher runs:
-
-```
-# Windows
-NAMS.exe run --nier-path <game dir>
-
-# macOS
-/Applications/CrossOver.app/.../bin/wine --bottle <name> --workdir <runtime dir> \
-  <runtime dir>/NAMS.exe run --nier-path 'C:\Program Files (x86)\Steam\...'
-```
-
-Note the asymmetry on macOS: the exe is passed as a **host** path (CrossOver's
-wine wrapper translates it), while `--nier-path` is a **Windows** path, because
-NAMS consumes it Windows-side.
-
-The game runs *inside* the NAMS host process via `game.bin` — there is no
-separate `NieRAutomata.exe` process and no DLL injection. Stopping the game
-means terminating `NAMS.exe`.
-
-Plugins are enabled by file presence: NAMS loads whatever sits in
-`bins/plugins/`. `yorha_protocol.dll` is always present there.
-
-### Configuration and mods
-
-Everything the launcher writes lives under your game folder in `nams/`:
-
-| Path | Purpose |
-| --- | --- |
-| `nams/nams.toml` | NAMS engine + content settings |
-| `nams/lodmod.toml` | LodMod visual settings |
-| `nams/texture_injection.toml` | texture pack load order and VRAM budget |
-| `nams/disabled_mods.toml` | mods excluded at boot |
-| `nams/mod_names.json` | custom mod display names (launcher-only) |
-| `nams/mods/` | installed mods |
-| `nams/inject/textures/` | texture packs |
-| `nams/cutscenes/` | cutscene mods |
-
-The one exception is `settings.json`, which the mod itself owns. It lives where
-NAMS looks for it — on Windows `%APPDATA%/NAMS/`, and on macOS inside the
-bottle at `<bottle>/drive_c/users/<user>/AppData/Roaming/NAMS/`.
+Everything the launcher manages lives in a `nams/` folder next to your game:
+installed mods, texture packs, cutscenes and all the settings. Nothing is
+scattered across your system, so your setup stays with the game folder.
 
 ## Links
 
-- [Source Code](https://github.com/Vluurie/yp_launcher)
 - [Guide / Documentation](https://gitlab.yasupa.de/nams/yp-docs/-/blob/master/YoRHa_Protocol_Documentation.md)
 - [Discord](https://discord.gg/Z5spWtF8qs)
+- [Source Code](https://github.com/Vluurie/yp_launcher)
 - [NAO Launcher (alternative)](https://www.nexusmods.com/nierautomata/mods/772?tab=files)
+
+---
+
+## Building from source
+
+Most people should just download a release above. This section is for developers.
+
+You'll need the Flutter SDK (Dart `^3.9.2`). Then:
+
+```bash
+flutter pub get
+dart run build_runner build --delete-conflicting-outputs   # re-run after changing a @Riverpod provider
+```
+
+The `assets/bins/` folder holds the runtime binaries. `NAMS.exe` and the
+`yorha_protocol.dll` plugin are committed; only the 7-Zip binaries are fetched
+separately (`7z.exe`/`7z.dll` on Windows, `7zz` on macOS/Linux) from the
+[official 7-Zip 26.02 release](https://github.com/ip7z/7zip/releases). On macOS
+the `7zz` binary must be ad-hoc signed (`codesign --force --sign - 7zz`).
+
+Build commands:
+
+```bash
+flutter build windows                # Windows
+./scripts/build_macos_dmg.sh         # macOS  -> build/YP-Launcher-<version>.dmg
+./scripts/build_linux_tarball.sh     # Linux  -> tarball
+./scripts/build_linux_appimage.sh    # Linux  -> AppImage
+```
