@@ -144,7 +144,7 @@ class AppStrings {
   static const String notifyShortcutFailed =
       'Failed to create desktop shortcut.';
 
-  static const String appVersion = 'v2.1.6';
+  static const String appVersion = 'v2.1.7';
 
   // Tab headers
   static const String headerNams = 'NAMS';
