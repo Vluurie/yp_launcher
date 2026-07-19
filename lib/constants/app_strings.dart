@@ -27,7 +27,7 @@ class AppStrings {
   static const String tooltipClose = 'Close';
 
   // Info & help text
-  static const String infoText = 'Select your game, press play \u2014 done.';
+  static const String infoText = 'Select your game, press play - done.';
   static const String helpPrefix = 'Launcher not working? Try ';
   static const String helpNaoLauncher = 'NAO Launcher';
   static const String helpOr = ' or ';
@@ -72,7 +72,7 @@ class AppStrings {
   static const String gameExeName = 'NieRAutomata.exe';
   static const String gameSignature = 'PRJ_028';
 
-  // Launcher files (shipped next to the launcher exe — never copied)
+  // Launcher files (shipped next to the launcher exe - never copied)
   static const String namsExeName = 'NAMS.exe';
   static const String yorhaDllName = 'yorha_protocol.dll';
   static const String pluginsDirName = 'plugins';
@@ -85,11 +85,11 @@ class AppStrings {
 
   // Feature info
   static const String featureReshade =
-      'ReShade \u2014 Already installed? YP picks it up automatically.';
+      'ReShade - Already installed? YP picks it up automatically.';
   static const String featureTextures =
-      'HD Textures \u2014 Drop textures into nams/inject/textures/ or they get picked up from SK_Res/.';
+      'HD Textures - Drop textures into nams/inject/textures/ or they get picked up from SK_Res/.';
   static const String featureLodMod =
-      'LOD Mod \u2014 Built-in visual tweaks like shadows, details and pop-in. Off by default.';
+      'LOD Mod - Built-in visual tweaks like shadows, details and pop-in. Off by default.';
 
   // Tooltips for action buttons
   static const String tooltipEditConfigs =
@@ -115,20 +115,24 @@ class AppStrings {
       '${AppStrings.gameExeName} not found in $dir';
 
   static String errorFilesQuarantined(String files) =>
-      'Missing launcher files: $files. This is often caused by antivirus software. We load mods at runtime \u2014 standard for game modding but it can trigger false positives. Restore the files from quarantine or re-download the launcher, then add an exclusion for the launcher install folder (the folder containing NAMS.exe).';
+      'Missing launcher files: $files. This is often caused by antivirus software. We load mods at runtime - standard for game modding but it can trigger false positives. Restore the files from quarantine or re-download the launcher, then add an exclusion for the launcher install folder (the folder containing NAMS.exe).';
 
   static const String notifyFilesQuarantined =
       'Missing launcher files detected. This is often caused by antivirus software. We load mods at runtime, which is normal for game modding but may trigger false positives. Restore the files from quarantine or re-download the launcher, then add an exclusion for the launcher install folder (the folder containing NAMS.exe).';
 
   // Notification banners
   static const String notifyLodModMigrated =
-      'Found your old LodMod.ini settings \u2014 imported into lodmod.toml and enabled LodMod.';
+      'Found your old LodMod.ini settings - imported into lodmod.toml and enabled LodMod.';
+  static const String notifyNaiomMigrated =
+      'Found your old NAIOM settings - imported into nams.toml. Check the NAIOM tab. You can remove the old NAIOM files (dinput8.dll, NAIOM.ini) from the game folder.';
+  static String notifyNaiomSkipped(String entries) =>
+      'Some NAIOM bindings use keys NAMS does not support and were not imported: $entries. Rebind them in the NAIOM tab.';
   static const String notifyReShadeDetected =
-      'ReShade detected \u2014 will load automatically on launch.';
+      'ReShade detected - will load automatically on launch.';
   static const String notifyReShadeIncompatible =
-      'ReShade with addon/ImGui support detected \u2014 incompatible. Use standard ReShade without addon support.';
+      'ReShade with addon/ImGui support detected - incompatible. Use standard ReShade without addon support.';
   static String notifyTexturesDetected(String folder) =>
-      'HD textures found in $folder \u2014 will load on launch.';
+      'HD textures found in $folder - will load on launch.';
   static const String notifyWolfLimitBreakDetected =
       'Wolf Limit Break NieRAutomata.exe detected. NAMS does not need this patch and was never tested against it. The game may still launch, but performance issues, memory crashes, or mod incompatibilities are possible. For full support, restore the original Steam executable (verify game files in Steam).';
   static String notifyPlatformUnsupported(String platform) =>
@@ -144,7 +148,7 @@ class AppStrings {
   static const String notifyShortcutFailed =
       'Failed to create desktop shortcut.';
 
-  static const String appVersion = 'v2.1.7';
+  static const String appVersion = 'v2.1.8';
 
   // Tab headers
   static const String headerNams = 'NAMS';
@@ -271,7 +275,7 @@ class AppStrings {
   static const String cutsceneHowItWorks2 =
       'If a custom file is missing or broken, the original plays as fallback.';
   static const String cutsceneHowItWorks3 =
-      'Your original game files are never touched \u2014 mods load from a separate location.';
+      'Your original game files are never touched - mods load from a separate location.';
   static const String cutsceneStructurePath =
       'nams/cutscenes/<mod_name>/movie/<filename>.usm';
   static const String cutsceneFolderNameLimit =
@@ -287,7 +291,7 @@ class AppStrings {
   // Onboarding wizard
   static const String onboardingWelcomeTitle = 'Welcome to YoRHa Protocol';
   static const String onboardingWelcomeSubtitle =
-      'The all-in-one mod launcher for NieR:Automata.\nNo manual file management \u2014 just play.';
+      'The all-in-one mod launcher for NieR:Automata.\nNo manual file management - just play.';
   static const String onboardingSelectTitle =
       'Select your NieR:Automata installation';
   static const String onboardingSearchingDrives = 'Scanning all drives...';
@@ -298,8 +302,8 @@ class AppStrings {
       'Is this your first playthrough?';
   static const String onboardingFirstPlaythroughHint =
       'If yes, certain advanced features will be hidden\nuntil you progress further.';
-  static const String onboardingFirstYes = 'Yes \u2014 hide spoiler features';
-  static const String onboardingFirstNo = 'No \u2014 show everything';
+  static const String onboardingFirstYes = 'Yes - hide spoiler features';
+  static const String onboardingFirstNo = 'No - show everything';
   static const String onboardingReadyTitle = "You're all set!";
   static const String onboardingCreateShortcut = 'Create desktop shortcut';
   static const String onboardingFirstPlaythroughSpoilerFree =
@@ -318,19 +322,19 @@ class AppStrings {
   static const String detectionNotFound = 'Not found';
   static const String detectionNoneFound = 'None found';
   static const String detectionLodModMigrated =
-      'Found \u2014 migrated into NAMS';
-  static const String detectionSkResAuto = 'Found \u2014 loaded automatically';
+      'Found - migrated into NAMS';
+  static const String detectionSkResAuto = 'Found - loaded automatically';
   static const String detectionNaiomPending =
-      'Found \u2014 not yet migrated, coming in a future update';
+      'Found - not yet migrated, coming in a future update';
   static const String detectionNoneInstalled = 'None installed';
   static const String detectionCustomMovieHint =
-      'Found \u2014 consider using nams/cutscenes/ instead for safe fallback';
+      'Found - consider using nams/cutscenes/ instead for safe fallback';
   static const String detectionInstalled = 'Installed';
   static const String detectionCustomFilesDetected = 'Custom files detected';
   static const String detectionMigratedIntoNams = 'Migrated into NAMS';
   static const String detectionLoadedAutomatically = 'Loaded automatically';
   static const String detectionMigrationComingSoon =
-      'Found \u2014 migration coming soon';
+      'Found - migration coming soon';
   static const String detectionNotSet = 'Not set';
 
   // Shared labels
@@ -427,7 +431,7 @@ class AppStrings {
 
   // Warning messages
   static const String warningPluginLoadingDisabled =
-      'Plugin loading is disabled \u2014 YoRHa Protocol workspace will not load';
+      'Plugin loading is disabled - YoRHa Protocol workspace will not load';
   static const String warningReShadeDisabled =
       'ReShade auto-loading is disabled';
   static const String warningTextureInjectionDisabled =
@@ -438,12 +442,12 @@ class AppStrings {
 
   static const List<String> tips = [
     'Drag texture mods directly into the Textures tab',
-    'Set a default outfit in Garderobe \u2014 it loads automatically on game start',
+    'Set a default outfit in Garderobe - it loads automatically on game start',
     'HD cutscene mods are auto-detected and configured',
     'LOD Mod settings come with before/after preview images',
     'Use the FAQ button to see which mods YoRHa Protocol replaces',
-    'ReShade is auto-detected \u2014 no manual config needed',
+    'ReShade is auto-detected - no manual config needed',
     'YoRHa Protocol includes a built-in freecam with save slots',
-    'Custom quests are coming soon \u2014 stay tuned',
+    'Custom quests are coming soon - stay tuned',
   ];
 }

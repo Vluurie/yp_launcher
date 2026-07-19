@@ -6,6 +6,7 @@ import 'package:yp_launcher/providers/config_state.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
 import 'package:path/path.dart' as p;
+import 'package:yp_launcher/widgets/collapsible_card.dart';
 import 'package:yp_launcher/widgets/config_field_bool.dart';
 import 'package:yp_launcher/widgets/config_field_dropdown.dart';
 import 'package:yp_launcher/widgets/config_field_int.dart';
@@ -26,7 +27,6 @@ class LodmodView extends ConsumerStatefulWidget {
 class _LodmodViewState extends ConsumerState<LodmodView> {
   final _scrollController = ScrollController();
   bool _loaded = false;
-  final Set<String> _expanded = {};
 
   @override
   void initState() {
@@ -574,142 +574,6 @@ class _LodmodViewState extends ConsumerState<LodmodView> {
   }
 
   Widget _card(BuildContext context, String title, List<Widget> children) {
-    final collapsed = !_expanded.contains(title);
-    final radius = BorderRadius.circular(AppSizes.borderRadius(context));
-    return Container(
-      margin: EdgeInsets.only(bottom: AppSizes.paddingLG(context)),
-      decoration: BoxDecoration(
-        color: AppColors.backgroundCard,
-        borderRadius: radius,
-        border: Border.all(color: AppColors.borderLight),
-        boxShadow: const [
-          BoxShadow(
-            color: AppColors.shadow,
-            blurRadius: 4,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _HoverHeader(
-            radius: radius,
-            collapsed: collapsed,
-            onTap: () {
-              setState(() {
-                if (collapsed) {
-                  _expanded.add(title);
-                } else {
-                  _expanded.remove(title);
-                }
-              });
-            },
-            child: Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(
-                horizontal: AppSizes.cardPaddingH(context),
-                vertical: AppSizes.cardPaddingV(context),
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      title,
-                      style: TextStyle(
-                        fontSize: AppSizes.fontSM(context),
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.accentPrimary,
-                        letterSpacing: 1.0,
-                      ),
-                    ),
-                  ),
-                  AnimatedRotation(
-                    turns: collapsed ? -0.25 : 0,
-                    duration: const Duration(milliseconds: 150),
-                    child: Icon(
-                      Icons.keyboard_arrow_down,
-                      size: AppSizes.iconMD(context),
-                      color: AppColors.accentPrimary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          AnimatedSize(
-            duration: const Duration(milliseconds: 180),
-            curve: Curves.easeInOut,
-            alignment: Alignment.topCenter,
-            child: collapsed
-                ? const SizedBox(width: double.infinity)
-                : Padding(
-                    padding: EdgeInsets.all(AppSizes.cardPaddingH(context)),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: children,
-                    ),
-                  ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _HoverHeader extends StatefulWidget {
-  final BorderRadius radius;
-  final bool collapsed;
-  final VoidCallback onTap;
-  final Widget child;
-
-  const _HoverHeader({
-    required this.radius,
-    required this.collapsed,
-    required this.onTap,
-    required this.child,
-  });
-
-  @override
-  State<_HoverHeader> createState() => _HoverHeaderState();
-}
-
-class _HoverHeaderState extends State<_HoverHeader> {
-  bool _hovered = false;
-
-  @override
-  Widget build(BuildContext context) {
-    final radius = BorderRadius.only(
-      topLeft: widget.radius.topLeft,
-      topRight: widget.radius.topRight,
-      bottomLeft: widget.collapsed ? widget.radius.bottomLeft : Radius.zero,
-      bottomRight: widget.collapsed ? widget.radius.bottomRight : Radius.zero,
-    );
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      onEnter: (_) => setState(() => _hovered = true),
-      onExit: (_) => setState(() => _hovered = false),
-      child: GestureDetector(
-        onTap: widget.onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 120),
-          decoration: BoxDecoration(
-            color: _hovered
-                ? AppColors.accentPrimary.withValues(alpha: 0.10)
-                : AppColors.surfaceMedium,
-            borderRadius: radius,
-            border: Border(
-              left: BorderSide(
-                color: _hovered
-                    ? AppColors.accentPrimary
-                    : Colors.transparent,
-                width: 2,
-              ),
-            ),
-          ),
-          child: widget.child,
-        ),
-      ),
-    );
+    return CollapsibleCard(title: title, children: children);
   }
 }

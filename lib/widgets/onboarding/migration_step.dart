@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:yp_launcher/l10n/app_localizations.dart';
-import 'package:yp_launcher/services/detection_service.dart';
+import 'package:yp_launcher/services/detection/reshade_detection.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
 import 'package:yp_launcher/widgets/onboarding/shared.dart';
@@ -141,7 +141,7 @@ class _MigrationStepState extends State<MigrationStep> {
         icon: Icons.mouse,
         label: l.detectionNaiom,
         action: l.onboardingMigrationActionNaiom,
-        ok: false,
+        ok: true,
       ));
     }
     if (widget.hasCutsceneMods) {

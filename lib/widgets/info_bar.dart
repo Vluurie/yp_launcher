@@ -12,7 +12,8 @@ import 'package:yp_launcher/providers/config_state.dart';
 import 'package:yp_launcher/providers/log_state.dart';
 import 'package:yp_launcher/providers/notification_state.dart';
 import 'package:yp_launcher/services/cutscene_detection_service.dart';
-import 'package:yp_launcher/services/detection_service.dart';
+import 'package:yp_launcher/services/detection/game_detection.dart';
+import 'package:yp_launcher/services/detection/reshade_detection.dart';
 import 'package:yp_launcher/services/isolate_service.dart';
 import 'package:yp_launcher/services/shortcut_service.dart';
 import 'package:yp_launcher/services/toml_service.dart';
@@ -246,7 +247,7 @@ class _DetectionChipState extends ConsumerState<DetectionChip> {
             });
         }
       case 'reshade':
-        final status = await DetectionService.detectReShade(widget.gameDir);
+        final status = await ReShadeDetection.detectReShade(widget.gameDir);
         if (mounted)
           setState(() {
             _detected = status == ReShadeStatus.detected;
@@ -329,7 +330,7 @@ class _DetectionChipState extends ConsumerState<DetectionChip> {
             });
         }
       case 'dlc':
-        final has = await DetectionService.hasDlc(widget.gameDir);
+        final has = await GameDetection.hasDlc(widget.gameDir);
         if (!mounted) return;
         setState(() {
           _detected = has;
@@ -341,7 +342,7 @@ class _DetectionChipState extends ConsumerState<DetectionChip> {
           _checked = true;
         });
       case 'exe':
-        final variant = await DetectionService.detectExeVariant(widget.gameDir);
+        final variant = await GameDetection.detectExeVariant(widget.gameDir);
         if (!mounted) return;
         switch (variant) {
           case ExeVariant.wolfLimitBreak:

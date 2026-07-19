@@ -151,7 +151,7 @@ abstract class AppLocalizations {
   /// No description provided for @infoText.
   ///
   /// In en, this message translates to:
-  /// **'Select your game, press play — done.'**
+  /// **'Select your game, press play - done.'**
   String get infoText;
 
   /// No description provided for @helpPrefix.
@@ -301,7 +301,7 @@ abstract class AppLocalizations {
   /// No description provided for @errorFilesQuarantined.
   ///
   /// In en, this message translates to:
-  /// **'Missing launcher files: {files}. This is often caused by antivirus software. We load mods at runtime — standard for game modding but it can trigger false positives. Restore the files from quarantine or re-download the launcher, then add an exclusion for the launcher install folder (the folder containing NAMS.exe).'**
+  /// **'Missing launcher files: {files}. This is often caused by antivirus software. We load mods at runtime - standard for game modding but it can trigger false positives. Restore the files from quarantine or re-download the launcher, then add an exclusion for the launcher install folder (the folder containing NAMS.exe).'**
   String errorFilesQuarantined(String files);
 
   /// No description provided for @notifyFilesQuarantined.
@@ -313,19 +313,19 @@ abstract class AppLocalizations {
   /// No description provided for @featureReshade.
   ///
   /// In en, this message translates to:
-  /// **'ReShade — Already installed? YP picks it up automatically.'**
+  /// **'ReShade - Already installed? YP picks it up automatically.'**
   String get featureReshade;
 
   /// No description provided for @featureTextures.
   ///
   /// In en, this message translates to:
-  /// **'HD Textures — Drop textures into nams/inject/textures/ or they get picked up from SK_Res/.'**
+  /// **'HD Textures - Drop textures into nams/inject/textures/ or they get picked up from SK_Res/.'**
   String get featureTextures;
 
   /// No description provided for @featureLodMod.
   ///
   /// In en, this message translates to:
-  /// **'LOD Mod — Built-in visual tweaks like shadows, details and pop-in. Off by default.'**
+  /// **'LOD Mod - Built-in visual tweaks like shadows, details and pop-in. Off by default.'**
   String get featureLodMod;
 
   /// No description provided for @tooltipEditConfigs.
@@ -373,25 +373,25 @@ abstract class AppLocalizations {
   /// No description provided for @notifyLodModMigrated.
   ///
   /// In en, this message translates to:
-  /// **'Found your old LodMod.ini settings — imported into lodmod.toml and enabled LodMod.'**
+  /// **'Found your old LodMod.ini settings - imported into lodmod.toml and enabled LodMod.'**
   String get notifyLodModMigrated;
 
   /// No description provided for @notifyReShadeDetected.
   ///
   /// In en, this message translates to:
-  /// **'ReShade detected — disabled by default. NAMS already ships a patched native depth-of-field, so ReShade is optional. Re-enable it any time in the NAMS config tab (Disable ReShade Loading → off).'**
+  /// **'ReShade detected - disabled by default. NAMS already ships a patched native depth-of-field, so ReShade is optional. Re-enable it any time in the NAMS config tab (Disable ReShade Loading → off).'**
   String get notifyReShadeDetected;
 
   /// No description provided for @notifyReShadeIncompatible.
   ///
   /// In en, this message translates to:
-  /// **'ReShade with addon/ImGui support detected — incompatible. Use standard ReShade without addon support.'**
+  /// **'ReShade with addon/ImGui support detected - incompatible. Use standard ReShade without addon support.'**
   String get notifyReShadeIncompatible;
 
   /// No description provided for @notifyTexturesDetected.
   ///
   /// In en, this message translates to:
-  /// **'HD textures found in {folder} — will load on launch.'**
+  /// **'HD textures found in {folder} - will load on launch.'**
   String notifyTexturesDetected(String folder);
 
   /// No description provided for @errorAppDataNotFound.
@@ -445,7 +445,7 @@ abstract class AppLocalizations {
   /// No description provided for @errorDirNotWritableBody.
   ///
   /// In en, this message translates to:
-  /// **'The YP Launcher folder cannot be written to:\n{dir}\n\nNAMS writes its runtime cache, plugins and logs next to NAMS.exe, so the launcher folder must be writable.\n\nHow to fix it:\n1. Close the launcher.\n2. Move the whole extracted YP Launcher folder out of Program Files (or any protected location) into a normal folder you own — for example Desktop, Documents, or D:\\Games\\YP Launcher.\n3. Start the launcher again from the new location.\n\nAlternative: right-click the launcher .exe and choose \"Run as administrator\" to allow writing in the current location.'**
+  /// **'The YP Launcher folder cannot be written to:\n{dir}\n\nNAMS writes its runtime cache, plugins and logs next to NAMS.exe, so the launcher folder must be writable.\n\nHow to fix it:\n1. Close the launcher.\n2. Move the whole extracted YP Launcher folder out of Program Files (or any protected location) into a normal folder you own - for example Desktop, Documents, or D:\\Games\\YP Launcher.\n3. Start the launcher again from the new location.\n\nAlternative: right-click the launcher .exe and choose \"Run as administrator\" to allow writing in the current location.'**
   String errorDirNotWritableBody(String dir);
 
   /// No description provided for @errorGameDirNotWritable.
@@ -457,7 +457,7 @@ abstract class AppLocalizations {
   /// No description provided for @errorGameDirNotWritableBody.
   ///
   /// In en, this message translates to:
-  /// **'The game folder cannot be written to:\n{gameDir}\n\nNAMS writes mods and configs into:\n{namsDir}\nbut it cannot create files there. NieR is probably installed under C:\\Program Files (x86)\\Steam, which Windows protects.\n\nHow to fix it (recommended — move the Steam library off Program Files):\n1. Open Steam > Settings > Storage.\n2. Click the drive dropdown > \"Add Drive\" and pick a folder on another drive (for example D:\\SteamLibrary).\n3. Go to your Library, right-click NieR:Automata > Properties > Installed Files > \"Move install folder\", and move it to the new library.\n4. Re-select the game in this launcher and press Play again.\n\nQuick alternative: right-click the launcher .exe and choose \"Run as administrator\" so it can write into Program Files. Moving the library is the cleaner long-term fix.'**
+  /// **'The game folder cannot be written to:\n{gameDir}\n\nNAMS writes mods and configs into:\n{namsDir}\nbut it cannot create files there. NieR is probably installed under C:\\Program Files (x86)\\Steam, which Windows protects.\n\nHow to fix it (recommended - move the Steam library off Program Files):\n1. Open Steam > Settings > Storage.\n2. Click the drive dropdown > \"Add Drive\" and pick a folder on another drive (for example D:\\SteamLibrary).\n3. Go to your Library, right-click NieR:Automata > Properties > Installed Files > \"Move install folder\", and move it to the new library.\n4. Re-select the game in this launcher and press Play again.\n\nQuick alternative: right-click the launcher .exe and choose \"Run as administrator\" so it can write into Program Files. Moving the library is the cleaner long-term fix.'**
   String errorGameDirNotWritableBody(String gameDir, String namsDir);
 
   /// No description provided for @errorNoCompatLayer.
@@ -469,7 +469,7 @@ abstract class AppLocalizations {
   /// No description provided for @errorNoCompatLayerBody.
   ///
   /// In en, this message translates to:
-  /// **'Running NieR:Automata on this system needs CrossOver, which runs Windows programs on macOS. It was not found in /Applications.\n\nWithout it the launcher can still manage mods, textures and configs — only starting the game is unavailable.\n\nHow to fix it:\n1. Install CrossOver from codeweavers.com.\n2. Install Steam and NieR:Automata inside a CrossOver bottle.\n3. Select NieRAutomata.exe from inside that bottle in this launcher.'**
+  /// **'Running NieR:Automata on this system needs CrossOver, which runs Windows programs on macOS. It was not found in /Applications.\n\nWithout it the launcher can still manage mods, textures and configs - only starting the game is unavailable.\n\nHow to fix it:\n1. Install CrossOver from codeweavers.com.\n2. Install Steam and NieR:Automata inside a CrossOver bottle.\n3. Select NieRAutomata.exe from inside that bottle in this launcher.'**
   String get errorNoCompatLayerBody;
 
   /// No description provided for @errorProtonMissing.
@@ -571,7 +571,7 @@ abstract class AppLocalizations {
   /// No description provided for @tooltipEditsNaiom.
   ///
   /// In en, this message translates to:
-  /// **'Edits nams/nams.toml [mouse] section. NAIOM features being integrated into YP.'**
+  /// **'Edits the [mouse] settings in nams/nams.toml. Most settings apply after saving; a few need a game restart.'**
   String get tooltipEditsNaiom;
 
   /// No description provided for @tooltipCutscenesLocation.
@@ -1021,7 +1021,7 @@ abstract class AppLocalizations {
   /// No description provided for @warningPluginLoadingDisabled.
   ///
   /// In en, this message translates to:
-  /// **'Plugin loading is disabled — YoRHa Protocol workspace will not load'**
+  /// **'Plugin loading is disabled - YoRHa Protocol workspace will not load'**
   String get warningPluginLoadingDisabled;
 
   /// No description provided for @warningReShadeDisabled.
@@ -1117,13 +1117,13 @@ abstract class AppLocalizations {
   /// No description provided for @extractingArchivePercent.
   ///
   /// In en, this message translates to:
-  /// **'Extracting — {percent}%'**
+  /// **'Extracting - {percent}%'**
   String extractingArchivePercent(int percent);
 
   /// No description provided for @extractingArchivePercentFile.
   ///
   /// In en, this message translates to:
-  /// **'Extracting {percent}% — {file}'**
+  /// **'Extracting {percent}% - {file}'**
   String extractingArchivePercentFile(int percent, String file);
 
   /// No description provided for @cutsceneScanningArchive.
@@ -1135,13 +1135,13 @@ abstract class AppLocalizations {
   /// No description provided for @cutsceneCopyingFile.
   ///
   /// In en, this message translates to:
-  /// **'Copying {current}/{total} — {name}'**
+  /// **'Copying {current}/{total} - {name}'**
   String cutsceneCopyingFile(int current, int total, String name);
 
   /// No description provided for @cutsceneCopyingFileBytes.
   ///
   /// In en, this message translates to:
-  /// **'Copying {current}/{total} — {name} ({mbDone} / {mbTotal} MB)'**
+  /// **'Copying {current}/{total} - {name} ({mbDone} / {mbTotal} MB)'**
   String cutsceneCopyingFileBytes(
     int current,
     int total,
@@ -1291,7 +1291,7 @@ abstract class AppLocalizations {
   /// No description provided for @modDropMisroutedCutscenes.
   ///
   /// In en, this message translates to:
-  /// **'This looks like a standalone cutscene mod — drop it on the Cutscenes tab instead. Bundled cutscenes belong inside a mod that already ships entities/ or mod.toml.'**
+  /// **'This looks like a standalone cutscene mod - drop it on the Cutscenes tab instead. Bundled cutscenes belong inside a mod that already ships entities/ or mod.toml.'**
   String get modDropMisroutedCutscenes;
 
   /// No description provided for @modSideInstalledTextures.
@@ -1372,18 +1372,6 @@ abstract class AppLocalizations {
   /// **'WIP'**
   String get wipLabel;
 
-  /// No description provided for @todoLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'TODO'**
-  String get todoLabel;
-
-  /// No description provided for @naiomWipBanner.
-  ///
-  /// In en, this message translates to:
-  /// **'NAIOM (NieR Automata Input Overhaul Mod) features are being integrated natively into NAMS. Active settings work now via nams.toml. Greyed-out features are planned for a future update.'**
-  String get naiomWipBanner;
-
   /// No description provided for @dropCutsceneHere.
   ///
   /// In en, this message translates to:
@@ -1429,7 +1417,7 @@ abstract class AppLocalizations {
   /// No description provided for @cutsceneHowItWorks3.
   ///
   /// In en, this message translates to:
-  /// **'Your original game files are never touched — mods load from a separate location.'**
+  /// **'Your original game files are never touched - mods load from a separate location.'**
   String get cutsceneHowItWorks3;
 
   /// No description provided for @cutsceneStructurePath.
@@ -1453,7 +1441,7 @@ abstract class AppLocalizations {
   /// No description provided for @cutsceneMigrationBody.
   ///
   /// In en, this message translates to:
-  /// **'Found {count} custom cutscene {count, plural, =1{file} other{files}} directly in data/movie/. These overwrite the originals permanently. Next time, install cutscene mods here instead — if a custom file fails to load, the original plays as fallback.'**
+  /// **'Found {count} custom cutscene {count, plural, =1{file} other{files}} directly in data/movie/. These overwrite the originals permanently. Next time, install cutscene mods here instead - if a custom file fails to load, the original plays as fallback.'**
   String cutsceneMigrationBody(int count);
 
   /// No description provided for @noMovieFolderFound.
@@ -1477,7 +1465,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingWelcomeSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'One launcher. All your mods. New NieR content.\n\nDrag-and-drop mods, mid-game outfit switching, new quests, and a built-in devkit — without configuration nightmares.'**
+  /// **'One launcher. All your mods. New NieR content.\n\nDrag-and-drop mods, mid-game outfit switching, new quests, and a built-in devkit - without configuration nightmares.'**
   String get onboardingWelcomeSubtitle;
 
   /// No description provided for @onboardingSelectTitle.
@@ -1519,13 +1507,13 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingFirstYes.
   ///
   /// In en, this message translates to:
-  /// **'Yes — hide spoiler features'**
+  /// **'Yes - hide spoiler features'**
   String get onboardingFirstYes;
 
   /// No description provided for @onboardingFirstNo.
   ///
   /// In en, this message translates to:
-  /// **'No — show everything'**
+  /// **'No - show everything'**
   String get onboardingFirstNo;
 
   /// No description provided for @onboardingMigrationAskTitle.
@@ -1573,13 +1561,13 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingMigrationActionReshadeKept.
   ///
   /// In en, this message translates to:
-  /// **'Disabled — NAMS has native DoF. Re-enable in NAMS config if you want it.'**
+  /// **'Disabled - NAMS has native DoF. Re-enable in NAMS config if you want it.'**
   String get onboardingMigrationActionReshadeKept;
 
   /// No description provided for @onboardingMigrationActionReshadeIncompatible.
   ///
   /// In en, this message translates to:
-  /// **'Addon/ImGui version — replace or remove.'**
+  /// **'Addon/ImGui version - replace or remove.'**
   String get onboardingMigrationActionReshadeIncompatible;
 
   /// No description provided for @onboardingMigrationActionTextures.
@@ -1603,7 +1591,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingMigrationActionNaiom.
   ///
   /// In en, this message translates to:
-  /// **'Migration in progress — leave for now.'**
+  /// **'Your NAIOM settings are imported into NAMS automatically. Afterwards you can delete the old NAIOM files (dinput8.dll, NAIOM.ini).'**
   String get onboardingMigrationActionNaiom;
 
   /// No description provided for @onboardingMigrationActionCutscenes.
@@ -1615,7 +1603,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingMigrationActionExistingMods.
   ///
   /// In en, this message translates to:
-  /// **'Already installed — kept as-is.'**
+  /// **'Already installed - kept as-is.'**
   String get onboardingMigrationActionExistingMods;
 
   /// No description provided for @onboardingMigrationLabelExistingMods.
@@ -1633,7 +1621,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingModInstallAskBody.
   ///
   /// In en, this message translates to:
-  /// **'Got a .zip or folder? We\'ll handle it.\n(Textures and cutscenes have their own tabs — install those later.)'**
+  /// **'Got a .zip or folder? We\'ll handle it.\n(Textures and cutscenes have their own tabs - install those later.)'**
   String get onboardingModInstallAskBody;
 
   /// No description provided for @onboardingModInstallYes.
@@ -1687,7 +1675,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingModInstallExtractingFile.
   ///
   /// In en, this message translates to:
-  /// **'Extracting {percent}% — {file}'**
+  /// **'Extracting {percent}% - {file}'**
   String onboardingModInstallExtractingFile(int percent, String file);
 
   /// No description provided for @onboardingModInstallNotAMod.
@@ -1867,19 +1855,19 @@ abstract class AppLocalizations {
   /// No description provided for @detectionLodModMigrated.
   ///
   /// In en, this message translates to:
-  /// **'Found — migrated into NAMS'**
+  /// **'Found - migrated into NAMS'**
   String get detectionLodModMigrated;
 
   /// No description provided for @detectionSkResAuto.
   ///
   /// In en, this message translates to:
-  /// **'Found — loaded automatically'**
+  /// **'Found - loaded automatically'**
   String get detectionSkResAuto;
 
   /// No description provided for @detectionNaiomPending.
   ///
   /// In en, this message translates to:
-  /// **'Found — not yet migrated, coming in a future update'**
+  /// **'Found - settings are imported automatically'**
   String get detectionNaiomPending;
 
   /// No description provided for @detectionNoneInstalled.
@@ -1891,7 +1879,7 @@ abstract class AppLocalizations {
   /// No description provided for @detectionCustomMovieHint.
   ///
   /// In en, this message translates to:
-  /// **'Found — consider using nams/cutscenes/ instead for safe fallback'**
+  /// **'Found - consider using nams/cutscenes/ instead for safe fallback'**
   String get detectionCustomMovieHint;
 
   /// No description provided for @detectionInstalled.
@@ -1921,7 +1909,7 @@ abstract class AppLocalizations {
   /// No description provided for @detectionMigrationComingSoon.
   ///
   /// In en, this message translates to:
-  /// **'Found — migration coming soon'**
+  /// **'Settings imported automatically'**
   String get detectionMigrationComingSoon;
 
   /// No description provided for @detectionNotSet.
@@ -2209,7 +2197,7 @@ abstract class AppLocalizations {
   /// No description provided for @modsTutorialSupportingStep1Body.
   ///
   /// In en, this message translates to:
-  /// **'**NAMS has been a 3+ year project.** What started as a single modloader grew into a whole platform that **mods**, **plugins**, and tools are now built on top of:\n\n- **Mods** are content additions — outfits, custom quests, new weapons, textures. They use NAMS\'s content system but don\'t run their own code.\n- **Plugins** are programs that run alongside the game and can extend the modloader itself — things like the multiplayer mod, debug overlays, or new game systems. They\'re written in code, loaded by NAMS at startup.\n- The launcher you\'re using right now is **not a plugin** — it\'s a separate app that prepares your mods and configs before launch.\n\nThe mods you see today aren\'t running in spite of an obstacle course — they\'re running on top of years of foundational work that exists specifically so you don\'t have to redo it.\n\nThis section is about **how that platform stays alive** and what it means for you — whether you\'re just playing, dipping into modding, or thinking about contributing something back.\n\nThe next pages start with the parts that apply to **everyone**, then go into more technical territory at the end. Skip ahead whenever you\'ve heard enough — none of it is required reading.'**
+  /// **'**NAMS has been a 3+ year project.** What started as a single modloader grew into a whole platform that **mods**, **plugins**, and tools are now built on top of:\n\n- **Mods** are content additions - outfits, custom quests, new weapons, textures. They use NAMS\'s content system but don\'t run their own code.\n- **Plugins** are programs that run alongside the game and can extend the modloader itself - things like the multiplayer mod, debug overlays, or new game systems. They\'re written in code, loaded by NAMS at startup.\n- The launcher you\'re using right now is **not a plugin** - it\'s a separate app that prepares your mods and configs before launch.\n\nThe mods you see today aren\'t running in spite of an obstacle course - they\'re running on top of years of foundational work that exists specifically so you don\'t have to redo it.\n\nThis section is about **how that platform stays alive** and what it means for you - whether you\'re just playing, dipping into modding, or thinking about contributing something back.\n\nThe next pages start with the parts that apply to **everyone**, then go into more technical territory at the end. Skip ahead whenever you\'ve heard enough - none of it is required reading.'**
   String get modsTutorialSupportingStep1Body;
 
   /// No description provided for @modsTutorialSupportingStep2Title.
@@ -2221,31 +2209,31 @@ abstract class AppLocalizations {
   /// No description provided for @modsTutorialSupportingStep2Body.
   ///
   /// In en, this message translates to:
-  /// **'**You don\'t need to be a programmer to add to this ecosystem.**\n\nNAMS has a content system that already supports — and is steadily growing to support more — declarative content additions:\n\n- **Custom quests** added on top of the vanilla story.\n- **New weapons and items** with their own behavior, no overrides.\n- **Accessories** in **new slots**, not replacing existing ones.\n- **Custom cutscenes** that live in `nams/cutscenes/` or are bundled inside a mod (e.g. a custom quest shipping its own cinematics) — the original cutscenes are **never replaced**, new ones simply load alongside.\n\nThe through-line: **additive, not replacive.** Vanilla content is preserved; modded content is layered on top. That means a modeler with no programming experience can build accessories, weapons, characters, and ship them as additions — without overwriting anything, without breaking saves, without conflicts with other mods doing the same.\n\nThis surface is going to **expand** over time. Every release adds more declarative hooks so non-programmers can do more.'**
+  /// **'**You don\'t need to be a programmer to add to this ecosystem.**\n\nNAMS has a content system that already supports - and is steadily growing to support more - declarative content additions:\n\n- **Custom quests** added on top of the vanilla story.\n- **New weapons and items** with their own behavior, no overrides.\n- **Accessories** in **new slots**, not replacing existing ones.\n- **Custom cutscenes** that live in `nams/cutscenes/` or are bundled inside a mod (e.g. a custom quest shipping its own cinematics) - the original cutscenes are **never replaced**, new ones simply load alongside.\n\nThe through-line: **additive, not replacive.** Vanilla content is preserved; modded content is layered on top. That means a modeler with no programming experience can build accessories, weapons, characters, and ship them as additions - without overwriting anything, without breaking saves, without conflicts with other mods doing the same.\n\nThis surface is going to **expand** over time. Every release adds more declarative hooks so non-programmers can do more.'**
   String get modsTutorialSupportingStep2Body;
 
   /// No description provided for @modsTutorialSupportingStep3Title.
   ///
   /// In en, this message translates to:
-  /// **'Ways to contribute — not just code'**
+  /// **'Ways to contribute - not just code'**
   String get modsTutorialSupportingStep3Title;
 
   /// No description provided for @modsTutorialSupportingStep3Body.
   ///
   /// In en, this message translates to:
-  /// **'Making content (the previous page) is one way to give back. It\'s far from the only one — and a lot of the things that keep an ecosystem healthy don\'t involve making mods at all. Here\'s what actually moves the needle:\n\n- **Write a guide.** \"How I built X with NAMS\", \"how I debugged Y\", \"the five things I wish I\'d known\". Most of the gaps in onboarding right now are documentation gaps.\n- **Report a real bug, well.** A reproducible repro, a log, the diagnostics report from the Logs panel. That\'s worth more than ten \"it doesn\'t work\" tickets.\n- **Model.** Accessories, weapons, characters, props. NAMS\'s content system loads those as **additions** — new slots, no overrides — so a modeler with no programming experience can ship work that just slots into everyone else\'s loadouts without conflicts.\n- **Translate.** The launcher is localized. If your language isn\'t there yet and you\'d use it, the strings are in `lib/l10n/` and a PR is welcome.\n- **Test on weird hardware.** Steam Deck, AMD GPUs, ultrawide setups, multi-monitor, controllers nobody owns. Bugs that only show up on rare configurations stay hidden until someone reports them.\n- **Just answer questions in the Discord.** Helping the next new person is contribution. Most of what survives in any ecosystem long-term is the culture of the people who showed up early.\n- **Reverse-engineer one game function and give the API back.** *(more on this on the next page if you\'re curious)* — for the technically-inclined, this is the highest-leverage contribution there is.\n\n### Closing thought (so far)\n\nA lot of free time, personal investment, and stubborn fleiß went into making this platform exist — always with the mindset of **enabling other people to start doing something**. If one of those bullet points feels doable, you\'re already most of the way there. The Discord (**YoRHa Continuum**) is the place to ask.\n\nThe next two pages get more technical — read on if you\'re curious about how plugins coexist and how new game APIs end up in NAMS, or stop here if you\'ve heard enough.'**
+  /// **'Making content (the previous page) is one way to give back. It\'s far from the only one - and a lot of the things that keep an ecosystem healthy don\'t involve making mods at all. Here\'s what actually moves the needle:\n\n- **Write a guide.** \"How I built X with NAMS\", \"how I debugged Y\", \"the five things I wish I\'d known\". Most of the gaps in onboarding right now are documentation gaps.\n- **Report a real bug, well.** A reproducible repro, a log, the diagnostics report from the Logs panel. That\'s worth more than ten \"it doesn\'t work\" tickets.\n- **Model.** Accessories, weapons, characters, props. NAMS\'s content system loads those as **additions** - new slots, no overrides - so a modeler with no programming experience can ship work that just slots into everyone else\'s loadouts without conflicts.\n- **Translate.** The launcher is localized. If your language isn\'t there yet and you\'d use it, the strings are in `lib/l10n/` and a PR is welcome.\n- **Test on weird hardware.** Steam Deck, AMD GPUs, ultrawide setups, multi-monitor, controllers nobody owns. Bugs that only show up on rare configurations stay hidden until someone reports them.\n- **Just answer questions in the Discord.** Helping the next new person is contribution. Most of what survives in any ecosystem long-term is the culture of the people who showed up early.\n- **Reverse-engineer one game function and give the API back.** *(more on this on the next page if you\'re curious)* - for the technically-inclined, this is the highest-leverage contribution there is.\n\n### Closing thought (so far)\n\nA lot of free time, personal investment, and stubborn fleiß went into making this platform exist - always with the mindset of **enabling other people to start doing something**. If one of those bullet points feels doable, you\'re already most of the way there. The Discord (**YoRHa Continuum**) is the place to ask.\n\nThe next two pages get more technical - read on if you\'re curious about how plugins coexist and how new game APIs end up in NAMS, or stop here if you\'ve heard enough.'**
   String get modsTutorialSupportingStep3Body;
 
   /// No description provided for @modsTutorialSupportingStep4Title.
   ///
   /// In en, this message translates to:
-  /// **'Plugins coexist — by design'**
+  /// **'Plugins coexist - by design'**
   String get modsTutorialSupportingStep4Title;
 
   /// No description provided for @modsTutorialSupportingStep4Body.
   ///
   /// In en, this message translates to:
-  /// **'*The next two pages are more technical and aimed at people thinking about building plugins. Skip if not your thing.*\n\nA defining feature of the NAMS platform is that **plugins can run together at the same time**, in the same game session, without fighting each other.\n\n**Multiplayer Mod by Jasper** is one of the biggest things to happen in the NAMS ecosystem and is still actively maintained — huge respect to that work. The YP devkit and the MP plugin **both load at once**, both work, both render their own UI on top of the game. That\'s not a happy accident — that\'s what NAMS\'s plugin host was built for.\n\nSo if you ship a plugin that follows the platform\'s expectations, **it can coexist with everything else already running** — your plugin, the MP plugin, the YP devkit, future plugins from people you\'ll never meet. You don\'t have to compete for hooks or fight load order; the platform mediates.\n\nThere are still refactorings happening every month to reduce edges where one plugin can accidentally break another. It\'s a moving target — but the direction is clear and the work is ongoing.'**
+  /// **'*The next two pages are more technical and aimed at people thinking about building plugins. Skip if not your thing.*\n\nA defining feature of the NAMS platform is that **plugins can run together at the same time**, in the same game session, without fighting each other.\n\n**Multiplayer Mod by Jasper** is one of the biggest things to happen in the NAMS ecosystem and is still actively maintained - huge respect to that work. The YP devkit and the MP plugin **both load at once**, both work, both render their own UI on top of the game. That\'s not a happy accident - that\'s what NAMS\'s plugin host was built for.\n\nSo if you ship a plugin that follows the platform\'s expectations, **it can coexist with everything else already running** - your plugin, the MP plugin, the YP devkit, future plugins from people you\'ll never meet. You don\'t have to compete for hooks or fight load order; the platform mediates.\n\nThere are still refactorings happening every month to reduce edges where one plugin can accidentally break another. It\'s a moving target - but the direction is clear and the work is ongoing.'**
   String get modsTutorialSupportingStep4Body;
 
   /// No description provided for @modsTutorialSupportingStep5Title.
@@ -2257,7 +2245,7 @@ abstract class AppLocalizations {
   /// No description provided for @modsTutorialSupportingStep5Body.
   ///
   /// In en, this message translates to:
-  /// **'Most of the engine APIs you\'d need to build a serious plugin already exist in NAMS — and **they exist because someone reverse-engineered the game** to solve their own problem and contributed the result back.\n\nThe game is closed-source. Every API in NAMS that lets you read or write some game state is the result of someone tracing functions, finding offsets, validating behavior. That\'s a lot of free work, and it lives in NAMS specifically so the **next** plugin author doesn\'t have to redo it.\n\nWhen you build on NAMS, you inherit all of that. You don\'t start from `LoadLibrary`; you start from APIs that someone already wrestled into existence — and the next person who needs the API you reverse-engineered gets the same gift.\n\n### Why this is the highest-leverage contribution\n\nIf you ever do this — even once — you\'ve permanently saved every future plugin author the same work. That\'s the asymmetry. A guide helps a few people read it; an API in NAMS helps everyone who\'ll ever need that capability, forever. The ecosystem grows on the back of people who reverse-engineer one thing for themselves and leave the result behind for everyone.'**
+  /// **'Most of the engine APIs you\'d need to build a serious plugin already exist in NAMS - and **they exist because someone reverse-engineered the game** to solve their own problem and contributed the result back.\n\nThe game is closed-source. Every API in NAMS that lets you read or write some game state is the result of someone tracing functions, finding offsets, validating behavior. That\'s a lot of free work, and it lives in NAMS specifically so the **next** plugin author doesn\'t have to redo it.\n\nWhen you build on NAMS, you inherit all of that. You don\'t start from `LoadLibrary`; you start from APIs that someone already wrestled into existence - and the next person who needs the API you reverse-engineered gets the same gift.\n\n### Why this is the highest-leverage contribution\n\nIf you ever do this - even once - you\'ve permanently saved every future plugin author the same work. That\'s the asymmetry. A guide helps a few people read it; an API in NAMS helps everyone who\'ll ever need that capability, forever. The ecosystem grows on the back of people who reverse-engineer one thing for themselves and leave the result behind for everyone.'**
   String get modsTutorialSupportingStep5Body;
 
   /// No description provided for @modsTutorialEcosystemStep1Title.
@@ -2269,7 +2257,7 @@ abstract class AppLocalizations {
   /// No description provided for @modsTutorialEcosystemStep1Body.
   ///
   /// In en, this message translates to:
-  /// **'Modding NieR has historically been painful. Mods that work fine on their own start fighting the moment you stack a few of them — different DLL hooks (`dxgi`, `d3d11`, `dinput8`) compete for the same slot, the wrong wrapper wins the load order, and the game silently crashes on boot. People with 5–10 mods spend more time bisecting than playing.\n\nFor a long time the only answer was *manual installs only*: drop loose `.dat`/`.dtt` files into `data/`, hand-edit configs, never use a mod manager. That works for one or two mods, but it overwrites real game files and leaves no record of what changed. Tools like Vortex didn\'t help — they don\'t understand NieR\'s quirks.\n\n**NAMS exists to fix this at the modloader level**, and **this launcher exists to give NAMS a friendly face on top.**'**
+  /// **'Modding NieR has historically been painful. Mods that work fine on their own start fighting the moment you stack a few of them - different DLL hooks (`dxgi`, `d3d11`, `dinput8`) compete for the same slot, the wrong wrapper wins the load order, and the game silently crashes on boot. People with 5–10 mods spend more time bisecting than playing.\n\nFor a long time the only answer was *manual installs only*: drop loose `.dat`/`.dtt` files into `data/`, hand-edit configs, never use a mod manager. That works for one or two mods, but it overwrites real game files and leaves no record of what changed. Tools like Vortex didn\'t help - they don\'t understand NieR\'s quirks.\n\n**NAMS exists to fix this at the modloader level**, and **this launcher exists to give NAMS a friendly face on top.**'**
   String get modsTutorialEcosystemStep1Body;
 
   /// No description provided for @modsTutorialEcosystemStep2Title.
@@ -2281,19 +2269,19 @@ abstract class AppLocalizations {
   /// No description provided for @modsTutorialEcosystemStep2Body.
   ///
   /// In en, this message translates to:
-  /// **'**NAMS is the modloader.** It\'s not a proxy DLL hijacking `dxgi.dll` or `d3d11.dll` like older tools did — that\'s the very mechanism that caused the conflicts in the first place.\n\nInstead, NAMS runs as its own host process: it loads NieR:Automata as a library inside that process (the game\'s exe transformed into a loadable `game.bin`) and initializes the modloader before the game starts. Nothing is injected into another process — NAMS *is* the process the game runs in, with full control over what\'s about to load.\n\nFrom there, NAMS does two big things:\n\n**1. Reimplements the features other tools used to provide** — LodMod, Limit Break, texture injection, fast loading — natively, in one coordinated layer. Mods plug into NAMS APIs instead of fighting over which DLL hook gets called first.\n\n**2. Provides a virtual file system (VFS):**\n\n- Every mod lives in its own folder under `nams/mods/<modId>/` — never overwriting real game files.\n- At runtime NAMS overlays active mods into the engine\'s view of `data/`.\n- Your vanilla `data/*.cpk` and `NieRAutomata.exe` are **never modified**, so launching unmodded through Steam still works exactly as before.\n\nMods declare what they change in a manifest. NAMS validates and loads them in a defined order, so you finally get **clean enable/disable per mod** and **knowable conflict detection** — neither was possible with the old drop-files-into-`data` approach.\n\n### How this fits together\n\nThis launcher is **not** built directly on top of NieR:Automata. It doesn\'t reverse-engineer the game, hook engine functions, or know anything about `.dat`/`.dtt` formats on its own. The order is:\n\n1. **NieR:Automata** — the game, untouched.\n2. **NAMS** — the modloader, designed first to make scalable modding possible at all (engine reimplementation, VFS, plugin host, content framework).\n3. **This launcher** — built on top of NAMS as the helper. It reads NAMS\'s TOML configs, writes into NAMS\'s folder layout, and talks to NAMS\'s APIs. That\'s it.\n\nThe practical consequence: NAMS is the load-bearing layer. The launcher is just a friendly UI in front of it, and could be replaced by a different UI (or the command line) without your mods caring.\n\n### And it has been\n\nThis isn\'t theoretical. **The NAO Launcher by Rustukun** is a separate launcher built on the same foundation — a different UI, different design choices, talks to the same NAMS underneath. Your mods, your `nams/mods/<modId>/` folders, your `disabled_mods.toml` — all of it works the same regardless of which launcher you\'re using.\n\nThat\'s the proof that NAMS is the platform and any launcher (this one, NAO, a future one nobody\'s written yet) is just a frontend choice. Pick whichever fits your workflow; your mod library doesn\'t have to move.'**
+  /// **'**NAMS is the modloader.** It\'s not a proxy DLL hijacking `dxgi.dll` or `d3d11.dll` like older tools did - that\'s the very mechanism that caused the conflicts in the first place.\n\nInstead, NAMS runs as its own host process: it loads NieR:Automata as a library inside that process (the game\'s exe transformed into a loadable `game.bin`) and initializes the modloader before the game starts. Nothing is injected into another process - NAMS *is* the process the game runs in, with full control over what\'s about to load.\n\nFrom there, NAMS does two big things:\n\n**1. Reimplements the features other tools used to provide** - LodMod, Limit Break, texture injection, fast loading - natively, in one coordinated layer. Mods plug into NAMS APIs instead of fighting over which DLL hook gets called first.\n\n**2. Provides a virtual file system (VFS):**\n\n- Every mod lives in its own folder under `nams/mods/<modId>/` - never overwriting real game files.\n- At runtime NAMS overlays active mods into the engine\'s view of `data/`.\n- Your vanilla `data/*.cpk` and `NieRAutomata.exe` are **never modified**, so launching unmodded through Steam still works exactly as before.\n\nMods declare what they change in a manifest. NAMS validates and loads them in a defined order, so you finally get **clean enable/disable per mod** and **knowable conflict detection** - neither was possible with the old drop-files-into-`data` approach.\n\n### How this fits together\n\nThis launcher is **not** built directly on top of NieR:Automata. It doesn\'t reverse-engineer the game, hook engine functions, or know anything about `.dat`/`.dtt` formats on its own. The order is:\n\n1. **NieR:Automata** - the game, untouched.\n2. **NAMS** - the modloader, designed first to make scalable modding possible at all (engine reimplementation, VFS, plugin host, content framework).\n3. **This launcher** - built on top of NAMS as the helper. It reads NAMS\'s TOML configs, writes into NAMS\'s folder layout, and talks to NAMS\'s APIs. That\'s it.\n\nThe practical consequence: NAMS is the load-bearing layer. The launcher is just a friendly UI in front of it, and could be replaced by a different UI (or the command line) without your mods caring.\n\n### And it has been\n\nThis isn\'t theoretical. **The NAO Launcher by Rustukun** is a separate launcher built on the same foundation - a different UI, different design choices, talks to the same NAMS underneath. Your mods, your `nams/mods/<modId>/` folders, your `disabled_mods.toml` - all of it works the same regardless of which launcher you\'re using.\n\nThat\'s the proof that NAMS is the platform and any launcher (this one, NAO, a future one nobody\'s written yet) is just a frontend choice. Pick whichever fits your workflow; your mod library doesn\'t have to move.'**
   String get modsTutorialEcosystemStep2Body;
 
   /// No description provided for @modsTutorialEcosystemStep3Title.
   ///
   /// In en, this message translates to:
-  /// **'What this launcher adds — and what\'s different'**
+  /// **'What this launcher adds - and what\'s different'**
   String get modsTutorialEcosystemStep3Title;
 
   /// No description provided for @modsTutorialEcosystemStep3Body.
   ///
   /// In en, this message translates to:
-  /// **'NAMS handles loading. The launcher handles **everything around it** — install, organisation, troubleshooting:\n\n- **Mod Manager** — drag-and-drop install of NAMS-format mods, automatic layout normalization (wax/SK_Res wrappers, bundled assets), manifest inspection, conflict warnings.\n- **Textures** — manage standalone texture packs and `load_order` priority without hand-editing TOML.\n- **Cutscenes** — install HD cutscene mods, auto-detect codec (H264 vs MPEG-2), wire up the right NAMS settings.\n- **Profiles** — keep multiple mod loadouts side-by-side, switch with one click, without copying or losing state.\n- **Diagnostics** — full report of what\'s installed where, what\'s leftover from old installs, what NAMS sees vs what\'s actually on disk.\n\n### Why we built this\n\n**Nothing against manual installs.** Dropping one outfit\'s `.dat`/`.dtt` files into the right `data/` subfolder works fine for one or two mods. The launcher is built for the scale beyond that.\n\nThe NAMS ecosystem now supports things like:\n\n- **30+ outfit mods** with multi-outfit swapping per character.\n- **20+ custom quests** added on top of the vanilla story.\n- **10+ new weapons** with their own behaviour.\n- Plus textures, cutscenes, plugins, balance changes…\n\nManaging that by hand isn\'t a philosophical preference — it\'s **just not possible**. You can\'t track which file came from which mod, you can\'t enable or disable a single mod cleanly, you can\'t tell why something broke. At scale, manual modding hits a hard wall — and the NAMS ecosystem has been past that wall for a while.\n\n### How this differs from NAMH and Vortex\n\nIf you\'ve been around the NieR scene a while, you remember how previous mod managers ended:\n\n- **NAMH** (NieR Automata Mod Helper) became unmaintained, broke games in unrecoverable ways, hit \"program in use\" lock issues, and the standard recovery was *uninstall the game, reinstall, do it manually.* It worked by **directly replacing files in `data/`** — once a NAMH install went sideways, there was no clean way back.\n- **Vortex** never properly understood NieR\'s file structure. Its virtual file system makes assumptions that don\'t match how the game actually loads content, so installs would silently misplace files.\n\nThis launcher is built differently. The defining choices:\n\n1. **No file replacement, ever.** Mods live in `nams/mods/<modId>/` and get overlaid into the engine\'s view at runtime via NAMS\'s VFS. Vanilla `data/` is never touched. There\'s no \"unrecoverable state\" because nothing in the real game ever changed.\n2. **Every action is reversible.** Uninstall a mod → its folder and bundled assets are removed cleanly. Disable a mod → an entry in `disabled_mods.toml` and NAMS skips it. No hidden state, no irreversible writes.\n3. **Profiles instead of one global state.** Past managers committed everything to a single configuration. Profiles let you keep multiple loadouts side-by-side and switch atomically — nothing to corrupt, nothing to lose.\n4. **Built on a maintained modloader.** NAMH\'s death came from the modloader story being uncertain. NAMS is the foundation everything here is built on, and the launcher follows its updates.\n\nIf this launcher ever stops being maintained, your mods are still just files on disk that NAMS reads — you don\'t end up locked out of your own install.'**
+  /// **'NAMS handles loading. The launcher handles **everything around it** - install, organisation, troubleshooting:\n\n- **Mod Manager** - drag-and-drop install of NAMS-format mods, automatic layout normalization (wax/SK_Res wrappers, bundled assets), manifest inspection, conflict warnings.\n- **Textures** - manage standalone texture packs and `load_order` priority without hand-editing TOML.\n- **Cutscenes** - install HD cutscene mods, auto-detect codec (H264 vs MPEG-2), wire up the right NAMS settings.\n- **Profiles** - keep multiple mod loadouts side-by-side, switch with one click, without copying or losing state.\n- **Diagnostics** - full report of what\'s installed where, what\'s leftover from old installs, what NAMS sees vs what\'s actually on disk.\n\n### Why we built this\n\n**Nothing against manual installs.** Dropping one outfit\'s `.dat`/`.dtt` files into the right `data/` subfolder works fine for one or two mods. The launcher is built for the scale beyond that.\n\nThe NAMS ecosystem now supports things like:\n\n- **30+ outfit mods** with multi-outfit swapping per character.\n- **20+ custom quests** added on top of the vanilla story.\n- **10+ new weapons** with their own behaviour.\n- Plus textures, cutscenes, plugins, balance changes…\n\nManaging that by hand isn\'t a philosophical preference - it\'s **just not possible**. You can\'t track which file came from which mod, you can\'t enable or disable a single mod cleanly, you can\'t tell why something broke. At scale, manual modding hits a hard wall - and the NAMS ecosystem has been past that wall for a while.\n\n### How this differs from NAMH and Vortex\n\nIf you\'ve been around the NieR scene a while, you remember how previous mod managers ended:\n\n- **NAMH** (NieR Automata Mod Helper) became unmaintained, broke games in unrecoverable ways, hit \"program in use\" lock issues, and the standard recovery was *uninstall the game, reinstall, do it manually.* It worked by **directly replacing files in `data/`** - once a NAMH install went sideways, there was no clean way back.\n- **Vortex** never properly understood NieR\'s file structure. Its virtual file system makes assumptions that don\'t match how the game actually loads content, so installs would silently misplace files.\n\nThis launcher is built differently. The defining choices:\n\n1. **No file replacement, ever.** Mods live in `nams/mods/<modId>/` and get overlaid into the engine\'s view at runtime via NAMS\'s VFS. Vanilla `data/` is never touched. There\'s no \"unrecoverable state\" because nothing in the real game ever changed.\n2. **Every action is reversible.** Uninstall a mod → its folder and bundled assets are removed cleanly. Disable a mod → an entry in `disabled_mods.toml` and NAMS skips it. No hidden state, no irreversible writes.\n3. **Profiles instead of one global state.** Past managers committed everything to a single configuration. Profiles let you keep multiple loadouts side-by-side and switch atomically - nothing to corrupt, nothing to lose.\n4. **Built on a maintained modloader.** NAMH\'s death came from the modloader story being uncertain. NAMS is the foundation everything here is built on, and the launcher follows its updates.\n\nIf this launcher ever stops being maintained, your mods are still just files on disk that NAMS reads - you don\'t end up locked out of your own install.'**
   String get modsTutorialEcosystemStep3Body;
 
   /// No description provided for @modsTutorialEcosystemStep4Title.
@@ -2305,7 +2293,7 @@ abstract class AppLocalizations {
   /// No description provided for @modsTutorialEcosystemStep4Body.
   ///
   /// In en, this message translates to:
-  /// **'If you\'ve never installed a mod here before:\n\n- **How to install a mod** — walks through the install flow tab-by-tab.\n- **How profiles work** — explains separate loadouts and when to use them.\n\nFind both in this same help menu (the **?** icon you used to open this).\n\n**The short version:** drop archives onto the right tab (Mod Manager for character/data mods, Textures for standalone texture packs, Cutscenes for HD cutscenes), hit Play, look at Logs if something breaks. The launcher tries to do the right thing automatically — if you disagree with a choice it made, every action is reversible from the UI.'**
+  /// **'If you\'ve never installed a mod here before:\n\n- **How to install a mod** - walks through the install flow tab-by-tab.\n- **How profiles work** - explains separate loadouts and when to use them.\n\nFind both in this same help menu (the **?** icon you used to open this).\n\n**The short version:** drop archives onto the right tab (Mod Manager for character/data mods, Textures for standalone texture packs, Cutscenes for HD cutscenes), hit Play, look at Logs if something breaks. The launcher tries to do the right thing automatically - if you disagree with a choice it made, every action is reversible from the UI.'**
   String get modsTutorialEcosystemStep4Body;
 
   /// No description provided for @modsTutorialHelpTooltip.
@@ -2323,7 +2311,7 @@ abstract class AppLocalizations {
   /// No description provided for @modsTutorialInstallStep1Body.
   ///
   /// In en, this message translates to:
-  /// **'This is the **Mod Manager** tab — it\'s where character, outfit, and other gameplay mods get installed.\n\nDrag a `.zip`, `.7z`, or `.rar` from Nexus onto this drop zone (or click to browse). The launcher unpacks it, checks the layout, and puts it in the right place. You don\'t need to extract anything yourself.\n\n**Good to know:** your vanilla game files stay untouched. Mods live in a separate `nams/` folder, so you can always launch the unmodded game through Steam if you want.'**
+  /// **'This is the **Mod Manager** tab - it\'s where character, outfit, and other gameplay mods get installed.\n\nDrag a `.zip`, `.7z`, or `.rar` from Nexus onto this drop zone (or click to browse). The launcher unpacks it, checks the layout, and puts it in the right place. You don\'t need to extract anything yourself.\n\n**Good to know:** your vanilla game files stay untouched. Mods live in a separate `nams/` folder, so you can always launch the unmodded game through Steam if you want.'**
   String get modsTutorialInstallStep1Body;
 
   /// No description provided for @modsTutorialInstallStep2Title.
@@ -2335,7 +2323,7 @@ abstract class AppLocalizations {
   /// No description provided for @modsTutorialInstallStep2Body.
   ///
   /// In en, this message translates to:
-  /// **'**WAX mods do work here** — NAMS reimplements WAX up to a tested compatibility version. Most mods on Nexus that target that version or older will install and run normally.\n\n### How compatibility works\n\nNAMS is validated against a specific WAX version. Anything WAX shipped up to and including that version: supported. Anything WAX adds in a **newer** version after that: not automatically — that\'s a new feature on the WAX side that has to be reimplemented from scratch on the NAMS side.\n\n### What happens when WAX adds something new\n\nWhen WAX ships a new feature in a future version, it gets evaluated against NAMS\'s roadmap:\n\n- **In scope** — if the feature fits where NAMS is already heading, it gets implemented and a future NAMS update will support mods using it.\n- **Out of scope** — NAMS has its own content extensions to focus on (custom quests, custom world maps, custom plugin chips, expanded modding APIs, and more). Reimplementing every WAX feature isn\'t the priority. Some niche WAX features may simply not get NAMS equivalents.\n\n**This isn\'t a slight against WAX.** They\'re separate projects with separate goals. NAMS isn\'t trying to be a drop-in WAX replacement — it\'s its own platform that happens to be **broadly compatible** with WAX because most users want their existing mod libraries to keep working.\n\n### This pattern is normal\n\nThis kind of split is **how every modded-game ecosystem evolves**, not a NieR-specific weirdness. Concrete example: **Skyrim Legendary Edition (LE)** and **Skyrim Special Edition (SE)** are forks of the same engine. SE is broadly compatible with LE mods, but not 100% — some LE mods need conversion, and a handful never got ported because they relied on engine quirks SE changed. The Skyrim community didn\'t treat that as a flaw; it just became part of how the ecosystem worked. Same story with **OpenMW vs vanilla Morrowind**, **Java vs Bedrock Minecraft**, **KSP1 vs KSP2 mods**, etc.\n\nWhenever a platform reimplements another platform\'s behavior, you get a compatibility envelope — most of it works, edges don\'t. That\'s the deal across every modded-game scene that\'s been around long enough to fork.\n\n### Best practice if you\'re not sure\n\n1. **Create a fresh empty profile** (see *How profiles work* in the help menu) and switch to it.\n2. **Drop the WAX mod alone** into that profile. Nothing else.\n3. **Press Play.** Works? Install it into your real profile.\n4. **Doesn\'t work?** The mod is probably using a feature past NAMS\'s tested WAX version, or one that NAMS chose not to reimplement.\n\n### What to expect\n\n- If you have features X, Y, and Z working in NAMS and the WAX mod you want needs feature W that isn\'t supported — and you can live without W — you\'ve still got X, Y, Z working fine alongside it.\n- If feature W is essential to the mod and NAMS doesn\'t have it, you\'re picking between WAX (gets you W but loses NAMS\'s other benefits) or NAMS (everything else, but not W).\n\n**And don\'t forget the other side of the trade-off:** sticking with WAX means missing out on the **NAMS-exclusive mods** that don\'t run on WAX at all — multi-outfit swapping per character, custom quests, and the broader plugin ecosystem (Multiplayer Mod, the YP devkit, future plugins). Those depend on NAMS APIs that WAX doesn\'t have. So the choice isn\'t \"NAMS minus W\" vs \"WAX with W\" — it\'s \"NAMS-ecosystem minus W\" vs \"WAX with W minus everything NAMS-exclusive.\"\n\nThat\'s a real trade-off, and it\'s yours to make. We\'re not the right people to ask whether a specific WAX-exclusive feature will get NAMS support — that\'s an ecosystem-roadmap question, best directed at the YoRHa Continuum Discord.'**
+  /// **'**WAX mods do work here** - NAMS reimplements WAX up to a tested compatibility version. Most mods on Nexus that target that version or older will install and run normally.\n\n### How compatibility works\n\nNAMS is validated against a specific WAX version. Anything WAX shipped up to and including that version: supported. Anything WAX adds in a **newer** version after that: not automatically - that\'s a new feature on the WAX side that has to be reimplemented from scratch on the NAMS side.\n\n### What happens when WAX adds something new\n\nWhen WAX ships a new feature in a future version, it gets evaluated against NAMS\'s roadmap:\n\n- **In scope** - if the feature fits where NAMS is already heading, it gets implemented and a future NAMS update will support mods using it.\n- **Out of scope** - NAMS has its own content extensions to focus on (custom quests, custom world maps, custom plugin chips, expanded modding APIs, and more). Reimplementing every WAX feature isn\'t the priority. Some niche WAX features may simply not get NAMS equivalents.\n\n**This isn\'t a slight against WAX.** They\'re separate projects with separate goals. NAMS isn\'t trying to be a drop-in WAX replacement - it\'s its own platform that happens to be **broadly compatible** with WAX because most users want their existing mod libraries to keep working.\n\n### This pattern is normal\n\nThis kind of split is **how every modded-game ecosystem evolves**, not a NieR-specific weirdness. Concrete example: **Skyrim Legendary Edition (LE)** and **Skyrim Special Edition (SE)** are forks of the same engine. SE is broadly compatible with LE mods, but not 100% - some LE mods need conversion, and a handful never got ported because they relied on engine quirks SE changed. The Skyrim community didn\'t treat that as a flaw; it just became part of how the ecosystem worked. Same story with **OpenMW vs vanilla Morrowind**, **Java vs Bedrock Minecraft**, **KSP1 vs KSP2 mods**, etc.\n\nWhenever a platform reimplements another platform\'s behavior, you get a compatibility envelope - most of it works, edges don\'t. That\'s the deal across every modded-game scene that\'s been around long enough to fork.\n\n### Best practice if you\'re not sure\n\n1. **Create a fresh empty profile** (see *How profiles work* in the help menu) and switch to it.\n2. **Drop the WAX mod alone** into that profile. Nothing else.\n3. **Press Play.** Works? Install it into your real profile.\n4. **Doesn\'t work?** The mod is probably using a feature past NAMS\'s tested WAX version, or one that NAMS chose not to reimplement.\n\n### What to expect\n\n- If you have features X, Y, and Z working in NAMS and the WAX mod you want needs feature W that isn\'t supported - and you can live without W - you\'ve still got X, Y, Z working fine alongside it.\n- If feature W is essential to the mod and NAMS doesn\'t have it, you\'re picking between WAX (gets you W but loses NAMS\'s other benefits) or NAMS (everything else, but not W).\n\n**And don\'t forget the other side of the trade-off:** sticking with WAX means missing out on the **NAMS-exclusive mods** that don\'t run on WAX at all - multi-outfit swapping per character, custom quests, and the broader plugin ecosystem (Multiplayer Mod, the YP devkit, future plugins). Those depend on NAMS APIs that WAX doesn\'t have. So the choice isn\'t \"NAMS minus W\" vs \"WAX with W\" - it\'s \"NAMS-ecosystem minus W\" vs \"WAX with W minus everything NAMS-exclusive.\"\n\nThat\'s a real trade-off, and it\'s yours to make. We\'re not the right people to ask whether a specific WAX-exclusive feature will get NAMS support - that\'s an ecosystem-roadmap question, best directed at the YoRHa Continuum Discord.'**
   String get modsTutorialInstallStep2Body;
 
   /// No description provided for @modsTutorialInstallStep3Title.
@@ -2347,7 +2335,7 @@ abstract class AppLocalizations {
   /// No description provided for @modsTutorialInstallStep3Body.
   ///
   /// In en, this message translates to:
-  /// **'Every mod you installed shows up here.\n\n**Toggle on the right** — enable or disable the mod. Disabling keeps it installed but tells the modloader to skip it on next launch.\n\n**Game crashing on boot?** Disable half your mods, launch, repeat. The toggles let you bisect quickly.\n\n**Warning badges** mark mods that conflict with each other (two mods replacing the same outfit, etc.) — that\'s the usual reason a game won\'t reach the title screen.'**
+  /// **'Every mod you installed shows up here.\n\n**Toggle on the right** - enable or disable the mod. Disabling keeps it installed but tells the modloader to skip it on next launch.\n\n**Game crashing on boot?** Disable half your mods, launch, repeat. The toggles let you bisect quickly.\n\n**Warning badges** mark mods that conflict with each other (two mods replacing the same outfit, etc.) - that\'s the usual reason a game won\'t reach the title screen.'**
   String get modsTutorialInstallStep3Body;
 
   /// No description provided for @modsTutorialInstallStep4Title.
@@ -2359,7 +2347,7 @@ abstract class AppLocalizations {
   /// No description provided for @modsTutorialInstallStep4Body.
   ///
   /// In en, this message translates to:
-  /// **'Click any mod in the list to see its details here: author, version, what it changes, conflicts with your other mods, and any **bundled texture packs or cutscenes** that came with it.\n\nIf a mod won\'t work, the most common reasons show up here — *requires a newer NAMS version* or *conflicts with another mod*. Both are visible **before** you press Play.\n\nThe **Uninstall** button cleans the mod up properly, including its bundled extras.'**
+  /// **'Click any mod in the list to see its details here: author, version, what it changes, conflicts with your other mods, and any **bundled texture packs or cutscenes** that came with it.\n\nIf a mod won\'t work, the most common reasons show up here - *requires a newer NAMS version* or *conflicts with another mod*. Both are visible **before** you press Play.\n\nThe **Uninstall** button cleans the mod up properly, including its bundled extras.'**
   String get modsTutorialInstallStep4Body;
 
   /// No description provided for @modsTutorialInstallStep5Title.
@@ -2371,7 +2359,7 @@ abstract class AppLocalizations {
   /// No description provided for @modsTutorialInstallStep5Body.
   ///
   /// In en, this message translates to:
-  /// **'**Texture-only mods** (HD upscale packs, color reskins) don\'t get installed here. They live in their own tab.\n\nClick **Textures** in the sidebar to install those. Drag `.zip` archives in the same way — the launcher knows what it\'s looking at.\n\n**Note:** if a character mod *bundles* its own textures, those install automatically with the mod. You only use the Textures tab for **standalone** texture packs.'**
+  /// **'**Texture-only mods** (HD upscale packs, color reskins) don\'t get installed here. They live in their own tab.\n\nClick **Textures** in the sidebar to install those. Drag `.zip` archives in the same way - the launcher knows what it\'s looking at.\n\n**Note:** if a character mod *bundles* its own textures, those install automatically with the mod. You only use the Textures tab for **standalone** texture packs.'**
   String get modsTutorialInstallStep5Body;
 
   /// No description provided for @modsTutorialInstallStep6Title.
@@ -2383,7 +2371,7 @@ abstract class AppLocalizations {
   /// No description provided for @modsTutorialInstallStep6Body.
   ///
   /// In en, this message translates to:
-  /// **'**Cutscene mods** (HD cutscenes, replacement videos) go in their own tab too.\n\nClick **Cutscenes** in the sidebar to install those.\n\n**Same rule as textures:** if a character mod bundles cutscenes, they install automatically — you only use the Cutscenes tab for **standalone** cutscene packs.'**
+  /// **'**Cutscene mods** (HD cutscenes, replacement videos) go in their own tab too.\n\nClick **Cutscenes** in the sidebar to install those.\n\n**Same rule as textures:** if a character mod bundles cutscenes, they install automatically - you only use the Cutscenes tab for **standalone** cutscene packs.'**
   String get modsTutorialInstallStep6Body;
 
   /// No description provided for @modsTutorialInstallStep7Title.
@@ -2395,7 +2383,7 @@ abstract class AppLocalizations {
   /// No description provided for @modsTutorialInstallStep7Body.
   ///
   /// In en, this message translates to:
-  /// **'Head back to the **Launcher** tab and press **PLAY**. The modloader reads your mods fresh on every game start, so you don\'t need to restart this launcher.\n\n### If the game crashes\n\nOpen **Logs** (bottom-right) — the modloader\'s output usually names the broken mod. Come back here and disable it.\n\n### Still broken with everything disabled?\n\nIf you (or a previous mod manager) ever dropped loose `.dat` / `.dtt` files directly into `<gameDir>/data/`, the engine still picks those up — and the modloader can\'t see or disable them. That\'s the kind of mess this launcher specifically avoids: every mod stays isolated in `nams/mods/<modId>/` instead of overwriting real game files.\n\nOpen **Logs → Diagnostics** and check the *Vanilla data/ overlay* section. Anything listed there is leftover from an old install — move those folders out of `data/` and your game is back to a clean state.'**
+  /// **'Head back to the **Launcher** tab and press **PLAY**. The modloader reads your mods fresh on every game start, so you don\'t need to restart this launcher.\n\n### If the game crashes\n\nOpen **Logs** (bottom-right) - the modloader\'s output usually names the broken mod. Come back here and disable it.\n\n### Still broken with everything disabled?\n\nIf you (or a previous mod manager) ever dropped loose `.dat` / `.dtt` files directly into `<gameDir>/data/`, the engine still picks those up - and the modloader can\'t see or disable them. That\'s the kind of mess this launcher specifically avoids: every mod stays isolated in `nams/mods/<modId>/` instead of overwriting real game files.\n\nOpen **Logs → Diagnostics** and check the *Vanilla data/ overlay* section. Anything listed there is leftover from an old install - move those folders out of `data/` and your game is back to a clean state.'**
   String get modsTutorialInstallStep7Body;
 
   /// No description provided for @modsTutorialProfilesStep1Title.
@@ -2407,7 +2395,7 @@ abstract class AppLocalizations {
   /// No description provided for @modsTutorialProfilesStep1Body.
   ///
   /// In en, this message translates to:
-  /// **'Profiles let you keep multiple separate mod loadouts side by side.\n\nFor example:\n\n- A **main** profile with the mods you actually play with.\n- A **test** profile for trying out anything new.\n\nIf a sketchy new mod breaks your game, just switch back to **main** and you\'re playing again. Your loadouts never mix.\n\n**Important:** mods you\'re not actively using aren\'t deleted — they\'re just parked, ready to come back when you switch.'**
+  /// **'Profiles let you keep multiple separate mod loadouts side by side.\n\nFor example:\n\n- A **main** profile with the mods you actually play with.\n- A **test** profile for trying out anything new.\n\nIf a sketchy new mod breaks your game, just switch back to **main** and you\'re playing again. Your loadouts never mix.\n\n**Important:** mods you\'re not actively using aren\'t deleted - they\'re just parked, ready to come back when you switch.'**
   String get modsTutorialProfilesStep1Body;
 
   /// No description provided for @modsTutorialProfilesStep2Title.
@@ -2419,7 +2407,7 @@ abstract class AppLocalizations {
   /// No description provided for @modsTutorialProfilesStep2Body.
   ///
   /// In en, this message translates to:
-  /// **'Click **NEW** in the profile bar, type a name, confirm.\n\nThe launcher creates a fresh empty profile and switches to it. Your previous profile\'s mods stay safe on disk — they\'re not gone, they\'re just parked.\n\nNow you can install whatever you want into this new profile without touching your other loadouts.'**
+  /// **'Click **NEW** in the profile bar, type a name, confirm.\n\nThe launcher creates a fresh empty profile and switches to it. Your previous profile\'s mods stay safe on disk - they\'re not gone, they\'re just parked.\n\nNow you can install whatever you want into this new profile without touching your other loadouts.'**
   String get modsTutorialProfilesStep2Body;
 
   /// No description provided for @modsTutorialProfilesStep3Title.
@@ -2431,7 +2419,7 @@ abstract class AppLocalizations {
   /// No description provided for @modsTutorialProfilesStep3Body.
   ///
   /// In en, this message translates to:
-  /// **'**Switch** — pick any profile from the dropdown. Your mod list flips over instantly.\n\n**Rename** — change a profile\'s name without losing anything.\n\n**Delete** — permanently remove an inactive profile (you can\'t delete the active one or the last remaining one).\n\nThe whole switch happens in one step — if anything goes wrong it rolls back automatically, so you can\'t end up in a broken state.'**
+  /// **'**Switch** - pick any profile from the dropdown. Your mod list flips over instantly.\n\n**Rename** - change a profile\'s name without losing anything.\n\n**Delete** - permanently remove an inactive profile (you can\'t delete the active one or the last remaining one).\n\nThe whole switch happens in one step - if anything goes wrong it rolls back automatically, so you can\'t end up in a broken state.'**
   String get modsTutorialProfilesStep3Body;
 
   /// No description provided for @modsTutorialProfilesStep4Title.
@@ -2461,7 +2449,7 @@ abstract class AppLocalizations {
   /// No description provided for @platformUnsupportedMacos.
   ///
   /// In en, this message translates to:
-  /// **'NieR:Automata is a Windows game. Run the launcher through CrossOver/Wine — that has worked in the past, though it has not been re-tested recently. Native macOS without a translation layer cannot run the game.\n\nIf you did get it working somehow, please use the command line directly instead of this launcher.'**
+  /// **'NieR:Automata is a Windows game. Run the launcher through CrossOver/Wine - that has worked in the past, though it has not been re-tested recently. Native macOS without a translation layer cannot run the game.\n\nIf you did get it working somehow, please use the command line directly instead of this launcher.'**
   String get platformUnsupportedMacos;
 
   /// No description provided for @playDisabledTooltip.
@@ -2563,7 +2551,7 @@ abstract class AppLocalizations {
   /// No description provided for @tipReShadeAuto.
   ///
   /// In en, this message translates to:
-  /// **'ReShade is auto-detected — no manual config needed'**
+  /// **'ReShade is auto-detected - no manual config needed'**
   String get tipReShadeAuto;
 
   /// No description provided for @tipFreecam.
@@ -2575,7 +2563,7 @@ abstract class AppLocalizations {
   /// No description provided for @tipCustomQuests.
   ///
   /// In en, this message translates to:
-  /// **'Custom quests are coming soon — stay tuned'**
+  /// **'Custom quests are coming soon - stay tuned'**
   String get tipCustomQuests;
 
   /// No description provided for @sectionNams.
@@ -2821,7 +2809,7 @@ abstract class AppLocalizations {
   /// No description provided for @tooltipHqShadowModels.
   ///
   /// In en, this message translates to:
-  /// **'Uses real-time HQ models for shadows instead of static LQ models. Tree shadows will sway with the wind instead of being frozen. Experimental — works well in city ruins, could cause issues in rare areas.'**
+  /// **'Uses real-time HQ models for shadows instead of static LQ models. Tree shadows will sway with the wind instead of being frozen. Experimental - works well in city ruins, could cause issues in rare areas.'**
   String get tooltipHqShadowModels;
 
   /// No description provided for @labelForceAllShadowModels.
@@ -2833,7 +2821,7 @@ abstract class AppLocalizations {
   /// No description provided for @tooltipForceAllShadowModels.
   ///
   /// In en, this message translates to:
-  /// **'Forces all models to cast shadows, including small objects like rocks and grass. Experimental — may rarely cause invisible models to cast shadows. No issues noticed so far.'**
+  /// **'Forces all models to cast shadows, including small objects like rocks and grass. Experimental - may rarely cause invisible models to cast shadows. No issues noticed so far.'**
   String get tooltipForceAllShadowModels;
 
   /// No description provided for @labelDisableVignette.
@@ -2941,7 +2929,7 @@ abstract class AppLocalizations {
   /// No description provided for @experimentalWarningTitle.
   ///
   /// In en, this message translates to:
-  /// **'Experimental — will break things'**
+  /// **'Experimental - will break things'**
   String get experimentalWarningTitle;
 
   /// No description provided for @experimentalWarningBody.
@@ -3205,7 +3193,7 @@ abstract class AppLocalizations {
   /// No description provided for @tooltipOutfitSwapVisualEffects.
   ///
   /// In en, this message translates to:
-  /// **'Play the visual effects during an outfit hot-swap: the pod spawn-in blinder animation, the curtain, and the hacking-screen glitch filter. Turn off for an instant, effect-free swap — the model still reloads. Takes effect immediately, no restart needed.'**
+  /// **'Play the visual effects during an outfit hot-swap: the pod spawn-in blinder animation, the curtain, and the hacking-screen glitch filter. Turn off for an instant, effect-free swap - the model still reloads. Takes effect immediately, no restart needed.'**
   String get tooltipOutfitSwapVisualEffects;
 
   /// No description provided for @labelDisableSplashScreen.
@@ -3445,7 +3433,7 @@ abstract class AppLocalizations {
   /// No description provided for @tutorialDamageMultiplier.
   ///
   /// In en, this message translates to:
-  /// **'Tweak gameplay — stack damage, enable infinite HP, and more.'**
+  /// **'Tweak gameplay - stack damage, enable infinite HP, and more.'**
   String get tutorialDamageMultiplier;
 
   /// No description provided for @labelOpenWorkspace.
@@ -3543,6 +3531,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Toggle developer mode. Enables penetration/stress test buttons and debug tools.'**
   String get tooltipDevMode;
+
+  /// No description provided for @labelWarpSave1.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Warp 1'**
+  String get labelWarpSave1;
+
+  /// No description provided for @tooltipWarpSave1.
+  ///
+  /// In en, this message translates to:
+  /// **'Save the current position and rotation to warp slot 1.'**
+  String get tooltipWarpSave1;
+
+  /// No description provided for @labelWarpGoto1.
+  ///
+  /// In en, this message translates to:
+  /// **'Warp to 1'**
+  String get labelWarpGoto1;
+
+  /// No description provided for @tooltipWarpGoto1.
+  ///
+  /// In en, this message translates to:
+  /// **'Teleport to the position saved in warp slot 1.'**
+  String get tooltipWarpGoto1;
+
+  /// No description provided for @labelWarpSave2.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Warp 2'**
+  String get labelWarpSave2;
+
+  /// No description provided for @tooltipWarpSave2.
+  ///
+  /// In en, this message translates to:
+  /// **'Save the current position and rotation to warp slot 2.'**
+  String get tooltipWarpSave2;
+
+  /// No description provided for @labelWarpGoto2.
+  ///
+  /// In en, this message translates to:
+  /// **'Warp to 2'**
+  String get labelWarpGoto2;
+
+  /// No description provided for @tooltipWarpGoto2.
+  ///
+  /// In en, this message translates to:
+  /// **'Teleport to the position saved in warp slot 2.'**
+  String get tooltipWarpGoto2;
 
   /// No description provided for @labelGlobalKeybinds.
   ///
@@ -3760,18 +3796,6 @@ abstract class AppLocalizations {
   /// **'Camera sensitivity multiplier. Higher = faster rotation. 2.0 is a good default.'**
   String get tooltipSensitivity;
 
-  /// No description provided for @labelFixAimAcceleration.
-  ///
-  /// In en, this message translates to:
-  /// **'Fix Aim Acceleration'**
-  String get labelFixAimAcceleration;
-
-  /// No description provided for @tooltipFixAimAcceleration.
-  ///
-  /// In en, this message translates to:
-  /// **'Remove clamp and deadzone from pod/mech aiming in top-down and side-scroll views.'**
-  String get tooltipFixAimAcceleration;
-
   /// No description provided for @labelAimSensitivity.
   ///
   /// In en, this message translates to:
@@ -3817,392 +3841,716 @@ abstract class AppLocalizations {
   /// No description provided for @tooltipDebugMenuKey.
   ///
   /// In en, this message translates to:
-  /// **'Opens the debug menu accessible after clearing the game. Usually requires a controller — this binding makes it possible with keyboard.'**
+  /// **'Opens the debug menu accessible after clearing the game. Usually requires a controller - this binding makes it possible with keyboard.'**
   String get tooltipDebugMenuKey;
 
-  /// No description provided for @labelEvadeKey.
+  /// No description provided for @labelThirdPersonMode.
   ///
   /// In en, this message translates to:
-  /// **'Evade Key'**
-  String get labelEvadeKey;
+  /// **'Third-Person Camera Fix'**
+  String get labelThirdPersonMode;
 
-  /// No description provided for @tooltipEvadeKey.
+  /// No description provided for @tooltipThirdPersonMode.
   ///
   /// In en, this message translates to:
-  /// **'Dedicated evade/dodge in current movement direction.'**
-  String get tooltipEvadeKey;
+  /// **'Raw mouse input for the third-person camera. Smooth, direct camera control that ignores the in-game mouse settings.'**
+  String get tooltipThirdPersonMode;
 
-  /// No description provided for @todoThirdPersonMode.
+  /// No description provided for @labelThirdPersonCharFollow.
   ///
   /// In en, this message translates to:
-  /// **'Third-Person Mode'**
-  String get todoThirdPersonMode;
+  /// **'Camera Follows Character'**
+  String get labelThirdPersonCharFollow;
 
-  /// No description provided for @todoThirdPersonModeDesc.
+  /// No description provided for @tooltipThirdPersonCharFollow.
   ///
   /// In en, this message translates to:
-  /// **'Raw Input / Raw Input Char Follow / Disabled'**
-  String get todoThirdPersonModeDesc;
+  /// **'Keep the game\'s automatic camera-follow while moving, like on a controller.'**
+  String get tooltipThirdPersonCharFollow;
 
-  /// No description provided for @todoThirdPersonSensX.
+  /// No description provided for @labelThirdPersonSensX.
   ///
   /// In en, this message translates to:
-  /// **'Third-Person Sensitivity X'**
-  String get todoThirdPersonSensX;
+  /// **'Horizontal Sensitivity'**
+  String get labelThirdPersonSensX;
 
-  /// No description provided for @todoThirdPersonSensXDesc.
+  /// No description provided for @tooltipThirdPersonSensX.
   ///
   /// In en, this message translates to:
-  /// **'Horizontal sensitivity (calibrated to Quake preset, yaw 0.022)'**
-  String get todoThirdPersonSensXDesc;
+  /// **'Left/right camera speed. Negative value inverts the direction.'**
+  String get tooltipThirdPersonSensX;
 
-  /// No description provided for @todoThirdPersonSensY.
+  /// No description provided for @labelThirdPersonSensY.
   ///
   /// In en, this message translates to:
-  /// **'Third-Person Sensitivity Y'**
-  String get todoThirdPersonSensY;
+  /// **'Vertical Sensitivity'**
+  String get labelThirdPersonSensY;
 
-  /// No description provided for @todoThirdPersonSensYDesc.
+  /// No description provided for @tooltipThirdPersonSensY.
   ///
   /// In en, this message translates to:
-  /// **'Vertical sensitivity'**
-  String get todoThirdPersonSensYDesc;
+  /// **'Up/down camera speed. Negative value inverts the direction.'**
+  String get tooltipThirdPersonSensY;
 
-  /// No description provided for @todoThirdPersonFixToggle.
+  /// No description provided for @labelAimMode.
   ///
   /// In en, this message translates to:
-  /// **'Third-Person Fix Toggle'**
-  String get todoThirdPersonFixToggle;
+  /// **'Fix Pod Aiming'**
+  String get labelAimMode;
 
-  /// No description provided for @todoThirdPersonFixToggleDesc.
+  /// No description provided for @tooltipAimMode.
   ///
   /// In en, this message translates to:
-  /// **'Binding to toggle fix on/off'**
-  String get todoThirdPersonFixToggleDesc;
+  /// **'Remove clamp and deadzone from pod/mech aiming in top-down and side-scroll views.'**
+  String get tooltipAimMode;
 
-  /// No description provided for @todoAimMode.
+  /// No description provided for @labelAimCrosshair.
   ///
   /// In en, this message translates to:
-  /// **'Aim Mode'**
-  String get todoAimMode;
+  /// **'Crosshair Mode'**
+  String get labelAimCrosshair;
 
-  /// No description provided for @todoAimModeDesc.
+  /// No description provided for @tooltipAimCrosshair.
   ///
   /// In en, this message translates to:
-  /// **'Disabled / Raw Input Only / Raw Input Crosshair'**
-  String get todoAimModeDesc;
+  /// **'Aim by pointing: the pod aims at a crosshair that follows your mouse, like a twin-stick shooter. The crosshair is built from the game\'s own UI elements, so it looks and feels like it was always part of NieR:Automata. Recommended.'**
+  String get tooltipAimCrosshair;
 
-  /// No description provided for @todoAimSensXY.
+  /// No description provided for @labelAimCrosshairAlways.
   ///
   /// In en, this message translates to:
-  /// **'Aim Sensitivity X / Y'**
-  String get todoAimSensXY;
+  /// **'Always Show Crosshair'**
+  String get labelAimCrosshairAlways;
 
-  /// No description provided for @todoAimSensXYDesc.
+  /// No description provided for @tooltipAimCrosshairAlways.
   ///
   /// In en, this message translates to:
-  /// **'Separate horizontal and vertical aim sensitivity'**
-  String get todoAimSensXYDesc;
+  /// **'Keep the crosshair visible even when not firing. Off = only shown while shooting.'**
+  String get tooltipAimCrosshairAlways;
 
-  /// No description provided for @todoAimFixToggle.
+  /// No description provided for @naiomNeedsCrosshair.
   ///
   /// In en, this message translates to:
-  /// **'Aim Fix Toggle'**
-  String get todoAimFixToggle;
+  /// **'Turn on Crosshair Mode to use this'**
+  String get naiomNeedsCrosshair;
 
-  /// No description provided for @todoAimFixToggleDesc.
+  /// No description provided for @labelAimSensX.
   ///
   /// In en, this message translates to:
-  /// **'Binding to toggle aim fix on/off'**
-  String get todoAimFixToggleDesc;
+  /// **'Aim Horizontal Sensitivity'**
+  String get labelAimSensX;
 
-  /// No description provided for @todoAutoFireToggle.
+  /// No description provided for @tooltipAimSensX.
   ///
   /// In en, this message translates to:
-  /// **'Auto Fire Toggle'**
-  String get todoAutoFireToggle;
+  /// **'Left/right aim speed multiplier. Negative value inverts the direction.'**
+  String get tooltipAimSensX;
 
-  /// No description provided for @todoAutoFireToggleDesc.
+  /// No description provided for @labelAimSensY.
   ///
   /// In en, this message translates to:
-  /// **'Toggles auto firing so button doesn\'t have to be held'**
-  String get todoAutoFireToggleDesc;
+  /// **'Aim Vertical Sensitivity'**
+  String get labelAimSensY;
 
-  /// No description provided for @todoCustomCursors.
+  /// No description provided for @tooltipAimSensY.
   ///
   /// In en, this message translates to:
-  /// **'Custom Cursors'**
-  String get todoCustomCursors;
+  /// **'Up/down aim speed multiplier. Negative value inverts the direction.'**
+  String get tooltipAimSensY;
 
-  /// No description provided for @todoCustomCursorsDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'Custom mouse cursors in menus and hacking minigame'**
-  String get todoCustomCursorsDesc;
-
-  /// No description provided for @todoStatusSounds.
-  ///
-  /// In en, this message translates to:
-  /// **'Status Sounds'**
-  String get todoStatusSounds;
-
-  /// No description provided for @todoStatusSoundsDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'Text-to-speech status sounds on config reload/profile switch'**
-  String get todoStatusSoundsDesc;
-
-  /// No description provided for @todoReloadConfigBinding.
-  ///
-  /// In en, this message translates to:
-  /// **'Reload Config Binding'**
-  String get todoReloadConfigBinding;
-
-  /// No description provided for @todoReloadConfigBindingDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'Hotkey to reload config without restarting'**
-  String get todoReloadConfigBindingDesc;
-
-  /// No description provided for @todoMoveForward.
-  ///
-  /// In en, this message translates to:
-  /// **'Move Forward / Left / Back / Right'**
-  String get todoMoveForward;
-
-  /// No description provided for @todoMoveForwardDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'Custom movement bindings'**
-  String get todoMoveForwardDesc;
-
-  /// No description provided for @todoJump.
-  ///
-  /// In en, this message translates to:
-  /// **'Jump'**
-  String get todoJump;
-
-  /// No description provided for @todoJumpDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'Custom jump binding'**
-  String get todoJumpDesc;
-
-  /// No description provided for @todoWalk.
-  ///
-  /// In en, this message translates to:
-  /// **'Walk'**
-  String get todoWalk;
-
-  /// No description provided for @todoWalkDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'Toggle walk mode'**
-  String get todoWalkDesc;
-
-  /// No description provided for @todoAutoRun.
-  ///
-  /// In en, this message translates to:
-  /// **'Auto-Run'**
-  String get todoAutoRun;
-
-  /// No description provided for @todoAutoRunDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'Toggle auto-run'**
-  String get todoAutoRunDesc;
-
-  /// No description provided for @todoDisableTapEvade.
+  /// No description provided for @labelDisableTapEvade.
   ///
   /// In en, this message translates to:
   /// **'Disable Tap Evade'**
-  String get todoDisableTapEvade;
+  String get labelDisableTapEvade;
 
-  /// No description provided for @todoDisableTapEvadeDesc.
+  /// No description provided for @tooltipDisableTapEvade.
   ///
   /// In en, this message translates to:
-  /// **'Prevent double-tap movement keys from evading'**
-  String get todoDisableTapEvadeDesc;
+  /// **'Stop double-tapping movement keys from dodging. Only useful together with a dedicated Evade key.'**
+  String get tooltipDisableTapEvade;
 
-  /// No description provided for @todoLightAttack.
+  /// No description provided for @labelCustomCursorMenu.
+  ///
+  /// In en, this message translates to:
+  /// **'Menu Cursor'**
+  String get labelCustomCursorMenu;
+
+  /// No description provided for @tooltipCustomCursorMenu.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom mouse cursor for the menus (.cur or .ani file). Empty = the bundled default cursor.'**
+  String get tooltipCustomCursorMenu;
+
+  /// No description provided for @labelCustomCursorHacking.
+  ///
+  /// In en, this message translates to:
+  /// **'Hacking Cursor'**
+  String get labelCustomCursorHacking;
+
+  /// No description provided for @tooltipCustomCursorHacking.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom cursor for the hacking minigame. Empty = same as the menu cursor.'**
+  String get tooltipCustomCursorHacking;
+
+  /// No description provided for @labelDisableDefaultCursor.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep System Cursor'**
+  String get labelDisableDefaultCursor;
+
+  /// No description provided for @tooltipDisableDefaultCursor.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t use the bundled cursor - keep the normal Windows cursor unless you picked your own file above.'**
+  String get tooltipDisableDefaultCursor;
+
+  /// No description provided for @labelBindMoveForward.
+  ///
+  /// In en, this message translates to:
+  /// **'Move Forward'**
+  String get labelBindMoveForward;
+
+  /// No description provided for @tooltipBindMoveForward.
+  ///
+  /// In en, this message translates to:
+  /// **'Same as the in-game binding.'**
+  String get tooltipBindMoveForward;
+
+  /// No description provided for @labelBindMoveBackward.
+  ///
+  /// In en, this message translates to:
+  /// **'Move Backward'**
+  String get labelBindMoveBackward;
+
+  /// No description provided for @tooltipBindMoveBackward.
+  ///
+  /// In en, this message translates to:
+  /// **'Same as the in-game binding.'**
+  String get tooltipBindMoveBackward;
+
+  /// No description provided for @labelBindMoveLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'Move Left'**
+  String get labelBindMoveLeft;
+
+  /// No description provided for @tooltipBindMoveLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'Same as the in-game binding.'**
+  String get tooltipBindMoveLeft;
+
+  /// No description provided for @labelBindMoveRight.
+  ///
+  /// In en, this message translates to:
+  /// **'Move Right'**
+  String get labelBindMoveRight;
+
+  /// No description provided for @tooltipBindMoveRight.
+  ///
+  /// In en, this message translates to:
+  /// **'Same as the in-game binding.'**
+  String get tooltipBindMoveRight;
+
+  /// No description provided for @labelBindJump.
+  ///
+  /// In en, this message translates to:
+  /// **'Jump'**
+  String get labelBindJump;
+
+  /// No description provided for @tooltipBindJump.
+  ///
+  /// In en, this message translates to:
+  /// **'Same as the in-game binding.'**
+  String get tooltipBindJump;
+
+  /// No description provided for @labelBindWalk.
+  ///
+  /// In en, this message translates to:
+  /// **'Walk'**
+  String get labelBindWalk;
+
+  /// No description provided for @tooltipBindWalk.
+  ///
+  /// In en, this message translates to:
+  /// **'Hold to walk slowly.'**
+  String get tooltipBindWalk;
+
+  /// No description provided for @labelBindAutoRun.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-Run'**
+  String get labelBindAutoRun;
+
+  /// No description provided for @tooltipBindAutoRun.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep running without holding the movement keys.'**
+  String get tooltipBindAutoRun;
+
+  /// No description provided for @labelBindLightAttack.
   ///
   /// In en, this message translates to:
   /// **'Light Attack'**
-  String get todoLightAttack;
+  String get labelBindLightAttack;
 
-  /// No description provided for @todoLightAttackDesc.
+  /// No description provided for @tooltipBindLightAttack.
   ///
   /// In en, this message translates to:
-  /// **'Custom light attack binding'**
-  String get todoLightAttackDesc;
+  /// **'Same as the in-game binding.'**
+  String get tooltipBindLightAttack;
 
-  /// No description provided for @todoHeavyAttack.
+  /// No description provided for @labelBindHeavyAttack.
   ///
   /// In en, this message translates to:
   /// **'Heavy Attack'**
-  String get todoHeavyAttack;
+  String get labelBindHeavyAttack;
 
-  /// No description provided for @todoHeavyAttackDesc.
+  /// No description provided for @tooltipBindHeavyAttack.
   ///
   /// In en, this message translates to:
-  /// **'Custom heavy attack binding'**
-  String get todoHeavyAttackDesc;
+  /// **'Same as the in-game binding.'**
+  String get tooltipBindHeavyAttack;
 
-  /// No description provided for @todoFirePodDash.
+  /// No description provided for @labelBindFire.
   ///
   /// In en, this message translates to:
   /// **'Fire / Pod Dash'**
-  String get todoFirePodDash;
+  String get labelBindFire;
 
-  /// No description provided for @todoFirePodDashDesc.
+  /// No description provided for @tooltipBindFire.
   ///
   /// In en, this message translates to:
-  /// **'Fire pod or pod dash with jump'**
-  String get todoFirePodDashDesc;
+  /// **'Fires the pod. Together with Jump it performs the pod dash - also while Auto-Fire is on.'**
+  String get tooltipBindFire;
 
-  /// No description provided for @todoUseProgram.
+  /// No description provided for @labelBindProgram.
   ///
   /// In en, this message translates to:
   /// **'Use Program'**
-  String get todoUseProgram;
+  String get labelBindProgram;
 
-  /// No description provided for @todoUseProgramDesc.
+  /// No description provided for @tooltipBindProgram.
   ///
   /// In en, this message translates to:
-  /// **'Use pod/flying unit program'**
-  String get todoUseProgramDesc;
+  /// **'Use the pod / flying-unit program.'**
+  String get tooltipBindProgram;
 
-  /// No description provided for @todoLockOn.
+  /// No description provided for @labelBindLockOn.
   ///
   /// In en, this message translates to:
   /// **'Lock-On'**
-  String get todoLockOn;
+  String get labelBindLockOn;
 
-  /// No description provided for @todoLockOnDesc.
+  /// No description provided for @tooltipBindLockOn.
   ///
   /// In en, this message translates to:
-  /// **'Lock-on to target'**
-  String get todoLockOnDesc;
+  /// **'Lock onto the current target.'**
+  String get tooltipBindLockOn;
 
-  /// No description provided for @todoSwitchWeapon.
+  /// No description provided for @labelBindUse.
   ///
   /// In en, this message translates to:
-  /// **'Switch Weapon'**
-  String get todoSwitchWeapon;
+  /// **'Use / Interact'**
+  String get labelBindUse;
 
-  /// No description provided for @todoSwitchWeaponDesc.
+  /// No description provided for @tooltipBindUse.
   ///
   /// In en, this message translates to:
-  /// **'Cycle equipped weapons'**
-  String get todoSwitchWeaponDesc;
+  /// **'Same as the in-game binding.'**
+  String get tooltipBindUse;
 
-  /// No description provided for @todoNextPrevProgram.
+  /// No description provided for @labelBindSelfDestruct.
   ///
   /// In en, this message translates to:
-  /// **'Next / Previous Program'**
-  String get todoNextPrevProgram;
+  /// **'Self-Destruct'**
+  String get labelBindSelfDestruct;
 
-  /// No description provided for @todoNextPrevProgramDesc.
+  /// No description provided for @tooltipBindSelfDestruct.
   ///
   /// In en, this message translates to:
-  /// **'Cycle pod programs'**
-  String get todoNextPrevProgramDesc;
+  /// **'Same as the in-game binding.'**
+  String get tooltipBindSelfDestruct;
 
-  /// No description provided for @todoSelfDestruct.
+  /// No description provided for @labelBindLight.
   ///
   /// In en, this message translates to:
-  /// **'Self Destruct'**
-  String get todoSelfDestruct;
+  /// **'Toggle Light'**
+  String get labelBindLight;
 
-  /// No description provided for @todoSelfDestructDesc.
+  /// No description provided for @tooltipBindLight.
   ///
   /// In en, this message translates to:
-  /// **'Trigger self destruct'**
-  String get todoSelfDestructDesc;
+  /// **'Same as the in-game binding.'**
+  String get tooltipBindLight;
 
-  /// No description provided for @todoNextPrevItem.
+  /// No description provided for @labelBindResetCamera.
   ///
   /// In en, this message translates to:
-  /// **'Next / Previous Item'**
-  String get todoNextPrevItem;
+  /// **'Reset Camera'**
+  String get labelBindResetCamera;
 
-  /// No description provided for @todoNextPrevItemDesc.
+  /// No description provided for @tooltipBindResetCamera.
   ///
   /// In en, this message translates to:
-  /// **'Quick-switch items without opening menu twice'**
-  String get todoNextPrevItemDesc;
+  /// **'Same as the in-game binding.'**
+  String get tooltipBindResetCamera;
 
-  /// No description provided for @todoUseItem.
+  /// No description provided for @labelBindSwitchWeapon.
   ///
   /// In en, this message translates to:
-  /// **'Use Item'**
-  String get todoUseItem;
+  /// **'Switch Weapon Set'**
+  String get labelBindSwitchWeapon;
 
-  /// No description provided for @todoUseItemDesc.
+  /// No description provided for @tooltipBindSwitchWeapon.
   ///
   /// In en, this message translates to:
-  /// **'Immediately use selected quick menu item'**
-  String get todoUseItemDesc;
+  /// **'Cycle the equipped weapon sets.'**
+  String get tooltipBindSwitchWeapon;
 
-  /// No description provided for @todoMenuUpDown.
+  /// No description provided for @labelBindNextProgram.
   ///
   /// In en, this message translates to:
-  /// **'Menu Up / Down / Left / Right'**
-  String get todoMenuUpDown;
+  /// **'Next Program'**
+  String get labelBindNextProgram;
 
-  /// No description provided for @todoMenuUpDownDesc.
+  /// No description provided for @tooltipBindNextProgram.
   ///
   /// In en, this message translates to:
-  /// **'Navigate menus with custom keys'**
-  String get todoMenuUpDownDesc;
+  /// **'Select the next pod program.'**
+  String get tooltipBindNextProgram;
 
-  /// No description provided for @todoMenuOpen.
+  /// No description provided for @labelBindPreviousProgram.
   ///
   /// In en, this message translates to:
-  /// **'Menu Open'**
-  String get todoMenuOpen;
+  /// **'Previous Program'**
+  String get labelBindPreviousProgram;
 
-  /// No description provided for @todoMenuOpenDesc.
+  /// No description provided for @tooltipBindPreviousProgram.
   ///
   /// In en, this message translates to:
-  /// **'Open system menu'**
-  String get todoMenuOpenDesc;
+  /// **'Select the previous pod program.'**
+  String get tooltipBindPreviousProgram;
 
-  /// No description provided for @todoMenuBackClose.
+  /// No description provided for @labelBindMenuUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Menu Up'**
+  String get labelBindMenuUp;
+
+  /// No description provided for @tooltipBindMenuUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Navigate up in menus.'**
+  String get tooltipBindMenuUp;
+
+  /// No description provided for @labelBindMenuDown.
+  ///
+  /// In en, this message translates to:
+  /// **'Menu Down'**
+  String get labelBindMenuDown;
+
+  /// No description provided for @tooltipBindMenuDown.
+  ///
+  /// In en, this message translates to:
+  /// **'Navigate down in menus.'**
+  String get tooltipBindMenuDown;
+
+  /// No description provided for @labelBindMenuLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'Menu Left'**
+  String get labelBindMenuLeft;
+
+  /// No description provided for @tooltipBindMenuLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'Navigate left in menus.'**
+  String get tooltipBindMenuLeft;
+
+  /// No description provided for @labelBindMenuRight.
+  ///
+  /// In en, this message translates to:
+  /// **'Menu Right'**
+  String get labelBindMenuRight;
+
+  /// No description provided for @tooltipBindMenuRight.
+  ///
+  /// In en, this message translates to:
+  /// **'Navigate right in menus.'**
+  String get tooltipBindMenuRight;
+
+  /// No description provided for @labelBindMenuOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Menu'**
+  String get labelBindMenuOpen;
+
+  /// No description provided for @tooltipBindMenuOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the system menu.'**
+  String get tooltipBindMenuOpen;
+
+  /// No description provided for @labelBindMenuBack.
   ///
   /// In en, this message translates to:
   /// **'Menu Back / Close'**
-  String get todoMenuBackClose;
+  String get labelBindMenuBack;
 
-  /// No description provided for @todoMenuBackCloseDesc.
+  /// No description provided for @tooltipBindMenuBack.
   ///
   /// In en, this message translates to:
-  /// **'Navigate back or close menu'**
-  String get todoMenuBackCloseDesc;
+  /// **'Go back in menus, or close them at the top level.'**
+  String get tooltipBindMenuBack;
 
-  /// No description provided for @todoMenuEnterSkip.
+  /// No description provided for @labelBindMenuEnter.
   ///
   /// In en, this message translates to:
   /// **'Menu Enter / Skip Dialog'**
-  String get todoMenuEnterSkip;
+  String get labelBindMenuEnter;
 
-  /// No description provided for @todoMenuEnterSkipDesc.
+  /// No description provided for @tooltipBindMenuEnter.
   ///
   /// In en, this message translates to:
-  /// **'Enter sub-menu or skip dialog'**
-  String get todoMenuEnterSkipDesc;
+  /// **'Enter the selected sub-menu or skip dialog.'**
+  String get tooltipBindMenuEnter;
 
-  /// No description provided for @todoShortcutMenu.
+  /// No description provided for @labelBindShortcutMenu.
   ///
   /// In en, this message translates to:
   /// **'Shortcut Menu'**
-  String get todoShortcutMenu;
+  String get labelBindShortcutMenu;
 
-  /// No description provided for @todoShortcutMenuDesc.
+  /// No description provided for @tooltipBindShortcutMenu.
   ///
   /// In en, this message translates to:
-  /// **'Open shortcut menu'**
-  String get todoShortcutMenuDesc;
+  /// **'Open the shortcut menu.'**
+  String get tooltipBindShortcutMenu;
+
+  /// No description provided for @labelBindEvade.
+  ///
+  /// In en, this message translates to:
+  /// **'Evade (dedicated key)'**
+  String get labelBindEvade;
+
+  /// No description provided for @tooltipBindEvade.
+  ///
+  /// In en, this message translates to:
+  /// **'Dodge in the current movement direction with a single key - no double-tap needed.'**
+  String get tooltipBindEvade;
+
+  /// No description provided for @labelBindAutoFire.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-Fire Toggle'**
+  String get labelBindAutoFire;
+
+  /// No description provided for @tooltipBindAutoFire.
+  ///
+  /// In en, this message translates to:
+  /// **'Toggle continuous pod fire on/off, so you don\'t have to hold the fire button.'**
+  String get tooltipBindAutoFire;
+
+  /// No description provided for @labelBindNextItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Next Item'**
+  String get labelBindNextItem;
+
+  /// No description provided for @tooltipBindNextItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch to the next quick-item instantly. Works silently in the background - no item menu appears in-game, that\'s intended.'**
+  String get tooltipBindNextItem;
+
+  /// No description provided for @labelBindPreviousItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous Item'**
+  String get labelBindPreviousItem;
+
+  /// No description provided for @tooltipBindPreviousItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch to the previous quick-item instantly. Works silently in the background - no item menu appears in-game, that\'s intended.'**
+  String get tooltipBindPreviousItem;
+
+  /// No description provided for @labelBindUseItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Use Item'**
+  String get labelBindUseItem;
+
+  /// No description provided for @tooltipBindUseItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Use the selected quick-item instantly. Works silently in the background - no item menu appears in-game, that\'s intended.'**
+  String get tooltipBindUseItem;
+
+  /// No description provided for @labelBindThirdPersonToggle.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera Fix Toggle'**
+  String get labelBindThirdPersonToggle;
+
+  /// No description provided for @tooltipBindThirdPersonToggle.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn the third-person camera fix on/off while playing.'**
+  String get tooltipBindThirdPersonToggle;
+
+  /// No description provided for @labelBindAimToggle.
+  ///
+  /// In en, this message translates to:
+  /// **'Aim Fix Toggle'**
+  String get labelBindAimToggle;
+
+  /// No description provided for @tooltipBindAimToggle.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn the pod aiming fix on/off while playing.'**
+  String get tooltipBindAimToggle;
+
+  /// No description provided for @keybindUnbound.
+  ///
+  /// In en, this message translates to:
+  /// **'Not bound'**
+  String get keybindUnbound;
+
+  /// No description provided for @keybindConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'Also used by: {other}'**
+  String keybindConflict(String other);
+
+  /// No description provided for @keybindMouseNotSupported.
+  ///
+  /// In en, this message translates to:
+  /// **'Mouse buttons don\'t work for this action - it needs a keyboard key.'**
+  String get keybindMouseNotSupported;
+
+  /// No description provided for @naiomResetConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset NAIOM settings?'**
+  String get naiomResetConfirmTitle;
+
+  /// No description provided for @naiomResetConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This will reset every camera, aiming, cursor and keybind setting on this tab to its default value. Nothing is written until you press Save, so you can still discard afterwards. Continue?'**
+  String get naiomResetConfirmBody;
+
+  /// No description provided for @naiomControllerNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Playing with a controller? These settings are designed for mouse and keyboard, but some of them - especially the camera and aiming fixes - also affect controller input. If you switch back to playing on a controller, disable those settings first to restore the original gamepad feel.'**
+  String get naiomControllerNote;
+
+  /// No description provided for @naiomBetaBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'BETA'**
+  String get naiomBetaBadge;
+
+  /// No description provided for @naiomRestartBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'RESTART'**
+  String get naiomRestartBadge;
+
+  /// No description provided for @naiomRestartTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Takes effect after restarting the game.'**
+  String get naiomRestartTooltip;
+
+  /// No description provided for @naiomNeedsCameraFix.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on Fix Camera Acceleration to use this'**
+  String get naiomNeedsCameraFix;
+
+  /// No description provided for @naiomNeedsThirdPerson.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on Third-Person Camera Fix to use this'**
+  String get naiomNeedsThirdPerson;
+
+  /// No description provided for @naiomNeedsAimMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on Fix Pod Aiming to use this'**
+  String get naiomNeedsAimMode;
+
+  /// No description provided for @naiomCrosshairOverrides.
+  ///
+  /// In en, this message translates to:
+  /// **'Not used while Crosshair Mode is on - the crosshair has its own speed'**
+  String get naiomCrosshairOverrides;
+
+  /// No description provided for @naiomThirdPersonRestartNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Turning this ON needs a game restart. Turning it OFF works while playing.'**
+  String get naiomThirdPersonRestartNote;
+
+  /// No description provided for @naiomTapEvadeWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'No Evade key is bound! With Tap Evade disabled and no dedicated Evade key you cannot dodge at all. Bind an Evade key under Non-Standard Actions.'**
+  String get naiomTapEvadeWarning;
+
+  /// No description provided for @naiomCrosshairNote.
+  ///
+  /// In en, this message translates to:
+  /// **'The crosshair only shows during normal top-down / side-scroll gameplay with mouse input. If it\'s not visible somewhere, that\'s usually normal - not a bug.'**
+  String get naiomCrosshairNote;
+
+  /// No description provided for @naiomBindingsIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Extra keys on top of the game\'s own controls - the original keys keep working. Changes apply after saving, no restart needed.'**
+  String get naiomBindingsIntro;
+
+  /// No description provided for @naiomCrosshairPreviewLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Crosshair Mode in-game'**
+  String get naiomCrosshairPreviewLabel;
+
+  /// No description provided for @naiomCursorPick.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose file...'**
+  String get naiomCursorPick;
+
+  /// No description provided for @naiomCursorClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get naiomCursorClear;
+
+  /// No description provided for @naiomCursorInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Not a valid cursor file - needs a real .cur or .ani file'**
+  String get naiomCursorInvalid;
+
+  /// No description provided for @naiomLiveBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'LIVE'**
+  String get naiomLiveBadge;
+
+  /// No description provided for @naiomLiveTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Applies after saving - no game restart needed.'**
+  String get naiomLiveTooltip;
 
   /// No description provided for @labelPreloadMaxDimensionShort.
   ///
@@ -4237,7 +4585,7 @@ abstract class AppLocalizations {
   /// No description provided for @tooltipVramBudget.
   ///
   /// In en, this message translates to:
-  /// **'How much GPU memory the texture mod system may use. Pick a value to set a hard cap — e.g. 8192 means \"never use more than 8 GB for modded textures\", 16384 means \"never use more than 16 GB\". Auto (recommended) skips the cap and uses what your GPU actually has available.'**
+  /// **'How much GPU memory the texture mod system may use. Pick a value to set a hard cap - e.g. 8192 means \"never use more than 8 GB for modded textures\", 16384 means \"never use more than 16 GB\". Auto (recommended) skips the cap and uses what your GPU actually has available.'**
   String get tooltipVramBudget;
 
   /// No description provided for @labelStreamingEnabled.
@@ -4249,7 +4597,7 @@ abstract class AppLocalizations {
   /// No description provided for @tooltipStreamingEnabled.
   ///
   /// In en, this message translates to:
-  /// **'Loads textures in the background while you play. Prevents freezes and stuttering when new areas load in. Turn off only if you have issues — without it, the game may briefly freeze when loading new textures.'**
+  /// **'Loads textures in the background while you play. Prevents freezes and stuttering when new areas load in. Turn off only if you have issues - without it, the game may briefly freeze when loading new textures.'**
   String get tooltipStreamingEnabled;
 
   /// No description provided for @labelLoadOnlyRelevant.
@@ -4261,7 +4609,7 @@ abstract class AppLocalizations {
   /// No description provided for @tooltipLoadOnlyRelevant.
   ///
   /// In en, this message translates to:
-  /// **'For huge packs (400+ files), only load textures matching a curated priority list — saves VRAM and loading time. Small packs (clothing, weapons) are always loaded in full. Turn on if you use a massive pack and want to save memory.'**
+  /// **'For huge packs (400+ files), only load textures matching a curated priority list - saves VRAM and loading time. Small packs (clothing, weapons) are always loaded in full. Turn on if you use a massive pack and want to save memory.'**
   String get tooltipLoadOnlyRelevant;
 
   /// No description provided for @tutorialDropTextures.
@@ -4489,7 +4837,7 @@ abstract class AppLocalizations {
   /// No description provided for @cutsceneMigrationBannerBody.
   ///
   /// In en, this message translates to:
-  /// **'Found {count} custom cutscene {count, plural, =1{file} other{files}} directly in data/movie/. These overwrite the originals permanently. Next time, install cutscene mods here instead — if a custom file fails to load, the original plays as fallback.'**
+  /// **'Found {count} custom cutscene {count, plural, =1{file} other{files}} directly in data/movie/. These overwrite the originals permanently. Next time, install cutscene mods here instead - if a custom file fails to load, the original plays as fallback.'**
   String cutsceneMigrationBannerBody(int count);
 
   /// No description provided for @hardwareInfoLabel.
@@ -4537,31 +4885,31 @@ abstract class AppLocalizations {
   /// No description provided for @reasonFitsInMemory.
   ///
   /// In en, this message translates to:
-  /// **'{ramGB}GB RAM, {textureSizeMB}MB textures — fits in memory, preload everything for zero stutter'**
+  /// **'{ramGB}GB RAM, {textureSizeMB}MB textures - fits in memory, preload everything for zero stutter'**
   String reasonFitsInMemory(int ramGB, int textureSizeMB);
 
   /// No description provided for @reasonExceedsRam.
   ///
   /// In en, this message translates to:
-  /// **'{ramGB}GB RAM, ~{estimatedGB}GB estimated texture memory — preloading all will freeze or crash your system. Use a low preload dimension or remove some texture packs.'**
+  /// **'{ramGB}GB RAM, ~{estimatedGB}GB estimated texture memory - preloading all will freeze or crash your system. Use a low preload dimension or remove some texture packs.'**
   String reasonExceedsRam(int ramGB, int estimatedGB);
 
   /// No description provided for @reasonTooLargeForAll.
   ///
   /// In en, this message translates to:
-  /// **'{ramGB}GB RAM, {textureSizeMB}MB textures — too large to preload all, preload up to 4K on demand'**
+  /// **'{ramGB}GB RAM, {textureSizeMB}MB textures - too large to preload all, preload up to 4K on demand'**
   String reasonTooLargeForAll(int ramGB, int textureSizeMB);
 
   /// No description provided for @reasonMediumRam.
   ///
   /// In en, this message translates to:
-  /// **'{ramGB}GB RAM — preload up to 4K, larger textures load on demand'**
+  /// **'{ramGB}GB RAM - preload up to 4K, larger textures load on demand'**
   String reasonMediumRam(int ramGB);
 
   /// No description provided for @reasonLowRam.
   ///
   /// In en, this message translates to:
-  /// **'{ramGB}GB RAM — preload small textures only to save memory'**
+  /// **'{ramGB}GB RAM - preload small textures only to save memory'**
   String reasonLowRam(int ramGB);
 
   /// No description provided for @analyzingHardware.
@@ -4615,7 +4963,7 @@ abstract class AppLocalizations {
   /// No description provided for @confirmCleanTexturesDetail3.
   ///
   /// In en, this message translates to:
-  /// **'This cannot be undone — drop the mod again to restore removed files'**
+  /// **'This cannot be undone - drop the mod again to restore removed files'**
   String get confirmCleanTexturesDetail3;
 
   /// No description provided for @texturesBloatDialogTitle.
@@ -4633,19 +4981,19 @@ abstract class AppLocalizations {
   /// No description provided for @texturesBloatPoint1.
   ///
   /// In en, this message translates to:
-  /// **'Much longer game startup — the engine loads every texture at launch'**
+  /// **'Much longer game startup - the engine loads every texture at launch'**
   String get texturesBloatPoint1;
 
   /// No description provided for @texturesBloatPoint2.
   ///
   /// In en, this message translates to:
-  /// **'Random stutter and frame drops — the game streams textures that add no visual benefit'**
+  /// **'Random stutter and frame drops - the game streams textures that add no visual benefit'**
   String get texturesBloatPoint2;
 
   /// No description provided for @texturesBloatPoint3.
   ///
   /// In en, this message translates to:
-  /// **'High RAM usage — up to several GB wasted on textures you cannot see'**
+  /// **'High RAM usage - up to several GB wasted on textures you cannot see'**
   String get texturesBloatPoint3;
 
   /// No description provided for @texturesBloatPoint4.
@@ -4657,7 +5005,7 @@ abstract class AppLocalizations {
   /// No description provided for @texturesBloatPoint5.
   ///
   /// In en, this message translates to:
-  /// **'Almost no visual difference — most are tiny UI elements, particle effects, etc.'**
+  /// **'Almost no visual difference - most are tiny UI elements, particle effects, etc.'**
   String get texturesBloatPoint5;
 
   /// No description provided for @texturesBloatRecommendation.
@@ -4705,13 +5053,13 @@ abstract class AppLocalizations {
   /// No description provided for @texturesBusyMessage.
   ///
   /// In en, this message translates to:
-  /// **'Please wait — texture installation in progress'**
+  /// **'Please wait - texture installation in progress'**
   String get texturesBusyMessage;
 
   /// No description provided for @texturesInstallProgress.
   ///
   /// In en, this message translates to:
-  /// **'Installing: {files}/{totalFiles} files — {mb}/{totalMb} MB'**
+  /// **'Installing: {files}/{totalFiles} files - {mb}/{totalMb} MB'**
   String texturesInstallProgress(
     int files,
     int totalFiles,
@@ -4800,7 +5148,7 @@ abstract class AppLocalizations {
   /// No description provided for @cutsceneStatusHdTooltip.
   ///
   /// In en, this message translates to:
-  /// **'[cutscene] hd_cutscenes in nams.toml — must be true for HD cutscene mods to load.'**
+  /// **'[cutscene] hd_cutscenes in nams.toml - must be true for HD cutscene mods to load.'**
   String get cutsceneStatusHdTooltip;
 
   /// No description provided for @cutsceneStatusH264.
@@ -4812,19 +5160,19 @@ abstract class AppLocalizations {
   /// No description provided for @cutsceneStatusH264Tooltip.
   ///
   /// In en, this message translates to:
-  /// **'[cutscene] enable_h264 in nams.toml — must be true to play H264-encoded cutscenes.'**
+  /// **'[cutscene] enable_h264 in nams.toml - must be true to play H264-encoded cutscenes.'**
   String get cutsceneStatusH264Tooltip;
 
   /// No description provided for @modIntroTitle.
   ///
   /// In en, this message translates to:
-  /// **'Powered by NAMS — your data/ folder stays untouched'**
+  /// **'Powered by NAMS - your data/ folder stays untouched'**
   String get modIntroTitle;
 
   /// No description provided for @modIntroBody.
   ///
   /// In en, this message translates to:
-  /// **'NAMS loads mods from nams/mods/ through a virtual file system on top of the original game data, so nothing is ever copied or overwritten in data/. Mods can be turned on or off at any time without reinstalling, multiple outfits can coexist for the same character, and uninstalling a mod just removes its folder — the vanilla game is always intact underneath.'**
+  /// **'NAMS loads mods from nams/mods/ through a virtual file system on top of the original game data, so nothing is ever copied or overwritten in data/. Mods can be turned on or off at any time without reinstalling, multiple outfits can coexist for the same character, and uninstalling a mod just removes its folder - the vanilla game is always intact underneath.'**
   String get modIntroBody;
 
   /// No description provided for @modListEmpty.
@@ -5040,7 +5388,7 @@ abstract class AppLocalizations {
   /// No description provided for @textureOutfitLinkedEntry.
   ///
   /// In en, this message translates to:
-  /// **'{count} textures — active only with this outfit'**
+  /// **'{count} textures - active only with this outfit'**
   String textureOutfitLinkedEntry(int count);
 
   /// No description provided for @modKindTexture.
@@ -5190,7 +5538,7 @@ abstract class AppLocalizations {
   /// No description provided for @modDisabledTooltip.
   ///
   /// In en, this message translates to:
-  /// **'This mod is disabled. NAMS will not load it on next game start. Enable it to load again — no need to delete and reinstall.'**
+  /// **'This mod is disabled. NAMS will not load it on next game start. Enable it to load again - no need to delete and reinstall.'**
   String get modDisabledTooltip;
 
   /// No description provided for @modEnableTooltip.
@@ -5202,13 +5550,13 @@ abstract class AppLocalizations {
   /// No description provided for @modDisableNotice.
   ///
   /// In en, this message translates to:
-  /// **'Disabled — takes effect on next game start.'**
+  /// **'Disabled - takes effect on next game start.'**
   String get modDisableNotice;
 
   /// No description provided for @modEnableNotice.
   ///
   /// In en, this message translates to:
-  /// **'Enabled — takes effect on next game start.'**
+  /// **'Enabled - takes effect on next game start.'**
   String get modEnableNotice;
 
   /// No description provided for @modUninstall.
@@ -5340,7 +5688,7 @@ abstract class AppLocalizations {
   /// No description provided for @modProfileEmptyHint.
   ///
   /// In en, this message translates to:
-  /// **'Empty profile — drop a mod to get started'**
+  /// **'Empty profile - drop a mod to get started'**
   String get modProfileEmptyHint;
 
   /// No description provided for @modProfileSwitchedToast.
@@ -5574,13 +5922,13 @@ abstract class AppLocalizations {
   /// No description provided for @modInstallReasonUnknownDrop.
   ///
   /// In en, this message translates to:
-  /// **'Unknown drop — the folder doesn\'t match any supported mod layout.'**
+  /// **'Unknown drop - the folder doesn\'t match any supported mod layout.'**
   String get modInstallReasonUnknownDrop;
 
   /// No description provided for @modInstallReasonInvalidMixed.
   ///
   /// In en, this message translates to:
-  /// **'Invalid layout — a mod can\'t mix entities and wax-style configs.'**
+  /// **'Invalid layout - a mod can\'t mix entities and wax-style configs.'**
   String get modInstallReasonInvalidMixed;
 
   /// No description provided for @modInstallReasonNativeEmpty.

@@ -451,6 +451,7 @@ class LogPanelState extends ConsumerState<LogPanel>
                 fontFamily: 'monospace',
               ),
             ),
+            const TextSpan(text: '\n', style: TextStyle(fontSize: 0.1)),
           ],
         ),
       ),

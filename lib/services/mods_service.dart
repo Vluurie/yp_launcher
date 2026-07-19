@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:path/path.dart' as path;
 import 'package:yp_launcher/models/installed_mod.dart';
 import 'package:yp_launcher/services/archive_service.dart';
-import 'package:yp_launcher/services/detection_service.dart';
+import 'package:yp_launcher/services/detection/game_detection.dart';
 import 'package:yp_launcher/services/isolate_service.dart';
 import 'package:yp_launcher/services/mod_manifest_service.dart';
 import 'package:yp_launcher/services/mod_profiles_service.dart';
@@ -86,7 +86,7 @@ class ModsService {
       workDir = extracted;
     }
     try {
-      final hasDlc = await DetectionService.hasDlc(gameDir);
+      final hasDlc = await GameDetection.hasDlc(gameDir);
       final activeProfile = ModProfilesService.activeNameSync(gameDir);
       final params = _InstallParams(
         gameDir: gameDir,
@@ -129,7 +129,7 @@ class ModsService {
       workDir = extracted;
     }
     try {
-      final hasDlc = await DetectionService.hasDlc(gameDir);
+      final hasDlc = await GameDetection.hasDlc(gameDir);
       final activeProfile = ModProfilesService.activeNameSync(gameDir);
       final params = _InstallBatchParams(
         gameDir: gameDir,
@@ -159,7 +159,7 @@ class ModsService {
   }
 
   static Future<int> syncDlcSlots(String gameDir) async {
-    final hasDlc = await DetectionService.hasDlc(gameDir);
+    final hasDlc = await GameDetection.hasDlc(gameDir);
     return IsolateService.run(
       _syncDlcSlotsSync,
       _SyncDlcParams(gameDir: gameDir, hasDlc: hasDlc),

@@ -3,7 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yp_launcher/constants/app_strings.dart';
-import 'package:yp_launcher/services/detection_service.dart';
+import 'package:yp_launcher/services/detection/game_detection.dart';
+import 'package:yp_launcher/services/detection/lodmod_detection.dart';
+import 'package:yp_launcher/services/detection/naiom_detection.dart';
+import 'package:yp_launcher/services/detection/reshade_detection.dart';
+import 'package:yp_launcher/services/nams_config_service.dart';
 import 'package:yp_launcher/services/launcher_setup_service.dart';
 import 'package:yp_launcher/services/platform/platform_adapter.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
@@ -66,9 +70,9 @@ class NotificationStateController extends _$NotificationStateController {
     } catch (_) {}
 
     try {
-      final iniValues = await DetectionService.detectLegacyLodMod(gameDir);
+      final iniValues = await LodModDetection.detectLegacyLodMod(gameDir);
       if (iniValues != null) {
-        final migrated = await DetectionService.migrateLodModIni(
+        final migrated = await LodModDetection.migrateLodModIni(
           gameDir,
           iniValues,
         );
@@ -87,9 +91,44 @@ class NotificationStateController extends _$NotificationStateController {
     } catch (_) {}
 
     try {
-      final reshadeStatus = await DetectionService.detectReShade(gameDir);
+      final iniValues = await NaiomDetection.detectLegacyNaiom(gameDir);
+      if (iniValues != null) {
+        await NamsConfigService.ensureConfigs(gameDir);
+        final result = await NaiomDetection.migrateNaiomIni(
+          gameDir,
+          iniValues,
+        );
+        if (result.migrated) {
+          items.add(
+            const NotificationItem(
+              id: 'naiom_migration',
+              message: AppStrings.notifyNaiomMigrated,
+              icon: Icons.swap_horiz,
+              color: AppColors.success,
+              type: NotificationType.migration,
+            ),
+          );
+          if (result.skippedEntries.isNotEmpty) {
+            items.add(
+              NotificationItem(
+                id: 'naiom_migration_skipped',
+                message: AppStrings.notifyNaiomSkipped(
+                  result.skippedEntries.join(', '),
+                ),
+                icon: Icons.warning_amber,
+                color: AppColors.warning,
+                type: NotificationType.migration,
+              ),
+            );
+          }
+        }
+      }
+    } catch (_) {}
+
+    try {
+      final reshadeStatus = await ReShadeDetection.detectReShade(gameDir);
       if (reshadeStatus == ReShadeStatus.detected) {
-        await DetectionService.autoDisableReShadeLoading(gameDir);
+        await ReShadeDetection.autoDisableReShadeLoading(gameDir);
         items.add(
           const NotificationItem(
             id: 'reshade',
@@ -113,7 +152,7 @@ class NotificationStateController extends _$NotificationStateController {
     } catch (_) {}
 
     try {
-      final textureFolders = await DetectionService.detectHDTextures(gameDir);
+      final textureFolders = await GameDetection.detectHDTextures(gameDir);
       for (final folder in textureFolders) {
         items.add(
           NotificationItem(

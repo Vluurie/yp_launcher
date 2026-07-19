@@ -123,8 +123,10 @@ class _ModsViewState extends ConsumerState<ModsView> {
 
   Future<void> _handleDrop(List<String> paths) async {
     if (ref.read(activeTabProvider) != 5) return;
-    if (paths.isEmpty) return;
-    await _installFromPath(paths.first);
+    for (final path in paths) {
+      if (!mounted) return;
+      await _installFromPath(path);
+    }
   }
 
   Future<void> _handleBrowseFile() async {
