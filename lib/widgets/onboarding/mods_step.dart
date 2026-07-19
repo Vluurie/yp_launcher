@@ -158,10 +158,7 @@ class _ModsStepState extends ConsumerState<ModsStep> {
           )
         else
           ModDropZone(
-            onDrop: (paths) {
-              if (paths.isEmpty) return;
-              _install(paths.first);
-            },
+            onDrop: _installAll,
             onBrowse: _pickAndInstall,
           ),
         if (_error != null) ...[
@@ -292,6 +289,13 @@ class _ModsStepState extends ConsumerState<ModsStep> {
     final filePath = result.files.first.path;
     if (filePath == null) return;
     await _install(filePath);
+  }
+
+  Future<void> _installAll(List<String> paths) async {
+    for (final path in paths) {
+      if (!mounted) return;
+      await _install(path);
+    }
   }
 
   Future<void> _install(String sourcePath) async {

@@ -5,7 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:automato_theme/automato_theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yp_launcher/l10n/app_localizations.dart';
-import 'package:yp_launcher/services/detection_service.dart';
+import 'package:yp_launcher/services/detection/game_detection.dart';
+import 'package:yp_launcher/services/detection/lodmod_detection.dart';
+import 'package:yp_launcher/services/detection/naiom_detection.dart';
+import 'package:yp_launcher/services/detection/reshade_detection.dart';
 import 'package:yp_launcher/services/nams_settings_service.dart';
 import 'package:yp_launcher/services/platform_gate.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
@@ -68,16 +71,16 @@ class _OnboardingWizardState extends ConsumerState<OnboardingWizard> {
     _detectionsLoaded = true;
 
     try {
-      _reshadeStatus = await DetectionService.detectReShade(_selectedPath!);
+      _reshadeStatus = await ReShadeDetection.detectReShade(_selectedPath!);
     } catch (_) {}
 
     try {
-      _textureResults = await DetectionService.detectHDTextures(_selectedPath!);
+      _textureResults = await GameDetection.detectHDTextures(_selectedPath!);
     } catch (_) {}
 
     try {
       final iniValues =
-          await DetectionService.detectLegacyLodMod(_selectedPath!);
+          await LodModDetection.detectLegacyLodMod(_selectedPath!);
       _hasLodMod = iniValues != null;
     } catch (_) {}
 
@@ -87,9 +90,8 @@ class _OnboardingWizardState extends ConsumerState<OnboardingWizard> {
     } catch (_) {}
 
     try {
-      final naiomDll = File(path.join(_selectedPath!, 'dinput8.dll'));
-      final naiomCfg = File(path.join(_selectedPath!, 'NAIOM.cfg'));
-      _hasNaiom = await naiomDll.exists() && await naiomCfg.exists();
+      _hasNaiom =
+          await NaiomDetection.detectLegacyNaiom(_selectedPath!) != null;
     } catch (_) {}
 
     try {

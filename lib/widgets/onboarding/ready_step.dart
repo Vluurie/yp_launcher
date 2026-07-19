@@ -7,7 +7,7 @@ import 'package:window_manager/window_manager.dart';
 import 'package:yp_launcher/constants/app_strings.dart';
 import 'package:yp_launcher/l10n/app_localizations.dart';
 import 'package:yp_launcher/providers/app_state.dart';
-import 'package:yp_launcher/services/detection_service.dart';
+import 'package:yp_launcher/services/detection/reshade_detection.dart';
 import 'package:yp_launcher/services/process_service.dart';
 import 'package:yp_launcher/services/shortcut_service.dart';
 import 'package:yp_launcher/theme/app_colors.dart';

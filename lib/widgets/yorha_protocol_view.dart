@@ -251,6 +251,54 @@ class _YorhaProtocolViewState extends ConsumerState<YorhaProtocolView> {
                   ),
                   tooltip: YpKeybindFields.devMode.tooltip!(l10n),
                 ),
+                _keybindRow(
+                  context,
+                  YpKeybindFields.warpSave1.label(l10n),
+                  (ypBinds[YpKeybindFields.warpSave1.key] as String?) ??
+                      YpKeybindFields.warpSave1.defaultValue,
+                  (v) => notifier.updateKeybind(
+                    YpKeybindFields.warpSave1.section!,
+                    YpKeybindFields.warpSave1.key,
+                    v,
+                  ),
+                  tooltip: YpKeybindFields.warpSave1.tooltip!(l10n),
+                ),
+                _keybindRow(
+                  context,
+                  YpKeybindFields.warpGoto1.label(l10n),
+                  (ypBinds[YpKeybindFields.warpGoto1.key] as String?) ??
+                      YpKeybindFields.warpGoto1.defaultValue,
+                  (v) => notifier.updateKeybind(
+                    YpKeybindFields.warpGoto1.section!,
+                    YpKeybindFields.warpGoto1.key,
+                    v,
+                  ),
+                  tooltip: YpKeybindFields.warpGoto1.tooltip!(l10n),
+                ),
+                _keybindRow(
+                  context,
+                  YpKeybindFields.warpSave2.label(l10n),
+                  (ypBinds[YpKeybindFields.warpSave2.key] as String?) ??
+                      YpKeybindFields.warpSave2.defaultValue,
+                  (v) => notifier.updateKeybind(
+                    YpKeybindFields.warpSave2.section!,
+                    YpKeybindFields.warpSave2.key,
+                    v,
+                  ),
+                  tooltip: YpKeybindFields.warpSave2.tooltip!(l10n),
+                ),
+                _keybindRow(
+                  context,
+                  YpKeybindFields.warpGoto2.label(l10n),
+                  (ypBinds[YpKeybindFields.warpGoto2.key] as String?) ??
+                      YpKeybindFields.warpGoto2.defaultValue,
+                  (v) => notifier.updateKeybind(
+                    YpKeybindFields.warpGoto2.section!,
+                    YpKeybindFields.warpGoto2.key,
+                    v,
+                  ),
+                  tooltip: YpKeybindFields.warpGoto2.tooltip!(l10n),
+                ),
               ]),
               _card(context, l10n.cardWorkspace, [
                 ConfigFieldBool(

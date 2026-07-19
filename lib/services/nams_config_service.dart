@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:path/path.dart' as path;
+import 'package:yp_launcher/constants/naiom_keys.dart';
 import 'package:yp_launcher/services/isolate_service.dart';
 import 'package:yp_launcher/models/config_fields.dart';
 
@@ -85,12 +86,59 @@ fix_wind_timer_bug = true
 [mouse]
 fix_camera_acceleration = false
 sensitivity = 2.0
-disable_pod_pet = false
-fix_aim_acceleration = false
+third_person_mode = false
+third_person_char_follow = false
+third_person_sensitivity_x = 1.0
+third_person_sensitivity_y = 1.0
+aim_mode = false
+aim_crosshair = false
+aim_crosshair_always = false
 aim_sensitivity = 0.001
+aim_sensitivity_x = 1.0
+aim_sensitivity_y = 1.0
 aim_output_multiplier = 15.0
-debug_menu_key = 0
-evade_key = 0
+movement_disable_tap_evade = false
+misc_disable_pod_pet = false
+misc_open_debug_menu = 0
+misc_custom_cursor_menu = ""
+misc_custom_cursor_hacking = ""
+misc_disable_default_cursor = false
+
+[mouse.bindings]
+standard_move_forward = ""
+standard_move_left = ""
+standard_move_backward = ""
+standard_move_right = ""
+standard_jump = ""
+standard_walk = ""
+standard_auto_run = ""
+standard_light_attack = ""
+standard_heavy_attack = ""
+standard_program = ""
+standard_lock_on = ""
+standard_use = ""
+standard_self_destruct = ""
+standard_light = ""
+standard_reset_camera = ""
+standard_menu_up = ""
+standard_menu_left = ""
+standard_menu_down = ""
+standard_menu_right = ""
+standard_menu_open = ""
+standard_menu_back = ""
+standard_menu_enter = ""
+standard_shortcut_menu = ""
+standard_switch_weapon = ""
+standard_next_program = ""
+standard_previous_program = ""
+standard_fire = ""
+non_standard_evade = ""
+non_standard_auto_fire = ""
+non_standard_next_item = ""
+non_standard_previous_item = ""
+non_standard_use_item = ""
+third_person_mode_toggle = ""
+aim_mode_toggle = ""
 
 [cutscene]
 hd_cutscenes = false
@@ -140,20 +188,89 @@ load_order = []
 [mouse]
 # Remove the deadzone and acceleration curve from camera rotation.
 fix_camera_acceleration = false
-# Sensitivity multiplier. Higher = faster camera rotation.
+# Sensitivity multiplier for fix_camera_acceleration. Higher = faster rotation.
 sensitivity = 2.0
-# Disable the pod petting animation that triggers when moving the mouse.
-disable_pod_pet = false
+# Raw-input third-person camera driven directly from raw mouse deltas.
+third_person_mode = false
+# Keep the game's automatic camera-follow while moving.
+third_person_char_follow = false
+# Per-axis sensitivity for third_person_mode. Negative inverts the axis.
+third_person_sensitivity_x = 1.0
+third_person_sensitivity_y = 1.0
 # Remove the clamp and deadzone from pod/mech aiming.
-fix_aim_acceleration = false
-# Aim sensitivity for top-down/side-scroll.
+aim_mode = false
+# Aim follows the hidden mouse cursor and draws a crosshair. Needs aim_mode.
+aim_crosshair = false
+# Keep the crosshair visible even when not firing. Off = only shown while shooting.
+aim_crosshair_always = false
+# Aim sensitivity for top-down/side-scroll. 0.001 fits ~3500 DPI, 0.003 ~800 DPI.
 aim_sensitivity = 0.001
+# Per-axis multipliers on top of aim_sensitivity. Negative inverts the axis.
+aim_sensitivity_x = 1.0
+aim_sensitivity_y = 1.0
 # Raw multiplier applied to aim output after normalization.
 aim_output_multiplier = 15.0
-# Virtual key code for opening the debug menu. 0 = disabled.
-debug_menu_key = 0
-# Virtual key code for dedicated evade/dodge. 0 = disabled.
-evade_key = 0
+# Disable dodge on double-tapping movement keys (use with non_standard_evade).
+movement_disable_tap_evade = false
+# Disable the pod petting animation that triggers when moving the mouse.
+misc_disable_pod_pet = false
+# Virtual key code for opening the after-clearance debug menu. 0 = disabled.
+misc_open_debug_menu = 0
+# Custom mouse cursor. Path to a .cur/.ani file; "" uses the bundled default.
+misc_custom_cursor_menu = ""
+# Cursor for the hacking minigame. "" falls back to the menu cursor.
+misc_custom_cursor_hacking = ""
+# Keep the system cursor instead of the bundled default.
+misc_disable_default_cursor = false
+''';
+
+  static const _bindingsSectionDefault = '''
+
+# Additional key bindings. All bindings are additive - the vanilla keys keep
+# working. "" = unbound. Supported key names: A-Z, 0-9, SPACE, END, UPARROW,
+# DOWNARROW, LEFTARROW, RIGHTARROW, LSHIFT, RSHIFT, LCTRL, RCTRL, MOUSE1-MOUSE5.
+# Combinations use +, e.g. "CTRL+X". SHIFT, CTRL and ALT match either side
+# and are modifier-only.
+[mouse.bindings]
+standard_move_forward = ""
+standard_move_left = ""
+standard_move_backward = ""
+standard_move_right = ""
+standard_jump = ""
+standard_walk = ""
+standard_auto_run = ""
+standard_light_attack = ""
+standard_heavy_attack = ""
+standard_program = ""
+standard_lock_on = ""
+standard_use = ""
+standard_self_destruct = ""
+standard_light = ""
+standard_reset_camera = ""
+standard_menu_up = ""
+standard_menu_left = ""
+standard_menu_down = ""
+standard_menu_right = ""
+standard_menu_open = ""
+standard_menu_back = ""
+standard_menu_enter = ""
+standard_shortcut_menu = ""
+standard_switch_weapon = ""
+standard_next_program = ""
+standard_previous_program = ""
+standard_fire = ""
+# Dedicated dodge/evade - same distance and duration as the double-tap version.
+non_standard_evade = ""
+# Toggles continuous pod fire on/off.
+non_standard_auto_fire = ""
+# Quick-item shortcuts: switch/use items directly without opening the menu.
+non_standard_next_item = ""
+non_standard_previous_item = ""
+non_standard_use_item = ""
+# Toggle the camera raw-input fix on/off while playing.
+third_person_mode_toggle = ""
+# Toggle the aim fix on/off while playing.
+aim_mode_toggle = ""
 ''';
 
   static const _cutsceneSectionDefault = '''
@@ -165,6 +282,47 @@ hd_cutscenes = false
 # Enable H264 codec for USM playback. Required for H264-encoded cutscene mods.
 enable_h264 = false
 ''';
+
+  static const _mouseKeyRenames = <String, String>{
+    'fix_aim_acceleration': 'aim_mode',
+    'disable_pod_pet': 'misc_disable_pod_pet',
+    'debug_menu_key': 'misc_open_debug_menu',
+  };
+
+  static const _newMouseKeyBlocks = <String, String>{
+    'third_person_mode':
+        '# Raw-input third-person camera driven directly from raw mouse deltas.\n'
+        'third_person_mode = false',
+    'third_person_char_follow':
+        '# Keep the game\'s automatic camera-follow while moving.\n'
+        'third_person_char_follow = false',
+    'third_person_sensitivity_x':
+        '# Per-axis sensitivity for third_person_mode. Negative inverts the axis.\n'
+        'third_person_sensitivity_x = 1.0',
+    'third_person_sensitivity_y': 'third_person_sensitivity_y = 1.0',
+    'aim_crosshair':
+        '# Aim follows the hidden mouse cursor and draws a crosshair. Needs aim_mode.\n'
+        'aim_crosshair = false',
+    'aim_crosshair_always':
+        '# Keep the crosshair visible even when not firing. Off = only while shooting.\n'
+        'aim_crosshair_always = false',
+    'aim_sensitivity_x':
+        '# Per-axis multipliers on top of aim_sensitivity. Negative inverts the axis.\n'
+        'aim_sensitivity_x = 1.0',
+    'aim_sensitivity_y': 'aim_sensitivity_y = 1.0',
+    'movement_disable_tap_evade':
+        '# Disable dodge on double-tapping movement keys (use with non_standard_evade).\n'
+        'movement_disable_tap_evade = false',
+    'misc_custom_cursor_menu':
+        '# Custom mouse cursor. Path to a .cur/.ani file; "" uses the bundled default.\n'
+        'misc_custom_cursor_menu = ""',
+    'misc_custom_cursor_hacking':
+        '# Cursor for the hacking minigame. "" falls back to the menu cursor.\n'
+        'misc_custom_cursor_hacking = ""',
+    'misc_disable_default_cursor':
+        '# Keep the system cursor instead of the bundled default.\n'
+        'misc_disable_default_cursor = false',
+  };
 
   static Future<void> ensureConfigs(String gameDir) {
     return IsolateService.run(_ensureConfigsSync, gameDir);
@@ -288,9 +446,88 @@ enable_h264 = false
       modified = true;
     }
 
+    for (final entry in _mouseKeyRenames.entries) {
+      final re = RegExp('^${entry.key}(\\s*=)', multiLine: true);
+      if (re.hasMatch(content)) {
+        content = content.replaceAllMapped(
+          re,
+          (m) => '${entry.value}${m.group(1)}',
+        );
+        modified = true;
+      }
+    }
+
+    String? migratedEvadeName;
+    final evadeMatch = RegExp(
+      r'^evade_key\s*=\s*(\S+).*$',
+      multiLine: true,
+    ).firstMatch(content);
+    if (evadeMatch != null) {
+      final vk = int.tryParse(evadeMatch.group(1)!);
+      if (vk != null && vk != 0) {
+        migratedEvadeName = NaiomKeys.vkToKeyName(vk);
+      }
+      content = content.replaceFirst(
+        RegExp(
+          r'^# Virtual key code for dedicated evade/dodge\. 0 = disabled\.\r?\n',
+          multiLine: true,
+        ),
+        '',
+      );
+      content = content.replaceFirst(
+        RegExp(r'^evade_key\s*=.*\r?\n?', multiLine: true),
+        '',
+      );
+      modified = true;
+    }
+
     if (!content.contains('[mouse]')) {
       content += _mouseSectionDefault;
       modified = true;
+    } else {
+      final missingBlocks = <String>[];
+      for (final entry in _newMouseKeyBlocks.entries) {
+        final re = RegExp('^${entry.key}\\s*=', multiLine: true);
+        if (!re.hasMatch(content)) {
+          missingBlocks.add(entry.value);
+        }
+      }
+      if (missingBlocks.isNotEmpty) {
+        final afterMouse = content.indexOf('[mouse]') + '[mouse]'.length;
+        final nextSection = content.indexOf(
+          RegExp(r'^\[', multiLine: true),
+          afterMouse,
+        );
+        final block = '${missingBlocks.join('\n')}\n';
+        if (nextSection == -1) {
+          final sep = content.endsWith('\n') ? '' : '\n';
+          content = '$content$sep$block';
+        } else {
+          content =
+              '${content.substring(0, nextSection)}$block\n'
+              '${content.substring(nextSection)}';
+        }
+        modified = true;
+      }
+    }
+
+    if (!content.contains('[mouse.bindings]')) {
+      content += _bindingsSectionDefault;
+      modified = true;
+    }
+
+    if (migratedEvadeName != null) {
+      final unboundEvade = RegExp(
+        r'^non_standard_evade\s*=\s*""',
+        multiLine: true,
+      );
+      if (unboundEvade.hasMatch(content)) {
+        content = content.replaceFirst(
+          unboundEvade,
+          'non_standard_evade = "$migratedEvadeName"',
+        );
+        modified = true;
+      }
     }
 
     if (!content.contains('[cutscene]')) {

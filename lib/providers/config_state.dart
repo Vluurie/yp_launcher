@@ -139,11 +139,15 @@ class ConfigStateController extends _$ConfigStateController {
   void updateNams(String key, dynamic value, {String? section}) {
     final updated = Map<String, dynamic>.from(state.namsValues);
     if (section != null) {
-      final sectionMap = Map<String, dynamic>.from(
-        (updated[section] as Map<String, dynamic>?) ?? {},
-      );
-      sectionMap[key] = value;
-      updated[section] = sectionMap;
+      var parent = updated;
+      for (final part in section.split('.')) {
+        final child = Map<String, dynamic>.from(
+          (parent[part] as Map<String, dynamic>?) ?? {},
+        );
+        parent[part] = child;
+        parent = child;
+      }
+      parent[key] = value;
     } else {
       updated[key] = value;
     }
