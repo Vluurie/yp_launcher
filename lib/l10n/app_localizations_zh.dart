@@ -3276,6 +3276,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get modFilterAll => '全部';
 
   @override
+  String get modCollapseAll => '折叠所有分组';
+
+  @override
+  String get modExpandAll => '展开所有分组';
+
+  @override
   String get modBulkInstall => '从文件夹批量安装';
 
   @override
@@ -3389,6 +3395,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get modGroupMixed => '混合内容';
+
+  @override
+  String get modGroupWax => 'WAX 精简';
 
   @override
   String get modGroupMultiHint => '此模组会替换多个角色的模型，因此会列在每个相关角色下。';
@@ -3816,6 +3825,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get modInstallReasonUnknownDrop => '无法识别拖入内容——该文件夹不符合任何受支持的模组结构。';
+
+  @override
+  String get modInstallReasonUnsupportedNasa =>
+      '这是一个 NASA 模组（包含 sadfutago.cpk），本启动器不支持。';
 
   @override
   String get modInstallReasonInvalidMixed =>

@@ -5937,6 +5937,18 @@ abstract class AppLocalizations {
   /// **'All'**
   String get modFilterAll;
 
+  /// No description provided for @modCollapseAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Collapse all groups'**
+  String get modCollapseAll;
+
+  /// No description provided for @modExpandAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Expand all groups'**
+  String get modExpandAll;
+
   /// No description provided for @modBulkInstall.
   ///
   /// In en, this message translates to:
@@ -6146,6 +6158,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'MIXED CONTENT'**
   String get modGroupMixed;
+
+  /// No description provided for @modGroupWax.
+  ///
+  /// In en, this message translates to:
+  /// **'WAX COMPACT'**
+  String get modGroupWax;
 
   /// No description provided for @modGroupMultiHint.
   ///
@@ -6896,6 +6914,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unknown drop - the folder doesn\'t match any supported mod layout.'**
   String get modInstallReasonUnknownDrop;
+
+  /// No description provided for @modInstallReasonUnsupportedNasa.
+  ///
+  /// In en, this message translates to:
+  /// **'This is a NASA mod (contains sadfutago.cpk), which this launcher does not support.'**
+  String get modInstallReasonUnsupportedNasa;
 
   /// No description provided for @modInstallReasonInvalidMixed.
   ///

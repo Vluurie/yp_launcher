@@ -1076,8 +1076,36 @@ Map<String, int> _collectDataFileStamps(String rootPath) {
   return files;
 }
 
+const _unsupportedCpkNames = {'sadfutago.cpk'};
+
+bool _hasUnsupportedCpk(String root) {
+  final dir = Directory(root);
+  if (!dir.existsSync()) return false;
+  for (final f in dir.listSync(recursive: true, followLinks: false)) {
+    if (f is! File) continue;
+    if (_unsupportedCpkNames.contains(path.basename(f.path).toLowerCase())) {
+      return true;
+    }
+  }
+  return false;
+}
+
 DetectedDrop _detectDropSync(_DetectParams p) {
   final unwrapped = _unwrapSingleChild(p.workDir);
+
+  if (_hasUnsupportedCpk(p.workDir)) {
+    return DetectedDrop(
+      unwrappedRoot: unwrapped,
+      kind: ModKind.unknown,
+      suggestedId: _suggestId(
+        manifest: null,
+        sourceBaseName: p.sourceBaseName,
+        unwrappedRoot: unwrapped,
+      ),
+      errorReason: 'unsupported_nasa',
+    );
+  }
+
   final manifest = ModManifestService.loadSync(unwrapped);
   final kind = _classifyKind(unwrapped);
 

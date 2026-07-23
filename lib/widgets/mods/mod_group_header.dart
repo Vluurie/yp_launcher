@@ -7,6 +7,7 @@ import 'package:yp_launcher/theme/app_sizes.dart';
 String modGroupLabel(ModGroupKind kind, AppLocalizations l10n) {
   return switch (kind) {
     ModGroupKind.mixed => l10n.modGroupMixed,
+    ModGroupKind.wax => l10n.modGroupWax,
     ModGroupKind.outfit2b => l10n.modGroup2b,
     ModGroupKind.outfit9s => l10n.modGroup9s,
     ModGroupKind.outfitA2 => l10n.modGroupA2,
@@ -35,6 +36,7 @@ String modGroupLabel(ModGroupKind kind, AppLocalizations l10n) {
 IconData modGroupIcon(ModGroupKind kind) {
   return switch (kind) {
     ModGroupKind.mixed => Icons.dashboard_customize_outlined,
+    ModGroupKind.wax => Icons.checkroom_outlined,
     ModGroupKind.outfit2b ||
     ModGroupKind.outfit9s ||
     ModGroupKind.outfitA2 ||

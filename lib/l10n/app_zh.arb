@@ -1609,6 +1609,8 @@
   "modListEmptyHint": "将模组文件夹或压缩包拖入上方区域进行安装。",
   "modSearchPlaceholder": "搜索模组…",
   "modFilterAll": "全部",
+  "modCollapseAll": "折叠所有分组",
+  "modExpandAll": "展开所有分组",
   "modBulkInstall": "从文件夹批量安装",
   "modBulkInstallBusy": "正在安装 {done}/{total}：{name}",
   "@modBulkInstallBusy": {
@@ -1694,6 +1696,7 @@
   "modGroupNative": "原生模组",
   "modGroupOther": "其他",
   "modGroupMixed": "混合内容",
+  "modGroupWax": "WAX 精简",
   "modGroupMultiHint": "此模组会替换多个角色的模型，因此会列在每个相关角色下。",
   "modGroupMixedHint": "此模组会同时更改多种类型的内容。点击查看它包含的全部内容以及涉及的类别。",
   "modRename": "重命名",
@@ -1950,6 +1953,7 @@
     }
   },
   "modInstallReasonUnknownDrop": "无法识别拖入内容——该文件夹不符合任何受支持的模组结构。",
+  "modInstallReasonUnsupportedNasa": "这是一个 NASA 模组（包含 sadfutago.cpk），本启动器不支持。",
   "modInstallReasonInvalidMixed": "无效结构——一个模组不能同时混用 entities 和 wax 风格配置。",
   "modInstallReasonNativeEmpty": "entities/ 中未找到实体文件。",
   "modInstallReasonDataEmpty": "未找到可识别的内容。",

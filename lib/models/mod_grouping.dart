@@ -2,6 +2,7 @@ import 'package:yp_launcher/models/installed_mod.dart';
 
 enum ModGroupKind {
   mixed,
+  wax,
   outfit2b,
   outfit9s,
   outfitA2,
@@ -29,6 +30,7 @@ enum ModGroupKind {
 const List<ModGroupKind> modGroupOrder = [
   ModGroupKind.native,
   ModGroupKind.mixed,
+  ModGroupKind.wax,
   ModGroupKind.outfit2b,
   ModGroupKind.outfit9s,
   ModGroupKind.outfitA2,
@@ -81,6 +83,8 @@ ModGroupKind? playerSlotGroup(String fileName) {
 
 Set<ModGroupKind> groupsForMod(InstalledMod mod) {
   if (mod.kind == ModKind.native) return {ModGroupKind.native};
+
+  if (mod.data?.hasCompatConfig == true) return {ModGroupKind.wax};
 
   final groups = <ModGroupKind>{};
 

@@ -3487,6 +3487,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get modFilterAll => 'Alle';
 
   @override
+  String get modCollapseAll => 'Alle Gruppen einklappen';
+
+  @override
+  String get modExpandAll => 'Alle Gruppen ausklappen';
+
+  @override
   String get modBulkInstall => 'Mehrere Mods aus Ordner installieren';
 
   @override
@@ -3605,6 +3611,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get modGroupMixed => 'GEMISCHTE INHALTE';
+
+  @override
+  String get modGroupWax => 'WAX COMPACT';
 
   @override
   String get modGroupMultiHint =>
@@ -4051,6 +4060,10 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get modInstallReasonUnknownDrop =>
       'Unbekannte Ablage – der Ordner entspricht keiner unterstützten Mod-Struktur.';
+
+  @override
+  String get modInstallReasonUnsupportedNasa =>
+      'Dies ist eine NASA-Mod (enthält sadfutago.cpk), die von diesem Launcher nicht unterstützt wird.';
 
   @override
   String get modInstallReasonInvalidMixed =>

@@ -481,6 +481,7 @@ class _ModsViewState extends ConsumerState<ModsView> {
       case 'native_empty': return l10n.modInstallReasonNativeEmpty;
       case 'data_empty': return l10n.modInstallReasonDataEmpty;
       case 'texture_only': return l10n.modInstallReasonTextureOnly;
+      case 'unsupported_nasa': return l10n.modInstallReasonUnsupportedNasa;
       case 'archive_extract_failed': return l10n.modInstallReasonArchiveExtractFailed;
       default:
         if (code.startsWith('move_failed')) return l10n.modInstallReasonMoveFailed;
@@ -685,6 +686,8 @@ class _ModsViewState extends ConsumerState<ModsView> {
                                 ),
                               ),
                               SizedBox(width: AppSizes.spacingSM(context)),
+                              _collapseAllButton(l10n, data.mods),
+                              SizedBox(width: AppSizes.spacingSM(context)),
                               _bulkInstallButton(l10n),
                               SizedBox(width: AppSizes.spacingSM(context)),
                               _looseInstallButton(l10n),
@@ -767,6 +770,31 @@ class _ModsViewState extends ConsumerState<ModsView> {
         color: AppColors.textMuted,
       ),
       onTap: _handleBulkInstall,
+    );
+  }
+
+  Widget _collapseAllButton(AppLocalizations l10n, List<InstalledMod> mods) {
+    final allGroups = groupMods(mods).keys.toSet();
+    final allCollapsed =
+        allGroups.isNotEmpty && _collapsedGroups.containsAll(allGroups);
+    return HoverIconButton(
+      tooltip: allCollapsed ? l10n.modExpandAll : l10n.modCollapseAll,
+      bordered: false,
+      padding: EdgeInsets.all(AppSizes.paddingXS(context)),
+      icon: Icon(
+        allCollapsed ? Icons.unfold_more : Icons.unfold_less,
+        size: AppSizes.iconLG(context),
+        color: AppColors.textMuted,
+      ),
+      onTap: () => setState(() {
+        if (allCollapsed) {
+          _collapsedGroups.clear();
+        } else {
+          _collapsedGroups
+            ..clear()
+            ..addAll(allGroups);
+        }
+      }),
     );
   }
 

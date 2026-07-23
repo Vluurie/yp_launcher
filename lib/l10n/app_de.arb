@@ -1609,6 +1609,8 @@
   "modListEmptyHint": "Lege einen Mod-Ordner oder ein Archiv im Feld oben ab, um ihn zu installieren.",
   "modSearchPlaceholder": "Mods durchsuchen …",
   "modFilterAll": "Alle",
+  "modCollapseAll": "Alle Gruppen einklappen",
+  "modExpandAll": "Alle Gruppen ausklappen",
   "modBulkInstall": "Mehrere Mods aus Ordner installieren",
   "modBulkInstallBusy": "Installation {done} von {total}: {name}",
   "@modBulkInstallBusy": {
@@ -1694,6 +1696,7 @@
   "modGroupNative": "NATIVE MODS",
   "modGroupOther": "SONSTIGES",
   "modGroupMixed": "GEMISCHTE INHALTE",
+  "modGroupWax": "WAX COMPACT",
   "modGroupMultiHint": "Diese Mod ersetzt Modelle für mehrere Charaktere und wird daher unter jedem von ihnen aufgeführt.",
   "modGroupMixedHint": "Diese Mod ändert mehrere Arten von Inhalten gleichzeitig. Klicke sie an, um alles zu sehen, was sie enthält, und welche Kategorien sie betrifft.",
   "modRename": "Umbenennen",
@@ -1950,6 +1953,7 @@
     }
   },
   "modInstallReasonUnknownDrop": "Unbekannte Ablage – der Ordner entspricht keiner unterstützten Mod-Struktur.",
+  "modInstallReasonUnsupportedNasa": "Dies ist eine NASA-Mod (enthält sadfutago.cpk), die von diesem Launcher nicht unterstützt wird.",
   "modInstallReasonInvalidMixed": "Ungültige Struktur – eine Mod darf entities- und wax-artige Konfigurationen nicht mischen.",
   "modInstallReasonNativeEmpty": "In entities/ wurden keine Entity-Dateien gefunden.",
   "modInstallReasonDataEmpty": "Keine erkennbaren Inhalte gefunden.",
