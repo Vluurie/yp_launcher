@@ -31,6 +31,55 @@ class AppLocalizationsEn extends AppLocalizations {
       'Translations are community-made or auto-generated and may be inaccurate. The maintainers speak English only - please ask for help in English.';
 
   @override
+  String get tooltipCopyCommand =>
+      'Copy the NAMS command to clipboard so you can paste it into a terminal and start the game manually.';
+
+  @override
+  String get notificationCommandCopied =>
+      'Launch command copied - paste it into a terminal to start the game manually.';
+
+  @override
+  String get notificationCommandNotReady =>
+      'Could not build launch command - launcher binaries are not ready yet.';
+
+  @override
+  String get textureAutoRecommended => 'Auto (recommended)';
+
+  @override
+  String get detectionDlcPresent => 'DLC: present';
+
+  @override
+  String get detectionDlcNotDetected => 'DLC: not detected';
+
+  @override
+  String get detectionDlcPresentTooltip =>
+      'DLC data100.cpk found. Mods that ship DLC-only outfit files (pl000d, pl010d, pl020d) will install as-is.';
+
+  @override
+  String get detectionDlcNotDetectedTooltip =>
+      'No DLC detected. Mods that ship DLC-only outfit files (pl000d, pl010d, pl020d) will be installed under the non-DLC names (pl0000, pl0100, pl0200) so they show up in-game.';
+
+  @override
+  String get detectionExeWolfLimitBreak => 'EXE: Wolf Limit Break';
+
+  @override
+  String get detectionExeOriginal => 'EXE: Original';
+
+  @override
+  String get detectionExeMissing => 'EXE: missing';
+
+  @override
+  String get detectionExeUnrecognised => 'EXE: unrecognised';
+
+  @override
+  String get detectionExeUnrecognisedTooltip =>
+      'NieRAutomata.exe is present but its hash is not in our known list. NAMS will still run; this is just a heads-up that we have not seen this exact build.';
+
+  @override
+  String get detectionExeWolfLimitBreakTooltip =>
+      'Wolf Limit Break NieRAutomata.exe detected. NAMS does not need this patch and was never tested against it. The game may still launch, but performance issues, memory crashes, or mod incompatibilities are possible. For full support, restore the original Steam executable (verify game files in Steam).';
+
+  @override
   String get launchOptionsTitle => 'LAUNCH OPTIONS';
 
   @override
@@ -414,6 +463,20 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get notifyReShadeDetected =>
       'ReShade detected - disabled by default. NAMS already ships a patched native depth-of-field, so ReShade is optional. Re-enable it any time in the NAMS config tab (Disable ReShade Loading → off).';
+
+  @override
+  String get notifyNaiomMigrated =>
+      'Found your old NAIOM settings - imported into nams.toml. Check the NAIOM tab. You can remove the old NAIOM files (dinput8.dll, NAIOM.ini) from the game folder.';
+
+  @override
+  String notifyNaiomSkipped(String entries) {
+    return 'Some NAIOM bindings use keys NAMS does not support and were not imported: $entries. Rebind them in the NAIOM tab.';
+  }
+
+  @override
+  String notifyPlatformUnsupported(String platform) {
+    return 'No Windows compatibility layer found on $platform, so the game cannot be started from here. Mods, textures and configs all still work. Install CrossOver and put NieR:Automata in a bottle to enable launching.';
+  }
 
   @override
   String get notifyReShadeIncompatible =>

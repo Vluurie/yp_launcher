@@ -127,14 +127,14 @@ class PlayButton extends ConsumerWidget {
       }
 
       controller.setPlayButtonState(PlayButtonState.loading);
-      controller.setStatus(l10n.statusLaunching);
+      controller.setStatus(LaunchStatus.launching);
 
       ProcessService.startNierAutomata(
             installDirectory: appState.selectedDirectory,
             l10n: l10n,
             onProcessStopped: () async {
               controller.setPlayButtonState(PlayButtonState.idle);
-              controller.setStatus(l10n.statusStopped);
+              controller.setStatus(LaunchStatus.stopped);
               if (Platform.isWindows) {
                 try {
                   if (await windowManager.isMinimized()) {
@@ -148,7 +148,7 @@ class PlayButton extends ConsumerWidget {
           .then((outcome) async {
             if (outcome.started) {
               controller.setPlayButtonState(PlayButtonState.running);
-              controller.setStatus(l10n.statusRunning);
+              controller.setStatus(LaunchStatus.running);
               if (Platform.isWindows) {
                 try {
                   final prefs = await SharedPreferences.getInstance();
@@ -188,12 +188,12 @@ class PlayButton extends ConsumerWidget {
           });
     } else if (appState.playButtonState == PlayButtonState.running) {
       controller.setPlayButtonState(PlayButtonState.loading);
-      controller.setStatus(l10n.statusStopping);
+      controller.setStatus(LaunchStatus.stopping);
 
       final success = await ProcessService.terminateNierAutomata();
       if (success) {
         controller.setPlayButtonState(PlayButtonState.idle);
-        controller.setStatus(l10n.statusStopped);
+        controller.setStatus(LaunchStatus.stopped);
       } else {
         controller.setError(l10n.errorStopFailed);
         controller.setPlayButtonState(PlayButtonState.running);

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:automato_theme/automato_theme.dart';
 import 'package:window_manager/window_manager.dart';
-import 'package:yp_launcher/constants/app_strings.dart';
 import 'package:yp_launcher/l10n/app_localizations.dart';
 import 'package:yp_launcher/providers/locale_state.dart';
 import 'package:yp_launcher/screens/launcher_screen.dart';
@@ -37,7 +36,7 @@ void main(List<String> args) async {
       titleBarStyle: PlatformAdapter.current.usesNativeTitleBar
           ? TitleBarStyle.normal
           : TitleBarStyle.hidden,
-      title: AppStrings.appTitle,
+      title: 'YoRHa Protocol Launcher',
     );
 
     await windowManager.waitUntilReadyToShow(windowOptions, () async {
@@ -69,7 +68,7 @@ class YoRHaProtocolLauncher extends ConsumerWidget {
     final baseTheme = themeState.theme;
     final gameFont = GoogleFonts.rajdhaniTextTheme(baseTheme.textTheme);
     return MaterialApp(
-      title: AppStrings.appTitle,
+      onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
       debugShowCheckedModeBanner: false,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,

@@ -61,7 +61,7 @@ class CutsceneInstallService {
         .addNotification(
           NotificationItem(
             id: 'cutscenes_${DateTime.now().millisecondsSinceEpoch}',
-            message: message,
+            message: (l10n) => message,
             icon: icon,
             color: color,
             type: NotificationType.shortcut,

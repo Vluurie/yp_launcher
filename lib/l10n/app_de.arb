@@ -7,6 +7,20 @@
   "tooltipDiscord": "Discord",
   "tooltipLanguage": "Sprache",
   "languageSupportNotice": "Übersetzungen stammen aus der Community oder wurden automatisch erstellt und können ungenau sein. Die Maintainer sprechen nur Englisch – bitte stelle Fragen auf Englisch.",
+  "tooltipCopyCommand": "Kopiert den NAMS-Befehl in die Zwischenablage, damit du ihn in ein Terminal einfügen und das Spiel manuell starten kannst.",
+  "notificationCommandCopied": "Startbefehl kopiert – füge ihn in ein Terminal ein, um das Spiel manuell zu starten.",
+  "notificationCommandNotReady": "Startbefehl konnte nicht erstellt werden – die Launcher-Dateien sind noch nicht bereit.",
+  "textureAutoRecommended": "Automatisch (empfohlen)",
+  "detectionDlcPresent": "DLC: vorhanden",
+  "detectionDlcNotDetected": "DLC: nicht erkannt",
+  "detectionDlcPresentTooltip": "DLC data100.cpk gefunden. Mods, die reine DLC-Outfit-Dateien mitliefern (pl000d, pl010d, pl020d), werden unverändert installiert.",
+  "detectionDlcNotDetectedTooltip": "Kein DLC erkannt. Mods, die reine DLC-Outfit-Dateien mitliefern (pl000d, pl010d, pl020d), werden unter den Nicht-DLC-Namen (pl0000, pl0100, pl0200) installiert, damit sie im Spiel erscheinen.",
+  "detectionExeWolfLimitBreak": "EXE: Wolf Limit Break",
+  "detectionExeOriginal": "EXE: Original",
+  "detectionExeMissing": "EXE: fehlt",
+  "detectionExeUnrecognised": "EXE: nicht erkannt",
+  "detectionExeUnrecognisedTooltip": "NieRAutomata.exe ist vorhanden, aber ihr Hash steht nicht auf unserer bekannten Liste. NAMS läuft trotzdem; dies ist nur ein Hinweis darauf, dass wir genau diesen Build noch nicht gesehen haben.",
+  "detectionExeWolfLimitBreakTooltip": "Wolf-Limit-Break-Version von NieRAutomata.exe erkannt. NAMS benötigt diesen Patch nicht und wurde nie damit getestet. Das Spiel startet möglicherweise trotzdem, aber Leistungsprobleme, Speicherabstürze oder Mod-Inkompatibilitäten sind möglich. Für vollständige Unterstützung stelle die originale Steam-Programmdatei wieder her (Spieldateien in Steam überprüfen).",
   "launchOptionsTitle": "STARTOPTIONEN",
   "launchOptionMinimizeOnLaunch": "Launcher während des Spielens minimieren",
   "launchOptionPreferDedicatedGpu": "Dedizierte GPU bevorzugen",
@@ -134,6 +148,23 @@
   "notifyShortcutFailed": "Desktopverknüpfung konnte nicht erstellt werden.",
   "notifyLodModMigrated": "Deine alten LodMod.ini-Einstellungen wurden gefunden, in lodmod.toml importiert und LodMod wurde aktiviert.",
   "notifyReShadeDetected": "ReShade erkannt – standardmäßig deaktiviert. NAMS enthält bereits eine gepatchte native Tiefenschärfe, daher ist ReShade optional. Du kannst es jederzeit im NAMS-Konfigurationsreiter wieder aktivieren (ReShade-Laden deaktivieren → aus).",
+  "notifyNaiomMigrated": "Deine alten NAIOM-Einstellungen wurden gefunden und in nams.toml importiert. Sieh im NAIOM-Reiter nach. Du kannst die alten NAIOM-Dateien (dinput8.dll, NAIOM.ini) aus dem Spielordner entfernen.",
+  "notifyNaiomSkipped": "Einige NAIOM-Belegungen verwenden Tasten, die NAMS nicht unterstützt, und wurden nicht importiert: {entries}. Belege sie im NAIOM-Reiter neu.",
+  "@notifyNaiomSkipped": {
+    "placeholders": {
+      "entries": {
+        "type": "String"
+      }
+    }
+  },
+  "notifyPlatformUnsupported": "Auf {platform} wurde keine Windows-Kompatibilitätsschicht gefunden, daher kann das Spiel von hier aus nicht gestartet werden. Mods, Texturen und Konfigurationen funktionieren weiterhin. Installiere CrossOver und richte NieR:Automata in einer Bottle ein, um das Starten zu ermöglichen.",
+  "@notifyPlatformUnsupported": {
+    "placeholders": {
+      "platform": {
+        "type": "String"
+      }
+    }
+  },
   "notifyReShadeIncompatible": "ReShade mit Add-on-/ImGui-Unterstützung erkannt – nicht kompatibel. Verwende die Standardversion von ReShade ohne Add-on-Unterstützung.",
   "notifyTexturesDetected": "HD-Texturen in {folder} gefunden – sie werden beim Start geladen.",
   "@notifyTexturesDetected": {

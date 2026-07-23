@@ -98,7 +98,7 @@ class LogPanelState extends ConsumerState<LogPanel>
       ref.read(notificationStateControllerProvider.notifier).addNotification(
             NotificationItem(
               id: 'diag_fail_${DateTime.now().millisecondsSinceEpoch}',
-              message: '$e',
+              message: (l10n) => '$e',
               icon: Icons.error_outline,
               color: AppColors.error,
               type: NotificationType.general,
@@ -817,7 +817,7 @@ class _DiagnosticsDialogState extends ConsumerState<_DiagnosticsDialog> {
                           .read(notificationStateControllerProvider.notifier)
                           .addNotification(NotificationItem(
                             id: 'diag_copied_${DateTime.now().millisecondsSinceEpoch}',
-                            message: l10n.diagnosticsCopied,
+                            message: (l10n) => l10n.diagnosticsCopied,
                             icon: Icons.check_circle,
                             color: AppColors.success,
                             type: NotificationType.general,
@@ -843,7 +843,7 @@ class _DiagnosticsDialogState extends ConsumerState<_DiagnosticsDialog> {
                                   .read(notificationStateControllerProvider.notifier)
                                   .addNotification(NotificationItem(
                                     id: 'diag_saved_${DateTime.now().millisecondsSinceEpoch}',
-                                    message: l10n.diagnosticsSavedAt(outPath),
+                                    message: (l10n) => l10n.diagnosticsSavedAt(outPath),
                                     icon: Icons.save,
                                     color: AppColors.success,
                                     type: NotificationType.general,

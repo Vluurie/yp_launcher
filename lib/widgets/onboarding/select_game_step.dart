@@ -207,7 +207,7 @@ class _SelectGameStepState extends ConsumerState<SelectGameStep> {
     ref.read(notificationStateControllerProvider.notifier).addNotification(
           NotificationItem(
             id: 'game_outside_prefix',
-            message: reason,
+            message: (l10n) => reason,
             icon: Icons.warning_amber,
             color: AppColors.warning,
             type: NotificationType.general,

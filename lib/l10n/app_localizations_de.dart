@@ -31,6 +31,55 @@ class AppLocalizationsDe extends AppLocalizations {
       'Übersetzungen stammen aus der Community oder wurden automatisch erstellt und können ungenau sein. Die Maintainer sprechen nur Englisch – bitte stelle Fragen auf Englisch.';
 
   @override
+  String get tooltipCopyCommand =>
+      'Kopiert den NAMS-Befehl in die Zwischenablage, damit du ihn in ein Terminal einfügen und das Spiel manuell starten kannst.';
+
+  @override
+  String get notificationCommandCopied =>
+      'Startbefehl kopiert – füge ihn in ein Terminal ein, um das Spiel manuell zu starten.';
+
+  @override
+  String get notificationCommandNotReady =>
+      'Startbefehl konnte nicht erstellt werden – die Launcher-Dateien sind noch nicht bereit.';
+
+  @override
+  String get textureAutoRecommended => 'Automatisch (empfohlen)';
+
+  @override
+  String get detectionDlcPresent => 'DLC: vorhanden';
+
+  @override
+  String get detectionDlcNotDetected => 'DLC: nicht erkannt';
+
+  @override
+  String get detectionDlcPresentTooltip =>
+      'DLC data100.cpk gefunden. Mods, die reine DLC-Outfit-Dateien mitliefern (pl000d, pl010d, pl020d), werden unverändert installiert.';
+
+  @override
+  String get detectionDlcNotDetectedTooltip =>
+      'Kein DLC erkannt. Mods, die reine DLC-Outfit-Dateien mitliefern (pl000d, pl010d, pl020d), werden unter den Nicht-DLC-Namen (pl0000, pl0100, pl0200) installiert, damit sie im Spiel erscheinen.';
+
+  @override
+  String get detectionExeWolfLimitBreak => 'EXE: Wolf Limit Break';
+
+  @override
+  String get detectionExeOriginal => 'EXE: Original';
+
+  @override
+  String get detectionExeMissing => 'EXE: fehlt';
+
+  @override
+  String get detectionExeUnrecognised => 'EXE: nicht erkannt';
+
+  @override
+  String get detectionExeUnrecognisedTooltip =>
+      'NieRAutomata.exe ist vorhanden, aber ihr Hash steht nicht auf unserer bekannten Liste. NAMS läuft trotzdem; dies ist nur ein Hinweis darauf, dass wir genau diesen Build noch nicht gesehen haben.';
+
+  @override
+  String get detectionExeWolfLimitBreakTooltip =>
+      'Wolf-Limit-Break-Version von NieRAutomata.exe erkannt. NAMS benötigt diesen Patch nicht und wurde nie damit getestet. Das Spiel startet möglicherweise trotzdem, aber Leistungsprobleme, Speicherabstürze oder Mod-Inkompatibilitäten sind möglich. Für vollständige Unterstützung stelle die originale Steam-Programmdatei wieder her (Spieldateien in Steam überprüfen).';
+
+  @override
   String get launchOptionsTitle => 'STARTOPTIONEN';
 
   @override
@@ -421,6 +470,20 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get notifyReShadeDetected =>
       'ReShade erkannt – standardmäßig deaktiviert. NAMS enthält bereits eine gepatchte native Tiefenschärfe, daher ist ReShade optional. Du kannst es jederzeit im NAMS-Konfigurationsreiter wieder aktivieren (ReShade-Laden deaktivieren → aus).';
+
+  @override
+  String get notifyNaiomMigrated =>
+      'Deine alten NAIOM-Einstellungen wurden gefunden und in nams.toml importiert. Sieh im NAIOM-Reiter nach. Du kannst die alten NAIOM-Dateien (dinput8.dll, NAIOM.ini) aus dem Spielordner entfernen.';
+
+  @override
+  String notifyNaiomSkipped(String entries) {
+    return 'Einige NAIOM-Belegungen verwenden Tasten, die NAMS nicht unterstützt, und wurden nicht importiert: $entries. Belege sie im NAIOM-Reiter neu.';
+  }
+
+  @override
+  String notifyPlatformUnsupported(String platform) {
+    return 'Auf $platform wurde keine Windows-Kompatibilitätsschicht gefunden, daher kann das Spiel von hier aus nicht gestartet werden. Mods, Texturen und Konfigurationen funktionieren weiterhin. Installiere CrossOver und richte NieR:Automata in einer Bottle ein, um das Starten zu ermöglichen.';
+  }
 
   @override
   String get notifyReShadeIncompatible =>

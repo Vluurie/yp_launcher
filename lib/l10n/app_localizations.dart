@@ -142,6 +142,90 @@ abstract class AppLocalizations {
   /// **'Translations are community-made or auto-generated and may be inaccurate. The maintainers speak English only - please ask for help in English.'**
   String get languageSupportNotice;
 
+  /// No description provided for @tooltipCopyCommand.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy the NAMS command to clipboard so you can paste it into a terminal and start the game manually.'**
+  String get tooltipCopyCommand;
+
+  /// No description provided for @notificationCommandCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Launch command copied - paste it into a terminal to start the game manually.'**
+  String get notificationCommandCopied;
+
+  /// No description provided for @notificationCommandNotReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not build launch command - launcher binaries are not ready yet.'**
+  String get notificationCommandNotReady;
+
+  /// No description provided for @textureAutoRecommended.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto (recommended)'**
+  String get textureAutoRecommended;
+
+  /// No description provided for @detectionDlcPresent.
+  ///
+  /// In en, this message translates to:
+  /// **'DLC: present'**
+  String get detectionDlcPresent;
+
+  /// No description provided for @detectionDlcNotDetected.
+  ///
+  /// In en, this message translates to:
+  /// **'DLC: not detected'**
+  String get detectionDlcNotDetected;
+
+  /// No description provided for @detectionDlcPresentTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'DLC data100.cpk found. Mods that ship DLC-only outfit files (pl000d, pl010d, pl020d) will install as-is.'**
+  String get detectionDlcPresentTooltip;
+
+  /// No description provided for @detectionDlcNotDetectedTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'No DLC detected. Mods that ship DLC-only outfit files (pl000d, pl010d, pl020d) will be installed under the non-DLC names (pl0000, pl0100, pl0200) so they show up in-game.'**
+  String get detectionDlcNotDetectedTooltip;
+
+  /// No description provided for @detectionExeWolfLimitBreak.
+  ///
+  /// In en, this message translates to:
+  /// **'EXE: Wolf Limit Break'**
+  String get detectionExeWolfLimitBreak;
+
+  /// No description provided for @detectionExeOriginal.
+  ///
+  /// In en, this message translates to:
+  /// **'EXE: Original'**
+  String get detectionExeOriginal;
+
+  /// No description provided for @detectionExeMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'EXE: missing'**
+  String get detectionExeMissing;
+
+  /// No description provided for @detectionExeUnrecognised.
+  ///
+  /// In en, this message translates to:
+  /// **'EXE: unrecognised'**
+  String get detectionExeUnrecognised;
+
+  /// No description provided for @detectionExeUnrecognisedTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'NieRAutomata.exe is present but its hash is not in our known list. NAMS will still run; this is just a heads-up that we have not seen this exact build.'**
+  String get detectionExeUnrecognisedTooltip;
+
+  /// No description provided for @detectionExeWolfLimitBreakTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Wolf Limit Break NieRAutomata.exe detected. NAMS does not need this patch and was never tested against it. The game may still launch, but performance issues, memory crashes, or mod incompatibilities are possible. For full support, restore the original Steam executable (verify game files in Steam).'**
+  String get detectionExeWolfLimitBreakTooltip;
+
   /// No description provided for @launchOptionsTitle.
   ///
   /// In en, this message translates to:
@@ -819,6 +903,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'ReShade detected - disabled by default. NAMS already ships a patched native depth-of-field, so ReShade is optional. Re-enable it any time in the NAMS config tab (Disable ReShade Loading → off).'**
   String get notifyReShadeDetected;
+
+  /// No description provided for @notifyNaiomMigrated.
+  ///
+  /// In en, this message translates to:
+  /// **'Found your old NAIOM settings - imported into nams.toml. Check the NAIOM tab. You can remove the old NAIOM files (dinput8.dll, NAIOM.ini) from the game folder.'**
+  String get notifyNaiomMigrated;
+
+  /// No description provided for @notifyNaiomSkipped.
+  ///
+  /// In en, this message translates to:
+  /// **'Some NAIOM bindings use keys NAMS does not support and were not imported: {entries}. Rebind them in the NAIOM tab.'**
+  String notifyNaiomSkipped(String entries);
+
+  /// No description provided for @notifyPlatformUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'No Windows compatibility layer found on {platform}, so the game cannot be started from here. Mods, textures and configs all still work. Install CrossOver and put NieR:Automata in a bottle to enable launching.'**
+  String notifyPlatformUnsupported(String platform);
 
   /// No description provided for @notifyReShadeIncompatible.
   ///

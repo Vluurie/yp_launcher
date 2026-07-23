@@ -31,6 +31,52 @@ class AppLocalizationsZh extends AppLocalizations {
       '翻译由社区提供或自动生成，可能存在不准确之处。维护者仅使用英语 — 寻求帮助时请使用英语提问。';
 
   @override
+  String get tooltipCopyCommand => '将 NAMS 命令复制到剪贴板，以便粘贴到终端中手动启动游戏。';
+
+  @override
+  String get notificationCommandCopied => '启动命令已复制 — 将其粘贴到终端中即可手动启动游戏。';
+
+  @override
+  String get notificationCommandNotReady => '无法生成启动命令 — 启动器二进制文件尚未就绪。';
+
+  @override
+  String get textureAutoRecommended => '自动（推荐）';
+
+  @override
+  String get detectionDlcPresent => 'DLC：已存在';
+
+  @override
+  String get detectionDlcNotDetected => 'DLC：未检测到';
+
+  @override
+  String get detectionDlcPresentTooltip =>
+      '已找到 DLC data100.cpk。附带仅限 DLC 的服装文件（pl000d、pl010d、pl020d）的模组将按原样安装。';
+
+  @override
+  String get detectionDlcNotDetectedTooltip =>
+      '未检测到 DLC。附带仅限 DLC 的服装文件（pl000d、pl010d、pl020d）的模组将以非 DLC 名称（pl0000、pl0100、pl0200）安装，以便在游戏中显示。';
+
+  @override
+  String get detectionExeWolfLimitBreak => 'EXE：Wolf Limit Break';
+
+  @override
+  String get detectionExeOriginal => 'EXE：原版';
+
+  @override
+  String get detectionExeMissing => 'EXE：缺失';
+
+  @override
+  String get detectionExeUnrecognised => 'EXE：无法识别';
+
+  @override
+  String get detectionExeUnrecognisedTooltip =>
+      'NieRAutomata.exe 存在，但其哈希值不在我们的已知列表中。NAMS 仍可运行；这只是提醒你我们尚未见过这个确切的版本。';
+
+  @override
+  String get detectionExeWolfLimitBreakTooltip =>
+      '检测到 Wolf Limit Break 版本的 NieRAutomata.exe。NAMS 不需要此补丁，且从未针对它进行测试。游戏或许仍能启动，但可能出现性能问题、内存崩溃或模组不兼容。若需完整支持，请还原原版 Steam 可执行文件（在 Steam 中验证游戏文件）。';
+
+  @override
   String get launchOptionsTitle => '启动选项';
 
   @override
@@ -390,6 +436,20 @@ class AppLocalizationsZh extends AppLocalizations {
   @override
   String get notifyReShadeDetected =>
       '检测到 ReShade，默认已禁用。NAMS 已自带修补后的原生景深效果，因此 ReShade 为可选项。你可以随时在 NAMS 配置选项卡中重新启用（关闭“禁用 ReShade 加载”）。';
+
+  @override
+  String get notifyNaiomMigrated =>
+      '已找到旧的 NAIOM 设置并导入 nams.toml。请查看 NAIOM 选项卡。你可以从游戏文件夹中删除旧的 NAIOM 文件（dinput8.dll、NAIOM.ini）。';
+
+  @override
+  String notifyNaiomSkipped(String entries) {
+    return '部分 NAIOM 按键绑定使用了 NAMS 不支持的按键，未被导入：$entries。请在 NAIOM 选项卡中重新绑定。';
+  }
+
+  @override
+  String notifyPlatformUnsupported(String platform) {
+    return '在 $platform 上未找到 Windows 兼容层，因此无法从这里启动游戏。模组、纹理和配置仍可正常使用。请安装 CrossOver 并将 NieR:Automata 放入 bottle 中以启用启动功能。';
+  }
 
   @override
   String get notifyReShadeIncompatible =>

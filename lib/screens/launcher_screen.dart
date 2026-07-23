@@ -453,7 +453,7 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
                     .isDirectorySelected) ...[
                   _buildIconAction(
                     Icons.terminal,
-                    'Copy the NAMS command to clipboard so you can paste it into a terminal and start the game manually.',
+                    l10n.tooltipCopyCommand,
                     () => _copyLaunchCommand(),
                   ),
                   SizedBox(width: AppSizes.spacingSM(context)),
@@ -637,7 +637,7 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
     final appState = ref.watch(appStateControllerProvider);
 
     final hasError = appState.errorMessage != null;
-    final hasStatus = appState.statusMessage != null;
+    final hasStatus = appState.status != null;
     final isReady =
         appState.isDirectorySelected &&
         appState.playButtonState == PlayButtonState.idle &&
@@ -650,7 +650,12 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
       text = appState.errorMessage!;
       color = AppColors.error;
     } else if (hasStatus) {
-      text = appState.statusMessage!;
+      text = switch (appState.status!) {
+        LaunchStatus.launching => l10n.statusLaunching,
+        LaunchStatus.running => l10n.statusRunning,
+        LaunchStatus.stopped => l10n.statusStopped,
+        LaunchStatus.stopping => l10n.statusStopping,
+      };
       color = AppColors.textSecondary;
     } else if (!PlatformGate.canLaunchGame) {
       text = PlatformGate.isMacOS
@@ -848,8 +853,7 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
       notifier.addNotification(
         NotificationItem(
           id: 'launch_cmd_${DateTime.now().millisecondsSinceEpoch}',
-          message:
-              'Could not build launch command — launcher binaries are not ready yet.',
+          message: (l10n) => l10n.notificationCommandNotReady,
           icon: Icons.error_outline,
           color: AppColors.error,
           type: NotificationType.general,
@@ -861,8 +865,7 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
     notifier.addNotification(
       NotificationItem(
         id: 'launch_cmd_${DateTime.now().millisecondsSinceEpoch}',
-        message:
-            'Launch command copied — paste it into a terminal to start the game manually.',
+        message: (l10n) => l10n.notificationCommandCopied,
         icon: Icons.check_circle,
         color: AppColors.success,
         type: NotificationType.general,

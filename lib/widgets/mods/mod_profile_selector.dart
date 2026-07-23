@@ -520,7 +520,7 @@ class ModProfileSelector extends ConsumerWidget {
     ref.read(notificationStateControllerProvider.notifier).addNotification(
           NotificationItem(
             id: 'profile_${DateTime.now().millisecondsSinceEpoch}',
-            message: message,
+            message: (l10n) => message,
             icon: color == AppColors.error
                 ? Icons.error_outline
                 : Icons.check_circle,

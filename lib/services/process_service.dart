@@ -35,7 +35,7 @@ class ProcessService {
       final missing = await LauncherSetupService.findMissingFiles();
       if (missing.isNotEmpty) {
         return LaunchOutcome.failed(LaunchFailure(
-          headline: AppStrings.errorFilesQuarantined(missing.join(', ')),
+          headline: l10n.errorFilesQuarantined(missing.join(', ')),
           rawOutput:
               'Missing required files in launcher directory:\n${missing.join('\n')}\n\n'
               'These files were quarantined or removed by antivirus software.',
@@ -56,7 +56,7 @@ class ProcessService {
       final nierExePath = path.join(installDirectory, AppStrings.gameExeName);
       if (!await File(nierExePath).exists()) {
         return LaunchOutcome.failed(LaunchFailure(
-          headline: AppStrings.errorExeNotFound(installDirectory),
+          headline: l10n.errorExeNotFound(installDirectory),
           rawOutput:
               'NieRAutomata.exe was not found at:\n$nierExePath\n\n'
               'The game install path saved in the launcher may be wrong, '

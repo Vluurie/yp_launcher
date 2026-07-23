@@ -7,6 +7,20 @@
   "tooltipDiscord": "Discord",
   "tooltipLanguage": "Language",
   "languageSupportNotice": "Translations are community-made or auto-generated and may be inaccurate. The maintainers speak English only - please ask for help in English.",
+  "tooltipCopyCommand": "Copy the NAMS command to clipboard so you can paste it into a terminal and start the game manually.",
+  "notificationCommandCopied": "Launch command copied - paste it into a terminal to start the game manually.",
+  "notificationCommandNotReady": "Could not build launch command - launcher binaries are not ready yet.",
+  "textureAutoRecommended": "Auto (recommended)",
+  "detectionDlcPresent": "DLC: present",
+  "detectionDlcNotDetected": "DLC: not detected",
+  "detectionDlcPresentTooltip": "DLC data100.cpk found. Mods that ship DLC-only outfit files (pl000d, pl010d, pl020d) will install as-is.",
+  "detectionDlcNotDetectedTooltip": "No DLC detected. Mods that ship DLC-only outfit files (pl000d, pl010d, pl020d) will be installed under the non-DLC names (pl0000, pl0100, pl0200) so they show up in-game.",
+  "detectionExeWolfLimitBreak": "EXE: Wolf Limit Break",
+  "detectionExeOriginal": "EXE: Original",
+  "detectionExeMissing": "EXE: missing",
+  "detectionExeUnrecognised": "EXE: unrecognised",
+  "detectionExeUnrecognisedTooltip": "NieRAutomata.exe is present but its hash is not in our known list. NAMS will still run; this is just a heads-up that we have not seen this exact build.",
+  "detectionExeWolfLimitBreakTooltip": "Wolf Limit Break NieRAutomata.exe detected. NAMS does not need this patch and was never tested against it. The game may still launch, but performance issues, memory crashes, or mod incompatibilities are possible. For full support, restore the original Steam executable (verify game files in Steam).",
   "launchOptionsTitle": "LAUNCH OPTIONS",
   "launchOptionMinimizeOnLaunch": "Minimize launcher while playing",
   "launchOptionPreferDedicatedGpu": "Prefer dedicated GPU",
@@ -134,6 +148,23 @@
   "notifyShortcutFailed": "Failed to create desktop shortcut.",
   "notifyLodModMigrated": "Found your old LodMod.ini settings - imported into lodmod.toml and enabled LodMod.",
   "notifyReShadeDetected": "ReShade detected - disabled by default. NAMS already ships a patched native depth-of-field, so ReShade is optional. Re-enable it any time in the NAMS config tab (Disable ReShade Loading → off).",
+  "notifyNaiomMigrated": "Found your old NAIOM settings - imported into nams.toml. Check the NAIOM tab. You can remove the old NAIOM files (dinput8.dll, NAIOM.ini) from the game folder.",
+  "notifyNaiomSkipped": "Some NAIOM bindings use keys NAMS does not support and were not imported: {entries}. Rebind them in the NAIOM tab.",
+  "@notifyNaiomSkipped": {
+    "placeholders": {
+      "entries": {
+        "type": "String"
+      }
+    }
+  },
+  "notifyPlatformUnsupported": "No Windows compatibility layer found on {platform}, so the game cannot be started from here. Mods, textures and configs all still work. Install CrossOver and put NieR:Automata in a bottle to enable launching.",
+  "@notifyPlatformUnsupported": {
+    "placeholders": {
+      "platform": {
+        "type": "String"
+      }
+    }
+  },
   "notifyReShadeIncompatible": "ReShade with addon/ImGui support detected - incompatible. Use standard ReShade without addon support.",
   "notifyTexturesDetected": "HD textures found in {folder} - will load on launch.",
   "@notifyTexturesDetected": {

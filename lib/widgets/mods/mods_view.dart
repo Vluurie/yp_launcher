@@ -168,7 +168,7 @@ class _ModsViewState extends ConsumerState<ModsView> {
           : l10n.modDropNotAMod;
       notif.addNotification(NotificationItem(
         id: 'mod_drop_reject_${DateTime.now().millisecondsSinceEpoch}',
-        message: message,
+        message: (l10n) => message,
         icon: Icons.error_outline,
         color: AppColors.error,
         type: NotificationType.general,
@@ -207,7 +207,7 @@ class _ModsViewState extends ConsumerState<ModsView> {
       final isTextureOnly = detect.errorReason == 'texture_only';
       notif.addNotification(NotificationItem(
         id: 'mod_install_fail_${DateTime.now().millisecondsSinceEpoch}',
-        message: isTextureOnly
+        message: (l10n) => isTextureOnly
             ? l10n.modInstallReasonTextureOnly
             : l10n.modInstallFailed(
                 _localizeReason(l10n, detect.errorReason ?? 'unknown_drop')),
@@ -309,7 +309,7 @@ class _ModsViewState extends ConsumerState<ModsView> {
       setState(() => _selectedId = result.installedId);
       notif.addNotification(NotificationItem(
         id: 'mod_installed_${DateTime.now().millisecondsSinceEpoch}',
-        message: l10n.modInstalled(result.installedId ?? ''),
+        message: (l10n) => l10n.modInstalled(result.installedId ?? ''),
         icon: Icons.check_circle,
         color: AppColors.success,
         type: NotificationType.general,
@@ -317,7 +317,7 @@ class _ModsViewState extends ConsumerState<ModsView> {
       if (result.sideInstalledTexturePacks.isNotEmpty) {
         notif.addNotification(NotificationItem(
           id: 'mod_side_textures_${DateTime.now().millisecondsSinceEpoch}',
-          message: l10n.modSideInstalledTextures(
+          message: (l10n) => l10n.modSideInstalledTextures(
             result.sideInstalledTexturePacks.join(', '),
           ),
           icon: Icons.texture,
@@ -328,7 +328,7 @@ class _ModsViewState extends ConsumerState<ModsView> {
     } else {
       notif.addNotification(NotificationItem(
         id: 'mod_install_fail_${DateTime.now().millisecondsSinceEpoch}',
-        message: l10n.modInstallFailed(_localizeReason(l10n, result.errorMessage ?? 'unknown')),
+        message: (l10n) => l10n.modInstallFailed(_localizeReason(l10n, result.errorMessage ?? 'unknown')),
         icon: Icons.error_outline,
         color: AppColors.error,
         type: NotificationType.general,
@@ -447,7 +447,7 @@ class _ModsViewState extends ConsumerState<ModsView> {
     if (installed > 0) {
       notif.addNotification(NotificationItem(
         id: 'mod_variants_${DateTime.now().millisecondsSinceEpoch}',
-        message: l10n.modVariantInstalledToast(installed),
+        message: (l10n) => l10n.modVariantInstalledToast(installed),
         icon: Icons.check_circle,
         color: AppColors.success,
         type: NotificationType.general,
@@ -456,7 +456,7 @@ class _ModsViewState extends ConsumerState<ModsView> {
     for (final f in failures) {
       notif.addNotification(NotificationItem(
         id: 'mod_variant_fail_${DateTime.now().millisecondsSinceEpoch}_$f',
-        message: l10n.modInstallFailed(f),
+        message: (l10n) => l10n.modInstallFailed(f),
         icon: Icons.error_outline,
         color: AppColors.error,
         type: NotificationType.general,
@@ -573,7 +573,7 @@ class _ModsViewState extends ConsumerState<ModsView> {
     if (_selectedId == mod.id) setState(() => _selectedId = null);
     ref.read(notificationStateControllerProvider.notifier).addNotification(NotificationItem(
           id: 'mod_uninstalled_${DateTime.now().millisecondsSinceEpoch}',
-          message: l10n.modUninstalled(mod.id),
+          message: (l10n) => l10n.modUninstalled(mod.id),
           icon: Icons.delete_outline,
           color: AppColors.textMuted,
           type: NotificationType.general,
@@ -776,7 +776,7 @@ class _ModsViewState extends ConsumerState<ModsView> {
       setState(() => _busy = false);
       notif.addNotification(NotificationItem(
         id: 'bulk_none_${DateTime.now().millisecondsSinceEpoch}',
-        message: l10n.modBulkInstallNone,
+        message: (l10n) => l10n.modBulkInstallNone,
         icon: Icons.info_outline,
         color: AppColors.warning,
         type: NotificationType.general,
@@ -815,7 +815,7 @@ class _ModsViewState extends ConsumerState<ModsView> {
 
     notif.addNotification(NotificationItem(
       id: 'bulk_done_${DateTime.now().millisecondsSinceEpoch}',
-      message: l10n.modBulkInstallDone(installed, archives.length),
+      message: (l10n) => l10n.modBulkInstallDone(installed, archives.length),
       icon: Icons.check_circle,
       color: installed == archives.length ? AppColors.success : AppColors.warning,
       type: NotificationType.general,
@@ -823,7 +823,7 @@ class _ModsViewState extends ConsumerState<ModsView> {
     for (final f in failures) {
       notif.addNotification(NotificationItem(
         id: 'bulk_fail_${DateTime.now().millisecondsSinceEpoch}_$f',
-        message: l10n.modInstallFailed(f),
+        message: (l10n) => l10n.modInstallFailed(f),
         icon: Icons.error_outline,
         color: AppColors.error,
         type: NotificationType.general,

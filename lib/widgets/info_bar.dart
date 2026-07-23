@@ -5,7 +5,6 @@ import 'package:path/path.dart' as path;
 import 'package:toml/toml.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:yp_launcher/constants/app_strings.dart';
 import 'package:yp_launcher/l10n/app_localizations.dart';
 import 'package:yp_launcher/providers/app_state.dart';
 import 'package:yp_launcher/providers/config_state.dart';
@@ -98,7 +97,7 @@ class InfoBar extends ConsumerWidget {
                       notifier.addNotification(
                         NotificationItem(
                           id: 'shortcut_${DateTime.now().millisecondsSinceEpoch}',
-                          message: success
+                          message: (l10n) => success
                               ? l10n.notifyShortcutCreated
                               : l10n.notifyShortcutFailed,
                           icon: success
@@ -335,10 +334,11 @@ class _DetectionChipState extends ConsumerState<DetectionChip> {
         setState(() {
           _detected = has;
           _warning = false;
-          _label = has ? 'DLC: present' : 'DLC: not detected';
+          _label =
+              has ? l10n.detectionDlcPresent : l10n.detectionDlcNotDetected;
           _tooltip = has
-              ? 'DLC data100.cpk found. Mods that ship DLC-only outfit files (pl000d, pl010d, pl020d) will install as-is.'
-              : 'No DLC detected. Mods that ship DLC-only outfit files (pl000d, pl010d, pl020d) will be installed under the non-DLC names (pl0000, pl0100, pl0200) so they show up in-game.';
+              ? l10n.detectionDlcPresentTooltip
+              : l10n.detectionDlcNotDetectedTooltip;
           _checked = true;
         });
       case 'exe':
@@ -349,15 +349,15 @@ class _DetectionChipState extends ConsumerState<DetectionChip> {
             setState(() {
               _detected = true;
               _warning = true;
-              _label = 'EXE: Wolf Limit Break';
-              _tooltip = AppStrings.notifyWolfLimitBreakDetected;
+              _label = l10n.detectionExeWolfLimitBreak;
+              _tooltip = l10n.detectionExeWolfLimitBreakTooltip;
               _checked = true;
             });
           case ExeVariant.original:
             setState(() {
               _detected = true;
               _warning = false;
-              _label = 'EXE: Original';
+              _label = l10n.detectionExeOriginal;
               _tooltip = null;
               _checked = true;
             });
@@ -365,7 +365,7 @@ class _DetectionChipState extends ConsumerState<DetectionChip> {
             setState(() {
               _detected = false;
               _warning = false;
-              _label = 'EXE: missing';
+              _label = l10n.detectionExeMissing;
               _tooltip = null;
               _checked = true;
             });
@@ -373,8 +373,8 @@ class _DetectionChipState extends ConsumerState<DetectionChip> {
             setState(() {
               _detected = false;
               _warning = false;
-              _label = 'EXE: unrecognised';
-              _tooltip = 'NieRAutomata.exe is present but its hash is not in our known list. NAMS will still run; this is just a heads-up that we have not seen this exact build.';
+              _label = l10n.detectionExeUnrecognised;
+              _tooltip = l10n.detectionExeUnrecognisedTooltip;
               _checked = true;
             });
         }

@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:yp_launcher/constants/app_strings.dart';
+import 'package:yp_launcher/l10n/app_localizations.dart';
 import 'package:yp_launcher/services/detection/game_detection.dart';
 import 'package:yp_launcher/services/detection/lodmod_detection.dart';
 import 'package:yp_launcher/services/detection/naiom_detection.dart';
@@ -18,7 +18,7 @@ enum NotificationType { migration, reshade, textures, shortcut, general }
 
 class NotificationItem {
   final String id;
-  final String message;
+  final String Function(AppLocalizations l10n) message;
   final IconData icon;
   final Color color;
   final NotificationType type;
@@ -58,9 +58,9 @@ class NotificationStateController extends _$NotificationStateController {
       final missing = await LauncherSetupService.findMissingFiles();
       if (missing.isNotEmpty) {
         items.add(
-          const NotificationItem(
+          NotificationItem(
             id: 'files_quarantined',
-            message: AppStrings.notifyFilesQuarantined,
+            message: (l10n) => l10n.notifyFilesQuarantined,
             icon: Icons.shield_outlined,
             color: AppColors.error,
             type: NotificationType.general,
@@ -78,9 +78,9 @@ class NotificationStateController extends _$NotificationStateController {
         );
         if (migrated) {
           items.add(
-            const NotificationItem(
+            NotificationItem(
               id: 'lodmod_migration',
-              message: AppStrings.notifyLodModMigrated,
+              message: (l10n) => l10n.notifyLodModMigrated,
               icon: Icons.swap_horiz,
               color: AppColors.success,
               type: NotificationType.migration,
@@ -100,21 +100,20 @@ class NotificationStateController extends _$NotificationStateController {
         );
         if (result.migrated) {
           items.add(
-            const NotificationItem(
+            NotificationItem(
               id: 'naiom_migration',
-              message: AppStrings.notifyNaiomMigrated,
+              message: (l10n) => l10n.notifyNaiomMigrated,
               icon: Icons.swap_horiz,
               color: AppColors.success,
               type: NotificationType.migration,
             ),
           );
           if (result.skippedEntries.isNotEmpty) {
+            final skipped = result.skippedEntries.join(', ');
             items.add(
               NotificationItem(
                 id: 'naiom_migration_skipped',
-                message: AppStrings.notifyNaiomSkipped(
-                  result.skippedEntries.join(', '),
-                ),
+                message: (l10n) => l10n.notifyNaiomSkipped(skipped),
                 icon: Icons.warning_amber,
                 color: AppColors.warning,
                 type: NotificationType.migration,
@@ -130,9 +129,9 @@ class NotificationStateController extends _$NotificationStateController {
       if (reshadeStatus == ReShadeStatus.detected) {
         await ReShadeDetection.autoDisableReShadeLoading(gameDir);
         items.add(
-          const NotificationItem(
+          NotificationItem(
             id: 'reshade',
-            message: AppStrings.notifyReShadeDetected,
+            message: (l10n) => l10n.notifyReShadeDetected,
             icon: Icons.auto_fix_high,
             color: AppColors.accentPrimary,
             type: NotificationType.reshade,
@@ -140,9 +139,9 @@ class NotificationStateController extends _$NotificationStateController {
         );
       } else if (reshadeStatus == ReShadeStatus.incompatibleAddon) {
         items.add(
-          const NotificationItem(
+          NotificationItem(
             id: 'reshade_incompatible',
-            message: AppStrings.notifyReShadeIncompatible,
+            message: (l10n) => l10n.notifyReShadeIncompatible,
             icon: Icons.warning_amber,
             color: AppColors.warning,
             type: NotificationType.reshade,
@@ -157,7 +156,7 @@ class NotificationStateController extends _$NotificationStateController {
         items.add(
           NotificationItem(
             id: 'textures_$folder',
-            message: AppStrings.notifyTexturesDetected(folder),
+            message: (l10n) => l10n.notifyTexturesDetected(folder),
             icon: Icons.image,
             color: AppColors.accentPrimary,
             type: NotificationType.textures,
@@ -186,7 +185,7 @@ class NotificationStateController extends _$NotificationStateController {
       ...state,
       NotificationItem(
         id: id,
-        message: AppStrings.notifyPlatformUnsupported(platformName),
+        message: (l10n) => l10n.notifyPlatformUnsupported(platformName),
         icon: Icons.warning_amber,
         color: AppColors.warning,
         type: NotificationType.general,

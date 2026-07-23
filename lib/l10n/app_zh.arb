@@ -7,6 +7,20 @@
   "tooltipDiscord": "Discord",
   "tooltipLanguage": "语言",
   "languageSupportNotice": "翻译由社区提供或自动生成，可能存在不准确之处。维护者仅使用英语 — 寻求帮助时请使用英语提问。",
+  "tooltipCopyCommand": "将 NAMS 命令复制到剪贴板，以便粘贴到终端中手动启动游戏。",
+  "notificationCommandCopied": "启动命令已复制 — 将其粘贴到终端中即可手动启动游戏。",
+  "notificationCommandNotReady": "无法生成启动命令 — 启动器二进制文件尚未就绪。",
+  "textureAutoRecommended": "自动（推荐）",
+  "detectionDlcPresent": "DLC：已存在",
+  "detectionDlcNotDetected": "DLC：未检测到",
+  "detectionDlcPresentTooltip": "已找到 DLC data100.cpk。附带仅限 DLC 的服装文件（pl000d、pl010d、pl020d）的模组将按原样安装。",
+  "detectionDlcNotDetectedTooltip": "未检测到 DLC。附带仅限 DLC 的服装文件（pl000d、pl010d、pl020d）的模组将以非 DLC 名称（pl0000、pl0100、pl0200）安装，以便在游戏中显示。",
+  "detectionExeWolfLimitBreak": "EXE：Wolf Limit Break",
+  "detectionExeOriginal": "EXE：原版",
+  "detectionExeMissing": "EXE：缺失",
+  "detectionExeUnrecognised": "EXE：无法识别",
+  "detectionExeUnrecognisedTooltip": "NieRAutomata.exe 存在，但其哈希值不在我们的已知列表中。NAMS 仍可运行；这只是提醒你我们尚未见过这个确切的版本。",
+  "detectionExeWolfLimitBreakTooltip": "检测到 Wolf Limit Break 版本的 NieRAutomata.exe。NAMS 不需要此补丁，且从未针对它进行测试。游戏或许仍能启动，但可能出现性能问题、内存崩溃或模组不兼容。若需完整支持，请还原原版 Steam 可执行文件（在 Steam 中验证游戏文件）。",
   "launchOptionsTitle": "启动选项",
   "launchOptionMinimizeOnLaunch": "游戏时最小化启动器",
   "launchOptionPreferDedicatedGpu": "优先使用独立显卡",
@@ -134,6 +148,23 @@
   "notifyShortcutFailed": "创建桌面快捷方式失败。",
   "notifyLodModMigrated": "已找到旧的 LodMod.ini 设置，并导入 lodmod.toml，同时启用了 LodMod。",
   "notifyReShadeDetected": "检测到 ReShade，默认已禁用。NAMS 已自带修补后的原生景深效果，因此 ReShade 为可选项。你可以随时在 NAMS 配置选项卡中重新启用（关闭“禁用 ReShade 加载”）。",
+  "notifyNaiomMigrated": "已找到旧的 NAIOM 设置并导入 nams.toml。请查看 NAIOM 选项卡。你可以从游戏文件夹中删除旧的 NAIOM 文件（dinput8.dll、NAIOM.ini）。",
+  "notifyNaiomSkipped": "部分 NAIOM 按键绑定使用了 NAMS 不支持的按键，未被导入：{entries}。请在 NAIOM 选项卡中重新绑定。",
+  "@notifyNaiomSkipped": {
+    "placeholders": {
+      "entries": {
+        "type": "String"
+      }
+    }
+  },
+  "notifyPlatformUnsupported": "在 {platform} 上未找到 Windows 兼容层，因此无法从这里启动游戏。模组、纹理和配置仍可正常使用。请安装 CrossOver 并将 NieR:Automata 放入 bottle 中以启用启动功能。",
+  "@notifyPlatformUnsupported": {
+    "placeholders": {
+      "platform": {
+        "type": "String"
+      }
+    }
+  },
   "notifyReShadeIncompatible": "检测到支持插件/ImGui 的 ReShade，无法兼容。请使用不含插件支持的标准版 ReShade。",
   "notifyTexturesDetected": "在 {folder} 中发现高清纹理，将在启动时加载。",
   "@notifyTexturesDetected": {

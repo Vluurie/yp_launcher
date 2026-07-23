@@ -32,30 +32,32 @@ final busyOperationsProvider = StateProvider<int>((ref) => 0);
 
 enum PlayButtonState { idle, loading, running }
 
+enum LaunchStatus { launching, running, stopped, stopping }
+
 class AppState {
   final String selectedDirectory;
   final PlayButtonState playButtonState;
   final String? errorMessage;
-  final String? statusMessage;
+  final LaunchStatus? status;
 
   const AppState({
     this.selectedDirectory = '',
     this.playButtonState = PlayButtonState.idle,
     this.errorMessage,
-    this.statusMessage,
+    this.status,
   });
 
   AppState copyWith({
     String? selectedDirectory,
     PlayButtonState? playButtonState,
     String? errorMessage,
-    String? statusMessage,
+    LaunchStatus? status,
   }) {
     return AppState(
       selectedDirectory: selectedDirectory ?? this.selectedDirectory,
       playButtonState: playButtonState ?? this.playButtonState,
       errorMessage: errorMessage,
-      statusMessage: statusMessage,
+      status: status,
     );
   }
 
@@ -107,7 +109,7 @@ class AppStateController extends _$AppStateController {
     state = state.copyWith(errorMessage: null);
   }
 
-  void setStatus(String? status) {
-    state = state.copyWith(statusMessage: status);
+  void setStatus(LaunchStatus? status) {
+    state = state.copyWith(status: status);
   }
 }
