@@ -7,7 +7,15 @@ class DefaultModsData {
   final List<DefaultEntry> entries;
   final bool isLoading;
 
-  const DefaultModsData({this.entries = const [], this.isLoading = false});
+  /// Mirrors `experimental_default_outfits` in nams.toml. When false the game
+  /// ignores default_mods.toml, so the launcher hides the default-mods UI.
+  final bool defaultOutfitsEnabled;
+
+  const DefaultModsData({
+    this.entries = const [],
+    this.isLoading = false,
+    this.defaultOutfitsEnabled = false,
+  });
 
   bool isDefault(String relPath) =>
       DefaultModsService.matches(entries, relPath);
@@ -50,9 +58,18 @@ class DefaultModsStateController extends _$DefaultModsStateController {
 
   Future<void> load(String gameDir) async {
     if (gameDir.isEmpty) return;
-    state = DefaultModsData(entries: state.entries, isLoading: true);
+    state = DefaultModsData(
+      entries: state.entries,
+      isLoading: true,
+      defaultOutfitsEnabled: state.defaultOutfitsEnabled,
+    );
+    final enabled = await DefaultModsService.isFeatureEnabled(gameDir);
+    if (!enabled) {
+      state = const DefaultModsData();
+      return;
+    }
     final entries = await DefaultModsService.list(gameDir);
-    state = DefaultModsData(entries: entries);
+    state = DefaultModsData(entries: entries, defaultOutfitsEnabled: true);
   }
 
   /// Sets `relPath` to `kind`, or clears it when `kind` is null.

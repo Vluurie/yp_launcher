@@ -35,6 +35,7 @@ class _ModsStepState extends ConsumerState<ModsStep> {
   bool _busy = false;
   String _busyMessage = '';
   String? _error;
+  String? _warning;
   final List<String> _installedNames = [];
   _OutfitHint _outfitHint = _OutfitHint.none;
 
@@ -181,6 +182,35 @@ class _ModsStepState extends ConsumerState<ModsStep> {
                     style: TextStyle(
                       fontSize: AppSizes.fontXS(context),
                       color: AppColors.error,
+                      height: 1.35,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+        if (_warning != null) ...[
+          const SizedBox(height: 10),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            decoration: BoxDecoration(
+              color: AppColors.warning.withValues(alpha: 0.10),
+              border:
+                  Border.all(color: AppColors.warning.withValues(alpha: 0.5)),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.warning_amber,
+                    size: 16, color: AppColors.warning),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    _warning!,
+                    style: TextStyle(
+                      fontSize: AppSizes.fontXS(context),
+                      color: AppColors.warning,
                       height: 1.35,
                     ),
                   ),
@@ -398,6 +428,9 @@ class _ModsStepState extends ConsumerState<ModsStep> {
     setState(() {
       _busy = false;
       _error = null;
+      _warning = result.unpairedWarnings.isNotEmpty
+          ? l.modLooseUnpairedWarning(result.unpairedWarnings.join(', '))
+          : null;
       _installedNames.add(displayName);
       if (hint != _OutfitHint.none) _outfitHint = hint;
     });
@@ -444,7 +477,14 @@ class _ModsStepState extends ConsumerState<ModsStep> {
       }
       if (!mounted) return;
       if (result.success) {
-        setState(() => _installedNames.add(name));
+        setState(() {
+          _installedNames.add(name);
+          if (result.unpairedWarnings.isNotEmpty) {
+            _warning = l.modLooseUnpairedWarning(
+              result.unpairedWarnings.join(', '),
+            );
+          }
+        });
       } else {
         setState(() => _error = l.onboardingModInstallFailed(
               result.errorMessage ?? 'unknown error',

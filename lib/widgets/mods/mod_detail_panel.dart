@@ -263,6 +263,19 @@ class ModDetailPanel extends ConsumerWidget {
             ? p.fileName.substring(0, p.fileName.lastIndexOf('.'))
             : p.fileName;
         if (!seen.add(stem)) continue;
+        if (!defaults.defaultOutfitsEnabled) {
+          lines.add(Padding(
+            padding: EdgeInsets.only(bottom: AppSizes.paddingXS(context)),
+            child: Text(
+              p.label,
+              style: TextStyle(
+                fontSize: AppSizes.fontSM(context),
+                color: AppColors.textSecondary,
+              ),
+            ),
+          ));
+          continue;
+        }
         final relPath = 'mods/${mod.id}/pl/$stem';
         final kind = defaults.kindOf(relPath);
         final target = DefaultModsService.kindFor(
@@ -308,7 +321,7 @@ class ModDetailPanel extends ConsumerWidget {
     }
 
     for (final e in d.entries) {
-      if (e.category == DataCategory.player3d && d.players.isNotEmpty) continue;
+      if (e.category == DataCategory.player && d.players.isNotEmpty) continue;
       final label = _categoryLabel(e.category, e.dirName);
       lines.add(Padding(
         padding: EdgeInsets.only(bottom: AppSizes.paddingXS(context)),
@@ -340,14 +353,14 @@ class ModDetailPanel extends ConsumerWidget {
 
   String _categoryLabel(DataCategory cat, String dirName) {
     switch (cat) {
-      case DataCategory.player3d: return 'Player models';
-      case DataCategory.weapon3d: return 'Weapons (wp)';
-      case DataCategory.enemy3d: return 'Enemies (em)';
-      case DataCategory.accessory3d: return 'Accessories / items (et)';
-      case DataCategory.item3d: return 'Items (it)';
-      case DataCategory.worldProp3d: return 'World props ($dirName)';
-      case DataCategory.modelVariant3d: return 'Model variants (um)';
-      case DataCategory.map3d: return 'Map ($dirName)';
+      case DataCategory.player: return 'Player models';
+      case DataCategory.weapon: return 'Weapons (wp)';
+      case DataCategory.enemy: return 'Enemies (em)';
+      case DataCategory.accessory: return 'Accessories / items (et)';
+      case DataCategory.item: return 'Items (it)';
+      case DataCategory.worldProp: return 'World props ($dirName)';
+      case DataCategory.modelVariant: return 'Model variants (um)';
+      case DataCategory.map: return 'Map ($dirName)';
       case DataCategory.scripting: return 'Scripts ($dirName)';
       case DataCategory.localization: return 'Localization ($dirName)';
       case DataCategory.effects: return 'Effects ($dirName)';

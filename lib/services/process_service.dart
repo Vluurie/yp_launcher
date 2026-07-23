@@ -8,6 +8,7 @@ import 'package:yp_launcher/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yp_launcher/services/gpu_preference_service.dart';
 import 'package:yp_launcher/services/launch_failure.dart';
+import 'package:yp_launcher/services/launch_wrapper_service.dart';
 import 'package:yp_launcher/services/launcher_setup_service.dart';
 import 'package:yp_launcher/services/log_service.dart';
 import 'package:yp_launcher/services/mods_service.dart';
@@ -74,7 +75,7 @@ class ProcessService {
 
       await ModsService.syncDlcSlots(installDirectory);
 
-      final LaunchCommand command;
+      LaunchCommand command;
       try {
         command = await PlatformAdapter.current.buildLaunchCommand(
           namsExe: launcherPaths['namsExe']!,
@@ -87,6 +88,11 @@ class ProcessService {
         return LaunchOutcome.failed(
           LaunchFailure(headline: e.headline, rawOutput: e.detail),
         );
+      }
+
+      if (Platform.isLinux) {
+        final wrapper = await LaunchWrapperService.read();
+        command = LaunchWrapperService.wrap(command, wrapper);
       }
 
       var preferGpu = true;
@@ -186,13 +192,18 @@ class ProcessService {
   }) async {
     try {
       final paths = await LauncherSetupService.getLauncherPaths();
-      final command = await PlatformAdapter.current.buildLaunchCommand(
+      var command = await PlatformAdapter.current.buildLaunchCommand(
         namsExe: paths['namsExe']!,
         gameDir: installDirectory,
         gameExe: path.join(installDirectory, AppStrings.gameExeName),
         launcherDir: paths['launcherDir']!,
         l10n: l10n,
       );
+
+      if (Platform.isLinux) {
+        command =
+            LaunchWrapperService.wrap(command, await LaunchWrapperService.read());
+      }
 
       final line = [command.command, ...command.args].map(_shellQuote).join(' ');
       if (Platform.isWindows) {

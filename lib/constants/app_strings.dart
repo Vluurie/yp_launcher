@@ -18,6 +18,7 @@ class AppStrings {
   static const String prefKeyMinimizeOnLaunch = 'minimize_on_launch';
   static const String prefKeyPreferDedicatedGpu = 'prefer_dedicated_gpu';
   static const String prefKeyLocale = 'app_locale';
+  static const String prefKeyLaunchWrapper = 'launch_wrapper';
 
   static const String gameExeName = 'NieRAutomata.exe';
   static const String gameSignature = 'PRJ_028';
@@ -30,6 +31,8 @@ class AppStrings {
 
   static const String argRun = 'run';
   static const String argNierPath = '--nier-path';
+  static const String argVerify = 'verify';
+  static const String argJson = '--json';
 
   static const String shortcutName = 'NieR Automata (YoRHa Protocol)';
   static const String shortcutDescription =

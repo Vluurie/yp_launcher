@@ -325,6 +325,16 @@ class _ModsViewState extends ConsumerState<ModsView> {
           type: NotificationType.general,
         ));
       }
+      if (result.unpairedWarnings.isNotEmpty) {
+        notif.addNotification(NotificationItem(
+          id: 'mod_unpaired_${DateTime.now().millisecondsSinceEpoch}',
+          message: (l10n) =>
+              l10n.modLooseUnpairedWarning(result.unpairedWarnings.join(', ')),
+          icon: Icons.warning_amber,
+          color: AppColors.warning,
+          type: NotificationType.general,
+        ));
+      }
     } else {
       notif.addNotification(NotificationItem(
         id: 'mod_install_fail_${DateTime.now().millisecondsSinceEpoch}',
@@ -677,6 +687,8 @@ class _ModsViewState extends ConsumerState<ModsView> {
                               SizedBox(width: AppSizes.spacingSM(context)),
                               _bulkInstallButton(l10n),
                               SizedBox(width: AppSizes.spacingSM(context)),
+                              _looseInstallButton(l10n),
+                              SizedBox(width: AppSizes.spacingSM(context)),
                               _helpIconButton(l10n),
                             ],
                           ),
@@ -828,6 +840,144 @@ class _ModsViewState extends ConsumerState<ModsView> {
         color: AppColors.error,
         type: NotificationType.general,
       ));
+    }
+  }
+
+  Widget _looseInstallButton(AppLocalizations l10n) {
+    return HoverIconButton(
+      tooltip: l10n.modLooseInstall,
+      bordered: false,
+      padding: EdgeInsets.all(AppSizes.paddingXS(context)),
+      icon: Icon(
+        Icons.note_add_outlined,
+        size: AppSizes.iconLG(context),
+        color: AppColors.textMuted,
+      ),
+      onTap: _handleLooseInstall,
+    );
+  }
+
+  Future<void> _handleLooseInstall() async {
+    final l10n = AppLocalizations.of(context)!;
+    final notif = ref.read(notificationStateControllerProvider.notifier);
+
+    final folder = await FilePicker.getDirectoryPath();
+    if (folder == null || !mounted) return;
+
+    setState(() {
+      _busy = true;
+      _busyMessage = l10n.modLooseInstallScanning;
+    });
+
+    final count = await IsolateService.run(_countLooseFilesSync, folder);
+    if (!mounted) return;
+    if (count == 0) {
+      setState(() => _busy = false);
+      notif.addNotification(NotificationItem(
+        id: 'loose_none_${DateTime.now().millisecondsSinceEpoch}',
+        message: (l10n) => l10n.modLooseInstallNone,
+        icon: Icons.info_outline,
+        color: AppColors.warning,
+        type: NotificationType.general,
+      ));
+      return;
+    }
+
+    setState(() => _busyMessage = l10n.modLooseInstallBusy(count));
+
+    InstallResult result;
+    try {
+      result = await withBusyGuard(
+        ref,
+        () => _installLooseFolder(
+          folder,
+          (done) {
+            if (mounted) {
+              setState(() =>
+                  _busyMessage = l10n.modLooseInstallProgress(done, count));
+            }
+          },
+          () {
+            if (mounted) {
+              setState(() => _busyMessage = l10n.modLooseInstallFinalizing);
+            }
+          },
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+    if (!mounted) return;
+
+    await ref.read(modsStateControllerProvider.notifier).loadMods(_gameDir);
+    if (!mounted) return;
+
+    if (result.success) {
+      notif.addNotification(NotificationItem(
+        id: 'loose_done_${DateTime.now().millisecondsSinceEpoch}',
+        message: (l10n) =>
+            l10n.modLooseInstallDone(count, result.installedId ?? ''),
+        icon: Icons.check_circle,
+        color: AppColors.success,
+        type: NotificationType.general,
+      ));
+      if (result.unpairedWarnings.isNotEmpty) {
+        notif.addNotification(NotificationItem(
+          id: 'loose_unpaired_${DateTime.now().millisecondsSinceEpoch}',
+          message: (l10n) =>
+              l10n.modLooseUnpairedWarning(result.unpairedWarnings.join(', ')),
+          icon: Icons.warning_amber,
+          color: AppColors.warning,
+          type: NotificationType.general,
+        ));
+      }
+    } else {
+      notif.addNotification(NotificationItem(
+        id: 'loose_fail_${DateTime.now().millisecondsSinceEpoch}',
+        message: (l10n) =>
+            l10n.modInstallFailed(_localizeReason(l10n, result.errorMessage ?? 'unknown')),
+        icon: Icons.error_outline,
+        color: AppColors.error,
+        type: NotificationType.general,
+      ));
+    }
+  }
+
+  Future<InstallResult> _installLooseFolder(
+    String folder,
+    void Function(int done) onCopyProgress,
+    VoidCallback onFinalizing,
+  ) async {
+    final staged = await IsolateService.runWithProgress<String, String?>(
+      _stageLooseFilesSync,
+      folder,
+      (msg) {
+        final done = int.tryParse(msg);
+        if (done != null) onCopyProgress(done);
+      },
+    );
+    if (staged == null) return const InstallResult.fail('data_empty');
+    onFinalizing();
+    try {
+      final baseName = prettifyModId(p.basename(folder));
+      var name = baseName;
+      for (var attempt = 2; attempt < 100; attempt++) {
+        final result = await ModsService.install(
+          _gameDir,
+          staged,
+          requestedName: name,
+        );
+        if (result.success ||
+            result.errorMessage?.startsWith('exists:') != true) {
+          return result;
+        }
+        name = '$baseName $attempt';
+      }
+      return const InstallResult.fail('exists');
+    } finally {
+      try {
+        Directory(staged).deleteSync(recursive: true);
+      } catch (_) {}
     }
   }
 
@@ -1153,6 +1303,41 @@ List<String> _findArchivesSync(String root) {
   scan(dir, 1);
   out.sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
   return out;
+}
+
+int _countLooseFilesSync(String root) {
+  final dir = Directory(root);
+  if (!dir.existsSync()) return 0;
+  var count = 0;
+  for (final entity in dir.listSync(followLinks: false).whereType<File>()) {
+    final ext = p.extension(entity.path).toLowerCase();
+    if (ext == '.dat' || ext == '.dtt') count++;
+  }
+  return count;
+}
+
+String? _stageLooseFilesSync(String root, void Function(String) report) {
+  final dir = Directory(root);
+  if (!dir.existsSync()) return null;
+  final loose = dir
+      .listSync(followLinks: false)
+      .whereType<File>()
+      .where((f) {
+        final ext = p.extension(f.path).toLowerCase();
+        return ext == '.dat' || ext == '.dtt';
+      })
+      .toList();
+  if (loose.isEmpty) return null;
+  final staged = Directory.systemTemp.createTempSync('yp_loose_stage_');
+  var done = 0;
+  for (final f in loose) {
+    f.copySync(p.join(staged.path, p.basename(f.path)));
+    done++;
+    if (done % 100 == 0 || done == loose.length) {
+      report('$done');
+    }
+  }
+  return staged.path;
 }
 
 /// Subdirs accepted INSIDE a `data/` overlay. Includes everything NAMS

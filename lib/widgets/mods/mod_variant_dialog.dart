@@ -16,21 +16,21 @@ Future<List<ModVariant>?> showModVariantDialog(
 
 String _categoryLabel(AppLocalizations l10n, DataCategory? c) {
   switch (c) {
-    case DataCategory.player3d:
+    case DataCategory.player:
       return l10n.variantCatPlayer;
-    case DataCategory.weapon3d:
+    case DataCategory.weapon:
       return l10n.variantCatWeapon;
-    case DataCategory.accessory3d:
+    case DataCategory.accessory:
       return l10n.variantCatAccessory;
-    case DataCategory.enemy3d:
+    case DataCategory.enemy:
       return l10n.variantCatEnemy;
-    case DataCategory.modelVariant3d:
+    case DataCategory.modelVariant:
       return l10n.variantCatModelVariant;
-    case DataCategory.item3d:
+    case DataCategory.item:
       return l10n.variantCatItem;
-    case DataCategory.worldProp3d:
+    case DataCategory.worldProp:
       return l10n.variantCatWorldProp;
-    case DataCategory.map3d:
+    case DataCategory.map:
       return l10n.variantCatMap;
     case DataCategory.effects:
       return l10n.variantCatEffects;

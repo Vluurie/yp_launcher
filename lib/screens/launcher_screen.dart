@@ -26,6 +26,7 @@ import 'package:yp_launcher/theme/app_sizes.dart';
 import 'package:yp_launcher/widgets/log_panel.dart';
 import 'package:yp_launcher/widgets/notification_banner.dart';
 import 'package:yp_launcher/widgets/settings_view.dart';
+import 'package:yp_launcher/widgets/launcher_settings_view.dart';
 import 'package:yp_launcher/widgets/lodmod_view.dart';
 import 'package:yp_launcher/widgets/yorha_protocol_view.dart';
 import 'package:yp_launcher/widgets/mods/mods_view.dart';
@@ -330,6 +331,7 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
         const ModsView(),
         const NaiomView(),
         const CutscenesView(),
+        const LauncherSettingsView(),
       ],
     );
   }

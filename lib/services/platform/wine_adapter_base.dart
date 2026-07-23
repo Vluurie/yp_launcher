@@ -31,7 +31,8 @@ abstract class WineAdapterBase extends PlatformAdapter {
   bool get usesNativeTitleBar => true;
 
   @override
-  Future<LaunchCommand> buildLaunchCommand({
+  Future<LaunchCommand> buildNamsCommand({
+    required List<String> Function(String nierPath) namsArgs,
     required String namsExe,
     required String gameDir,
     required String gameExe,
@@ -40,6 +41,12 @@ abstract class WineAdapterBase extends PlatformAdapter {
   }) async {
     final runtime = detectWineRuntime(gameExePath: gameExe);
     if (runtime == null) {
+      if (Platform.isLinux) {
+        throw LaunchUnavailable(
+          l10n.errorNoCompatLayerLinux,
+          l10n.errorNoCompatLayerLinuxBody,
+        );
+      }
       throw LaunchUnavailable(
         l10n.errorNoCompatLayer,
         l10n.errorNoCompatLayerBody,
@@ -57,6 +64,7 @@ abstract class WineAdapterBase extends PlatformAdapter {
           wineBinary: runtime.binary,
           bottle: runtime.bottle!,
           prefix: runtime.prefix!,
+          namsArgs: namsArgs,
         );
       case WineSource.proton:
         final command = buildProtonLaunchCommand(
@@ -65,6 +73,7 @@ abstract class WineAdapterBase extends PlatformAdapter {
           gameExe: gameExe,
           launcherDir: launcherDir,
           protonPath: runtime.binary,
+          namsArgs: namsArgs,
         );
         if (command == null) {
           throw LaunchUnavailable(
@@ -80,6 +89,7 @@ abstract class WineAdapterBase extends PlatformAdapter {
           launcherDir: launcherDir,
           wineBinary: runtime.binary,
           prefix: runtime.prefix,
+          namsArgs: namsArgs,
         );
     }
   }

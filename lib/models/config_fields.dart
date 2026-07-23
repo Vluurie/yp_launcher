@@ -132,6 +132,14 @@ class NamsFields {
     tooltip: (l) => l.tooltipOutfitSwapVisualEffects,
   );
 
+  static final experimentalDefaultOutfits = ConfigField<bool>(
+    key: 'experimental_default_outfits',
+    defaultValue: false,
+    restartRequired: true,
+    label: (l) => l.labelExperimentalDefaultOutfits,
+    tooltip: (l) => l.tooltipExperimentalDefaultOutfits,
+  );
+
   static final disableReShadeLoading = ConfigField<bool>(
     key: 'disable_reshade_loading',
     defaultValue: false,

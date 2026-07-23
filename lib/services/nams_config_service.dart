@@ -72,6 +72,11 @@ content_buddy_ruby_selector = true
 # an instant, effect-free swap (the model still reloads). Live toggle.
 outfit_swap_visual_effects = true
 
+# EXPERIMENTAL. Default-outfit boot mods: mods listed in nams/default_mods.toml
+# are active from game start, as if their files were placed in NieRAutomata/data.
+# Off by default while the feature stabilizes. Requires restart.
+experimental_default_outfits = false
+
 disable_reshade_loading = false
 disable_texture_injection = false
 
@@ -439,6 +444,11 @@ enable_h264 = false
           '# Skip the startup splash window shown while the game loads. Setting this\n'
           '# to true brings back the vanilla resize/flicker artifacts on startup.\n'
           'disable_splash_screen = false\n',
+      'experimental_default_outfits':
+          '# EXPERIMENTAL. Default-outfit boot mods: mods listed in\n'
+          '# nams/default_mods.toml are active from game start. Off by default\n'
+          '# while the feature stabilizes. Requires restart.\n'
+          'experimental_default_outfits = false\n',
     };
     for (final entry in topLevelAdditions.entries) {
       if (content.contains(entry.key)) continue;

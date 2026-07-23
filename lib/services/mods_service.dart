@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:path/path.dart' as path;
 import 'package:yp_launcher/models/installed_mod.dart';
+import 'package:yp_launcher/models/loose_file_paths.dart';
 import 'package:yp_launcher/services/archive_service.dart';
 import 'package:yp_launcher/services/detection/game_detection.dart';
 import 'package:yp_launcher/services/isolate_service.dart';
@@ -762,6 +763,8 @@ String? _dataDirForLooseFile(String fileName) {
   final lower = fileName.toLowerCase();
   if (!lower.endsWith('.dat') && !lower.endsWith('.dtt')) return null;
   final stem = lower.substring(0, lower.length - 4);
+  final exact = LooseFilePaths.subdirForStem[stem];
+  if (exact != null) return exact;
   String? best;
   for (final key in dataDirCategoryTable.keys) {
     if (stem.startsWith(key)) {
@@ -973,7 +976,7 @@ DataSummary _scanData(
       final fileCount = _countAssetEntries(sub);
       entries.add(DataDirEntry(dirName: dirName, category: cat, fileCount: fileCount));
 
-      if (cat == DataCategory.player3d) {
+      if (cat == DataCategory.player) {
         for (final f in sub.listSync().whereType<File>()) {
           final base = path.basename(f.path);
           final lower = base.toLowerCase();
@@ -1240,7 +1243,7 @@ InstallResult _installSync(_InstallParams p) {
   }
 
   _normalizeLooseDataDirs(workRoot);
-  _normalizeLooseDataFiles(workRoot);
+  final unpairedWarnings = _normalizeLooseDataFiles(workRoot);
   _normalizeCpks(workRoot);
 
   final modsRoot = ModsService.modsDir(p.gameDir);
@@ -1308,7 +1311,7 @@ InstallResult _installSync(_InstallParams p) {
     _renameDlcSlotsToVanilla(targetDir.path);
   }
 
-  return InstallResult.ok(targetId);
+  return InstallResult.ok(targetId, unpairedWarnings: unpairedWarnings);
 }
 
 List<InstallResult> _installBatchSync(_InstallBatchParams p) {
@@ -1347,7 +1350,7 @@ List<InstallResult> _installBatchSync(_InstallBatchParams p) {
     }
 
     _normalizeLooseDataDirs(targetDir.path);
-    _normalizeLooseDataFiles(targetDir.path);
+    final unpairedWarnings = _normalizeLooseDataFiles(targetDir.path);
     _normalizeCpks(targetDir.path);
 
     final localSubPaths = _stageSiblingTextureSets(
@@ -1363,7 +1366,7 @@ List<InstallResult> _installBatchSync(_InstallBatchParams p) {
     }
 
     usedIds.add(targetId);
-    results.add(InstallResult.ok(targetId));
+    results.add(InstallResult.ok(targetId, unpairedWarnings: unpairedWarnings));
   }
 
   return results;
@@ -1677,22 +1680,38 @@ void _normalizeLooseDataDirs(String root) {
   }
 }
 
-void _normalizeLooseDataFiles(String root) {
+List<String> _normalizeLooseDataFiles(String root) {
   final dir = Directory(root);
-  if (!dir.existsSync()) return;
+  if (!dir.existsSync()) return const [];
   final moves = <File, String>{};
+  final extsByStem = <String, Set<String>>{};
   for (final f in dir.listSync().whereType<File>()) {
     final name = path.basename(f.path);
     final target = _dataDirForLooseFile(name);
     if (target == null) continue;
     moves[f] = target;
+    final lower = name.toLowerCase();
+    final stem = lower.substring(0, lower.length - 4);
+    extsByStem.putIfAbsent(stem, () => <String>{}).add(lower.substring(lower.length - 3));
   }
-  if (moves.isEmpty) return;
+  if (moves.isEmpty) return const [];
   for (final entry in moves.entries) {
-    final destDir = Directory(path.join(root, 'data', entry.value));
+    final sub = entry.value;
+    final destDir = sub.isEmpty
+        ? Directory(path.join(root, 'data'))
+        : Directory(path.joinAll([root, 'data', ...sub.split('/')]));
     destDir.createSync(recursive: true);
     entry.key.renameSync(path.join(destDir.path, path.basename(entry.key.path)));
   }
+  final warnings = <String>[];
+  for (final stem in extsByStem.keys) {
+    if (!LooseFilePaths.stemsWithVanillaPair.contains(stem)) continue;
+    final exts = extsByStem[stem]!;
+    if (!exts.contains('dat')) warnings.add('$stem.dat');
+    if (!exts.contains('dtt')) warnings.add('$stem.dtt');
+  }
+  warnings.sort();
+  return warnings;
 }
 
 void _normalizeCpks(String root) {

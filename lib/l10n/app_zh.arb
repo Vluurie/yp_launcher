@@ -21,7 +21,29 @@
   "detectionExeUnrecognised": "EXE：无法识别",
   "detectionExeUnrecognisedTooltip": "NieRAutomata.exe 存在，但其哈希值不在我们的已知列表中。NAMS 仍可运行；这只是提醒你我们尚未见过这个确切的版本。",
   "detectionExeWolfLimitBreakTooltip": "检测到 Wolf Limit Break 版本的 NieRAutomata.exe。NAMS 不需要此补丁，且从未针对它进行测试。游戏或许仍能启动，但可能出现性能问题、内存崩溃或模组不兼容。若需完整支持，请还原原版 Steam 可执行文件（在 Steam 中验证游戏文件）。",
+  "detectionExeLegacyWin7": "EXE：Windows 7 版本",
+  "detectionExeLegacyWin7Tooltip": "这是旧版 Windows 7/8 的 NieRAutomata.exe。NAMS 需要 Windows 10/11 的 Steam 版本，无法启动此版本。这在 Proton/Linux 上很常见，Steam 有时会下载 Windows 7 可执行文件。\n\n解决方法：\n1. 删除 NieRAutomata 游戏文件夹中的每个 .exe 文件。\n2. 在 Steam 中将 Proton 设置为“Proton Experimental”（右键点击游戏 > 属性 > 兼容性）。\n3. 右键点击游戏 > 属性 > 已安装文件 > 验证游戏文件完整性。\n4. 通过 Steam 启动一次游戏以保留正确的可执行文件，然后再次使用启动器。",
   "launchOptionsTitle": "启动选项",
+  "launchWrapperTitle": "启动包装命令 (LINUX)",
+  "launchWrapperDesc": "在游戏启动前添加一个命令，例如 gamescope 或 mangohud。启动器通过 Proton 运行游戏，因此 Steam 启动选项在此无效。留空则正常启动。将在下次启动时生效。",
+  "launchWrapperHint": "gamescope -w 2560 -h 1440 -f --",
+  "launchWrapperExample": "示例：\ngamescope -w 2560 -h 1440 -f --\nmangohud\ngamemoderun",
+  "tabLauncherSettings": "启动器设置",
+  "verifyInstallTitle": "安装诊断",
+  "verifyInstallDesc": "运行 NAMS 内置检查以诊断游戏无法启动的原因（错误的 Windows 版本、缺失的 Steam 文件、权限）。",
+  "verifyInstallButton": "验证安装",
+  "verifyInstallRunning": "检查中...",
+  "verifyInstallOk": "所有检查均已通过。",
+  "verifyInstallFailed": "部分检查失败。详见下方。",
+  "verifyNoRuntime": "无法验证：未找到此安装的 Proton/Wine 运行时。",
+  "verifySteamNotRunning": "无法验证：Steam 必须正在运行并拥有该游戏。",
+  "verifyInstallError": "无法运行检查。请确保已选择游戏文件夹。",
+  "verifyInstallNoGameDir": "请先选择你的游戏文件夹。",
+  "verifyCheckSteamInstall": "Steam 安装",
+  "verifyCheckNierExe": "游戏可执行文件",
+  "verifyCheckSteamApi64": "Steam API 库",
+  "verifyCheckRuntimeWritable": "运行时可写",
+  "verifyCheckRuntimeCached": "运行时库已缓存",
   "launchOptionMinimizeOnLaunch": "游戏时最小化启动器",
   "launchOptionPreferDedicatedGpu": "优先使用独立显卡",
   "launchOptionPreferDedicatedGpuTooltip": "让系统使用独立显卡而非节能显卡运行游戏。仅在配备双显卡的电脑上有效（例如游戏笔记本）。",
@@ -225,8 +247,10 @@
   },
   "errorNoCompatLayer": "未找到 CrossOver",
   "errorNoCompatLayerBody": "在此系统上运行 NieR:Automata 需要 CrossOver，它可在 macOS 上运行 Windows 程序。未在 /Applications 中找到 CrossOver。\n\n没有它时，启动器仍可管理模组、纹理和配置，但无法启动游戏。\n\n解决方法：\n1. 从 codeweavers.com 安装 CrossOver。\n2. 在 CrossOver 容器中安装 Steam 和 NieR:Automata。\n3. 在此启动器中选择该容器内的 NieRAutomata.exe。",
+  "errorNoCompatLayerLinux": "未找到 Proton 或 Wine",
+  "errorNoCompatLayerLinuxBody": "在 Linux 上运行 NieR:Automata 需要 Proton（推荐）或 Wine，但未找到任何一个。\n\n没有它，启动器仍可管理模组、纹理和配置，只是无法启动游戏。\n\n解决方法：\n1. 在 Steam 中安装一个 Proton 版本（推荐 Proton Experimental）。如果它在另一个磁盘上，启动器现在会检查每个 Steam 库。\n2. 确保你从 Steam 库中选择了 NieRAutomata.exe（路径包含 steamapps/common）。\n3. 或在启动启动器前将 YP_PROTON_PATH 设置为你的 proton 可执行文件，例如 YP_PROTON_PATH=\"$HOME/.steam/steam/steamapps/common/Proton - Experimental/proton\"。",
   "errorProtonMissing": "未找到 Proton",
-  "errorProtonMissingBody": "配置的 Proton 运行时在以下位置缺失：\n{path}\n\n请通过 Steam 重新安装 Proton，或改为选择 CrossOver 容器内的游戏可执行文件。",
+  "errorProtonMissingBody": "配置的 Proton 运行时在以下位置缺失：\n{path}\n\n请通过 Steam 重新安装 Proton，或在启动启动器前将 YP_PROTON_PATH 设置为有效的 proton 可执行文件。",
   "@errorProtonMissingBody": {
     "placeholders": {
       "path": {
@@ -484,6 +508,14 @@
   "modDropMisroutedCutscenes": "这似乎是独立的过场动画模组，请改为拖放到“过场动画”选项卡。捆绑的过场动画应位于已经包含 entities/ 或 mod.toml 的模组内部。",
   "modSideInstalledTextures": "还将捆绑的纹理包安装到了 nams/inject/textures/：{names}",
   "@modSideInstalledTextures": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "modLooseUnpairedWarning": "已安装，但部分文件缺少其原版配对文件（.dat/.dtt）：{names}。模组可能无法完全生效。",
+  "@modLooseUnpairedWarning": {
     "placeholders": {
       "names": {
         "type": "String"
@@ -879,6 +911,8 @@
   "tooltipDisableTextureInjection": "跳过从模组文件夹注入纹理。适合排查问题，或在已安装纹理模组但不想使用时启用。",
   "labelOutfitSwapVisualEffects": "服装切换视觉效果",
   "tooltipOutfitSwapVisualEffects": "在热切换服装时播放视觉效果：Pod 出现时的致盲动画、帷幕以及骇入画面故障滤镜。关闭后将立即完成无特效切换，但模型仍会重新加载。立即生效，无需重启。",
+  "labelExperimentalDefaultOutfits": "默认服装（实验性）",
+  "tooltipExperimentalDefaultOutfits": "可将已安装的服装 Mod 设为游戏启动时即生效，如同将其文件放入游戏的 data 文件夹。开启后，Mod 详情面板会为每个玩家模型显示一个星标按钮，用于将其设为启动默认项。功能稳定前默认关闭。需要重启游戏。",
   "labelDisableSplashScreen": "禁用启动画面",
   "tooltipDisableSplashScreen": "跳过游戏加载时显示的启动画面窗口。原版游戏会在窗口准备完成前就将其显示出来，导致缩放和闪烁问题；NAMS 完善了启动画面，使窗口仅在准备好后显示。启用此选项会重新带回原版启动时的这些问题。",
   "tooltipValidateModelDataSettings": "以对话框显示模型验证错误，而不是静默失败。",
@@ -1603,11 +1637,53 @@
       }
     }
   },
+  "modLooseInstall": "从文件夹安装散装文件",
+  "modLooseInstallScanning": "正在扫描文件夹中的散装游戏文件……",
+  "modLooseInstallNone": "该文件夹中未找到散装游戏文件（.dat / .dtt）。",
+  "modLooseInstallBusy": "正在安装 {count} 个散装文件……",
+  "@modLooseInstallBusy": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "modLooseInstallProgress": "正在复制文件 {done}/{total}……",
+  "@modLooseInstallProgress": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "modLooseInstallFinalizing": "正在将文件放入模组……",
+  "modLooseInstallDone": "已将 {count} 个散装文件安装到 {id}。",
+  "@modLooseInstallDone": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "id": {
+        "type": "String"
+      }
+    }
+  },
   "modGroup2b": "2B 服装",
   "modGroup9s": "9S 服装",
   "modGroupA2": "A2 服装",
   "modGroupOtherOutfits": "其他服装",
   "modGroupWeapons": "武器",
+  "modGroupAccessories": "配饰",
+  "modGroupItems": "道具",
+  "modGroupWorldProps": "场景物件",
+  "modGroupModelVariants": "模型变体",
+  "modGroupMaps": "地图 / 场景",
+  "modGroupUi": "界面 / 字体",
+  "modGroupMisc": "杂项纹理",
+  "modGroupArchives": "CPK 归档",
   "modGroupEnemies": "敌人",
   "modGroupEffects": "效果",
   "modGroupScripting": "脚本",
@@ -1617,7 +1693,9 @@
   "modGroupTextures": "纹理",
   "modGroupNative": "原生模组",
   "modGroupOther": "其他",
+  "modGroupMixed": "混合内容",
   "modGroupMultiHint": "此模组会替换多个角色的模型，因此会列在每个相关角色下。",
+  "modGroupMixedHint": "此模组会同时更改多种类型的内容。点击查看它包含的全部内容以及涉及的类别。",
   "modRename": "重命名",
   "modRenameDialogTitle": "重命名模组",
   "modRenameReset": "恢复原始名称",

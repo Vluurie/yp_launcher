@@ -27,6 +27,7 @@ void main() {
           '/CrossOver/bin/wine',
       bottle: _bottle,
       prefix: _bottlePath,
+      namsArgs: namsRunArgs,
     );
 
     test('runs the wine wrapper, not the exe', () {
@@ -76,6 +77,7 @@ void main() {
         launcherDir: _launcherDir,
         wineBinary: '/usr/bin/wine',
         prefix: _bottlePath,
+        namsArgs: namsRunArgs,
       );
 
       expect(cmd.command, '/usr/bin/wine');
@@ -95,6 +97,7 @@ void main() {
         gameDir: _gameDir,
         launcherDir: _launcherDir,
         wineBinary: '/usr/bin/wine',
+        namsArgs: namsRunArgs,
       );
 
       expect(cmd.env!.containsKey('WINEPREFIX'), isFalse);
@@ -107,12 +110,24 @@ void main() {
         namsExe: r'C:\yp\bins\NAMS.exe',
         gameDir: r'D:/Games/NieRAutomata',
         launcherDir: r'C:\yp\bins',
+        namsArgs: namsRunArgs,
       );
 
       expect(cmd.command, r'C:\yp\bins\NAMS.exe');
       expect(cmd.args, ['run', '--nier-path', r'D:\Games\NieRAutomata']);
       expect(cmd.env, isNull);
       expect(cmd.label, 'Windows');
+    });
+
+    test('namsVerifyArgs produces the verify subcommand with --json', () {
+      final cmd = buildNativeLaunchCommand(
+        namsExe: r'C:\yp\bins\NAMS.exe',
+        gameDir: r'D:/Games/NieRAutomata',
+        launcherDir: r'C:\yp\bins',
+        namsArgs: namsVerifyArgs,
+      );
+      expect(cmd.args,
+          ['verify', '--nier-path', r'D:\Games\NieRAutomata', '--json']);
     });
   });
 
@@ -125,6 +140,7 @@ void main() {
           gameExe: '$_gameDir/NieRAutomata.exe',
           launcherDir: _launcherDir,
           protonPath: '/nonexistent/proton',
+          namsArgs: namsRunArgs,
         ),
         isNull,
       );
@@ -146,6 +162,7 @@ void main() {
         gameExe: gameExe,
         launcherDir: '/run/bins',
         protonPath: proton,
+        namsArgs: namsRunArgs,
       );
 
       expect(cmd, isNotNull);

@@ -80,7 +80,80 @@ class AppLocalizationsEn extends AppLocalizations {
       'Wolf Limit Break NieRAutomata.exe detected. NAMS does not need this patch and was never tested against it. The game may still launch, but performance issues, memory crashes, or mod incompatibilities are possible. For full support, restore the original Steam executable (verify game files in Steam).';
 
   @override
+  String get detectionExeLegacyWin7 => 'EXE: Windows 7 build';
+
+  @override
+  String get detectionExeLegacyWin7Tooltip =>
+      'This is the legacy Windows 7/8 NieRAutomata.exe. NAMS needs the Windows 10/11 Steam build and cannot launch this one. It is common on Proton/Linux, where Steam sometimes downloads the Windows 7 executable.\n\nHow to fix it:\n1. Delete every .exe in your NieRAutomata game folder.\n2. In Steam, set Proton to \'Proton Experimental\' (right click the game > Properties > Compatibility).\n3. In Steam, right click the game > Properties > Installed Files > Verify integrity of game files.\n4. Launch the game once through Steam so it keeps the correct executable, then use the launcher again.';
+
+  @override
   String get launchOptionsTitle => 'LAUNCH OPTIONS';
+
+  @override
+  String get launchWrapperTitle => 'LAUNCH WRAPPER (LINUX)';
+
+  @override
+  String get launchWrapperDesc =>
+      'Prepend a command in front of the game launch, e.g. gamescope or mangohud. The launcher runs the game through Proton, so Steam launch options do not apply here. Leave empty to launch normally. Applies on the next launch.';
+
+  @override
+  String get launchWrapperHint => 'gamescope -w 2560 -h 1440 -f --';
+
+  @override
+  String get launchWrapperExample =>
+      'Examples:\ngamescope -w 2560 -h 1440 -f --\nmangohud\ngamemoderun';
+
+  @override
+  String get tabLauncherSettings => 'Launcher Settings';
+
+  @override
+  String get verifyInstallTitle => 'INSTALL DIAGNOSTICS';
+
+  @override
+  String get verifyInstallDesc =>
+      'Run NAMS\'s built-in checks to diagnose why the game may not launch (wrong Windows build, missing Steam files, permissions).';
+
+  @override
+  String get verifyInstallButton => 'Verify installation';
+
+  @override
+  String get verifyInstallRunning => 'Checking...';
+
+  @override
+  String get verifyInstallOk => 'All checks passed.';
+
+  @override
+  String get verifyInstallFailed => 'Some checks failed. See details below.';
+
+  @override
+  String get verifyNoRuntime =>
+      'Cannot verify: no Proton/Wine runtime found for this install.';
+
+  @override
+  String get verifySteamNotRunning =>
+      'Cannot verify: Steam must be running and own the game.';
+
+  @override
+  String get verifyInstallError =>
+      'Could not run the check. Make sure a game folder is selected.';
+
+  @override
+  String get verifyInstallNoGameDir => 'Select your game folder first.';
+
+  @override
+  String get verifyCheckSteamInstall => 'Steam installation';
+
+  @override
+  String get verifyCheckNierExe => 'Game executable';
+
+  @override
+  String get verifyCheckSteamApi64 => 'Steam API library';
+
+  @override
+  String get verifyCheckRuntimeWritable => 'Runtime writable';
+
+  @override
+  String get verifyCheckRuntimeCached => 'Runtime library cached';
 
   @override
   String get launchOptionMinimizeOnLaunch => 'Minimize launcher while playing';
@@ -539,11 +612,18 @@ class AppLocalizationsEn extends AppLocalizations {
       'Running NieR:Automata on this system needs CrossOver, which runs Windows programs on macOS. It was not found in /Applications.\n\nWithout it the launcher can still manage mods, textures and configs - only starting the game is unavailable.\n\nHow to fix it:\n1. Install CrossOver from codeweavers.com.\n2. Install Steam and NieR:Automata inside a CrossOver bottle.\n3. Select NieRAutomata.exe from inside that bottle in this launcher.';
 
   @override
+  String get errorNoCompatLayerLinux => 'No Proton or Wine found';
+
+  @override
+  String get errorNoCompatLayerLinuxBody =>
+      'Running NieR:Automata on Linux needs Proton (recommended) or Wine, and none was found.\n\nWithout it the launcher can still manage mods, textures and configs - only starting the game is unavailable.\n\nHow to fix it:\n1. In Steam, install a Proton build (Proton Experimental works well). If it is on another drive, the launcher now checks every Steam library.\n2. Make sure you selected NieRAutomata.exe from inside your Steam library (a path containing steamapps/common).\n3. Or set YP_PROTON_PATH to your proton binary before starting the launcher, e.g. YP_PROTON_PATH=\"\$HOME/.steam/steam/steamapps/common/Proton - Experimental/proton\".';
+
+  @override
   String get errorProtonMissing => 'Proton not found';
 
   @override
   String errorProtonMissingBody(String path) {
-    return 'The configured Proton runtime is missing at:\n$path\n\nReinstall Proton through Steam, or select the game executable from inside a CrossOver bottle instead.';
+    return 'The configured Proton runtime is missing at:\n$path\n\nReinstall Proton through Steam, or set YP_PROTON_PATH to a valid proton binary before starting the launcher.';
   }
 
   @override
@@ -1000,6 +1080,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String modSideInstalledTextures(String names) {
     return 'Also installed bundled texture pack(s) into nams/inject/textures/: $names';
+  }
+
+  @override
+  String modLooseUnpairedWarning(String names) {
+    return 'Installed, but some files are missing their vanilla pair (.dat/.dtt): $names. The mod may not work fully.';
   }
 
   @override
@@ -2098,6 +2183,14 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get tooltipOutfitSwapVisualEffects =>
       'Play the visual effects during an outfit hot-swap: the pod spawn-in blinder animation, the curtain, and the hacking-screen glitch filter. Turn off for an instant, effect-free swap - the model still reloads. Takes effect immediately, no restart needed.';
+
+  @override
+  String get labelExperimentalDefaultOutfits =>
+      'Default Outfits (experimental)';
+
+  @override
+  String get tooltipExperimentalDefaultOutfits =>
+      'Lets you mark installed outfit mods as active from the moment the game starts, as if their files were placed in the game\'s data folder. When on, the mod details panel shows a star button per player model to set it as the boot default. Off by default while the feature stabilizes. Requires a game restart.';
 
   @override
   String get labelDisableSplashScreen => 'Disable Splash Screen';
@@ -3356,6 +3449,34 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get modLooseInstall => 'Install loose files from folder';
+
+  @override
+  String get modLooseInstallScanning => 'Scanning folder for loose game files…';
+
+  @override
+  String get modLooseInstallNone =>
+      'No loose game files (.dat / .dtt) found in that folder.';
+
+  @override
+  String modLooseInstallBusy(int count) {
+    return 'Installing $count loose files…';
+  }
+
+  @override
+  String modLooseInstallProgress(int done, int total) {
+    return 'Copying $done of $total files…';
+  }
+
+  @override
+  String get modLooseInstallFinalizing => 'Placing files into the mod…';
+
+  @override
+  String modLooseInstallDone(int count, String id) {
+    return 'Installed $count loose files into $id.';
+  }
+
+  @override
   String get modGroup2b => '2B OUTFITS';
 
   @override
@@ -3371,7 +3492,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get modGroupWeapons => 'WEAPONS';
 
   @override
+  String get modGroupAccessories => 'ACCESSORIES';
+
+  @override
+  String get modGroupItems => 'ITEMS';
+
+  @override
   String get modGroupEnemies => 'ENEMIES';
+
+  @override
+  String get modGroupWorldProps => 'WORLD PROPS';
+
+  @override
+  String get modGroupModelVariants => 'MODEL VARIANTS';
+
+  @override
+  String get modGroupMaps => 'MAPS / STAGES';
+
+  @override
+  String get modGroupUi => 'UI / FONTS';
+
+  @override
+  String get modGroupMisc => 'MISC TEXTURES';
+
+  @override
+  String get modGroupArchives => 'CPK ARCHIVES';
 
   @override
   String get modGroupEffects => 'EFFECTS';
@@ -3398,8 +3543,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get modGroupOther => 'OTHER';
 
   @override
+  String get modGroupMixed => 'MIXED CONTENT';
+
+  @override
   String get modGroupMultiHint =>
       'This mod replaces models for several characters, so it is listed under each of them.';
+
+  @override
+  String get modGroupMixedHint =>
+      'This mod changes several kinds of content at once. Click it to see everything it includes and which categories it touches.';
 
   @override
   String get modRename => 'Rename';

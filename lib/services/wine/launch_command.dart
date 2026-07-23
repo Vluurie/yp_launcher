@@ -23,17 +23,21 @@ class LaunchCommand {
   String get display => [command, ...args].join(' ');
 }
 
-List<String> _namsArgs(String gameDirForNams) =>
-    [AppStrings.argRun, AppStrings.argNierPath, gameDirForNams];
+List<String> namsRunArgs(String nierPath) =>
+    [AppStrings.argRun, AppStrings.argNierPath, nierPath];
+
+List<String> namsVerifyArgs(String nierPath) =>
+    [AppStrings.argVerify, AppStrings.argNierPath, nierPath, AppStrings.argJson];
 
 LaunchCommand buildNativeLaunchCommand({
   required String namsExe,
   required String gameDir,
   required String launcherDir,
+  required List<String> Function(String nierPath) namsArgs,
 }) =>
     LaunchCommand(
       command: namsExe,
-      args: _namsArgs(gameDir.replaceAll('/', '\\')),
+      args: namsArgs(gameDir.replaceAll('/', '\\')),
       cwd: launcherDir,
       label: 'Windows',
     );
@@ -47,6 +51,7 @@ LaunchCommand buildCrossOverLaunchCommand({
   required String wineBinary,
   required CrossOverBottle bottle,
   required String prefix,
+  required List<String> Function(String nierPath) namsArgs,
 }) =>
     LaunchCommand(
       command: wineBinary,
@@ -56,7 +61,7 @@ LaunchCommand buildCrossOverLaunchCommand({
         '--workdir',
         launcherDir,
         namsExe,
-        ..._namsArgs(toWinePath(gameDir)),
+        ...namsArgs(toWinePath(gameDir)),
       ],
       cwd: launcherDir,
       env: {
@@ -72,11 +77,12 @@ LaunchCommand buildPlainWineLaunchCommand({
   required String gameDir,
   required String launcherDir,
   required String wineBinary,
+  required List<String> Function(String nierPath) namsArgs,
   String? prefix,
 }) =>
     LaunchCommand(
       command: wineBinary,
-      args: [namsExe, ..._namsArgs(toWinePath(gameDir))],
+      args: [namsExe, ...namsArgs(toWinePath(gameDir))],
       cwd: launcherDir,
       env: {
         ...createWineEnv(),
@@ -91,6 +97,7 @@ LaunchCommand? buildProtonLaunchCommand({
   required String gameExe,
   required String launcherDir,
   required String protonPath,
+  required List<String> Function(String nierPath) namsArgs,
 }) {
   if (!File(protonPath).existsSync()) return null;
 
@@ -104,7 +111,7 @@ LaunchCommand? buildProtonLaunchCommand({
 
   return LaunchCommand(
     command: protonPath,
-    args: ['run', namsExe, ..._namsArgs(toWinePath(gameDir))],
+    args: ['run', namsExe, ...namsArgs(toWinePath(gameDir))],
     cwd: launcherDir,
     env: {
       ...createWineEnv(),

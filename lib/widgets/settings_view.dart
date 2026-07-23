@@ -309,6 +309,20 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                           ),
                         ),
                         ..._contentToggles(context, nams, notifier, l10n),
+                        ConfigFieldBool(
+                          label: NamsFields.experimentalDefaultOutfits.label(
+                            l10n,
+                          ),
+                          value:
+                              nams[NamsFields.experimentalDefaultOutfits.key] ==
+                              true,
+                          onChanged: (v) => notifier.updateNams(
+                            NamsFields.experimentalDefaultOutfits.key,
+                            v,
+                          ),
+                          tooltip: NamsFields.experimentalDefaultOutfits
+                              .tooltip!(l10n),
+                        ),
                       ]),
                     ],
                   ),

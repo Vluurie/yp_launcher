@@ -77,7 +77,77 @@ class AppLocalizationsZh extends AppLocalizations {
       '检测到 Wolf Limit Break 版本的 NieRAutomata.exe。NAMS 不需要此补丁，且从未针对它进行测试。游戏或许仍能启动，但可能出现性能问题、内存崩溃或模组不兼容。若需完整支持，请还原原版 Steam 可执行文件（在 Steam 中验证游戏文件）。';
 
   @override
+  String get detectionExeLegacyWin7 => 'EXE：Windows 7 版本';
+
+  @override
+  String get detectionExeLegacyWin7Tooltip =>
+      '这是旧版 Windows 7/8 的 NieRAutomata.exe。NAMS 需要 Windows 10/11 的 Steam 版本，无法启动此版本。这在 Proton/Linux 上很常见，Steam 有时会下载 Windows 7 可执行文件。\n\n解决方法：\n1. 删除 NieRAutomata 游戏文件夹中的每个 .exe 文件。\n2. 在 Steam 中将 Proton 设置为“Proton Experimental”（右键点击游戏 > 属性 > 兼容性）。\n3. 右键点击游戏 > 属性 > 已安装文件 > 验证游戏文件完整性。\n4. 通过 Steam 启动一次游戏以保留正确的可执行文件，然后再次使用启动器。';
+
+  @override
   String get launchOptionsTitle => '启动选项';
+
+  @override
+  String get launchWrapperTitle => '启动包装命令 (LINUX)';
+
+  @override
+  String get launchWrapperDesc =>
+      '在游戏启动前添加一个命令，例如 gamescope 或 mangohud。启动器通过 Proton 运行游戏，因此 Steam 启动选项在此无效。留空则正常启动。将在下次启动时生效。';
+
+  @override
+  String get launchWrapperHint => 'gamescope -w 2560 -h 1440 -f --';
+
+  @override
+  String get launchWrapperExample =>
+      '示例：\ngamescope -w 2560 -h 1440 -f --\nmangohud\ngamemoderun';
+
+  @override
+  String get tabLauncherSettings => '启动器设置';
+
+  @override
+  String get verifyInstallTitle => '安装诊断';
+
+  @override
+  String get verifyInstallDesc =>
+      '运行 NAMS 内置检查以诊断游戏无法启动的原因（错误的 Windows 版本、缺失的 Steam 文件、权限）。';
+
+  @override
+  String get verifyInstallButton => '验证安装';
+
+  @override
+  String get verifyInstallRunning => '检查中...';
+
+  @override
+  String get verifyInstallOk => '所有检查均已通过。';
+
+  @override
+  String get verifyInstallFailed => '部分检查失败。详见下方。';
+
+  @override
+  String get verifyNoRuntime => '无法验证：未找到此安装的 Proton/Wine 运行时。';
+
+  @override
+  String get verifySteamNotRunning => '无法验证：Steam 必须正在运行并拥有该游戏。';
+
+  @override
+  String get verifyInstallError => '无法运行检查。请确保已选择游戏文件夹。';
+
+  @override
+  String get verifyInstallNoGameDir => '请先选择你的游戏文件夹。';
+
+  @override
+  String get verifyCheckSteamInstall => 'Steam 安装';
+
+  @override
+  String get verifyCheckNierExe => '游戏可执行文件';
+
+  @override
+  String get verifyCheckSteamApi64 => 'Steam API 库';
+
+  @override
+  String get verifyCheckRuntimeWritable => '运行时可写';
+
+  @override
+  String get verifyCheckRuntimeCached => '运行时库已缓存';
 
   @override
   String get launchOptionMinimizeOnLaunch => '游戏时最小化启动器';
@@ -511,11 +581,18 @@ class AppLocalizationsZh extends AppLocalizations {
       '在此系统上运行 NieR:Automata 需要 CrossOver，它可在 macOS 上运行 Windows 程序。未在 /Applications 中找到 CrossOver。\n\n没有它时，启动器仍可管理模组、纹理和配置，但无法启动游戏。\n\n解决方法：\n1. 从 codeweavers.com 安装 CrossOver。\n2. 在 CrossOver 容器中安装 Steam 和 NieR:Automata。\n3. 在此启动器中选择该容器内的 NieRAutomata.exe。';
 
   @override
+  String get errorNoCompatLayerLinux => '未找到 Proton 或 Wine';
+
+  @override
+  String get errorNoCompatLayerLinuxBody =>
+      '在 Linux 上运行 NieR:Automata 需要 Proton（推荐）或 Wine，但未找到任何一个。\n\n没有它，启动器仍可管理模组、纹理和配置，只是无法启动游戏。\n\n解决方法：\n1. 在 Steam 中安装一个 Proton 版本（推荐 Proton Experimental）。如果它在另一个磁盘上，启动器现在会检查每个 Steam 库。\n2. 确保你从 Steam 库中选择了 NieRAutomata.exe（路径包含 steamapps/common）。\n3. 或在启动启动器前将 YP_PROTON_PATH 设置为你的 proton 可执行文件，例如 YP_PROTON_PATH=\"\$HOME/.steam/steam/steamapps/common/Proton - Experimental/proton\"。';
+
+  @override
   String get errorProtonMissing => '未找到 Proton';
 
   @override
   String errorProtonMissingBody(String path) {
-    return '配置的 Proton 运行时在以下位置缺失：\n$path\n\n请通过 Steam 重新安装 Proton，或改为选择 CrossOver 容器内的游戏可执行文件。';
+    return '配置的 Proton 运行时在以下位置缺失：\n$path\n\n请通过 Steam 重新安装 Proton，或在启动启动器前将 YP_PROTON_PATH 设置为有效的 proton 可执行文件。';
   }
 
   @override
@@ -968,6 +1045,11 @@ class AppLocalizationsZh extends AppLocalizations {
   @override
   String modSideInstalledTextures(String names) {
     return '还将捆绑的纹理包安装到了 nams/inject/textures/：$names';
+  }
+
+  @override
+  String modLooseUnpairedWarning(String names) {
+    return '已安装，但部分文件缺少其原版配对文件（.dat/.dtt）：$names。模组可能无法完全生效。';
   }
 
   @override
@@ -2024,6 +2106,13 @@ class AppLocalizationsZh extends AppLocalizations {
   @override
   String get tooltipOutfitSwapVisualEffects =>
       '在热切换服装时播放视觉效果：Pod 出现时的致盲动画、帷幕以及骇入画面故障滤镜。关闭后将立即完成无特效切换，但模型仍会重新加载。立即生效，无需重启。';
+
+  @override
+  String get labelExperimentalDefaultOutfits => '默认服装（实验性）';
+
+  @override
+  String get tooltipExperimentalDefaultOutfits =>
+      '可将已安装的服装 Mod 设为游戏启动时即生效，如同将其文件放入游戏的 data 文件夹。开启后，Mod 详情面板会为每个玩家模型显示一个星标按钮，用于将其设为启动默认项。功能稳定前默认关闭。需要重启游戏。';
 
   @override
   String get labelDisableSplashScreen => '禁用启动画面';
@@ -3206,6 +3295,33 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String get modLooseInstall => '从文件夹安装散装文件';
+
+  @override
+  String get modLooseInstallScanning => '正在扫描文件夹中的散装游戏文件……';
+
+  @override
+  String get modLooseInstallNone => '该文件夹中未找到散装游戏文件（.dat / .dtt）。';
+
+  @override
+  String modLooseInstallBusy(int count) {
+    return '正在安装 $count 个散装文件……';
+  }
+
+  @override
+  String modLooseInstallProgress(int done, int total) {
+    return '正在复制文件 $done/$total……';
+  }
+
+  @override
+  String get modLooseInstallFinalizing => '正在将文件放入模组……';
+
+  @override
+  String modLooseInstallDone(int count, String id) {
+    return '已将 $count 个散装文件安装到 $id。';
+  }
+
+  @override
   String get modGroup2b => '2B 服装';
 
   @override
@@ -3221,7 +3337,31 @@ class AppLocalizationsZh extends AppLocalizations {
   String get modGroupWeapons => '武器';
 
   @override
+  String get modGroupAccessories => '配饰';
+
+  @override
+  String get modGroupItems => '道具';
+
+  @override
   String get modGroupEnemies => '敌人';
+
+  @override
+  String get modGroupWorldProps => '场景物件';
+
+  @override
+  String get modGroupModelVariants => '模型变体';
+
+  @override
+  String get modGroupMaps => '地图 / 场景';
+
+  @override
+  String get modGroupUi => '界面 / 字体';
+
+  @override
+  String get modGroupMisc => '杂项纹理';
+
+  @override
+  String get modGroupArchives => 'CPK 归档';
 
   @override
   String get modGroupEffects => '效果';
@@ -3248,7 +3388,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get modGroupOther => '其他';
 
   @override
+  String get modGroupMixed => '混合内容';
+
+  @override
   String get modGroupMultiHint => '此模组会替换多个角色的模型，因此会列在每个相关角色下。';
+
+  @override
+  String get modGroupMixedHint => '此模组会同时更改多种类型的内容。点击查看它包含的全部内容以及涉及的类别。';
 
   @override
   String get modRename => '重命名';

@@ -51,7 +51,8 @@ WineRuntime? detectWineRuntime({String? gameExePath}) {
 
     final steam = inferSteamContext(gamePath);
     if (steam != null) {
-      final proton = findProtonPath(steam.steamRoot, steam.libraryRoot);
+      final proton = findProtonPath(steam.steamRoot, steam.libraryRoot) ??
+          findAnyProtonPath();
       if (proton != null) {
         return WineRuntime(
           binary: proton,
@@ -65,6 +66,18 @@ WineRuntime? detectWineRuntime({String? gameExePath}) {
     if (wine != null) {
       final resolved = resolveCrossOverBottle(gamePath);
       if (resolved != null) return _crossOver(wine, resolved);
+    }
+
+    if (Platform.isLinux) {
+      final proton = findAnyProtonPath();
+      if (proton != null) {
+        return WineRuntime(
+          binary: proton,
+          source: WineSource.proton,
+          label: 'Proton',
+          prefix: p.join(getProtonCompatDataPath(gamePath), 'pfx'),
+        );
+      }
     }
   }
 

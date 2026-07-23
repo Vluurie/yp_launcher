@@ -353,6 +353,14 @@ class _DetectionChipState extends ConsumerState<DetectionChip> {
               _tooltip = l10n.detectionExeWolfLimitBreakTooltip;
               _checked = true;
             });
+          case ExeVariant.legacyWindows7:
+            setState(() {
+              _detected = true;
+              _warning = true;
+              _label = l10n.detectionExeLegacyWin7;
+              _tooltip = l10n.detectionExeLegacyWin7Tooltip;
+              _checked = true;
+            });
           case ExeVariant.original:
             setState(() {
               _detected = true;

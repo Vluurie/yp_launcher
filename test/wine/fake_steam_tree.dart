@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:path/path.dart' as p;
-import 'package:yp_launcher/services/wine/native_steam.dart';
+import 'package:yp_launcher/services/wine/proton.dart';
 
 class FakeSteamTree {
   final Directory _dir;

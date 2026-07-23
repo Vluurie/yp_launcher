@@ -80,7 +80,82 @@ class AppLocalizationsDe extends AppLocalizations {
       'Wolf-Limit-Break-Version von NieRAutomata.exe erkannt. NAMS benötigt diesen Patch nicht und wurde nie damit getestet. Das Spiel startet möglicherweise trotzdem, aber Leistungsprobleme, Speicherabstürze oder Mod-Inkompatibilitäten sind möglich. Für vollständige Unterstützung stelle die originale Steam-Programmdatei wieder her (Spieldateien in Steam überprüfen).';
 
   @override
+  String get detectionExeLegacyWin7 => 'EXE: Windows-7-Version';
+
+  @override
+  String get detectionExeLegacyWin7Tooltip =>
+      'Dies ist die alte Windows-7/8-Version von NieRAutomata.exe. NAMS benötigt die Windows-10/11-Steam-Version und kann diese hier nicht starten. Das kommt unter Proton/Linux häufig vor, wo Steam manchmal die Windows-7-Programmdatei herunterlädt.\n\nSo behebst du es:\n1. Lösche jede .exe in deinem NieRAutomata-Spielordner.\n2. Stelle Proton in Steam auf \'Proton Experimental\' (Rechtsklick auf das Spiel > Eigenschaften > Kompatibilität).\n3. Rechtsklick auf das Spiel > Eigenschaften > Installierte Dateien > Integrität der Spieldateien überprüfen.\n4. Starte das Spiel einmal über Steam, damit die korrekte Programmdatei behalten wird, und nutze dann wieder den Launcher.';
+
+  @override
   String get launchOptionsTitle => 'STARTOPTIONEN';
+
+  @override
+  String get launchWrapperTitle => 'START-WRAPPER (LINUX)';
+
+  @override
+  String get launchWrapperDesc =>
+      'Stellt dem Spielstart einen Befehl voran, z. B. gamescope oder mangohud. Der Launcher startet das Spiel über Proton, daher greifen Steam-Startoptionen hier nicht. Leer lassen, um normal zu starten. Wird beim nächsten Start angewendet.';
+
+  @override
+  String get launchWrapperHint => 'gamescope -w 2560 -h 1440 -f --';
+
+  @override
+  String get launchWrapperExample =>
+      'Beispiele:\ngamescope -w 2560 -h 1440 -f --\nmangohud\ngamemoderun';
+
+  @override
+  String get tabLauncherSettings => 'Launcher-Einstellungen';
+
+  @override
+  String get verifyInstallTitle => 'INSTALLATIONSDIAGNOSE';
+
+  @override
+  String get verifyInstallDesc =>
+      'Führt die integrierten NAMS-Prüfungen aus, um zu diagnostizieren, warum das Spiel evtl. nicht startet (falscher Windows-Build, fehlende Steam-Dateien, Berechtigungen).';
+
+  @override
+  String get verifyInstallButton => 'Installation prüfen';
+
+  @override
+  String get verifyInstallRunning => 'Wird geprüft...';
+
+  @override
+  String get verifyInstallOk => 'Alle Prüfungen bestanden.';
+
+  @override
+  String get verifyInstallFailed =>
+      'Einige Prüfungen fehlgeschlagen. Details unten.';
+
+  @override
+  String get verifyNoRuntime =>
+      'Prüfung nicht möglich: keine Proton-/Wine-Laufzeit für diese Installation gefunden.';
+
+  @override
+  String get verifySteamNotRunning =>
+      'Prüfung nicht möglich: Steam muss laufen und das Spiel besitzen.';
+
+  @override
+  String get verifyInstallError =>
+      'Prüfung konnte nicht ausgeführt werden. Stelle sicher, dass ein Spielordner ausgewählt ist.';
+
+  @override
+  String get verifyInstallNoGameDir => 'Wähle zuerst deinen Spielordner aus.';
+
+  @override
+  String get verifyCheckSteamInstall => 'Steam-Installation';
+
+  @override
+  String get verifyCheckNierExe => 'Spiel-Programmdatei';
+
+  @override
+  String get verifyCheckSteamApi64 => 'Steam-API-Bibliothek';
+
+  @override
+  String get verifyCheckRuntimeWritable => 'Laufzeit beschreibbar';
+
+  @override
+  String get verifyCheckRuntimeCached =>
+      'Laufzeitbibliothek zwischengespeichert';
 
   @override
   String get launchOptionMinimizeOnLaunch =>
@@ -548,11 +623,18 @@ class AppLocalizationsDe extends AppLocalizations {
       'Zum Ausführen von NieR:Automata auf diesem System wird CrossOver benötigt, das Windows-Programme unter macOS ausführt. Es wurde unter /Applications nicht gefunden.\n\nOhne CrossOver kann der Launcher weiterhin Mods, Texturen und Konfigurationen verwalten – nur das Starten des Spiels ist nicht verfügbar.\n\nSo behebst du das Problem:\n1. Installiere CrossOver von codeweavers.com.\n2. Installiere Steam und NieR:Automata in einer CrossOver-Bottle.\n3. Wähle NieRAutomata.exe aus dieser Bottle in diesem Launcher aus.';
 
   @override
+  String get errorNoCompatLayerLinux => 'Kein Proton oder Wine gefunden';
+
+  @override
+  String get errorNoCompatLayerLinuxBody =>
+      'Um NieR:Automata unter Linux auszuführen, wird Proton (empfohlen) oder Wine benötigt, aber es wurde nichts gefunden.\n\nOhne eine solche Laufzeitumgebung kann der Launcher weiterhin Mods, Texturen und Konfigurationen verwalten - nur das Starten des Spiels ist nicht möglich.\n\nSo behebst du es:\n1. Installiere in Steam ein Proton-Build (Proton Experimental funktioniert gut). Liegt es auf einem anderen Laufwerk, durchsucht der Launcher jetzt jede Steam-Bibliothek.\n2. Stelle sicher, dass du NieRAutomata.exe aus deiner Steam-Bibliothek ausgewählt hast (ein Pfad, der steamapps/common enthält).\n3. Oder setze YP_PROTON_PATH vor dem Start des Launchers auf deine Proton-Datei, z. B. YP_PROTON_PATH=\"\$HOME/.steam/steam/steamapps/common/Proton - Experimental/proton\".';
+
+  @override
   String get errorProtonMissing => 'Proton wurde nicht gefunden';
 
   @override
   String errorProtonMissingBody(String path) {
-    return 'Die konfigurierte Proton-Laufzeitumgebung fehlt unter:\n$path\n\nInstalliere Proton über Steam neu oder wähle stattdessen die ausführbare Spieldatei aus einer CrossOver-Bottle aus.';
+    return 'Die konfigurierte Proton-Laufzeitumgebung fehlt unter:\n$path\n\nInstalliere Proton über Steam neu oder setze YP_PROTON_PATH vor dem Start des Launchers auf eine gültige Proton-Datei.';
   }
 
   @override
@@ -1016,6 +1098,11 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String modSideInstalledTextures(String names) {
     return 'Gebündelte Texturpakete wurden außerdem nach nams/inject/textures/ installiert: $names';
+  }
+
+  @override
+  String modLooseUnpairedWarning(String names) {
+    return 'Installiert, aber bei einigen Dateien fehlt das zugehörige Vanilla-Gegenstück (.dat/.dtt): $names. Der Mod funktioniert evtl. nicht vollständig.';
   }
 
   @override
@@ -2137,6 +2224,14 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get tooltipOutfitSwapVisualEffects =>
       'Spielt beim direkten Outfit-Wechsel die visuellen Effekte ab: die Blendenanimation beim Erscheinen des Pods, den Vorhang und den Glitch-Filter des Hacking-Bildschirms. Deaktiviere dies für einen sofortigen Wechsel ohne Effekte – das Modell wird weiterhin neu geladen. Wirkt sofort, kein Neustart erforderlich.';
+
+  @override
+  String get labelExperimentalDefaultOutfits =>
+      'Standard-Outfits (experimentell)';
+
+  @override
+  String get tooltipExperimentalDefaultOutfits =>
+      'Ermöglicht es, installierte Outfit-Mods ab Spielstart zu aktivieren, so als lägen ihre Dateien im data-Ordner des Spiels. Wenn aktiviert, zeigt das Mod-Detailfenster pro Spielermodell einen Stern-Button, um es als Standard beim Start festzulegen. Standardmäßig aus, solange sich die Funktion stabilisiert. Erfordert einen Spielneustart.';
 
   @override
   String get labelDisableSplashScreen => 'Startbildschirm deaktivieren';
@@ -3413,6 +3508,36 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get modLooseInstall => 'Lose Dateien aus Ordner installieren';
+
+  @override
+  String get modLooseInstallScanning =>
+      'Ordner wird nach losen Spieldateien durchsucht…';
+
+  @override
+  String get modLooseInstallNone =>
+      'Keine losen Spieldateien (.dat / .dtt) in diesem Ordner gefunden.';
+
+  @override
+  String modLooseInstallBusy(int count) {
+    return '$count lose Dateien werden installiert…';
+  }
+
+  @override
+  String modLooseInstallProgress(int done, int total) {
+    return '$done von $total Dateien werden kopiert…';
+  }
+
+  @override
+  String get modLooseInstallFinalizing =>
+      'Dateien werden in den Mod eingefügt…';
+
+  @override
+  String modLooseInstallDone(int count, String id) {
+    return '$count lose Dateien in $id installiert.';
+  }
+
+  @override
   String get modGroup2b => '2B-OUTFITS';
 
   @override
@@ -3428,7 +3553,31 @@ class AppLocalizationsDe extends AppLocalizations {
   String get modGroupWeapons => 'WAFFEN';
 
   @override
+  String get modGroupAccessories => 'ACCESSOIRES';
+
+  @override
+  String get modGroupItems => 'GEGENSTÄNDE';
+
+  @override
   String get modGroupEnemies => 'GEGNER';
+
+  @override
+  String get modGroupWorldProps => 'WELTOBJEKTE';
+
+  @override
+  String get modGroupModelVariants => 'MODELLVARIANTEN';
+
+  @override
+  String get modGroupMaps => 'KARTEN / SCHAUPLÄTZE';
+
+  @override
+  String get modGroupUi => 'UI / SCHRIFTEN';
+
+  @override
+  String get modGroupMisc => 'SONSTIGE TEXTUREN';
+
+  @override
+  String get modGroupArchives => 'CPK-ARCHIVE';
 
   @override
   String get modGroupEffects => 'EFFEKTE';
@@ -3455,8 +3604,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get modGroupOther => 'SONSTIGES';
 
   @override
+  String get modGroupMixed => 'GEMISCHTE INHALTE';
+
+  @override
   String get modGroupMultiHint =>
       'Diese Mod ersetzt Modelle für mehrere Charaktere und wird daher unter jedem von ihnen aufgeführt.';
+
+  @override
+  String get modGroupMixedHint =>
+      'Diese Mod ändert mehrere Arten von Inhalten gleichzeitig. Klicke sie an, um alles zu sehen, was sie enthält, und welche Kategorien sie betrifft.';
 
   @override
   String get modRename => 'Umbenennen';

@@ -226,11 +226,143 @@ abstract class AppLocalizations {
   /// **'Wolf Limit Break NieRAutomata.exe detected. NAMS does not need this patch and was never tested against it. The game may still launch, but performance issues, memory crashes, or mod incompatibilities are possible. For full support, restore the original Steam executable (verify game files in Steam).'**
   String get detectionExeWolfLimitBreakTooltip;
 
+  /// No description provided for @detectionExeLegacyWin7.
+  ///
+  /// In en, this message translates to:
+  /// **'EXE: Windows 7 build'**
+  String get detectionExeLegacyWin7;
+
+  /// No description provided for @detectionExeLegacyWin7Tooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'This is the legacy Windows 7/8 NieRAutomata.exe. NAMS needs the Windows 10/11 Steam build and cannot launch this one. It is common on Proton/Linux, where Steam sometimes downloads the Windows 7 executable.\n\nHow to fix it:\n1. Delete every .exe in your NieRAutomata game folder.\n2. In Steam, set Proton to \'Proton Experimental\' (right click the game > Properties > Compatibility).\n3. In Steam, right click the game > Properties > Installed Files > Verify integrity of game files.\n4. Launch the game once through Steam so it keeps the correct executable, then use the launcher again.'**
+  String get detectionExeLegacyWin7Tooltip;
+
   /// No description provided for @launchOptionsTitle.
   ///
   /// In en, this message translates to:
   /// **'LAUNCH OPTIONS'**
   String get launchOptionsTitle;
+
+  /// No description provided for @launchWrapperTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'LAUNCH WRAPPER (LINUX)'**
+  String get launchWrapperTitle;
+
+  /// No description provided for @launchWrapperDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Prepend a command in front of the game launch, e.g. gamescope or mangohud. The launcher runs the game through Proton, so Steam launch options do not apply here. Leave empty to launch normally. Applies on the next launch.'**
+  String get launchWrapperDesc;
+
+  /// No description provided for @launchWrapperHint.
+  ///
+  /// In en, this message translates to:
+  /// **'gamescope -w 2560 -h 1440 -f --'**
+  String get launchWrapperHint;
+
+  /// No description provided for @launchWrapperExample.
+  ///
+  /// In en, this message translates to:
+  /// **'Examples:\ngamescope -w 2560 -h 1440 -f --\nmangohud\ngamemoderun'**
+  String get launchWrapperExample;
+
+  /// No description provided for @tabLauncherSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Launcher Settings'**
+  String get tabLauncherSettings;
+
+  /// No description provided for @verifyInstallTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'INSTALL DIAGNOSTICS'**
+  String get verifyInstallTitle;
+
+  /// No description provided for @verifyInstallDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Run NAMS\'s built-in checks to diagnose why the game may not launch (wrong Windows build, missing Steam files, permissions).'**
+  String get verifyInstallDesc;
+
+  /// No description provided for @verifyInstallButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify installation'**
+  String get verifyInstallButton;
+
+  /// No description provided for @verifyInstallRunning.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking...'**
+  String get verifyInstallRunning;
+
+  /// No description provided for @verifyInstallOk.
+  ///
+  /// In en, this message translates to:
+  /// **'All checks passed.'**
+  String get verifyInstallOk;
+
+  /// No description provided for @verifyInstallFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Some checks failed. See details below.'**
+  String get verifyInstallFailed;
+
+  /// No description provided for @verifyNoRuntime.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot verify: no Proton/Wine runtime found for this install.'**
+  String get verifyNoRuntime;
+
+  /// No description provided for @verifySteamNotRunning.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot verify: Steam must be running and own the game.'**
+  String get verifySteamNotRunning;
+
+  /// No description provided for @verifyInstallError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not run the check. Make sure a game folder is selected.'**
+  String get verifyInstallError;
+
+  /// No description provided for @verifyInstallNoGameDir.
+  ///
+  /// In en, this message translates to:
+  /// **'Select your game folder first.'**
+  String get verifyInstallNoGameDir;
+
+  /// No description provided for @verifyCheckSteamInstall.
+  ///
+  /// In en, this message translates to:
+  /// **'Steam installation'**
+  String get verifyCheckSteamInstall;
+
+  /// No description provided for @verifyCheckNierExe.
+  ///
+  /// In en, this message translates to:
+  /// **'Game executable'**
+  String get verifyCheckNierExe;
+
+  /// No description provided for @verifyCheckSteamApi64.
+  ///
+  /// In en, this message translates to:
+  /// **'Steam API library'**
+  String get verifyCheckSteamApi64;
+
+  /// No description provided for @verifyCheckRuntimeWritable.
+  ///
+  /// In en, this message translates to:
+  /// **'Runtime writable'**
+  String get verifyCheckRuntimeWritable;
+
+  /// No description provided for @verifyCheckRuntimeCached.
+  ///
+  /// In en, this message translates to:
+  /// **'Runtime library cached'**
+  String get verifyCheckRuntimeCached;
 
   /// No description provided for @launchOptionMinimizeOnLaunch.
   ///
@@ -1012,6 +1144,18 @@ abstract class AppLocalizations {
   /// **'Running NieR:Automata on this system needs CrossOver, which runs Windows programs on macOS. It was not found in /Applications.\n\nWithout it the launcher can still manage mods, textures and configs - only starting the game is unavailable.\n\nHow to fix it:\n1. Install CrossOver from codeweavers.com.\n2. Install Steam and NieR:Automata inside a CrossOver bottle.\n3. Select NieRAutomata.exe from inside that bottle in this launcher.'**
   String get errorNoCompatLayerBody;
 
+  /// No description provided for @errorNoCompatLayerLinux.
+  ///
+  /// In en, this message translates to:
+  /// **'No Proton or Wine found'**
+  String get errorNoCompatLayerLinux;
+
+  /// No description provided for @errorNoCompatLayerLinuxBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Running NieR:Automata on Linux needs Proton (recommended) or Wine, and none was found.\n\nWithout it the launcher can still manage mods, textures and configs - only starting the game is unavailable.\n\nHow to fix it:\n1. In Steam, install a Proton build (Proton Experimental works well). If it is on another drive, the launcher now checks every Steam library.\n2. Make sure you selected NieRAutomata.exe from inside your Steam library (a path containing steamapps/common).\n3. Or set YP_PROTON_PATH to your proton binary before starting the launcher, e.g. YP_PROTON_PATH=\"\$HOME/.steam/steam/steamapps/common/Proton - Experimental/proton\".'**
+  String get errorNoCompatLayerLinuxBody;
+
   /// No description provided for @errorProtonMissing.
   ///
   /// In en, this message translates to:
@@ -1021,7 +1165,7 @@ abstract class AppLocalizations {
   /// No description provided for @errorProtonMissingBody.
   ///
   /// In en, this message translates to:
-  /// **'The configured Proton runtime is missing at:\n{path}\n\nReinstall Proton through Steam, or select the game executable from inside a CrossOver bottle instead.'**
+  /// **'The configured Proton runtime is missing at:\n{path}\n\nReinstall Proton through Steam, or set YP_PROTON_PATH to a valid proton binary before starting the launcher.'**
   String errorProtonMissingBody(String path);
 
   /// No description provided for @errorNoZDrive.
@@ -1839,6 +1983,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Also installed bundled texture pack(s) into nams/inject/textures/: {names}'**
   String modSideInstalledTextures(String names);
+
+  /// No description provided for @modLooseUnpairedWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Installed, but some files are missing their vanilla pair (.dat/.dtt): {names}. The mod may not work fully.'**
+  String modLooseUnpairedWarning(String names);
 
   /// No description provided for @modBundledTexturesLabel.
   ///
@@ -3735,6 +3885,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Play the visual effects during an outfit hot-swap: the pod spawn-in blinder animation, the curtain, and the hacking-screen glitch filter. Turn off for an instant, effect-free swap - the model still reloads. Takes effect immediately, no restart needed.'**
   String get tooltipOutfitSwapVisualEffects;
+
+  /// No description provided for @labelExperimentalDefaultOutfits.
+  ///
+  /// In en, this message translates to:
+  /// **'Default Outfits (experimental)'**
+  String get labelExperimentalDefaultOutfits;
+
+  /// No description provided for @tooltipExperimentalDefaultOutfits.
+  ///
+  /// In en, this message translates to:
+  /// **'Lets you mark installed outfit mods as active from the moment the game starts, as if their files were placed in the game\'s data folder. When on, the mod details panel shows a star button per player model to set it as the boot default. Off by default while the feature stabilizes. Requires a game restart.'**
+  String get tooltipExperimentalDefaultOutfits;
 
   /// No description provided for @labelDisableSplashScreen.
   ///
@@ -5805,6 +5967,48 @@ abstract class AppLocalizations {
   /// **'Installed {installed} of {total} mods.'**
   String modBulkInstallDone(int installed, int total);
 
+  /// No description provided for @modLooseInstall.
+  ///
+  /// In en, this message translates to:
+  /// **'Install loose files from folder'**
+  String get modLooseInstall;
+
+  /// No description provided for @modLooseInstallScanning.
+  ///
+  /// In en, this message translates to:
+  /// **'Scanning folder for loose game files…'**
+  String get modLooseInstallScanning;
+
+  /// No description provided for @modLooseInstallNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No loose game files (.dat / .dtt) found in that folder.'**
+  String get modLooseInstallNone;
+
+  /// No description provided for @modLooseInstallBusy.
+  ///
+  /// In en, this message translates to:
+  /// **'Installing {count} loose files…'**
+  String modLooseInstallBusy(int count);
+
+  /// No description provided for @modLooseInstallProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Copying {done} of {total} files…'**
+  String modLooseInstallProgress(int done, int total);
+
+  /// No description provided for @modLooseInstallFinalizing.
+  ///
+  /// In en, this message translates to:
+  /// **'Placing files into the mod…'**
+  String get modLooseInstallFinalizing;
+
+  /// No description provided for @modLooseInstallDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Installed {count} loose files into {id}.'**
+  String modLooseInstallDone(int count, String id);
+
   /// No description provided for @modGroup2b.
   ///
   /// In en, this message translates to:
@@ -5835,11 +6039,59 @@ abstract class AppLocalizations {
   /// **'WEAPONS'**
   String get modGroupWeapons;
 
+  /// No description provided for @modGroupAccessories.
+  ///
+  /// In en, this message translates to:
+  /// **'ACCESSORIES'**
+  String get modGroupAccessories;
+
+  /// No description provided for @modGroupItems.
+  ///
+  /// In en, this message translates to:
+  /// **'ITEMS'**
+  String get modGroupItems;
+
   /// No description provided for @modGroupEnemies.
   ///
   /// In en, this message translates to:
   /// **'ENEMIES'**
   String get modGroupEnemies;
+
+  /// No description provided for @modGroupWorldProps.
+  ///
+  /// In en, this message translates to:
+  /// **'WORLD PROPS'**
+  String get modGroupWorldProps;
+
+  /// No description provided for @modGroupModelVariants.
+  ///
+  /// In en, this message translates to:
+  /// **'MODEL VARIANTS'**
+  String get modGroupModelVariants;
+
+  /// No description provided for @modGroupMaps.
+  ///
+  /// In en, this message translates to:
+  /// **'MAPS / STAGES'**
+  String get modGroupMaps;
+
+  /// No description provided for @modGroupUi.
+  ///
+  /// In en, this message translates to:
+  /// **'UI / FONTS'**
+  String get modGroupUi;
+
+  /// No description provided for @modGroupMisc.
+  ///
+  /// In en, this message translates to:
+  /// **'MISC TEXTURES'**
+  String get modGroupMisc;
+
+  /// No description provided for @modGroupArchives.
+  ///
+  /// In en, this message translates to:
+  /// **'CPK ARCHIVES'**
+  String get modGroupArchives;
 
   /// No description provided for @modGroupEffects.
   ///
@@ -5889,11 +6141,23 @@ abstract class AppLocalizations {
   /// **'OTHER'**
   String get modGroupOther;
 
+  /// No description provided for @modGroupMixed.
+  ///
+  /// In en, this message translates to:
+  /// **'MIXED CONTENT'**
+  String get modGroupMixed;
+
   /// No description provided for @modGroupMultiHint.
   ///
   /// In en, this message translates to:
   /// **'This mod replaces models for several characters, so it is listed under each of them.'**
   String get modGroupMultiHint;
+
+  /// No description provided for @modGroupMixedHint.
+  ///
+  /// In en, this message translates to:
+  /// **'This mod changes several kinds of content at once. Click it to see everything it includes and which categories it touches.'**
+  String get modGroupMixedHint;
 
   /// No description provided for @modRename.
   ///

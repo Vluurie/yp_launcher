@@ -6,18 +6,27 @@ import 'package:yp_launcher/theme/app_sizes.dart';
 
 String modGroupLabel(ModGroupKind kind, AppLocalizations l10n) {
   return switch (kind) {
+    ModGroupKind.mixed => l10n.modGroupMixed,
     ModGroupKind.outfit2b => l10n.modGroup2b,
     ModGroupKind.outfit9s => l10n.modGroup9s,
     ModGroupKind.outfitA2 => l10n.modGroupA2,
     ModGroupKind.outfitOther => l10n.modGroupOtherOutfits,
     ModGroupKind.weapon => l10n.modGroupWeapons,
+    ModGroupKind.accessory => l10n.modGroupAccessories,
+    ModGroupKind.item => l10n.modGroupItems,
     ModGroupKind.enemy => l10n.modGroupEnemies,
+    ModGroupKind.worldProp => l10n.modGroupWorldProps,
+    ModGroupKind.modelVariant => l10n.modGroupModelVariants,
+    ModGroupKind.map => l10n.modGroupMaps,
     ModGroupKind.effect => l10n.modGroupEffects,
     ModGroupKind.scripting => l10n.modGroupScripting,
     ModGroupKind.localization => l10n.modGroupLocalization,
+    ModGroupKind.ui => l10n.modGroupUi,
     ModGroupKind.cutscene => l10n.modGroupCutscenes,
     ModGroupKind.audio => l10n.modGroupAudio,
     ModGroupKind.texture => l10n.modGroupTextures,
+    ModGroupKind.misc => l10n.modGroupMisc,
+    ModGroupKind.archive => l10n.modGroupArchives,
     ModGroupKind.native => l10n.modGroupNative,
     ModGroupKind.other => l10n.modGroupOther,
   };
@@ -25,19 +34,28 @@ String modGroupLabel(ModGroupKind kind, AppLocalizations l10n) {
 
 IconData modGroupIcon(ModGroupKind kind) {
   return switch (kind) {
+    ModGroupKind.mixed => Icons.dashboard_customize_outlined,
     ModGroupKind.outfit2b ||
     ModGroupKind.outfit9s ||
     ModGroupKind.outfitA2 ||
     ModGroupKind.outfitOther =>
       Icons.checkroom_outlined,
     ModGroupKind.weapon => Icons.gavel_outlined,
+    ModGroupKind.accessory => Icons.diamond_outlined,
+    ModGroupKind.item => Icons.inventory_2_outlined,
     ModGroupKind.enemy => Icons.bug_report_outlined,
+    ModGroupKind.worldProp => Icons.chair_outlined,
+    ModGroupKind.modelVariant => Icons.category_outlined,
+    ModGroupKind.map => Icons.map_outlined,
     ModGroupKind.effect => Icons.auto_awesome_outlined,
     ModGroupKind.scripting => Icons.code_outlined,
     ModGroupKind.localization => Icons.translate_outlined,
+    ModGroupKind.ui => Icons.web_outlined,
     ModGroupKind.cutscene => Icons.movie_creation_outlined,
     ModGroupKind.audio => Icons.volume_up_outlined,
     ModGroupKind.texture => Icons.texture_outlined,
+    ModGroupKind.misc => Icons.image_outlined,
+    ModGroupKind.archive => Icons.archive_outlined,
     ModGroupKind.native => Icons.extension_outlined,
     ModGroupKind.other => Icons.folder_outlined,
   };

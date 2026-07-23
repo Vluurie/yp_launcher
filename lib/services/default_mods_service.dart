@@ -65,6 +65,19 @@ class DefaultModsService {
   static String _filePath(String gameDir) =>
       path.join(gameDir, 'nams', 'default_mods.toml');
 
+  /// Whether the game-side experimental default-outfit feature is enabled in
+  /// nams.toml. The launcher hides the whole default-mods UI when it is off,
+  /// since the game ignores default_mods.toml entirely in that case.
+  static Future<bool> isFeatureEnabled(String gameDir) =>
+      IsolateService.run(_isFeatureEnabledSync, gameDir);
+
+  static bool _isFeatureEnabledSync(String gameDir) {
+    final file = File(path.join(gameDir, 'nams', 'nams.toml'));
+    if (!file.existsSync()) return false;
+    final parsed = TomlService.parse(file.readAsStringSync());
+    return parsed['experimental_default_outfits'] == true;
+  }
+
   static String get _defaultFile {
     final buffer = StringBuffer()
       ..writeln('# Mods listed here are active from the moment the game starts,')

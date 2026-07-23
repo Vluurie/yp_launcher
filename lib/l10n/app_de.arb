@@ -21,7 +21,29 @@
   "detectionExeUnrecognised": "EXE: nicht erkannt",
   "detectionExeUnrecognisedTooltip": "NieRAutomata.exe ist vorhanden, aber ihr Hash steht nicht auf unserer bekannten Liste. NAMS läuft trotzdem; dies ist nur ein Hinweis darauf, dass wir genau diesen Build noch nicht gesehen haben.",
   "detectionExeWolfLimitBreakTooltip": "Wolf-Limit-Break-Version von NieRAutomata.exe erkannt. NAMS benötigt diesen Patch nicht und wurde nie damit getestet. Das Spiel startet möglicherweise trotzdem, aber Leistungsprobleme, Speicherabstürze oder Mod-Inkompatibilitäten sind möglich. Für vollständige Unterstützung stelle die originale Steam-Programmdatei wieder her (Spieldateien in Steam überprüfen).",
+  "detectionExeLegacyWin7": "EXE: Windows-7-Version",
+  "detectionExeLegacyWin7Tooltip": "Dies ist die alte Windows-7/8-Version von NieRAutomata.exe. NAMS benötigt die Windows-10/11-Steam-Version und kann diese hier nicht starten. Das kommt unter Proton/Linux häufig vor, wo Steam manchmal die Windows-7-Programmdatei herunterlädt.\n\nSo behebst du es:\n1. Lösche jede .exe in deinem NieRAutomata-Spielordner.\n2. Stelle Proton in Steam auf 'Proton Experimental' (Rechtsklick auf das Spiel > Eigenschaften > Kompatibilität).\n3. Rechtsklick auf das Spiel > Eigenschaften > Installierte Dateien > Integrität der Spieldateien überprüfen.\n4. Starte das Spiel einmal über Steam, damit die korrekte Programmdatei behalten wird, und nutze dann wieder den Launcher.",
   "launchOptionsTitle": "STARTOPTIONEN",
+  "launchWrapperTitle": "START-WRAPPER (LINUX)",
+  "launchWrapperDesc": "Stellt dem Spielstart einen Befehl voran, z. B. gamescope oder mangohud. Der Launcher startet das Spiel über Proton, daher greifen Steam-Startoptionen hier nicht. Leer lassen, um normal zu starten. Wird beim nächsten Start angewendet.",
+  "launchWrapperHint": "gamescope -w 2560 -h 1440 -f --",
+  "launchWrapperExample": "Beispiele:\ngamescope -w 2560 -h 1440 -f --\nmangohud\ngamemoderun",
+  "tabLauncherSettings": "Launcher-Einstellungen",
+  "verifyInstallTitle": "INSTALLATIONSDIAGNOSE",
+  "verifyInstallDesc": "Führt die integrierten NAMS-Prüfungen aus, um zu diagnostizieren, warum das Spiel evtl. nicht startet (falscher Windows-Build, fehlende Steam-Dateien, Berechtigungen).",
+  "verifyInstallButton": "Installation prüfen",
+  "verifyInstallRunning": "Wird geprüft...",
+  "verifyInstallOk": "Alle Prüfungen bestanden.",
+  "verifyInstallFailed": "Einige Prüfungen fehlgeschlagen. Details unten.",
+  "verifyNoRuntime": "Prüfung nicht möglich: keine Proton-/Wine-Laufzeit für diese Installation gefunden.",
+  "verifySteamNotRunning": "Prüfung nicht möglich: Steam muss laufen und das Spiel besitzen.",
+  "verifyInstallError": "Prüfung konnte nicht ausgeführt werden. Stelle sicher, dass ein Spielordner ausgewählt ist.",
+  "verifyInstallNoGameDir": "Wähle zuerst deinen Spielordner aus.",
+  "verifyCheckSteamInstall": "Steam-Installation",
+  "verifyCheckNierExe": "Spiel-Programmdatei",
+  "verifyCheckSteamApi64": "Steam-API-Bibliothek",
+  "verifyCheckRuntimeWritable": "Laufzeit beschreibbar",
+  "verifyCheckRuntimeCached": "Laufzeitbibliothek zwischengespeichert",
   "launchOptionMinimizeOnLaunch": "Launcher während des Spielens minimieren",
   "launchOptionPreferDedicatedGpu": "Dedizierte GPU bevorzugen",
   "launchOptionPreferDedicatedGpuTooltip": "Weist das System an, das Spiel auf der dedizierten Grafikkarte statt auf der stromsparenden auszuführen. Nur relevant bei PCs mit zwei GPUs (z. B. Gaming-Laptops).",
@@ -225,8 +247,10 @@
   },
   "errorNoCompatLayer": "CrossOver wurde nicht gefunden",
   "errorNoCompatLayerBody": "Zum Ausführen von NieR:Automata auf diesem System wird CrossOver benötigt, das Windows-Programme unter macOS ausführt. Es wurde unter /Applications nicht gefunden.\n\nOhne CrossOver kann der Launcher weiterhin Mods, Texturen und Konfigurationen verwalten – nur das Starten des Spiels ist nicht verfügbar.\n\nSo behebst du das Problem:\n1. Installiere CrossOver von codeweavers.com.\n2. Installiere Steam und NieR:Automata in einer CrossOver-Bottle.\n3. Wähle NieRAutomata.exe aus dieser Bottle in diesem Launcher aus.",
+  "errorNoCompatLayerLinux": "Kein Proton oder Wine gefunden",
+  "errorNoCompatLayerLinuxBody": "Um NieR:Automata unter Linux auszuführen, wird Proton (empfohlen) oder Wine benötigt, aber es wurde nichts gefunden.\n\nOhne eine solche Laufzeitumgebung kann der Launcher weiterhin Mods, Texturen und Konfigurationen verwalten - nur das Starten des Spiels ist nicht möglich.\n\nSo behebst du es:\n1. Installiere in Steam ein Proton-Build (Proton Experimental funktioniert gut). Liegt es auf einem anderen Laufwerk, durchsucht der Launcher jetzt jede Steam-Bibliothek.\n2. Stelle sicher, dass du NieRAutomata.exe aus deiner Steam-Bibliothek ausgewählt hast (ein Pfad, der steamapps/common enthält).\n3. Oder setze YP_PROTON_PATH vor dem Start des Launchers auf deine Proton-Datei, z. B. YP_PROTON_PATH=\"$HOME/.steam/steam/steamapps/common/Proton - Experimental/proton\".",
   "errorProtonMissing": "Proton wurde nicht gefunden",
-  "errorProtonMissingBody": "Die konfigurierte Proton-Laufzeitumgebung fehlt unter:\n{path}\n\nInstalliere Proton über Steam neu oder wähle stattdessen die ausführbare Spieldatei aus einer CrossOver-Bottle aus.",
+  "errorProtonMissingBody": "Die konfigurierte Proton-Laufzeitumgebung fehlt unter:\n{path}\n\nInstalliere Proton über Steam neu oder setze YP_PROTON_PATH vor dem Start des Launchers auf eine gültige Proton-Datei.",
   "@errorProtonMissingBody": {
     "placeholders": {
       "path": {
@@ -484,6 +508,14 @@
   "modDropMisroutedCutscenes": "Das sieht wie eine eigenständige Cutscene-Mod aus – lege sie stattdessen im Reiter Cutscenes ab. Gebündelte Cutscenes gehören in eine Mod, die bereits entities/ oder mod.toml enthält.",
   "modSideInstalledTextures": "Gebündelte Texturpakete wurden außerdem nach nams/inject/textures/ installiert: {names}",
   "@modSideInstalledTextures": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "modLooseUnpairedWarning": "Installiert, aber bei einigen Dateien fehlt das zugehörige Vanilla-Gegenstück (.dat/.dtt): {names}. Der Mod funktioniert evtl. nicht vollständig.",
+  "@modLooseUnpairedWarning": {
     "placeholders": {
       "names": {
         "type": "String"
@@ -879,6 +911,8 @@
   "tooltipDisableTextureInjection": "Überspringt die Texturinjektion aus dem Mods-Ordner. Nützlich zur Fehlereingrenzung oder wenn du installierte Textur-Mods nicht verwenden möchtest.",
   "labelOutfitSwapVisualEffects": "Visuelle Effekte beim Outfit-Wechsel",
   "tooltipOutfitSwapVisualEffects": "Spielt beim direkten Outfit-Wechsel die visuellen Effekte ab: die Blendenanimation beim Erscheinen des Pods, den Vorhang und den Glitch-Filter des Hacking-Bildschirms. Deaktiviere dies für einen sofortigen Wechsel ohne Effekte – das Modell wird weiterhin neu geladen. Wirkt sofort, kein Neustart erforderlich.",
+  "labelExperimentalDefaultOutfits": "Standard-Outfits (experimentell)",
+  "tooltipExperimentalDefaultOutfits": "Ermöglicht es, installierte Outfit-Mods ab Spielstart zu aktivieren, so als lägen ihre Dateien im data-Ordner des Spiels. Wenn aktiviert, zeigt das Mod-Detailfenster pro Spielermodell einen Stern-Button, um es als Standard beim Start festzulegen. Standardmäßig aus, solange sich die Funktion stabilisiert. Erfordert einen Spielneustart.",
   "labelDisableSplashScreen": "Startbildschirm deaktivieren",
   "tooltipDisableSplashScreen": "Überspringt das Startfenster, das während des Ladens des Spiels angezeigt wird. Das ursprüngliche Spiel zeigte sein Fenster, bevor es bereit war, was Größenänderungs- und Flackerartefakte verursachte; NAMS vervollständigt den Startbildschirm, sodass das Fenster erst sichtbar wird, wenn es bereit ist. Durch Aktivieren dieser Option kehren die ursprünglichen Startartefakte zurück.",
   "tooltipValidateModelDataSettings": "Zeigt Fehler bei der Modellüberprüfung in einem Dialog an, statt unbemerkt fehlzuschlagen.",
@@ -1603,11 +1637,53 @@
       }
     }
   },
+  "modLooseInstall": "Lose Dateien aus Ordner installieren",
+  "modLooseInstallScanning": "Ordner wird nach losen Spieldateien durchsucht…",
+  "modLooseInstallNone": "Keine losen Spieldateien (.dat / .dtt) in diesem Ordner gefunden.",
+  "modLooseInstallBusy": "{count} lose Dateien werden installiert…",
+  "@modLooseInstallBusy": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "modLooseInstallProgress": "{done} von {total} Dateien werden kopiert…",
+  "@modLooseInstallProgress": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "modLooseInstallFinalizing": "Dateien werden in den Mod eingefügt…",
+  "modLooseInstallDone": "{count} lose Dateien in {id} installiert.",
+  "@modLooseInstallDone": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "id": {
+        "type": "String"
+      }
+    }
+  },
   "modGroup2b": "2B-OUTFITS",
   "modGroup9s": "9S-OUTFITS",
   "modGroupA2": "A2-OUTFITS",
   "modGroupOtherOutfits": "ANDERE OUTFITS",
   "modGroupWeapons": "WAFFEN",
+  "modGroupAccessories": "ACCESSOIRES",
+  "modGroupItems": "GEGENSTÄNDE",
+  "modGroupWorldProps": "WELTOBJEKTE",
+  "modGroupModelVariants": "MODELLVARIANTEN",
+  "modGroupMaps": "KARTEN / SCHAUPLÄTZE",
+  "modGroupUi": "UI / SCHRIFTEN",
+  "modGroupMisc": "SONSTIGE TEXTUREN",
+  "modGroupArchives": "CPK-ARCHIVE",
   "modGroupEnemies": "GEGNER",
   "modGroupEffects": "EFFEKTE",
   "modGroupScripting": "SKRIPTE",
@@ -1617,7 +1693,9 @@
   "modGroupTextures": "TEXTUREN",
   "modGroupNative": "NATIVE MODS",
   "modGroupOther": "SONSTIGES",
+  "modGroupMixed": "GEMISCHTE INHALTE",
   "modGroupMultiHint": "Diese Mod ersetzt Modelle für mehrere Charaktere und wird daher unter jedem von ihnen aufgeführt.",
+  "modGroupMixedHint": "Diese Mod ändert mehrere Arten von Inhalten gleichzeitig. Klicke sie an, um alles zu sehen, was sie enthält, und welche Kategorien sie betrifft.",
   "modRename": "Umbenennen",
   "modRenameDialogTitle": "Mod umbenennen",
   "modRenameReset": "Auf ursprünglichen Namen zurücksetzen",

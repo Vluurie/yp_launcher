@@ -7,7 +7,8 @@ import 'package:yp_launcher/services/platform/linux_adapter.dart';
 import 'package:yp_launcher/services/platform/macos_adapter.dart';
 import 'package:yp_launcher/services/platform/platform_adapter.dart';
 import 'package:yp_launcher/services/platform/wine_adapter_base.dart';
-import 'package:yp_launcher/services/wine/native_steam.dart';
+import 'package:yp_launcher/services/wine/launch_command.dart';
+import 'package:yp_launcher/services/wine/proton.dart';
 
 import '../support/posix_only.dart';
 import '../wine/fake_bottle.dart';
@@ -206,5 +207,35 @@ void main() {
         throwsA(isA<LaunchUnavailable>()),
       );
     });
+
+    test('buildNamsCommand routes verify args through the same runtime',
+        () async {
+      final bottle = tree.addBottle('Steam');
+      final exe = tree.addNier('Steam');
+      final gameDir = p.dirname(exe);
+      Directory(p.join(bottle, 'dosdevices', 'z:')).createSync(recursive: true);
+      final wine = tree.addWineScript();
+
+      final cmd = await tree.run(
+        () => adapter.buildNamsCommand(
+          namsArgs: namsVerifyArgs,
+          namsExe: '/run/bins/NAMS.exe',
+          gameDir: gameDir,
+          gameExe: exe,
+          launcherDir: '/run/bins',
+          l10n: _l10n,
+        ),
+        wineCommand: wine,
+      );
+
+      expect(cmd.command, wine);
+      expect(cmd.args[4], '/run/bins/NAMS.exe');
+      expect(cmd.args.sublist(5), [
+        'verify',
+        '--nier-path',
+        r'C:\Program Files (x86)\Steam\steamapps\common\NieRAutomata',
+        '--json',
+      ]);
+    }, skip: skipOnWindows);
   });
 }
