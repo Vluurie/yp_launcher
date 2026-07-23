@@ -954,22 +954,22 @@ class _DiagnosticsDialogState extends ConsumerState<_DiagnosticsDialog> {
       _sectionCard(
         context,
         icon: Icons.computer_outlined,
-        title: 'System',
+        title: l10n.logSectionSystem,
         children: [
-          _kvRow(context, 'OS',
+          _kvRow(context, l10n.logDetailOs,
               '${r.systemInfo['OS'] ?? '?'} ${r.systemInfo['OS version'] ?? ''}'),
-          _kvRow(context, 'Locale', r.systemInfo['Locale'] ?? '?'),
+          _kvRow(context, l10n.logDetailLocale, r.systemInfo['Locale'] ?? '?'),
         ],
       ),
       SizedBox(height: AppSizes.spacingMD(context)),
       _sectionCard(
         context,
         icon: Icons.extension_outlined,
-        title: 'Mods (NAMS)',
+        title: l10n.logSectionModsNams,
         trailing: _countBadge(r.mods.length),
         children: [
           if (modKinds.isEmpty)
-            _mutedLine(context, 'No mods installed.')
+            _mutedLine(context, l10n.logNoModsInstalled)
           else
             Wrap(
               spacing: 6,
@@ -993,7 +993,7 @@ class _DiagnosticsDialogState extends ConsumerState<_DiagnosticsDialog> {
       _sectionCard(
         context,
         icon: Icons.movie_creation_outlined,
-        title: 'Cutscenes',
+        title: l10n.logSectionCutscenes,
         trailing: _countBadge(r.cutsceneMods.length),
         children: [
           Wrap(
@@ -1016,7 +1016,7 @@ class _DiagnosticsDialogState extends ConsumerState<_DiagnosticsDialog> {
       _sectionCard(
         context,
         icon: Icons.texture,
-        title: 'Textures',
+        title: l10n.logSectionTextures,
         children: [
           Wrap(
             spacing: 6,

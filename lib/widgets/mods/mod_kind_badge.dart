@@ -46,7 +46,13 @@ class ModKindBadge extends StatelessWidget {
 class ModCompatChip extends StatelessWidget {
   final String label;
   final String? tooltip;
-  const ModCompatChip({super.key, required this.label, this.tooltip});
+  final Color? accent;
+  const ModCompatChip({
+    super.key,
+    required this.label,
+    this.tooltip,
+    this.accent,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -54,15 +60,18 @@ class ModCompatChip extends StatelessWidget {
       margin: EdgeInsets.only(left: AppSizes.spacingSM(context)),
       padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
       decoration: BoxDecoration(
-        color: AppColors.borderMedium.withValues(alpha: 0.4),
+        color: (accent ?? AppColors.borderMedium).withValues(alpha: 0.4),
         borderRadius: BorderRadius.circular(4),
+        border: accent == null
+            ? null
+            : Border.all(color: accent!.withValues(alpha: 0.7)),
       ),
       child: Text(
         label,
         style: TextStyle(
           fontSize: 11,
-          color: AppColors.textMuted,
-          fontWeight: FontWeight.w500,
+          color: accent == null ? AppColors.textMuted : AppColors.textPrimary,
+          fontWeight: accent == null ? FontWeight.w500 : FontWeight.bold,
           letterSpacing: 0.3,
           height: 1.2,
         ),

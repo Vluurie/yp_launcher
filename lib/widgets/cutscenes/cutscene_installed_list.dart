@@ -307,7 +307,9 @@ class _ModTileHoverState extends ConsumerState<_ModTileHover> {
                     label: AppLocalizations.of(context)!.cutsceneBundledWith(
                       widget.mod.bundledWithModId!,
                     ),
-                    tooltip: 'Open in Mod Manager',
+                    tooltip: AppLocalizations.of(
+                      context,
+                    )!.tooltipOpenInModManager,
                     onTap: () {
                       ref.read(pendingTabSelectionProvider.notifier).state =
                           TabSelectionRequest(

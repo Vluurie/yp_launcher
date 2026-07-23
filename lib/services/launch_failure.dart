@@ -1,3 +1,5 @@
+import 'package:yp_launcher/l10n/app_localizations.dart';
+
 class LaunchFailure {
   final int? code;
   final bool panic;
@@ -21,81 +23,72 @@ class LaunchFailure {
     this.capturedLogPath,
   });
 
-  String friendlyTitle() {
-    if (panic) return 'NAMS crashed';
+  String friendlyTitle(AppLocalizations l) {
+    if (panic) return l.failTitlePanic;
     final c = code;
-    if (c == null) return 'Game launch failed';
-    return _categoryFor(c).title;
+    if (c == null) return l.failTitleUnknown;
+    return _categoryFor(c).title(l);
   }
 
-  String friendlyExplanation() {
-    if (panic) {
-      return 'NAMS hit an unrecoverable error before the game could start. '
-          'This is almost always a bug — please share the report below with the maintainer.';
-    }
+  String friendlyExplanation(AppLocalizations l) {
+    if (panic) return l.failExplanationPanic;
     final c = code;
-    if (c == null) return 'The game did not start within 60 seconds and no error was reported.';
-    return _categoryFor(c).explanation;
+    if (c == null) return l.failExplanationUnknown;
+    return _categoryFor(c).explanation(l);
   }
 
-  List<String> hints() {
+  List<String> hints(AppLocalizations l) {
     if (panic) {
-      return const [
-        'Copy the full report below and send it to the maintainer.',
-        'Try once more after rebooting — sometimes a stale handle clears itself.',
-      ];
+      return [l.failHintPanicShare, l.failHintPanicReboot];
     }
     final c = code;
     if (c == null) {
-      return const [
-        'NAMS seems to have spawned but the game window never appeared.',
-        'Check Task Manager — is NieRAutomata.exe running but invisible? Kill it and retry.',
-        'Make sure no other launcher / DRM tool is holding the exe (FAR, Special K, etc).',
+      return [
+        l.failHintUnknownSpawned,
+        l.failHintUnknownTaskManager,
+        l.failHintUnknownOtherLauncher,
       ];
     }
     final cat = _categoryFor(c);
-    return [if (fix != null && fix!.isNotEmpty) fix!, ...cat.extraHints];
+    return [
+      if (fix != null && fix!.isNotEmpty) fix!,
+      ...cat.extraHints.map((h) => h(l)),
+    ];
   }
 
   static _Category _categoryFor(int code) {
     switch (code) {
       case 1:
-        return const _Category(
-          title: 'NAMS reported a failure',
-          explanation:
-              'A NAMS check failed before the game could run. See the report below for details.',
-          extraHints: [
-            'Copy the full report below and share it for diagnosis.',
-          ],
+        return _Category(
+          title: (l) => l.failTitleNamsFailure,
+          explanation: (l) => l.failExplanationNamsFailure,
+          extraHints: [(l) => l.failHintShareReport],
         );
       case 2:
-        return const _Category(
-          title: 'NieR:Automata install not found',
-          explanation:
-              'NAMS could not resolve your NieR:Automata install. The saved path may be wrong, or Steam autodetect failed.',
+        return _Category(
+          title: (l) => l.failTitleInstallNotFound,
+          explanation: (l) => l.failExplanationInstallNotFound,
           extraHints: [
-            'Re-pick your game directory in the launcher to refresh the saved path.',
-            'Verify game files in Steam (Library → NieR:Automata → Properties → Local Files → Verify).',
+            (l) => l.failHintRepickDirectory,
+            (l) => l.failHintVerifyFiles,
           ],
         );
       case 3:
-        return const _Category(
-          title: 'Could not create a needed folder',
-          explanation:
-              'NAMS could not create a directory next to NAMS.exe. The install folder may be read-only.',
+        return _Category(
+          title: (l) => l.failTitleFolderCreate,
+          explanation: (l) => l.failExplanationFolderCreate,
           extraHints: [
-            'Make sure the launcher install folder (where NAMS.exe lives) is writable.',
-            'If it is in Program Files or OneDrive-synced, move the launcher to a normal folder or right-click → "Always keep on this device".',
+            (l) => l.failHintWritableFolder,
+            (l) => l.failHintProgramFiles,
           ],
         );
       case 4:
-        return const _Category(
-          title: 'Runtime preparation failed',
-          explanation:
-              'NAMS could not prepare its runtime (game.bin / steam_api64.dll). This is usually a writability or antivirus problem.',
+        return _Category(
+          title: (l) => l.failTitleRuntimePrep,
+          explanation: (l) => l.failExplanationRuntimePrep,
           extraHints: [
-            'Add the launcher install folder AND your game folder to your antivirus exclusions, then retry.',
-            'Make sure the install folder is writable so the runtime cache can be built.',
+            (l) => l.failHintAntivirusExclusions,
+            (l) => l.failHintWritableCache,
           ],
         );
       case 5:
@@ -103,71 +96,61 @@ class LaunchFailure {
       case 7:
       case 8:
       case 9:
-        return const _Category(
-          title: 'NAMS host failure',
-          explanation:
-              'NAMS could not load and start the game host (game.bin). This is usually an environment or corruption issue.',
+        return _Category(
+          title: (l) => l.failTitleHostFailure,
+          explanation: (l) => l.failExplanationHostFailure,
           extraHints: [
-            'Reboot and try again — sometimes a stale handle clears itself.',
-            'Add the launcher install folder AND your game folder to your antivirus exclusions.',
-            'If it persists, copy the full report and send it to the maintainer.',
+            (l) => l.failHintReboot,
+            (l) => l.failHintAntivirusExclusions,
+            (l) => l.failHintPersistShare,
           ],
         );
       case 20:
-        return const _Category(
-          title: 'Steam not running / not logged in',
-          explanation:
-              'NAMS could not reach a logged-in Steam session. Steam must be running and signed in.',
-          extraHints: [
-            'Start Steam and sign in, then launch again.',
-          ],
+        return _Category(
+          title: (l) => l.failTitleSteamNotRunning,
+          explanation: (l) => l.failExplanationSteamNotRunning,
+          extraHints: [(l) => l.failHintStartSteam],
         );
       case 21:
-        return const _Category(
-          title: 'Steam account does not own NieR:Automata',
-          explanation:
-              'The signed-in Steam account does not own NieR:Automata.',
-          extraHints: [
-            'Sign into the Steam account that owns NieR:Automata.',
-          ],
+        return _Category(
+          title: (l) => l.failTitleSteamNotOwned,
+          explanation: (l) => l.failExplanationSteamNotOwned,
+          extraHints: [(l) => l.failHintSignInOwner],
         );
       case 22:
-        return const _Category(
-          title: 'Steam check failed',
-          explanation:
-              'NAMS hit an internal error while verifying Steam ownership.',
+        return _Category(
+          title: (l) => l.failTitleSteamCheckFailed,
+          explanation: (l) => l.failExplanationSteamCheckFailed,
           extraHints: [
-            'Restart Steam and the launcher, then try again.',
-            'If it persists, copy the full report and send it to the maintainer.',
+            (l) => l.failHintRestartSteam,
+            (l) => l.failHintPersistShare,
           ],
         );
       case 64:
-        return const _Category(
-          title: 'Invalid launch arguments',
-          explanation:
-              'The launcher passed arguments NAMS could not parse. This is a launcher bug.',
-          extraHints: [
-            'Copy the full report below and send it to the maintainer.',
-          ],
+        return _Category(
+          title: (l) => l.failTitleInvalidArgs,
+          explanation: (l) => l.failExplanationInvalidArgs,
+          extraHints: [(l) => l.failHintPanicShare],
         );
       default:
-        return const _Category(
-          title: 'Game exited unexpectedly',
-          explanation:
-              'NAMS started the game but it exited with a non-zero code. The game may have crashed.',
+        return _Category(
+          title: (l) => l.failTitleExitedUnexpectedly,
+          explanation: (l) => l.failExplanationExitedUnexpectedly,
           extraHints: [
-            'Check the in-app log viewer (nams.log) for the crash details.',
-            'Copy the full report below and share it for diagnosis.',
+            (l) => l.failHintCheckLogViewer,
+            (l) => l.failHintShareReport,
           ],
         );
     }
   }
 }
 
+typedef _L10nString = String Function(AppLocalizations l);
+
 class _Category {
-  final String title;
-  final String explanation;
-  final List<String> extraHints;
+  final _L10nString title;
+  final _L10nString explanation;
+  final List<_L10nString> extraHints;
   const _Category({
     required this.title,
     required this.explanation,

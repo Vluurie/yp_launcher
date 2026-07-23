@@ -5,7 +5,9 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
+import 'app_localizations_de.dart';
 import 'app_localizations_en.dart';
+import 'app_localizations_zh.dart';
 
 // ignore_for_file: type=lint
 
@@ -92,7 +94,11 @@ abstract class AppLocalizations {
       ];
 
   /// A list of this localizations delegate's supported locales.
-  static const List<Locale> supportedLocales = <Locale>[Locale('en')];
+  static const List<Locale> supportedLocales = <Locale>[
+    Locale('de'),
+    Locale('en'),
+    Locale('zh'),
+  ];
 
   /// No description provided for @appTitle.
   ///
@@ -123,6 +129,438 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Discord'**
   String get tooltipDiscord;
+
+  /// No description provided for @tooltipLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get tooltipLanguage;
+
+  /// No description provided for @languageSupportNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Translations are community-made or auto-generated and may be inaccurate. The maintainers speak English only - please ask for help in English.'**
+  String get languageSupportNotice;
+
+  /// No description provided for @launchOptionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'LAUNCH OPTIONS'**
+  String get launchOptionsTitle;
+
+  /// No description provided for @launchOptionMinimizeOnLaunch.
+  ///
+  /// In en, this message translates to:
+  /// **'Minimize launcher while playing'**
+  String get launchOptionMinimizeOnLaunch;
+
+  /// No description provided for @launchOptionPreferDedicatedGpu.
+  ///
+  /// In en, this message translates to:
+  /// **'Prefer dedicated GPU'**
+  String get launchOptionPreferDedicatedGpu;
+
+  /// No description provided for @launchOptionPreferDedicatedGpuTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Tells the system to run the game on the dedicated graphics card instead of the power-saving one. Only matters on PCs with two GPUs (e.g. gaming laptops).'**
+  String get launchOptionPreferDedicatedGpuTooltip;
+
+  /// No description provided for @failTitlePanic.
+  ///
+  /// In en, this message translates to:
+  /// **'NAMS crashed'**
+  String get failTitlePanic;
+
+  /// No description provided for @failTitleUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Game launch failed'**
+  String get failTitleUnknown;
+
+  /// No description provided for @failExplanationPanic.
+  ///
+  /// In en, this message translates to:
+  /// **'NAMS hit an unrecoverable error before the game could start. This is almost always a bug — please share the report below with the maintainer.'**
+  String get failExplanationPanic;
+
+  /// No description provided for @failExplanationUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'The game did not start within 60 seconds and no error was reported.'**
+  String get failExplanationUnknown;
+
+  /// No description provided for @failHintPanicShare.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy the full report below and send it to the maintainer.'**
+  String get failHintPanicShare;
+
+  /// No description provided for @failHintPanicReboot.
+  ///
+  /// In en, this message translates to:
+  /// **'Try once more after rebooting — sometimes a stale handle clears itself.'**
+  String get failHintPanicReboot;
+
+  /// No description provided for @failHintUnknownSpawned.
+  ///
+  /// In en, this message translates to:
+  /// **'NAMS seems to have spawned but the game window never appeared.'**
+  String get failHintUnknownSpawned;
+
+  /// No description provided for @failHintUnknownTaskManager.
+  ///
+  /// In en, this message translates to:
+  /// **'Check Task Manager — is NieRAutomata.exe running but invisible? Kill it and retry.'**
+  String get failHintUnknownTaskManager;
+
+  /// No description provided for @failHintUnknownOtherLauncher.
+  ///
+  /// In en, this message translates to:
+  /// **'Make sure no other launcher / DRM tool is holding the exe (FAR, Special K, etc).'**
+  String get failHintUnknownOtherLauncher;
+
+  /// No description provided for @failTitleNamsFailure.
+  ///
+  /// In en, this message translates to:
+  /// **'NAMS reported a failure'**
+  String get failTitleNamsFailure;
+
+  /// No description provided for @failExplanationNamsFailure.
+  ///
+  /// In en, this message translates to:
+  /// **'A NAMS check failed before the game could run. See the report below for details.'**
+  String get failExplanationNamsFailure;
+
+  /// No description provided for @failHintShareReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy the full report below and share it for diagnosis.'**
+  String get failHintShareReport;
+
+  /// No description provided for @failTitleInstallNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'NieR:Automata install not found'**
+  String get failTitleInstallNotFound;
+
+  /// No description provided for @failExplanationInstallNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'NAMS could not resolve your NieR:Automata install. The saved path may be wrong, or Steam autodetect failed.'**
+  String get failExplanationInstallNotFound;
+
+  /// No description provided for @failHintRepickDirectory.
+  ///
+  /// In en, this message translates to:
+  /// **'Re-pick your game directory in the launcher to refresh the saved path.'**
+  String get failHintRepickDirectory;
+
+  /// No description provided for @failHintVerifyFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify game files in Steam (Library → NieR:Automata → Properties → Local Files → Verify).'**
+  String get failHintVerifyFiles;
+
+  /// No description provided for @failTitleFolderCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not create a needed folder'**
+  String get failTitleFolderCreate;
+
+  /// No description provided for @failExplanationFolderCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'NAMS could not create a directory next to NAMS.exe. The install folder may be read-only.'**
+  String get failExplanationFolderCreate;
+
+  /// No description provided for @failHintWritableFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Make sure the launcher install folder (where NAMS.exe lives) is writable.'**
+  String get failHintWritableFolder;
+
+  /// No description provided for @failHintProgramFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'If it is in Program Files or OneDrive-synced, move the launcher to a normal folder or right-click → \"Always keep on this device\".'**
+  String get failHintProgramFiles;
+
+  /// No description provided for @failTitleRuntimePrep.
+  ///
+  /// In en, this message translates to:
+  /// **'Runtime preparation failed'**
+  String get failTitleRuntimePrep;
+
+  /// No description provided for @failExplanationRuntimePrep.
+  ///
+  /// In en, this message translates to:
+  /// **'NAMS could not prepare its runtime (game.bin / steam_api64.dll). This is usually a writability or antivirus problem.'**
+  String get failExplanationRuntimePrep;
+
+  /// No description provided for @failHintAntivirusExclusions.
+  ///
+  /// In en, this message translates to:
+  /// **'Add the launcher install folder AND your game folder to your antivirus exclusions, then retry.'**
+  String get failHintAntivirusExclusions;
+
+  /// No description provided for @failHintWritableCache.
+  ///
+  /// In en, this message translates to:
+  /// **'Make sure the install folder is writable so the runtime cache can be built.'**
+  String get failHintWritableCache;
+
+  /// No description provided for @failTitleHostFailure.
+  ///
+  /// In en, this message translates to:
+  /// **'NAMS host failure'**
+  String get failTitleHostFailure;
+
+  /// No description provided for @failExplanationHostFailure.
+  ///
+  /// In en, this message translates to:
+  /// **'NAMS could not load and start the game host (game.bin). This is usually an environment or corruption issue.'**
+  String get failExplanationHostFailure;
+
+  /// No description provided for @failHintReboot.
+  ///
+  /// In en, this message translates to:
+  /// **'Reboot and try again — sometimes a stale handle clears itself.'**
+  String get failHintReboot;
+
+  /// No description provided for @failHintPersistShare.
+  ///
+  /// In en, this message translates to:
+  /// **'If it persists, copy the full report and send it to the maintainer.'**
+  String get failHintPersistShare;
+
+  /// No description provided for @failTitleSteamNotRunning.
+  ///
+  /// In en, this message translates to:
+  /// **'Steam not running / not logged in'**
+  String get failTitleSteamNotRunning;
+
+  /// No description provided for @failExplanationSteamNotRunning.
+  ///
+  /// In en, this message translates to:
+  /// **'NAMS could not reach a logged-in Steam session. Steam must be running and signed in.'**
+  String get failExplanationSteamNotRunning;
+
+  /// No description provided for @failHintStartSteam.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Steam and sign in, then launch again.'**
+  String get failHintStartSteam;
+
+  /// No description provided for @failTitleSteamNotOwned.
+  ///
+  /// In en, this message translates to:
+  /// **'Steam account does not own NieR:Automata'**
+  String get failTitleSteamNotOwned;
+
+  /// No description provided for @failExplanationSteamNotOwned.
+  ///
+  /// In en, this message translates to:
+  /// **'The signed-in Steam account does not own NieR:Automata.'**
+  String get failExplanationSteamNotOwned;
+
+  /// No description provided for @failHintSignInOwner.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign into the Steam account that owns NieR:Automata.'**
+  String get failHintSignInOwner;
+
+  /// No description provided for @failTitleSteamCheckFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Steam check failed'**
+  String get failTitleSteamCheckFailed;
+
+  /// No description provided for @failExplanationSteamCheckFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'NAMS hit an internal error while verifying Steam ownership.'**
+  String get failExplanationSteamCheckFailed;
+
+  /// No description provided for @failHintRestartSteam.
+  ///
+  /// In en, this message translates to:
+  /// **'Restart Steam and the launcher, then try again.'**
+  String get failHintRestartSteam;
+
+  /// No description provided for @failTitleInvalidArgs.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid launch arguments'**
+  String get failTitleInvalidArgs;
+
+  /// No description provided for @failExplanationInvalidArgs.
+  ///
+  /// In en, this message translates to:
+  /// **'The launcher passed arguments NAMS could not parse. This is a launcher bug.'**
+  String get failExplanationInvalidArgs;
+
+  /// No description provided for @failTitleExitedUnexpectedly.
+  ///
+  /// In en, this message translates to:
+  /// **'Game exited unexpectedly'**
+  String get failTitleExitedUnexpectedly;
+
+  /// No description provided for @failExplanationExitedUnexpectedly.
+  ///
+  /// In en, this message translates to:
+  /// **'NAMS started the game but it exited with a non-zero code. The game may have crashed.'**
+  String get failExplanationExitedUnexpectedly;
+
+  /// No description provided for @failHintCheckLogViewer.
+  ///
+  /// In en, this message translates to:
+  /// **'Check the in-app log viewer (nams.log) for the crash details.'**
+  String get failHintCheckLogViewer;
+
+  /// No description provided for @failHeadlinePanicked.
+  ///
+  /// In en, this message translates to:
+  /// **'NAMS panicked'**
+  String get failHeadlinePanicked;
+
+  /// No description provided for @failSectionWhatHappened.
+  ///
+  /// In en, this message translates to:
+  /// **'What happened'**
+  String get failSectionWhatHappened;
+
+  /// No description provided for @failSectionReportedByNams.
+  ///
+  /// In en, this message translates to:
+  /// **'Reported by NAMS'**
+  String get failSectionReportedByNams;
+
+  /// No description provided for @failSectionTryThis.
+  ///
+  /// In en, this message translates to:
+  /// **'Try this'**
+  String get failSectionTryThis;
+
+  /// No description provided for @failSectionDiagnosticDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'Diagnostic detail'**
+  String get failSectionDiagnosticDetail;
+
+  /// No description provided for @failSectionLaunchManually.
+  ///
+  /// In en, this message translates to:
+  /// **'Launch manually from a terminal'**
+  String get failSectionLaunchManually;
+
+  /// No description provided for @failSectionRawOutput.
+  ///
+  /// In en, this message translates to:
+  /// **'Raw output'**
+  String get failSectionRawOutput;
+
+  /// No description provided for @failManualCommandHint.
+  ///
+  /// In en, this message translates to:
+  /// **'If the launcher UI keeps failing for you, paste this into a terminal to start the game manually. It is the exact same command the Play button runs.'**
+  String get failManualCommandHint;
+
+  /// No description provided for @failDetailOs.
+  ///
+  /// In en, this message translates to:
+  /// **'OS'**
+  String get failDetailOs;
+
+  /// No description provided for @failDetailCause.
+  ///
+  /// In en, this message translates to:
+  /// **'Cause'**
+  String get failDetailCause;
+
+  /// No description provided for @failDetailSuggested.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested'**
+  String get failDetailSuggested;
+
+  /// No description provided for @failActionCopyReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy report'**
+  String get failActionCopyReport;
+
+  /// No description provided for @failActionOpenLogFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Open log file'**
+  String get failActionOpenLogFile;
+
+  /// No description provided for @logDetailOs.
+  ///
+  /// In en, this message translates to:
+  /// **'OS'**
+  String get logDetailOs;
+
+  /// No description provided for @logDetailLocale.
+  ///
+  /// In en, this message translates to:
+  /// **'Locale'**
+  String get logDetailLocale;
+
+  /// No description provided for @logNoModsInstalled.
+  ///
+  /// In en, this message translates to:
+  /// **'No mods installed.'**
+  String get logNoModsInstalled;
+
+  /// No description provided for @logSectionSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get logSectionSystem;
+
+  /// No description provided for @logSectionModsNams.
+  ///
+  /// In en, this message translates to:
+  /// **'Mods (NAMS)'**
+  String get logSectionModsNams;
+
+  /// No description provided for @logSectionCutscenes.
+  ///
+  /// In en, this message translates to:
+  /// **'Cutscenes'**
+  String get logSectionCutscenes;
+
+  /// No description provided for @logSectionTextures.
+  ///
+  /// In en, this message translates to:
+  /// **'Textures'**
+  String get logSectionTextures;
+
+  /// No description provided for @tooltipOpenInModManager.
+  ///
+  /// In en, this message translates to:
+  /// **'Open in Mod Manager'**
+  String get tooltipOpenInModManager;
+
+  /// No description provided for @tooltipOpenInCutscenesTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Open in Cutscenes tab'**
+  String get tooltipOpenInCutscenesTab;
+
+  /// No description provided for @tooltipOpenInTexturesTab.
+  ///
+  /// In en, this message translates to:
+  /// **'{name}\n\nOpen in Textures tab'**
+  String tooltipOpenInTexturesTab(String name);
+
+  /// No description provided for @actionCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get actionCancel;
 
   /// No description provided for @tooltipMinimize.
   ///
@@ -4450,6 +4888,42 @@ abstract class AppLocalizations {
   /// **'Playing with a controller? These settings are designed for mouse and keyboard, but some of them - especially the camera and aiming fixes - also affect controller input. If you switch back to playing on a controller, disable those settings first to restore the original gamepad feel.'**
   String get naiomControllerNote;
 
+  /// No description provided for @cardCheatEngine.
+  ///
+  /// In en, this message translates to:
+  /// **'CHEAT ENGINE'**
+  String get cardCheatEngine;
+
+  /// No description provided for @cheatTableConvertDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Got a Cheat Engine table (.CT) that does not work with NAMS? Fix it here. The fixed copy is saved next to your original file.'**
+  String get cheatTableConvertDesc;
+
+  /// No description provided for @cheatTableConvertButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Fix cheat table...'**
+  String get cheatTableConvertButton;
+
+  /// No description provided for @cheatTableConvertSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Fixed! Saved as {file}'**
+  String cheatTableConvertSuccess(String file);
+
+  /// No description provided for @cheatTableConvertNone.
+  ///
+  /// In en, this message translates to:
+  /// **'This table already works with NAMS - nothing to fix.'**
+  String get cheatTableConvertNone;
+
+  /// No description provided for @cheatTableConvertError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not fix this table. Make sure the file is a valid .CT file.'**
+  String get cheatTableConvertError;
+
   /// No description provided for @naiomBetaBadge.
   ///
   /// In en, this message translates to:
@@ -5505,6 +5979,42 @@ abstract class AppLocalizations {
   /// **'Conflicts'**
   String get modConflictsLabel;
 
+  /// No description provided for @modLoadOrderHint.
+  ///
+  /// In en, this message translates to:
+  /// **'These mods replace the same files. Drag to reorder - top wins.'**
+  String get modLoadOrderHint;
+
+  /// No description provided for @modConflictKeep.
+  ///
+  /// In en, this message translates to:
+  /// **'KEEP THIS'**
+  String get modConflictKeep;
+
+  /// No description provided for @modConflictResolve.
+  ///
+  /// In en, this message translates to:
+  /// **'RESOLVE'**
+  String get modConflictResolve;
+
+  /// No description provided for @modConflictDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Which mod should win?'**
+  String get modConflictDialogTitle;
+
+  /// No description provided for @modConflictKeepTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep {id} and disable the others'**
+  String modConflictKeepTooltip(String id);
+
+  /// No description provided for @modConflictPickBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{mods} enabled mods replace the same {files, plural, =1{file} other{{files} files}}. Pick the one to keep - the others get disabled.'**
+  String modConflictPickBody(int mods, int files);
+
   /// No description provided for @modConflictOverlapFile.
   ///
   /// In en, this message translates to:
@@ -5546,6 +6056,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Mod is loaded by NAMS. Click to disable without removing the files.'**
   String get modEnableTooltip;
+
+  /// No description provided for @modDefaultTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Active from game start, as if its files were in NieRAutomata/data. Click to turn off.'**
+  String get modDefaultTooltip;
+
+  /// No description provided for @modSetDefaultTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Make this mod active from game start, without copying anything into NieRAutomata/data.'**
+  String get modSetDefaultTooltip;
+
+  /// No description provided for @modSetDefaultOutfitTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Wear this from game start, without copying anything into NieRAutomata/data. Replaces whichever outfit is currently the default - only one can be.'**
+  String get modSetDefaultOutfitTooltip;
+
+  /// No description provided for @modDefaultChip.
+  ///
+  /// In en, this message translates to:
+  /// **'DEFAULT'**
+  String get modDefaultChip;
+
+  /// No description provided for @modDefaultKindOutfitBare.
+  ///
+  /// In en, this message translates to:
+  /// **'outfit'**
+  String get modDefaultKindOutfitBare;
+
+  /// No description provided for @modDefaultKindOutfitConfig.
+  ///
+  /// In en, this message translates to:
+  /// **'outfit + config'**
+  String get modDefaultKindOutfitConfig;
+
+  /// No description provided for @modDefaultKindOutfitAnimation.
+  ///
+  /// In en, this message translates to:
+  /// **'animation'**
+  String get modDefaultKindOutfitAnimation;
+
+  /// No description provided for @modDefaultKindOutfitBareTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Replaces the model files directly. Only one outfit can be the default at a time.'**
+  String get modDefaultKindOutfitBareTooltip;
+
+  /// No description provided for @modDefaultKindOutfitConfigTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'This mod ships an outfit config, so its mesh rules and effects load with it. Only one outfit can be the default at a time.'**
+  String get modDefaultKindOutfitConfigTooltip;
+
+  /// No description provided for @modDefaultKindOutfitAnimationTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Animation data, not an outfit. Stays active underneath whatever outfit you wear.'**
+  String get modDefaultKindOutfitAnimationTooltip;
+
+  /// No description provided for @modDefaultReplaceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace the default?'**
+  String get modDefaultReplaceTitle;
+
+  /// No description provided for @modDefaultReplaceBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{model} is currently worn from game start by \"{current}\".\n\nMaking \"{next}\" the default removes that, since only one mod can dress a character at a time.'**
+  String modDefaultReplaceBody(String model, String current, String next);
+
+  /// No description provided for @modDefaultReplaceConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace'**
+  String get modDefaultReplaceConfirm;
+
+  /// No description provided for @modDefaultOutfitAuto.
+  ///
+  /// In en, this message translates to:
+  /// **'Default outfit'**
+  String get modDefaultOutfitAuto;
+
+  /// No description provided for @modDefaultOutfitPickTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'This mod ships several outfits. Pick the one you want to wear from game start. \"Default outfit\" is the one worn without an item.'**
+  String get modDefaultOutfitPickTooltip;
+
+  /// No description provided for @modDefaultRowTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Active from game start: {files}'**
+  String modDefaultRowTooltip(String files);
 
   /// No description provided for @modDisableNotice.
   ///
@@ -5985,7 +6591,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['en'].contains(locale.languageCode);
+      <String>['de', 'en', 'zh'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -5994,8 +6600,12 @@ class _AppLocalizationsDelegate
 AppLocalizations lookupAppLocalizations(Locale locale) {
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
+    case 'de':
+      return AppLocalizationsDe();
     case 'en':
       return AppLocalizationsEn();
+    case 'zh':
+      return AppLocalizationsZh();
   }
 
   throw FlutterError(

@@ -78,15 +78,37 @@ class PlayerModelEntry {
   const PlayerModelEntry({required this.fileName, required this.label});
 }
 
+/// One outfit a mod's config declares for a character.
+///
+/// A mod may ship several, in which case a boot default has to say which one
+/// to wear.
+class OutfitChoice {
+  final int outfitId;
+  final String name;
+  final bool needsItem;
+
+  const OutfitChoice({
+    required this.outfitId,
+    required this.name,
+    required this.needsItem,
+  });
+}
+
 class DataSummary {
   final List<DataDirEntry> entries;
   final List<PlayerModelEntry> players;
   final bool hasCompatConfig;
+  final bool hasOutfitConfig;
+
+  /// Outfits declared per player-model stem, e.g. `pl000d` -> 2B's outfits.
+  final Map<String, List<OutfitChoice>> outfitsByStem;
 
   const DataSummary({
     this.entries = const [],
     this.players = const [],
     this.hasCompatConfig = false,
+    this.hasOutfitConfig = false,
+    this.outfitsByStem = const {},
   });
 }
 
@@ -284,6 +306,10 @@ const Map<String, DataCategory> dataDirCategoryTable = {
 const Map<String, String> playerModelLookup = {
   'pl0000': '2B (vanilla)',
   'pl000d': '2B (DLC clothes)',
+  'pl000f': '2B (animations)',
+  'pl002f': '9S (animations)',
+  'pl010f': 'A2 (animations)',
+  'pl020f': '9S (animations, DLC)',
   'pl0001': '2B (armoured)',
   'pl000e': 'dead YoRHa (2B body)',
   'pl0010': 'flight unit',

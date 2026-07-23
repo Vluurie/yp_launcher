@@ -5,6 +5,8 @@ import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as path;
 import 'package:yp_launcher/constants/app_strings.dart';
 import 'package:yp_launcher/l10n/app_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:yp_launcher/services/gpu_preference_service.dart';
 import 'package:yp_launcher/services/launch_failure.dart';
 import 'package:yp_launcher/services/launcher_setup_service.dart';
 import 'package:yp_launcher/services/log_service.dart';
@@ -87,11 +89,25 @@ class ProcessService {
         );
       }
 
+      var preferGpu = true;
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        preferGpu =
+            prefs.getBool(AppStrings.prefKeyPreferDedicatedGpu) ?? true;
+      } catch (_) {}
+      GpuPreferenceService.apply(
+        launcherPaths['namsExe']!,
+        enabled: preferGpu,
+      );
+
       final process = await Process.start(
         command.command,
         command.args,
         workingDirectory: command.cwd,
-        environment: command.env,
+        environment: GpuPreferenceService.mergedLaunchEnv(
+          command.env,
+          enabled: preferGpu,
+        ),
         mode: ProcessStartMode.normal,
       );
 

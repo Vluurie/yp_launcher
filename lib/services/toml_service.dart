@@ -270,8 +270,14 @@ class TomlService {
     }
     if (value is List) {
       if (value.isEmpty) return '[]';
-      final items = value.map((e) => '"$e"').join(', ');
+      final items = value.map(_formatValue).join(', ');
       return '[$items]';
+    }
+    if (value is Map) {
+      final pairs = value.entries
+          .map((e) => '${e.key} = ${_formatValue(e.value)}')
+          .join(', ');
+      return '{ $pairs }';
     }
     return '"$value"';
   }

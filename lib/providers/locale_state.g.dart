@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'config_state.dart';
+part of 'locale_state.dart';
 
 // **************************************************************************
 // RiverpodGenerator
@@ -9,53 +9,52 @@ part of 'config_state.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(ConfigStateController)
-const configStateControllerProvider = ConfigStateControllerProvider._();
+@ProviderFor(LocaleController)
+const localeControllerProvider = LocaleControllerProvider._();
 
-final class ConfigStateControllerProvider
-    extends $NotifierProvider<ConfigStateController, ConfigData> {
-  const ConfigStateControllerProvider._()
+final class LocaleControllerProvider
+    extends $NotifierProvider<LocaleController, Locale?> {
+  const LocaleControllerProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'configStateControllerProvider',
+        name: r'localeControllerProvider',
         isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$configStateControllerHash();
+  String debugGetCreateSourceHash() => _$localeControllerHash();
 
   @$internal
   @override
-  ConfigStateController create() => ConfigStateController();
+  LocaleController create() => LocaleController();
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(ConfigData value) {
+  Override overrideWithValue(Locale? value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<ConfigData>(value),
+      providerOverride: $SyncValueProvider<Locale?>(value),
     );
   }
 }
 
-String _$configStateControllerHash() =>
-    r'32b1c49fc7c4d8669653d56f0e5dbf6521ed2745';
+String _$localeControllerHash() => r'7e50fc17332097e488fcc7ab205f5474a46ff3ef';
 
-abstract class _$ConfigStateController extends $Notifier<ConfigData> {
-  ConfigData build();
+abstract class _$LocaleController extends $Notifier<Locale?> {
+  Locale? build();
   @$mustCallSuper
   @override
   void runBuild() {
     final created = build();
-    final ref = this.ref as $Ref<ConfigData, ConfigData>;
+    final ref = this.ref as $Ref<Locale?, Locale?>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<ConfigData, ConfigData>,
-              ConfigData,
+              AnyNotifier<Locale?, Locale?>,
+              Locale?,
               Object?,
               Object?
             >;

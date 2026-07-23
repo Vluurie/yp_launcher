@@ -8,7 +8,9 @@ import 'package:yp_launcher/l10n/app_localizations.dart';
 import 'package:yp_launcher/models/installed_mod.dart';
 import 'package:yp_launcher/models/mod_grouping.dart';
 import 'package:yp_launcher/providers/app_state.dart';
+import 'package:yp_launcher/providers/default_mods_state.dart';
 import 'package:yp_launcher/providers/disabled_mods_state.dart';
+import 'package:yp_launcher/providers/mod_load_order_state.dart';
 import 'package:yp_launcher/providers/mod_names_state.dart';
 import 'package:yp_launcher/providers/mod_profiles_state.dart';
 import 'package:yp_launcher/widgets/mods/mod_group_header.dart';
@@ -87,6 +89,8 @@ class _ModsViewState extends ConsumerState<ModsView> {
       ref.read(modProfilesStateControllerProvider.notifier).load(dir);
       ref.read(modsStateControllerProvider.notifier).loadMods(dir);
       ref.read(disabledModsStateControllerProvider.notifier).load(dir);
+      ref.read(defaultModsStateControllerProvider.notifier).load(dir);
+      ref.read(modLoadOrderStateControllerProvider.notifier).load(dir);
       ref.read(modNamesStateControllerProvider.notifier).load(dir);
       _restartWatcher(dir);
     });
@@ -532,7 +536,7 @@ class _ModsViewState extends ConsumerState<ModsView> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(ctx).pop(false),
-              child: Text('Cancel', style: TextStyle(color: AppColors.textMuted, fontSize: AppSizes.fontSM(ctx))),
+              child: Text(AppLocalizations.of(ctx)!.actionCancel, style: TextStyle(color: AppColors.textMuted, fontSize: AppSizes.fontSM(ctx))),
             ),
             TextButton(
               onPressed: () => Navigator.of(ctx).pop(true),

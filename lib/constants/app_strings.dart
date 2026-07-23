@@ -67,6 +67,8 @@ class AppStrings {
   // Preferences keys
   static const String prefKeyDirectory = 'nier_directory';
   static const String prefKeyMinimizeOnLaunch = 'minimize_on_launch';
+  static const String prefKeyPreferDedicatedGpu = 'prefer_dedicated_gpu';
+  static const String prefKeyLocale = 'app_locale';
 
   // Game
   static const String gameExeName = 'NieRAutomata.exe';

@@ -43,7 +43,7 @@ final class ModProfilesStateControllerProvider
 }
 
 String _$modProfilesStateControllerHash() =>
-    r'd7c0cccfb72cb3985bd3e797438e89604fc005f0';
+    r'a4ca55a6133ae7c870fb47223be8cf02aef851be';
 
 abstract class _$ModProfilesStateController extends $Notifier<ModProfileState> {
   ModProfileState build();

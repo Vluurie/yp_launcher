@@ -6,6 +6,7 @@ import 'package:automato_theme/automato_theme.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:yp_launcher/constants/app_strings.dart';
 import 'package:yp_launcher/l10n/app_localizations.dart';
+import 'package:yp_launcher/providers/locale_state.dart';
 import 'package:yp_launcher/screens/launcher_screen.dart';
 import 'package:yp_launcher/services/launcher_setup_service.dart';
 import 'package:yp_launcher/services/platform/platform_adapter.dart';
@@ -72,6 +73,7 @@ class YoRHaProtocolLauncher extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
+      locale: ref.watch(localeControllerProvider),
       theme: baseTheme.copyWith(
         textTheme: gameFont,
         tooltipTheme: TooltipThemeData(

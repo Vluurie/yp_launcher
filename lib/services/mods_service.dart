@@ -539,7 +539,12 @@ InstalledMod? _scanInstalledMod(String rootPath, String id, String gameDir) {
   final dataDir = Directory(path.join(contentRoot, 'data'));
   final hasCompat = _hasCompatConfig(contentRoot);
   if (dataDir.existsSync() || hasCompat) {
-    data = _scanData(dataDir, hasCompatConfig: hasCompat);
+    data = _scanData(
+      dataDir,
+      hasCompatConfig: hasCompat,
+      hasOutfitConfig: _hasOutfitConfig(contentRoot),
+      outfitsByStem: _scanOutfitChoices(contentRoot),
+    );
   }
 
   DateTime installedAt;
@@ -776,24 +781,94 @@ bool _entitiesHasContent(Directory dir) {
   return false;
 }
 
-bool _hasCompatConfig(String contentRoot) {
+bool _hasCompatConfig(String contentRoot) =>
+    _hasConfigIn(contentRoot, _compatConfigSubdirs);
+
+bool _hasOutfitConfig(String contentRoot) =>
+    _hasConfigIn(contentRoot, const {'outfits'});
+
+bool _hasConfigIn(String contentRoot, Set<String> subdirs) {
   final wrappedRoot = Directory(path.join(contentRoot, 'wax', 'mods'));
   if (wrappedRoot.existsSync()) {
     for (final inner in wrappedRoot.listSync().whereType<Directory>()) {
-      if (_hasCompatSubdirAt(inner.path)) return true;
+      if (_hasConfigSubdirAt(inner.path, subdirs)) return true;
     }
   }
-  return _hasCompatSubdirAt(contentRoot);
+  return _hasConfigSubdirAt(contentRoot, subdirs);
 }
 
-bool _hasCompatSubdirAt(String root) {
-  for (final sub in _compatConfigSubdirs) {
+bool _hasConfigSubdirAt(String root, Set<String> subdirs) {
+  for (final sub in subdirs) {
     final d = Directory(path.join(root, sub));
     if (!d.existsSync()) continue;
     final hasJson = d.listSync().whereType<File>().any((f) => f.path.toLowerCase().endsWith('.json'));
     if (hasJson) return true;
   }
   return false;
+}
+
+const _outfitListsByStem = {
+  'pl_2b_outfits': ['pl000d', 'pl0000'],
+  'pl_9s_outfits': ['pl020d', 'pl0200'],
+  'pl_a2_outfits': ['pl010d', 'pl0100'],
+};
+
+Map<String, List<OutfitChoice>> _scanOutfitChoices(String contentRoot) {
+  final byStem = <String, List<OutfitChoice>>{};
+
+  void readDir(String root) {
+    final dir = Directory(path.join(root, 'outfits'));
+    if (!dir.existsSync()) return;
+    final files = dir
+        .listSync()
+        .whereType<File>()
+        .where((f) => f.path.toLowerCase().endsWith('.json'))
+        .toList()
+      ..sort((a, b) => a.path.compareTo(b.path));
+
+    for (final file in files) {
+      Object? raw;
+      try {
+        raw = jsonDecode(file.readAsStringSync());
+      } catch (_) {
+        continue;
+      }
+      if (raw is! Map) continue;
+      for (final entry in _outfitListsByStem.entries) {
+        final list = raw[entry.key];
+        if (list is! List) continue;
+        final choices = <OutfitChoice>[];
+        for (final o in list) {
+          if (o is! Map) continue;
+          final id = o['outfit_id'];
+          if (id is! int) continue;
+          final name = o['outfit_name'];
+          choices.add(OutfitChoice(
+            outfitId: id,
+            name: name is String && name.isNotEmpty ? name : 'Outfit $id',
+            needsItem: o['item_id'] != null,
+          ));
+        }
+        if (choices.isEmpty) continue;
+        for (final stem in entry.value) {
+          byStem.putIfAbsent(stem, () => []).addAll(choices);
+        }
+      }
+    }
+  }
+
+  final wrappedRoot = Directory(path.join(contentRoot, 'wax', 'mods'));
+  if (wrappedRoot.existsSync()) {
+    for (final inner in wrappedRoot.listSync().whereType<Directory>()) {
+      readDir(inner.path);
+    }
+  }
+  readDir(contentRoot);
+
+  for (final list in byStem.values) {
+    list.sort((a, b) => a.outfitId.compareTo(b.outfitId));
+  }
+  return byStem;
 }
 
 bool _dataHasSubdirs(Directory dir) {
@@ -869,7 +944,12 @@ int _countAssetEntries(Directory dir) {
   return stems.length + other;
 }
 
-DataSummary _scanData(Directory dataDir, {required bool hasCompatConfig}) {
+DataSummary _scanData(
+  Directory dataDir, {
+  required bool hasCompatConfig,
+  required bool hasOutfitConfig,
+  Map<String, List<OutfitChoice>> outfitsByStem = const {},
+}) {
   final entries = <DataDirEntry>[];
   final players = <PlayerModelEntry>[];
 
@@ -908,13 +988,19 @@ DataSummary _scanData(Directory dataDir, {required bool hasCompatConfig}) {
 
   entries.sort((a, b) => a.dirName.compareTo(b.dirName));
   players.sort((a, b) => a.fileName.compareTo(b.fileName));
-  return DataSummary(entries: entries, players: players, hasCompatConfig: hasCompatConfig);
+  return DataSummary(
+    entries: entries,
+    players: players,
+    hasCompatConfig: hasCompatConfig,
+    hasOutfitConfig: hasOutfitConfig,
+    outfitsByStem: outfitsByStem,
+  );
 }
 
 List<InstalledMod> _computeConflicts(List<InstalledMod> mods) {
-  final dataFilesByMod = <String, Set<String>>{};
+  final dataFilesByMod = <String, Map<String, int>>{};
   for (final m in mods) {
-    dataFilesByMod[m.id] = _collectDataRelPaths(m.rootPath);
+    dataFilesByMod[m.id] = _collectDataFileStamps(m.rootPath);
   }
   final installedIds = mods.map((m) => m.id).toSet();
 
@@ -924,12 +1010,17 @@ List<InstalledMod> _computeConflicts(List<InstalledMod> mods) {
     final myFiles = dataFilesByMod[m.id]!;
     for (final other in mods) {
       if (other.id == m.id) continue;
-      final overlap = myFiles.intersection(dataFilesByMod[other.id]!);
-      for (final rel in overlap) {
+      final theirFiles = dataFilesByMod[other.id]!;
+      for (final entry in myFiles.entries) {
+        final theirSize = theirFiles[entry.key];
+        if (theirSize == null) continue;
+        // Same path *and* same size: both mods ship the identical shared
+        // asset, so either one serving it gives the same result.
+        if (theirSize == entry.value && theirSize >= 0) continue;
         conflicts.add(ModConflict(
           otherModId: other.id,
           kind: ModConflictKind.overlappingDataFile,
-          detail: rel,
+          detail: entry.key,
         ));
       }
     }
@@ -958,17 +1049,26 @@ List<InstalledMod> _computeConflicts(List<InstalledMod> mods) {
 
 const _conditionallyMountedDirs = {'pl'};
 
-Set<String> _collectDataRelPaths(String rootPath) {
+/// Relative data path -> file size. Size lets us tell a real conflict (two mods
+/// shipping *different* versions of a file) from mods that merely bundle the
+/// same shared asset, which is harmless.
+Map<String, int> _collectDataFileStamps(String rootPath) {
   final contentRoot = _unwrapSingleChild(rootPath);
   final dataDir = Directory(path.join(contentRoot, 'data'));
   if (!dataDir.existsSync()) return const {};
   final base = dataDir.path;
-  final files = <String>{};
+  final files = <String, int>{};
   for (final f in dataDir.listSync(recursive: true, followLinks: false).whereType<File>()) {
     final rel = path.relative(f.path, from: base).replaceAll('\\', '/');
     final firstSegment = rel.split('/').first.toLowerCase();
     if (_conditionallyMountedDirs.contains(firstSegment)) continue;
-    files.add('data/$rel');
+    int size;
+    try {
+      size = f.lengthSync();
+    } catch (_) {
+      size = -1;
+    }
+    files['data/$rel'] = size;
   }
   return files;
 }
@@ -1002,7 +1102,12 @@ DetectedDrop _detectDropSync(_DetectParams p) {
   final dataDir = Directory(path.join(unwrapped, 'data'));
   final hasCompat = _hasCompatConfig(unwrapped);
   if (dataDir.existsSync() || hasCompat) {
-    data = _scanData(dataDir, hasCompatConfig: hasCompat);
+    data = _scanData(
+      dataDir,
+      hasCompatConfig: hasCompat,
+      hasOutfitConfig: _hasOutfitConfig(unwrapped),
+      outfitsByStem: _scanOutfitChoices(unwrapped),
+    );
   }
 
   var textureVariants = const <TexturePack>[];

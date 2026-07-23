@@ -24,6 +24,258 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tooltipDiscord => 'Discord';
 
   @override
+  String get tooltipLanguage => 'Language';
+
+  @override
+  String get languageSupportNotice =>
+      'Translations are community-made or auto-generated and may be inaccurate. The maintainers speak English only - please ask for help in English.';
+
+  @override
+  String get launchOptionsTitle => 'LAUNCH OPTIONS';
+
+  @override
+  String get launchOptionMinimizeOnLaunch => 'Minimize launcher while playing';
+
+  @override
+  String get launchOptionPreferDedicatedGpu => 'Prefer dedicated GPU';
+
+  @override
+  String get launchOptionPreferDedicatedGpuTooltip =>
+      'Tells the system to run the game on the dedicated graphics card instead of the power-saving one. Only matters on PCs with two GPUs (e.g. gaming laptops).';
+
+  @override
+  String get failTitlePanic => 'NAMS crashed';
+
+  @override
+  String get failTitleUnknown => 'Game launch failed';
+
+  @override
+  String get failExplanationPanic =>
+      'NAMS hit an unrecoverable error before the game could start. This is almost always a bug — please share the report below with the maintainer.';
+
+  @override
+  String get failExplanationUnknown =>
+      'The game did not start within 60 seconds and no error was reported.';
+
+  @override
+  String get failHintPanicShare =>
+      'Copy the full report below and send it to the maintainer.';
+
+  @override
+  String get failHintPanicReboot =>
+      'Try once more after rebooting — sometimes a stale handle clears itself.';
+
+  @override
+  String get failHintUnknownSpawned =>
+      'NAMS seems to have spawned but the game window never appeared.';
+
+  @override
+  String get failHintUnknownTaskManager =>
+      'Check Task Manager — is NieRAutomata.exe running but invisible? Kill it and retry.';
+
+  @override
+  String get failHintUnknownOtherLauncher =>
+      'Make sure no other launcher / DRM tool is holding the exe (FAR, Special K, etc).';
+
+  @override
+  String get failTitleNamsFailure => 'NAMS reported a failure';
+
+  @override
+  String get failExplanationNamsFailure =>
+      'A NAMS check failed before the game could run. See the report below for details.';
+
+  @override
+  String get failHintShareReport =>
+      'Copy the full report below and share it for diagnosis.';
+
+  @override
+  String get failTitleInstallNotFound => 'NieR:Automata install not found';
+
+  @override
+  String get failExplanationInstallNotFound =>
+      'NAMS could not resolve your NieR:Automata install. The saved path may be wrong, or Steam autodetect failed.';
+
+  @override
+  String get failHintRepickDirectory =>
+      'Re-pick your game directory in the launcher to refresh the saved path.';
+
+  @override
+  String get failHintVerifyFiles =>
+      'Verify game files in Steam (Library → NieR:Automata → Properties → Local Files → Verify).';
+
+  @override
+  String get failTitleFolderCreate => 'Could not create a needed folder';
+
+  @override
+  String get failExplanationFolderCreate =>
+      'NAMS could not create a directory next to NAMS.exe. The install folder may be read-only.';
+
+  @override
+  String get failHintWritableFolder =>
+      'Make sure the launcher install folder (where NAMS.exe lives) is writable.';
+
+  @override
+  String get failHintProgramFiles =>
+      'If it is in Program Files or OneDrive-synced, move the launcher to a normal folder or right-click → \"Always keep on this device\".';
+
+  @override
+  String get failTitleRuntimePrep => 'Runtime preparation failed';
+
+  @override
+  String get failExplanationRuntimePrep =>
+      'NAMS could not prepare its runtime (game.bin / steam_api64.dll). This is usually a writability or antivirus problem.';
+
+  @override
+  String get failHintAntivirusExclusions =>
+      'Add the launcher install folder AND your game folder to your antivirus exclusions, then retry.';
+
+  @override
+  String get failHintWritableCache =>
+      'Make sure the install folder is writable so the runtime cache can be built.';
+
+  @override
+  String get failTitleHostFailure => 'NAMS host failure';
+
+  @override
+  String get failExplanationHostFailure =>
+      'NAMS could not load and start the game host (game.bin). This is usually an environment or corruption issue.';
+
+  @override
+  String get failHintReboot =>
+      'Reboot and try again — sometimes a stale handle clears itself.';
+
+  @override
+  String get failHintPersistShare =>
+      'If it persists, copy the full report and send it to the maintainer.';
+
+  @override
+  String get failTitleSteamNotRunning => 'Steam not running / not logged in';
+
+  @override
+  String get failExplanationSteamNotRunning =>
+      'NAMS could not reach a logged-in Steam session. Steam must be running and signed in.';
+
+  @override
+  String get failHintStartSteam =>
+      'Start Steam and sign in, then launch again.';
+
+  @override
+  String get failTitleSteamNotOwned =>
+      'Steam account does not own NieR:Automata';
+
+  @override
+  String get failExplanationSteamNotOwned =>
+      'The signed-in Steam account does not own NieR:Automata.';
+
+  @override
+  String get failHintSignInOwner =>
+      'Sign into the Steam account that owns NieR:Automata.';
+
+  @override
+  String get failTitleSteamCheckFailed => 'Steam check failed';
+
+  @override
+  String get failExplanationSteamCheckFailed =>
+      'NAMS hit an internal error while verifying Steam ownership.';
+
+  @override
+  String get failHintRestartSteam =>
+      'Restart Steam and the launcher, then try again.';
+
+  @override
+  String get failTitleInvalidArgs => 'Invalid launch arguments';
+
+  @override
+  String get failExplanationInvalidArgs =>
+      'The launcher passed arguments NAMS could not parse. This is a launcher bug.';
+
+  @override
+  String get failTitleExitedUnexpectedly => 'Game exited unexpectedly';
+
+  @override
+  String get failExplanationExitedUnexpectedly =>
+      'NAMS started the game but it exited with a non-zero code. The game may have crashed.';
+
+  @override
+  String get failHintCheckLogViewer =>
+      'Check the in-app log viewer (nams.log) for the crash details.';
+
+  @override
+  String get failHeadlinePanicked => 'NAMS panicked';
+
+  @override
+  String get failSectionWhatHappened => 'What happened';
+
+  @override
+  String get failSectionReportedByNams => 'Reported by NAMS';
+
+  @override
+  String get failSectionTryThis => 'Try this';
+
+  @override
+  String get failSectionDiagnosticDetail => 'Diagnostic detail';
+
+  @override
+  String get failSectionLaunchManually => 'Launch manually from a terminal';
+
+  @override
+  String get failSectionRawOutput => 'Raw output';
+
+  @override
+  String get failManualCommandHint =>
+      'If the launcher UI keeps failing for you, paste this into a terminal to start the game manually. It is the exact same command the Play button runs.';
+
+  @override
+  String get failDetailOs => 'OS';
+
+  @override
+  String get failDetailCause => 'Cause';
+
+  @override
+  String get failDetailSuggested => 'Suggested';
+
+  @override
+  String get failActionCopyReport => 'Copy report';
+
+  @override
+  String get failActionOpenLogFile => 'Open log file';
+
+  @override
+  String get logDetailOs => 'OS';
+
+  @override
+  String get logDetailLocale => 'Locale';
+
+  @override
+  String get logNoModsInstalled => 'No mods installed.';
+
+  @override
+  String get logSectionSystem => 'System';
+
+  @override
+  String get logSectionModsNams => 'Mods (NAMS)';
+
+  @override
+  String get logSectionCutscenes => 'Cutscenes';
+
+  @override
+  String get logSectionTextures => 'Textures';
+
+  @override
+  String get tooltipOpenInModManager => 'Open in Mod Manager';
+
+  @override
+  String get tooltipOpenInCutscenesTab => 'Open in Cutscenes tab';
+
+  @override
+  String tooltipOpenInTexturesTab(String name) {
+    return '$name\n\nOpen in Textures tab';
+  }
+
+  @override
+  String get actionCancel => 'Cancel';
+
+  @override
   String get tooltipMinimize => 'Minimize';
 
   @override
@@ -2471,6 +2723,29 @@ class AppLocalizationsEn extends AppLocalizations {
       'Playing with a controller? These settings are designed for mouse and keyboard, but some of them - especially the camera and aiming fixes - also affect controller input. If you switch back to playing on a controller, disable those settings first to restore the original gamepad feel.';
 
   @override
+  String get cardCheatEngine => 'CHEAT ENGINE';
+
+  @override
+  String get cheatTableConvertDesc =>
+      'Got a Cheat Engine table (.CT) that does not work with NAMS? Fix it here. The fixed copy is saved next to your original file.';
+
+  @override
+  String get cheatTableConvertButton => 'Fix cheat table...';
+
+  @override
+  String cheatTableConvertSuccess(String file) {
+    return 'Fixed! Saved as $file';
+  }
+
+  @override
+  String get cheatTableConvertNone =>
+      'This table already works with NAMS - nothing to fix.';
+
+  @override
+  String get cheatTableConvertError =>
+      'Could not fix this table. Make sure the file is a valid .CT file.';
+
+  @override
   String get naiomBetaBadge => 'BETA';
 
   @override
@@ -3166,6 +3441,35 @@ class AppLocalizationsEn extends AppLocalizations {
   String get modConflictsLabel => 'Conflicts';
 
   @override
+  String get modLoadOrderHint =>
+      'These mods replace the same files. Drag to reorder - top wins.';
+
+  @override
+  String get modConflictKeep => 'KEEP THIS';
+
+  @override
+  String get modConflictResolve => 'RESOLVE';
+
+  @override
+  String get modConflictDialogTitle => 'Which mod should win?';
+
+  @override
+  String modConflictKeepTooltip(String id) {
+    return 'Keep $id and disable the others';
+  }
+
+  @override
+  String modConflictPickBody(int mods, int files) {
+    String _temp0 = intl.Intl.pluralLogic(
+      files,
+      locale: localeName,
+      other: '$files files',
+      one: 'file',
+    );
+    return '$mods enabled mods replace the same $_temp0. Pick the one to keep - the others get disabled.';
+  }
+
+  @override
   String modConflictOverlapFile(String otherId, String file) {
     return '$otherId also ships $file';
   }
@@ -3189,6 +3493,65 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get modEnableTooltip =>
       'Mod is loaded by NAMS. Click to disable without removing the files.';
+
+  @override
+  String get modDefaultTooltip =>
+      'Active from game start, as if its files were in NieRAutomata/data. Click to turn off.';
+
+  @override
+  String get modSetDefaultTooltip =>
+      'Make this mod active from game start, without copying anything into NieRAutomata/data.';
+
+  @override
+  String get modSetDefaultOutfitTooltip =>
+      'Wear this from game start, without copying anything into NieRAutomata/data. Replaces whichever outfit is currently the default - only one can be.';
+
+  @override
+  String get modDefaultChip => 'DEFAULT';
+
+  @override
+  String get modDefaultKindOutfitBare => 'outfit';
+
+  @override
+  String get modDefaultKindOutfitConfig => 'outfit + config';
+
+  @override
+  String get modDefaultKindOutfitAnimation => 'animation';
+
+  @override
+  String get modDefaultKindOutfitBareTooltip =>
+      'Replaces the model files directly. Only one outfit can be the default at a time.';
+
+  @override
+  String get modDefaultKindOutfitConfigTooltip =>
+      'This mod ships an outfit config, so its mesh rules and effects load with it. Only one outfit can be the default at a time.';
+
+  @override
+  String get modDefaultKindOutfitAnimationTooltip =>
+      'Animation data, not an outfit. Stays active underneath whatever outfit you wear.';
+
+  @override
+  String get modDefaultReplaceTitle => 'Replace the default?';
+
+  @override
+  String modDefaultReplaceBody(String model, String current, String next) {
+    return '$model is currently worn from game start by \"$current\".\n\nMaking \"$next\" the default removes that, since only one mod can dress a character at a time.';
+  }
+
+  @override
+  String get modDefaultReplaceConfirm => 'Replace';
+
+  @override
+  String get modDefaultOutfitAuto => 'Default outfit';
+
+  @override
+  String get modDefaultOutfitPickTooltip =>
+      'This mod ships several outfits. Pick the one you want to wear from game start. \"Default outfit\" is the one worn without an item.';
+
+  @override
+  String modDefaultRowTooltip(String files) {
+    return 'Active from game start: $files';
+  }
 
   @override
   String get modDisableNotice => 'Disabled - takes effect on next game start.';

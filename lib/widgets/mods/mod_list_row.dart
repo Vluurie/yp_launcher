@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yp_launcher/l10n/app_localizations.dart';
 import 'package:yp_launcher/models/installed_mod.dart';
 import 'package:yp_launcher/providers/app_state.dart';
+import 'package:yp_launcher/providers/default_mods_state.dart';
 import 'package:yp_launcher/providers/disabled_mods_state.dart';
 import 'package:yp_launcher/providers/mod_names_state.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
@@ -37,11 +38,20 @@ class _ModListRowState extends ConsumerState<ModListRow> {
     final l10n = AppLocalizations.of(context)!;
     final m = widget.mod;
     final disabled = ref.watch(disabledModsStateControllerProvider).isDisabled(_relPath);
+    final defaultEntries =
+        ref.watch(defaultModsStateControllerProvider).entriesUnder(_relPath);
     final customName =
         ref.watch(modNamesStateControllerProvider).customNameOf(m.id);
     final displayName = customName ?? m.displayName;
     final showDataChip = m.kind == ModKind.native && m.hasDataOverlay;
     final showCompatChip = m.data?.hasCompatConfig == true;
+    final defaulted = defaultEntries.isNotEmpty;
+    final disabledState = ref.watch(disabledModsStateControllerProvider);
+    final liveConflicts = m.conflicts
+        .where((c) => !disabledState.isDisabled('mods/${c.otherModId}'))
+        .toList();
+    final hasLiveWarnings =
+        !disabled && (liveConflicts.isNotEmpty || m.requiresMissing.isNotEmpty);
 
     final row = MouseRegion(
       cursor: SystemMouseCursors.click,
@@ -57,12 +67,22 @@ class _ModListRowState extends ConsumerState<ModListRow> {
           decoration: BoxDecoration(
             color: widget.selected
                 ? AppColors.accentPrimary.withValues(alpha: 0.10)
-                : _hovered
-                    ? AppColors.surfaceLight
-                    : Colors.transparent,
+                : defaulted
+                    ? AppColors.accentSecondary
+                        .withValues(alpha: _hovered ? 0.18 : 0.10)
+                    : _hovered
+                        ? AppColors.surfaceLight
+                        : Colors.transparent,
             border: widget.selected
                 ? Border(left: BorderSide(color: AppColors.accentPrimary, width: 2))
-                : null,
+                : defaulted
+                    ? Border(
+                        left: BorderSide(
+                          color: AppColors.accentSecondary,
+                          width: 2,
+                        ),
+                      )
+                    : null,
           ),
           child: Opacity(
             opacity: disabled ? 0.45 : 1.0,
@@ -95,7 +115,7 @@ class _ModListRowState extends ConsumerState<ModListRow> {
                   ModCompatChip(label: l10n.modDataChip, tooltip: l10n.modDataChipTooltip),
                 if (showCompatChip)
                   ModCompatChip(label: l10n.modCompatChip, tooltip: l10n.modCompatChipTooltip),
-                if (m.hasWarnings) ...[
+                if (hasLiveWarnings) ...[
                   SizedBox(width: AppSizes.spacingMD(context)),
                   Icon(
                     Icons.warning_amber_rounded,
@@ -115,6 +135,16 @@ class _ModListRowState extends ConsumerState<ModListRow> {
                       color: AppColors.textMuted,
                     ),
                     onTap: () => _onRename(l10n, customName),
+                  ),
+                if (defaulted)
+                  ModCompatChip(
+                    label: l10n.modDefaultChip,
+                    accent: AppColors.accentSecondary,
+                    tooltip: l10n.modDefaultRowTooltip(
+                      defaultEntries
+                          .map((e) => e.path.split('/').last)
+                          .join(', '),
+                    ),
                   ),
                 _DisableToggle(
                   disabled: disabled,
@@ -153,6 +183,7 @@ class _ModListRowState extends ConsumerState<ModListRow> {
         );
   }
 }
+
 
 class _DisableToggle extends StatelessWidget {
   final bool disabled;

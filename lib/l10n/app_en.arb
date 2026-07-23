@@ -5,6 +5,85 @@
   "tooltipNamsSource": "NAMS Project Source",
   "tooltipGuide": "Guide",
   "tooltipDiscord": "Discord",
+  "tooltipLanguage": "Language",
+  "languageSupportNotice": "Translations are community-made or auto-generated and may be inaccurate. The maintainers speak English only - please ask for help in English.",
+  "launchOptionsTitle": "LAUNCH OPTIONS",
+  "launchOptionMinimizeOnLaunch": "Minimize launcher while playing",
+  "launchOptionPreferDedicatedGpu": "Prefer dedicated GPU",
+  "launchOptionPreferDedicatedGpuTooltip": "Tells the system to run the game on the dedicated graphics card instead of the power-saving one. Only matters on PCs with two GPUs (e.g. gaming laptops).",
+  "failTitlePanic": "NAMS crashed",
+  "failTitleUnknown": "Game launch failed",
+  "failExplanationPanic": "NAMS hit an unrecoverable error before the game could start. This is almost always a bug — please share the report below with the maintainer.",
+  "failExplanationUnknown": "The game did not start within 60 seconds and no error was reported.",
+  "failHintPanicShare": "Copy the full report below and send it to the maintainer.",
+  "failHintPanicReboot": "Try once more after rebooting — sometimes a stale handle clears itself.",
+  "failHintUnknownSpawned": "NAMS seems to have spawned but the game window never appeared.",
+  "failHintUnknownTaskManager": "Check Task Manager — is NieRAutomata.exe running but invisible? Kill it and retry.",
+  "failHintUnknownOtherLauncher": "Make sure no other launcher / DRM tool is holding the exe (FAR, Special K, etc).",
+  "failTitleNamsFailure": "NAMS reported a failure",
+  "failExplanationNamsFailure": "A NAMS check failed before the game could run. See the report below for details.",
+  "failHintShareReport": "Copy the full report below and share it for diagnosis.",
+  "failTitleInstallNotFound": "NieR:Automata install not found",
+  "failExplanationInstallNotFound": "NAMS could not resolve your NieR:Automata install. The saved path may be wrong, or Steam autodetect failed.",
+  "failHintRepickDirectory": "Re-pick your game directory in the launcher to refresh the saved path.",
+  "failHintVerifyFiles": "Verify game files in Steam (Library → NieR:Automata → Properties → Local Files → Verify).",
+  "failTitleFolderCreate": "Could not create a needed folder",
+  "failExplanationFolderCreate": "NAMS could not create a directory next to NAMS.exe. The install folder may be read-only.",
+  "failHintWritableFolder": "Make sure the launcher install folder (where NAMS.exe lives) is writable.",
+  "failHintProgramFiles": "If it is in Program Files or OneDrive-synced, move the launcher to a normal folder or right-click → \"Always keep on this device\".",
+  "failTitleRuntimePrep": "Runtime preparation failed",
+  "failExplanationRuntimePrep": "NAMS could not prepare its runtime (game.bin / steam_api64.dll). This is usually a writability or antivirus problem.",
+  "failHintAntivirusExclusions": "Add the launcher install folder AND your game folder to your antivirus exclusions, then retry.",
+  "failHintWritableCache": "Make sure the install folder is writable so the runtime cache can be built.",
+  "failTitleHostFailure": "NAMS host failure",
+  "failExplanationHostFailure": "NAMS could not load and start the game host (game.bin). This is usually an environment or corruption issue.",
+  "failHintReboot": "Reboot and try again — sometimes a stale handle clears itself.",
+  "failHintPersistShare": "If it persists, copy the full report and send it to the maintainer.",
+  "failTitleSteamNotRunning": "Steam not running / not logged in",
+  "failExplanationSteamNotRunning": "NAMS could not reach a logged-in Steam session. Steam must be running and signed in.",
+  "failHintStartSteam": "Start Steam and sign in, then launch again.",
+  "failTitleSteamNotOwned": "Steam account does not own NieR:Automata",
+  "failExplanationSteamNotOwned": "The signed-in Steam account does not own NieR:Automata.",
+  "failHintSignInOwner": "Sign into the Steam account that owns NieR:Automata.",
+  "failTitleSteamCheckFailed": "Steam check failed",
+  "failExplanationSteamCheckFailed": "NAMS hit an internal error while verifying Steam ownership.",
+  "failHintRestartSteam": "Restart Steam and the launcher, then try again.",
+  "failTitleInvalidArgs": "Invalid launch arguments",
+  "failExplanationInvalidArgs": "The launcher passed arguments NAMS could not parse. This is a launcher bug.",
+  "failTitleExitedUnexpectedly": "Game exited unexpectedly",
+  "failExplanationExitedUnexpectedly": "NAMS started the game but it exited with a non-zero code. The game may have crashed.",
+  "failHintCheckLogViewer": "Check the in-app log viewer (nams.log) for the crash details.",
+  "failHeadlinePanicked": "NAMS panicked",
+  "failSectionWhatHappened": "What happened",
+  "failSectionReportedByNams": "Reported by NAMS",
+  "failSectionTryThis": "Try this",
+  "failSectionDiagnosticDetail": "Diagnostic detail",
+  "failSectionLaunchManually": "Launch manually from a terminal",
+  "failSectionRawOutput": "Raw output",
+  "failManualCommandHint": "If the launcher UI keeps failing for you, paste this into a terminal to start the game manually. It is the exact same command the Play button runs.",
+  "failDetailOs": "OS",
+  "failDetailCause": "Cause",
+  "failDetailSuggested": "Suggested",
+  "failActionCopyReport": "Copy report",
+  "failActionOpenLogFile": "Open log file",
+  "logDetailOs": "OS",
+  "logDetailLocale": "Locale",
+  "logNoModsInstalled": "No mods installed.",
+  "logSectionSystem": "System",
+  "logSectionModsNams": "Mods (NAMS)",
+  "logSectionCutscenes": "Cutscenes",
+  "logSectionTextures": "Textures",
+  "tooltipOpenInModManager": "Open in Mod Manager",
+  "tooltipOpenInCutscenesTab": "Open in Cutscenes tab",
+  "tooltipOpenInTexturesTab": "{name}\n\nOpen in Textures tab",
+  "@tooltipOpenInTexturesTab": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "actionCancel": "Cancel",
   "tooltipMinimize": "Minimize",
   "tooltipMaximize": "Maximize",
   "tooltipRestore": "Restore",
@@ -992,6 +1071,19 @@
   "naiomResetConfirmTitle": "Reset NAIOM settings?",
   "naiomResetConfirmBody": "This will reset every camera, aiming, cursor and keybind setting on this tab to its default value. Nothing is written until you press Save, so you can still discard afterwards. Continue?",
   "naiomControllerNote": "Playing with a controller? These settings are designed for mouse and keyboard, but some of them - especially the camera and aiming fixes - also affect controller input. If you switch back to playing on a controller, disable those settings first to restore the original gamepad feel.",
+  "cardCheatEngine": "CHEAT ENGINE",
+  "cheatTableConvertDesc": "Got a Cheat Engine table (.CT) that does not work with NAMS? Fix it here. The fixed copy is saved next to your original file.",
+  "cheatTableConvertButton": "Fix cheat table...",
+  "cheatTableConvertSuccess": "Fixed! Saved as {file}",
+  "@cheatTableConvertSuccess": {
+    "placeholders": {
+      "file": {
+        "type": "String"
+      }
+    }
+  },
+  "cheatTableConvertNone": "This table already works with NAMS - nothing to fix.",
+  "cheatTableConvertError": "Could not fix this table. Make sure the file is a valid .CT file.",
   "naiomBetaBadge": "BETA",
   "naiomRestartBadge": "RESTART",
   "naiomRestartTooltip": "Takes effect after restarting the game.",
@@ -1523,6 +1615,29 @@
   "modRequiresPluginsLabel": "Requires plugins",
   "modRequiresMissing": "missing",
   "modConflictsLabel": "Conflicts",
+  "modLoadOrderHint": "These mods replace the same files. Drag to reorder - top wins.",
+  "modConflictKeep": "KEEP THIS",
+  "modConflictResolve": "RESOLVE",
+  "modConflictDialogTitle": "Which mod should win?",
+  "modConflictKeepTooltip": "Keep {id} and disable the others",
+  "@modConflictKeepTooltip": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "modConflictPickBody": "{mods} enabled mods replace the same {files, plural, =1{file} other{{files} files}}. Pick the one to keep - the others get disabled.",
+  "@modConflictPickBody": {
+    "placeholders": {
+      "mods": {
+        "type": "int"
+      },
+      "files": {
+        "type": "int"
+      }
+    }
+  },
   "modConflictOverlapFile": "{otherId} also ships {file}",
   "@modConflictOverlapFile": {
     "placeholders": {
@@ -1540,6 +1655,42 @@
   "modDisabled": "Disabled",
   "modDisabledTooltip": "This mod is disabled. NAMS will not load it on next game start. Enable it to load again - no need to delete and reinstall.",
   "modEnableTooltip": "Mod is loaded by NAMS. Click to disable without removing the files.",
+  "modDefaultTooltip": "Active from game start, as if its files were in NieRAutomata/data. Click to turn off.",
+  "modSetDefaultTooltip": "Make this mod active from game start, without copying anything into NieRAutomata/data.",
+  "modSetDefaultOutfitTooltip": "Wear this from game start, without copying anything into NieRAutomata/data. Replaces whichever outfit is currently the default - only one can be.",
+  "modDefaultChip": "DEFAULT",
+  "modDefaultKindOutfitBare": "outfit",
+  "modDefaultKindOutfitConfig": "outfit + config",
+  "modDefaultKindOutfitAnimation": "animation",
+  "modDefaultKindOutfitBareTooltip": "Replaces the model files directly. Only one outfit can be the default at a time.",
+  "modDefaultKindOutfitConfigTooltip": "This mod ships an outfit config, so its mesh rules and effects load with it. Only one outfit can be the default at a time.",
+  "modDefaultKindOutfitAnimationTooltip": "Animation data, not an outfit. Stays active underneath whatever outfit you wear.",
+  "modDefaultReplaceTitle": "Replace the default?",
+  "modDefaultReplaceBody": "{model} is currently worn from game start by \"{current}\".\n\nMaking \"{next}\" the default removes that, since only one mod can dress a character at a time.",
+  "@modDefaultReplaceBody": {
+    "placeholders": {
+      "model": {
+        "type": "String"
+      },
+      "current": {
+        "type": "String"
+      },
+      "next": {
+        "type": "String"
+      }
+    }
+  },
+  "modDefaultReplaceConfirm": "Replace",
+  "modDefaultOutfitAuto": "Default outfit",
+  "modDefaultOutfitPickTooltip": "This mod ships several outfits. Pick the one you want to wear from game start. \"Default outfit\" is the one worn without an item.",
+  "modDefaultRowTooltip": "Active from game start: {files}",
+  "@modDefaultRowTooltip": {
+    "placeholders": {
+      "files": {
+        "type": "String"
+      }
+    }
+  },
   "modDisableNotice": "Disabled - takes effect on next game start.",
   "modEnableNotice": "Enabled - takes effect on next game start.",
   "modUninstall": "Uninstall",
