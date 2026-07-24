@@ -60,7 +60,10 @@ class MigotoRuntime extends GraphicsRuntime {
   ) async {
     final incoming = findGraphicsDll(c.sourceRoot, GraphicsDll.migoto);
     if (incoming == null) return null;
-    final installed = path.join(installDir(gameDir), 'd3d11.dll');
+    var installed = path.join(installDir(gameDir), '3dmigoto.dll');
+    if (!File(installed).existsSync()) {
+      installed = path.join(installDir(gameDir), 'd3d11.dll');
+    }
     if (!File(installed).existsSync()) return null;
     if (!FileOps.filesDiffer(incoming.file.path, installed)) return null;
     return ThirdPartyUpdateInfo(
@@ -76,7 +79,15 @@ class MigotoRuntime extends GraphicsRuntime {
     if (!Directory(dest).existsSync()) return;
     final ini = File(path.join(dest, migotoIniName));
     final current = ini.existsSync() ? ini.readAsStringSync() : '';
-    ini.writeAsStringSync(patchLoaderTarget(current, loaderTarget));
+    ini.writeAsStringSync(
+      patchNamsCompat(patchLoaderTarget(current, loaderTarget)),
+    );
+
+    final dll = File(path.join(dest, 'd3d11.dll'));
+    if (dll.existsSync() &&
+        !File(path.join(dest, '3dmigoto.dll')).existsSync()) {
+      dll.renameSync(path.join(dest, '3dmigoto.dll'));
+    }
   }
 
   DllHit? findGameRootDll(String gameDir) {
@@ -98,7 +109,8 @@ class MigotoRuntime extends GraphicsRuntime {
     final dest = installDir(gameDir);
     Directory(dest).createSync(recursive: true);
 
-    FileOps.copyFileInto(hit.file.path, dest, asName: 'd3d11.dll');
+    FileOps.copyFileInto(hit.file.path, dest, asName: '3dmigoto.dll');
+    FileOps.deleteFileQuiet(path.join(dest, 'd3d11.dll'));
     for (final name in [...supportDlls, migotoIniName]) {
       final f = File(path.join(gameDir, name));
       if (f.existsSync()) FileOps.copyFileInto(f.path, dest, asName: name);
@@ -111,7 +123,9 @@ class MigotoRuntime extends GraphicsRuntime {
 
     final ini = File(path.join(dest, migotoIniName));
     final current = ini.existsSync() ? ini.readAsStringSync() : '';
-    ini.writeAsStringSync(patchLoaderTarget(current, loaderTarget));
+    ini.writeAsStringSync(
+      patchNamsCompat(patchLoaderTarget(current, loaderTarget)),
+    );
 
     await ThirdPartyFlags.set(gameDir, disableFlagKey, false);
     return true;
@@ -288,10 +302,8 @@ class MigotoRuntime extends GraphicsRuntime {
   void _placeDll(String src, String dest) {
     final dll = findGraphicsDll(src, GraphicsDll.migoto);
     if (dll == null) return;
-    FileOps.copyFileInto(dll.file.path, dest, asName: 'd3d11.dll');
-    if (dll.file.path.toLowerCase().endsWith('3dmigoto.dll')) {
-      FileOps.deleteFileQuiet(path.join(dest, '3dmigoto.dll'));
-    }
+    FileOps.copyFileInto(dll.file.path, dest, asName: '3dmigoto.dll');
+    FileOps.deleteFileQuiet(path.join(dest, 'd3d11.dll'));
   }
 
   void _placeSupportDlls(String src, String dest) {
@@ -333,7 +345,17 @@ class MigotoRuntime extends GraphicsRuntime {
       target.writeAsStringSync(packIni.readAsStringSync());
     }
     final current = target.existsSync() ? target.readAsStringSync() : '';
-    target.writeAsStringSync(patchLoaderTarget(current, loaderTarget));
+    target.writeAsStringSync(
+      patchNamsCompat(patchLoaderTarget(current, loaderTarget)),
+    );
+  }
+
+  static String patchNamsCompat(String content) {
+    var s = content;
+    s = IniPatch.setKey(s, 'System', 'hook', 'recommended');
+    s = IniPatch.setKey(s, 'System', 'allow_create_device', '0');
+    s = IniPatch.setKey(s, 'System', 'load_library_redirect', '0');
+    return s;
   }
 
   static String patchLoaderTarget(String content, String target) {
