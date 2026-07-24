@@ -57,6 +57,7 @@ class LauncherSetupService {
   }
 
   static Future<String> getLauncherDirectory() async {
+    if (_resolvedRuntimeDir != null) return _resolvedRuntimeDir!;
     await ensureReady();
     return launcherDirectory;
   }
