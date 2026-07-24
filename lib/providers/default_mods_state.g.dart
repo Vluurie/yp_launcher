@@ -43,7 +43,7 @@ final class DefaultModsStateControllerProvider
 }
 
 String _$defaultModsStateControllerHash() =>
-    r'8335edcd2a4fa4d5d00d03a178bc8a6736110d94';
+    r'01a361463072302b8b7b2455835f64881269a02f';
 
 abstract class _$DefaultModsStateController extends $Notifier<DefaultModsData> {
   DefaultModsData build();

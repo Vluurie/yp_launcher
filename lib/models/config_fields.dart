@@ -147,6 +147,13 @@ class NamsFields {
     tooltip: (l) => l.tooltipDisableReShadeLoading,
   );
 
+  static final disable3dmigotoLoading = ConfigField<bool>(
+    key: 'disable_3dmigoto_loading',
+    defaultValue: false,
+    label: (l) => l.labelDisable3dmigotoLoading,
+    tooltip: (l) => l.tooltipDisable3dmigotoLoading,
+  );
+
   static final disableTextureInjection = ConfigField<bool>(
     key: 'disable_texture_injection',
     defaultValue: false,

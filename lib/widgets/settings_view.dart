@@ -371,6 +371,19 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                           ),
                         ),
                         ConfigFieldBool(
+                          label: NamsFields.disable3dmigotoLoading.label(l10n),
+                          value:
+                              nams[NamsFields.disable3dmigotoLoading.key] ==
+                              true,
+                          onChanged: (v) => notifier.updateNams(
+                            NamsFields.disable3dmigotoLoading.key,
+                            v,
+                          ),
+                          tooltip: NamsFields.disable3dmigotoLoading.tooltip!(
+                            l10n,
+                          ),
+                        ),
+                        ConfigFieldBool(
                           label: NamsFields.disableTextureInjection.label(l10n),
                           value:
                               nams[NamsFields.disableTextureInjection.key] ==

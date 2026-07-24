@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:automato_theme/automato_theme.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -20,7 +19,6 @@ import 'package:yp_launcher/providers/nams_settings_state.dart';
 import 'package:yp_launcher/providers/locale_state.dart';
 import 'package:yp_launcher/providers/log_state.dart';
 import 'package:yp_launcher/providers/notification_state.dart';
-import 'package:yp_launcher/services/process_service.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
 import 'package:yp_launcher/widgets/log_panel.dart';
@@ -31,6 +29,7 @@ import 'package:yp_launcher/widgets/lodmod_view.dart';
 import 'package:yp_launcher/widgets/yorha_protocol_view.dart';
 import 'package:yp_launcher/widgets/mods/mods_view.dart';
 import 'package:yp_launcher/widgets/cutscenes_view.dart';
+import 'package:yp_launcher/widgets/thirdparty/thirdparty_view.dart';
 import 'package:yp_launcher/widgets/naiom_view.dart';
 import 'package:yp_launcher/widgets/onboarding_wizard.dart';
 import 'package:yp_launcher/widgets/info_bar.dart';
@@ -332,6 +331,7 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
         const NaiomView(),
         const CutscenesView(),
         const LauncherSettingsView(),
+        const ThirdPartyView(),
       ],
     );
   }
@@ -450,16 +450,6 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                if (ref
-                    .watch(appStateControllerProvider)
-                    .isDirectorySelected) ...[
-                  _buildIconAction(
-                    Icons.terminal,
-                    l10n.tooltipCopyCommand,
-                    () => _copyLaunchCommand(),
-                  ),
-                  SizedBox(width: AppSizes.spacingSM(context)),
-                ],
                 _buildLinkIcon(
                   Icons.code,
                   l10n.tooltipLauncherSource,
@@ -829,51 +819,6 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
     );
   }
 
-  Widget _buildIconAction(IconData icon, String tooltip, VoidCallback onTap) {
-    return HoverIconButton(
-      tooltip: tooltip,
-      bordered: false,
-      padding: EdgeInsets.all(AppSizes.paddingXS(context)),
-      radius: AppSizes.borderRadius(context),
-      onTap: onTap,
-      icon: Icon(
-        icon,
-        size: AppSizes.iconMD(context),
-        color: AppColors.accentPrimary,
-      ),
-    );
-  }
-
-  Future<void> _copyLaunchCommand() async {
-    final gameDir = ref.read(appStateControllerProvider).selectedDirectory;
-    final notifier = ref.read(notificationStateControllerProvider.notifier);
-    final cmd = await ProcessService.buildLaunchCommandPreview(
-      installDirectory: gameDir,
-      l10n: AppLocalizations.of(context)!,
-    );
-    if (cmd == null) {
-      notifier.addNotification(
-        NotificationItem(
-          id: 'launch_cmd_${DateTime.now().millisecondsSinceEpoch}',
-          message: (l10n) => l10n.notificationCommandNotReady,
-          icon: Icons.error_outline,
-          color: AppColors.error,
-          type: NotificationType.general,
-        ),
-      );
-      return;
-    }
-    await Clipboard.setData(ClipboardData(text: cmd));
-    notifier.addNotification(
-      NotificationItem(
-        id: 'launch_cmd_${DateTime.now().millisecondsSinceEpoch}',
-        message: (l10n) => l10n.notificationCommandCopied,
-        icon: Icons.check_circle,
-        color: AppColors.success,
-        type: NotificationType.general,
-      ),
-    );
-  }
 }
 
 class _HoverTextLink extends StatefulWidget {

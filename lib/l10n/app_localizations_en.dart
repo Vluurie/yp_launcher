@@ -104,7 +104,67 @@ class AppLocalizationsEn extends AppLocalizations {
       'Examples:\ngamescope -w 2560 -h 1440 -f --\nmangohud\ngamemoderun';
 
   @override
-  String get tabLauncherSettings => 'Launcher Settings';
+  String get tabLauncherSettings => 'Troubleshooting';
+
+  @override
+  String get troubleWrongExeTitle => 'Wrong game version';
+
+  @override
+  String get troubleWrongExeSummary =>
+      'This is the legacy Windows 7/8 NieRAutomata.exe. NAMS cannot launch it.';
+
+  @override
+  String get troubleMissingFilesTitle => 'Missing launcher files';
+
+  @override
+  String troubleMissingFilesSummary(String files) {
+    return 'Missing: $files';
+  }
+
+  @override
+  String get troubleMissingFilesDesc =>
+      'These files are part of the portable launcher but are gone. Antivirus (usually Windows Defender) most likely quarantined them. Exclude the launcher folder from your antivirus and restore the files, or re-download the launcher.';
+
+  @override
+  String get troubleRecentErrorsTitle => 'Recent NAMS errors';
+
+  @override
+  String get troubleFoldersTitle => 'Open folders';
+
+  @override
+  String get troubleFoldersDesc =>
+      'Quick access to the folders a maintainer may ask you to open.';
+
+  @override
+  String get troubleOpenGame => 'Game folder';
+
+  @override
+  String get troubleOpenNamsConfig => 'NAMS config';
+
+  @override
+  String get troubleOpenLogs => 'Logs';
+
+  @override
+  String get troubleOpenBins => 'Launcher folder';
+
+  @override
+  String get troubleClearCacheTitle => 'Clear cache';
+
+  @override
+  String get troubleClearCacheDesc =>
+      'Delete cached state that can go stale: log files, the detection cache, the mod\'s NAMS settings.json, and the runtime extract stamp. Your mods and game files are not touched.';
+
+  @override
+  String get troubleClearCacheButton => 'Clear cache';
+
+  @override
+  String get troubleClearCacheConfirm =>
+      'This deletes logs, the detection cache, the mod\'s in-game settings.json, and forces a runtime re-extract on next start. Mods and game files stay untouched. Continue?';
+
+  @override
+  String troubleClearCacheDone(int count) {
+    return 'Cache cleared ($count log files removed).';
+  }
 
   @override
   String get verifyInstallTitle => 'INSTALL DIAGNOSTICS';
@@ -835,6 +895,301 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tabCutscenes => 'Cutscenes';
 
   @override
+  String get tabThirdParty => 'Third Party';
+
+  @override
+  String get thirdPartyTitle => 'Third Party Runtimes';
+
+  @override
+  String get thirdPartySubtitle =>
+      'ReShade and 3DMigoto, loaded by NAMS from a managed folder. No renaming, no DLL conflicts.';
+
+  @override
+  String get thirdPartyReShadeHeader => 'RESHADE';
+
+  @override
+  String get thirdPartyMigotoHeader => '3DMIGOTO';
+
+  @override
+  String get thirdPartyReShadeHowto =>
+      'Install ReShade normally into your NieRAutomata folder (pick dxgi as the API). The launcher moves it into NAMS and sets up the paths for you.';
+
+  @override
+  String get thirdPartyMigotoHowto =>
+      'Drop a 3DMigoto shader-mod archive here. The launcher installs it and sets the loader target so NAMS hooks it.';
+
+  @override
+  String get thirdPartyStatusInstalled => 'Installed';
+
+  @override
+  String get thirdPartyStatusNotInstalled => 'Not installed';
+
+  @override
+  String get thirdPartyStatusFoundInGame =>
+      'Found in your game folder — click Import to set it up for NAMS.';
+
+  @override
+  String get thirdPartyEnable => 'Enable';
+
+  @override
+  String get thirdPartyImport => 'Import into NAMS';
+
+  @override
+  String get thirdPartyRepair => 'Repair';
+
+  @override
+  String get thirdPartyRemove => 'Remove';
+
+  @override
+  String get thirdPartyGetReShade => 'Get ReShade';
+
+  @override
+  String get thirdPartyShadersMissing =>
+      'No effects installed yet — add a preset or shader pack, or they won\'t do anything.';
+
+  @override
+  String get thirdPartyOpenFolder => 'Open folder';
+
+  @override
+  String thirdPartyPresetsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count presets',
+      one: '1 preset',
+      zero: 'No presets',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get thirdPartyInstallCard => 'INSTALL';
+
+  @override
+  String get thirdPartyDropHere => 'Drop a ReShade preset / 3DMigoto mod here';
+
+  @override
+  String get thirdPartyImported => 'Imported into NAMS';
+
+  @override
+  String get thirdPartyInstalled => 'Installed';
+
+  @override
+  String get thirdPartyInstallFailed => 'Could not install this file';
+
+  @override
+  String get thirdPartyRedirectMods =>
+      'This is a game-data mod — use the Mod Manager tab.';
+
+  @override
+  String get thirdPartyRedirectTextures =>
+      'This is a texture pack — use the Textures tab.';
+
+  @override
+  String get thirdPartyUnsupported => 'This file type is not supported here.';
+
+  @override
+  String get thirdPartyLodModPrompt =>
+      'This is a LodMod. NAMS has LodMod built in — import its settings into the LodMod tab?';
+
+  @override
+  String get thirdPartyStatusActive => 'Active';
+
+  @override
+  String get thirdPartyStatusInactive => 'Installed, disabled in NAMS tab';
+
+  @override
+  String get thirdPartyVersion => 'Version';
+
+  @override
+  String get thirdPartyAddonBuild => 'Addon build';
+
+  @override
+  String get thirdPartyPresets => 'PRESETS';
+
+  @override
+  String get thirdPartyNonePresets => 'No presets installed';
+
+  @override
+  String get thirdPartyShaderRepos => 'SHADERS';
+
+  @override
+  String get thirdPartyNoneShaders => 'No shaders — effects won\'t compile';
+
+  @override
+  String thirdPartyShaderCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count effects',
+      one: '1 effect',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get thirdPartyAddons => 'ADDONS';
+
+  @override
+  String get thirdPartyFiles => 'FILES';
+
+  @override
+  String get thirdPartyShaderFixes => 'ShaderFixes';
+
+  @override
+  String thirdPartyShaderFixCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count fixes',
+      one: '1 fix',
+      zero: 'none',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get thirdPartyLoaderTarget => 'Loader target';
+
+  @override
+  String get thirdPartyHunting => 'Hunting';
+
+  @override
+  String get thirdPartyHuntingOn => 'on';
+
+  @override
+  String thirdPartyUpdateTitle(String name) {
+    return 'Replace installed $name?';
+  }
+
+  @override
+  String thirdPartyUpdateBody(String name) {
+    return '$name is already installed. The file you dropped is a different build. Replace the installed one with it?';
+  }
+
+  @override
+  String get thirdPartyUpdateInstalledLabel => 'Installed now';
+
+  @override
+  String get thirdPartyUpdateIncomingLabel => 'You dropped';
+
+  @override
+  String get thirdPartyUpdateReplace => 'Replace';
+
+  @override
+  String get thirdPartyUpdateKeep => 'Keep current';
+
+  @override
+  String get thirdPartyUpdateSkipped => 'Kept the installed version.';
+
+  @override
+  String get thirdPartyD3dCompilerMissing =>
+      'No d3dcompiler_47.dll here. Under Wine, ReShade falls back to Wine\'s stub and effects won\'t compile. Reinstall a ReShade build that ships it, or drop a native d3dcompiler_47.dll into this folder.';
+
+  @override
+  String get thirdPartyBanner =>
+      'The tools on this tab are third-party software. NAMS only loads them. It does not implement them and cannot change how they behave. Anything you install through them runs on its own, so correctness, compatibility and safety are your responsibility. If something misbehaves, that is on the tool or the mod, not on NAMS.';
+
+  @override
+  String get thirdPartyConfigSection => 'SETTINGS';
+
+  @override
+  String get thirdPartyRestartRequired => 'applied on next game start';
+
+  @override
+  String get thirdPartyReShadePerformanceMode => 'Performance mode';
+
+  @override
+  String get thirdPartyReShadePerformanceModeHint =>
+      'Skip effect recompilation on launch. Turn off while tuning effects.';
+
+  @override
+  String get thirdPartyReShadeShowFps => 'Show FPS';
+
+  @override
+  String get thirdPartyReShadeShowFpsHint =>
+      'Draw the frame rate in the ReShade overlay corner.';
+
+  @override
+  String get thirdPartyReShadeShowClock => 'Show clock';
+
+  @override
+  String get thirdPartyReShadeShowClockHint =>
+      'Draw the current time in the ReShade overlay corner.';
+
+  @override
+  String get thirdPartyReShadeActivePreset => 'Active preset';
+
+  @override
+  String get thirdPartyReShadeOverlayKey => 'Overlay key';
+
+  @override
+  String get thirdPartyReShadeNoKey => 'unset';
+
+  @override
+  String get thirdPartyMigotoHunting => 'Hunting';
+
+  @override
+  String get thirdPartyMigotoHuntingOff => 'Off';
+
+  @override
+  String get thirdPartyMigotoHuntingOn => 'On';
+
+  @override
+  String get thirdPartyMigotoHuntingNoMarking => 'On, no marking';
+
+  @override
+  String get thirdPartyMigotoHuntingHint =>
+      'Developer mode: cycle shaders to find and dump them. Leave off for normal play.';
+
+  @override
+  String get thirdPartyMigotoMarkingMode => 'Marking mode';
+
+  @override
+  String get thirdPartyMigotoMarkingModeHint =>
+      'How the hunted shader is highlighted in-game: skip (no change), original, pink, or mono.';
+
+  @override
+  String get thirdPartyMigotoMarkingSkip => 'Skip';
+
+  @override
+  String get thirdPartyMigotoMarkingOriginal => 'Original';
+
+  @override
+  String get thirdPartyMigotoMarkingPink => 'Pink';
+
+  @override
+  String get thirdPartyMigotoMarkingMono => 'Mono';
+
+  @override
+  String get thirdPartyMigotoVerboseOverlay => 'Verbose overlay';
+
+  @override
+  String get thirdPartyMigotoVerboseOverlayHint =>
+      'Show detailed 3DMigoto status text on screen. Useful while debugging, noisy otherwise.';
+
+  @override
+  String get thirdPartyMigotoCacheShaders => 'Cache shaders';
+
+  @override
+  String get thirdPartyMigotoCacheShadersHint =>
+      'Reuse compiled shaders across launches. Turn off only when debugging fixes.';
+
+  @override
+  String get thirdPartyMigotoCheckForegroundWindow => 'Only hook in foreground';
+
+  @override
+  String get thirdPartyMigotoCheckForegroundWindowHint =>
+      'Only apply the overlay and hotkeys when the game window is focused.';
+
+  @override
+  String get thirdPartyConfigApplied => 'Settings saved.';
+
+  @override
+  String get thirdPartyConfigNoIni =>
+      'No config file yet — install writes one.';
+
+  @override
   String get tabSectionGeneral => 'General';
 
   @override
@@ -1544,6 +1899,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get diagnosticsButton => 'Generate diagnostics';
 
   @override
+  String get diagnosticsSubtitle =>
+      'Collect a full report of your install (game files, mods, ReShade/3DMigoto, settings) to share when asking for help.';
+
+  @override
+  String get copyCommandTitle => 'Manual launch command';
+
+  @override
+  String get copyCommandDesc =>
+      'If the game will not start from the launcher, copy the NAMS command and run it in a terminal. NAMS prints why it failed there, which is the fastest way to find the cause.';
+
+  @override
+  String get copyCommandButton => 'Copy command';
+
+  @override
   String get diagnosticsTitle => 'Diagnostics summary';
 
   @override
@@ -1764,6 +2133,74 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get diagnosticsSectionGameRootExtras =>
       'Game root extras (non-vanilla)';
+
+  @override
+  String get diagnosticsSectionGameIdentity => 'Game identity';
+
+  @override
+  String get diagnosticsSectionNamsHealth => 'NAMS health';
+
+  @override
+  String get diagnosticsSectionReshade => 'ReShade';
+
+  @override
+  String get diagnosticsSectionMigoto => '3DMigoto';
+
+  @override
+  String get diagnosticsSectionTexturePacks => 'Texture packs';
+
+  @override
+  String get diagnosticsSectionVanillaDrops => 'Files dropped in vanilla data/';
+
+  @override
+  String get diagnosticsSectionNonDefault => 'Non-default settings';
+
+  @override
+  String get diagnosticsSectionRecentIssues => 'Recent NAMS issues';
+
+  @override
+  String diagnosticsExeVariant(String variant) {
+    return 'exe: $variant';
+  }
+
+  @override
+  String get diagnosticsExeUnsupported => 'unsupported build';
+
+  @override
+  String get diagnosticsDlcPresent => 'DLC';
+
+  @override
+  String get diagnosticsGameRunning => 'running';
+
+  @override
+  String get diagnosticsNamsPresent => 'NAMS.exe';
+
+  @override
+  String diagnosticsMissingFiles(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count missing files',
+      one: '1 missing file',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get diagnosticsInstalled => 'installed';
+
+  @override
+  String get diagnosticsEnabled => 'enabled';
+
+  @override
+  String get diagnosticsShadersMissing => 'shaders missing';
+
+  @override
+  String get diagnosticsTexturePacksUnavailable =>
+      'NAMS texture query unavailable';
+
+  @override
+  String get diagnosticsExtraFile => 'extra';
 
   @override
   String diagnosticsFileCount(int count) {
@@ -2169,6 +2606,13 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get tooltipDisableReShadeLoading =>
       'Skip automatic ReShade DLL detection from the reshade/ folder and does not load it anymore.';
+
+  @override
+  String get labelDisable3dmigotoLoading => 'Disable 3DMigoto Loading';
+
+  @override
+  String get tooltipDisable3dmigotoLoading =>
+      'Skip loading the 3DMigoto runtime from thirdparty/3dmigoto/. Turn off to stop loading shader mods.';
 
   @override
   String get labelDisableTextureInjection => 'Disable Texture Injection';

@@ -2,7 +2,7 @@ name: yp_launcher
 description: "Simple Launcher for YoRHa Protocol with Mod Managing and NAMS Config Editing."
 
 publish_to: 'none'
-version: 2.1.8+1
+version: 2.2.0+1
 
 environment:
   sdk: ^3.9.2

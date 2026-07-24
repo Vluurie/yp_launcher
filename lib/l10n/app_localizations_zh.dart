@@ -101,7 +101,66 @@ class AppLocalizationsZh extends AppLocalizations {
       '示例：\ngamescope -w 2560 -h 1440 -f --\nmangohud\ngamemoderun';
 
   @override
-  String get tabLauncherSettings => '启动器设置';
+  String get tabLauncherSettings => '疑难解答';
+
+  @override
+  String get troubleWrongExeTitle => '游戏版本错误';
+
+  @override
+  String get troubleWrongExeSummary =>
+      '这是旧版 Windows 7/8 的 NieRAutomata.exe。NAMS 无法启动它。';
+
+  @override
+  String get troubleMissingFilesTitle => '启动器文件缺失';
+
+  @override
+  String troubleMissingFilesSummary(String files) {
+    return '缺失：$files';
+  }
+
+  @override
+  String get troubleMissingFilesDesc =>
+      '这些文件属于便携版启动器，但已丢失。很可能是杀毒软件（通常是 Windows Defender）将其隔离。请将启动器文件夹加入杀毒软件排除项并恢复文件，或重新下载启动器。';
+
+  @override
+  String get troubleRecentErrorsTitle => '最近的 NAMS 错误';
+
+  @override
+  String get troubleFoldersTitle => '打开文件夹';
+
+  @override
+  String get troubleFoldersDesc => '快速访问维护者可能会让你打开的文件夹。';
+
+  @override
+  String get troubleOpenGame => '游戏文件夹';
+
+  @override
+  String get troubleOpenNamsConfig => 'NAMS 配置';
+
+  @override
+  String get troubleOpenLogs => '日志';
+
+  @override
+  String get troubleOpenBins => '启动器文件夹';
+
+  @override
+  String get troubleClearCacheTitle => '清除缓存';
+
+  @override
+  String get troubleClearCacheDesc =>
+      '删除可能过期的缓存状态：日志文件、检测缓存、模组的 NAMS settings.json，以及运行时解压标记。你的模组和游戏文件不受影响。';
+
+  @override
+  String get troubleClearCacheButton => '清除缓存';
+
+  @override
+  String get troubleClearCacheConfirm =>
+      '这将删除日志、检测缓存、模组的游戏内 settings.json，并在下次启动时强制重新解压运行时。模组和游戏文件不受影响。是否继续？';
+
+  @override
+  String troubleClearCacheDone(int count) {
+    return '缓存已清除（移除了 $count 个日志文件）。';
+  }
 
   @override
   String get verifyInstallTitle => '安装诊断';
@@ -804,6 +863,288 @@ class AppLocalizationsZh extends AppLocalizations {
   String get tabCutscenes => '过场动画';
 
   @override
+  String get tabThirdParty => '第三方';
+
+  @override
+  String get thirdPartyTitle => '第三方运行时';
+
+  @override
+  String get thirdPartySubtitle =>
+      'ReShade 和 3DMigoto，由 NAMS 从托管文件夹加载。无需重命名，无 DLL 冲突。';
+
+  @override
+  String get thirdPartyReShadeHeader => 'RESHADE';
+
+  @override
+  String get thirdPartyMigotoHeader => '3DMIGOTO';
+
+  @override
+  String get thirdPartyReShadeHowto =>
+      '像平常一样将 ReShade 安装到你的 NieRAutomata 文件夹（API 选择 dxgi）。启动器会将其移入 NAMS 并为你设置好路径。';
+
+  @override
+  String get thirdPartyMigotoHowto =>
+      '将 3DMigoto 着色器模组压缩包拖到这里。启动器会安装它并设置加载目标，以便 NAMS 挂钩。';
+
+  @override
+  String get thirdPartyStatusInstalled => '已安装';
+
+  @override
+  String get thirdPartyStatusNotInstalled => '未安装';
+
+  @override
+  String get thirdPartyStatusFoundInGame => '在游戏文件夹中找到 — 点击导入以为 NAMS 设置。';
+
+  @override
+  String get thirdPartyEnable => '启用';
+
+  @override
+  String get thirdPartyImport => '导入到 NAMS';
+
+  @override
+  String get thirdPartyRepair => '修复';
+
+  @override
+  String get thirdPartyRemove => '移除';
+
+  @override
+  String get thirdPartyGetReShade => '获取 ReShade';
+
+  @override
+  String get thirdPartyShadersMissing => '尚未安装任何效果 — 添加预设或着色器包，否则不会有任何效果。';
+
+  @override
+  String get thirdPartyOpenFolder => '打开文件夹';
+
+  @override
+  String thirdPartyPresetsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count 个预设',
+      zero: '无预设',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get thirdPartyInstallCard => '安装';
+
+  @override
+  String get thirdPartyDropHere => '将 ReShade 预设 / 3DMigoto 模组拖到这里';
+
+  @override
+  String get thirdPartyImported => '已导入到 NAMS';
+
+  @override
+  String get thirdPartyInstalled => '已安装';
+
+  @override
+  String get thirdPartyInstallFailed => '无法安装此文件';
+
+  @override
+  String get thirdPartyRedirectMods => '这是游戏数据模组 — 请使用模组管理器标签页。';
+
+  @override
+  String get thirdPartyRedirectTextures => '这是纹理包 — 请使用纹理标签页。';
+
+  @override
+  String get thirdPartyUnsupported => '此处不支持该文件类型。';
+
+  @override
+  String get thirdPartyLodModPrompt =>
+      '这是 LodMod。NAMS 已内置 LodMod — 是否将其设置导入到 LodMod 标签页？';
+
+  @override
+  String get thirdPartyStatusActive => '已启用';
+
+  @override
+  String get thirdPartyStatusInactive => '已安装，在 NAMS 标签页中已禁用';
+
+  @override
+  String get thirdPartyVersion => '版本';
+
+  @override
+  String get thirdPartyAddonBuild => 'Addon 版本';
+
+  @override
+  String get thirdPartyPresets => '预设';
+
+  @override
+  String get thirdPartyNonePresets => '未安装预设';
+
+  @override
+  String get thirdPartyShaderRepos => '着色器';
+
+  @override
+  String get thirdPartyNoneShaders => '无着色器 — 效果无法编译';
+
+  @override
+  String thirdPartyShaderCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count 个效果',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get thirdPartyAddons => '插件';
+
+  @override
+  String get thirdPartyFiles => '文件';
+
+  @override
+  String get thirdPartyShaderFixes => 'ShaderFixes';
+
+  @override
+  String thirdPartyShaderFixCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count 个修复',
+      zero: '无',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get thirdPartyLoaderTarget => '加载目标';
+
+  @override
+  String get thirdPartyHunting => 'Hunting';
+
+  @override
+  String get thirdPartyHuntingOn => '开';
+
+  @override
+  String thirdPartyUpdateTitle(String name) {
+    return '替换已安装的 $name？';
+  }
+
+  @override
+  String thirdPartyUpdateBody(String name) {
+    return '$name 已安装。你拖入的文件是不同的版本。要用它替换已安装的版本吗？';
+  }
+
+  @override
+  String get thirdPartyUpdateInstalledLabel => '当前已安装';
+
+  @override
+  String get thirdPartyUpdateIncomingLabel => '你拖入的';
+
+  @override
+  String get thirdPartyUpdateReplace => '替换';
+
+  @override
+  String get thirdPartyUpdateKeep => '保留当前';
+
+  @override
+  String get thirdPartyUpdateSkipped => '已保留安装的版本。';
+
+  @override
+  String get thirdPartyD3dCompilerMissing =>
+      '此处没有 d3dcompiler_47.dll。在 Wine 下，ReShade 会退回到 Wine 的存根，特效将无法编译。请重新安装自带该文件的 ReShade 版本，或将原生 d3dcompiler_47.dll 放入此文件夹。';
+
+  @override
+  String get thirdPartyBanner =>
+      '此标签页中的工具是第三方软件。NAMS 只负责加载它们，并不实现它们，也无法改变它们的行为。你通过它们安装的任何内容都独立运行，因此正确性、兼容性和安全性由你自行负责。如果出现问题，责任在于该工具或模组，而非 NAMS。';
+
+  @override
+  String get thirdPartyConfigSection => '设置';
+
+  @override
+  String get thirdPartyRestartRequired => '下次启动游戏时生效';
+
+  @override
+  String get thirdPartyReShadePerformanceMode => '性能模式';
+
+  @override
+  String get thirdPartyReShadePerformanceModeHint => '启动时不重新编译特效。调整特效时请关闭。';
+
+  @override
+  String get thirdPartyReShadeShowFps => '显示 FPS';
+
+  @override
+  String get thirdPartyReShadeShowFpsHint => '在 ReShade 叠加层的角落显示帧率。';
+
+  @override
+  String get thirdPartyReShadeShowClock => '显示时钟';
+
+  @override
+  String get thirdPartyReShadeShowClockHint => '在 ReShade 叠加层的角落显示当前时间。';
+
+  @override
+  String get thirdPartyReShadeActivePreset => '当前预设';
+
+  @override
+  String get thirdPartyReShadeOverlayKey => '叠加层按键';
+
+  @override
+  String get thirdPartyReShadeNoKey => '未设置';
+
+  @override
+  String get thirdPartyMigotoHunting => 'Hunting';
+
+  @override
+  String get thirdPartyMigotoHuntingOff => '关闭';
+
+  @override
+  String get thirdPartyMigotoHuntingOn => '开启';
+
+  @override
+  String get thirdPartyMigotoHuntingNoMarking => '开启，无标记';
+
+  @override
+  String get thirdPartyMigotoHuntingHint => '开发者模式：循环切换着色器以查找并转储。正常游玩时请关闭。';
+
+  @override
+  String get thirdPartyMigotoMarkingMode => '标记模式';
+
+  @override
+  String get thirdPartyMigotoMarkingModeHint =>
+      '被查找的着色器在游戏中如何高亮：跳过（不变）、原始、粉色或单色。';
+
+  @override
+  String get thirdPartyMigotoMarkingSkip => '跳过';
+
+  @override
+  String get thirdPartyMigotoMarkingOriginal => '原始';
+
+  @override
+  String get thirdPartyMigotoMarkingPink => '粉色';
+
+  @override
+  String get thirdPartyMigotoMarkingMono => '单色';
+
+  @override
+  String get thirdPartyMigotoVerboseOverlay => '详细叠加层';
+
+  @override
+  String get thirdPartyMigotoVerboseOverlayHint =>
+      '在屏幕上显示详细的 3DMigoto 状态文本。调试时有用，否则会很杂乱。';
+
+  @override
+  String get thirdPartyMigotoCacheShaders => '缓存着色器';
+
+  @override
+  String get thirdPartyMigotoCacheShadersHint => '在多次启动间复用已编译的着色器。仅在调试修复时关闭。';
+
+  @override
+  String get thirdPartyMigotoCheckForegroundWindow => '仅在前台时挂钩';
+
+  @override
+  String get thirdPartyMigotoCheckForegroundWindowHint =>
+      '仅在游戏窗口获得焦点时应用叠加层和快捷键。';
+
+  @override
+  String get thirdPartyConfigApplied => '设置已保存。';
+
+  @override
+  String get thirdPartyConfigNoIni => '尚无配置文件 — 安装时会创建。';
+
+  @override
   String get tabSectionGeneral => '常规';
 
   @override
@@ -1491,6 +1832,20 @@ class AppLocalizationsZh extends AppLocalizations {
   String get diagnosticsButton => '生成诊断信息';
 
   @override
+  String get diagnosticsSubtitle =>
+      '收集完整的安装报告（游戏文件、模组、ReShade/3DMigoto、设置），以便寻求帮助时分享。';
+
+  @override
+  String get copyCommandTitle => '手动启动命令';
+
+  @override
+  String get copyCommandDesc =>
+      '如果游戏无法从启动器启动，请复制 NAMS 命令并在终端中运行。NAMS 会在那里输出失败原因，这是查找问题的最快方法。';
+
+  @override
+  String get copyCommandButton => '复制命令';
+
+  @override
   String get diagnosticsTitle => '诊断摘要';
 
   @override
@@ -1702,6 +2057,72 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get diagnosticsSectionGameRootExtras => '游戏根目录额外文件（非原版）';
+
+  @override
+  String get diagnosticsSectionGameIdentity => '游戏标识';
+
+  @override
+  String get diagnosticsSectionNamsHealth => 'NAMS 状态';
+
+  @override
+  String get diagnosticsSectionReshade => 'ReShade';
+
+  @override
+  String get diagnosticsSectionMigoto => '3DMigoto';
+
+  @override
+  String get diagnosticsSectionTexturePacks => '纹理包';
+
+  @override
+  String get diagnosticsSectionVanillaDrops => '放入原版 data/ 的文件';
+
+  @override
+  String get diagnosticsSectionNonDefault => '非默认设置';
+
+  @override
+  String get diagnosticsSectionRecentIssues => '最近的 NAMS 问题';
+
+  @override
+  String diagnosticsExeVariant(String variant) {
+    return 'exe：$variant';
+  }
+
+  @override
+  String get diagnosticsExeUnsupported => '不受支持的版本';
+
+  @override
+  String get diagnosticsDlcPresent => 'DLC';
+
+  @override
+  String get diagnosticsGameRunning => '运行中';
+
+  @override
+  String get diagnosticsNamsPresent => 'NAMS.exe';
+
+  @override
+  String diagnosticsMissingFiles(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '缺失 $count 个文件',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get diagnosticsInstalled => '已安装';
+
+  @override
+  String get diagnosticsEnabled => '已启用';
+
+  @override
+  String get diagnosticsShadersMissing => '缺少着色器';
+
+  @override
+  String get diagnosticsTexturePacksUnavailable => 'NAMS 纹理查询不可用';
+
+  @override
+  String get diagnosticsExtraFile => '额外';
 
   @override
   String diagnosticsFileCount(int count) {
@@ -2092,6 +2513,13 @@ class AppLocalizationsZh extends AppLocalizations {
   @override
   String get tooltipDisableReShadeLoading =>
       '跳过对 reshade/ 文件夹中 ReShade DLL 的自动检测，并停止加载它。';
+
+  @override
+  String get labelDisable3dmigotoLoading => '禁用 3DMigoto 加载';
+
+  @override
+  String get tooltipDisable3dmigotoLoading =>
+      '不再从 thirdparty/3dmigoto/ 加载 3DMigoto 运行时。关闭以停止加载着色器模组。';
 
   @override
   String get labelDisableTextureInjection => '禁用纹理注入';

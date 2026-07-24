@@ -483,6 +483,11 @@ List<SidebarSection> buildLauncherSections(AppLocalizations l10n) {
           label: l10n.tabCutscenes,
           icon: Icons.movie_creation_outlined,
         ),
+        SidebarTabItem(
+          index: 9,
+          label: l10n.tabThirdParty,
+          icon: Icons.auto_fix_high,
+        ),
       ],
     ),
     SidebarSection(

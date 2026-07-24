@@ -7,6 +7,7 @@ import 'package:intl/intl.dart' as intl;
 
 import 'app_localizations_de.dart';
 import 'app_localizations_en.dart';
+import 'app_localizations_th.dart';
 import 'app_localizations_zh.dart';
 
 // ignore_for_file: type=lint
@@ -97,6 +98,7 @@ abstract class AppLocalizations {
   static const List<Locale> supportedLocales = <Locale>[
     Locale('de'),
     Locale('en'),
+    Locale('th'),
     Locale('zh'),
   ];
 
@@ -271,8 +273,110 @@ abstract class AppLocalizations {
   /// No description provided for @tabLauncherSettings.
   ///
   /// In en, this message translates to:
-  /// **'Launcher Settings'**
+  /// **'Troubleshooting'**
   String get tabLauncherSettings;
+
+  /// No description provided for @troubleWrongExeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrong game version'**
+  String get troubleWrongExeTitle;
+
+  /// No description provided for @troubleWrongExeSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'This is the legacy Windows 7/8 NieRAutomata.exe. NAMS cannot launch it.'**
+  String get troubleWrongExeSummary;
+
+  /// No description provided for @troubleMissingFilesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Missing launcher files'**
+  String get troubleMissingFilesTitle;
+
+  /// No description provided for @troubleMissingFilesSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Missing: {files}'**
+  String troubleMissingFilesSummary(String files);
+
+  /// No description provided for @troubleMissingFilesDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'These files are part of the portable launcher but are gone. Antivirus (usually Windows Defender) most likely quarantined them. Exclude the launcher folder from your antivirus and restore the files, or re-download the launcher.'**
+  String get troubleMissingFilesDesc;
+
+  /// No description provided for @troubleRecentErrorsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent NAMS errors'**
+  String get troubleRecentErrorsTitle;
+
+  /// No description provided for @troubleFoldersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Open folders'**
+  String get troubleFoldersTitle;
+
+  /// No description provided for @troubleFoldersDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick access to the folders a maintainer may ask you to open.'**
+  String get troubleFoldersDesc;
+
+  /// No description provided for @troubleOpenGame.
+  ///
+  /// In en, this message translates to:
+  /// **'Game folder'**
+  String get troubleOpenGame;
+
+  /// No description provided for @troubleOpenNamsConfig.
+  ///
+  /// In en, this message translates to:
+  /// **'NAMS config'**
+  String get troubleOpenNamsConfig;
+
+  /// No description provided for @troubleOpenLogs.
+  ///
+  /// In en, this message translates to:
+  /// **'Logs'**
+  String get troubleOpenLogs;
+
+  /// No description provided for @troubleOpenBins.
+  ///
+  /// In en, this message translates to:
+  /// **'Launcher folder'**
+  String get troubleOpenBins;
+
+  /// No description provided for @troubleClearCacheTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear cache'**
+  String get troubleClearCacheTitle;
+
+  /// No description provided for @troubleClearCacheDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete cached state that can go stale: log files, the detection cache, the mod\'s NAMS settings.json, and the runtime extract stamp. Your mods and game files are not touched.'**
+  String get troubleClearCacheDesc;
+
+  /// No description provided for @troubleClearCacheButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear cache'**
+  String get troubleClearCacheButton;
+
+  /// No description provided for @troubleClearCacheConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'This deletes logs, the detection cache, the mod\'s in-game settings.json, and forces a runtime re-extract on next start. Mods and game files stay untouched. Continue?'**
+  String get troubleClearCacheConfirm;
+
+  /// No description provided for @troubleClearCacheDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Cache cleared ({count} log files removed).'**
+  String troubleClearCacheDone(int count);
 
   /// No description provided for @verifyInstallTitle.
   ///
@@ -1570,6 +1674,498 @@ abstract class AppLocalizations {
   /// **'Cutscenes'**
   String get tabCutscenes;
 
+  /// No description provided for @tabThirdParty.
+  ///
+  /// In en, this message translates to:
+  /// **'Third Party'**
+  String get tabThirdParty;
+
+  /// No description provided for @thirdPartyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Third Party Runtimes'**
+  String get thirdPartyTitle;
+
+  /// No description provided for @thirdPartySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'ReShade and 3DMigoto, loaded by NAMS from a managed folder. No renaming, no DLL conflicts.'**
+  String get thirdPartySubtitle;
+
+  /// No description provided for @thirdPartyReShadeHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'RESHADE'**
+  String get thirdPartyReShadeHeader;
+
+  /// No description provided for @thirdPartyMigotoHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'3DMIGOTO'**
+  String get thirdPartyMigotoHeader;
+
+  /// No description provided for @thirdPartyReShadeHowto.
+  ///
+  /// In en, this message translates to:
+  /// **'Install ReShade normally into your NieRAutomata folder (pick dxgi as the API). The launcher moves it into NAMS and sets up the paths for you.'**
+  String get thirdPartyReShadeHowto;
+
+  /// No description provided for @thirdPartyMigotoHowto.
+  ///
+  /// In en, this message translates to:
+  /// **'Drop a 3DMigoto shader-mod archive here. The launcher installs it and sets the loader target so NAMS hooks it.'**
+  String get thirdPartyMigotoHowto;
+
+  /// No description provided for @thirdPartyStatusInstalled.
+  ///
+  /// In en, this message translates to:
+  /// **'Installed'**
+  String get thirdPartyStatusInstalled;
+
+  /// No description provided for @thirdPartyStatusNotInstalled.
+  ///
+  /// In en, this message translates to:
+  /// **'Not installed'**
+  String get thirdPartyStatusNotInstalled;
+
+  /// No description provided for @thirdPartyStatusFoundInGame.
+  ///
+  /// In en, this message translates to:
+  /// **'Found in your game folder — click Import to set it up for NAMS.'**
+  String get thirdPartyStatusFoundInGame;
+
+  /// No description provided for @thirdPartyEnable.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable'**
+  String get thirdPartyEnable;
+
+  /// No description provided for @thirdPartyImport.
+  ///
+  /// In en, this message translates to:
+  /// **'Import into NAMS'**
+  String get thirdPartyImport;
+
+  /// No description provided for @thirdPartyRepair.
+  ///
+  /// In en, this message translates to:
+  /// **'Repair'**
+  String get thirdPartyRepair;
+
+  /// No description provided for @thirdPartyRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get thirdPartyRemove;
+
+  /// No description provided for @thirdPartyGetReShade.
+  ///
+  /// In en, this message translates to:
+  /// **'Get ReShade'**
+  String get thirdPartyGetReShade;
+
+  /// No description provided for @thirdPartyShadersMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'No effects installed yet — add a preset or shader pack, or they won\'t do anything.'**
+  String get thirdPartyShadersMissing;
+
+  /// No description provided for @thirdPartyOpenFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Open folder'**
+  String get thirdPartyOpenFolder;
+
+  /// No description provided for @thirdPartyPresetsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No presets} =1{1 preset} other{{count} presets}}'**
+  String thirdPartyPresetsCount(int count);
+
+  /// No description provided for @thirdPartyInstallCard.
+  ///
+  /// In en, this message translates to:
+  /// **'INSTALL'**
+  String get thirdPartyInstallCard;
+
+  /// No description provided for @thirdPartyDropHere.
+  ///
+  /// In en, this message translates to:
+  /// **'Drop a ReShade preset / 3DMigoto mod here'**
+  String get thirdPartyDropHere;
+
+  /// No description provided for @thirdPartyImported.
+  ///
+  /// In en, this message translates to:
+  /// **'Imported into NAMS'**
+  String get thirdPartyImported;
+
+  /// No description provided for @thirdPartyInstalled.
+  ///
+  /// In en, this message translates to:
+  /// **'Installed'**
+  String get thirdPartyInstalled;
+
+  /// No description provided for @thirdPartyInstallFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not install this file'**
+  String get thirdPartyInstallFailed;
+
+  /// No description provided for @thirdPartyRedirectMods.
+  ///
+  /// In en, this message translates to:
+  /// **'This is a game-data mod — use the Mod Manager tab.'**
+  String get thirdPartyRedirectMods;
+
+  /// No description provided for @thirdPartyRedirectTextures.
+  ///
+  /// In en, this message translates to:
+  /// **'This is a texture pack — use the Textures tab.'**
+  String get thirdPartyRedirectTextures;
+
+  /// No description provided for @thirdPartyUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'This file type is not supported here.'**
+  String get thirdPartyUnsupported;
+
+  /// No description provided for @thirdPartyLodModPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'This is a LodMod. NAMS has LodMod built in — import its settings into the LodMod tab?'**
+  String get thirdPartyLodModPrompt;
+
+  /// No description provided for @thirdPartyStatusActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get thirdPartyStatusActive;
+
+  /// No description provided for @thirdPartyStatusInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'Installed, disabled in NAMS tab'**
+  String get thirdPartyStatusInactive;
+
+  /// No description provided for @thirdPartyVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Version'**
+  String get thirdPartyVersion;
+
+  /// No description provided for @thirdPartyAddonBuild.
+  ///
+  /// In en, this message translates to:
+  /// **'Addon build'**
+  String get thirdPartyAddonBuild;
+
+  /// No description provided for @thirdPartyPresets.
+  ///
+  /// In en, this message translates to:
+  /// **'PRESETS'**
+  String get thirdPartyPresets;
+
+  /// No description provided for @thirdPartyNonePresets.
+  ///
+  /// In en, this message translates to:
+  /// **'No presets installed'**
+  String get thirdPartyNonePresets;
+
+  /// No description provided for @thirdPartyShaderRepos.
+  ///
+  /// In en, this message translates to:
+  /// **'SHADERS'**
+  String get thirdPartyShaderRepos;
+
+  /// No description provided for @thirdPartyNoneShaders.
+  ///
+  /// In en, this message translates to:
+  /// **'No shaders — effects won\'t compile'**
+  String get thirdPartyNoneShaders;
+
+  /// No description provided for @thirdPartyShaderCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 effect} other{{count} effects}}'**
+  String thirdPartyShaderCount(int count);
+
+  /// No description provided for @thirdPartyAddons.
+  ///
+  /// In en, this message translates to:
+  /// **'ADDONS'**
+  String get thirdPartyAddons;
+
+  /// No description provided for @thirdPartyFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'FILES'**
+  String get thirdPartyFiles;
+
+  /// No description provided for @thirdPartyShaderFixes.
+  ///
+  /// In en, this message translates to:
+  /// **'ShaderFixes'**
+  String get thirdPartyShaderFixes;
+
+  /// No description provided for @thirdPartyShaderFixCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{none} =1{1 fix} other{{count} fixes}}'**
+  String thirdPartyShaderFixCount(int count);
+
+  /// No description provided for @thirdPartyLoaderTarget.
+  ///
+  /// In en, this message translates to:
+  /// **'Loader target'**
+  String get thirdPartyLoaderTarget;
+
+  /// No description provided for @thirdPartyHunting.
+  ///
+  /// In en, this message translates to:
+  /// **'Hunting'**
+  String get thirdPartyHunting;
+
+  /// No description provided for @thirdPartyHuntingOn.
+  ///
+  /// In en, this message translates to:
+  /// **'on'**
+  String get thirdPartyHuntingOn;
+
+  /// No description provided for @thirdPartyUpdateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace installed {name}?'**
+  String thirdPartyUpdateTitle(String name);
+
+  /// No description provided for @thirdPartyUpdateBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is already installed. The file you dropped is a different build. Replace the installed one with it?'**
+  String thirdPartyUpdateBody(String name);
+
+  /// No description provided for @thirdPartyUpdateInstalledLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Installed now'**
+  String get thirdPartyUpdateInstalledLabel;
+
+  /// No description provided for @thirdPartyUpdateIncomingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'You dropped'**
+  String get thirdPartyUpdateIncomingLabel;
+
+  /// No description provided for @thirdPartyUpdateReplace.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace'**
+  String get thirdPartyUpdateReplace;
+
+  /// No description provided for @thirdPartyUpdateKeep.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep current'**
+  String get thirdPartyUpdateKeep;
+
+  /// No description provided for @thirdPartyUpdateSkipped.
+  ///
+  /// In en, this message translates to:
+  /// **'Kept the installed version.'**
+  String get thirdPartyUpdateSkipped;
+
+  /// No description provided for @thirdPartyD3dCompilerMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'No d3dcompiler_47.dll here. Under Wine, ReShade falls back to Wine\'s stub and effects won\'t compile. Reinstall a ReShade build that ships it, or drop a native d3dcompiler_47.dll into this folder.'**
+  String get thirdPartyD3dCompilerMissing;
+
+  /// No description provided for @thirdPartyBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'The tools on this tab are third-party software. NAMS only loads them. It does not implement them and cannot change how they behave. Anything you install through them runs on its own, so correctness, compatibility and safety are your responsibility. If something misbehaves, that is on the tool or the mod, not on NAMS.'**
+  String get thirdPartyBanner;
+
+  /// No description provided for @thirdPartyConfigSection.
+  ///
+  /// In en, this message translates to:
+  /// **'SETTINGS'**
+  String get thirdPartyConfigSection;
+
+  /// No description provided for @thirdPartyRestartRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'applied on next game start'**
+  String get thirdPartyRestartRequired;
+
+  /// No description provided for @thirdPartyReShadePerformanceMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Performance mode'**
+  String get thirdPartyReShadePerformanceMode;
+
+  /// No description provided for @thirdPartyReShadePerformanceModeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip effect recompilation on launch. Turn off while tuning effects.'**
+  String get thirdPartyReShadePerformanceModeHint;
+
+  /// No description provided for @thirdPartyReShadeShowFps.
+  ///
+  /// In en, this message translates to:
+  /// **'Show FPS'**
+  String get thirdPartyReShadeShowFps;
+
+  /// No description provided for @thirdPartyReShadeShowFpsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Draw the frame rate in the ReShade overlay corner.'**
+  String get thirdPartyReShadeShowFpsHint;
+
+  /// No description provided for @thirdPartyReShadeShowClock.
+  ///
+  /// In en, this message translates to:
+  /// **'Show clock'**
+  String get thirdPartyReShadeShowClock;
+
+  /// No description provided for @thirdPartyReShadeShowClockHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Draw the current time in the ReShade overlay corner.'**
+  String get thirdPartyReShadeShowClockHint;
+
+  /// No description provided for @thirdPartyReShadeActivePreset.
+  ///
+  /// In en, this message translates to:
+  /// **'Active preset'**
+  String get thirdPartyReShadeActivePreset;
+
+  /// No description provided for @thirdPartyReShadeOverlayKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Overlay key'**
+  String get thirdPartyReShadeOverlayKey;
+
+  /// No description provided for @thirdPartyReShadeNoKey.
+  ///
+  /// In en, this message translates to:
+  /// **'unset'**
+  String get thirdPartyReShadeNoKey;
+
+  /// No description provided for @thirdPartyMigotoHunting.
+  ///
+  /// In en, this message translates to:
+  /// **'Hunting'**
+  String get thirdPartyMigotoHunting;
+
+  /// No description provided for @thirdPartyMigotoHuntingOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get thirdPartyMigotoHuntingOff;
+
+  /// No description provided for @thirdPartyMigotoHuntingOn.
+  ///
+  /// In en, this message translates to:
+  /// **'On'**
+  String get thirdPartyMigotoHuntingOn;
+
+  /// No description provided for @thirdPartyMigotoHuntingNoMarking.
+  ///
+  /// In en, this message translates to:
+  /// **'On, no marking'**
+  String get thirdPartyMigotoHuntingNoMarking;
+
+  /// No description provided for @thirdPartyMigotoHuntingHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Developer mode: cycle shaders to find and dump them. Leave off for normal play.'**
+  String get thirdPartyMigotoHuntingHint;
+
+  /// No description provided for @thirdPartyMigotoMarkingMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Marking mode'**
+  String get thirdPartyMigotoMarkingMode;
+
+  /// No description provided for @thirdPartyMigotoMarkingModeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'How the hunted shader is highlighted in-game: skip (no change), original, pink, or mono.'**
+  String get thirdPartyMigotoMarkingModeHint;
+
+  /// No description provided for @thirdPartyMigotoMarkingSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get thirdPartyMigotoMarkingSkip;
+
+  /// No description provided for @thirdPartyMigotoMarkingOriginal.
+  ///
+  /// In en, this message translates to:
+  /// **'Original'**
+  String get thirdPartyMigotoMarkingOriginal;
+
+  /// No description provided for @thirdPartyMigotoMarkingPink.
+  ///
+  /// In en, this message translates to:
+  /// **'Pink'**
+  String get thirdPartyMigotoMarkingPink;
+
+  /// No description provided for @thirdPartyMigotoMarkingMono.
+  ///
+  /// In en, this message translates to:
+  /// **'Mono'**
+  String get thirdPartyMigotoMarkingMono;
+
+  /// No description provided for @thirdPartyMigotoVerboseOverlay.
+  ///
+  /// In en, this message translates to:
+  /// **'Verbose overlay'**
+  String get thirdPartyMigotoVerboseOverlay;
+
+  /// No description provided for @thirdPartyMigotoVerboseOverlayHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Show detailed 3DMigoto status text on screen. Useful while debugging, noisy otherwise.'**
+  String get thirdPartyMigotoVerboseOverlayHint;
+
+  /// No description provided for @thirdPartyMigotoCacheShaders.
+  ///
+  /// In en, this message translates to:
+  /// **'Cache shaders'**
+  String get thirdPartyMigotoCacheShaders;
+
+  /// No description provided for @thirdPartyMigotoCacheShadersHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Reuse compiled shaders across launches. Turn off only when debugging fixes.'**
+  String get thirdPartyMigotoCacheShadersHint;
+
+  /// No description provided for @thirdPartyMigotoCheckForegroundWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'Only hook in foreground'**
+  String get thirdPartyMigotoCheckForegroundWindow;
+
+  /// No description provided for @thirdPartyMigotoCheckForegroundWindowHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Only apply the overlay and hotkeys when the game window is focused.'**
+  String get thirdPartyMigotoCheckForegroundWindowHint;
+
+  /// No description provided for @thirdPartyConfigApplied.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings saved.'**
+  String get thirdPartyConfigApplied;
+
+  /// No description provided for @thirdPartyConfigNoIni.
+  ///
+  /// In en, this message translates to:
+  /// **'No config file yet — install writes one.'**
+  String get thirdPartyConfigNoIni;
+
   /// No description provided for @tabSectionGeneral.
   ///
   /// In en, this message translates to:
@@ -2794,6 +3390,30 @@ abstract class AppLocalizations {
   /// **'Generate diagnostics'**
   String get diagnosticsButton;
 
+  /// No description provided for @diagnosticsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Collect a full report of your install (game files, mods, ReShade/3DMigoto, settings) to share when asking for help.'**
+  String get diagnosticsSubtitle;
+
+  /// No description provided for @copyCommandTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual launch command'**
+  String get copyCommandTitle;
+
+  /// No description provided for @copyCommandDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'If the game will not start from the launcher, copy the NAMS command and run it in a terminal. NAMS prints why it failed there, which is the fastest way to find the cause.'**
+  String get copyCommandDesc;
+
+  /// No description provided for @copyCommandButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy command'**
+  String get copyCommandButton;
+
   /// No description provided for @diagnosticsTitle.
   ///
   /// In en, this message translates to:
@@ -3171,6 +3791,120 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Game root extras (non-vanilla)'**
   String get diagnosticsSectionGameRootExtras;
+
+  /// No description provided for @diagnosticsSectionGameIdentity.
+  ///
+  /// In en, this message translates to:
+  /// **'Game identity'**
+  String get diagnosticsSectionGameIdentity;
+
+  /// No description provided for @diagnosticsSectionNamsHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'NAMS health'**
+  String get diagnosticsSectionNamsHealth;
+
+  /// No description provided for @diagnosticsSectionReshade.
+  ///
+  /// In en, this message translates to:
+  /// **'ReShade'**
+  String get diagnosticsSectionReshade;
+
+  /// No description provided for @diagnosticsSectionMigoto.
+  ///
+  /// In en, this message translates to:
+  /// **'3DMigoto'**
+  String get diagnosticsSectionMigoto;
+
+  /// No description provided for @diagnosticsSectionTexturePacks.
+  ///
+  /// In en, this message translates to:
+  /// **'Texture packs'**
+  String get diagnosticsSectionTexturePacks;
+
+  /// No description provided for @diagnosticsSectionVanillaDrops.
+  ///
+  /// In en, this message translates to:
+  /// **'Files dropped in vanilla data/'**
+  String get diagnosticsSectionVanillaDrops;
+
+  /// No description provided for @diagnosticsSectionNonDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Non-default settings'**
+  String get diagnosticsSectionNonDefault;
+
+  /// No description provided for @diagnosticsSectionRecentIssues.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent NAMS issues'**
+  String get diagnosticsSectionRecentIssues;
+
+  /// No description provided for @diagnosticsExeVariant.
+  ///
+  /// In en, this message translates to:
+  /// **'exe: {variant}'**
+  String diagnosticsExeVariant(String variant);
+
+  /// No description provided for @diagnosticsExeUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'unsupported build'**
+  String get diagnosticsExeUnsupported;
+
+  /// No description provided for @diagnosticsDlcPresent.
+  ///
+  /// In en, this message translates to:
+  /// **'DLC'**
+  String get diagnosticsDlcPresent;
+
+  /// No description provided for @diagnosticsGameRunning.
+  ///
+  /// In en, this message translates to:
+  /// **'running'**
+  String get diagnosticsGameRunning;
+
+  /// No description provided for @diagnosticsNamsPresent.
+  ///
+  /// In en, this message translates to:
+  /// **'NAMS.exe'**
+  String get diagnosticsNamsPresent;
+
+  /// No description provided for @diagnosticsMissingFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 missing file} other{{count} missing files}}'**
+  String diagnosticsMissingFiles(int count);
+
+  /// No description provided for @diagnosticsInstalled.
+  ///
+  /// In en, this message translates to:
+  /// **'installed'**
+  String get diagnosticsInstalled;
+
+  /// No description provided for @diagnosticsEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'enabled'**
+  String get diagnosticsEnabled;
+
+  /// No description provided for @diagnosticsShadersMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'shaders missing'**
+  String get diagnosticsShadersMissing;
+
+  /// No description provided for @diagnosticsTexturePacksUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'NAMS texture query unavailable'**
+  String get diagnosticsTexturePacksUnavailable;
+
+  /// No description provided for @diagnosticsExtraFile.
+  ///
+  /// In en, this message translates to:
+  /// **'extra'**
+  String get diagnosticsExtraFile;
 
   /// No description provided for @diagnosticsFileCount.
   ///
@@ -3861,6 +4595,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Skip automatic ReShade DLL detection from the reshade/ folder and does not load it anymore.'**
   String get tooltipDisableReShadeLoading;
+
+  /// No description provided for @labelDisable3dmigotoLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Disable 3DMigoto Loading'**
+  String get labelDisable3dmigotoLoading;
+
+  /// No description provided for @tooltipDisable3dmigotoLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip loading the 3DMigoto runtime from thirdparty/3dmigoto/. Turn off to stop loading shader mods.'**
+  String get tooltipDisable3dmigotoLoading;
 
   /// No description provided for @labelDisableTextureInjection.
   ///
@@ -6981,7 +7727,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['de', 'en', 'zh'].contains(locale.languageCode);
+      <String>['de', 'en', 'th', 'zh'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -6994,6 +7740,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsDe();
     case 'en':
       return AppLocalizationsEn();
+    case 'th':
+      return AppLocalizationsTh();
     case 'zh':
       return AppLocalizationsZh();
   }

@@ -29,6 +29,13 @@ class AppStrings {
   static const String logsDirName = 'logs';
   static const String namsLogName = 'nams.log';
 
+  static const String thirdPartyDirName = 'thirdparty';
+  static const String reshadeDirName = 'reshade';
+  static const String migotoDirName = '3dmigoto';
+
+  static const String reshadeMeUrl = 'https://reshade.me';
+  static const String migotoUrl = 'https://github.com/bo3b/3Dmigoto';
+
   static const String argRun = 'run';
   static const String argNierPath = '--nier-path';
   static const String argVerify = 'verify';
@@ -38,7 +45,7 @@ class AppStrings {
   static const String shortcutDescription =
       'Launch NieR:Automata with YoRHa Protocol';
 
-  static const String appVersion = 'v2.1.8';
+  static const String appVersion = 'v2.2.0';
 
   static const String tabModloaderId = 'modloader';
   static const String tabYorhaId = 'yorha';

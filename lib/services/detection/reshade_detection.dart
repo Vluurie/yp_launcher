@@ -1,7 +1,6 @@
-import 'dart:io';
-import 'dart:typed_data';
 import 'package:path/path.dart' as path;
 import 'package:yp_launcher/services/toml_service.dart';
+import 'package:yp_launcher/services/detection/graphics_dll_id.dart';
 import 'package:yp_launcher/models/config_fields.dart';
 
 enum ReShadeStatus { notFound, detected, incompatibleAddon }
@@ -9,64 +8,26 @@ enum ReShadeStatus { notFound, detected, incompatibleAddon }
 class ReShadeDetection {
   ReShadeDetection._();
 
+  /// Detects a game-root ReShade install by byte-identifying any DLL under a
+  /// name ReShade commonly ships as (regardless of the packaged filename). Uses
+  /// [GraphicsDllId] robust string markers (reshade.me / crosire), which match
+  /// old builds (4.x) through current — the previous long-string byte signature
+  /// missed every compressed build and is no longer used.
   static Future<ReShadeStatus> detectReShade(String gameDir) async {
-    const reshadeDllCandidates = ['ReShade64.dll', 'reshade64.dll', 'dxgi.dll'];
-    File? sourceDll;
-    bool isNamedReShade = false;
+    const reshadeDllCandidates = [
+      'ReShade64.dll',
+      'reshade64.dll',
+      'ReShade64_Addon.dll',
+      'dxgi.dll',
+      'd3d11.dll',
+    ];
 
     for (final candidate in reshadeDllCandidates) {
-      final file = File(path.join(gameDir, candidate));
-      if (await file.exists()) {
-        sourceDll = file;
-        isNamedReShade = candidate.toLowerCase() == 'reshade64.dll';
-        break;
-      }
+      final filePath = path.join(gameDir, candidate);
+      final kind = GraphicsDllId.identifyFile(filePath);
+      if (kind == GraphicsDll.reshade) return ReShadeStatus.detected;
     }
-
-    if (sourceDll == null) return ReShadeStatus.notFound;
-
-    if (!isNamedReShade) {
-      final Uint8List bytes;
-      try {
-        bytes = await sourceDll.readAsBytes();
-      } catch (_) {
-        return ReShadeStatus.notFound;
-      }
-
-      if (!_containsBytes(bytes, _reshadeSignature)) {
-        return ReShadeStatus.notFound;
-      }
-
-      if (_containsBytes(bytes, _imguiAddonSignature)) {
-        return ReShadeStatus.incompatibleAddon;
-      }
-    }
-
-    return ReShadeStatus.detected;
-  }
-
-  static const _reshadeSignature = [
-    0x52, 0x65, 0x53, 0x68, 0x61, 0x64, 0x65, 0x20, // "ReShade "
-    0x64, 0x65, 0x70, 0x74, 0x68, 0x20, // "depth "
-    0x62, 0x61, 0x63, 0x6B, 0x75, 0x70, 0x20, // "backup "
-    0x74, 0x65, 0x78, 0x74, 0x75, 0x72, 0x65, // "texture"
-  ];
-
-  static const _imguiAddonSignature = [
-    0x42, 0x65, 0x67, 0x69, 0x6E, 0x4D, 0x65, 0x6E, 0x75, // "BeginMenu"
-    0x42, 0x61, 0x72, 0x40, 0x49, 0x6D, 0x47, 0x75, 0x69, // "Bar@ImGui"
-  ];
-
-  static bool _containsBytes(Uint8List haystack, List<int> needle) {
-    if (needle.length > haystack.length) return false;
-    outer:
-    for (var i = 0; i <= haystack.length - needle.length; i++) {
-      for (var j = 0; j < needle.length; j++) {
-        if (haystack[i + j] != needle[j]) continue outer;
-      }
-      return true;
-    }
-    return false;
+    return ReShadeStatus.notFound;
   }
 
   /// When ReShade is present we default `disable_reshade_loading = true` so

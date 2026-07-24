@@ -10,6 +10,7 @@ const List<Locale> kSupportedLocales = [
   Locale('en'),
   Locale('de'),
   Locale('zh'),
+  Locale('th'),
 ];
 
 String localeDisplayName(Locale locale) {
@@ -18,6 +19,8 @@ String localeDisplayName(Locale locale) {
       return 'Deutsch';
     case 'zh':
       return '简体中文';
+    case 'th':
+      return 'ไทย';
     default:
       return 'English';
   }

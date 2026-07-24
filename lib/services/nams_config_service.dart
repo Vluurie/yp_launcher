@@ -78,6 +78,7 @@ outfit_swap_visual_effects = true
 experimental_default_outfits = false
 
 disable_reshade_loading = false
+disable_3dmigoto_loading = false
 disable_texture_injection = false
 
 # Skip the startup splash window shown while the game loads. Vanilla revealed
@@ -449,6 +450,20 @@ enable_h264 = false
           '# nams/default_mods.toml are active from game start. Off by default\n'
           '# while the feature stabilizes. Requires restart.\n'
           'experimental_default_outfits = false\n',
+      NamsFields.disable3dmigotoLoading.key:
+          '# Skip loading the 3DMigoto runtime from thirdparty/3dmigoto/. Managed\n'
+          '# by the Third Party tab; set to true to stop loading it.\n'
+          'disable_3dmigoto_loading = false\n',
+      NamsFields.disableReShadeLoading.key:
+          '# Skip loading ReShade from thirdparty/reshade/. Managed by the Third\n'
+          '# Party tab; set to true to run without ReShade.\n'
+          'disable_reshade_loading = false\n',
+      NamsFields.loadingStallHints.key:
+          '# Show escalating hints when the "Loading Map" screen takes too long.\n'
+          'loading_stall_hints = true\n',
+      NamsFields.fixWindTimerBug.key:
+          '# Fix the vanilla bug where wind animation stops after max playtime.\n'
+          'fix_wind_timer_bug = true\n',
     };
     for (final entry in topLevelAdditions.entries) {
       if (content.contains(entry.key)) continue;
