@@ -43,7 +43,8 @@ class WindowsAdapter extends PlatformAdapter {
   bool get supportsDesktopShortcut => true;
 
   @override
-  Future<LaunchCommand> buildLaunchCommand({
+  Future<LaunchCommand> buildNamsCommand({
+    required List<String> Function(String nierPath) namsArgs,
     required String namsExe,
     required String gameDir,
     required String gameExe,
@@ -54,6 +55,7 @@ class WindowsAdapter extends PlatformAdapter {
         namsExe: namsExe,
         gameDir: gameDir,
         launcherDir: launcherDir,
+        namsArgs: namsArgs,
       );
 
   @override

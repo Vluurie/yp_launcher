@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:meta/meta.dart';
 import 'package:path/path.dart' as path;
 import 'package:yp_launcher/constants/app_strings.dart';
 import 'package:yp_launcher/services/platform/platform_adapter.dart';
@@ -48,6 +49,11 @@ class LauncherSetupService {
       );
     }
     return resolved;
+  }
+
+  @visibleForTesting
+  static void setRuntimeDirForTest(String? dir) {
+    _resolvedRuntimeDir = dir;
   }
 
   static Future<String> getLauncherDirectory() async {

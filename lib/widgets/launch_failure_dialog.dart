@@ -152,7 +152,9 @@ class _LaunchFailureDialogState extends State<_LaunchFailureDialog> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  failure.friendlyTitle().toUpperCase(),
+                  failure
+                      .friendlyTitle(AppLocalizations.of(context)!)
+                      .toUpperCase(),
                   style: TextStyle(
                     fontSize: AppSizes.fontLG(context),
                     fontWeight: FontWeight.bold,
@@ -190,15 +192,16 @@ class _LaunchFailureDialogState extends State<_LaunchFailureDialog> {
   }
 
   List<Widget> _buildSections(BuildContext context, Color accent) {
-    final hints = failure.hints();
+    final l10n = AppLocalizations.of(context)!;
+    final hints = failure.hints(l10n);
     return [
       _card(
         context,
         accent: accent,
         icon: Icons.info_outline,
-        title: 'What happened',
+        title: l10n.failSectionWhatHappened,
         body: Text(
-          failure.friendlyExplanation(),
+          failure.friendlyExplanation(l10n),
           style: TextStyle(
             fontSize: AppSizes.fontSM(context),
             color: AppColors.textSecondary,
@@ -207,13 +210,13 @@ class _LaunchFailureDialogState extends State<_LaunchFailureDialog> {
         ),
       ),
       if (failure.headline.isNotEmpty &&
-          failure.headline != failure.friendlyTitle()) ...[
+          failure.headline != failure.friendlyTitle(l10n)) ...[
         SizedBox(height: AppSizes.spacingMD(context)),
         _card(
           context,
           accent: accent,
           icon: Icons.report_outlined,
-          title: 'Reported by NAMS',
+          title: l10n.failSectionReportedByNams,
           body: SelectableText(
             failure.headline,
             style: TextStyle(
@@ -230,7 +233,7 @@ class _LaunchFailureDialogState extends State<_LaunchFailureDialog> {
           context,
           accent: AppColors.accentPrimary,
           icon: Icons.lightbulb_outline,
-          title: 'Try this',
+          title: l10n.failSectionTryThis,
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -269,15 +272,16 @@ class _LaunchFailureDialogState extends State<_LaunchFailureDialog> {
           context,
           accent: AppColors.textMuted,
           icon: Icons.terminal,
-          title: 'Diagnostic detail',
+          title: l10n.failSectionDiagnosticDetail,
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (failure.osError != null)
-                _kv(context, 'OS', failure.osError!),
+                _kv(context, l10n.failDetailOs, failure.osError!),
               if (failure.cause != null)
-                _kv(context, 'Cause', failure.cause!),
-              if (failure.fix != null) _kv(context, 'Suggested', failure.fix!),
+                _kv(context, l10n.failDetailCause, failure.cause!),
+              if (failure.fix != null)
+                _kv(context, l10n.failDetailSuggested, failure.fix!),
             ],
           ),
         ),
@@ -288,14 +292,14 @@ class _LaunchFailureDialogState extends State<_LaunchFailureDialog> {
           context,
           accent: AppColors.accentPrimary,
           icon: Icons.code,
-          title: 'Launch manually from a terminal',
+          title: l10n.failSectionLaunchManually,
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Padding(
                 padding: EdgeInsets.only(bottom: AppSizes.spacingSM(context)),
                 child: Text(
-                  'If the launcher UI keeps failing for you, paste this into a terminal to start the game manually. It is the exact same command the Play button runs.',
+                  l10n.failManualCommandHint,
                   style: TextStyle(
                     fontSize: AppSizes.fontXS(context),
                     color: AppColors.textMuted,
@@ -356,7 +360,7 @@ class _LaunchFailureDialogState extends State<_LaunchFailureDialog> {
         context,
         accent: AppColors.borderMedium,
         icon: Icons.article_outlined,
-        title: 'Raw output',
+        title: l10n.failSectionRawOutput,
         body: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
@@ -482,7 +486,7 @@ class _LaunchFailureDialogState extends State<_LaunchFailureDialog> {
           _action(
             context,
             icon: Icons.copy,
-            label: 'Copy report',
+            label: AppLocalizations.of(context)!.failActionCopyReport,
             onTap: () async {
               await Clipboard.setData(ClipboardData(text: failure.rawOutput));
             },
@@ -492,7 +496,7 @@ class _LaunchFailureDialogState extends State<_LaunchFailureDialog> {
             _action(
               context,
               icon: Icons.folder_open,
-              label: 'Open log file',
+              label: AppLocalizations.of(context)!.failActionOpenLogFile,
               onTap: () async {
                 final logPath = failure.capturedLogPath!;
                 final uri = Uri.file(File(logPath).parent.path);

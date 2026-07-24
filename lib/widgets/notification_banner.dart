@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:yp_launcher/l10n/app_localizations.dart';
 import 'package:yp_launcher/providers/notification_state.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
@@ -45,6 +46,7 @@ class _ToastItemState extends State<_ToastItem>
   late Animation<Offset> _slideAnimation;
   late Animation<double> _fadeAnimation;
   bool _hovered = false;
+  bool _autoDismissScheduled = false;
 
   @override
   void initState() {
@@ -62,16 +64,16 @@ class _ToastItemState extends State<_ToastItem>
       end: 1.0,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
     _controller.forward();
-    _startAutoDismiss();
   }
 
-  Duration get _readDuration {
-    final ms = (widget.item.message.length * 55).clamp(4000, 12000);
-    return Duration(milliseconds: ms);
-  }
-
-  void _startAutoDismiss() {
-    Future.delayed(_readDuration, () {
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_autoDismissScheduled) return;
+    _autoDismissScheduled = true;
+    final text = widget.item.message(AppLocalizations.of(context)!);
+    final ms = (text.length * 55).clamp(4000, 12000);
+    Future.delayed(Duration(milliseconds: ms), () {
       if (mounted && !_hovered) _dismiss();
     });
   }
@@ -140,7 +142,7 @@ class _ToastItemState extends State<_ToastItem>
                   const SizedBox(width: 8),
                   Flexible(
                     child: Text(
-                      widget.item.message,
+                      widget.item.message(AppLocalizations.of(context)!),
                       style: TextStyle(
                         fontSize: AppSizes.fontSM(context),
                         color: AppColors.textPrimary,

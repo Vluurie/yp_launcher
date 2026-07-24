@@ -63,6 +63,9 @@ class LodModDetection {
     return true;
   }
 
+  static Map<String, dynamic> parseLodModIni(String content) =>
+      _parseIniFile(content);
+
   static Map<String, dynamic> _parseIniFile(String content) {
     final result = <String, dynamic>{};
 

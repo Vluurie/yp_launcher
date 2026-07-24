@@ -75,18 +75,20 @@ class _AppDropdownState<T> extends State<AppDropdown<T>> {
                 child: ConstrainedBox(
                   constraints: BoxConstraints(
                     minWidth: size.width,
-                    maxWidth: size.width.clamp(120.0, 480.0),
+                    maxWidth: 480,
                     maxHeight: 320,
                   ),
-                  child: _MenuPanel<T>(
-                    items: widget.items,
-                    selectedValue: widget.value,
-                    itemLabel: widget.itemLabel,
-                    onPick: (it) {
-                      _removeOverlay();
-                      widget.onChanged?.call(it);
-                    },
-                    onDismiss: _removeOverlay,
+                  child: IntrinsicWidth(
+                    child: _MenuPanel<T>(
+                      items: widget.items,
+                      selectedValue: widget.value,
+                      itemLabel: widget.itemLabel,
+                      onPick: (it) {
+                        _removeOverlay();
+                        widget.onChanged?.call(it);
+                      },
+                      onDismiss: _removeOverlay,
+                    ),
                   ),
                 ),
               ),
@@ -169,13 +171,12 @@ class _AppDropdownState<T> extends State<AppDropdown<T>> {
               ),
             ),
             child: Row(
-              mainAxisSize: widget.maxWidth != null
-                  ? MainAxisSize.max
-                  : MainAxisSize.min,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Flexible(
                   child: Text(
                     selectedLabel,
+                    softWrap: false,
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                     style: TextStyle(
@@ -343,6 +344,7 @@ class _DesktopMenuItemState<T> extends State<_DesktopMenuItem<T>> {
               Flexible(
                 child: Text(
                   widget.label,
+                  softWrap: false,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                   style: TextStyle(

@@ -458,6 +458,11 @@ List<SidebarSection> buildLauncherSections(AppLocalizations l10n) {
           label: l10n.tabLauncher,
           icon: Icons.play_circle_outline,
         ),
+        SidebarTabItem(
+          index: 8,
+          label: l10n.tabLauncherSettings,
+          icon: Icons.settings_outlined,
+        ),
       ],
     ),
     SidebarSection(
@@ -477,6 +482,11 @@ List<SidebarSection> buildLauncherSections(AppLocalizations l10n) {
           index: 7,
           label: l10n.tabCutscenes,
           icon: Icons.movie_creation_outlined,
+        ),
+        SidebarTabItem(
+          index: 9,
+          label: l10n.tabThirdParty,
+          icon: Icons.auto_fix_high,
         ),
       ],
     ),

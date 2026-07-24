@@ -45,8 +45,10 @@ void main() {
         NamsFields.contentEquipTracker,
         NamsFields.contentMcd,
         NamsFields.contentBuddyRubySelector,
+        NamsFields.experimentalDefaultOutfits,
         NamsFields.outfitSwapVisualEffects,
         NamsFields.disableReShadeLoading,
+        NamsFields.disable3dmigotoLoading,
         NamsFields.disableTextureInjection,
         NamsFields.disableSplashScreen,
         NamsFields.fixWindTimerBug,
@@ -80,6 +82,10 @@ sensitivity = 2.0
       expect(cfg[NamsFields.disableSplashScreen.key], isFalse);
       expect(cfg[NamsFields.disableContentFeatures.key], isFalse);
       expect(cfg[NamsFields.contentItems.key], isTrue);
+      expect(cfg[NamsFields.disable3dmigotoLoading.key], isFalse,
+          reason: 'disable_3dmigoto_loading migrated into an old config');
+      expect(cfg[NamsFields.disableReShadeLoading.key], isFalse,
+          reason: 'disable_reshade_loading migrated into an old config');
 
       expect((cfg['mouse'] as Map)['sensitivity'], 2.0,
           reason: 'existing [mouse] values must survive migration');

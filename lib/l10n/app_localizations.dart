@@ -5,7 +5,10 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
+import 'app_localizations_de.dart';
 import 'app_localizations_en.dart';
+import 'app_localizations_th.dart';
+import 'app_localizations_zh.dart';
 
 // ignore_for_file: type=lint
 
@@ -92,7 +95,12 @@ abstract class AppLocalizations {
       ];
 
   /// A list of this localizations delegate's supported locales.
-  static const List<Locale> supportedLocales = <Locale>[Locale('en')];
+  static const List<Locale> supportedLocales = <Locale>[
+    Locale('de'),
+    Locale('en'),
+    Locale('th'),
+    Locale('zh'),
+  ];
 
   /// No description provided for @appTitle.
   ///
@@ -123,6 +131,756 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Discord'**
   String get tooltipDiscord;
+
+  /// No description provided for @tooltipLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get tooltipLanguage;
+
+  /// No description provided for @languageSupportNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Translations are community-made or auto-generated and may be inaccurate. The maintainers speak English only - please ask for help in English.'**
+  String get languageSupportNotice;
+
+  /// No description provided for @tooltipCopyCommand.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy the NAMS command to clipboard so you can paste it into a terminal and start the game manually.'**
+  String get tooltipCopyCommand;
+
+  /// No description provided for @notificationCommandCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Launch command copied - paste it into a terminal to start the game manually.'**
+  String get notificationCommandCopied;
+
+  /// No description provided for @notificationCommandNotReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not build launch command - launcher binaries are not ready yet.'**
+  String get notificationCommandNotReady;
+
+  /// No description provided for @textureAutoRecommended.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto (recommended)'**
+  String get textureAutoRecommended;
+
+  /// No description provided for @detectionDlcPresent.
+  ///
+  /// In en, this message translates to:
+  /// **'DLC: present'**
+  String get detectionDlcPresent;
+
+  /// No description provided for @detectionDlcNotDetected.
+  ///
+  /// In en, this message translates to:
+  /// **'DLC: not detected'**
+  String get detectionDlcNotDetected;
+
+  /// No description provided for @detectionDlcPresentTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'DLC data100.cpk found. Mods that ship DLC-only outfit files (pl000d, pl010d, pl020d) will install as-is.'**
+  String get detectionDlcPresentTooltip;
+
+  /// No description provided for @detectionDlcNotDetectedTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'No DLC detected. Mods that ship DLC-only outfit files (pl000d, pl010d, pl020d) will be installed under the non-DLC names (pl0000, pl0100, pl0200) so they show up in-game.'**
+  String get detectionDlcNotDetectedTooltip;
+
+  /// No description provided for @detectionExeWolfLimitBreak.
+  ///
+  /// In en, this message translates to:
+  /// **'EXE: Wolf Limit Break'**
+  String get detectionExeWolfLimitBreak;
+
+  /// No description provided for @detectionExeOriginal.
+  ///
+  /// In en, this message translates to:
+  /// **'EXE: Original'**
+  String get detectionExeOriginal;
+
+  /// No description provided for @detectionExeMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'EXE: missing'**
+  String get detectionExeMissing;
+
+  /// No description provided for @detectionExeUnrecognised.
+  ///
+  /// In en, this message translates to:
+  /// **'EXE: unrecognised'**
+  String get detectionExeUnrecognised;
+
+  /// No description provided for @detectionExeUnrecognisedTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'NieRAutomata.exe is present but its hash is not in our known list. NAMS will still run; this is just a heads-up that we have not seen this exact build.'**
+  String get detectionExeUnrecognisedTooltip;
+
+  /// No description provided for @detectionExeWolfLimitBreakTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Wolf Limit Break NieRAutomata.exe detected. NAMS does not need this patch and was never tested against it. The game may still launch, but performance issues, memory crashes, or mod incompatibilities are possible. For full support, restore the original Steam executable (verify game files in Steam).'**
+  String get detectionExeWolfLimitBreakTooltip;
+
+  /// No description provided for @detectionExeLegacyWin7.
+  ///
+  /// In en, this message translates to:
+  /// **'EXE: Windows 7 build'**
+  String get detectionExeLegacyWin7;
+
+  /// No description provided for @detectionExeLegacyWin7Tooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'This is the legacy Windows 7/8 NieRAutomata.exe. NAMS needs the Windows 10/11 Steam build and cannot launch this one. It is common on Proton/Linux, where Steam sometimes downloads the Windows 7 executable.\n\nHow to fix it:\n1. Delete every .exe in your NieRAutomata game folder.\n2. In Steam, set Proton to \'Proton Experimental\' (right click the game > Properties > Compatibility).\n3. In Steam, right click the game > Properties > Installed Files > Verify integrity of game files.\n4. Launch the game once through Steam so it keeps the correct executable, then use the launcher again.'**
+  String get detectionExeLegacyWin7Tooltip;
+
+  /// No description provided for @launchOptionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'LAUNCH OPTIONS'**
+  String get launchOptionsTitle;
+
+  /// No description provided for @launchWrapperTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'LAUNCH WRAPPER (LINUX)'**
+  String get launchWrapperTitle;
+
+  /// No description provided for @launchWrapperDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Prepend a command in front of the game launch, e.g. gamescope or mangohud. The launcher runs the game through Proton, so Steam launch options do not apply here. Leave empty to launch normally. Applies on the next launch.'**
+  String get launchWrapperDesc;
+
+  /// No description provided for @launchWrapperHint.
+  ///
+  /// In en, this message translates to:
+  /// **'gamescope -w 2560 -h 1440 -f --'**
+  String get launchWrapperHint;
+
+  /// No description provided for @launchWrapperExample.
+  ///
+  /// In en, this message translates to:
+  /// **'Examples:\ngamescope -w 2560 -h 1440 -f --\nmangohud\ngamemoderun'**
+  String get launchWrapperExample;
+
+  /// No description provided for @tabLauncherSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Troubleshooting'**
+  String get tabLauncherSettings;
+
+  /// No description provided for @troubleWrongExeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrong game version'**
+  String get troubleWrongExeTitle;
+
+  /// No description provided for @troubleWrongExeSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'This is the legacy Windows 7/8 NieRAutomata.exe. NAMS cannot launch it.'**
+  String get troubleWrongExeSummary;
+
+  /// No description provided for @troubleMissingFilesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Missing launcher files'**
+  String get troubleMissingFilesTitle;
+
+  /// No description provided for @troubleMissingFilesSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Missing: {files}'**
+  String troubleMissingFilesSummary(String files);
+
+  /// No description provided for @troubleMissingFilesDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'These files are part of the portable launcher but are gone. Antivirus (usually Windows Defender) most likely quarantined them. Exclude the launcher folder from your antivirus and restore the files, or re-download the launcher.'**
+  String get troubleMissingFilesDesc;
+
+  /// No description provided for @troubleRecentErrorsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent NAMS errors'**
+  String get troubleRecentErrorsTitle;
+
+  /// No description provided for @troubleFoldersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Open folders'**
+  String get troubleFoldersTitle;
+
+  /// No description provided for @troubleFoldersDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick access to the folders a maintainer may ask you to open.'**
+  String get troubleFoldersDesc;
+
+  /// No description provided for @troubleOpenGame.
+  ///
+  /// In en, this message translates to:
+  /// **'Game folder'**
+  String get troubleOpenGame;
+
+  /// No description provided for @troubleOpenNamsConfig.
+  ///
+  /// In en, this message translates to:
+  /// **'NAMS config'**
+  String get troubleOpenNamsConfig;
+
+  /// No description provided for @troubleOpenLogs.
+  ///
+  /// In en, this message translates to:
+  /// **'Logs'**
+  String get troubleOpenLogs;
+
+  /// No description provided for @troubleOpenBins.
+  ///
+  /// In en, this message translates to:
+  /// **'Launcher folder'**
+  String get troubleOpenBins;
+
+  /// No description provided for @troubleClearCacheTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear cache'**
+  String get troubleClearCacheTitle;
+
+  /// No description provided for @troubleClearCacheDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete cached state that can go stale: log files, the detection cache, the mod\'s NAMS settings.json, and the runtime extract stamp. Your mods and game files are not touched.'**
+  String get troubleClearCacheDesc;
+
+  /// No description provided for @troubleClearCacheButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear cache'**
+  String get troubleClearCacheButton;
+
+  /// No description provided for @troubleClearCacheConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'This deletes logs, the detection cache, the mod\'s in-game settings.json, and forces a runtime re-extract on next start. Mods and game files stay untouched. Continue?'**
+  String get troubleClearCacheConfirm;
+
+  /// No description provided for @troubleClearCacheDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Cache cleared ({count} log files removed).'**
+  String troubleClearCacheDone(int count);
+
+  /// No description provided for @verifyInstallTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'INSTALL DIAGNOSTICS'**
+  String get verifyInstallTitle;
+
+  /// No description provided for @verifyInstallDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Run NAMS\'s built-in checks to diagnose why the game may not launch (wrong Windows build, missing Steam files, permissions).'**
+  String get verifyInstallDesc;
+
+  /// No description provided for @verifyInstallButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify installation'**
+  String get verifyInstallButton;
+
+  /// No description provided for @verifyInstallRunning.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking...'**
+  String get verifyInstallRunning;
+
+  /// No description provided for @verifyInstallOk.
+  ///
+  /// In en, this message translates to:
+  /// **'All checks passed.'**
+  String get verifyInstallOk;
+
+  /// No description provided for @verifyInstallFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Some checks failed. See details below.'**
+  String get verifyInstallFailed;
+
+  /// No description provided for @verifyNoRuntime.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot verify: no Proton/Wine runtime found for this install.'**
+  String get verifyNoRuntime;
+
+  /// No description provided for @verifySteamNotRunning.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot verify: Steam must be running and own the game.'**
+  String get verifySteamNotRunning;
+
+  /// No description provided for @verifyInstallError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not run the check. Make sure a game folder is selected.'**
+  String get verifyInstallError;
+
+  /// No description provided for @verifyInstallNoGameDir.
+  ///
+  /// In en, this message translates to:
+  /// **'Select your game folder first.'**
+  String get verifyInstallNoGameDir;
+
+  /// No description provided for @verifyCheckSteamInstall.
+  ///
+  /// In en, this message translates to:
+  /// **'Steam installation'**
+  String get verifyCheckSteamInstall;
+
+  /// No description provided for @verifyCheckNierExe.
+  ///
+  /// In en, this message translates to:
+  /// **'Game executable'**
+  String get verifyCheckNierExe;
+
+  /// No description provided for @verifyCheckSteamApi64.
+  ///
+  /// In en, this message translates to:
+  /// **'Steam API library'**
+  String get verifyCheckSteamApi64;
+
+  /// No description provided for @verifyCheckRuntimeWritable.
+  ///
+  /// In en, this message translates to:
+  /// **'Runtime writable'**
+  String get verifyCheckRuntimeWritable;
+
+  /// No description provided for @verifyCheckRuntimeCached.
+  ///
+  /// In en, this message translates to:
+  /// **'Runtime library cached'**
+  String get verifyCheckRuntimeCached;
+
+  /// No description provided for @launchOptionMinimizeOnLaunch.
+  ///
+  /// In en, this message translates to:
+  /// **'Minimize launcher while playing'**
+  String get launchOptionMinimizeOnLaunch;
+
+  /// No description provided for @launchOptionPreferDedicatedGpu.
+  ///
+  /// In en, this message translates to:
+  /// **'Prefer dedicated GPU'**
+  String get launchOptionPreferDedicatedGpu;
+
+  /// No description provided for @launchOptionPreferDedicatedGpuTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Tells the system to run the game on the dedicated graphics card instead of the power-saving one. Only matters on PCs with two GPUs (e.g. gaming laptops).'**
+  String get launchOptionPreferDedicatedGpuTooltip;
+
+  /// No description provided for @failTitlePanic.
+  ///
+  /// In en, this message translates to:
+  /// **'NAMS crashed'**
+  String get failTitlePanic;
+
+  /// No description provided for @failTitleUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Game launch failed'**
+  String get failTitleUnknown;
+
+  /// No description provided for @failExplanationPanic.
+  ///
+  /// In en, this message translates to:
+  /// **'NAMS hit an unrecoverable error before the game could start. This is almost always a bug — please share the report below with the maintainer.'**
+  String get failExplanationPanic;
+
+  /// No description provided for @failExplanationUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'The game did not start within 60 seconds and no error was reported.'**
+  String get failExplanationUnknown;
+
+  /// No description provided for @failHintPanicShare.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy the full report below and send it to the maintainer.'**
+  String get failHintPanicShare;
+
+  /// No description provided for @failHintPanicReboot.
+  ///
+  /// In en, this message translates to:
+  /// **'Try once more after rebooting — sometimes a stale handle clears itself.'**
+  String get failHintPanicReboot;
+
+  /// No description provided for @failHintUnknownSpawned.
+  ///
+  /// In en, this message translates to:
+  /// **'NAMS seems to have spawned but the game window never appeared.'**
+  String get failHintUnknownSpawned;
+
+  /// No description provided for @failHintUnknownTaskManager.
+  ///
+  /// In en, this message translates to:
+  /// **'Check Task Manager — is NieRAutomata.exe running but invisible? Kill it and retry.'**
+  String get failHintUnknownTaskManager;
+
+  /// No description provided for @failHintUnknownOtherLauncher.
+  ///
+  /// In en, this message translates to:
+  /// **'Make sure no other launcher / DRM tool is holding the exe (FAR, Special K, etc).'**
+  String get failHintUnknownOtherLauncher;
+
+  /// No description provided for @failTitleNamsFailure.
+  ///
+  /// In en, this message translates to:
+  /// **'NAMS reported a failure'**
+  String get failTitleNamsFailure;
+
+  /// No description provided for @failExplanationNamsFailure.
+  ///
+  /// In en, this message translates to:
+  /// **'A NAMS check failed before the game could run. See the report below for details.'**
+  String get failExplanationNamsFailure;
+
+  /// No description provided for @failHintShareReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy the full report below and share it for diagnosis.'**
+  String get failHintShareReport;
+
+  /// No description provided for @failTitleInstallNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'NieR:Automata install not found'**
+  String get failTitleInstallNotFound;
+
+  /// No description provided for @failExplanationInstallNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'NAMS could not resolve your NieR:Automata install. The saved path may be wrong, or Steam autodetect failed.'**
+  String get failExplanationInstallNotFound;
+
+  /// No description provided for @failHintRepickDirectory.
+  ///
+  /// In en, this message translates to:
+  /// **'Re-pick your game directory in the launcher to refresh the saved path.'**
+  String get failHintRepickDirectory;
+
+  /// No description provided for @failHintVerifyFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify game files in Steam (Library → NieR:Automata → Properties → Local Files → Verify).'**
+  String get failHintVerifyFiles;
+
+  /// No description provided for @failTitleFolderCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not create a needed folder'**
+  String get failTitleFolderCreate;
+
+  /// No description provided for @failExplanationFolderCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'NAMS could not create a directory next to NAMS.exe. The install folder may be read-only.'**
+  String get failExplanationFolderCreate;
+
+  /// No description provided for @failHintWritableFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Make sure the launcher install folder (where NAMS.exe lives) is writable.'**
+  String get failHintWritableFolder;
+
+  /// No description provided for @failHintProgramFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'If it is in Program Files or OneDrive-synced, move the launcher to a normal folder or right-click → \"Always keep on this device\".'**
+  String get failHintProgramFiles;
+
+  /// No description provided for @failTitleRuntimePrep.
+  ///
+  /// In en, this message translates to:
+  /// **'Runtime preparation failed'**
+  String get failTitleRuntimePrep;
+
+  /// No description provided for @failExplanationRuntimePrep.
+  ///
+  /// In en, this message translates to:
+  /// **'NAMS could not prepare its runtime (game.bin / steam_api64.dll). This is usually a writability or antivirus problem.'**
+  String get failExplanationRuntimePrep;
+
+  /// No description provided for @failHintAntivirusExclusions.
+  ///
+  /// In en, this message translates to:
+  /// **'Add the launcher install folder AND your game folder to your antivirus exclusions, then retry.'**
+  String get failHintAntivirusExclusions;
+
+  /// No description provided for @failHintWritableCache.
+  ///
+  /// In en, this message translates to:
+  /// **'Make sure the install folder is writable so the runtime cache can be built.'**
+  String get failHintWritableCache;
+
+  /// No description provided for @failTitleHostFailure.
+  ///
+  /// In en, this message translates to:
+  /// **'NAMS host failure'**
+  String get failTitleHostFailure;
+
+  /// No description provided for @failExplanationHostFailure.
+  ///
+  /// In en, this message translates to:
+  /// **'NAMS could not load and start the game host (game.bin). This is usually an environment or corruption issue.'**
+  String get failExplanationHostFailure;
+
+  /// No description provided for @failHintReboot.
+  ///
+  /// In en, this message translates to:
+  /// **'Reboot and try again — sometimes a stale handle clears itself.'**
+  String get failHintReboot;
+
+  /// No description provided for @failHintPersistShare.
+  ///
+  /// In en, this message translates to:
+  /// **'If it persists, copy the full report and send it to the maintainer.'**
+  String get failHintPersistShare;
+
+  /// No description provided for @failTitleSteamNotRunning.
+  ///
+  /// In en, this message translates to:
+  /// **'Steam not running / not logged in'**
+  String get failTitleSteamNotRunning;
+
+  /// No description provided for @failExplanationSteamNotRunning.
+  ///
+  /// In en, this message translates to:
+  /// **'NAMS could not reach a logged-in Steam session. Steam must be running and signed in.'**
+  String get failExplanationSteamNotRunning;
+
+  /// No description provided for @failHintStartSteam.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Steam and sign in, then launch again.'**
+  String get failHintStartSteam;
+
+  /// No description provided for @failTitleSteamNotOwned.
+  ///
+  /// In en, this message translates to:
+  /// **'Steam account does not own NieR:Automata'**
+  String get failTitleSteamNotOwned;
+
+  /// No description provided for @failExplanationSteamNotOwned.
+  ///
+  /// In en, this message translates to:
+  /// **'The signed-in Steam account does not own NieR:Automata.'**
+  String get failExplanationSteamNotOwned;
+
+  /// No description provided for @failHintSignInOwner.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign into the Steam account that owns NieR:Automata.'**
+  String get failHintSignInOwner;
+
+  /// No description provided for @failTitleSteamCheckFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Steam check failed'**
+  String get failTitleSteamCheckFailed;
+
+  /// No description provided for @failExplanationSteamCheckFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'NAMS hit an internal error while verifying Steam ownership.'**
+  String get failExplanationSteamCheckFailed;
+
+  /// No description provided for @failHintRestartSteam.
+  ///
+  /// In en, this message translates to:
+  /// **'Restart Steam and the launcher, then try again.'**
+  String get failHintRestartSteam;
+
+  /// No description provided for @failTitleInvalidArgs.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid launch arguments'**
+  String get failTitleInvalidArgs;
+
+  /// No description provided for @failExplanationInvalidArgs.
+  ///
+  /// In en, this message translates to:
+  /// **'The launcher passed arguments NAMS could not parse. This is a launcher bug.'**
+  String get failExplanationInvalidArgs;
+
+  /// No description provided for @failTitleExitedUnexpectedly.
+  ///
+  /// In en, this message translates to:
+  /// **'Game exited unexpectedly'**
+  String get failTitleExitedUnexpectedly;
+
+  /// No description provided for @failExplanationExitedUnexpectedly.
+  ///
+  /// In en, this message translates to:
+  /// **'NAMS started the game but it exited with a non-zero code. The game may have crashed.'**
+  String get failExplanationExitedUnexpectedly;
+
+  /// No description provided for @failHintCheckLogViewer.
+  ///
+  /// In en, this message translates to:
+  /// **'Check the in-app log viewer (nams.log) for the crash details.'**
+  String get failHintCheckLogViewer;
+
+  /// No description provided for @failHeadlinePanicked.
+  ///
+  /// In en, this message translates to:
+  /// **'NAMS panicked'**
+  String get failHeadlinePanicked;
+
+  /// No description provided for @failSectionWhatHappened.
+  ///
+  /// In en, this message translates to:
+  /// **'What happened'**
+  String get failSectionWhatHappened;
+
+  /// No description provided for @failSectionReportedByNams.
+  ///
+  /// In en, this message translates to:
+  /// **'Reported by NAMS'**
+  String get failSectionReportedByNams;
+
+  /// No description provided for @failSectionTryThis.
+  ///
+  /// In en, this message translates to:
+  /// **'Try this'**
+  String get failSectionTryThis;
+
+  /// No description provided for @failSectionDiagnosticDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'Diagnostic detail'**
+  String get failSectionDiagnosticDetail;
+
+  /// No description provided for @failSectionLaunchManually.
+  ///
+  /// In en, this message translates to:
+  /// **'Launch manually from a terminal'**
+  String get failSectionLaunchManually;
+
+  /// No description provided for @failSectionRawOutput.
+  ///
+  /// In en, this message translates to:
+  /// **'Raw output'**
+  String get failSectionRawOutput;
+
+  /// No description provided for @failManualCommandHint.
+  ///
+  /// In en, this message translates to:
+  /// **'If the launcher UI keeps failing for you, paste this into a terminal to start the game manually. It is the exact same command the Play button runs.'**
+  String get failManualCommandHint;
+
+  /// No description provided for @failDetailOs.
+  ///
+  /// In en, this message translates to:
+  /// **'OS'**
+  String get failDetailOs;
+
+  /// No description provided for @failDetailCause.
+  ///
+  /// In en, this message translates to:
+  /// **'Cause'**
+  String get failDetailCause;
+
+  /// No description provided for @failDetailSuggested.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested'**
+  String get failDetailSuggested;
+
+  /// No description provided for @failActionCopyReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy report'**
+  String get failActionCopyReport;
+
+  /// No description provided for @failActionOpenLogFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Open log file'**
+  String get failActionOpenLogFile;
+
+  /// No description provided for @logDetailOs.
+  ///
+  /// In en, this message translates to:
+  /// **'OS'**
+  String get logDetailOs;
+
+  /// No description provided for @logDetailLocale.
+  ///
+  /// In en, this message translates to:
+  /// **'Locale'**
+  String get logDetailLocale;
+
+  /// No description provided for @logNoModsInstalled.
+  ///
+  /// In en, this message translates to:
+  /// **'No mods installed.'**
+  String get logNoModsInstalled;
+
+  /// No description provided for @logSectionSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get logSectionSystem;
+
+  /// No description provided for @logSectionModsNams.
+  ///
+  /// In en, this message translates to:
+  /// **'Mods (NAMS)'**
+  String get logSectionModsNams;
+
+  /// No description provided for @logSectionCutscenes.
+  ///
+  /// In en, this message translates to:
+  /// **'Cutscenes'**
+  String get logSectionCutscenes;
+
+  /// No description provided for @logSectionTextures.
+  ///
+  /// In en, this message translates to:
+  /// **'Textures'**
+  String get logSectionTextures;
+
+  /// No description provided for @tooltipOpenInModManager.
+  ///
+  /// In en, this message translates to:
+  /// **'Open in Mod Manager'**
+  String get tooltipOpenInModManager;
+
+  /// No description provided for @tooltipOpenInCutscenesTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Open in Cutscenes tab'**
+  String get tooltipOpenInCutscenesTab;
+
+  /// No description provided for @tooltipOpenInTexturesTab.
+  ///
+  /// In en, this message translates to:
+  /// **'{name}\n\nOpen in Textures tab'**
+  String tooltipOpenInTexturesTab(String name);
+
+  /// No description provided for @actionCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get actionCancel;
 
   /// No description provided for @tooltipMinimize.
   ///
@@ -382,6 +1140,24 @@ abstract class AppLocalizations {
   /// **'ReShade detected - disabled by default. NAMS already ships a patched native depth-of-field, so ReShade is optional. Re-enable it any time in the NAMS config tab (Disable ReShade Loading → off).'**
   String get notifyReShadeDetected;
 
+  /// No description provided for @notifyNaiomMigrated.
+  ///
+  /// In en, this message translates to:
+  /// **'Found your old NAIOM settings - imported into nams.toml. Check the NAIOM tab. You can remove the old NAIOM files (dinput8.dll, NAIOM.ini) from the game folder.'**
+  String get notifyNaiomMigrated;
+
+  /// No description provided for @notifyNaiomSkipped.
+  ///
+  /// In en, this message translates to:
+  /// **'Some NAIOM bindings use keys NAMS does not support and were not imported: {entries}. Rebind them in the NAIOM tab.'**
+  String notifyNaiomSkipped(String entries);
+
+  /// No description provided for @notifyPlatformUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'No Windows compatibility layer found on {platform}, so the game cannot be started from here. Mods, textures and configs all still work. Install CrossOver and put NieR:Automata in a bottle to enable launching.'**
+  String notifyPlatformUnsupported(String platform);
+
   /// No description provided for @notifyReShadeIncompatible.
   ///
   /// In en, this message translates to:
@@ -472,6 +1248,18 @@ abstract class AppLocalizations {
   /// **'Running NieR:Automata on this system needs CrossOver, which runs Windows programs on macOS. It was not found in /Applications.\n\nWithout it the launcher can still manage mods, textures and configs - only starting the game is unavailable.\n\nHow to fix it:\n1. Install CrossOver from codeweavers.com.\n2. Install Steam and NieR:Automata inside a CrossOver bottle.\n3. Select NieRAutomata.exe from inside that bottle in this launcher.'**
   String get errorNoCompatLayerBody;
 
+  /// No description provided for @errorNoCompatLayerLinux.
+  ///
+  /// In en, this message translates to:
+  /// **'No Proton or Wine found'**
+  String get errorNoCompatLayerLinux;
+
+  /// No description provided for @errorNoCompatLayerLinuxBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Running NieR:Automata on Linux needs Proton (recommended) or Wine, and none was found.\n\nWithout it the launcher can still manage mods, textures and configs - only starting the game is unavailable.\n\nHow to fix it:\n1. In Steam, install a Proton build (Proton Experimental works well). If it is on another drive, the launcher now checks every Steam library.\n2. Make sure you selected NieRAutomata.exe from inside your Steam library (a path containing steamapps/common).\n3. Or set YP_PROTON_PATH to your proton binary before starting the launcher, e.g. YP_PROTON_PATH=\"\$HOME/.steam/steam/steamapps/common/Proton - Experimental/proton\".'**
+  String get errorNoCompatLayerLinuxBody;
+
   /// No description provided for @errorProtonMissing.
   ///
   /// In en, this message translates to:
@@ -481,7 +1269,7 @@ abstract class AppLocalizations {
   /// No description provided for @errorProtonMissingBody.
   ///
   /// In en, this message translates to:
-  /// **'The configured Proton runtime is missing at:\n{path}\n\nReinstall Proton through Steam, or select the game executable from inside a CrossOver bottle instead.'**
+  /// **'The configured Proton runtime is missing at:\n{path}\n\nReinstall Proton through Steam, or set YP_PROTON_PATH to a valid proton binary before starting the launcher.'**
   String errorProtonMissingBody(String path);
 
   /// No description provided for @errorNoZDrive.
@@ -885,6 +1673,498 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cutscenes'**
   String get tabCutscenes;
+
+  /// No description provided for @tabThirdParty.
+  ///
+  /// In en, this message translates to:
+  /// **'Third Party'**
+  String get tabThirdParty;
+
+  /// No description provided for @thirdPartyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Third Party Runtimes'**
+  String get thirdPartyTitle;
+
+  /// No description provided for @thirdPartySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'ReShade and 3DMigoto, loaded by NAMS from a managed folder. No renaming, no DLL conflicts.'**
+  String get thirdPartySubtitle;
+
+  /// No description provided for @thirdPartyReShadeHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'RESHADE'**
+  String get thirdPartyReShadeHeader;
+
+  /// No description provided for @thirdPartyMigotoHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'3DMIGOTO'**
+  String get thirdPartyMigotoHeader;
+
+  /// No description provided for @thirdPartyReShadeHowto.
+  ///
+  /// In en, this message translates to:
+  /// **'Install ReShade normally into your NieRAutomata folder (pick dxgi as the API). The launcher moves it into NAMS and sets up the paths for you.'**
+  String get thirdPartyReShadeHowto;
+
+  /// No description provided for @thirdPartyMigotoHowto.
+  ///
+  /// In en, this message translates to:
+  /// **'Drop a 3DMigoto shader-mod archive here. The launcher installs it and sets the loader target so NAMS hooks it.'**
+  String get thirdPartyMigotoHowto;
+
+  /// No description provided for @thirdPartyStatusInstalled.
+  ///
+  /// In en, this message translates to:
+  /// **'Installed'**
+  String get thirdPartyStatusInstalled;
+
+  /// No description provided for @thirdPartyStatusNotInstalled.
+  ///
+  /// In en, this message translates to:
+  /// **'Not installed'**
+  String get thirdPartyStatusNotInstalled;
+
+  /// No description provided for @thirdPartyStatusFoundInGame.
+  ///
+  /// In en, this message translates to:
+  /// **'Found in your game folder — click Import to set it up for NAMS.'**
+  String get thirdPartyStatusFoundInGame;
+
+  /// No description provided for @thirdPartyEnable.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable'**
+  String get thirdPartyEnable;
+
+  /// No description provided for @thirdPartyImport.
+  ///
+  /// In en, this message translates to:
+  /// **'Import into NAMS'**
+  String get thirdPartyImport;
+
+  /// No description provided for @thirdPartyRepair.
+  ///
+  /// In en, this message translates to:
+  /// **'Repair'**
+  String get thirdPartyRepair;
+
+  /// No description provided for @thirdPartyRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get thirdPartyRemove;
+
+  /// No description provided for @thirdPartyGetReShade.
+  ///
+  /// In en, this message translates to:
+  /// **'Get ReShade'**
+  String get thirdPartyGetReShade;
+
+  /// No description provided for @thirdPartyShadersMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'No effects installed yet — add a preset or shader pack, or they won\'t do anything.'**
+  String get thirdPartyShadersMissing;
+
+  /// No description provided for @thirdPartyOpenFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Open folder'**
+  String get thirdPartyOpenFolder;
+
+  /// No description provided for @thirdPartyPresetsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No presets} =1{1 preset} other{{count} presets}}'**
+  String thirdPartyPresetsCount(int count);
+
+  /// No description provided for @thirdPartyInstallCard.
+  ///
+  /// In en, this message translates to:
+  /// **'INSTALL'**
+  String get thirdPartyInstallCard;
+
+  /// No description provided for @thirdPartyDropHere.
+  ///
+  /// In en, this message translates to:
+  /// **'Drop a ReShade preset / 3DMigoto mod here'**
+  String get thirdPartyDropHere;
+
+  /// No description provided for @thirdPartyImported.
+  ///
+  /// In en, this message translates to:
+  /// **'Imported into NAMS'**
+  String get thirdPartyImported;
+
+  /// No description provided for @thirdPartyInstalled.
+  ///
+  /// In en, this message translates to:
+  /// **'Installed'**
+  String get thirdPartyInstalled;
+
+  /// No description provided for @thirdPartyInstallFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not install this file'**
+  String get thirdPartyInstallFailed;
+
+  /// No description provided for @thirdPartyRedirectMods.
+  ///
+  /// In en, this message translates to:
+  /// **'This is a game-data mod — use the Mod Manager tab.'**
+  String get thirdPartyRedirectMods;
+
+  /// No description provided for @thirdPartyRedirectTextures.
+  ///
+  /// In en, this message translates to:
+  /// **'This is a texture pack — use the Textures tab.'**
+  String get thirdPartyRedirectTextures;
+
+  /// No description provided for @thirdPartyUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'This file type is not supported here.'**
+  String get thirdPartyUnsupported;
+
+  /// No description provided for @thirdPartyLodModPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'This is a LodMod. NAMS has LodMod built in — import its settings into the LodMod tab?'**
+  String get thirdPartyLodModPrompt;
+
+  /// No description provided for @thirdPartyStatusActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get thirdPartyStatusActive;
+
+  /// No description provided for @thirdPartyStatusInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'Installed, disabled in NAMS tab'**
+  String get thirdPartyStatusInactive;
+
+  /// No description provided for @thirdPartyVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Version'**
+  String get thirdPartyVersion;
+
+  /// No description provided for @thirdPartyAddonBuild.
+  ///
+  /// In en, this message translates to:
+  /// **'Addon build'**
+  String get thirdPartyAddonBuild;
+
+  /// No description provided for @thirdPartyPresets.
+  ///
+  /// In en, this message translates to:
+  /// **'PRESETS'**
+  String get thirdPartyPresets;
+
+  /// No description provided for @thirdPartyNonePresets.
+  ///
+  /// In en, this message translates to:
+  /// **'No presets installed'**
+  String get thirdPartyNonePresets;
+
+  /// No description provided for @thirdPartyShaderRepos.
+  ///
+  /// In en, this message translates to:
+  /// **'SHADERS'**
+  String get thirdPartyShaderRepos;
+
+  /// No description provided for @thirdPartyNoneShaders.
+  ///
+  /// In en, this message translates to:
+  /// **'No shaders — effects won\'t compile'**
+  String get thirdPartyNoneShaders;
+
+  /// No description provided for @thirdPartyShaderCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 effect} other{{count} effects}}'**
+  String thirdPartyShaderCount(int count);
+
+  /// No description provided for @thirdPartyAddons.
+  ///
+  /// In en, this message translates to:
+  /// **'ADDONS'**
+  String get thirdPartyAddons;
+
+  /// No description provided for @thirdPartyFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'FILES'**
+  String get thirdPartyFiles;
+
+  /// No description provided for @thirdPartyShaderFixes.
+  ///
+  /// In en, this message translates to:
+  /// **'ShaderFixes'**
+  String get thirdPartyShaderFixes;
+
+  /// No description provided for @thirdPartyShaderFixCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{none} =1{1 fix} other{{count} fixes}}'**
+  String thirdPartyShaderFixCount(int count);
+
+  /// No description provided for @thirdPartyLoaderTarget.
+  ///
+  /// In en, this message translates to:
+  /// **'Loader target'**
+  String get thirdPartyLoaderTarget;
+
+  /// No description provided for @thirdPartyHunting.
+  ///
+  /// In en, this message translates to:
+  /// **'Hunting'**
+  String get thirdPartyHunting;
+
+  /// No description provided for @thirdPartyHuntingOn.
+  ///
+  /// In en, this message translates to:
+  /// **'on'**
+  String get thirdPartyHuntingOn;
+
+  /// No description provided for @thirdPartyUpdateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace installed {name}?'**
+  String thirdPartyUpdateTitle(String name);
+
+  /// No description provided for @thirdPartyUpdateBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is already installed. The file you dropped is a different build. Replace the installed one with it?'**
+  String thirdPartyUpdateBody(String name);
+
+  /// No description provided for @thirdPartyUpdateInstalledLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Installed now'**
+  String get thirdPartyUpdateInstalledLabel;
+
+  /// No description provided for @thirdPartyUpdateIncomingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'You dropped'**
+  String get thirdPartyUpdateIncomingLabel;
+
+  /// No description provided for @thirdPartyUpdateReplace.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace'**
+  String get thirdPartyUpdateReplace;
+
+  /// No description provided for @thirdPartyUpdateKeep.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep current'**
+  String get thirdPartyUpdateKeep;
+
+  /// No description provided for @thirdPartyUpdateSkipped.
+  ///
+  /// In en, this message translates to:
+  /// **'Kept the installed version.'**
+  String get thirdPartyUpdateSkipped;
+
+  /// No description provided for @thirdPartyD3dCompilerMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'No d3dcompiler_47.dll here. Under Wine, ReShade falls back to Wine\'s stub and effects won\'t compile. Reinstall a ReShade build that ships it, or drop a native d3dcompiler_47.dll into this folder.'**
+  String get thirdPartyD3dCompilerMissing;
+
+  /// No description provided for @thirdPartyBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'The tools on this tab are third-party software. NAMS only loads them. It does not implement them and cannot change how they behave. Anything you install through them runs on its own, so correctness, compatibility and safety are your responsibility. If something misbehaves, that is on the tool or the mod, not on NAMS.'**
+  String get thirdPartyBanner;
+
+  /// No description provided for @thirdPartyConfigSection.
+  ///
+  /// In en, this message translates to:
+  /// **'SETTINGS'**
+  String get thirdPartyConfigSection;
+
+  /// No description provided for @thirdPartyRestartRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'applied on next game start'**
+  String get thirdPartyRestartRequired;
+
+  /// No description provided for @thirdPartyReShadePerformanceMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Performance mode'**
+  String get thirdPartyReShadePerformanceMode;
+
+  /// No description provided for @thirdPartyReShadePerformanceModeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip effect recompilation on launch. Turn off while tuning effects.'**
+  String get thirdPartyReShadePerformanceModeHint;
+
+  /// No description provided for @thirdPartyReShadeShowFps.
+  ///
+  /// In en, this message translates to:
+  /// **'Show FPS'**
+  String get thirdPartyReShadeShowFps;
+
+  /// No description provided for @thirdPartyReShadeShowFpsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Draw the frame rate in the ReShade overlay corner.'**
+  String get thirdPartyReShadeShowFpsHint;
+
+  /// No description provided for @thirdPartyReShadeShowClock.
+  ///
+  /// In en, this message translates to:
+  /// **'Show clock'**
+  String get thirdPartyReShadeShowClock;
+
+  /// No description provided for @thirdPartyReShadeShowClockHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Draw the current time in the ReShade overlay corner.'**
+  String get thirdPartyReShadeShowClockHint;
+
+  /// No description provided for @thirdPartyReShadeActivePreset.
+  ///
+  /// In en, this message translates to:
+  /// **'Active preset'**
+  String get thirdPartyReShadeActivePreset;
+
+  /// No description provided for @thirdPartyReShadeOverlayKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Overlay key'**
+  String get thirdPartyReShadeOverlayKey;
+
+  /// No description provided for @thirdPartyReShadeNoKey.
+  ///
+  /// In en, this message translates to:
+  /// **'unset'**
+  String get thirdPartyReShadeNoKey;
+
+  /// No description provided for @thirdPartyMigotoHunting.
+  ///
+  /// In en, this message translates to:
+  /// **'Hunting'**
+  String get thirdPartyMigotoHunting;
+
+  /// No description provided for @thirdPartyMigotoHuntingOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get thirdPartyMigotoHuntingOff;
+
+  /// No description provided for @thirdPartyMigotoHuntingOn.
+  ///
+  /// In en, this message translates to:
+  /// **'On'**
+  String get thirdPartyMigotoHuntingOn;
+
+  /// No description provided for @thirdPartyMigotoHuntingNoMarking.
+  ///
+  /// In en, this message translates to:
+  /// **'On, no marking'**
+  String get thirdPartyMigotoHuntingNoMarking;
+
+  /// No description provided for @thirdPartyMigotoHuntingHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Developer mode: cycle shaders to find and dump them. Leave off for normal play.'**
+  String get thirdPartyMigotoHuntingHint;
+
+  /// No description provided for @thirdPartyMigotoMarkingMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Marking mode'**
+  String get thirdPartyMigotoMarkingMode;
+
+  /// No description provided for @thirdPartyMigotoMarkingModeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'How the hunted shader is highlighted in-game: skip (no change), original, pink, or mono.'**
+  String get thirdPartyMigotoMarkingModeHint;
+
+  /// No description provided for @thirdPartyMigotoMarkingSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get thirdPartyMigotoMarkingSkip;
+
+  /// No description provided for @thirdPartyMigotoMarkingOriginal.
+  ///
+  /// In en, this message translates to:
+  /// **'Original'**
+  String get thirdPartyMigotoMarkingOriginal;
+
+  /// No description provided for @thirdPartyMigotoMarkingPink.
+  ///
+  /// In en, this message translates to:
+  /// **'Pink'**
+  String get thirdPartyMigotoMarkingPink;
+
+  /// No description provided for @thirdPartyMigotoMarkingMono.
+  ///
+  /// In en, this message translates to:
+  /// **'Mono'**
+  String get thirdPartyMigotoMarkingMono;
+
+  /// No description provided for @thirdPartyMigotoVerboseOverlay.
+  ///
+  /// In en, this message translates to:
+  /// **'Verbose overlay'**
+  String get thirdPartyMigotoVerboseOverlay;
+
+  /// No description provided for @thirdPartyMigotoVerboseOverlayHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Show detailed 3DMigoto status text on screen. Useful while debugging, noisy otherwise.'**
+  String get thirdPartyMigotoVerboseOverlayHint;
+
+  /// No description provided for @thirdPartyMigotoCacheShaders.
+  ///
+  /// In en, this message translates to:
+  /// **'Cache shaders'**
+  String get thirdPartyMigotoCacheShaders;
+
+  /// No description provided for @thirdPartyMigotoCacheShadersHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Reuse compiled shaders across launches. Turn off only when debugging fixes.'**
+  String get thirdPartyMigotoCacheShadersHint;
+
+  /// No description provided for @thirdPartyMigotoCheckForegroundWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'Only hook in foreground'**
+  String get thirdPartyMigotoCheckForegroundWindow;
+
+  /// No description provided for @thirdPartyMigotoCheckForegroundWindowHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Only apply the overlay and hotkeys when the game window is focused.'**
+  String get thirdPartyMigotoCheckForegroundWindowHint;
+
+  /// No description provided for @thirdPartyConfigApplied.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings saved.'**
+  String get thirdPartyConfigApplied;
+
+  /// No description provided for @thirdPartyConfigNoIni.
+  ///
+  /// In en, this message translates to:
+  /// **'No config file yet — install writes one.'**
+  String get thirdPartyConfigNoIni;
 
   /// No description provided for @tabSectionGeneral.
   ///
@@ -1299,6 +2579,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Also installed bundled texture pack(s) into nams/inject/textures/: {names}'**
   String modSideInstalledTextures(String names);
+
+  /// No description provided for @modLooseUnpairedWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Installed, but some files are missing their vanilla pair (.dat/.dtt): {names}. The mod may not work fully.'**
+  String modLooseUnpairedWarning(String names);
 
   /// No description provided for @modBundledTexturesLabel.
   ///
@@ -2104,6 +3390,30 @@ abstract class AppLocalizations {
   /// **'Generate diagnostics'**
   String get diagnosticsButton;
 
+  /// No description provided for @diagnosticsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Collect a full report of your install (game files, mods, ReShade/3DMigoto, settings) to share when asking for help.'**
+  String get diagnosticsSubtitle;
+
+  /// No description provided for @copyCommandTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual launch command'**
+  String get copyCommandTitle;
+
+  /// No description provided for @copyCommandDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'If the game will not start from the launcher, copy the NAMS command and run it in a terminal. NAMS prints why it failed there, which is the fastest way to find the cause.'**
+  String get copyCommandDesc;
+
+  /// No description provided for @copyCommandButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy command'**
+  String get copyCommandButton;
+
   /// No description provided for @diagnosticsTitle.
   ///
   /// In en, this message translates to:
@@ -2481,6 +3791,120 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Game root extras (non-vanilla)'**
   String get diagnosticsSectionGameRootExtras;
+
+  /// No description provided for @diagnosticsSectionGameIdentity.
+  ///
+  /// In en, this message translates to:
+  /// **'Game identity'**
+  String get diagnosticsSectionGameIdentity;
+
+  /// No description provided for @diagnosticsSectionNamsHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'NAMS health'**
+  String get diagnosticsSectionNamsHealth;
+
+  /// No description provided for @diagnosticsSectionReshade.
+  ///
+  /// In en, this message translates to:
+  /// **'ReShade'**
+  String get diagnosticsSectionReshade;
+
+  /// No description provided for @diagnosticsSectionMigoto.
+  ///
+  /// In en, this message translates to:
+  /// **'3DMigoto'**
+  String get diagnosticsSectionMigoto;
+
+  /// No description provided for @diagnosticsSectionTexturePacks.
+  ///
+  /// In en, this message translates to:
+  /// **'Texture packs'**
+  String get diagnosticsSectionTexturePacks;
+
+  /// No description provided for @diagnosticsSectionVanillaDrops.
+  ///
+  /// In en, this message translates to:
+  /// **'Files dropped in vanilla data/'**
+  String get diagnosticsSectionVanillaDrops;
+
+  /// No description provided for @diagnosticsSectionNonDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Non-default settings'**
+  String get diagnosticsSectionNonDefault;
+
+  /// No description provided for @diagnosticsSectionRecentIssues.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent NAMS issues'**
+  String get diagnosticsSectionRecentIssues;
+
+  /// No description provided for @diagnosticsExeVariant.
+  ///
+  /// In en, this message translates to:
+  /// **'exe: {variant}'**
+  String diagnosticsExeVariant(String variant);
+
+  /// No description provided for @diagnosticsExeUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'unsupported build'**
+  String get diagnosticsExeUnsupported;
+
+  /// No description provided for @diagnosticsDlcPresent.
+  ///
+  /// In en, this message translates to:
+  /// **'DLC'**
+  String get diagnosticsDlcPresent;
+
+  /// No description provided for @diagnosticsGameRunning.
+  ///
+  /// In en, this message translates to:
+  /// **'running'**
+  String get diagnosticsGameRunning;
+
+  /// No description provided for @diagnosticsNamsPresent.
+  ///
+  /// In en, this message translates to:
+  /// **'NAMS.exe'**
+  String get diagnosticsNamsPresent;
+
+  /// No description provided for @diagnosticsMissingFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 missing file} other{{count} missing files}}'**
+  String diagnosticsMissingFiles(int count);
+
+  /// No description provided for @diagnosticsInstalled.
+  ///
+  /// In en, this message translates to:
+  /// **'installed'**
+  String get diagnosticsInstalled;
+
+  /// No description provided for @diagnosticsEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'enabled'**
+  String get diagnosticsEnabled;
+
+  /// No description provided for @diagnosticsShadersMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'shaders missing'**
+  String get diagnosticsShadersMissing;
+
+  /// No description provided for @diagnosticsTexturePacksUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'NAMS texture query unavailable'**
+  String get diagnosticsTexturePacksUnavailable;
+
+  /// No description provided for @diagnosticsExtraFile.
+  ///
+  /// In en, this message translates to:
+  /// **'extra'**
+  String get diagnosticsExtraFile;
 
   /// No description provided for @diagnosticsFileCount.
   ///
@@ -3172,6 +4596,18 @@ abstract class AppLocalizations {
   /// **'Skip automatic ReShade DLL detection from the reshade/ folder and does not load it anymore.'**
   String get tooltipDisableReShadeLoading;
 
+  /// No description provided for @labelDisable3dmigotoLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Disable 3DMigoto Loading'**
+  String get labelDisable3dmigotoLoading;
+
+  /// No description provided for @tooltipDisable3dmigotoLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip loading the 3DMigoto runtime from thirdparty/3dmigoto/. Turn off to stop loading shader mods.'**
+  String get tooltipDisable3dmigotoLoading;
+
   /// No description provided for @labelDisableTextureInjection.
   ///
   /// In en, this message translates to:
@@ -3195,6 +4631,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Play the visual effects during an outfit hot-swap: the pod spawn-in blinder animation, the curtain, and the hacking-screen glitch filter. Turn off for an instant, effect-free swap - the model still reloads. Takes effect immediately, no restart needed.'**
   String get tooltipOutfitSwapVisualEffects;
+
+  /// No description provided for @labelExperimentalDefaultOutfits.
+  ///
+  /// In en, this message translates to:
+  /// **'Default Outfits (experimental)'**
+  String get labelExperimentalDefaultOutfits;
+
+  /// No description provided for @tooltipExperimentalDefaultOutfits.
+  ///
+  /// In en, this message translates to:
+  /// **'Lets you mark installed outfit mods as active from the moment the game starts, as if their files were placed in the game\'s data folder. When on, the mod details panel shows a star button per player model to set it as the boot default. Off by default while the feature stabilizes. Requires a game restart.'**
+  String get tooltipExperimentalDefaultOutfits;
 
   /// No description provided for @labelDisableSplashScreen.
   ///
@@ -4450,6 +5898,42 @@ abstract class AppLocalizations {
   /// **'Playing with a controller? These settings are designed for mouse and keyboard, but some of them - especially the camera and aiming fixes - also affect controller input. If you switch back to playing on a controller, disable those settings first to restore the original gamepad feel.'**
   String get naiomControllerNote;
 
+  /// No description provided for @cardCheatEngine.
+  ///
+  /// In en, this message translates to:
+  /// **'CHEAT ENGINE'**
+  String get cardCheatEngine;
+
+  /// No description provided for @cheatTableConvertDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Got a Cheat Engine table (.CT) that does not work with NAMS? Fix it here. The fixed copy is saved next to your original file.'**
+  String get cheatTableConvertDesc;
+
+  /// No description provided for @cheatTableConvertButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Fix cheat table...'**
+  String get cheatTableConvertButton;
+
+  /// No description provided for @cheatTableConvertSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Fixed! Saved as {file}'**
+  String cheatTableConvertSuccess(String file);
+
+  /// No description provided for @cheatTableConvertNone.
+  ///
+  /// In en, this message translates to:
+  /// **'This table already works with NAMS - nothing to fix.'**
+  String get cheatTableConvertNone;
+
+  /// No description provided for @cheatTableConvertError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not fix this table. Make sure the file is a valid .CT file.'**
+  String get cheatTableConvertError;
+
   /// No description provided for @naiomBetaBadge.
   ///
   /// In en, this message translates to:
@@ -5199,6 +6683,18 @@ abstract class AppLocalizations {
   /// **'All'**
   String get modFilterAll;
 
+  /// No description provided for @modCollapseAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Collapse all groups'**
+  String get modCollapseAll;
+
+  /// No description provided for @modExpandAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Expand all groups'**
+  String get modExpandAll;
+
   /// No description provided for @modBulkInstall.
   ///
   /// In en, this message translates to:
@@ -5228,6 +6724,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Installed {installed} of {total} mods.'**
   String modBulkInstallDone(int installed, int total);
+
+  /// No description provided for @modLooseInstall.
+  ///
+  /// In en, this message translates to:
+  /// **'Install loose files from folder'**
+  String get modLooseInstall;
+
+  /// No description provided for @modLooseInstallScanning.
+  ///
+  /// In en, this message translates to:
+  /// **'Scanning folder for loose game files…'**
+  String get modLooseInstallScanning;
+
+  /// No description provided for @modLooseInstallNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No loose game files (.dat / .dtt) found in that folder.'**
+  String get modLooseInstallNone;
+
+  /// No description provided for @modLooseInstallBusy.
+  ///
+  /// In en, this message translates to:
+  /// **'Installing {count} loose files…'**
+  String modLooseInstallBusy(int count);
+
+  /// No description provided for @modLooseInstallProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Copying {done} of {total} files…'**
+  String modLooseInstallProgress(int done, int total);
+
+  /// No description provided for @modLooseInstallFinalizing.
+  ///
+  /// In en, this message translates to:
+  /// **'Placing files into the mod…'**
+  String get modLooseInstallFinalizing;
+
+  /// No description provided for @modLooseInstallDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Installed {count} loose files into {id}.'**
+  String modLooseInstallDone(int count, String id);
 
   /// No description provided for @modGroup2b.
   ///
@@ -5259,11 +6797,59 @@ abstract class AppLocalizations {
   /// **'WEAPONS'**
   String get modGroupWeapons;
 
+  /// No description provided for @modGroupAccessories.
+  ///
+  /// In en, this message translates to:
+  /// **'ACCESSORIES'**
+  String get modGroupAccessories;
+
+  /// No description provided for @modGroupItems.
+  ///
+  /// In en, this message translates to:
+  /// **'ITEMS'**
+  String get modGroupItems;
+
   /// No description provided for @modGroupEnemies.
   ///
   /// In en, this message translates to:
   /// **'ENEMIES'**
   String get modGroupEnemies;
+
+  /// No description provided for @modGroupWorldProps.
+  ///
+  /// In en, this message translates to:
+  /// **'WORLD PROPS'**
+  String get modGroupWorldProps;
+
+  /// No description provided for @modGroupModelVariants.
+  ///
+  /// In en, this message translates to:
+  /// **'MODEL VARIANTS'**
+  String get modGroupModelVariants;
+
+  /// No description provided for @modGroupMaps.
+  ///
+  /// In en, this message translates to:
+  /// **'MAPS / STAGES'**
+  String get modGroupMaps;
+
+  /// No description provided for @modGroupUi.
+  ///
+  /// In en, this message translates to:
+  /// **'UI / FONTS'**
+  String get modGroupUi;
+
+  /// No description provided for @modGroupMisc.
+  ///
+  /// In en, this message translates to:
+  /// **'MISC TEXTURES'**
+  String get modGroupMisc;
+
+  /// No description provided for @modGroupArchives.
+  ///
+  /// In en, this message translates to:
+  /// **'CPK ARCHIVES'**
+  String get modGroupArchives;
 
   /// No description provided for @modGroupEffects.
   ///
@@ -5313,11 +6899,29 @@ abstract class AppLocalizations {
   /// **'OTHER'**
   String get modGroupOther;
 
+  /// No description provided for @modGroupMixed.
+  ///
+  /// In en, this message translates to:
+  /// **'MIXED CONTENT'**
+  String get modGroupMixed;
+
+  /// No description provided for @modGroupWax.
+  ///
+  /// In en, this message translates to:
+  /// **'WAX COMPACT'**
+  String get modGroupWax;
+
   /// No description provided for @modGroupMultiHint.
   ///
   /// In en, this message translates to:
   /// **'This mod replaces models for several characters, so it is listed under each of them.'**
   String get modGroupMultiHint;
+
+  /// No description provided for @modGroupMixedHint.
+  ///
+  /// In en, this message translates to:
+  /// **'This mod changes several kinds of content at once. Click it to see everything it includes and which categories it touches.'**
+  String get modGroupMixedHint;
 
   /// No description provided for @modRename.
   ///
@@ -5505,6 +7109,42 @@ abstract class AppLocalizations {
   /// **'Conflicts'**
   String get modConflictsLabel;
 
+  /// No description provided for @modLoadOrderHint.
+  ///
+  /// In en, this message translates to:
+  /// **'These mods replace the same files. Drag to reorder - top wins.'**
+  String get modLoadOrderHint;
+
+  /// No description provided for @modConflictKeep.
+  ///
+  /// In en, this message translates to:
+  /// **'KEEP THIS'**
+  String get modConflictKeep;
+
+  /// No description provided for @modConflictResolve.
+  ///
+  /// In en, this message translates to:
+  /// **'RESOLVE'**
+  String get modConflictResolve;
+
+  /// No description provided for @modConflictDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Which mod should win?'**
+  String get modConflictDialogTitle;
+
+  /// No description provided for @modConflictKeepTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep {id} and disable the others'**
+  String modConflictKeepTooltip(String id);
+
+  /// No description provided for @modConflictPickBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{mods} enabled mods replace the same {files, plural, =1{file} other{{files} files}}. Pick the one to keep - the others get disabled.'**
+  String modConflictPickBody(int mods, int files);
+
   /// No description provided for @modConflictOverlapFile.
   ///
   /// In en, this message translates to:
@@ -5546,6 +7186,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Mod is loaded by NAMS. Click to disable without removing the files.'**
   String get modEnableTooltip;
+
+  /// No description provided for @modDefaultTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Active from game start, as if its files were in NieRAutomata/data. Click to turn off.'**
+  String get modDefaultTooltip;
+
+  /// No description provided for @modSetDefaultTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Make this mod active from game start, without copying anything into NieRAutomata/data.'**
+  String get modSetDefaultTooltip;
+
+  /// No description provided for @modSetDefaultOutfitTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Wear this from game start, without copying anything into NieRAutomata/data. Replaces whichever outfit is currently the default - only one can be.'**
+  String get modSetDefaultOutfitTooltip;
+
+  /// No description provided for @modDefaultChip.
+  ///
+  /// In en, this message translates to:
+  /// **'DEFAULT'**
+  String get modDefaultChip;
+
+  /// No description provided for @modDefaultKindOutfitBare.
+  ///
+  /// In en, this message translates to:
+  /// **'outfit'**
+  String get modDefaultKindOutfitBare;
+
+  /// No description provided for @modDefaultKindOutfitConfig.
+  ///
+  /// In en, this message translates to:
+  /// **'outfit + config'**
+  String get modDefaultKindOutfitConfig;
+
+  /// No description provided for @modDefaultKindOutfitAnimation.
+  ///
+  /// In en, this message translates to:
+  /// **'animation'**
+  String get modDefaultKindOutfitAnimation;
+
+  /// No description provided for @modDefaultKindOutfitBareTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Replaces the model files directly. Only one outfit can be the default at a time.'**
+  String get modDefaultKindOutfitBareTooltip;
+
+  /// No description provided for @modDefaultKindOutfitConfigTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'This mod ships an outfit config, so its mesh rules and effects load with it. Only one outfit can be the default at a time.'**
+  String get modDefaultKindOutfitConfigTooltip;
+
+  /// No description provided for @modDefaultKindOutfitAnimationTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Animation data, not an outfit. Stays active underneath whatever outfit you wear.'**
+  String get modDefaultKindOutfitAnimationTooltip;
+
+  /// No description provided for @modDefaultReplaceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace the default?'**
+  String get modDefaultReplaceTitle;
+
+  /// No description provided for @modDefaultReplaceBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{model} is currently worn from game start by \"{current}\".\n\nMaking \"{next}\" the default removes that, since only one mod can dress a character at a time.'**
+  String modDefaultReplaceBody(String model, String current, String next);
+
+  /// No description provided for @modDefaultReplaceConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace'**
+  String get modDefaultReplaceConfirm;
+
+  /// No description provided for @modDefaultOutfitAuto.
+  ///
+  /// In en, this message translates to:
+  /// **'Default outfit'**
+  String get modDefaultOutfitAuto;
+
+  /// No description provided for @modDefaultOutfitPickTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'This mod ships several outfits. Pick the one you want to wear from game start. \"Default outfit\" is the one worn without an item.'**
+  String get modDefaultOutfitPickTooltip;
+
+  /// No description provided for @modDefaultRowTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Active from game start: {files}'**
+  String modDefaultRowTooltip(String files);
 
   /// No description provided for @modDisableNotice.
   ///
@@ -5925,6 +7661,12 @@ abstract class AppLocalizations {
   /// **'Unknown drop - the folder doesn\'t match any supported mod layout.'**
   String get modInstallReasonUnknownDrop;
 
+  /// No description provided for @modInstallReasonUnsupportedNasa.
+  ///
+  /// In en, this message translates to:
+  /// **'This is a NASA mod (contains sadfutago.cpk), which this launcher does not support.'**
+  String get modInstallReasonUnsupportedNasa;
+
   /// No description provided for @modInstallReasonInvalidMixed.
   ///
   /// In en, this message translates to:
@@ -5985,7 +7727,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['en'].contains(locale.languageCode);
+      <String>['de', 'en', 'th', 'zh'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -5994,8 +7736,14 @@ class _AppLocalizationsDelegate
 AppLocalizations lookupAppLocalizations(Locale locale) {
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
+    case 'de':
+      return AppLocalizationsDe();
     case 'en':
       return AppLocalizationsEn();
+    case 'th':
+      return AppLocalizationsTh();
+    case 'zh':
+      return AppLocalizationsZh();
   }
 
   throw FlutterError(

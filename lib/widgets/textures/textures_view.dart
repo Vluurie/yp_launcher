@@ -490,7 +490,7 @@ class _TexturesViewState extends ConsumerState<TexturesView> {
         .addNotification(
           NotificationItem(
             id: 'texture_${DateTime.now().millisecondsSinceEpoch}',
-            message: message,
+            message: (l10n) => message,
             icon: icon,
             color: color,
             type: NotificationType.textures,
@@ -593,7 +593,11 @@ class _TexturesViewState extends ConsumerState<TexturesView> {
                                         12288,
                                         16384,
                                       ],
-                                      labels: const {0: 'Auto (recommended)'},
+                                      labels: {
+                                        0: AppLocalizations.of(
+                                          context,
+                                        )!.textureAutoRecommended,
+                                      },
                                       onChanged: (v) =>
                                           notifier.updateTextureInjection(
                                             TextureInjectionFields

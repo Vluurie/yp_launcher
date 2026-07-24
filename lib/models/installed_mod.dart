@@ -1,14 +1,14 @@
 enum ModKind { native, data, texture, unknown }
 
 enum DataCategory {
-  player3d,
-  weapon3d,
-  enemy3d,
-  accessory3d,
-  item3d,
-  worldProp3d,
-  modelVariant3d,
-  map3d,
+  player,
+  weapon,
+  enemy,
+  accessory,
+  item,
+  worldProp,
+  modelVariant,
+  map,
   scripting,
   localization,
   effects,
@@ -78,15 +78,37 @@ class PlayerModelEntry {
   const PlayerModelEntry({required this.fileName, required this.label});
 }
 
+/// One outfit a mod's config declares for a character.
+///
+/// A mod may ship several, in which case a boot default has to say which one
+/// to wear.
+class OutfitChoice {
+  final int outfitId;
+  final String name;
+  final bool needsItem;
+
+  const OutfitChoice({
+    required this.outfitId,
+    required this.name,
+    required this.needsItem,
+  });
+}
+
 class DataSummary {
   final List<DataDirEntry> entries;
   final List<PlayerModelEntry> players;
   final bool hasCompatConfig;
+  final bool hasOutfitConfig;
+
+  /// Outfits declared per player-model stem, e.g. `pl000d` -> 2B's outfits.
+  final Map<String, List<OutfitChoice>> outfitsByStem;
 
   const DataSummary({
     this.entries = const [],
     this.players = const [],
     this.hasCompatConfig = false,
+    this.hasOutfitConfig = false,
+    this.outfitsByStem = const {},
   });
 }
 
@@ -150,19 +172,19 @@ class ModVariant {
     this.category,
   });
 
-  bool get isOutfit => category == DataCategory.player3d;
-  bool get isWeapon => category == DataCategory.weapon3d;
+  bool get isOutfit => category == DataCategory.player;
+  bool get isWeapon => category == DataCategory.weapon;
 }
 
 const List<DataCategory> variantCategoryOrder = [
-  DataCategory.player3d,
-  DataCategory.weapon3d,
-  DataCategory.accessory3d,
-  DataCategory.enemy3d,
-  DataCategory.modelVariant3d,
-  DataCategory.item3d,
-  DataCategory.worldProp3d,
-  DataCategory.map3d,
+  DataCategory.player,
+  DataCategory.weapon,
+  DataCategory.accessory,
+  DataCategory.enemy,
+  DataCategory.modelVariant,
+  DataCategory.item,
+  DataCategory.worldProp,
+  DataCategory.map,
   DataCategory.effects,
   DataCategory.scripting,
   DataCategory.localization,
@@ -175,7 +197,7 @@ const List<DataCategory> variantCategoryOrder = [
 ];
 
 const Set<DataCategory> mutuallyExclusiveVariantCategories = {
-  DataCategory.weapon3d,
+  DataCategory.weapon,
 };
 
 class TexturePack {
@@ -229,10 +251,12 @@ class InstallResult {
   final String? installedId;
   final String? errorMessage;
   final List<String> sideInstalledTexturePacks;
+  final List<String> unpairedWarnings;
 
   const InstallResult.ok(
     String id, {
     this.sideInstalledTexturePacks = const [],
+    this.unpairedWarnings = const [],
   })  : success = true,
         installedId = id,
         errorMessage = null;
@@ -241,25 +265,26 @@ class InstallResult {
       : success = false,
         installedId = null,
         errorMessage = message,
-        sideInstalledTexturePacks = const [];
+        sideInstalledTexturePacks = const [],
+        unpairedWarnings = const [];
 }
 
 const Map<String, DataCategory> dataDirCategoryTable = {
-  'pl': DataCategory.player3d,
-  'wp': DataCategory.weapon3d,
-  'em': DataCategory.enemy3d,
-  'ba': DataCategory.worldProp3d,
-  'bg': DataCategory.worldProp3d,
-  'bh': DataCategory.worldProp3d,
-  'et': DataCategory.accessory3d,
-  'it': DataCategory.item3d,
-  'um': DataCategory.modelVariant3d,
-  'wd1': DataCategory.map3d,
-  'wd2': DataCategory.map3d,
-  'wd3': DataCategory.map3d,
-  'wd4': DataCategory.map3d,
-  'wd5': DataCategory.map3d,
-  'wda': DataCategory.map3d,
+  'pl': DataCategory.player,
+  'wp': DataCategory.weapon,
+  'em': DataCategory.enemy,
+  'ba': DataCategory.worldProp,
+  'bg': DataCategory.worldProp,
+  'bh': DataCategory.worldProp,
+  'et': DataCategory.accessory,
+  'it': DataCategory.item,
+  'um': DataCategory.modelVariant,
+  'wd1': DataCategory.map,
+  'wd2': DataCategory.map,
+  'wd3': DataCategory.map,
+  'wd4': DataCategory.map,
+  'wd5': DataCategory.map,
+  'wda': DataCategory.map,
   'core': DataCategory.scripting,
   'ph1': DataCategory.scripting,
   'ph2': DataCategory.scripting,
@@ -284,6 +309,10 @@ const Map<String, DataCategory> dataDirCategoryTable = {
 const Map<String, String> playerModelLookup = {
   'pl0000': '2B (vanilla)',
   'pl000d': '2B (DLC clothes)',
+  'pl000f': '2B (animations)',
+  'pl002f': '9S (animations)',
+  'pl010f': 'A2 (animations)',
+  'pl020f': '9S (animations, DLC)',
   'pl0001': '2B (armoured)',
   'pl000e': 'dead YoRHa (2B body)',
   'pl0010': 'flight unit',

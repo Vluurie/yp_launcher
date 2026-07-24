@@ -1,6 +1,8 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yp_launcher/l10n/app_localizations.dart';
+import 'package:yp_launcher/services/cheat_table_service.dart';
 import 'package:yp_launcher/providers/app_state.dart';
 import 'package:yp_launcher/providers/config_state.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
@@ -24,6 +26,35 @@ class SettingsView extends ConsumerStatefulWidget {
 class _SettingsViewState extends ConsumerState<SettingsView> {
   final _scrollController = ScrollController();
   bool _loaded = false;
+  String? _ctResult;
+  bool _ctSuccess = false;
+
+  Future<void> _convertCheatTable() async {
+    final l10n = AppLocalizations.of(context)!;
+    final result = await FilePicker.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: const ['ct', 'CT'],
+    );
+    final picked = result?.files.single.path;
+    if (picked == null || !mounted) return;
+
+    final converted = await CheatTableService.convert(picked);
+    if (!mounted) return;
+    setState(() {
+      if (converted.success) {
+        _ctSuccess = true;
+        _ctResult = l10n.cheatTableConvertSuccess(
+          p.basename(converted.outputPath!),
+        );
+      } else if (converted.error == null) {
+        _ctSuccess = false;
+        _ctResult = l10n.cheatTableConvertNone;
+      } else {
+        _ctSuccess = false;
+        _ctResult = l10n.cheatTableConvertError;
+      }
+    });
+  }
 
   @override
   void initState() {
@@ -202,6 +233,66 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                           ),
                           tooltip: NamsFields.fixWindTimerBug.tooltip!(l10n),
                         ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: AppSizes.paddingXS(context),
+                          ),
+                          child: const Divider(
+                            height: 1,
+                            color: AppColors.borderLight,
+                          ),
+                        ),
+                        Text(
+                          l10n.cheatTableConvertDesc,
+                          style: TextStyle(
+                            fontSize: AppSizes.fontXS(context),
+                            color: AppColors.textMuted,
+                            height: 1.4,
+                          ),
+                        ),
+                        SizedBox(height: AppSizes.spacingMD(context)),
+                        Row(
+                          children: [
+                            HoverButton(
+                              label: l10n.cheatTableConvertButton,
+                              color: AppColors.accentPrimary,
+                              onTap: _convertCheatTable,
+                            ),
+                          ],
+                        ),
+                        if (_ctResult != null)
+                          Padding(
+                            padding: EdgeInsets.only(
+                              top: AppSizes.paddingSM(context),
+                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Icon(
+                                  _ctSuccess
+                                      ? Icons.check_circle_outline
+                                      : Icons.info_outline,
+                                  size: 14,
+                                  color: _ctSuccess
+                                      ? AppColors.success
+                                      : AppColors.warning,
+                                ),
+                                const SizedBox(width: 6),
+                                Expanded(
+                                  child: Text(
+                                    _ctResult!,
+                                    style: TextStyle(
+                                      fontSize: AppSizes.fontXS(context),
+                                      color: _ctSuccess
+                                          ? AppColors.success
+                                          : AppColors.warning,
+                                      height: 1.35,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                       ]),
                       _card(context, l10n.cardContentFeatures, [
                         Padding(
@@ -218,6 +309,20 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                           ),
                         ),
                         ..._contentToggles(context, nams, notifier, l10n),
+                        ConfigFieldBool(
+                          label: NamsFields.experimentalDefaultOutfits.label(
+                            l10n,
+                          ),
+                          value:
+                              nams[NamsFields.experimentalDefaultOutfits.key] ==
+                              true,
+                          onChanged: (v) => notifier.updateNams(
+                            NamsFields.experimentalDefaultOutfits.key,
+                            v,
+                          ),
+                          tooltip: NamsFields.experimentalDefaultOutfits
+                              .tooltip!(l10n),
+                        ),
                       ]),
                     ],
                   ),
@@ -262,6 +367,19 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                             v,
                           ),
                           tooltip: NamsFields.disableReShadeLoading.tooltip!(
+                            l10n,
+                          ),
+                        ),
+                        ConfigFieldBool(
+                          label: NamsFields.disable3dmigotoLoading.label(l10n),
+                          value:
+                              nams[NamsFields.disable3dmigotoLoading.key] ==
+                              true,
+                          onChanged: (v) => notifier.updateNams(
+                            NamsFields.disable3dmigotoLoading.key,
+                            v,
+                          ),
+                          tooltip: NamsFields.disable3dmigotoLoading.tooltip!(
                             l10n,
                           ),
                         ),

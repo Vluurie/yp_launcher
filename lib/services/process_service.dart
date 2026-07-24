@@ -5,7 +5,10 @@ import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as path;
 import 'package:yp_launcher/constants/app_strings.dart';
 import 'package:yp_launcher/l10n/app_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:yp_launcher/services/gpu_preference_service.dart';
 import 'package:yp_launcher/services/launch_failure.dart';
+import 'package:yp_launcher/services/launch_wrapper_service.dart';
 import 'package:yp_launcher/services/launcher_setup_service.dart';
 import 'package:yp_launcher/services/log_service.dart';
 import 'package:yp_launcher/services/mods_service.dart';
@@ -33,7 +36,7 @@ class ProcessService {
       final missing = await LauncherSetupService.findMissingFiles();
       if (missing.isNotEmpty) {
         return LaunchOutcome.failed(LaunchFailure(
-          headline: AppStrings.errorFilesQuarantined(missing.join(', ')),
+          headline: l10n.errorFilesQuarantined(missing.join(', ')),
           rawOutput:
               'Missing required files in launcher directory:\n${missing.join('\n')}\n\n'
               'These files were quarantined or removed by antivirus software.',
@@ -54,7 +57,7 @@ class ProcessService {
       final nierExePath = path.join(installDirectory, AppStrings.gameExeName);
       if (!await File(nierExePath).exists()) {
         return LaunchOutcome.failed(LaunchFailure(
-          headline: AppStrings.errorExeNotFound(installDirectory),
+          headline: l10n.errorExeNotFound(installDirectory),
           rawOutput:
               'NieRAutomata.exe was not found at:\n$nierExePath\n\n'
               'The game install path saved in the launcher may be wrong, '
@@ -72,7 +75,7 @@ class ProcessService {
 
       await ModsService.syncDlcSlots(installDirectory);
 
-      final LaunchCommand command;
+      LaunchCommand command;
       try {
         command = await PlatformAdapter.current.buildLaunchCommand(
           namsExe: launcherPaths['namsExe']!,
@@ -87,11 +90,30 @@ class ProcessService {
         );
       }
 
+      if (Platform.isLinux) {
+        final wrapper = await LaunchWrapperService.read();
+        command = LaunchWrapperService.wrap(command, wrapper);
+      }
+
+      var preferGpu = true;
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        preferGpu =
+            prefs.getBool(AppStrings.prefKeyPreferDedicatedGpu) ?? true;
+      } catch (_) {}
+      GpuPreferenceService.apply(
+        launcherPaths['namsExe']!,
+        enabled: preferGpu,
+      );
+
       final process = await Process.start(
         command.command,
         command.args,
         workingDirectory: command.cwd,
-        environment: command.env,
+        environment: GpuPreferenceService.mergedLaunchEnv(
+          command.env,
+          enabled: preferGpu,
+        ),
         mode: ProcessStartMode.normal,
       );
 
@@ -170,13 +192,18 @@ class ProcessService {
   }) async {
     try {
       final paths = await LauncherSetupService.getLauncherPaths();
-      final command = await PlatformAdapter.current.buildLaunchCommand(
+      var command = await PlatformAdapter.current.buildLaunchCommand(
         namsExe: paths['namsExe']!,
         gameDir: installDirectory,
         gameExe: path.join(installDirectory, AppStrings.gameExeName),
         launcherDir: paths['launcherDir']!,
         l10n: l10n,
       );
+
+      if (Platform.isLinux) {
+        command =
+            LaunchWrapperService.wrap(command, await LaunchWrapperService.read());
+      }
 
       final line = [command.command, ...command.args].map(_shellQuote).join(' ');
       if (Platform.isWindows) {

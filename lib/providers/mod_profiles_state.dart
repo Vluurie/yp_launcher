@@ -1,7 +1,9 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:yp_launcher/models/mod_profile.dart';
 import 'package:yp_launcher/providers/app_state.dart';
+import 'package:yp_launcher/providers/default_mods_state.dart';
 import 'package:yp_launcher/providers/disabled_mods_state.dart';
+import 'package:yp_launcher/providers/mod_load_order_state.dart';
 import 'package:yp_launcher/providers/mods_state.dart';
 import 'package:yp_launcher/services/mod_profiles_service.dart';
 
@@ -84,6 +86,8 @@ class ModProfilesStateController extends _$ModProfilesStateController {
   Future<void> _refreshDependents(String gameDir) async {
     await ref.read(modsStateControllerProvider.notifier).loadMods(gameDir);
     await ref.read(disabledModsStateControllerProvider.notifier).load(gameDir);
+    await ref.read(defaultModsStateControllerProvider.notifier).load(gameDir);
+    await ref.read(modLoadOrderStateControllerProvider.notifier).load(gameDir);
     ref.read(detectionRefreshProvider.notifier).state++;
   }
 }

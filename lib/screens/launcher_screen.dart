@@ -1,12 +1,12 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:automato_theme/automato_theme.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:yp_launcher/constants/app_strings.dart';
 import 'package:yp_launcher/l10n/app_localizations.dart';
+import 'package:yp_launcher/l10n/app_localizations_en.dart';
 import 'package:yp_launcher/widgets/directory_selector.dart';
 import 'package:yp_launcher/widgets/hover_button.dart';
 import 'package:yp_launcher/widgets/play_button.dart';
@@ -16,18 +16,20 @@ import 'package:yp_launcher/widgets/windows_title_bar.dart';
 import 'package:yp_launcher/providers/app_state.dart';
 import 'package:yp_launcher/providers/config_state.dart';
 import 'package:yp_launcher/providers/nams_settings_state.dart';
+import 'package:yp_launcher/providers/locale_state.dart';
 import 'package:yp_launcher/providers/log_state.dart';
 import 'package:yp_launcher/providers/notification_state.dart';
-import 'package:yp_launcher/services/process_service.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
 import 'package:yp_launcher/widgets/log_panel.dart';
 import 'package:yp_launcher/widgets/notification_banner.dart';
 import 'package:yp_launcher/widgets/settings_view.dart';
+import 'package:yp_launcher/widgets/launcher_settings_view.dart';
 import 'package:yp_launcher/widgets/lodmod_view.dart';
 import 'package:yp_launcher/widgets/yorha_protocol_view.dart';
 import 'package:yp_launcher/widgets/mods/mods_view.dart';
 import 'package:yp_launcher/widgets/cutscenes_view.dart';
+import 'package:yp_launcher/widgets/thirdparty/thirdparty_view.dart';
 import 'package:yp_launcher/widgets/naiom_view.dart';
 import 'package:yp_launcher/widgets/onboarding_wizard.dart';
 import 'package:yp_launcher/widgets/info_bar.dart';
@@ -45,6 +47,7 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
     with WindowListener {
   int _selectedTab = 0;
   final _logPanelKey = GlobalKey<LogPanelState>();
+  final _languageMenuKey = GlobalKey<PopupMenuButtonState<Locale>>();
   bool? _onboardingComplete;
 
   /// Matches the hosts where main() initializes window_manager.
@@ -327,6 +330,8 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
         const ModsView(),
         const NaiomView(),
         const CutscenesView(),
+        const LauncherSettingsView(),
+        const ThirdPartyView(),
       ],
     );
   }
@@ -393,11 +398,26 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
               children: [
                 const PlayButton(),
                 SizedBox(height: AppSizes.spacingSM(context)),
-                const MinimizeOnLaunchToggle(),
-                SizedBox(height: AppSizes.spacingSM(context)),
                 _buildStatusLine(),
               ],
             ),
+          ),
+        ),
+        Positioned.fill(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final gapEnd = constraints.maxWidth / 2 -
+                  AppSizes.playButtonWidth(context) / 2;
+              return Padding(
+                padding: EdgeInsets.only(
+                  right: constraints.maxWidth - gapEnd,
+                ),
+                child: Align(
+                  alignment: const Alignment(0, -0.35),
+                  child: _buildLaunchOptionsPanel(context),
+                ),
+              );
+            },
           ),
         ),
         Positioned(
@@ -430,16 +450,6 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                if (ref
-                    .watch(appStateControllerProvider)
-                    .isDirectorySelected) ...[
-                  _buildIconAction(
-                    Icons.terminal,
-                    'Copy the NAMS command to clipboard so you can paste it into a terminal and start the game manually.',
-                    () => _copyLaunchCommand(),
-                  ),
-                  SizedBox(width: AppSizes.spacingSM(context)),
-                ],
                 _buildLinkIcon(
                   Icons.code,
                   l10n.tooltipLauncherSource,
@@ -463,6 +473,8 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
                   l10n.tooltipDiscord,
                   AppStrings.discordUrl,
                 ),
+                SizedBox(width: AppSizes.spacingSM(context)),
+                _buildLanguageSelector(l10n),
               ],
             ),
           ),
@@ -562,12 +574,62 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
     );
   }
 
+  Widget _buildLaunchOptionsPanel(BuildContext context) {
+    if (!Platform.isWindows && !Platform.isLinux) {
+      return const SizedBox.shrink();
+    }
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 280),
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: AppSizes.paddingMD(context),
+          vertical: AppSizes.paddingSM(context),
+        ),
+        decoration: BoxDecoration(
+          color: AppColors.backgroundCard.withValues(alpha: 0.55),
+          borderRadius: BorderRadius.circular(AppSizes.borderRadius(context)),
+          border: Border.all(
+            color: AppColors.borderLight.withValues(alpha: 0.7),
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.tune,
+                  size: AppSizes.iconSM(context),
+                  color: AppColors.accentPrimary,
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  AppLocalizations.of(context)!.launchOptionsTitle,
+                  style: TextStyle(
+                    fontSize: AppSizes.fontXS(context),
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.accentPrimary,
+                    letterSpacing: 1.0,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: AppSizes.spacingSM(context)),
+            const MinimizeOnLaunchToggle(),
+            const PreferDedicatedGpuToggle(),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildStatusLine() {
     final l10n = AppLocalizations.of(context)!;
     final appState = ref.watch(appStateControllerProvider);
 
     final hasError = appState.errorMessage != null;
-    final hasStatus = appState.statusMessage != null;
+    final hasStatus = appState.status != null;
     final isReady =
         appState.isDirectorySelected &&
         appState.playButtonState == PlayButtonState.idle &&
@@ -580,7 +642,12 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
       text = appState.errorMessage!;
       color = AppColors.error;
     } else if (hasStatus) {
-      text = appState.statusMessage!;
+      text = switch (appState.status!) {
+        LaunchStatus.launching => l10n.statusLaunching,
+        LaunchStatus.running => l10n.statusRunning,
+        LaunchStatus.stopped => l10n.statusStopped,
+        LaunchStatus.stopping => l10n.statusStopping,
+      };
       color = AppColors.textSecondary;
     } else if (!PlatformGate.canLaunchGame) {
       text = PlatformGate.isMacOS
@@ -623,6 +690,115 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
     );
   }
 
+  Widget _buildLanguageSelector(AppLocalizations l10n) {
+    final current =
+        ref.watch(localeControllerProvider) ??
+        Localizations.localeOf(context);
+    return PopupMenuButton<Locale>(
+      key: _languageMenuKey,
+      tooltip: '',
+      color: AppColors.backgroundCard,
+      position: PopupMenuPosition.under,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppSizes.borderRadius(context)),
+        side: const BorderSide(color: AppColors.borderLight),
+      ),
+      onSelected: (locale) =>
+          ref.read(localeControllerProvider.notifier).setLocale(locale),
+      itemBuilder: (context) => [
+        for (final locale in kSupportedLocales)
+          PopupMenuItem<Locale>(
+            value: locale,
+            child: Row(
+              children: [
+                Icon(
+                  locale.languageCode == current.languageCode
+                      ? Icons.check
+                      : Icons.language,
+                  size: AppSizes.iconSM(context),
+                  color: locale.languageCode == current.languageCode
+                      ? AppColors.accentPrimary
+                      : AppColors.textSecondary,
+                ),
+                SizedBox(width: AppSizes.spacingSM(context)),
+                Text(
+                  localeDisplayName(locale),
+                  style: TextStyle(
+                    color: locale.languageCode == current.languageCode
+                        ? AppColors.accentPrimary
+                        : AppColors.textPrimary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        const PopupMenuDivider(),
+        PopupMenuItem<Locale>(
+          enabled: false,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 240),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(
+                      Icons.info_outline,
+                      size: AppSizes.iconSM(context),
+                      color: AppColors.warning,
+                    ),
+                    SizedBox(width: AppSizes.spacingSM(context)),
+                    Expanded(
+                      child: Text(
+                        l10n.languageSupportNotice,
+                        style: TextStyle(
+                          fontSize: AppSizes.fontXS(context),
+                          color: AppColors.textMuted,
+                          height: 1.35,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                if (current.languageCode != 'en') ...[
+                  SizedBox(height: AppSizes.spacingSM(context) / 2),
+                  Padding(
+                    padding: EdgeInsets.only(
+                      left: AppSizes.iconSM(context) + AppSizes.spacingSM(context),
+                    ),
+                    child: Text(
+                      AppLocalizationsEn().languageSupportNotice,
+                      style: TextStyle(
+                        fontSize: AppSizes.fontXS(context),
+                        color: AppColors.textMuted.withValues(alpha: 0.7),
+                        height: 1.35,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ],
+      child: HoverIconButton(
+        tooltip: l10n.tooltipLanguage,
+        bordered: false,
+        padding: EdgeInsets.all(AppSizes.paddingXS(context)),
+        radius: AppSizes.borderRadius(context),
+        onTap: () => _languageMenuKey.currentState?.showButtonMenu(),
+        icon: Icon(
+          Icons.language,
+          size: AppSizes.iconMD(context),
+          color: AppColors.accentPrimary,
+        ),
+      ),
+    );
+  }
+
   Widget _buildLinkIcon(IconData icon, String tooltip, String url) {
     return HoverIconButton(
       tooltip: tooltip,
@@ -643,53 +819,6 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
     );
   }
 
-  Widget _buildIconAction(IconData icon, String tooltip, VoidCallback onTap) {
-    return HoverIconButton(
-      tooltip: tooltip,
-      bordered: false,
-      padding: EdgeInsets.all(AppSizes.paddingXS(context)),
-      radius: AppSizes.borderRadius(context),
-      onTap: onTap,
-      icon: Icon(
-        icon,
-        size: AppSizes.iconMD(context),
-        color: AppColors.accentPrimary,
-      ),
-    );
-  }
-
-  Future<void> _copyLaunchCommand() async {
-    final gameDir = ref.read(appStateControllerProvider).selectedDirectory;
-    final notifier = ref.read(notificationStateControllerProvider.notifier);
-    final cmd = await ProcessService.buildLaunchCommandPreview(
-      installDirectory: gameDir,
-      l10n: AppLocalizations.of(context)!,
-    );
-    if (cmd == null) {
-      notifier.addNotification(
-        NotificationItem(
-          id: 'launch_cmd_${DateTime.now().millisecondsSinceEpoch}',
-          message:
-              'Could not build launch command — launcher binaries are not ready yet.',
-          icon: Icons.error_outline,
-          color: AppColors.error,
-          type: NotificationType.general,
-        ),
-      );
-      return;
-    }
-    await Clipboard.setData(ClipboardData(text: cmd));
-    notifier.addNotification(
-      NotificationItem(
-        id: 'launch_cmd_${DateTime.now().millisecondsSinceEpoch}',
-        message:
-            'Launch command copied — paste it into a terminal to start the game manually.',
-        icon: Icons.check_circle,
-        color: AppColors.success,
-        type: NotificationType.general,
-      ),
-    );
-  }
 }
 
 class _HoverTextLink extends StatefulWidget {

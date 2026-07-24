@@ -42,7 +42,7 @@ final class AppStateControllerProvider
 }
 
 String _$appStateControllerHash() =>
-    r'bc7a3f4a667a5268bfed855e3a684cae7dfcdfab';
+    r'cbaf0b3a28190290ecc88f42f45040267d8df0b5';
 
 abstract class _$AppStateController extends $Notifier<AppState> {
   AppState build();

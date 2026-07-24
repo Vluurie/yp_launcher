@@ -1,17 +1,12 @@
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as p;
 import 'package:yp_launcher/constants/app_strings.dart';
 import 'package:yp_launcher/models/nier_installation.dart';
 import 'package:yp_launcher/services/wine/proton.dart';
 import 'package:yp_launcher/services/wine/steam_vdf.dart';
 
-/// Overrides the Steam roots scanned. Lets tests inject a fake Steam tree.
-@visibleForTesting
-List<String>? overrideSteamRoots;
-
-List<String> _steamRoots() => overrideSteamRoots ?? steamRootCandidates();
+List<String> _steamRoots() => steamRootCandidates();
 
 /// Every Steam library directory: each root plus its `libraryfolders.vdf`
 /// entries. Native (host) paths — no Wine prefix translation.

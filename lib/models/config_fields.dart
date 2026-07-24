@@ -132,11 +132,26 @@ class NamsFields {
     tooltip: (l) => l.tooltipOutfitSwapVisualEffects,
   );
 
+  static final experimentalDefaultOutfits = ConfigField<bool>(
+    key: 'experimental_default_outfits',
+    defaultValue: false,
+    restartRequired: true,
+    label: (l) => l.labelExperimentalDefaultOutfits,
+    tooltip: (l) => l.tooltipExperimentalDefaultOutfits,
+  );
+
   static final disableReShadeLoading = ConfigField<bool>(
     key: 'disable_reshade_loading',
     defaultValue: false,
     label: (l) => l.labelDisableReShadeLoading,
     tooltip: (l) => l.tooltipDisableReShadeLoading,
+  );
+
+  static final disable3dmigotoLoading = ConfigField<bool>(
+    key: 'disable_3dmigoto_loading',
+    defaultValue: false,
+    label: (l) => l.labelDisable3dmigotoLoading,
+    tooltip: (l) => l.tooltipDisable3dmigotoLoading,
   );
 
   static final disableTextureInjection = ConfigField<bool>(

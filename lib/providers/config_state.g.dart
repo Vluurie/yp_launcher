@@ -42,7 +42,7 @@ final class ConfigStateControllerProvider
 }
 
 String _$configStateControllerHash() =>
-    r'b2ba3ac701539caeb863820c28309a92f15036b8';
+    r'32b1c49fc7c4d8669653d56f0e5dbf6521ed2745';
 
 abstract class _$ConfigStateController extends $Notifier<ConfigData> {
   ConfigData build();

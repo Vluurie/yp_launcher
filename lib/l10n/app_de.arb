@@ -1,0 +1,2112 @@
+{
+  "@@locale": "de",
+  "appTitle": "YoRHa Protocol Launcher",
+  "tooltipLauncherSource": "Launcher-Quellcode",
+  "tooltipNamsSource": "NAMS-Projektquellcode",
+  "tooltipGuide": "Anleitung",
+  "tooltipDiscord": "Discord",
+  "tooltipLanguage": "Sprache",
+  "languageSupportNotice": "Übersetzungen stammen aus der Community oder wurden automatisch erstellt und können ungenau sein. Die Maintainer sprechen nur Englisch – bitte stelle Fragen auf Englisch.",
+  "tooltipCopyCommand": "Kopiert den NAMS-Befehl in die Zwischenablage, damit du ihn in ein Terminal einfügen und das Spiel manuell starten kannst.",
+  "notificationCommandCopied": "Startbefehl kopiert – füge ihn in ein Terminal ein, um das Spiel manuell zu starten.",
+  "notificationCommandNotReady": "Startbefehl konnte nicht erstellt werden – die Launcher-Dateien sind noch nicht bereit.",
+  "textureAutoRecommended": "Automatisch (empfohlen)",
+  "detectionDlcPresent": "DLC: vorhanden",
+  "detectionDlcNotDetected": "DLC: nicht erkannt",
+  "detectionDlcPresentTooltip": "DLC data100.cpk gefunden. Mods, die reine DLC-Outfit-Dateien mitliefern (pl000d, pl010d, pl020d), werden unverändert installiert.",
+  "detectionDlcNotDetectedTooltip": "Kein DLC erkannt. Mods, die reine DLC-Outfit-Dateien mitliefern (pl000d, pl010d, pl020d), werden unter den Nicht-DLC-Namen (pl0000, pl0100, pl0200) installiert, damit sie im Spiel erscheinen.",
+  "detectionExeWolfLimitBreak": "EXE: Wolf Limit Break",
+  "detectionExeOriginal": "EXE: Original",
+  "detectionExeMissing": "EXE: fehlt",
+  "detectionExeUnrecognised": "EXE: nicht erkannt",
+  "detectionExeUnrecognisedTooltip": "NieRAutomata.exe ist vorhanden, aber ihr Hash steht nicht auf unserer bekannten Liste. NAMS läuft trotzdem; dies ist nur ein Hinweis darauf, dass wir genau diesen Build noch nicht gesehen haben.",
+  "detectionExeWolfLimitBreakTooltip": "Wolf-Limit-Break-Version von NieRAutomata.exe erkannt. NAMS benötigt diesen Patch nicht und wurde nie damit getestet. Das Spiel startet möglicherweise trotzdem, aber Leistungsprobleme, Speicherabstürze oder Mod-Inkompatibilitäten sind möglich. Für vollständige Unterstützung stelle die originale Steam-Programmdatei wieder her (Spieldateien in Steam überprüfen).",
+  "detectionExeLegacyWin7": "EXE: Windows-7-Version",
+  "detectionExeLegacyWin7Tooltip": "Dies ist die alte Windows-7/8-Version von NieRAutomata.exe. NAMS benötigt die Windows-10/11-Steam-Version und kann diese hier nicht starten. Das kommt unter Proton/Linux häufig vor, wo Steam manchmal die Windows-7-Programmdatei herunterlädt.\n\nSo behebst du es:\n1. Lösche jede .exe in deinem NieRAutomata-Spielordner.\n2. Stelle Proton in Steam auf 'Proton Experimental' (Rechtsklick auf das Spiel > Eigenschaften > Kompatibilität).\n3. Rechtsklick auf das Spiel > Eigenschaften > Installierte Dateien > Integrität der Spieldateien überprüfen.\n4. Starte das Spiel einmal über Steam, damit die korrekte Programmdatei behalten wird, und nutze dann wieder den Launcher.",
+  "launchOptionsTitle": "STARTOPTIONEN",
+  "launchWrapperTitle": "START-WRAPPER (LINUX)",
+  "launchWrapperDesc": "Stellt dem Spielstart einen Befehl voran, z. B. gamescope oder mangohud. Der Launcher startet das Spiel über Proton, daher greifen Steam-Startoptionen hier nicht. Leer lassen, um normal zu starten. Wird beim nächsten Start angewendet.",
+  "launchWrapperHint": "gamescope -w 2560 -h 1440 -f --",
+  "launchWrapperExample": "Beispiele:\ngamescope -w 2560 -h 1440 -f --\nmangohud\ngamemoderun",
+  "tabLauncherSettings": "Fehlerbehebung",
+  "troubleWrongExeTitle": "Falsche Spielversion",
+  "troubleWrongExeSummary": "Dies ist die alte Windows 7/8 NieRAutomata.exe. NAMS kann sie nicht starten.",
+  "troubleMissingFilesTitle": "Fehlende Launcher-Dateien",
+  "troubleMissingFilesSummary": "Fehlt: {files}",
+  "@troubleMissingFilesSummary": { "placeholders": { "files": { "type": "String" } } },
+  "troubleMissingFilesDesc": "Diese Dateien gehören zum portablen Launcher, sind aber verschwunden. Wahrscheinlich hat ein Antivirus (meist Windows Defender) sie in Quarantäne verschoben. Schließe den Launcher-Ordner im Antivirus aus und stelle die Dateien wieder her, oder lade den Launcher neu herunter.",
+  "troubleRecentErrorsTitle": "Letzte NAMS-Fehler",
+  "troubleFoldersTitle": "Ordner öffnen",
+  "troubleFoldersDesc": "Schnellzugriff auf Ordner, nach denen ein Betreuer fragen könnte.",
+  "troubleOpenGame": "Spielordner",
+  "troubleOpenNamsConfig": "NAMS-Config",
+  "troubleOpenLogs": "Logs",
+  "troubleOpenBins": "Launcher-Ordner",
+  "troubleClearCacheTitle": "Cache leeren",
+  "troubleClearCacheDesc": "Löscht zwischengespeicherten Zustand, der veralten kann: Log-Dateien, den Erkennungs-Cache, die settings.json des Mods und den Runtime-Extract-Stempel. Deine Mods und Spieldateien bleiben unangetastet.",
+  "troubleClearCacheButton": "Cache leeren",
+  "troubleClearCacheConfirm": "Dies löscht Logs, den Erkennungs-Cache, die In-Game-settings.json des Mods und erzwingt beim nächsten Start eine neue Runtime-Extraktion. Mods und Spieldateien bleiben unangetastet. Fortfahren?",
+  "troubleClearCacheDone": "Cache geleert ({count} Log-Dateien entfernt).",
+  "@troubleClearCacheDone": { "placeholders": { "count": { "type": "int" } } },
+  "verifyInstallTitle": "INSTALLATIONSDIAGNOSE",
+  "verifyInstallDesc": "Führt die integrierten NAMS-Prüfungen aus, um zu diagnostizieren, warum das Spiel evtl. nicht startet (falscher Windows-Build, fehlende Steam-Dateien, Berechtigungen).",
+  "verifyInstallButton": "Installation prüfen",
+  "verifyInstallRunning": "Wird geprüft...",
+  "verifyInstallOk": "Alle Prüfungen bestanden.",
+  "verifyInstallFailed": "Einige Prüfungen fehlgeschlagen. Details unten.",
+  "verifyNoRuntime": "Prüfung nicht möglich: keine Proton-/Wine-Laufzeit für diese Installation gefunden.",
+  "verifySteamNotRunning": "Prüfung nicht möglich: Steam muss laufen und das Spiel besitzen.",
+  "verifyInstallError": "Prüfung konnte nicht ausgeführt werden. Stelle sicher, dass ein Spielordner ausgewählt ist.",
+  "verifyInstallNoGameDir": "Wähle zuerst deinen Spielordner aus.",
+  "verifyCheckSteamInstall": "Steam-Installation",
+  "verifyCheckNierExe": "Spiel-Programmdatei",
+  "verifyCheckSteamApi64": "Steam-API-Bibliothek",
+  "verifyCheckRuntimeWritable": "Laufzeit beschreibbar",
+  "verifyCheckRuntimeCached": "Laufzeitbibliothek zwischengespeichert",
+  "launchOptionMinimizeOnLaunch": "Launcher während des Spielens minimieren",
+  "launchOptionPreferDedicatedGpu": "Dedizierte GPU bevorzugen",
+  "launchOptionPreferDedicatedGpuTooltip": "Weist das System an, das Spiel auf der dedizierten Grafikkarte statt auf der stromsparenden auszuführen. Nur relevant bei PCs mit zwei GPUs (z. B. Gaming-Laptops).",
+  "failTitlePanic": "NAMS ist abgestürzt",
+  "failTitleUnknown": "Spielstart fehlgeschlagen",
+  "failExplanationPanic": "NAMS ist auf einen nicht behebbaren Fehler gestoßen, bevor das Spiel starten konnte. Das ist fast immer ein Bug – bitte teile den Bericht unten mit dem Maintainer.",
+  "failExplanationUnknown": "Das Spiel wurde innerhalb von 60 Sekunden nicht gestartet und es wurde kein Fehler gemeldet.",
+  "failHintPanicShare": "Kopiere den vollständigen Bericht unten und sende ihn an den Maintainer.",
+  "failHintPanicReboot": "Versuche es nach einem Neustart erneut – manchmal löst sich ein hängengebliebener Handle von selbst.",
+  "failHintUnknownSpawned": "NAMS scheint gestartet zu sein, aber das Spielfenster ist nie erschienen.",
+  "failHintUnknownTaskManager": "Prüfe den Task-Manager – läuft NieRAutomata.exe, ist aber unsichtbar? Beende den Prozess und versuche es erneut.",
+  "failHintUnknownOtherLauncher": "Stelle sicher, dass kein anderer Launcher bzw. kein DRM-Tool die EXE blockiert (FAR, Special K usw.).",
+  "failTitleNamsFailure": "NAMS hat einen Fehler gemeldet",
+  "failExplanationNamsFailure": "Eine NAMS-Prüfung ist fehlgeschlagen, bevor das Spiel starten konnte. Details findest du im Bericht unten.",
+  "failHintShareReport": "Kopiere den vollständigen Bericht unten und teile ihn zur Diagnose.",
+  "failTitleInstallNotFound": "NieR:Automata-Installation nicht gefunden",
+  "failExplanationInstallNotFound": "NAMS konnte deine NieR:Automata-Installation nicht ermitteln. Der gespeicherte Pfad ist möglicherweise falsch oder die Steam-Erkennung ist fehlgeschlagen.",
+  "failHintRepickDirectory": "Wähle dein Spielverzeichnis im Launcher erneut aus, um den gespeicherten Pfad zu aktualisieren.",
+  "failHintVerifyFiles": "Überprüfe die Spieldateien in Steam (Bibliothek → NieR:Automata → Eigenschaften → Installierte Dateien → Überprüfen).",
+  "failTitleFolderCreate": "Benötigter Ordner konnte nicht erstellt werden",
+  "failExplanationFolderCreate": "NAMS konnte kein Verzeichnis neben NAMS.exe anlegen. Der Installationsordner ist möglicherweise schreibgeschützt.",
+  "failHintWritableFolder": "Stelle sicher, dass der Launcher-Installationsordner (in dem NAMS.exe liegt) beschreibbar ist.",
+  "failHintProgramFiles": "Liegt er unter Programme oder wird er von OneDrive synchronisiert, verschiebe den Launcher in einen normalen Ordner oder wähle per Rechtsklick „Immer auf diesem Gerät behalten“.",
+  "failTitleRuntimePrep": "Vorbereitung der Laufzeitumgebung fehlgeschlagen",
+  "failExplanationRuntimePrep": "NAMS konnte seine Laufzeitumgebung (game.bin / steam_api64.dll) nicht vorbereiten. Das liegt meist an fehlenden Schreibrechten oder an einem Virenscanner.",
+  "failHintAntivirusExclusions": "Füge sowohl den Launcher-Installationsordner als auch deinen Spielordner zu den Ausnahmen deines Virenscanners hinzu und versuche es erneut.",
+  "failHintWritableCache": "Stelle sicher, dass der Installationsordner beschreibbar ist, damit der Laufzeit-Cache erstellt werden kann.",
+  "failTitleHostFailure": "NAMS-Hostfehler",
+  "failExplanationHostFailure": "NAMS konnte den Spiel-Host (game.bin) nicht laden und starten. Das liegt meist an der Umgebung oder an beschädigten Dateien.",
+  "failHintReboot": "Starte neu und versuche es erneut – manchmal löst sich ein hängengebliebener Handle von selbst.",
+  "failHintPersistShare": "Falls das Problem bestehen bleibt, kopiere den vollständigen Bericht und sende ihn an den Maintainer.",
+  "failTitleSteamNotRunning": "Steam läuft nicht / nicht angemeldet",
+  "failExplanationSteamNotRunning": "NAMS konnte keine angemeldete Steam-Sitzung erreichen. Steam muss laufen und angemeldet sein.",
+  "failHintStartSteam": "Starte Steam, melde dich an und starte das Spiel erneut.",
+  "failTitleSteamNotOwned": "Steam-Konto besitzt NieR:Automata nicht",
+  "failExplanationSteamNotOwned": "Das angemeldete Steam-Konto besitzt NieR:Automata nicht.",
+  "failHintSignInOwner": "Melde dich mit dem Steam-Konto an, das NieR:Automata besitzt.",
+  "failTitleSteamCheckFailed": "Steam-Prüfung fehlgeschlagen",
+  "failExplanationSteamCheckFailed": "Bei der Überprüfung des Steam-Besitzes ist in NAMS ein interner Fehler aufgetreten.",
+  "failHintRestartSteam": "Starte Steam und den Launcher neu und versuche es erneut.",
+  "failTitleInvalidArgs": "Ungültige Startparameter",
+  "failExplanationInvalidArgs": "Der Launcher hat Parameter übergeben, die NAMS nicht verarbeiten konnte. Das ist ein Fehler im Launcher.",
+  "failTitleExitedUnexpectedly": "Spiel wurde unerwartet beendet",
+  "failExplanationExitedUnexpectedly": "NAMS hat das Spiel gestartet, es wurde jedoch mit einem Fehlercode beendet. Das Spiel ist möglicherweise abgestürzt.",
+  "failHintCheckLogViewer": "Prüfe den integrierten Log-Viewer (nams.log) auf Absturzdetails.",
+  "failHeadlinePanicked": "NAMS ist mit einem schweren Fehler abgebrochen",
+  "failManualCommandHint": "Falls die Launcher-Oberfläche bei dir immer wieder fehlschlägt, füge dies in ein Terminal ein, um das Spiel manuell zu starten. Es ist exakt derselbe Befehl, den die Start-Schaltfläche ausführt.",
+  "failDetailOs": "Betriebssystem",
+  "failDetailCause": "Ursache",
+  "failDetailSuggested": "Empfehlung",
+  "failSectionWhatHappened": "Was passiert ist",
+  "failSectionReportedByNams": "Von NAMS gemeldet",
+  "failSectionTryThis": "Versuche Folgendes",
+  "failSectionDiagnosticDetail": "Diagnosedetails",
+  "failSectionLaunchManually": "Manuell über ein Terminal starten",
+  "failSectionRawOutput": "Rohausgabe",
+  "failActionCopyReport": "Bericht kopieren",
+  "failActionOpenLogFile": "Logdatei öffnen",
+  "logDetailOs": "Betriebssystem",
+  "logDetailLocale": "Gebietsschema",
+  "logNoModsInstalled": "Keine Mods installiert.",
+  "logSectionSystem": "System",
+  "logSectionModsNams": "Mods (NAMS)",
+  "logSectionCutscenes": "Cutscenes",
+  "logSectionTextures": "Texturen",
+  "tooltipOpenInModManager": "Im Mod-Manager öffnen",
+  "tooltipOpenInCutscenesTab": "Im Tab „Cutscenes“ öffnen",
+  "tooltipOpenInTexturesTab": "{name}\n\nIm Tab „Texturen“ öffnen",
+  "@tooltipOpenInTexturesTab": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "actionCancel": "Abbrechen",
+  "tooltipMinimize": "Minimieren",
+  "tooltipMaximize": "Maximieren",
+  "tooltipRestore": "Wiederherstellen",
+  "tooltipClose": "Schließen",
+  "infoText": "Wähle dein Spiel aus, drücke auf Spielen – fertig.",
+  "helpPrefix": "Launcher funktioniert nicht? Probiere den ",
+  "helpNaoLauncher": "NAO Launcher",
+  "helpOr": " oder die ",
+  "helpCommandLine": "Kommandozeile",
+  "helpJoinDiscord": ". Tritt unserem ",
+  "helpDiscord": "Discord",
+  "helpSuffix": " bei, um Hilfe zu erhalten.",
+  "noFileSelected": "Keine Datei ausgewählt",
+  "selectButton": "AUSWÄHLEN",
+  "filePickerTitle": "Spielprogramm auswählen",
+  "playButton": "SPIELEN",
+  "stopButton": "STOPPEN",
+  "statusReady": "Bereit zum Starten!",
+  "statusSelectGame": "Wähle zunächst die ausführbare Datei des Spiels aus.",
+  "statusPreparing": "Launcher-Dateien werden vorbereitet ...",
+  "statusLaunching": "Spiel wird gestartet ...",
+  "statusRunning": "Das Spiel läuft.",
+  "statusStopped": "Das Spiel wurde beendet.",
+  "statusStopping": "Spiel wird beendet ...",
+  "errorInvalidExe": "Das scheint nicht NieR:Automata zu sein. Stelle sicher, dass es die neueste Steam-Version ist.",
+  "errorFileNotExist": "Die ausgewählte Datei ist nicht vorhanden",
+  "errorSelectFailed": "Datei konnte nicht ausgewählt werden",
+  "errorStartFailed": "Das Spiel konnte nicht gestartet werden.",
+  "errorStopFailed": "Das Spiel konnte nicht beendet werden.",
+  "errorFilesQuarantined": "Fehlende Launcher-Dateien: {files}. Dies wird häufig durch Antivirensoftware verursacht. Wir laden Mods zur Laufzeit – das ist beim Modding von Spielen üblich, kann aber Fehlalarme auslösen. Stelle die Dateien aus der Quarantäne wieder her oder lade den Launcher erneut herunter und füge anschließend eine Ausnahme für den Installationsordner des Launchers hinzu (den Ordner, der NAMS.exe enthält).",
+  "@errorFilesQuarantined": {
+    "placeholders": {
+      "files": {
+        "type": "String"
+      }
+    }
+  },
+  "notifyFilesQuarantined": "Fehlende Launcher-Dateien erkannt. Dies wird häufig durch Antivirensoftware verursacht. Wir laden Mods zur Laufzeit, was beim Modding von Spielen üblich ist, aber Fehlalarme auslösen kann. Stelle die Dateien aus der Quarantäne wieder her oder lade den Launcher erneut herunter und füge anschließend eine Ausnahme für den Installationsordner des Launchers hinzu (den Ordner, der NAMS.exe enthält).",
+  "featureReshade": "ReShade – bereits installiert? YP erkennt es automatisch.",
+  "featureTextures": "HD-Texturen – lege Texturen unter nams/inject/textures/ ab oder sie werden aus SK_Res/ übernommen.",
+  "featureLodMod": "LOD Mod – integrierte Grafikoptimierungen für Schatten, Details und Pop-ins. Standardmäßig deaktiviert.",
+  "tooltipEditConfigs": "Grafikeinstellungen ändern, ohne Dateien zu bearbeiten",
+  "tooltipOpenLogs": "Protokollordner im Explorer öffnen",
+  "tooltipCreateShortcut": "Desktopverknüpfung zum Starten mit YoRHa Protocol erstellen",
+  "shortcutName": "NieR Automata (YoRHa Protocol)",
+  "shortcutDescription": "NieR:Automata mit YoRHa Protocol starten",
+  "notifyShortcutCreated": "Desktopverknüpfung erstellt!",
+  "notifyShortcutFailed": "Desktopverknüpfung konnte nicht erstellt werden.",
+  "notifyLodModMigrated": "Deine alten LodMod.ini-Einstellungen wurden gefunden, in lodmod.toml importiert und LodMod wurde aktiviert.",
+  "notifyReShadeDetected": "ReShade erkannt – standardmäßig deaktiviert. NAMS enthält bereits eine gepatchte native Tiefenschärfe, daher ist ReShade optional. Du kannst es jederzeit im NAMS-Konfigurationsreiter wieder aktivieren (ReShade-Laden deaktivieren → aus).",
+  "notifyNaiomMigrated": "Deine alten NAIOM-Einstellungen wurden gefunden und in nams.toml importiert. Sieh im NAIOM-Reiter nach. Du kannst die alten NAIOM-Dateien (dinput8.dll, NAIOM.ini) aus dem Spielordner entfernen.",
+  "notifyNaiomSkipped": "Einige NAIOM-Belegungen verwenden Tasten, die NAMS nicht unterstützt, und wurden nicht importiert: {entries}. Belege sie im NAIOM-Reiter neu.",
+  "@notifyNaiomSkipped": {
+    "placeholders": {
+      "entries": {
+        "type": "String"
+      }
+    }
+  },
+  "notifyPlatformUnsupported": "Auf {platform} wurde keine Windows-Kompatibilitätsschicht gefunden, daher kann das Spiel von hier aus nicht gestartet werden. Mods, Texturen und Konfigurationen funktionieren weiterhin. Installiere CrossOver und richte NieR:Automata in einer Bottle ein, um das Starten zu ermöglichen.",
+  "@notifyPlatformUnsupported": {
+    "placeholders": {
+      "platform": {
+        "type": "String"
+      }
+    }
+  },
+  "notifyReShadeIncompatible": "ReShade mit Add-on-/ImGui-Unterstützung erkannt – nicht kompatibel. Verwende die Standardversion von ReShade ohne Add-on-Unterstützung.",
+  "notifyTexturesDetected": "HD-Texturen in {folder} gefunden – sie werden beim Start geladen.",
+  "@notifyTexturesDetected": {
+    "placeholders": {
+      "folder": {
+        "type": "String"
+      }
+    }
+  },
+  "errorAppDataNotFound": "Umgebungsvariable APPDATA wurde nicht gefunden",
+  "errorWinePrefixNotFound": "Wine-Präfix wurde nicht gefunden. Bitte setze die Umgebungsvariable WINEPREFIX.",
+  "errorHomeNotFound": "Umgebungsvariable HOME wurde nicht gefunden",
+  "errorNoWineUser": "Im Wine-Präfix wurde kein Benutzerverzeichnis gefunden",
+  "errorWineUsersNotFound": "Verzeichnis drive_c/users wurde im Wine-Präfix {prefix} nicht gefunden",
+  "@errorWineUsersNotFound": {
+    "placeholders": {
+      "prefix": {
+        "type": "String"
+      }
+    }
+  },
+  "errorPlatformNotSupported": "Die Plattform {os} wird nicht unterstützt",
+  "@errorPlatformNotSupported": {
+    "placeholders": {
+      "os": {
+        "type": "String"
+      }
+    }
+  },
+  "errorExeNotFound": "NieRAutomata.exe wurde in {dir} nicht gefunden",
+  "@errorExeNotFound": {
+    "placeholders": {
+      "dir": {
+        "type": "String"
+      }
+    }
+  },
+  "errorDirNotWritable": "Launcher-Ordner ist schreibgeschützt",
+  "errorDirNotWritableBody": "In den YP-Launcher-Ordner kann nicht geschrieben werden:\n{dir}\n\nNAMS speichert seinen Laufzeitcache, Plugins und Protokolle neben NAMS.exe. Daher muss der Launcher-Ordner beschreibbar sein.\n\nSo behebst du das Problem:\n1. Schließe den Launcher.\n2. Verschiebe den gesamten entpackten YP-Launcher-Ordner aus Program Files (oder einem anderen geschützten Speicherort) in einen normalen Ordner, der dir gehört, zum Beispiel Desktop, Dokumente oder D:\\Games\\YP Launcher.\n3. Starte den Launcher am neuen Speicherort erneut.\n\nAlternative: Klicke mit der rechten Maustaste auf die Launcher-.exe und wähle „Als Administrator ausführen“, um Schreibzugriff am aktuellen Speicherort zu erlauben.",
+  "@errorDirNotWritableBody": {
+    "placeholders": {
+      "dir": {
+        "type": "String"
+      }
+    }
+  },
+  "errorGameDirNotWritable": "Spielordner ist schreibgeschützt",
+  "errorGameDirNotWritableBody": "In den Spielordner kann nicht geschrieben werden:\n{gameDir}\n\nNAMS schreibt Mods und Konfigurationen nach:\n{namsDir}\nkann dort aber keine Dateien erstellen. NieR ist wahrscheinlich unter C:\\Program Files (x86)\\Steam installiert, das von Windows geschützt wird.\n\nSo behebst du das Problem (empfohlen – verschiebe die Steam-Bibliothek aus Program Files):\n1. Öffne Steam > Einstellungen > Speicher.\n2. Klicke auf das Laufwerks-Dropdown > „Laufwerk hinzufügen“ und wähle einen Ordner auf einem anderen Laufwerk, zum Beispiel D:\\SteamLibrary.\n3. Öffne deine Bibliothek, klicke mit der rechten Maustaste auf NieR:Automata > Eigenschaften > Installierte Dateien > „Installationsordner verschieben“ und verschiebe das Spiel in die neue Bibliothek.\n4. Wähle das Spiel in diesem Launcher erneut aus und drücke wieder auf Spielen.\n\nSchnelle Alternative: Klicke mit der rechten Maustaste auf die Launcher-.exe und wähle „Als Administrator ausführen“, damit sie in Program Files schreiben kann. Das Verschieben der Bibliothek ist langfristig die sauberere Lösung.",
+  "@errorGameDirNotWritableBody": {
+    "placeholders": {
+      "gameDir": {
+        "type": "String"
+      },
+      "namsDir": {
+        "type": "String"
+      }
+    }
+  },
+  "errorNoCompatLayer": "CrossOver wurde nicht gefunden",
+  "errorNoCompatLayerBody": "Zum Ausführen von NieR:Automata auf diesem System wird CrossOver benötigt, das Windows-Programme unter macOS ausführt. Es wurde unter /Applications nicht gefunden.\n\nOhne CrossOver kann der Launcher weiterhin Mods, Texturen und Konfigurationen verwalten – nur das Starten des Spiels ist nicht verfügbar.\n\nSo behebst du das Problem:\n1. Installiere CrossOver von codeweavers.com.\n2. Installiere Steam und NieR:Automata in einer CrossOver-Bottle.\n3. Wähle NieRAutomata.exe aus dieser Bottle in diesem Launcher aus.",
+  "errorNoCompatLayerLinux": "Kein Proton oder Wine gefunden",
+  "errorNoCompatLayerLinuxBody": "Um NieR:Automata unter Linux auszuführen, wird Proton (empfohlen) oder Wine benötigt, aber es wurde nichts gefunden.\n\nOhne eine solche Laufzeitumgebung kann der Launcher weiterhin Mods, Texturen und Konfigurationen verwalten - nur das Starten des Spiels ist nicht möglich.\n\nSo behebst du es:\n1. Installiere in Steam ein Proton-Build (Proton Experimental funktioniert gut). Liegt es auf einem anderen Laufwerk, durchsucht der Launcher jetzt jede Steam-Bibliothek.\n2. Stelle sicher, dass du NieRAutomata.exe aus deiner Steam-Bibliothek ausgewählt hast (ein Pfad, der steamapps/common enthält).\n3. Oder setze YP_PROTON_PATH vor dem Start des Launchers auf deine Proton-Datei, z. B. YP_PROTON_PATH=\"$HOME/.steam/steam/steamapps/common/Proton - Experimental/proton\".",
+  "errorProtonMissing": "Proton wurde nicht gefunden",
+  "errorProtonMissingBody": "Die konfigurierte Proton-Laufzeitumgebung fehlt unter:\n{path}\n\nInstalliere Proton über Steam neu oder setze YP_PROTON_PATH vor dem Start des Launchers auf eine gültige Proton-Datei.",
+  "@errorProtonMissingBody": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "errorNoZDrive": "Das Wine-Präfix besitzt kein Laufwerk Z:",
+  "errorNoZDriveBody": "Wine ordnet Z: dem Dateisystem des Hosts zu. So übergibt der Launcher NAMS.exe an das Spiel. In diesem Präfix fehlt dosdevices/z::\n{prefix}\n\nDies ist eine CrossOver-Standardeinstellung, daher wurde die Bottle wahrscheinlich verändert. Eine neue Bottle zu erstellen und das Spiel dort neu zu installieren, ist die schnellste Lösung.",
+  "@errorNoZDriveBody": {
+    "placeholders": {
+      "prefix": {
+        "type": "String"
+      }
+    }
+  },
+  "errorExeOutsidePrefix": "Diese ausführbare Datei befindet sich nicht in einer Bottle",
+  "errorExeOutsidePrefixBody": "Der Launcher startet das Spiel über CrossOver, daher muss sich {exeName} in einer CrossOver-Bottle befinden:\n{path}\n\nInstalliere das Spiel in einer Bottle und wähle anschließend die ausführbare Datei dort aus.",
+  "@errorExeOutsidePrefixBody": {
+    "placeholders": {
+      "exeName": {
+        "type": "String"
+      },
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "headerNams": "NAMS",
+  "headerLodMod": "LOD MOD",
+  "headerTextures": "TEXTUREN",
+  "headerYorhaProtocol": "YORHA PROTOCOL",
+  "headerNaiom": "NAIOM",
+  "headerCutscenes": "ZWISCHENSEQUENZEN",
+  "tooltipEditsNamsToml": "Bearbeitet nams/nams.toml",
+  "tooltipEditsLodmodToml": "Bearbeitet nams/lodmod.toml",
+  "tooltipEditsTextureInjectionToml": "Bearbeitet nams/texture_injection.toml",
+  "tooltipEditsSettingsJson": "Bearbeitet %APPDATA%\\NAMS\\settings.json",
+  "tooltipEditsNaiom": "Bearbeitet die [mouse]-Einstellungen in nams/nams.toml. Die meisten Einstellungen gelten nach dem Speichern; einige erfordern einen Neustart des Spiels.",
+  "tooltipCutscenesLocation": "Mods: nams/cutscenes/<mod_name>/movie/*.usm",
+  "cardGeneral": "ALLGEMEIN",
+  "cardLoading": "LADEN",
+  "cardHeapOverrides": "HEAP-ÜBERSCHREIBUNGEN",
+  "cardLevelOfDetail": "DETAILSTUFE",
+  "cardAmbientOcclusion": "UMGEBUNGSVERDECKUNG",
+  "cardPostProcessing": "NACHBEARBEITUNG",
+  "cardShadows": "SCHATTEN",
+  "cardGlobalIllumination": "GLOBALE BELEUCHTUNG",
+  "cardPreloading": "VORLADEN",
+  "cardTextureConfig": "KONFIGURATION",
+  "cardInstallTextures": "TEXTUREN INSTALLIEREN",
+  "cardHowItWorks": "SO FUNKTIONIERT ES",
+  "cardKeybinds": "TASTENBELEGUNGEN",
+  "cardWorkspace": "ARBEITSBEREICH",
+  "cardCheats": "CHEATS",
+  "cardRandomizer": "ZUFALLSGENERATOR",
+  "cardThirdPersonCamera": "DRITTPERSON-KAMERA",
+  "cardPodAiming": "POD / ZIELEN",
+  "cardMisc": "SONSTIGES",
+  "cardMovementBindings": "BEWEGUNGSBELEGUNGEN",
+  "cardCombatBindings": "KAMPFBELEGUNGEN",
+  "cardNonStandardBindings": "NICHT STANDARDMÄSSIGE BELEGUNGEN",
+  "cardMenuNavigation": "MENÜNAVIGATION",
+  "cardStructure": "STRUKTUR",
+  "buttonSave": "SPEICHERN",
+  "buttonDiscard": "VERWERFEN",
+  "buttonCancel": "ABBRECHEN",
+  "buttonInstall": "INSTALLIEREN",
+  "buttonDelete": "LÖSCHEN",
+  "buttonYes": "Ja",
+  "buttonNo": "Nein",
+  "buttonContinue": "Weiter",
+  "buttonBack": "Zurück",
+  "buttonGetStarted": "Loslegen",
+  "buttonAutoDetect": "Automatisch erkennen",
+  "buttonSelectManually": "Manuell auswählen",
+  "buttonGoToLauncher": "Zum Launcher",
+  "unsavedChangesTitle": "Ungespeicherte Änderungen",
+  "unsavedChangesMessage": "Du hast ungespeicherte Änderungen. Verwerfen?",
+  "stay": "BLEIBEN",
+  "discard": "VERWERFEN",
+  "enterValidNumber": "Gib eine gültige Zahl ein",
+  "pressKey": "Drücken ...",
+  "tabLauncher": "Launcher",
+  "tabYorhaProtocol": "YP-Devkit",
+  "tabNams": "NAMS",
+  "tabLodMod": "LOD Mod",
+  "tabNaiom": "NAIOM",
+  "tabTextures": "Texturen",
+  "tabMods": "Mod-Manager",
+  "tabCutscenes": "Cutscenes",
+  "tabThirdParty": "Drittanbieter",
+  "thirdPartyTitle": "Drittanbieter-Runtimes",
+  "thirdPartySubtitle": "ReShade und 3DMigoto, von NAMS aus einem verwalteten Ordner geladen. Kein Umbenennen, keine DLL-Konflikte.",
+  "thirdPartyReShadeHeader": "RESHADE",
+  "thirdPartyMigotoHeader": "3DMIGOTO",
+  "thirdPartyReShadeHowto": "Installiere ReShade ganz normal in deinen NieRAutomata-Ordner (wähle dxgi als API). Der Launcher verschiebt es nach NAMS und richtet die Pfade ein.",
+  "thirdPartyMigotoHowto": "Zieh ein 3DMigoto-Shader-Mod-Archiv hierher. Der Launcher installiert es und setzt das Loader-Target, damit NAMS es einhakt.",
+  "thirdPartyStatusInstalled": "Installiert",
+  "thirdPartyStatusNotInstalled": "Nicht installiert",
+  "thirdPartyStatusFoundInGame": "Im Spielordner gefunden — klicke auf Importieren, um es für NAMS einzurichten.",
+  "thirdPartyEnable": "Aktiv",
+  "thirdPartyImport": "In NAMS importieren",
+  "thirdPartyRepair": "Reparieren",
+  "thirdPartyRemove": "Entfernen",
+  "thirdPartyGetReShade": "ReShade holen",
+  "thirdPartyShadersMissing": "Noch keine Effekte installiert — füge ein Preset oder Shader-Paket hinzu, sonst passiert nichts.",
+  "thirdPartyOpenFolder": "Ordner öffnen",
+  "thirdPartyPresetsCount": "{count, plural, =0{Keine Presets} =1{1 Preset} other{{count} Presets}}",
+  "@thirdPartyPresetsCount": { "placeholders": { "count": { "type": "int" } } },
+  "thirdPartyInstallCard": "INSTALLIEREN",
+  "thirdPartyDropHere": "ReShade-Preset / 3DMigoto-Mod hierher ziehen",
+  "thirdPartyImported": "In NAMS importiert",
+  "thirdPartyInstalled": "Installiert",
+  "thirdPartyInstallFailed": "Diese Datei konnte nicht installiert werden",
+  "thirdPartyRedirectMods": "Das ist ein Spieldaten-Mod — nutze den Mod-Manager-Tab.",
+  "thirdPartyRedirectTextures": "Das ist ein Textur-Paket — nutze den Texturen-Tab.",
+  "thirdPartyUnsupported": "Dieser Dateityp wird hier nicht unterstützt.",
+  "thirdPartyLodModPrompt": "Das ist ein LodMod. NAMS hat LodMod eingebaut — die Einstellungen in den LodMod-Tab importieren?",
+  "thirdPartyStatusActive": "Aktiv",
+  "thirdPartyStatusInactive": "Installiert, im NAMS-Tab deaktiviert",
+  "thirdPartyVersion": "Version",
+  "thirdPartyAddonBuild": "Addon-Build",
+  "thirdPartyPresets": "PRESETS",
+  "thirdPartyNonePresets": "Keine Presets installiert",
+  "thirdPartyShaderRepos": "SHADER",
+  "thirdPartyNoneShaders": "Keine Shader — Effekte kompilieren nicht",
+  "thirdPartyShaderCount": "{count, plural, =1{1 Effekt} other{{count} Effekte}}",
+  "@thirdPartyShaderCount": { "placeholders": { "count": { "type": "int" } } },
+  "thirdPartyAddons": "ADDONS",
+  "thirdPartyFiles": "DATEIEN",
+  "thirdPartyShaderFixes": "ShaderFixes",
+  "thirdPartyShaderFixCount": "{count, plural, =0{keine} =1{1 Fix} other{{count} Fixes}}",
+  "@thirdPartyShaderFixCount": { "placeholders": { "count": { "type": "int" } } },
+  "thirdPartyLoaderTarget": "Loader-Target",
+  "thirdPartyHunting": "Hunting",
+  "thirdPartyHuntingOn": "an",
+  "thirdPartyUpdateTitle": "Installiertes {name} ersetzen?",
+  "@thirdPartyUpdateTitle": { "placeholders": { "name": { "type": "String" } } },
+  "thirdPartyUpdateBody": "{name} ist bereits installiert. Die abgelegte Datei ist ein anderer Build. Das installierte damit ersetzen?",
+  "@thirdPartyUpdateBody": { "placeholders": { "name": { "type": "String" } } },
+  "thirdPartyUpdateInstalledLabel": "Jetzt installiert",
+  "thirdPartyUpdateIncomingLabel": "Abgelegt",
+  "thirdPartyUpdateReplace": "Ersetzen",
+  "thirdPartyUpdateKeep": "Aktuelle behalten",
+  "thirdPartyUpdateSkipped": "Installierte Version behalten.",
+  "thirdPartyD3dCompilerMissing": "Keine d3dcompiler_47.dll hier. Unter Wine greift ReShade auf Wines Stub zurück und Effekte kompilieren nicht. Installiere eine ReShade-Version, die sie mitliefert, oder lege eine native d3dcompiler_47.dll in diesen Ordner.",
+  "thirdPartyBanner": "Die Tools auf diesem Tab sind Drittanbieter-Software. NAMS lädt sie nur. NAMS implementiert sie nicht und kann ihr Verhalten nicht ändern. Alles, was du darüber installierst, läuft eigenständig, daher liegen Korrektheit, Kompatibilität und Sicherheit in deiner Verantwortung. Wenn etwas nicht richtig funktioniert, liegt das am Tool oder am Mod, nicht an NAMS.",
+  "thirdPartyConfigSection": "EINSTELLUNGEN",
+  "thirdPartyRestartRequired": "wird beim nächsten Spielstart übernommen",
+  "thirdPartyReShadePerformanceMode": "Performance-Modus",
+  "thirdPartyReShadePerformanceModeHint": "Effekte beim Start nicht neu kompilieren. Beim Anpassen von Effekten ausschalten.",
+  "thirdPartyReShadeShowFps": "FPS anzeigen",
+  "thirdPartyReShadeShowFpsHint": "Zeigt die Bildrate in der Ecke des ReShade-Overlays.",
+  "thirdPartyReShadeShowClock": "Uhr anzeigen",
+  "thirdPartyReShadeShowClockHint": "Zeigt die aktuelle Uhrzeit in der Ecke des ReShade-Overlays.",
+  "thirdPartyReShadeActivePreset": "Aktives Preset",
+  "thirdPartyReShadeOverlayKey": "Overlay-Taste",
+  "thirdPartyReShadeNoKey": "nicht belegt",
+  "thirdPartyMigotoHunting": "Hunting",
+  "thirdPartyMigotoHuntingOff": "Aus",
+  "thirdPartyMigotoHuntingOn": "An",
+  "thirdPartyMigotoHuntingNoMarking": "An, ohne Markierung",
+  "thirdPartyMigotoHuntingHint": "Entwicklermodus: Shader durchschalten, um sie zu finden und zu dumpen. Für normales Spielen aus lassen.",
+  "thirdPartyMigotoMarkingMode": "Markierungsmodus",
+  "thirdPartyMigotoMarkingModeHint": "Wie der gesuchte Shader im Spiel hervorgehoben wird: überspringen (keine Änderung), Original, Pink oder Mono.",
+  "thirdPartyMigotoMarkingSkip": "Überspringen",
+  "thirdPartyMigotoMarkingOriginal": "Original",
+  "thirdPartyMigotoMarkingPink": "Pink",
+  "thirdPartyMigotoMarkingMono": "Mono",
+  "thirdPartyMigotoVerboseOverlay": "Ausführliches Overlay",
+  "thirdPartyMigotoVerboseOverlayHint": "Zeigt detaillierten 3DMigoto-Status auf dem Bildschirm. Nützlich beim Debuggen, sonst störend.",
+  "thirdPartyMigotoCacheShaders": "Shader zwischenspeichern",
+  "thirdPartyMigotoCacheShadersHint": "Kompilierte Shader über Starts hinweg wiederverwenden. Nur zum Debuggen ausschalten.",
+  "thirdPartyMigotoCheckForegroundWindow": "Nur im Vordergrund hooken",
+  "thirdPartyMigotoCheckForegroundWindowHint": "Overlay und Tastenkürzel nur anwenden, wenn das Spielfenster im Fokus ist.",
+  "thirdPartyConfigApplied": "Einstellungen gespeichert.",
+  "thirdPartyConfigNoIni": "Noch keine Konfigurationsdatei — wird bei der Installation erstellt.",
+  "tabSectionGeneral": "Allgemein",
+  "tabSectionConfig": "Konfiguration",
+  "tabSectionMods": "Mods",
+  "tabDividerConfig": "KONFIGURATION",
+  "tabDividerMods": "MODS",
+  "infoBarVersionPrefix": "YP Launcher ",
+  "infoBarLogs": "PROTOKOLLE",
+  "infoBarFaq": "FAQ",
+  "infoBarWhatsNew": "NEUIGKEITEN",
+  "infoBarShortcut": "VERKNÜPFUNG",
+  "tooltipFaq": "Brauche ich weiterhin andere Mods?",
+  "chipLodModOn": "LOD MOD AN",
+  "chipLodModOff": "LOD MOD AUS",
+  "chipReShade": "ReShade",
+  "chipNoTextures": "Keine Texturen",
+  "chipNoMods": "Keine Mods",
+  "chipNoCutsceneMod": "Keine Cutscene-Mod",
+  "chipTexturesCount": "Texturen ({details})",
+  "@chipTexturesCount": {
+    "placeholders": {
+      "details": {
+        "type": "String"
+      }
+    }
+  },
+  "chipModsCount": "{count} {count, plural, =1{Mod} other{Mods}}",
+  "@chipModsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chipInjectedCount": "{count} injiziert",
+  "@chipInjectedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chipSkRes": "SK_Res",
+  "chipCutsceneMod": "Cutscene-Mod ({width}x{height} {codec})",
+  "@chipCutsceneMod": {
+    "placeholders": {
+      "width": {
+        "type": "int"
+      },
+      "height": {
+        "type": "int"
+      },
+      "codec": {
+        "type": "String"
+      }
+    }
+  },
+  "warningPluginLoadingDisabled": "Das Laden von Plugins ist deaktiviert – der YoRHa-Protocol-Arbeitsbereich wird nicht geladen",
+  "warningReShadeDisabled": "Das automatische Laden von ReShade ist deaktiviert",
+  "warningTextureInjectionDisabled": "Die Texturinjektion ist deaktiviert",
+  "heapOverridesDescription": "Zusätzlicher Speicher oberhalb der NAMS-Standardwerte. Übergeordnete Heaps wachsen automatisch. Erhöhe die Werte nur, wenn Mods mehr Speicher benötigen. Neustart erforderlich.",
+  "lodModDescription": "In NAMS integrierte Patches für bessere Grafikqualität, inspiriert von Automata-LodMod von emoose. Entfernt LOD-Pop-ins, schärft Schatten und Umgebungsverdeckung, erzwingt Schattenwurf für alle Objekte einschließlich Vegetation, deaktiviert manuelles Culling, damit Objekte nicht plötzlich ein- oder ausgeblendet werden, und entfernt die Vignette.",
+  "dropModelModHere": "Modell-Mod-Ordner oder Archiv hier ablegen",
+  "dropToInstall": "Zum Installieren ablegen",
+  "orClickToBrowse": "oder zum Durchsuchen klicken",
+  "mixedModDetected": "Gemischte Mod erkannt",
+  "noOutfitsInstalled": "Noch keine Outfits installiert",
+  "defaultNoMod": "Standard (keine Mod)",
+  "clearAllStartupOutfits": "Alle Start-Outfits entfernen",
+  "removeOutfitTitle": "Outfit entfernen?",
+  "noModelFoundError": "Kein Modell gefunden. Benötigt pl000d.dat/.dtt (2B), pl010d.dat/.dtt (A2) oder pl020d.dat/.dtt (9S).",
+  "unsupportedArchiveFormat": "Nicht unterstütztes Archivformat.",
+  "extractingArchive": "Archiv wird entpackt ...",
+  "extractingArchivePercent": "Wird entpackt – {percent}%",
+  "@extractingArchivePercent": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "extractingArchivePercentFile": "Wird entpackt: {percent}% – {file}",
+  "@extractingArchivePercentFile": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      },
+      "file": {
+        "type": "String"
+      }
+    }
+  },
+  "cutsceneScanningArchive": "Archiv wird nach einem movie-Ordner durchsucht ...",
+  "cutsceneCopyingFile": "Kopieren {current}/{total} – {name}",
+  "@cutsceneCopyingFile": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "cutsceneCopyingFileBytes": "Kopieren {current}/{total} – {name} ({mbDone} / {mbTotal} MB)",
+  "@cutsceneCopyingFileBytes": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      },
+      "mbDone": {
+        "type": "String"
+      },
+      "mbTotal": {
+        "type": "String"
+      }
+    }
+  },
+  "failedToExtractArchive": "Archiv konnte nicht entpackt werden.",
+  "extractFailedDiskFull": "Entpacken fehlgeschlagen: Auf dem temporären Laufwerk ist nicht genügend freier Speicherplatz vorhanden. Gib Speicherplatz frei und versuche es erneut.",
+  "textureDeleteConfirmTitle": "Texturpaket löschen?",
+  "textureDeleteConfirmBody": "{name} dauerhaft aus nams/inject/textures/ entfernen? Dies kann nicht rückgängig gemacht werden.",
+  "@textureDeleteConfirmBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "textureDeleteLabel": "Löschen",
+  "busyDeletingTexture": "Texturpaket wird gelöscht ...",
+  "busyDeletingCutscene": "Cutscene-Mod wird gelöscht ...",
+  "busyCloseTitle": "Vorgang läuft",
+  "busyCloseBody": "Der Launcher installiert, löscht oder entpackt gerade Dateien. Wenn du ihn jetzt schließt, können beschädigte oder unvollständige Dateien auf dem Datenträger zurückbleiben. Warte, bis der aktuelle Vorgang abgeschlossen ist, oder erzwinge das Schließen.",
+  "busyCloseForce": "Schließen erzwingen",
+  "extractFailedDetail": "Entpacken fehlgeschlagen: {detail}",
+  "@extractFailedDetail": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "noOutfitsInstalledNotif": "Keine Outfits installiert.",
+  "dialogSelectModFolder": "Modell-Mod-Ordner auswählen",
+  "dialogNameOutfitShown": "Dieser Name wird im Spiel beim Wechseln von Outfits angezeigt.",
+  "dropTextureHere": "Texturordner oder Archiv hier ablegen",
+  "installedToTextures": "Installiert unter: nams/inject/textures/",
+  "installingTextures": "Texturen werden installiert ...",
+  "textureDropAnalyzing": "Abgelegte Dateien werden analysiert ...",
+  "textureDropNoDds": "In den abgelegten Dateien wurden keine .dds-Texturen gefunden. Es werden nur .dds-Dateien unterstützt.",
+  "cutsceneDropAnalyzing": "Abgelegte Dateien werden analysiert ...",
+  "cutsceneDropNoUsm": "In den abgelegten Dateien wurden keine .usm-Cutscenes gefunden.",
+  "modDropAnalyzing": "Abgelegte Dateien werden analysiert ...",
+  "modDropNotAMod": "Das sieht nicht wie eine NAMS-Mod aus. Lege einen Ordner oder ein Archiv ab, das entities/, wax/, data/ oder eine mod.toml enthält.",
+  "modDropMisroutedCutscenes": "Das sieht wie eine eigenständige Cutscene-Mod aus – lege sie stattdessen im Reiter Cutscenes ab. Gebündelte Cutscenes gehören in eine Mod, die bereits entities/ oder mod.toml enthält.",
+  "modSideInstalledTextures": "Gebündelte Texturpakete wurden außerdem nach nams/inject/textures/ installiert: {names}",
+  "@modSideInstalledTextures": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "modLooseUnpairedWarning": "Installiert, aber bei einigen Dateien fehlt das zugehörige Vanilla-Gegenstück (.dat/.dtt): {names}. Der Mod funktioniert evtl. nicht vollständig.",
+  "@modLooseUnpairedWarning": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "modBundledTexturesLabel": "Gebündelte Texturen",
+  "modBundledCutscenesLabel": "Gebündelte Cutscenes",
+  "textureBundledWithMod": "Gebündelt mit Mod: {modId}",
+  "@textureBundledWithMod": {
+    "placeholders": {
+      "modId": {
+        "type": "String"
+      }
+    }
+  },
+  "modUninstallAlsoTexturesLabel": "Gebündelte Texturpakete ebenfalls löschen: {names}",
+  "@modUninstallAlsoTexturesLabel": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "noTextures": "Keine Texturen",
+  "noTexturesInstalled": "Keine Texturen installiert",
+  "textureConflictHint": "Beide Mods werden geladen. Sie verändern teilweise dieselben Inhalte. Setze die wichtigere Mod nach oben.",
+  "noConflictsFound": "Keine Konflikte gefunden. Alle Mods werden unabhängig voneinander geladen.",
+  "selectTextureFiles": "Texturdateien oder Archive auswählen",
+  "noTextureFilesFound": "Keine Texturdateien gefunden (.dds, .png, .tga)",
+  "cheatsAppliedNote": "Wird einmal beim Spielstart angewendet.",
+  "wipLabel": "IN ARBEIT",
+  "dropCutsceneHere": "Cutscene-Mod-Ordner oder Archiv hier ablegen",
+  "cutsceneMovieHint": "Die Mod muss einen movie/-Ordner mit .usm-Dateien enthalten",
+  "cutsceneNamingTitle": "Diese Cutscene-Mod benennen",
+  "removeCutsceneModTitle": "Cutscene-Mod entfernen?",
+  "noCutsceneModsInstalled": "Noch keine Cutscene-Mods installiert",
+  "cutsceneHowItWorks1": "Benutzerdefinierte Cutscenes werden aus nams/cutscenes/ statt aus data/movie/ geladen.",
+  "cutsceneHowItWorks2": "Fehlt eine benutzerdefinierte Datei oder ist sie beschädigt, wird ersatzweise das Original abgespielt.",
+  "cutsceneHowItWorks3": "Deine ursprünglichen Spieldateien werden nie verändert – Mods werden von einem separaten Speicherort geladen.",
+  "cutsceneStructurePath": "nams/cutscenes/<mod_name>/movie/<filename>.usm",
+  "cutsceneFolderNameLimit": "Ordnernamen dürfen höchstens 27 Zeichen lang sein.",
+  "cutsceneMigrationTitle": "Benutzerdefinierte Cutscene-Dateien in data/movie/ erkannt",
+  "cutsceneMigrationBody": "{count} benutzerdefinierte {count, plural, =1{Cutscene-Datei} other{Cutscene-Dateien}} wurden direkt in data/movie/ gefunden. Diese überschreiben die Originale dauerhaft. Installiere Cutscene-Mods künftig stattdessen hier – falls eine benutzerdefinierte Datei nicht geladen werden kann, wird ersatzweise das Original abgespielt.",
+  "@cutsceneMigrationBody": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noMovieFolderFound": "Kein movie/-Ordner mit .usm-Dateien gefunden.",
+  "noUsmFilesFound": "In der Mod wurden keine .usm-Dateien gefunden.",
+  "onboardingWelcomeTitle": "Willkommen bei YoRHa Protocol",
+  "onboardingWelcomeSubtitle": "Ein Launcher. Alle deine Mods. Neue NieR-Inhalte.\n\nMods per Drag-and-drop, Outfit-Wechsel mitten im Spiel, neue Quests und ein integriertes Devkit – ohne Konfigurationsalbtraum.",
+  "onboardingSelectTitle": "Wähle deine NieR:Automata-Installation aus",
+  "onboardingSearchingDrives": "Alle Laufwerke werden durchsucht ...",
+  "onboardingSearchingNier": "NieR:Automata wird gesucht ...",
+  "onboardingSelectInstallation": "Installation auswählen",
+  "onboardingFirstPlaythroughTitle": "Ist dies dein erster Spieldurchlauf?",
+  "onboardingFirstPlaythroughHint": "Falls ja, blenden wir Spoiler aus.",
+  "onboardingFirstYes": "Ja – Spoilerfunktionen ausblenden",
+  "onboardingFirstNo": "Nein – alles anzeigen",
+  "onboardingMigrationAskTitle": "NieR schon einmal gemoddet?",
+  "onboardingMigrationAskBody": "Wir übernehmen deine alte Einrichtung automatisch.",
+  "onboardingMigrationYes": "Ja",
+  "onboardingMigrationNo": "Nein",
+  "onboardingMigrationResultsTitle": "Was wir gefunden haben",
+  "onboardingMigrationResultsBody": "",
+  "onboardingMigrationNothingFound": "Nichts erkannt. Deine Installation ist sauber.",
+  "onboardingMigrationActionReshadeKept": "Deaktiviert – NAMS besitzt native Tiefenschärfe. Bei Bedarf kannst du es in der NAMS-Konfiguration wieder aktivieren.",
+  "onboardingMigrationActionReshadeIncompatible": "Add-on-/ImGui-Version – ersetzen oder entfernen.",
+  "onboardingMigrationActionTextures": "Wird automatisch geladen.",
+  "onboardingMigrationActionLodMod": "LodMod.ini wurde importiert.",
+  "onboardingMigrationActionSkRes": "Automatisch übernommen.",
+  "onboardingMigrationActionNaiom": "Deine NAIOM-Einstellungen werden automatisch in NAMS importiert. Anschließend kannst du die alten NAIOM-Dateien löschen (dinput8.dll, NAIOM.ini).",
+  "onboardingMigrationActionCutscenes": "Bereits integriert.",
+  "onboardingMigrationActionExistingMods": "Bereits installiert – unverändert beibehalten.",
+  "onboardingMigrationLabelExistingMods": "{count, plural, one{1 Mod in nams/mods/} other{{count} Mods in nams/mods/}}",
+  "@onboardingMigrationLabelExistingMods": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "onboardingModInstallAskTitle": "Vor dem Start eine Mod installieren?",
+  "onboardingModInstallAskBody": "Du hast eine .zip-Datei oder einen Ordner? Wir kümmern uns darum.\n(Texturen und Cutscenes besitzen eigene Reiter – installiere sie später dort.)",
+  "onboardingModInstallYes": "Ja, jetzt eine Mod installieren",
+  "onboardingModInstallSkip": "Nein, vorerst überspringen",
+  "onboardingModInstallTitle": "Füge deine erste Mod hinzu",
+  "onboardingModInstallBody": "Unterstützt .zip, .7z und Ordner.",
+  "onboardingModInstallSubBody": "Die Spieldateien bleiben sicher.",
+  "onboardingModInstallBusy": "Wird installiert …",
+  "onboardingModInstallInspecting": "Mod wird geprüft …",
+  "onboardingModInstallExtractingPercent": "Wird entpackt … {percent}%",
+  "@onboardingModInstallExtractingPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "onboardingModInstallExtractingFile": "Wird entpackt: {percent}% – {file}",
+  "@onboardingModInstallExtractingFile": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      },
+      "file": {
+        "type": "String"
+      }
+    }
+  },
+  "onboardingModInstallNotAMod": "Das sieht nicht wie eine gültige NAMS-Mod aus. Stelle sicher, dass es sich um eine .zip-/.7z-Datei mit einer mod.toml oder einer erkannten Datenstruktur handelt.",
+  "onboardingOutfitHintHeader": "So trägst du es",
+  "onboardingOutfitHintCompat": "Kaufe es oder rüste es aus deinem Inventar aus.",
+  "onboardingOutfitHintData": "Im Spiel F1 → Garderobensymbol (oben links).",
+  "onboardingOutfitHintMultiOutfit": "Oder verwende den Multi-Outfit-NPC im Widerstandslager.",
+  "onboardingOutfitHintMultiOutfitLink": "Multi-Outfit-NPC herunterladen",
+  "onboardingOutfitHintMultiOutfitUrl": "https://www.nexusmods.com/nierautomata/mods/789",
+  "onboardingModInstallFailed": "Installation fehlgeschlagen: {reason}",
+  "@onboardingModInstallFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "onboardingModInstallNoGameDir": "Es wurde noch kein Spielverzeichnis ausgewählt. Gehe zurück und wähle zuerst deine Installation aus.",
+  "onboardingModInstallInstalledHeader": "Installiert:",
+  "onboardingModInstallSkipButton": "Überspringen",
+  "onboardingModInstallDoneButton": "Fertig",
+  "onboardingModInstallPickerTitle": "Eine Mod (.zip, .7z) auswählen oder einen Ordner öffnen",
+  "onboardingModInstallFolderPickerTitle": "Mod-Ordner auswählen",
+  "onboardingReadyTitle": "Alles ist eingerichtet!",
+  "onboardingCreateShortcut": "Desktopverknüpfung erstellen",
+  "onboardingFirstPlaythroughSpoilerFree": "Erster Spieldurchlauf (spoilerfrei)",
+  "onboardingFullAccess": "Vollständiger Zugriff",
+  "detectionReShade": "ReShade",
+  "detectionHDTextures": "HD-Texturen",
+  "detectionLodMod": "LOD Mod (Automata-LodMod)",
+  "detectionSkRes": "Special-K-Texturen (SK_Res)",
+  "detectionNaiom": "NAIOM",
+  "detectionCutscenes": "Cutscene-Mods (nams/cutscenes)",
+  "detectionCustomMovie": "Benutzerdefinierte Cutscenes in data/movie/",
+  "detectionDetected": "Erkannt",
+  "detectionReShadeIncompatible": "Nicht kompatibel (Add-on/ImGui)",
+  "detectionNotFound": "Nicht gefunden",
+  "detectionNoneFound": "Nichts gefunden",
+  "detectionLodModMigrated": "Gefunden – nach NAMS migriert",
+  "detectionSkResAuto": "Gefunden – wird automatisch geladen",
+  "detectionNaiomPending": "Gefunden – Einstellungen werden automatisch importiert",
+  "detectionNoneInstalled": "Nichts installiert",
+  "detectionCustomMovieHint": "Gefunden – erwäge für einen sicheren Rückgriff stattdessen nams/cutscenes/ zu verwenden",
+  "detectionInstalled": "Installiert",
+  "detectionCustomFilesDetected": "Benutzerdefinierte Dateien erkannt",
+  "detectionMigratedIntoNams": "Nach NAMS migriert",
+  "detectionLoadedAutomatically": "Automatisch geladen",
+  "detectionMigrationComingSoon": "Einstellungen automatisch importiert",
+  "detectionNotSet": "Nicht festgelegt",
+  "labelGame": "Spiel",
+  "labelMode": "Modus",
+  "labelDlc": "DLC",
+  "labelNoDlc": "Kein DLC",
+  "searchingForNier": "NieR:Automata wird gesucht ...",
+  "autoButton": "AUTO",
+  "nierFound": "NieR:Automata gefunden",
+  "selectInstallation": "Wähle deine Installation aus:",
+  "notYourGame": "Nicht dein Spiel?",
+  "searchAllDrives": "Alle Laufwerke durchsuchen",
+  "selectManually": "Manuell auswählen",
+  "notFoundTitle": "Nicht gefunden",
+  "notFoundMessage": "NieR:Automata konnte nicht über Steam gefunden werden. Möchtest du alle Laufwerke durchsuchen? Dies kann bis zu 30 Sekunden dauern.",
+  "scanDrives": "Laufwerke durchsuchen",
+  "confirmInstallation": "Ist dies die richtige Installation?",
+  "cancelButton": "Abbrechen",
+  "noSelectManually": "Nein, manuell auswählen",
+  "yesButton": "Ja",
+  "installationsFoundTitle": "NieR:Automata-Installationen gefunden",
+  "validInstallations": "Gültige Installationen (mit data-Ordner):",
+  "withoutDataFolder": "Ohne data-Ordner:",
+  "noLogEntries": "Keine Protokolleinträge gefunden",
+  "noLogMatches": "Keine Protokolleinträge entsprechen deiner Suche",
+  "logViewerTitle": "PROTOKOLLANZEIGE",
+  "logSearchPlaceholder": "Ebene / Modul / Nachricht durchsuchen ...",
+  "logLiveBadge": "LIVE",
+  "logAutoScroll": "Automatisch zum neuesten Eintrag scrollen",
+  "entriesSuffix": "Einträge",
+  "scrollToBottom": "Nach unten scrollen",
+  "openLogsFolder": "Protokollordner öffnen",
+  "diagnosticsButton": "Diagnose erstellen",
+  "diagnosticsSubtitle": "Erstellt einen vollständigen Bericht deiner Installation (Spieldateien, Mods, ReShade/3DMigoto, Einstellungen), den du bei Hilfeanfragen teilen kannst.",
+  "copyCommandTitle": "Manueller Startbefehl",
+  "copyCommandDesc": "Wenn das Spiel nicht über den Launcher startet, kopiere den NAMS-Befehl und führe ihn im Terminal aus. NAMS gibt dort den Grund für den Fehler aus, das ist der schnellste Weg zur Ursache.",
+  "copyCommandButton": "Befehl kopieren",
+  "diagnosticsTitle": "Diagnosezusammenfassung",
+  "diagnosticsCollecting": "Diagnosedaten werden gesammelt ...",
+  "diagnosticsCopy": "Zusammenfassung kopieren",
+  "diagnosticsCopied": "Zusammenfassung in die Zwischenablage kopiert",
+  "diagnosticsSaveFull": "Vollständigen Bericht speichern",
+  "diagnosticsSavedAt": "Vollständiger Bericht unter {path} gespeichert",
+  "@diagnosticsSavedAt": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "modsTutorialBack": "Zurück",
+  "modsTutorialNext": "Weiter",
+  "modsTutorialFinish": "Verstanden",
+  "modsTutorialSkip": "Überspringen",
+  "modsTutorialMenuEcosystem": "NAMS und der Launcher",
+  "modsTutorialMenuInstall": "Eine Mod installieren",
+  "modsTutorialMenuProfiles": "So funktionieren Profile",
+  "modsTutorialMenuSupporting": "Das Ökosystem unterstützen",
+  "modsTutorialSupportingStep1Title": "Ein Ökosystem, kein Mod-Manager",
+  "modsTutorialSupportingStep1Body": "**NAMS ist seit über drei Jahren in Entwicklung.** Was als einzelner Modloader begann, ist zu einer ganzen Plattform gewachsen, auf der heute **Mods**, **Plugins** und Werkzeuge aufbauen:\n\n- **Mods** sind Inhaltserweiterungen – Outfits, benutzerdefinierte Quests, neue Waffen und Texturen. Sie nutzen das Inhaltssystem von NAMS, führen aber keinen eigenen Code aus.\n- **Plugins** sind Programme, die parallel zum Spiel laufen und den Modloader selbst erweitern können – etwa die Multiplayer-Mod, Debug-Overlays oder neue Spielsysteme. Sie werden als Code geschrieben und beim Start von NAMS geladen.\n- Der Launcher, den du gerade verwendest, ist **kein Plugin** – er ist eine eigenständige Anwendung, die deine Mods und Konfigurationen vor dem Spielstart vorbereitet.\n\nDie Mods, die du heute siehst, laufen nicht trotz eines Hindernisparcours – sie bauen auf jahrelanger Grundlagenarbeit auf, die gerade deshalb existiert, damit du sie nicht erneut leisten musst.\n\nIn diesem Abschnitt geht es darum, **wie diese Plattform am Leben bleibt** und was das für dich bedeutet – egal, ob du nur spielst, erste Schritte beim Modding machst oder etwas beitragen möchtest.\n\nDie nächsten Seiten beginnen mit den Punkten, die **alle** betreffen, und werden zum Ende hin technischer. Du kannst jederzeit vorspringen, wenn du genug gelesen hast – nichts davon ist Pflichtlektüre.",
+  "modsTutorialSupportingStep2Title": "Inhalte ohne Programmierung",
+  "modsTutorialSupportingStep2Body": "**Du musst nicht programmieren können, um zu diesem Ökosystem beizutragen.**\n\nNAMS besitzt ein Inhaltssystem, das bereits deklarative Inhaltserweiterungen unterstützt und laufend um weitere Möglichkeiten ergänzt wird:\n\n- **Benutzerdefinierte Quests**, die zusätzlich zur ursprünglichen Geschichte eingebunden werden.\n- **Neue Waffen und Gegenstände** mit eigenem Verhalten, ohne vorhandene Inhalte zu überschreiben.\n- **Accessoires** in **neuen Plätzen**, statt bestehende zu ersetzen.\n- **Benutzerdefinierte Cutscenes**, die in `nams/cutscenes/` liegen oder in einer Mod gebündelt sind (zum Beispiel eine benutzerdefinierte Quest mit eigenen Filmsequenzen) – die ursprünglichen Cutscenes werden **niemals ersetzt**, neue werden einfach zusätzlich geladen.\n\nDas Grundprinzip lautet: **ergänzen statt ersetzen.** Die ursprünglichen Inhalte bleiben erhalten; Mod-Inhalte werden darübergelegt. Dadurch können Modellierer ohne Programmiererfahrung Accessoires, Waffen und Charaktere erstellen und als Ergänzungen veröffentlichen – ohne etwas zu überschreiben, Spielstände zu beschädigen oder Konflikte mit anderen Mods zu verursachen, die dasselbe Prinzip nutzen.\n\nDiese Möglichkeiten werden sich mit der Zeit **erweitern**. Jede Veröffentlichung fügt weitere deklarative Schnittstellen hinzu, damit Nichtprogrammierer noch mehr umsetzen können.",
+  "modsTutorialSupportingStep3Title": "Möglichkeiten beizutragen – nicht nur mit Code",
+  "modsTutorialSupportingStep3Body": "Inhalte zu erstellen (wie auf der vorherigen Seite beschrieben) ist eine Möglichkeit, etwas zurückzugeben. Es ist bei Weitem nicht die einzige – und viele Dinge, die ein Ökosystem gesund halten, haben überhaupt nichts mit dem Erstellen von Mods zu tun. Folgendes macht tatsächlich einen Unterschied:\n\n- **Schreibe eine Anleitung.** „Wie ich X mit NAMS gebaut habe“, „wie ich Y debuggt habe“, „die fünf Dinge, die ich gern vorher gewusst hätte“. Die meisten Lücken beim Einstieg sind derzeit Dokumentationslücken.\n- **Melde einen echten Fehler – und zwar gut.** Eine reproduzierbare Fehlerbeschreibung, ein Protokoll und der Diagnosebericht aus dem Protokollbereich sind mehr wert als zehn Tickets mit „es funktioniert nicht“.\n- **Modelliere.** Accessoires, Waffen, Charaktere und Requisiten. Das Inhaltssystem von NAMS lädt sie als **Ergänzungen** – neue Plätze, keine Überschreibungen. Dadurch können Modellierer ohne Programmiererfahrung Werke veröffentlichen, die sich konfliktfrei in die Zusammenstellungen anderer Spieler einfügen.\n- **Übersetze.** Der Launcher ist lokalisiert. Falls deine Sprache noch fehlt und du sie verwenden würdest, findest du die Texte unter `lib/l10n/`; Pull Requests sind willkommen.\n- **Teste auf ungewöhnlicher Hardware.** Steam Deck, AMD-GPUs, Ultrawide-Konfigurationen, mehrere Monitore oder Controller, die kaum jemand besitzt. Fehler, die nur bei seltenen Konfigurationen auftreten, bleiben verborgen, bis sie jemand meldet.\n- **Beantworte einfach Fragen auf Discord.** Der nächsten neuen Person zu helfen, ist ebenfalls ein Beitrag. Was in einem Ökosystem langfristig überlebt, ist zu einem großen Teil die Kultur der Menschen, die früh dabei waren.\n- **Analysiere eine Spielfunktion per Reverse Engineering und stelle die API bereit.** *(Mehr dazu auf der nächsten Seite, falls du neugierig bist.)* Für technisch Interessierte ist dies der Beitrag mit der größten Hebelwirkung.\n\n### Abschließender Gedanke (vorerst)\n\nViel Freizeit, persönlicher Einsatz und hartnäckiger Fleiß sind in die Entstehung dieser Plattform geflossen – immer mit dem Ziel, **anderen Menschen den Einstieg in etwas Eigenes zu ermöglichen**. Wenn einer dieser Punkte für dich machbar klingt, hast du den größten Teil bereits geschafft. Auf dem Discord (**YoRHa Continuum**) kannst du Fragen stellen.\n\nDie nächsten beiden Seiten werden technischer. Lies weiter, wenn du wissen möchtest, wie Plugins nebeneinander bestehen und wie neue Spiel-APIs in NAMS gelangen, oder höre hier auf, wenn du genug erfahren hast.",
+  "modsTutorialSupportingStep4Title": "Plugins bestehen bewusst nebeneinander",
+  "modsTutorialSupportingStep4Body": "*Die nächsten beiden Seiten sind technischer und richten sich an Personen, die über die Entwicklung von Plugins nachdenken. Überspringe sie, wenn das nicht dein Thema ist.*\n\nEin entscheidendes Merkmal der NAMS-Plattform ist, dass **mehrere Plugins gleichzeitig** in derselben Spielsitzung laufen können, ohne sich gegenseitig zu behindern.\n\nDie **Multiplayer Mod von Jasper** ist eine der größten Entwicklungen im NAMS-Ökosystem und wird weiterhin aktiv gepflegt – großen Respekt für diese Arbeit. Das YP-Devkit und das MP-Plugin werden **gleichzeitig geladen**, beide funktionieren und beide zeichnen ihre eigene Benutzeroberfläche über das Spiel. Das ist kein glücklicher Zufall – genau dafür wurde der Plugin-Host von NAMS entwickelt.\n\nWenn du also ein Plugin veröffentlichst, das die Vorgaben der Plattform einhält, **kann es mit allem anderen bereits Laufenden koexistieren** – deinem Plugin, dem MP-Plugin, dem YP-Devkit und zukünftigen Plugins von Menschen, die du nie kennenlernen wirst. Du musst nicht um Hooks konkurrieren oder gegen die Ladereihenfolge kämpfen; die Plattform vermittelt.\n\nJeden Monat finden weiterhin Umstrukturierungen statt, um Grenzfälle zu reduzieren, in denen ein Plugin versehentlich ein anderes beeinträchtigen kann. Das Ziel bewegt sich ständig – aber die Richtung ist klar und die Arbeit geht weiter.",
+  "modsTutorialSupportingStep5Title": "Du baust auf frei verfügbarem Reverse Engineering auf",
+  "modsTutorialSupportingStep5Body": "Die meisten Engine-APIs, die du für ein ernsthaftes Plugin benötigen würdest, existieren bereits in NAMS – und **sie existieren, weil jemand das Spiel per Reverse Engineering analysiert hat**, um ein eigenes Problem zu lösen, und das Ergebnis anschließend beigetragen hat.\n\nDas Spiel ist Closed Source. Jede API in NAMS, mit der sich ein Spielzustand lesen oder verändern lässt, ist das Ergebnis davon, dass jemand Funktionen nachverfolgt, Offsets gefunden und das Verhalten überprüft hat. Darin steckt viel unbezahlte Arbeit, und sie befindet sich gezielt in NAMS, damit der **nächste** Plugin-Entwickler sie nicht wiederholen muss.\n\nWenn du auf NAMS aufbaust, erbst du all das. Du beginnst nicht bei `LoadLibrary`, sondern bei APIs, die jemand bereits mühsam geschaffen hat – und die nächste Person, die eine von dir analysierte API benötigt, erhält dasselbe Geschenk.\n\n### Warum dies der Beitrag mit der größten Hebelwirkung ist\n\nWenn du das auch nur ein einziges Mal tust, ersparst du jedem zukünftigen Plugin-Entwickler dauerhaft dieselbe Arbeit. Darin liegt die Asymmetrie. Eine Anleitung hilft einigen Menschen, die sie lesen; eine API in NAMS hilft für immer allen, die diese Funktion jemals benötigen werden. Das Ökosystem wächst durch Menschen, die eine Sache für sich selbst per Reverse Engineering untersuchen und das Ergebnis anschließend allen hinterlassen.",
+  "modsTutorialEcosystemStep1Title": "Warum all das existiert",
+  "modsTutorialEcosystemStep1Body": "Das Modding von NieR war historisch mühsam. Mods, die einzeln problemlos funktionieren, beginnen sich gegenseitig zu stören, sobald mehrere davon kombiniert werden – verschiedene DLL-Hooks (`dxgi`, `d3d11`, `dinput8`) konkurrieren um denselben Platz, der falsche Wrapper gewinnt die Ladereihenfolge und das Spiel stürzt beim Start kommentarlos ab. Menschen mit 5–10 Mods verbringen mehr Zeit mit Fehlereingrenzung als mit Spielen.\n\nLange Zeit lautete die einzige Antwort: *nur manuell installieren*. Lose `.dat`-/`.dtt`-Dateien in `data/` ablegen, Konfigurationen von Hand bearbeiten und niemals einen Mod-Manager verwenden. Für eine oder zwei Mods funktioniert das, doch dabei werden echte Spieldateien überschrieben und es bleibt kein nachvollziehbarer Verlauf der Änderungen. Werkzeuge wie Vortex halfen nicht – sie verstehen die Besonderheiten von NieR nicht.\n\n**NAMS wurde entwickelt, um dieses Problem auf Ebene des Modloaders zu lösen**, und **dieser Launcher gibt NAMS eine benutzerfreundliche Oberfläche.**",
+  "modsTutorialEcosystemStep2Title": "Was NAMS macht",
+  "modsTutorialEcosystemStep2Body": "**NAMS ist der Modloader.** Es ist keine Proxy-DLL, die wie ältere Werkzeuge `dxgi.dll` oder `d3d11.dll` übernimmt – genau dieser Mechanismus hat die Konflikte überhaupt erst verursacht.\n\nStattdessen läuft NAMS als eigener Hostprozess: Es lädt NieR:Automata innerhalb dieses Prozesses als Bibliothek (die EXE des Spiels wird in eine ladbare `game.bin` umgewandelt) und initialisiert den Modloader, bevor das Spiel startet. In keinen anderen Prozess wird etwas injiziert – NAMS *ist* der Prozess, in dem das Spiel läuft, und besitzt vollständige Kontrolle darüber, was gleich geladen wird.\n\nVon dort aus übernimmt NAMS zwei große Aufgaben:\n\n**1. Es implementiert Funktionen, die früher andere Werkzeuge bereitstellten, neu** – LodMod, Limit Break, Texturinjektion und schnelles Laden – nativ und in einer koordinierten Schicht. Mods verwenden NAMS-APIs, statt darum zu kämpfen, welcher DLL-Hook zuerst aufgerufen wird.\n\n**2. Es stellt ein virtuelles Dateisystem (VFS) bereit:**\n\n- Jede Mod befindet sich in einem eigenen Ordner unter `nams/mods/<modId>/` – echte Spieldateien werden niemals überschrieben.\n- Zur Laufzeit legt NAMS aktive Mods über die Sicht der Engine auf `data/`.\n- Deine ursprünglichen Dateien `data/*.cpk` und `NieRAutomata.exe` werden **niemals verändert**, sodass der ungemoddete Start über Steam weiterhin genau wie zuvor funktioniert.\n\nMods erklären in einem Manifest, was sie verändern. NAMS prüft und lädt sie in einer festgelegten Reihenfolge. Dadurch erhältst du endlich ein **sauberes Aktivieren und Deaktivieren einzelner Mods** sowie eine **nachvollziehbare Konflikterkennung** – beides war mit dem alten Ansatz, Dateien direkt in `data` abzulegen, nicht möglich.\n\n### So greift alles ineinander\n\nDieser Launcher baut **nicht** direkt auf NieR:Automata auf. Er analysiert das Spiel nicht per Reverse Engineering, hängt sich nicht in Engine-Funktionen ein und kennt die Formate `.dat`/`.dtt` nicht von selbst. Die Reihenfolge lautet:\n\n1. **NieR:Automata** – das unveränderte Spiel.\n2. **NAMS** – der Modloader, der zuerst entwickelt wurde, um skalierbares Modding überhaupt zu ermöglichen (Neuimplementierung von Engine-Funktionen, VFS, Plugin-Host und Inhaltsframework).\n3. **Dieser Launcher** – als Hilfsanwendung auf NAMS aufgebaut. Er liest die TOML-Konfigurationen von NAMS, schreibt in dessen Ordnerstruktur und kommuniziert mit dessen APIs. Mehr nicht.\n\nDie praktische Folge: NAMS ist die tragende Schicht. Der Launcher ist lediglich eine benutzerfreundliche Oberfläche davor und könnte durch eine andere Oberfläche oder die Kommandozeile ersetzt werden, ohne dass deine Mods davon betroffen wären.\n\n### Und genau das ist bereits geschehen\n\nDas ist keine Theorie. **Der NAO Launcher von Rustukun** ist ein separater Launcher auf derselben Grundlage – andere Oberfläche, andere Designentscheidungen, aber dasselbe NAMS darunter. Deine Mods, deine Ordner `nams/mods/<modId>/` und deine `disabled_mods.toml` funktionieren unabhängig vom verwendeten Launcher identisch.\n\nDas beweist, dass NAMS die Plattform ist und jeder Launcher – dieser, NAO oder ein zukünftiger, den noch niemand geschrieben hat – nur eine Frontend-Entscheidung darstellt. Wähle den Launcher, der zu deinem Arbeitsablauf passt; deine Mod-Bibliothek muss nicht umziehen.",
+  "modsTutorialEcosystemStep3Title": "Was dieser Launcher ergänzt – und was anders ist",
+  "modsTutorialEcosystemStep3Body": "NAMS übernimmt das Laden. Der Launcher kümmert sich um **alles drumherum** – Installation, Organisation und Fehlerbehebung:\n\n- **Mod-Manager** – Drag-and-drop-Installation von Mods im NAMS-Format, automatische Normalisierung der Ordnerstruktur (wax-/SK_Res-Wrapper, gebündelte Inhalte), Manifestprüfung und Konfliktwarnungen.\n- **Texturen** – eigenständige Texturpakete und die Priorität von `load_order` verwalten, ohne TOML-Dateien von Hand zu bearbeiten.\n- **Cutscenes** – HD-Cutscene-Mods installieren, den Codec automatisch erkennen (H264 oder MPEG-2) und die richtigen NAMS-Einstellungen setzen.\n- **Profile** – mehrere Mod-Zusammenstellungen nebeneinander aufbewahren und mit einem Klick wechseln, ohne Zustände zu kopieren oder zu verlieren.\n- **Diagnose** – vollständiger Bericht darüber, was wo installiert ist, welche Reste alter Installationen vorhanden sind und was NAMS erkennt im Vergleich zu dem, was tatsächlich auf dem Datenträger liegt.\n\n### Warum wir das entwickelt haben\n\n**Nichts gegen manuelle Installationen.** Die `.dat`-/`.dtt`-Dateien eines Outfits in den richtigen Unterordner von `data/` zu legen, funktioniert für eine oder zwei Mods problemlos. Der Launcher ist für den darüber hinausgehenden Umfang gebaut.\n\nDas NAMS-Ökosystem unterstützt inzwischen unter anderem:\n\n- **Mehr als 30 Outfit-Mods** mit mehreren wechselbaren Outfits pro Charakter.\n- **Mehr als 20 benutzerdefinierte Quests**, die zur ursprünglichen Geschichte hinzugefügt werden.\n- **Mehr als 10 neue Waffen** mit eigenem Verhalten.\n- Außerdem Texturen, Cutscenes, Plugins, Balanceänderungen und mehr.\n\nAll das von Hand zu verwalten, ist keine Frage philosophischer Vorlieben – es ist **schlicht nicht möglich**. Du kannst nicht mehr nachvollziehen, welche Datei aus welcher Mod stammt, eine einzelne Mod nicht sauber aktivieren oder deaktivieren und nicht erkennen, warum etwas kaputtging. Bei diesem Umfang stößt manuelles Modding an eine harte Grenze – und das NAMS-Ökosystem hat diese Grenze längst überschritten.\n\n### Unterschiede zu NAMH und Vortex\n\nWenn du schon länger in der NieR-Szene unterwegs bist, erinnerst du dich vielleicht daran, wie frühere Mod-Manager endeten:\n\n- **NAMH** (NieR Automata Mod Helper) wurde nicht mehr gepflegt, konnte Spiele irreparabel beschädigen, litt unter Sperrproblemen wie „Programm wird verwendet“, und die Standardlösung lautete: *Spiel deinstallieren, neu installieren und alles manuell machen.* NAMH funktionierte durch das **direkte Ersetzen von Dateien in `data/`**. Wenn eine NAMH-Installation schiefging, gab es keinen sauberen Weg zurück.\n- **Vortex** verstand die Dateistruktur von NieR nie richtig. Sein virtuelles Dateisystem trifft Annahmen, die nicht zur tatsächlichen Ladeweise des Spiels passen, wodurch Installationen Dateien unbemerkt an falschen Orten ablegten.\n\nDieser Launcher ist anders aufgebaut. Die entscheidenden Prinzipien:\n\n1. **Niemals Dateien ersetzen.** Mods liegen in `nams/mods/<modId>/` und werden zur Laufzeit über das VFS von NAMS in die Sicht der Engine eingeblendet. Das ursprüngliche `data/` wird niemals verändert. Einen „nicht wiederherstellbaren Zustand“ gibt es nicht, weil sich am echten Spiel nichts geändert hat.\n2. **Jede Aktion ist umkehrbar.** Eine Mod deinstallieren → ihr Ordner und ihre gebündelten Inhalte werden sauber entfernt. Eine Mod deaktivieren → ein Eintrag in `disabled_mods.toml`, und NAMS überspringt sie. Kein versteckter Zustand, keine unumkehrbaren Schreibvorgänge.\n3. **Profile statt eines einzigen globalen Zustands.** Frühere Manager legten alles in einer einzigen Konfiguration fest. Mit Profilen kannst du mehrere Zusammenstellungen nebeneinander aufbewahren und atomar wechseln – nichts kann vermischt werden oder verloren gehen.\n4. **Auf einem gepflegten Modloader aufgebaut.** Das Ende von NAMH hing auch mit der unsicheren Zukunft des Modloaders zusammen. NAMS ist die Grundlage für alles hier, und der Launcher folgt seinen Aktualisierungen.\n\nSollte dieser Launcher irgendwann nicht mehr gepflegt werden, bleiben deine Mods dennoch einfache Dateien auf dem Datenträger, die NAMS lesen kann – du wirst nicht aus deiner eigenen Installation ausgesperrt.",
+  "modsTutorialEcosystemStep4Title": "Wie es weitergeht",
+  "modsTutorialEcosystemStep4Body": "Falls du hier noch nie eine Mod installiert hast:\n\n- **Eine Mod installieren** – führt dich Reiter für Reiter durch den Installationsablauf.\n- **So funktionieren Profile** – erklärt getrennte Zusammenstellungen und wann sie sinnvoll sind.\n\nBeide Anleitungen findest du in diesem Hilfemenü (über das **?**-Symbol, mit dem du es geöffnet hast).\n\n**Kurz zusammengefasst:** Lege Archive im passenden Reiter ab (Mod-Manager für Charakter-/Daten-Mods, Texturen für eigenständige Texturpakete, Cutscenes für HD-Cutscenes), drücke auf Spielen und sieh bei Problemen in die Protokolle. Der Launcher versucht automatisch die richtige Entscheidung zu treffen – falls du mit einer Entscheidung nicht einverstanden bist, lässt sich jede Aktion über die Benutzeroberfläche rückgängig machen.",
+  "modsTutorialHelpTooltip": "Anleitungen und Hilfe",
+  "modsTutorialInstallStep1Title": "Lege deine Mod hier ab",
+  "modsTutorialInstallStep1Body": "Dies ist der Reiter **Mod-Manager** – hier werden Charakter-, Outfit- und andere Gameplay-Mods installiert.\n\nZiehe eine `.zip`-, `.7z`- oder `.rar`-Datei von Nexus auf diesen Ablagebereich oder klicke zum Durchsuchen. Der Launcher entpackt sie, prüft die Struktur und legt sie am richtigen Ort ab. Du musst selbst nichts entpacken.\n\n**Gut zu wissen:** Deine ursprünglichen Spieldateien bleiben unverändert. Mods liegen in einem separaten Ordner `nams/`, sodass du das ungemoddete Spiel jederzeit über Steam starten kannst.",
+  "modsTutorialInstallStep2Title": "Du möchtest eine WAX-Mod installieren? Lies zuerst dies",
+  "modsTutorialInstallStep2Body": "**WAX-Mods funktionieren hier.** NAMS implementiert WAX bis zu einer getesteten Kompatibilitätsversion neu. Die meisten Mods auf Nexus, die auf diese oder eine ältere Version abzielen, lassen sich normal installieren und ausführen.\n\n### So funktioniert die Kompatibilität\n\nNAMS wird gegen eine bestimmte WAX-Version geprüft. Alles, was WAX bis einschließlich dieser Version bereitgestellt hat, wird unterstützt. Alles, was WAX danach in einer **neueren** Version ergänzt, wird nicht automatisch unterstützt – es handelt sich um eine neue Funktion auf WAX-Seite, die auf NAMS-Seite von Grund auf neu implementiert werden muss.\n\n### Was geschieht, wenn WAX etwas Neues ergänzt?\n\nVeröffentlicht WAX in einer zukünftigen Version eine neue Funktion, wird sie anhand der NAMS-Roadmap bewertet:\n\n- **Im Umfang enthalten** – passt die Funktion zu der Richtung, in die sich NAMS ohnehin entwickelt, wird sie umgesetzt und eine zukünftige NAMS-Version unterstützt Mods, die sie verwenden.\n- **Nicht im Umfang enthalten** – NAMS konzentriert sich auf eigene Inhaltserweiterungen (benutzerdefinierte Quests, eigene Weltkarten, benutzerdefinierte Plugin-Chips, erweiterte Modding-APIs und mehr). Jede WAX-Funktion neu zu implementieren, hat keine Priorität. Einige spezielle WAX-Funktionen erhalten möglicherweise nie ein NAMS-Gegenstück.\n\n**Das ist keine Abwertung von WAX.** Es handelt sich um getrennte Projekte mit unterschiedlichen Zielen. NAMS versucht nicht, WAX vollständig zu ersetzen – es ist eine eigene Plattform, die zufällig **weitgehend kompatibel** mit WAX ist, weil die meisten Benutzer ihre vorhandenen Mod-Bibliotheken weiterverwenden möchten.\n\n### Dieses Muster ist normal\n\nEine solche Aufspaltung ist **die normale Entwicklung jedes Modding-Ökosystems** und keine Besonderheit von NieR. Ein konkretes Beispiel: **Skyrim Legendary Edition (LE)** und **Skyrim Special Edition (SE)** sind Abzweigungen derselben Engine. SE ist weitgehend, aber nicht vollständig mit LE-Mods kompatibel. Einige LE-Mods müssen konvertiert werden, andere wurden nie portiert, weil sie sich auf Engine-Eigenheiten stützten, die SE verändert hat. Die Skyrim-Community betrachtete das nicht als Fehler; es wurde einfach Teil der Funktionsweise des Ökosystems. Dasselbe gilt für **OpenMW gegenüber dem ursprünglichen Morrowind**, **Java gegenüber Bedrock Minecraft**, **KSP1- gegenüber KSP2-Mods** und andere Beispiele.\n\nWann immer eine Plattform das Verhalten einer anderen neu implementiert, entsteht ein Kompatibilitätsbereich – der Großteil funktioniert, Randfälle nicht. Das ist in jeder Modding-Szene der Fall, die lange genug existiert, um sich aufzuspalten.\n\n### Empfohlene Vorgehensweise bei Unsicherheit\n\n1. **Erstelle ein neues, leeres Profil** (siehe *So funktionieren Profile* im Hilfemenü) und wechsle dorthin.\n2. **Lege nur die WAX-Mod** in diesem Profil ab. Sonst nichts.\n3. **Drücke auf Spielen.** Funktioniert sie? Dann installiere sie in deinem eigentlichen Profil.\n4. **Funktioniert sie nicht?** Wahrscheinlich verwendet die Mod eine Funktion nach der von NAMS getesteten WAX-Version oder eine Funktion, die NAMS bewusst nicht neu implementiert hat.\n\n### Was du erwarten kannst\n\n- Wenn die Funktionen X, Y und Z in NAMS laufen und die gewünschte WAX-Mod zusätzlich die nicht unterstützte Funktion W benötigt – du aber auf W verzichten kannst –, funktionieren X, Y und Z weiterhin problemlos daneben.\n- Ist W für die Mod unverzichtbar und NAMS besitzt diese Funktion nicht, entscheidest du dich zwischen WAX (W ist verfügbar, andere NAMS-Vorteile entfallen) und NAMS (alles andere ist verfügbar, aber nicht W).\n\n**Vergiss auch die andere Seite dieses Kompromisses nicht:** Bei WAX zu bleiben bedeutet, auf die **NAMS-exklusiven Mods** zu verzichten, die unter WAX überhaupt nicht laufen – mehrere wechselbare Outfits pro Charakter, benutzerdefinierte Quests und das breitere Plugin-Ökosystem (Multiplayer Mod, YP-Devkit und zukünftige Plugins). Diese hängen von NAMS-APIs ab, die WAX nicht besitzt. Die Wahl lautet daher nicht „NAMS ohne W“ gegenüber „WAX mit W“, sondern „NAMS-Ökosystem ohne W“ gegenüber „WAX mit W, aber ohne alles NAMS-Exklusive“.\n\nDas ist ein echter Kompromiss, und die Entscheidung liegt bei dir. Wir sind nicht die richtigen Ansprechpartner dafür, ob eine bestimmte WAX-exklusive Funktion NAMS-Unterstützung erhalten wird – das ist eine Frage der Ökosystem-Roadmap und sollte am besten im Discord von YoRHa Continuum gestellt werden.",
+  "modsTutorialInstallStep3Title": "Deine installierten Mods",
+  "modsTutorialInstallStep3Body": "Jede installierte Mod wird hier angezeigt.\n\n**Schalter rechts** – aktiviert oder deaktiviert die Mod. Beim Deaktivieren bleibt sie installiert, der Modloader überspringt sie jedoch beim nächsten Start.\n\n**Das Spiel stürzt beim Start ab?** Deaktiviere die Hälfte deiner Mods, starte das Spiel und wiederhole den Vorgang. Mit den Schaltern kannst du den Fehler schnell eingrenzen.\n\n**Warnsymbole** kennzeichnen Mods, die miteinander in Konflikt stehen (zum Beispiel zwei Mods, die dasselbe Outfit ersetzen). Das ist der häufigste Grund dafür, dass das Spiel den Titelbildschirm nicht erreicht.",
+  "modsTutorialInstallStep4Title": "Mod-Details",
+  "modsTutorialInstallStep4Body": "Klicke auf eine Mod in der Liste, um hier ihre Details anzuzeigen: Autor, Version, veränderte Inhalte, Konflikte mit anderen Mods und alle **gebündelten Texturpakete oder Cutscenes**, die mitgeliefert wurden.\n\nFunktioniert eine Mod nicht, werden die häufigsten Ursachen hier angezeigt – etwa *erfordert eine neuere NAMS-Version* oder *steht in Konflikt mit einer anderen Mod*. Beides ist sichtbar, **bevor** du auf Spielen drückst.\n\nDie Schaltfläche **Deinstallieren** entfernt die Mod einschließlich ihrer gebündelten Zusatzinhalte sauber.",
+  "modsTutorialInstallStep5Title": "Eigenständige Textur-Mods → Reiter Texturen",
+  "modsTutorialInstallStep5Body": "**Reine Textur-Mods** (HD-Upscaling-Pakete oder Farbänderungen) werden nicht hier installiert. Sie besitzen einen eigenen Reiter.\n\nKlicke in der Seitenleiste auf **Texturen**, um sie zu installieren. Ziehe `.zip`-Archive auf dieselbe Weise hinein – der Launcher erkennt, womit er es zu tun hat.\n\n**Hinweis:** Wenn eine Charakter-Mod eigene Texturen *bündelt*, werden diese automatisch zusammen mit der Mod installiert. Den Texturen-Reiter verwendest du nur für **eigenständige** Texturpakete.",
+  "modsTutorialInstallStep6Title": "Cutscene-Mods → Reiter Cutscenes",
+  "modsTutorialInstallStep6Body": "Auch **Cutscene-Mods** (HD-Cutscenes oder Ersatzvideos) besitzen einen eigenen Reiter.\n\nKlicke in der Seitenleiste auf **Cutscenes**, um sie zu installieren.\n\n**Es gilt dieselbe Regel wie bei Texturen:** Bündelt eine Charakter-Mod Cutscenes, werden diese automatisch installiert. Den Reiter Cutscenes verwendest du nur für **eigenständige** Cutscene-Pakete.",
+  "modsTutorialInstallStep7Title": "Drücke auf Spielen",
+  "modsTutorialInstallStep7Body": "Wechsle zurück zum Reiter **Launcher** und drücke auf **SPIELEN**. Der Modloader liest deine Mods bei jedem Spielstart neu ein, daher musst du diesen Launcher nicht neu starten.\n\n### Wenn das Spiel abstürzt\n\nÖffne **Protokolle** (unten rechts) – die Ausgabe des Modloaders nennt normalerweise die fehlerhafte Mod. Kehre anschließend hierher zurück und deaktiviere sie.\n\n### Auch bei deaktivierten Mods weiterhin fehlerhaft?\n\nFalls du oder ein früherer Mod-Manager irgendwann lose `.dat`-/`.dtt`-Dateien direkt in `<gameDir>/data/` abgelegt habt, werden diese weiterhin von der Engine erkannt – der Modloader kann sie jedoch weder sehen noch deaktivieren. Genau dieses Durcheinander vermeidet der Launcher: Jede Mod bleibt in `nams/mods/<modId>/` isoliert, statt echte Spieldateien zu überschreiben.\n\nÖffne **Protokolle → Diagnose** und prüfe den Abschnitt *Überlagerung des ursprünglichen data/-Ordners*. Alles, was dort aufgeführt wird, stammt aus einer alten Installation. Verschiebe diese Ordner aus `data/`, und dein Spiel befindet sich wieder in einem sauberen Zustand.",
+  "modsTutorialProfilesStep1Title": "Wofür Profile gedacht sind",
+  "modsTutorialProfilesStep1Body": "Mit Profilen kannst du mehrere getrennte Mod-Zusammenstellungen nebeneinander aufbewahren.\n\nZum Beispiel:\n\n- Ein **Hauptprofil** mit den Mods, mit denen du tatsächlich spielst.\n- Ein **Testprofil**, um neue Dinge auszuprobieren.\n\nBeschädigt eine fragwürdige neue Mod dein Spiel, wechselst du einfach zurück zu **Hauptprofil** und kannst sofort wieder spielen. Deine Zusammenstellungen werden nie vermischt.\n\n**Wichtig:** Mods, die du derzeit nicht verwendest, werden nicht gelöscht – sie werden nur beiseitegelegt und stehen beim nächsten Wechsel wieder bereit.",
+  "modsTutorialProfilesStep2Title": "Ein Profil erstellen",
+  "modsTutorialProfilesStep2Body": "Klicke in der Profilleiste auf **NEU**, gib einen Namen ein und bestätige.\n\nDer Launcher erstellt ein neues, leeres Profil und wechselt dorthin. Die Mods deines vorherigen Profils bleiben sicher auf dem Datenträger – sie sind nicht verschwunden, sondern lediglich beiseitegelegt.\n\nNun kannst du in diesem neuen Profil beliebige Inhalte installieren, ohne deine anderen Zusammenstellungen zu verändern.",
+  "modsTutorialProfilesStep3Title": "Wechseln, umbenennen und löschen",
+  "modsTutorialProfilesStep3Body": "**Wechseln** – wähle ein Profil aus dem Dropdown-Menü. Deine Mod-Liste wird sofort umgestellt.\n\n**Umbenennen** – ändere den Namen eines Profils, ohne Inhalte zu verlieren.\n\n**Löschen** – entferne ein inaktives Profil dauerhaft. Das aktive oder letzte verbleibende Profil kann nicht gelöscht werden.\n\nDer gesamte Wechsel erfolgt in einem einzigen Schritt. Falls etwas schiefgeht, wird automatisch zurückgerollt, sodass kein beschädigter Zustand entstehen kann.",
+  "modsTutorialProfilesStep4Title": "Was zum Profil gehört – und was nicht",
+  "modsTutorialProfilesStep4Body": "**Profilspezifisch** (ändert sich beim Wechsel):\n\n- Deine installierten Mods\n- Welche Mods aktiviert oder deaktiviert sind\n- Texturen, die mit einer Mod gebündelt wurden\n\n**Zwischen allen Profilen gemeinsam** (ändert sich nie):\n\n- Eigenständige Texturpakete, die du über den Texturen-Reiter installiert hast\n- Cutscene-Mods\n- Plugins\n- Alle Launcher-Einstellungen\n\nProfile wechseln also nur tatsächlich mod-spezifische Inhalte. Deine globale Einrichtung bleibt überall erhalten.",
+  "platformUnsupportedTitle": "Starten auf dieser Plattform nicht möglich",
+  "platformUnsupportedLinux": "NieR:Automata ist ein Windows-Spiel und benötigt daher eine Kompatibilitätsschicht, um unter Linux ausgeführt zu werden.\n\nInstalliere Steam mit Proton (das Spiel läuft unter Proton problemlos) oder installiere CrossOver/Wine. Sobald eine Laufzeitumgebung vorhanden ist, kann der Launcher das Spiel starten.\n\nUnter nativem Linux ohne Übersetzungsschicht kann das Spiel nicht ausgeführt werden.",
+  "platformUnsupportedMacos": "NieR:Automata ist ein Windows-Spiel. Führe den Launcher über CrossOver/Wine aus – das hat in der Vergangenheit funktioniert, wurde jedoch in letzter Zeit nicht erneut getestet. Unter nativem macOS ohne Übersetzungsschicht kann das Spiel nicht ausgeführt werden.\n\nFalls du es dennoch zum Laufen gebracht hast, verwende bitte direkt die Kommandozeile statt dieses Launchers.",
+  "playDisabledTooltip": "Starten auf dieser Plattform nicht verfügbar",
+  "diagnosticsClose": "Schließen",
+  "diagnosticsSectionDataOverlay": "Überlagerung des ursprünglichen data/-Ordners (manuell abgelegte Dateien)",
+  "diagnosticsSectionExternalLegacy": "Extern / veraltet",
+  "diagnosticsSectionGameRootExtras": "Zusätzliche Dateien im Spielstammverzeichnis (nicht original)",
+  "diagnosticsSectionGameIdentity": "Spiel-Identität",
+  "diagnosticsSectionNamsHealth": "NAMS-Status",
+  "diagnosticsSectionReshade": "ReShade",
+  "diagnosticsSectionMigoto": "3DMigoto",
+  "diagnosticsSectionTexturePacks": "Textur-Pakete",
+  "diagnosticsSectionVanillaDrops": "Dateien im originalen data/",
+  "diagnosticsSectionNonDefault": "Geänderte Einstellungen",
+  "diagnosticsSectionRecentIssues": "Letzte NAMS-Probleme",
+  "diagnosticsExeVariant": "exe: {variant}",
+  "@diagnosticsExeVariant": { "placeholders": { "variant": { "type": "String" } } },
+  "diagnosticsExeUnsupported": "nicht unterstützt",
+  "diagnosticsDlcPresent": "DLC",
+  "diagnosticsGameRunning": "läuft",
+  "diagnosticsNamsPresent": "NAMS.exe",
+  "diagnosticsMissingFiles": "{count, plural, =1{1 fehlende Datei} other{{count} fehlende Dateien}}",
+  "@diagnosticsMissingFiles": { "placeholders": { "count": { "type": "int" } } },
+  "diagnosticsInstalled": "installiert",
+  "diagnosticsEnabled": "aktiv",
+  "diagnosticsShadersMissing": "Shader fehlen",
+  "diagnosticsTexturePacksUnavailable": "NAMS-Texturabfrage nicht verfügbar",
+  "diagnosticsExtraFile": "zusätzlich",
+  "diagnosticsFileCount": "{count, plural, =1{1 Datei} other{{count} Dateien}}",
+  "@diagnosticsFileCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "diagnosticsMoreItems": "... {count} weitere",
+  "@diagnosticsMoreItems": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "refreshButton": "Aktualisieren",
+  "tabModloaderLabel": "Modloader",
+  "tabYorhaLabel": "YoRHa Protocol",
+  "configEditorTitle": "KONFIGURATIONSEDITOR",
+  "changelogTitle": "NEUIGKEITEN",
+  "tipDragTextures": "Ziehe Textur-Mods direkt in den Texturen-Reiter",
+  "tipHdCutscenes": "HD-Cutscene-Mods werden automatisch erkannt und konfiguriert",
+  "tipLodModPreviews": "LOD-Mod-Einstellungen enthalten Vorher-/Nachher-Vorschaubilder",
+  "tipFaqButton": "Über die FAQ-Schaltfläche erfährst du, welche Mods YoRHa Protocol ersetzt",
+  "tipReShadeAuto": "ReShade wird automatisch erkannt – keine manuelle Konfiguration erforderlich",
+  "tipFreecam": "YoRHa Protocol enthält eine integrierte freie Kamera mit Speicherplätzen",
+  "tipCustomQuests": "Benutzerdefinierte Quests folgen bald – bleib gespannt",
+  "sectionNams": "NAMS",
+  "sectionTextureInjection": "TEXTURINJEKTION",
+  "sectionLodMod": "LOD MOD",
+  "sectionLevelOfDetail": "DETAILSTUFE",
+  "sectionAmbientOcclusion": "UMGEBUNGSVERDECKUNG",
+  "sectionShadows": "SCHATTEN",
+  "sectionPostProcessing": "NACHBEARBEITUNG",
+  "labelValidateModelData": "Modelldaten überprüfen",
+  "tooltipValidateModelData": "Das Spiel überprüft Modelldaten beim Laden. Normalerweise schlägt die Prüfung unbemerkt fehl und das Spiel fährt mit beschädigten Daten fort, was unsichtbare Modelle oder Grafikfehler verursachen kann. Ist diese Option aktiviert, zeigt NAMS das Prüfergebnis in einem Dialog an, sodass du genau siehst, welches Modell warum fehlgeschlagen ist.",
+  "labelPreloadMaxDimension": "Maximale Vorladedimension",
+  "tooltipPreloadMaxDimension": "Maximale Texturgröße, die beim Start in den Arbeitsspeicher vorgeladen wird. 2048 = Standard, 4096 = Texturen bis 4K vorladen, 16384 = alles vorladen. Höhere Werte bedeuten längere Ladezeiten, aber weniger Ruckler im Spiel.",
+  "labelPreloadAllTextures": "Alle Texturen vorladen",
+  "tooltipPreloadAllTextures": "Lädt unabhängig von ihrer Größe ALLE Texturen in den Arbeitsspeicher vor. Beseitigt sämtliche Ruckler durch plötzlich eingeblendete Texturen, benötigt aber mindestens 32 GB RAM und verlangsamt den Start deutlich.",
+  "labelEnableLodMod": "LodMod aktivieren",
+  "tooltipEnableLodMod": "Hauptschalter für alle visuellen LodMod-Patches und -Neuschreibungen.",
+  "labelLodMultiplier": "LOD-Multiplikator",
+  "tooltipLodMultiplier": "Steuert die Darstellungsentfernungen der LOD-Stufen (Detailstufen). 0 = LODs deaktiviert (beste Qualität, keine Pop-ins). 1 = ursprünglicher Wert. 10+ hilft, AO-Ausbluten zu reduzieren, ohne LODs vollständig zu deaktivieren. Niedrigere Werte verbessern die Darstellung, können aber Leistung kosten.",
+  "labelDisableManualCulling": "Manuelles Culling deaktivieren",
+  "tooltipDisableManualCulling": "Verhindert, dass Modelle oder Geometrie bei bestimmten Entfernungen oder Kamerawinkeln zufällig verschwinden. Behebt beispielsweise das Verschwinden des Einkaufszentrums nach dem Überqueren der Brücke oder von Gebäuden außerhalb des Lagers. Seltene, unschöne LOD-Modelle, die dadurch sichtbar würden, werden herausgefiltert.",
+  "labelAoWidth": "AO-Breite",
+  "tooltipAoWidth": "Multiplikator für die horizontale AO-Auflösung. Die ursprüngliche AO läuft mit einem Viertel der Bildschirmauflösung. 2.0 = halbe Bildschirmauflösung (schärfere AO, aber rechenintensiv). 1.5 ist ein guter Kompromiss. Bereich: 0.1–2.0. Nur eine Achse auf 2 zu setzen, kann eine leichtere Alternative sein.",
+  "labelAoHeight": "AO-Höhe",
+  "tooltipAoHeight": "Multiplikator für die vertikale AO-Auflösung. Die ursprüngliche AO läuft mit einem Viertel der Bildschirmauflösung. 2.0 = halbe Bildschirmauflösung (schärfere AO, aber rechenintensiv). 1.5 ist ein guter Kompromiss. Bereich: 0.1–2.0. Beide Achsen auf 2.0 können im schlimmsten Fall etwa 10 FPS kosten.",
+  "labelShadowResolution": "Schattenauflösung",
+  "tooltipShadowResolution": "Texturgröße der Schattenkarte. Höher = schärfere Schatten, aber größere GPU-Belastung. 2048 = ursprünglich, 4096 = gute Verbesserung, 8192 = sehr scharf. Muss eine Zweierpotenz sein. Die Schärfe hängt sowohl von der Auflösung als auch von der Entfernung ab (größere Entfernung = mehr abzudeckende Fläche, daher sinkt die Qualität).",
+  "labelDistanceMultiplier": "Entfernungsmultiplikator",
+  "tooltipDistanceMultiplier": "Multipliziert die Schatten-Darstellungsentfernung pro Szene. 2.0 = Schatten sind doppelt so weit sichtbar. Ursprünglicher Wert: 1.0. Deaktiviere die unten stehenden Mindest-/Höchstwerte, damit dies korrekt funktioniert, oder nutze sie, um den vom Multiplikator gesetzten Bereich einzuschränken.",
+  "labelDistanceMinimum": "Mindestentfernung",
+  "tooltipDistanceMinimum": "Untergrenze für die Schatten-Darstellungsentfernung. 0 = aus (kein Mindestwert). Etwa 70 bei einer Auflösung von 8192 entspricht der ursprünglichen Qualität und erhöht die Schattenentfernung deutlich.",
+  "labelDistanceMaximum": "Höchstentfernung",
+  "tooltipDistanceMaximum": "Obergrenze für die Schatten-Darstellungsentfernung. 0 = aus (kein Höchstwert). Nur sinnvoll, wenn die ursprünglichen Entfernungen des Spiels Leistungsprobleme verursachen.",
+  "labelDistancePss": "PSS-Entfernung",
+  "tooltipDistancePss": "Aktiviert die PSS-Schattenverteilung für eine gleichmäßigere Schattenqualität. 0 = aus. Gute Werte: 0.5–0.9. Sieht in einigen Gebieten hervorragend aus, kann in anderen jedoch unscharf wirken. Sollte deutlich höher als andere Entfernungswerte gesetzt werden (etwa 1500 für große offene Gebiete).",
+  "labelFilterStrengthBias": "Filterstärke-Versatz",
+  "tooltipFilterStrengthBias": "Passt die Stärke des Schatten-Weichzeichnungsfilters pro Szene an. 0 = aus. -1 = schärfere Schatten. Positive Werte = weichere Schatten. Verschiedene Gebiete verwenden unterschiedliche Stärken (Wald = weicher). Kann mit Mindest-/Höchstwerten kombiniert werden, um den Bereich einzuschränken.",
+  "labelFilterStrengthMin": "Minimale Filterstärke",
+  "tooltipFilterStrengthMin": "Erzwingt in allen Gebieten eine minimale Schattenfilterstärke. 0 = aus. Der Spielstandard variiert je nach Szene (meist etwa 4). Verhindert, dass Schatten in einem Gebiet zu scharf werden.",
+  "labelFilterStrengthMax": "Maximale Filterstärke",
+  "tooltipFilterStrengthMax": "Erzwingt in allen Gebieten eine maximale Schattenfilterstärke. 0 = aus. Der Spielstandard variiert je nach Szene (meist etwa 4). Verhindert, dass Schatten in einem Gebiet zu unscharf werden.",
+  "labelHqShadowModels": "HQ-Schattenmodelle",
+  "tooltipHqShadowModels": "Verwendet für Schatten HQ-Echtzeitmodelle statt statischer LQ-Modelle. Baumschatten bewegen sich dann mit dem Wind, statt eingefroren zu sein. Experimentell – funktioniert in den Stadtruinen gut, kann in seltenen Gebieten jedoch Probleme verursachen.",
+  "labelForceAllShadowModels": "Schatten für alle Modelle erzwingen",
+  "tooltipForceAllShadowModels": "Erzwingt Schattenwurf für alle Modelle, einschließlich kleiner Objekte wie Steine und Gras. Experimentell – in seltenen Fällen können unsichtbare Modelle Schatten werfen. Bisher wurden keine Probleme festgestellt.",
+  "labelDisableVignette": "Vignette deaktivieren",
+  "tooltipDisableVignette": "Entfernt den dunklen Vignetteneffekt an den Bildschirmrändern. Bei einigen Ladebildschirmen kann er weiterhin fest in die Texturen eingebettet sein.",
+  "configAppliesOnRestart": "Gilt nach einem Neustart",
+  "configAppliesLive": "Gilt sofort (live)",
+  "dropZoneBrowseFolder": "Oder einen Ordner auswählen",
+  "labelGiEnabled": "Globale Beleuchtung aktivieren",
+  "tooltipGiEnabled": "Globale Beleuchtung im FAR-Stil. Deutlicher FPS-Gewinn auf Kosten eines Teils der Beleuchtungsgenauigkeit.",
+  "labelGiWorkgroupSize": "GI-Arbeitsgruppengröße",
+  "tooltipGiWorkgroupSize": "Anzahl der Lichtvolumen, die pro GI-Aufruf verarbeitet werden. 128 = ursprüngliche Qualität, 64/32/16 = zunehmend schneller, aber gröber. Niedrigere Werte tauschen Beleuchtungsgenauigkeit gegen FPS.",
+  "labelGiMinLightExtent": "Minimale GI-Lichtausdehnung",
+  "tooltipGiMinLightExtent": "Entfernt kleine, weit entfernte Lichter aus der GI. 0.0 = kein Culling (alle Lichter tragen bei), 0.5 = aggressives Culling. Bereich: 0.0–1.0.",
+  "cardExperimental": "EXPERIMENTELL",
+  "lodModResetButton": "Auf Standardwerte zurücksetzen",
+  "lodModResetConfirmTitle": "LodMod-Einstellungen zurücksetzen?",
+  "lodModResetConfirmBody": "Dadurch wird jedes LodMod-Feld in diesem Reiter auf seinen Standardwert zurückgesetzt. Deine aktuellen Werte werden überschrieben. Fortfahren?",
+  "lodModResetConfirmAction": "Zurücksetzen",
+  "lodModResetToast": "LodMod-Einstellungen auf Standardwerte zurückgesetzt",
+  "experimentalWarningTitle": "Experimentell – kann Fehler verursachen",
+  "experimentalWarningBody": "Diese Einstellungen umgehen Spielgrenzen, auf die sich die Engine verlässt. Sie werden NICHT unterstützt und verursachen bekanntermaßen Probleme. Aktiviere sie nur, wenn du genau weißt, was du tust. Fehler, die dadurch entstehen, werden weder in NAMS noch im Launcher untersucht.",
+  "labelFpsUncapInMenus": "FPS in Menüs / beim Laden freigeben",
+  "tooltipFpsUncapInMenus": "Entfernt die 60-FPS-Begrenzung in Menüs und Ladebildschirmen. Das Laden wirkt schneller und Menüanimationen werden flüssiger. Sicher: Das Gameplay bleibt unbeeinflusst.\n\nKann live umgeschaltet werden, wenn die Option beim Spielstart aktiviert war. War sie beim Start deaktiviert, erfordert das spätere Aktivieren einen Neustart.",
+  "labelFpsUncapInGameplay": "FPS im Gameplay freigeben",
+  "tooltipFpsUncapInGameplay": "Entfernt die 60-FPS-Begrenzung während des Gameplays. WARNUNG: Physik, Animationen und das Timing von Cutscenes in NieR:Automata sind an die 60-FPS-Begrenzung gekoppelt. Das Aufheben verursacht fehlerhafte Physik (Sprunghöhe, Unverwundbarkeitsfenster beim Ausweichen), veränderte Animationsgeschwindigkeiten, asynchronen Ton in Cutscenes und Softlocks in geskripteten Abläufen. Verwende dies nur, wenn du die Kompromisse genau verstehst.\n\nKann live umgeschaltet werden, wenn die Option beim Spielstart aktiviert war. War sie beim Start deaktiviert, erfordert das spätere Aktivieren einen Neustart.",
+  "labelFpsLimit": "FPS-Begrenzung",
+  "tooltipFpsLimit": "FPS-Grenze, die bei freigegebener Bildrate gilt. 0 = unbegrenzt. Ansonsten 60–1000 (NAMS begrenzt Werte außerhalb dieses Bereichs). Werte unter 60 werden angehoben, weil die interne Spin-Wait-Schleife des Spiels Framezeiten ignoriert, die länger als das ursprüngliche 60-FPS-Ziel sind. Tipp: Eine Begrenzung auf die Hälfte der Bildwiederholrate deines Monitors liefert flüssigere Bewegungen als die ursprünglichen 60 FPS (z. B. 72 bei 144 Hz, 82 bei 165 Hz oder 120 bei 240 Hz).",
+  "tutorialValidateModel": "Zeigt an, wenn das Modell einer Mod beschädigt ist, statt unbemerkt fehlzuschlagen.",
+  "labelValidateScripts": "Skripte überprüfen",
+  "tooltipValidateScripts": "Zeigt Skriptfehler in einem Dialog an, statt dass das Spiel kommentarlos abstürzt.",
+  "previewValidationDialog": "ÜBERPRÜFUNGSDIALOG",
+  "previewScriptErrorDialog": "SKRIPTFEHLERDIALOG",
+  "labelLoadingStallHints": "Hinweise bei festhängendem Laden",
+  "tooltipLoadingStallHints": "Zeigt zunehmend deutliche Hinweise an, wenn der Ladebildschirm zu lange dauert. Hilft dabei, fehlende oder gelöschte Mod-Dateien zu erkennen.",
+  "labelFixWindTimerBug": "Wind-Timer-Fehler beheben",
+  "tooltipFixWindTimerBug": "Behebt einen Fehler des ursprünglichen Spiels, durch den die Windanimation nach Erreichen der maximalen Spielzeit stoppt. Verwendet stattdessen den Geschwindigkeitsfaktor des Spiels.",
+  "labelDisablePluginLoading": "Plugin-Laden deaktivieren",
+  "tooltipDisablePluginLoading": "Überspringt das Laden aller Plugin-DLLs (z. B. des YoRHa-Protocol-Arbeitsbereichs). Alle Engine-Funktionen von NAMS funktionieren weiterhin.",
+  "labelDisableContentFeatures": "Inhaltsfunktionen deaktivieren",
+  "tooltipDisableContentFeatures": "Hauptschalter für alle Funktionen der Inhaltsschicht. Ist er aktiviert, läuft NAMS als reine Engine-Schicht (Mauskorrekturen, Überprüfung, Heap-Anpassung, Absturzbehebungen), ohne Unterstützung für Gegenstands-, Waffen-, Outfit-, Quest- oder Accessoire-Mods. Nützlich für Benchmarks oder zur Abgrenzung von Engine- gegenüber Inhaltsproblemen.",
+  "labelContentItems": "Gegenstände / Waffen / Läden",
+  "tooltipContentItems": "Benutzerdefinierte Gegenstände, Waffen, Outfits und Ladeneinträge. Deaktivieren, um ohne gegenstandsbezogene Mods zu spielen. Neustart erforderlich.",
+  "labelContentAccessories": "Accessoires",
+  "tooltipContentAccessories": "Benutzerdefinierte Accessoires (Gesichtsmasken, Lunar Tear, Masamune-Maske usw.) sowie der Ablauf zum An- und Ablegen. Deaktivieren, um ohne Accessoire-Mods zu spielen. Neustart erforderlich.",
+  "labelContentAssembleMeshes": "Spielermodelle",
+  "tooltipContentAssembleMeshes": "Benutzerdefinierte Spielermodelle (Mesh-Wechsel sowie Haar-, Outfit- und Maskenüberschreibungen). Deaktivieren, um die ursprünglichen Spielermodelle unverändert darzustellen. Neustart erforderlich.",
+  "labelContentQuestIntegration": "Quests / Nachrichten / Sprache",
+  "tooltipContentQuestIntegration": "Benutzerdefinierte Quests, Nachrichten, Sprachzeilen und die Quest-UI-Integration, die sie aktiviert. Deaktivieren, um ohne Quest-Mods zu spielen. Neustart erforderlich.",
+  "labelContentEffectsApplier": "Effektregeln",
+  "tooltipContentEffectsApplier": "Wendet in jedem Frame Waffen- und Outfit-Effektregeln auf Spielerwerte an (Schadensmultiplikatoren, Änderungen beim Ausweichen, Immunitäten usw.).",
+  "labelContentEquipTracker": "Ausrüstungsüberwachung",
+  "tooltipContentEquipTracker": "Erkennt Änderungen beim Ausrüsten und Ablegen von Waffen. Steuert Effektregeln und SDK-Callbacks beim Ausrüsten.",
+  "labelContentMcd": "Benutzerdefinierter Text",
+  "tooltipContentMcd": "Anpassung von Texten im Spiel (benutzerdefinierte Gegenstandsnamen, Beschreibungen und von Mods bereitgestellte Dialogtexte).",
+  "labelContentBuddyRubySelector": "Begleiter-Outfit-Auswahl (experimentell)",
+  "tooltipContentBuddyRubySelector": "Patcht das globale Gesprächsskript für Begleiter und fügt einen Eintrag „Outfit wechseln“ hinzu, der gemoddete Begleiter-Outfits auflistet. Deaktiviere dies, falls das gepatchte Gesprächsskript Instabilität verursacht oder andere Skript-Mods beeinträchtigt.",
+  "cardContentFeatures": "INHALTSFUNKTIONEN",
+  "contentFeaturesDescription": "Einzelschalter für Funktionen der Inhaltsschicht. Standardmäßig sind alle aktiviert. Nützlich, um ein Problem auf ein bestimmtes Subsystem einzugrenzen. Erfordert einen Neustart des Spiels.",
+  "labelDisableReShadeLoading": "ReShade-Laden deaktivieren",
+  "tooltipDisableReShadeLoading": "Überspringt die automatische Erkennung der ReShade-DLL im Ordner reshade/ und lädt sie nicht mehr.",
+  "labelDisable3dmigotoLoading": "3DMigoto-Laden deaktivieren",
+  "tooltipDisable3dmigotoLoading": "Lädt die 3DMigoto-Runtime aus thirdparty/3dmigoto/ nicht mehr. Ausschalten, um Shader-Mods nicht zu laden.",
+  "labelDisableTextureInjection": "Texturinjektion deaktivieren",
+  "tooltipDisableTextureInjection": "Überspringt die Texturinjektion aus dem Mods-Ordner. Nützlich zur Fehlereingrenzung oder wenn du installierte Textur-Mods nicht verwenden möchtest.",
+  "labelOutfitSwapVisualEffects": "Visuelle Effekte beim Outfit-Wechsel",
+  "tooltipOutfitSwapVisualEffects": "Spielt beim direkten Outfit-Wechsel die visuellen Effekte ab: die Blendenanimation beim Erscheinen des Pods, den Vorhang und den Glitch-Filter des Hacking-Bildschirms. Deaktiviere dies für einen sofortigen Wechsel ohne Effekte – das Modell wird weiterhin neu geladen. Wirkt sofort, kein Neustart erforderlich.",
+  "labelExperimentalDefaultOutfits": "Standard-Outfits (experimentell)",
+  "tooltipExperimentalDefaultOutfits": "Ermöglicht es, installierte Outfit-Mods ab Spielstart zu aktivieren, so als lägen ihre Dateien im data-Ordner des Spiels. Wenn aktiviert, zeigt das Mod-Detailfenster pro Spielermodell einen Stern-Button, um es als Standard beim Start festzulegen. Standardmäßig aus, solange sich die Funktion stabilisiert. Erfordert einen Spielneustart.",
+  "labelDisableSplashScreen": "Startbildschirm deaktivieren",
+  "tooltipDisableSplashScreen": "Überspringt das Startfenster, das während des Ladens des Spiels angezeigt wird. Das ursprüngliche Spiel zeigte sein Fenster, bevor es bereit war, was Größenänderungs- und Flackerartefakte verursachte; NAMS vervollständigt den Startbildschirm, sodass das Fenster erst sichtbar wird, wenn es bereit ist. Durch Aktivieren dieser Option kehren die ursprünglichen Startartefakte zurück.",
+  "tooltipValidateModelDataSettings": "Zeigt Fehler bei der Modellüberprüfung in einem Dialog an, statt unbemerkt fehlzuschlagen.",
+  "heapDefault": "Standard",
+  "heapPlus16MB": "+16 MB",
+  "heapPlus32MB": "+32 MB",
+  "heapPlus64MB": "+64 MB",
+  "heapPlus128MB": "+128 MB",
+  "heapPlus256MB": "+256 MB",
+  "heapCustomMB": "+{mb} MB",
+  "@heapCustomMB": {
+    "placeholders": {
+      "mb": {
+        "type": "String"
+      }
+    }
+  },
+  "heapScriptEngine": "Skript-Engine",
+  "heapScriptEngineDesc": "Für komplexe Skript-Mods (mRuby / HAP).",
+  "heapPlayerModels": "Spielermodelle",
+  "heapPlayerModelsDesc": "Für große Mods, die Spielermodelle ersetzen.",
+  "heapPlayerTextures": "Spielertexturen",
+  "heapPlayerTexturesDesc": "Für hochauflösende Spielertextur-Mods.",
+  "heapEnemyBgModels": "Gegner-/Hintergrundmodelle",
+  "heapEnemyBgModelsDesc": "Für Mods an Gegner- oder Umgebungsmodellen.",
+  "heapEnemyBgTextures": "Gegner-/Hintergrundtexturen",
+  "heapEnemyBgTexturesDesc": "Für hochauflösende Gegner- oder Umgebungstexturen.",
+  "tutorialLodModEnable": "Aktiviere dies für eine bessere Darstellung. Dies ist die wirkungsvollste Einstellung.",
+  "tutorialLodModShadowRes": "Höhere Werte bedeuten schärfere Schatten. 8192 wird empfohlen.",
+  "tutorialLodModComparison": "Klicke auf einen Vergleich, um den Unterschied im Vollbild anzuzeigen.",
+  "comparisonVanilla": "ORIGINAL",
+  "comparisonDefaultEnabled": "STANDARD (AKTIVIERT)",
+  "comparisonAo05x": "AO 0.5x",
+  "comparisonAo20x": "AO 2.0x",
+  "comparisonVignetteOn": "VIGNETTE AN",
+  "comparisonVignetteOff": "VIGNETTE AUS",
+  "comparison2048": "2048",
+  "comparison8192": "8192",
+  "comparisonDefault": "STANDARD",
+  "comparison20x": "2.0x",
+  "comparisonPssMinus5": "PSS -5.0",
+  "comparisonBiasMinus5": "VERSATZ -5.0",
+  "comparisonOff": "AUS",
+  "comparison30": "3.0",
+  "comparisonHqForceAll": "HQ + ALLE ERZWINGEN",
+  "tutorialKeybind": "Klicke, um die Tastenbelegung zu ändern. Drücke eine beliebige Taste, um sie zuzuweisen.",
+  "tutorialDamageMultiplier": "Passe das Gameplay an – erhöhe den Schaden, aktiviere unendliche Gesundheit und mehr.",
+  "labelOpenWorkspace": "Arbeitsbereich öffnen",
+  "tooltipOpenWorkspace": "Öffnet den YoRHa-Protocol-Arbeitsbereich im Spiel.",
+  "labelFreezeGame": "Spiel einfrieren",
+  "tooltipFreezeGame": "Friert das Spiel ein oder setzt es fort. Nützlich für Screenshots und Einzelbildschritte.",
+  "labelMaxSpeed": "Maximale Geschwindigkeit",
+  "tooltipMaxSpeed": "Schaltet die maximale Spielgeschwindigkeit für schnelles Reisen oder Tests ein und aus.",
+  "labelFreeCam": "Freie Kamera",
+  "tooltipFreeCam": "Schaltet die freie Kamera ein und aus. Volle Unterstützung für Tastatur/Maus und Controller.",
+  "labelPhaseJump": "Phasensprung",
+  "tooltipPhaseJump": "Springt zu einer zuvor ausgewählten Spielphase oder Szene. Lege das Ziel im Spiel fest.",
+  "labelToggleInput": "Eingabe umschalten",
+  "tooltipToggleInput": "Schaltet die Spieleingabe ein oder aus, während der Arbeitsbereich geöffnet ist.",
+  "labelAdvanceFrame": "Einzelbild weiter",
+  "tooltipAdvanceFrame": "Geht bei eingefrorenem Spiel ein Einzelbild vorwärts. Gedrückt halten, um schneller fortzufahren.",
+  "labelDevMode": "Entwicklermodus",
+  "tooltipDevMode": "Schaltet den Entwicklermodus ein und aus. Aktiviert Penetrations-/Stresstest-Schaltflächen und Debug-Werkzeuge.",
+  "labelWarpSave1": "Warp 1 speichern",
+  "tooltipWarpSave1": "Speichert die aktuelle Position und Ausrichtung im Warp-Speicherplatz 1.",
+  "labelWarpGoto1": "Zu 1 warpen",
+  "tooltipWarpGoto1": "Teleportiert zur im Warp-Speicherplatz 1 gespeicherten Position.",
+  "labelWarpSave2": "Warp 2 speichern",
+  "tooltipWarpSave2": "Speichert die aktuelle Position und Ausrichtung im Warp-Speicherplatz 2.",
+  "labelWarpGoto2": "Zu 2 warpen",
+  "tooltipWarpGoto2": "Teleportiert zur im Warp-Speicherplatz 2 gespeicherten Position.",
+  "labelGlobalKeybinds": "Globale Tastenbelegungen",
+  "tooltipGlobalKeybinds": "Tastenbelegungen funktionieren auch bei geschlossenem Arbeitsbereich.",
+  "labelLoadingSpeedup": "Schnelleres Laden",
+  "tooltipLoadingSpeedup": "Beschleunigt Ladebildschirme.",
+  "labelShaders": "Shader",
+  "tooltipShaders": "Shader des Arbeitsbereichs. Für bessere Leistung deaktivieren.",
+  "labelSound": "Ton",
+  "tooltipSound": "Ton bei Interaktionen mit der Benutzeroberfläche des Arbeitsbereichs.",
+  "labelDamageMultiplier": "Schadensmultiplikator",
+  "tooltipDamageMultiplier": "2.0 = doppelter Schaden.",
+  "labelSyncEnemyLevels": "Gegnerstufen synchronisieren",
+  "tooltipSyncEnemyLevels": "Passt die Stufen der Gegner an deine Stufe an.",
+  "labelInfiniteHealth": "Unendliche Gesundheit",
+  "tooltipInfiniteHealth": "Du erleidest keinen Schaden.",
+  "labelInfiniteJump": "Unendliche Sprünge",
+  "tooltipInfiniteJump": "Unbegrenzte Sprünge in der Luft.",
+  "labelNoPodCooldown": "Keine Pod-Abklingzeit",
+  "tooltipNoPodCooldown": "Pod-Programme besitzen keine Abklingzeit.",
+  "labelInfiniteAirDash": "Unendliche Luftsprints",
+  "tooltipInfiniteAirDash": "Unbegrenzte Sprints in der Luft.",
+  "labelAutoStart": "Automatisch starten",
+  "tooltipAutoStart": "Startet den Zufallsgenerator beim Spielstart automatisch.",
+  "labelGroundEnemies": "Bodengegner",
+  "tooltipGroundEnemies": "Zufällige bodengebundene Gegner-Spawns.",
+  "labelFlyingEnemies": "Fliegende Gegner",
+  "tooltipFlyingEnemies": "Zufällige fliegende Gegner-Spawns.",
+  "labelAllowBigEnemies": "Große Gegner erlauben",
+  "tooltipAllowBigEnemies": "Erlaubt große Gegner.",
+  "labelIncludeDlcEnemies": "DLC-Gegner einbeziehen",
+  "tooltipIncludeDlcEnemies": "Bezieht DLC-Gegner ein.",
+  "tutorialCameraAccel": "Entfernt die Mausbeschleunigung für eine direkte 1:1-Eingabe.",
+  "tutorialWipBanner": "Diese Funktionen erscheinen in zukünftigen NAMS-Aktualisierungen.",
+  "labelFixCameraAcceleration": "Kamerabeschleunigung korrigieren",
+  "tooltipFixCameraAcceleration": "Lineare 1:1-Mausbewegung. Entfernt Totzone und Beschleunigungskurve aus der Kameradrehung.",
+  "labelSensitivity": "Empfindlichkeit",
+  "tooltipSensitivity": "Multiplikator für die Kameraempfindlichkeit. Höher = schnellere Drehung. 2.0 ist ein guter Standardwert.",
+  "labelAimSensitivity": "Zielempfindlichkeit",
+  "tooltipAimSensitivity": "Zielempfindlichkeit für Draufsicht und Seitenansicht. 0.001 für etwa 3500 DPI, 0.003 für etwa 800 DPI.",
+  "labelAimOutputMultiplier": "Zielausgabe-Multiplikator",
+  "tooltipAimOutputMultiplier": "Direkter Multiplikator für die Fadenkreuzgeschwindigkeit nach der Normalisierung. Höher = schnelleres Fadenkreuz. Die meisten Benutzer müssen diesen Wert nicht ändern.",
+  "labelDisablePodPet": "Pod-Streicheln deaktivieren",
+  "tooltipDisablePodPet": "Deaktiviert die durch Mausbewegung ausgelöste Pod-Streichelanimation. Empfohlen.",
+  "labelDebugMenuKey": "Taste für Debug-Menü",
+  "tooltipDebugMenuKey": "Öffnet das nach Abschluss des Spiels zugängliche Debug-Menü. Normalerweise ist dafür ein Controller erforderlich – diese Belegung ermöglicht es mit der Tastatur.",
+  "labelThirdPersonMode": "Korrektur der Drittperson-Kamera",
+  "tooltipThirdPersonMode": "Direkte Mauseingabe für die Drittperson-Kamera. Gleichmäßige, unmittelbare Kamerasteuerung, die die Mausoptionen im Spiel ignoriert.",
+  "labelThirdPersonCharFollow": "Kamera folgt dem Charakter",
+  "tooltipThirdPersonCharFollow": "Behält die automatische Kameraführung des Spiels beim Bewegen bei, wie mit einem Controller.",
+  "labelThirdPersonSensX": "Horizontale Empfindlichkeit",
+  "tooltipThirdPersonSensX": "Kamerageschwindigkeit nach links und rechts. Ein negativer Wert kehrt die Richtung um.",
+  "labelThirdPersonSensY": "Vertikale Empfindlichkeit",
+  "tooltipThirdPersonSensY": "Kamerageschwindigkeit nach oben und unten. Ein negativer Wert kehrt die Richtung um.",
+  "labelAimMode": "Pod-Zielen korrigieren",
+  "tooltipAimMode": "Entfernt Begrenzung und Totzone beim Zielen mit Pod oder Mech in Draufsicht und Seitenansicht.",
+  "labelAimCrosshair": "Fadenkreuzmodus",
+  "tooltipAimCrosshair": "Zielen durch Zeigen: Der Pod zielt auf ein Fadenkreuz, das deiner Maus folgt, ähnlich wie in einem Twin-Stick-Shooter. Das Fadenkreuz besteht aus den eigenen UI-Elementen des Spiels und wirkt daher, als hätte es schon immer zu NieR:Automata gehört. Empfohlen.",
+  "labelAimCrosshairAlways": "Fadenkreuz immer anzeigen",
+  "tooltipAimCrosshairAlways": "Hält das Fadenkreuz auch sichtbar, wenn nicht geschossen wird. Aus = nur beim Schießen sichtbar.",
+  "naiomNeedsCrosshair": "Aktiviere den Fadenkreuzmodus, um dies zu verwenden",
+  "labelAimSensX": "Horizontale Zielempfindlichkeit",
+  "tooltipAimSensX": "Multiplikator für die Zielgeschwindigkeit nach links und rechts. Ein negativer Wert kehrt die Richtung um.",
+  "labelAimSensY": "Vertikale Zielempfindlichkeit",
+  "tooltipAimSensY": "Multiplikator für die Zielgeschwindigkeit nach oben und unten. Ein negativer Wert kehrt die Richtung um.",
+  "labelDisableTapEvade": "Ausweichen per Doppeltippen deaktivieren",
+  "tooltipDisableTapEvade": "Verhindert das Ausweichen durch doppeltes Antippen von Bewegungstasten. Nur zusammen mit einer eigenen Ausweichtaste sinnvoll.",
+  "labelCustomCursorMenu": "Menüzeiger",
+  "tooltipCustomCursorMenu": "Benutzerdefinierter Mauszeiger für die Menüs (.cur- oder .ani-Datei). Leer = mitgelieferter Standardzeiger.",
+  "labelCustomCursorHacking": "Hacking-Zeiger",
+  "tooltipCustomCursorHacking": "Benutzerdefinierter Zeiger für das Hacking-Minispiel. Leer = derselbe Zeiger wie im Menü.",
+  "labelDisableDefaultCursor": "Systemzeiger beibehalten",
+  "tooltipDisableDefaultCursor": "Verwendet nicht den mitgelieferten Zeiger, sondern behält den normalen Windows-Zeiger bei, sofern oben keine eigene Datei ausgewählt wurde.",
+  "labelBindMoveForward": "Vorwärts bewegen",
+  "tooltipBindMoveForward": "Entspricht der Belegung im Spiel.",
+  "labelBindMoveBackward": "Rückwärts bewegen",
+  "tooltipBindMoveBackward": "Entspricht der Belegung im Spiel.",
+  "labelBindMoveLeft": "Nach links bewegen",
+  "tooltipBindMoveLeft": "Entspricht der Belegung im Spiel.",
+  "labelBindMoveRight": "Nach rechts bewegen",
+  "tooltipBindMoveRight": "Entspricht der Belegung im Spiel.",
+  "labelBindJump": "Springen",
+  "tooltipBindJump": "Entspricht der Belegung im Spiel.",
+  "labelBindWalk": "Gehen",
+  "tooltipBindWalk": "Gedrückt halten, um langsam zu gehen.",
+  "labelBindAutoRun": "Automatisch laufen",
+  "tooltipBindAutoRun": "Läuft weiter, ohne dass Bewegungstasten gedrückt gehalten werden müssen.",
+  "labelBindLightAttack": "Leichter Angriff",
+  "tooltipBindLightAttack": "Entspricht der Belegung im Spiel.",
+  "labelBindHeavyAttack": "Schwerer Angriff",
+  "tooltipBindHeavyAttack": "Entspricht der Belegung im Spiel.",
+  "labelBindFire": "Feuern / Pod-Sprint",
+  "tooltipBindFire": "Feuert den Pod ab. Zusammen mit Springen wird der Pod-Sprint ausgeführt – auch bei aktiviertem automatischem Feuern.",
+  "labelBindProgram": "Programm verwenden",
+  "tooltipBindProgram": "Verwendet das Pod- oder Flugeinheitenprogramm.",
+  "labelBindLockOn": "Zielerfassung",
+  "tooltipBindLockOn": "Erfasst das aktuelle Ziel.",
+  "labelBindUse": "Benutzen / Interagieren",
+  "tooltipBindUse": "Entspricht der Belegung im Spiel.",
+  "labelBindSelfDestruct": "Selbstzerstörung",
+  "tooltipBindSelfDestruct": "Entspricht der Belegung im Spiel.",
+  "labelBindLight": "Licht umschalten",
+  "tooltipBindLight": "Entspricht der Belegung im Spiel.",
+  "labelBindResetCamera": "Kamera zurücksetzen",
+  "tooltipBindResetCamera": "Entspricht der Belegung im Spiel.",
+  "labelBindSwitchWeapon": "Waffensatz wechseln",
+  "tooltipBindSwitchWeapon": "Wechselt zyklisch zwischen den ausgerüsteten Waffensätzen.",
+  "labelBindNextProgram": "Nächstes Programm",
+  "tooltipBindNextProgram": "Wählt das nächste Pod-Programm aus.",
+  "labelBindPreviousProgram": "Vorheriges Programm",
+  "tooltipBindPreviousProgram": "Wählt das vorherige Pod-Programm aus.",
+  "labelBindMenuUp": "Menü nach oben",
+  "tooltipBindMenuUp": "Navigiert in Menüs nach oben.",
+  "labelBindMenuDown": "Menü nach unten",
+  "tooltipBindMenuDown": "Navigiert in Menüs nach unten.",
+  "labelBindMenuLeft": "Menü nach links",
+  "tooltipBindMenuLeft": "Navigiert in Menüs nach links.",
+  "labelBindMenuRight": "Menü nach rechts",
+  "tooltipBindMenuRight": "Navigiert in Menüs nach rechts.",
+  "labelBindMenuOpen": "Menü öffnen",
+  "tooltipBindMenuOpen": "Öffnet das Systemmenü.",
+  "labelBindMenuBack": "Im Menü zurück / schließen",
+  "tooltipBindMenuBack": "Geht in Menüs zurück oder schließt sie auf der obersten Ebene.",
+  "labelBindMenuEnter": "Menü bestätigen / Dialog überspringen",
+  "tooltipBindMenuEnter": "Öffnet das ausgewählte Untermenü oder überspringt einen Dialog.",
+  "labelBindShortcutMenu": "Schnellmenü",
+  "tooltipBindShortcutMenu": "Öffnet das Schnellmenü.",
+  "labelBindEvade": "Ausweichen (eigene Taste)",
+  "tooltipBindEvade": "Weicht mit einer einzelnen Taste in die aktuelle Bewegungsrichtung aus – kein Doppeltippen erforderlich.",
+  "labelBindAutoFire": "Automatisches Feuern umschalten",
+  "tooltipBindAutoFire": "Schaltet dauerhaftes Pod-Feuer ein oder aus, sodass die Feuertaste nicht gehalten werden muss.",
+  "labelBindNextItem": "Nächster Gegenstand",
+  "tooltipBindNextItem": "Wechselt sofort zum nächsten Schnellgegenstand. Funktioniert unbemerkt im Hintergrund – im Spiel erscheint absichtlich kein Gegenstandsmenü.",
+  "labelBindPreviousItem": "Vorheriger Gegenstand",
+  "tooltipBindPreviousItem": "Wechselt sofort zum vorherigen Schnellgegenstand. Funktioniert unbemerkt im Hintergrund – im Spiel erscheint absichtlich kein Gegenstandsmenü.",
+  "labelBindUseItem": "Gegenstand verwenden",
+  "tooltipBindUseItem": "Verwendet den ausgewählten Schnellgegenstand sofort. Funktioniert unbemerkt im Hintergrund – im Spiel erscheint absichtlich kein Gegenstandsmenü.",
+  "labelBindThirdPersonToggle": "Kamerakorrektur umschalten",
+  "tooltipBindThirdPersonToggle": "Schaltet die Korrektur der Drittperson-Kamera während des Spielens ein oder aus.",
+  "labelBindAimToggle": "Zielkorrektur umschalten",
+  "tooltipBindAimToggle": "Schaltet die Korrektur für das Pod-Zielen während des Spielens ein oder aus.",
+  "keybindUnbound": "Nicht belegt",
+  "keybindConflict": "Wird außerdem verwendet von: {other}",
+  "@keybindConflict": {
+    "placeholders": {
+      "other": {
+        "type": "String"
+      }
+    }
+  },
+  "keybindMouseNotSupported": "Maustasten funktionieren für diese Aktion nicht – sie benötigt eine Tastaturtaste.",
+  "naiomResetConfirmTitle": "NAIOM-Einstellungen zurücksetzen?",
+  "naiomResetConfirmBody": "Dadurch werden alle Kamera-, Ziel-, Zeiger- und Tastenbelegungseinstellungen in diesem Reiter auf ihre Standardwerte zurückgesetzt. Bis du auf Speichern drückst, wird nichts geschrieben, sodass du die Änderungen anschließend noch verwerfen kannst. Fortfahren?",
+  "naiomControllerNote": "Spielst du mit einem Controller? Diese Einstellungen sind für Maus und Tastatur ausgelegt, einige davon – insbesondere die Kamera- und Zielkorrekturen – beeinflussen jedoch auch Controller-Eingaben. Wenn du wieder mit einem Controller spielst, deaktiviere diese Einstellungen zuerst, um das ursprüngliche Gamepad-Gefühl wiederherzustellen.",
+  "cardCheatEngine": "CHEAT ENGINE",
+  "cheatTableConvertDesc": "Du hast eine Cheat-Engine-Tabelle (.CT), die nicht mit NAMS funktioniert? Repariere sie hier. Die korrigierte Kopie wird neben der Originaldatei gespeichert.",
+  "cheatTableConvertButton": "Cheat-Tabelle reparieren ...",
+  "cheatTableConvertSuccess": "Repariert! Gespeichert als {file}",
+  "@cheatTableConvertSuccess": {
+    "placeholders": {
+      "file": {
+        "type": "String"
+      }
+    }
+  },
+  "cheatTableConvertNone": "Diese Tabelle funktioniert bereits mit NAMS – nichts zu reparieren.",
+  "cheatTableConvertError": "Diese Tabelle konnte nicht repariert werden. Stelle sicher, dass die Datei eine gültige .CT-Datei ist.",
+  "naiomBetaBadge": "BETA",
+  "naiomRestartBadge": "NEUSTART",
+  "naiomRestartTooltip": "Wird nach einem Neustart des Spiels wirksam.",
+  "naiomNeedsCameraFix": "Aktiviere „Kamerabeschleunigung korrigieren“, um dies zu verwenden",
+  "naiomNeedsThirdPerson": "Aktiviere „Korrektur der Drittperson-Kamera“, um dies zu verwenden",
+  "naiomNeedsAimMode": "Aktiviere „Pod-Zielen korrigieren“, um dies zu verwenden",
+  "naiomCrosshairOverrides": "Wird bei aktiviertem Fadenkreuzmodus nicht verwendet – das Fadenkreuz besitzt eine eigene Geschwindigkeit",
+  "naiomThirdPersonRestartNote": "Das Aktivieren erfordert einen Neustart des Spiels. Das Deaktivieren funktioniert während des Spielens.",
+  "naiomTapEvadeWarning": "Es ist keine Ausweichtaste belegt! Wenn Ausweichen per Doppeltippen deaktiviert und keine eigene Ausweichtaste festgelegt ist, kannst du überhaupt nicht ausweichen. Belege unter „Nicht standardmäßige Aktionen“ eine Ausweichtaste.",
+  "naiomCrosshairNote": "Das Fadenkreuz wird nur während des normalen Gameplays in Draufsicht oder Seitenansicht bei Mauseingabe angezeigt. Falls es an einer Stelle nicht sichtbar ist, ist das normalerweise beabsichtigt und kein Fehler.",
+  "naiomBindingsIntro": "Zusätzliche Tasten neben der ursprünglichen Steuerung des Spiels – die Originaltasten funktionieren weiterhin. Änderungen gelten nach dem Speichern; ein Neustart ist nicht erforderlich.",
+  "naiomCrosshairPreviewLabel": "Fadenkreuzmodus im Spiel",
+  "naiomCursorPick": "Datei auswählen ...",
+  "naiomCursorClear": "Entfernen",
+  "naiomCursorInvalid": "Keine gültige Zeigerdatei – benötigt eine echte .cur- oder .ani-Datei",
+  "naiomLiveBadge": "LIVE",
+  "naiomLiveTooltip": "Gilt nach dem Speichern – kein Neustart des Spiels erforderlich.",
+  "labelPreloadMaxDimensionShort": "Maximale Vorladedimension",
+  "tooltipPreloadMaxDimensionShort": "0 = deaktiviert (reines Streaming), 2048 = Standard, 4096 = 4K-Texturen, 16384 = alles.",
+  "labelPreloadAllTexturesShort": "Alle Texturen vorladen",
+  "tooltipPreloadAllTexturesShort": "Lädt ALLE Texturen vor. Keine Ruckler, benötigt aber mindestens 32 GB RAM.",
+  "labelVramBudget": "VRAM-Budget (MB)",
+  "tooltipVramBudget": "Wie viel GPU-Speicher das Textur-Mod-System verwenden darf. Wähle einen Wert für eine feste Obergrenze – 8192 bedeutet beispielsweise „niemals mehr als 8 GB für gemoddete Texturen verwenden“, 16384 bedeutet „niemals mehr als 16 GB“. Automatisch (empfohlen) überspringt die Obergrenze und verwendet den tatsächlich verfügbaren Speicher deiner GPU.",
+  "labelStreamingEnabled": "Laden im Hintergrund",
+  "tooltipStreamingEnabled": "Lädt Texturen während des Spielens im Hintergrund. Verhindert Einfrieren und Ruckler beim Laden neuer Gebiete. Nur bei Problemen deaktivieren – ohne diese Option kann das Spiel beim Laden neuer Texturen kurz einfrieren.",
+  "labelLoadOnlyRelevant": "Nur relevante laden",
+  "tooltipLoadOnlyRelevant": "Lädt bei sehr großen Paketen (über 400 Dateien) nur Texturen, die einer kuratierten Prioritätenliste entsprechen. Das spart VRAM und Ladezeit. Kleine Pakete (Kleidung, Waffen) werden immer vollständig geladen. Aktiviere dies, wenn du ein riesiges Paket verwendest und Speicher sparen möchtest.",
+  "tutorialDropTextures": "Ziehe Textur-Mods hierher, um sie zu installieren. ZIP-Dateien werden automatisch entpackt.",
+  "tutorialLoadOrder": "Wenn sich Mods überschneiden, kannst du sie durch Ziehen neu anordnen. Oben = höchste Priorität.",
+  "textureOverlapLabel": "ÜBERSCHNEIDUNG",
+  "tooltipTextureOverlap": "Ändert dieselben Texturen wie: {mods}. Die Mod, die in der Liste weiter oben und näher an HÖCHSTE steht, ist im Spiel sichtbar.",
+  "@tooltipTextureOverlap": {
+    "placeholders": {
+      "mods": {
+        "type": "String"
+      }
+    }
+  },
+  "tooltipFolderNotFound": "Ordner in nams/inject/textures/ nicht gefunden",
+  "priorityHighest": "HÖCHSTE",
+  "priorityMedium": "MITTLERE",
+  "priorityLowest": "NIEDRIGSTE",
+  "nameOutfitTitle": "Dieses Outfit benennen ({character})",
+  "@nameOutfitTitle": {
+    "placeholders": {
+      "character": {
+        "type": "String"
+      }
+    }
+  },
+  "outfitNameHint": "Outfit-Name",
+  "installedTextureCount": "{count} {count, plural, =1{Texturdatei} other{Texturdateien}} installiert",
+  "@installedTextureCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "installationFailed": "Installation fehlgeschlagen: {error}",
+  "@installationFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "removedItem": "„{name}“ entfernt",
+  "@removedItem": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "tutorialStarIcon": "Klicke auf den Stern, um ein Standard-Outfit festzulegen, das beim Spielstart geladen wird.",
+  "installedOutfitsCount": "INSTALLIERTE OUTFITS ({count})",
+  "@installedOutfitsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "tooltipDlcDetected": "DLC erkannt (data100.cpk). Modelldateien verwenden die DLC-Namensgebung (pl000d).",
+  "tooltipNoDlcDetected": "Kein DLC erkannt. Modelldateien werden auf die Namensgebung ohne DLC umbenannt (pl0000).",
+  "installConfirmMod": "„{name}“ ({character}) installieren?",
+  "@installConfirmMod": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "character": {
+        "type": "String"
+      }
+    }
+  },
+  "installedOutfit": "„{name}“ ({character}) installiert",
+  "@installedOutfit": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "character": {
+        "type": "String"
+      }
+    }
+  },
+  "crossInstallTextures": "Diese Mod enthält außerdem Texturdateien. Nach nams/inject/textures/ installieren?",
+  "alsoInstalledTextures": "Außerdem {count} {count, plural, =1{Texturdatei} other{Texturdateien}} installiert",
+  "@alsoInstalledTextures": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "clearedAllStartupOutfits": "Alle Start-Outfits entfernt",
+  "clearedStartupOutfit": "Start-Outfit entfernt",
+  "setStartupOutfit": "„{name}“ als Start-Outfit festgelegt",
+  "@setStartupOutfit": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "tutorialDropCutscenes": "Lege Archive mit Cutscene-Mods hier ab. Unterstützt .zip, .7z und .rar.",
+  "tutorialInstalledCutscenes": "Deine installierten Cutscene-Mods. Benutzerdefinierte Cutscenes werden von hier statt aus data/movie/ geladen.",
+  "selectCutsceneModFolder": "Cutscene-Mod-Ordner auswählen",
+  "cutsceneNamingHint": "Höchstens {max} Zeichen. Dieser Text wird zum Ordnernamen in nams/cutscenes/.",
+  "@cutsceneNamingHint": {
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "cutsceneNameTooLong": "Der Name darf höchstens {max} Zeichen lang sein.",
+  "@cutsceneNameTooLong": {
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "preparingInstall": "Wird vorbereitet ...",
+  "installedCutsceneMod": "„{name}“ installiert ({count} USM-{count, plural, =1{Datei} other{Dateien}})",
+  "@installedCutsceneMod": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "deleteCutsceneConfirm": "„{name}“ und alle zugehörigen Dateien löschen?",
+  "@deleteCutsceneConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "installedCutsceneModsCount": "INSTALLIERTE ZWISCHENSEQUENZ-MODS ({count})",
+  "@installedCutsceneModsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cutsceneUsmCount": "{count} USM-{count, plural, =1{Datei} other{Dateien}}",
+  "@cutsceneUsmCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cutsceneMatchCount": "{matching}/{total} stimmen mit Originalen überein",
+  "@cutsceneMatchCount": {
+    "placeholders": {
+      "matching": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "tooltipMissingOriginals": "Dateien ohne Übereinstimmung mit Originalen: {files}",
+  "@tooltipMissingOriginals": {
+    "placeholders": {
+      "files": {
+        "type": "String"
+      }
+    }
+  },
+  "cutsceneMismatchHint": "Einige Dateien entsprechen keinen ursprünglichen Namen von Cutscenes. Bei fehlenden Dateien wird auf die ursprünglichen Cutscenes zurückgegriffen.",
+  "cutsceneMigrationBannerBody": "{count} benutzerdefinierte {count, plural, =1{Cutscene-Datei} other{Cutscene-Dateien}} wurden direkt in data/movie/ gefunden. Diese überschreiben die Originale dauerhaft. Installiere Cutscene-Mods künftig stattdessen hier – kann eine benutzerdefinierte Datei nicht geladen werden, wird ersatzweise das Original abgespielt.",
+  "@cutsceneMigrationBannerBody": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "hardwareInfoLabel": "{ram} GB RAM | {gpu}",
+  "@hardwareInfoLabel": {
+    "placeholders": {
+      "ram": {
+        "type": "int"
+      },
+      "gpu": {
+        "type": "String"
+      }
+    }
+  },
+  "hardwareInfoRamOnly": "{ram} GB RAM",
+  "@hardwareInfoRamOnly": {
+    "placeholders": {
+      "ram": {
+        "type": "int"
+      }
+    }
+  },
+  "texturesScanResult": "{count} Texturdateien, insgesamt {sizeMB} MB, maximal {maxDim} px",
+  "@texturesScanResult": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "sizeMB": {
+        "type": "int"
+      },
+      "maxDim": {
+        "type": "int"
+      }
+    }
+  },
+  "recommendedSettings": "Empfohlen: Vorladen {dim}, alle vorladen {allLabel}",
+  "@recommendedSettings": {
+    "placeholders": {
+      "dim": {
+        "type": "int"
+      },
+      "allLabel": {
+        "type": "String"
+      }
+    }
+  },
+  "applyRecommended": "ANWENDEN",
+  "settingsMatchRecommended": "Deine Einstellungen entsprechen der Empfehlung",
+  "reasonNoTextures": "Keine Texturen installiert",
+  "reasonFitsInMemory": "{ramGB} GB RAM, {textureSizeMB} MB Texturen – passen in den Speicher; lade alles vor, um Ruckler vollständig zu vermeiden",
+  "@reasonFitsInMemory": {
+    "placeholders": {
+      "ramGB": {
+        "type": "int"
+      },
+      "textureSizeMB": {
+        "type": "int"
+      }
+    }
+  },
+  "reasonExceedsRam": "{ramGB} GB RAM, geschätzter Texturspeicherbedarf von etwa {estimatedGB} GB – das Vorladen aller Texturen lässt dein System einfrieren oder abstürzen. Verwende eine niedrige Vorladedimension oder entferne einige Texturpakete.",
+  "@reasonExceedsRam": {
+    "placeholders": {
+      "ramGB": {
+        "type": "int"
+      },
+      "estimatedGB": {
+        "type": "int"
+      }
+    }
+  },
+  "reasonTooLargeForAll": "{ramGB} GB RAM, {textureSizeMB} MB Texturen – zu groß, um alles vorzuladen; Texturen bis 4K bei Bedarf vorladen",
+  "@reasonTooLargeForAll": {
+    "placeholders": {
+      "ramGB": {
+        "type": "int"
+      },
+      "textureSizeMB": {
+        "type": "int"
+      }
+    }
+  },
+  "reasonMediumRam": "{ramGB} GB RAM – Texturen bis 4K vorladen, größere bei Bedarf laden",
+  "@reasonMediumRam": {
+    "placeholders": {
+      "ramGB": {
+        "type": "int"
+      }
+    }
+  },
+  "reasonLowRam": "{ramGB} GB RAM – nur kleine Texturen vorladen, um Speicher zu sparen",
+  "@reasonLowRam": {
+    "placeholders": {
+      "ramGB": {
+        "type": "int"
+      }
+    }
+  },
+  "analyzingHardware": "Hardware und Texturen werden analysiert ...",
+  "texturesBloatWarning": "Diese Mod enthält {total} Texturen, aber nur {relevant} davon sind visuell relevant (basierend auf der kuratierten Referenzmenge von GPUnity). Die verbleibenden {excess} Texturen verlängern die Ladezeit und erhöhen den RAM-Verbrauch, ohne sichtbaren Nutzen.",
+  "@texturesBloatWarning": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      },
+      "relevant": {
+        "type": "int"
+      },
+      "excess": {
+        "type": "int"
+      }
+    }
+  },
+  "cleanUnneededTextures": "{count} UNNÖTIGE ENTFERNEN",
+  "@cleanUnneededTextures": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cleanedTextures": "{deleted} unnötige Texturen entfernt, {kept} beibehalten",
+  "@cleanedTextures": {
+    "placeholders": {
+      "deleted": {
+        "type": "int"
+      },
+      "kept": {
+        "type": "int"
+      }
+    }
+  },
+  "confirmCleanTextures": "Unnötige Texturen entfernen?",
+  "confirmCleanTexturesBody": "Dadurch werden {count} Texturdateien ({sizeMB} MB) dauerhaft aus diesem Mod-Ordner gelöscht.",
+  "@confirmCleanTexturesBody": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "sizeMB": {
+        "type": "String"
+      }
+    }
+  },
+  "confirmCleanTexturesDetail1": "Nur Texturen, die der kuratierten Referenzmenge von GPUnity entsprechen, werden beibehalten",
+  "confirmCleanTexturesDetail2": "Dies betrifft nur den ausgewählten Mod-Ordner, nicht andere installierte Mods",
+  "confirmCleanTexturesDetail3": "Dies kann nicht rückgängig gemacht werden – lege die Mod erneut ab, um entfernte Dateien wiederherzustellen",
+  "texturesBloatDialogTitle": "Unnötige Texturen erkannt",
+  "texturesBloatDialogBody": "Dieses Texturpaket enthält {total} Dateien, aber nur {relevant} entsprechen der kuratierten Referenzmenge von GPUnity. Die verbleibenden {excess} Texturen sind wahrscheinlich unnötig.",
+  "@texturesBloatDialogBody": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      },
+      "relevant": {
+        "type": "int"
+      },
+      "excess": {
+        "type": "int"
+      }
+    }
+  },
+  "texturesBloatPoint1": "Deutlich längerer Spielstart – die Engine lädt beim Start jede Textur",
+  "texturesBloatPoint2": "Zufällige Ruckler und Bildrateneinbrüche – das Spiel streamt Texturen ohne sichtbaren Nutzen",
+  "texturesBloatPoint3": "Hoher RAM-Verbrauch – mehrere GB können für unsichtbare Texturen verschwendet werden",
+  "texturesBloatPoint4": "Einige KI-hochskalierten Texturen können Artefakte oder Beschädigungen enthalten",
+  "texturesBloatPoint5": "Kaum sichtbarer Unterschied – meist handelt es sich um winzige UI-Elemente, Partikeleffekte usw.",
+  "texturesBloatRecommendation": "Das Entfernen ist sicher und wird für eine bessere Leistung empfohlen.",
+  "texturesBloatKeepAll": "Alle behalten",
+  "texturesBloatRemoveUnneeded": "Unnötige entfernen ({count})",
+  "@texturesBloatRemoveUnneeded": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "texturesProgressExtracting": "Archiv wird entpackt ...",
+  "texturesProgressCopying": "Dateien werden kopiert ...",
+  "texturesProgressAnalyzing": "Texturen werden analysiert ...",
+  "texturesAnalyzingSetup": "Deine Texturkonfiguration wird analysiert ...",
+  "texturesBusyMessage": "Bitte warten – Texturen werden installiert",
+  "texturesInstallProgress": "Installation: {files}/{totalFiles} Dateien – {mb}/{totalMb} MB",
+  "@texturesInstallProgress": {
+    "placeholders": {
+      "files": {
+        "type": "int"
+      },
+      "totalFiles": {
+        "type": "int"
+      },
+      "mb": {
+        "type": "int"
+      },
+      "totalMb": {
+        "type": "int"
+      }
+    }
+  },
+  "texturesAnalyzeProgress": "Analyse: {scanned}/{total} Texturen",
+  "@texturesAnalyzeProgress": {
+    "placeholders": {
+      "scanned": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "cleaningTextures": "Unnötige Texturen werden entfernt ...",
+  "textureMergeTitle": "Zu vorhandener Mod hinzufügen oder neu installieren?",
+  "textureMergeDescription": "Du hast bereits Textur-Mods installiert. Möchtest du diese Dateien zu einer vorhandenen Mod hinzufügen oder als neue Mod installieren?",
+  "textureMergeNewMod": "Als neue Mod installieren",
+  "textureMergeAddTo": "Hinzufügen zu: {name}",
+  "@textureMergeAddTo": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "cutsceneMergeTitle": "Zu vorhandener Mod hinzufügen oder neu installieren?",
+  "cutsceneMergeDescription": "Du hast bereits Cutscene-Mods installiert. Mehrteilige Cutscene-Pakete sollten in derselben Mod zusammengeführt werden.",
+  "cutsceneMergeNewMod": "Als neue Mod installieren",
+  "cutsceneMergeAddTo": "Hinzufügen zu: {name}",
+  "@cutsceneMergeAddTo": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "headerMods": "MODS",
+  "cutsceneBundledWith": "Gebündelt mit {modId}",
+  "@cutsceneBundledWith": {
+    "placeholders": {
+      "modId": {
+        "type": "String"
+      }
+    }
+  },
+  "cutsceneStatusHd": "HD",
+  "cutsceneStatusHdTooltip": "[cutscene] hd_cutscenes in nams.toml – muss true sein, damit HD-Cutscene-Mods geladen werden.",
+  "cutsceneStatusH264": "H264",
+  "cutsceneStatusH264Tooltip": "[cutscene] enable_h264 in nams.toml – muss true sein, damit H264-codierte Cutscenes abgespielt werden.",
+  "modIntroTitle": "Unterstützt durch NAMS – dein data/-Ordner bleibt unverändert",
+  "modIntroBody": "NAMS lädt Mods aus nams/mods/ über ein virtuelles Dateisystem zusätzlich zu den ursprünglichen Spieldaten. Dadurch wird niemals etwas nach data/ kopiert oder dort überschrieben. Mods lassen sich jederzeit ohne Neuinstallation ein- oder ausschalten, mehrere Outfits für denselben Charakter können nebeneinander bestehen, und beim Deinstallieren einer Mod wird lediglich ihr Ordner entfernt – das ursprüngliche Spiel bleibt darunter stets unverändert.",
+  "modListEmpty": "Keine Mods installiert",
+  "modListEmptyHint": "Lege einen Mod-Ordner oder ein Archiv im Feld oben ab, um ihn zu installieren.",
+  "modSearchPlaceholder": "Mods durchsuchen …",
+  "modFilterAll": "Alle",
+  "modCollapseAll": "Alle Gruppen einklappen",
+  "modExpandAll": "Alle Gruppen ausklappen",
+  "modBulkInstall": "Mehrere Mods aus Ordner installieren",
+  "modBulkInstallBusy": "Installation {done} von {total}: {name}",
+  "@modBulkInstallBusy": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "modBulkInstallScanning": "Ordner wird nach Mod-Archiven durchsucht …",
+  "modBulkInstallNone": "In diesem Ordner wurden keine Mod-Archive (.zip / .7z / .rar) gefunden.",
+  "modBulkInstallDone": "{installed} von {total} Mods installiert.",
+  "@modBulkInstallDone": {
+    "placeholders": {
+      "installed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "modLooseInstall": "Lose Dateien aus Ordner installieren",
+  "modLooseInstallScanning": "Ordner wird nach losen Spieldateien durchsucht…",
+  "modLooseInstallNone": "Keine losen Spieldateien (.dat / .dtt) in diesem Ordner gefunden.",
+  "modLooseInstallBusy": "{count} lose Dateien werden installiert…",
+  "@modLooseInstallBusy": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "modLooseInstallProgress": "{done} von {total} Dateien werden kopiert…",
+  "@modLooseInstallProgress": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "modLooseInstallFinalizing": "Dateien werden in den Mod eingefügt…",
+  "modLooseInstallDone": "{count} lose Dateien in {id} installiert.",
+  "@modLooseInstallDone": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "modGroup2b": "2B-OUTFITS",
+  "modGroup9s": "9S-OUTFITS",
+  "modGroupA2": "A2-OUTFITS",
+  "modGroupOtherOutfits": "ANDERE OUTFITS",
+  "modGroupWeapons": "WAFFEN",
+  "modGroupAccessories": "ACCESSOIRES",
+  "modGroupItems": "GEGENSTÄNDE",
+  "modGroupWorldProps": "WELTOBJEKTE",
+  "modGroupModelVariants": "MODELLVARIANTEN",
+  "modGroupMaps": "KARTEN / SCHAUPLÄTZE",
+  "modGroupUi": "UI / SCHRIFTEN",
+  "modGroupMisc": "SONSTIGE TEXTUREN",
+  "modGroupArchives": "CPK-ARCHIVE",
+  "modGroupEnemies": "GEGNER",
+  "modGroupEffects": "EFFEKTE",
+  "modGroupScripting": "SKRIPTE",
+  "modGroupLocalization": "TEXT UND LOKALISIERUNG",
+  "modGroupCutscenes": "ZWISCHENSEQUENZEN",
+  "modGroupAudio": "AUDIO",
+  "modGroupTextures": "TEXTUREN",
+  "modGroupNative": "NATIVE MODS",
+  "modGroupOther": "SONSTIGES",
+  "modGroupMixed": "GEMISCHTE INHALTE",
+  "modGroupWax": "WAX COMPACT",
+  "modGroupMultiHint": "Diese Mod ersetzt Modelle für mehrere Charaktere und wird daher unter jedem von ihnen aufgeführt.",
+  "modGroupMixedHint": "Diese Mod ändert mehrere Arten von Inhalten gleichzeitig. Klicke sie an, um alles zu sehen, was sie enthält, und welche Kategorien sie betrifft.",
+  "modRename": "Umbenennen",
+  "modRenameDialogTitle": "Mod umbenennen",
+  "modRenameReset": "Auf ursprünglichen Namen zurücksetzen",
+  "dropModHere": "Mod hier ablegen",
+  "dropModHereHint": "oder zum Durchsuchen klicken",
+  "modKindNative": "NATIV",
+  "modKindNativeTooltip": "NAMS-Mod mit einem entities/-Ordner. Definiert neue Gegenstände, Waffen, Outfits, Accessoires, Quests usw. über TOML-Pakete.",
+  "modKindData": "DATEN",
+  "modKindDataTooltip": "Das klassische Mod-Format – dieselben Dateien, die normalerweise nach NieRAutomata/data/ gehören würden, werden stattdessen unter nams/mods/ verwaltet, sodass der ursprüngliche data-Ordner sauber bleibt",
+  "textureOutfitLinkedTitle": "Outfit-gebundene Texturen",
+  "textureOutfitLinkedSubtitle": "Diese Texturen befinden sich im Ordner ihrer Mod und werden nur geladen, solange dieses Outfit ausgerüstet ist. NAMS wechselt sie sofort, wenn du im Spiel das Outfit änderst.",
+  "textureOutfitLinkedEntry": "{count} Texturen – nur mit diesem Outfit aktiv",
+  "@textureOutfitLinkedEntry": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "modKindTexture": "TEXTUREN",
+  "modKindTextureTooltip": "Ein Texturpaket. Seine .dds-Dateien wurden nach nams/inject/textures/ installiert und werden im Reiter Texturen verwaltet.",
+  "modKindUnknown": "UNBEKANNT",
+  "modKindUnknownTooltip": "Der Launcher konnte diesen Ordner nicht als gültige Mod erkennen.",
+  "modCompatChip": "wax-kompatibel",
+  "modCompatChipTooltip": " NAMS liest diese zur Kompatibilität mit vorhandenen wax-Mods ebenfalls ein.",
+  "modDataChip": "+Daten",
+  "modDataChipTooltip": "Enthält zusätzlich zu den Metadaten eine data/-Überlagerung. Modelle, Texturen, Töne usw. befinden sich hier.",
+  "modDetailNoSelection": "Wähle eine Mod aus, um Details anzuzeigen",
+  "modAuthor": "Autor",
+  "modVersion": "Version",
+  "modRootPath": "Pfad",
+  "modNativeBundles": "Native Pakete",
+  "modDataContent": "Dateninhalt",
+  "modDataPlayerModels": "Spielermodelle",
+  "modRequiresLabel": "Erfordert",
+  "modRequiresPluginsLabel": "Erfordert Plugins",
+  "modRequiresMissing": "fehlt",
+  "modConflictsLabel": "Konflikte",
+  "modLoadOrderHint": "Diese Mods ersetzen dieselben Dateien. Ziehe sie zum Neuordnen – die oberste gewinnt.",
+  "modConflictKeep": "DIESE BEHALTEN",
+  "modConflictResolve": "LÖSEN",
+  "modConflictDialogTitle": "Welche Mod soll Vorrang haben?",
+  "modConflictKeepTooltip": "{id} beibehalten und die anderen deaktivieren",
+  "@modConflictKeepTooltip": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "modConflictPickBody": "{mods} aktivierte Mods ersetzen dieselben {files, plural, =1{Datei} other{{files} Dateien}}. Wähle die Mod aus, die beibehalten werden soll – die anderen werden deaktiviert.",
+  "@modConflictPickBody": {
+    "placeholders": {
+      "mods": {
+        "type": "int"
+      },
+      "files": {
+        "type": "int"
+      }
+    }
+  },
+  "modConflictOverlapFile": "{otherId} enthält ebenfalls {file}",
+  "@modConflictOverlapFile": {
+    "placeholders": {
+      "otherId": {
+        "type": "String"
+      },
+      "file": {
+        "type": "String"
+      }
+    }
+  },
+  "modOpenFolder": "Ordner öffnen",
+  "modEnable": "Aktivieren",
+  "modDisable": "Deaktivieren",
+  "modDisabled": "Deaktiviert",
+  "modDisabledTooltip": "Diese Mod ist deaktiviert. NAMS lädt sie beim nächsten Spielstart nicht. Aktiviere sie, um sie wieder zu laden – Löschen und Neuinstallieren ist nicht erforderlich.",
+  "modEnableTooltip": "Die Mod wird von NAMS geladen. Klicke, um sie zu deaktivieren, ohne die Dateien zu entfernen.",
+  "modDefaultTooltip": "Ab Spielstart aktiv, als lägen ihre Dateien in NieRAutomata/data. Klicke, um sie auszuschalten.",
+  "modSetDefaultTooltip": "Macht diese Mod ab Spielstart aktiv, ohne etwas nach NieRAutomata/data zu kopieren.",
+  "modSetDefaultOutfitTooltip": "Trage dies ab Spielstart, ohne etwas nach NieRAutomata/data zu kopieren. Ersetzt das derzeitige Standard-Outfit – es kann nur eines geben.",
+  "modDefaultChip": "STANDARD",
+  "modDefaultKindOutfitBare": "Outfit",
+  "modDefaultKindOutfitConfig": "Outfit + Konfiguration",
+  "modDefaultKindOutfitAnimation": "Animation",
+  "modDefaultKindOutfitBareTooltip": "Ersetzt die Modelldateien direkt. Es kann jeweils nur ein Outfit das Standard-Outfit sein.",
+  "modDefaultKindOutfitConfigTooltip": "Diese Mod enthält eine Outfit-Konfiguration, sodass ihre Mesh-Regeln und Effekte mitgeladen werden. Es kann jeweils nur ein Outfit das Standard-Outfit sein.",
+  "modDefaultKindOutfitAnimationTooltip": "Animationsdaten, kein Outfit. Bleibt unter jedem getragenen Outfit aktiv.",
+  "modDefaultReplaceTitle": "Standard ersetzen?",
+  "modDefaultReplaceBody": "{model} wird derzeit ab Spielstart durch „{current}“ getragen.\n\nWenn „{next}“ zum Standard gemacht wird, wird dies entfernt, da jeweils nur eine Mod einen Charakter einkleiden kann.",
+  "@modDefaultReplaceBody": {
+    "placeholders": {
+      "model": {
+        "type": "String"
+      },
+      "current": {
+        "type": "String"
+      },
+      "next": {
+        "type": "String"
+      }
+    }
+  },
+  "modDefaultReplaceConfirm": "Ersetzen",
+  "modDefaultOutfitAuto": "Standard-Outfit",
+  "modDefaultOutfitPickTooltip": "Diese Mod enthält mehrere Outfits. Wähle das Outfit, das du ab Spielstart tragen möchtest. „Standard-Outfit“ ist das Outfit, das ohne Gegenstand getragen wird.",
+  "modDefaultRowTooltip": "Ab Spielstart aktiv: {files}",
+  "@modDefaultRowTooltip": {
+    "placeholders": {
+      "files": {
+        "type": "String"
+      }
+    }
+  },
+  "modDisableNotice": "Deaktiviert – gilt beim nächsten Spielstart.",
+  "modEnableNotice": "Aktiviert – gilt beim nächsten Spielstart.",
+  "modUninstall": "Deinstallieren",
+  "modUninstallConfirmTitle": "Mod deinstallieren?",
+  "modUninstallConfirmBody": "Dadurch wird der Mod-Ordner „{id}“ dauerhaft gelöscht.",
+  "@modUninstallConfirmBody": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "modProfileLabel": "Profil",
+  "modProfileNewButton": "Neu",
+  "modProfileRenameButton": "Umbenennen",
+  "modProfileDeleteButton": "Löschen",
+  "modProfileNewDialogTitle": "Neues Profil",
+  "modProfileNewDialogHint": "Profilname (Buchstaben, Zahlen, _ -)",
+  "modProfileRenameDialogTitle": "Profil umbenennen",
+  "modProfileDeleteDialogTitle": "Profil löschen?",
+  "modProfileDeleteDialogBody": "Entfernt den Ordner mods_profile_{name}/ und alle gebündelten Texturpakete dieses Profils dauerhaft. Dies kann nicht rückgängig gemacht werden.",
+  "@modProfileDeleteDialogBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "modProfileDeleteConfirm": "Löschen",
+  "modProfileErrorNameEmpty": "Name erforderlich",
+  "modProfileErrorNameInvalid": "Verwende nur Buchstaben, Zahlen, _ oder -",
+  "modProfileErrorNameCollision": "Ein Profil mit diesem Namen ist bereits vorhanden",
+  "modProfileErrorDeleteActive": "Wechsle zu einem anderen Profil, bevor du dieses löschst",
+  "modProfileErrorDeleteLast": "Das einzige verbleibende Profil kann nicht gelöscht werden",
+  "modProfileErrorTargetMissing": "Der Profilordner fehlt auf dem Datenträger",
+  "modProfileErrorFsBusy": "Das Dateisystem ist beschäftigt. Schließe das Spiel und versuche es erneut.",
+  "modProfileLockedRunning": "Beende das Spiel, bevor du das Profil wechselst.",
+  "modProfileEmptyHint": "Leeres Profil – lege eine Mod ab, um zu beginnen",
+  "modProfileSwitchedToast": "Zu Profil {name} gewechselt",
+  "@modProfileSwitchedToast": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "modProfileCreatedToast": "Profil {name} erstellt und ausgewählt",
+  "@modProfileCreatedToast": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "modProfileDeletedToast": "Profil {name} gelöscht",
+  "@modProfileDeletedToast": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "modProfileRenamedToast": "Profil in {name} umbenannt",
+  "@modProfileRenamedToast": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "modInstallNeedsName": "Diese Mod benennen",
+  "modInstallExistsPickAnother": "Eine Mod namens „{id}“ ist bereits vorhanden. Wähle einen anderen Namen.",
+  "@modInstallExistsPickAnother": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "modInspectBusy": "Mod wird geprüft …",
+  "modInstallBusy": "Mod wird installiert …",
+  "modVariantDialogTitle": "Installationsinhalte auswählen",
+  "modVariantDialogSubtitle": "Dieses Archiv enthält mehrere Optionen. Wähle die gewünschten aus.",
+  "modOutfitChoiceDialogTitle": "Installationsinhalte auswählen",
+  "modOutfitChoiceDialogSubtitle": "Markiere alles, was du möchtest. Jeder Eintrag wird als eigene Mod installiert. Enthält ein Outfit Texturen, werden diese mitinstalliert; im Texturen-Reiter kannst du später genauer festlegen, welche Sätze es verwendet.",
+  "variantCatPlayer": "Outfits",
+  "variantCatWeapon": "Waffen",
+  "variantCatAccessory": "Accessoires",
+  "variantCatEnemy": "Gegner",
+  "variantCatModelVariant": "Modellvarianten",
+  "variantCatItem": "Gegenstände",
+  "variantCatWorldProp": "Weltobjekte",
+  "variantCatMap": "Karten",
+  "variantCatEffects": "Effekte",
+  "variantCatScripting": "Skripte",
+  "variantCatLocalization": "Lokalisierung",
+  "variantCatUi": "Benutzeroberfläche",
+  "variantCatCutscenes": "Cutscenes",
+  "variantCatAudio": "Audio",
+  "variantCatMisc": "Sonstiges",
+  "variantCatOther": "Andere",
+  "variantPickOneSuffix": "eine auswählen",
+  "modVariantSelectAll": "Alle auswählen",
+  "modVariantSelectNone": "Keine",
+  "modVariantInstall": "Installieren",
+  "modVariantInstallSelected": "{count} installieren",
+  "@modVariantInstallSelected": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "modVariantTexture": "Texturen",
+  "modVariantInstalledToast": "{count} Option(en) installiert",
+  "@modVariantInstalledToast": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "modUninstallBusy": "Mod wird deinstalliert …",
+  "modInstalled": "Installiert: {id}",
+  "@modInstalled": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "modInstallFailed": "Installation fehlgeschlagen: {reason}",
+  "@modInstallFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "modInstallReasonUnknownDrop": "Unbekannte Ablage – der Ordner entspricht keiner unterstützten Mod-Struktur.",
+  "modInstallReasonUnsupportedNasa": "Dies ist eine NASA-Mod (enthält sadfutago.cpk), die von diesem Launcher nicht unterstützt wird.",
+  "modInstallReasonInvalidMixed": "Ungültige Struktur – eine Mod darf entities- und wax-artige Konfigurationen nicht mischen.",
+  "modInstallReasonNativeEmpty": "In entities/ wurden keine Entity-Dateien gefunden.",
+  "modInstallReasonDataEmpty": "Keine erkennbaren Inhalte gefunden.",
+  "modInstallReasonArchiveExtractFailed": "Das Archiv konnte nicht entpackt werden.",
+  "modInstallReasonMoveFailed": "Die Dateien konnten nicht nach nams/mods/ verschoben werden.",
+  "modInstallReasonTextureOnly": "Dies ist ein Texturpaket (nur .dds-Dateien). Installiere es stattdessen über den Texturen-Reiter.",
+  "modUninstalled": "Entfernt: {id}",
+  "@modUninstalled": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "modCountFiles": "{count, plural, =1{1 Datei} other{{count} Dateien}}",
+  "@modCountFiles": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
+}

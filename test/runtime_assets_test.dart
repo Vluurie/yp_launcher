@@ -4,6 +4,10 @@ import 'package:crypto/crypto.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+List<String> get _sevenZipAssets => Platform.isWindows
+    ? const ['assets/bins/7z.exe', 'assets/bins/7z.dll']
+    : const ['assets/bins/7zz'];
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -16,16 +20,20 @@ void main() {
 
     expect(bins, contains('assets/bins/NAMS.exe'));
     expect(bins, contains('assets/bins/plugins/yorha_protocol.dll'));
-    expect(bins, contains('assets/bins/7zz'));
+    for (final asset in _sevenZipAssets) {
+      expect(bins, contains(asset));
+    }
   });
 
   test('extracting a bundled binary reproduces it byte for byte', () async {
-    final data = await rootBundle.load('assets/bins/7zz');
-    final extracted = data.buffer
-        .asUint8List(data.offsetInBytes, data.lengthInBytes);
+    for (final asset in _sevenZipAssets) {
+      final data = await rootBundle.load(asset);
+      final extracted =
+          data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
 
-    final onDisk = File('assets/bins/7zz').readAsBytesSync();
+      final onDisk = File(asset).readAsBytesSync();
 
-    expect(sha256.convert(extracted), sha256.convert(onDisk));
+      expect(sha256.convert(extracted), sha256.convert(onDisk));
+    }
   });
 }

@@ -127,14 +127,14 @@ class PlayButton extends ConsumerWidget {
       }
 
       controller.setPlayButtonState(PlayButtonState.loading);
-      controller.setStatus(l10n.statusLaunching);
+      controller.setStatus(LaunchStatus.launching);
 
       ProcessService.startNierAutomata(
             installDirectory: appState.selectedDirectory,
             l10n: l10n,
             onProcessStopped: () async {
               controller.setPlayButtonState(PlayButtonState.idle);
-              controller.setStatus(l10n.statusStopped);
+              controller.setStatus(LaunchStatus.stopped);
               if (Platform.isWindows) {
                 try {
                   if (await windowManager.isMinimized()) {
@@ -148,7 +148,7 @@ class PlayButton extends ConsumerWidget {
           .then((outcome) async {
             if (outcome.started) {
               controller.setPlayButtonState(PlayButtonState.running);
-              controller.setStatus(l10n.statusRunning);
+              controller.setStatus(LaunchStatus.running);
               if (Platform.isWindows) {
                 try {
                   final prefs = await SharedPreferences.getInstance();
@@ -168,7 +168,7 @@ class PlayButton extends ConsumerWidget {
             } else {
               final failure = outcome.failure;
               controller.setError(
-                failure?.friendlyTitle() ?? l10n.errorStartFailed,
+                failure?.friendlyTitle(l10n) ?? l10n.errorStartFailed,
               );
               controller.setPlayButtonState(PlayButtonState.idle);
               controller.setStatus(null);
@@ -188,18 +188,108 @@ class PlayButton extends ConsumerWidget {
           });
     } else if (appState.playButtonState == PlayButtonState.running) {
       controller.setPlayButtonState(PlayButtonState.loading);
-      controller.setStatus(l10n.statusStopping);
+      controller.setStatus(LaunchStatus.stopping);
 
       final success = await ProcessService.terminateNierAutomata();
       if (success) {
         controller.setPlayButtonState(PlayButtonState.idle);
-        controller.setStatus(l10n.statusStopped);
+        controller.setStatus(LaunchStatus.stopped);
       } else {
         controller.setError(l10n.errorStopFailed);
         controller.setPlayButtonState(PlayButtonState.running);
         controller.setStatus(null);
       }
     }
+  }
+}
+
+class PreferDedicatedGpuToggle extends StatefulWidget {
+  const PreferDedicatedGpuToggle({super.key});
+
+  @override
+  State<PreferDedicatedGpuToggle> createState() =>
+      _PreferDedicatedGpuToggleState();
+}
+
+class _PreferDedicatedGpuToggleState extends State<PreferDedicatedGpuToggle> {
+  bool? _enabled;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (!mounted) return;
+    setState(() {
+      _enabled = prefs.getBool(AppStrings.prefKeyPreferDedicatedGpu) ?? true;
+    });
+  }
+
+  Future<void> _set(bool value) async {
+    setState(() => _enabled = value);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(AppStrings.prefKeyPreferDedicatedGpu, value);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!Platform.isWindows && !Platform.isLinux) {
+      return const SizedBox.shrink();
+    }
+    final value = _enabled ?? true;
+    return Tooltip(
+      message: AppLocalizations.of(
+        context,
+      )!.launchOptionPreferDedicatedGpuTooltip,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => _set(!value),
+          borderRadius: BorderRadius.circular(4),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: Checkbox(
+                    value: value,
+                    onChanged: (v) => _set(v ?? true),
+                    visualDensity: VisualDensity.compact,
+                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    activeColor: AppColors.accentPrimary,
+                    checkColor: AppColors.backgroundPrimary,
+                    side: const BorderSide(
+                      color: AppColors.borderMedium,
+                      width: 1.2,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Flexible(
+                  child: Text(
+                    AppLocalizations.of(
+                      context,
+                    )!.launchOptionPreferDedicatedGpu,
+                    style: TextStyle(
+                      fontSize: AppSizes.fontXS(context),
+                      color: AppColors.textMuted,
+                      letterSpacing: 0.3,
+                    ),
+                    softWrap: true,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
 
@@ -264,12 +354,15 @@ class _MinimizeOnLaunchToggleState extends State<MinimizeOnLaunchToggle> {
                 ),
               ),
               const SizedBox(width: 8),
-              Text(
-                'Minimize launcher while playing',
-                style: TextStyle(
-                  fontSize: AppSizes.fontXS(context),
-                  color: AppColors.textMuted,
-                  letterSpacing: 0.3,
+              Flexible(
+                child: Text(
+                  AppLocalizations.of(context)!.launchOptionMinimizeOnLaunch,
+                  style: TextStyle(
+                    fontSize: AppSizes.fontXS(context),
+                    color: AppColors.textMuted,
+                    letterSpacing: 0.3,
+                  ),
+                  softWrap: true,
                 ),
               ),
             ],

@@ -1,8 +1,13 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as p;
 
 const nierSteamAppId = '524220';
+
+/// Overrides the Steam roots scanned. Lets tests inject a fake Steam tree.
+@visibleForTesting
+List<String>? overrideSteamRoots;
 
 const protonPathEnv = 'YP_PROTON_PATH';
 
@@ -70,7 +75,9 @@ String? findProtonPath(String steamRoot, String libraryRoot) {
 }
 
 /// Native Steam install roots: deb/tarball, Snap and Flatpak.
-List<String> steamRootCandidates() => [
+List<String> steamRootCandidates() =>
+    overrideSteamRoots ??
+    [
       p.join(_home, '.steam', 'steam'),
       p.join(_home, '.local', 'share', 'Steam'),
       p.join(_home, 'snap', 'steam', 'common', '.local', 'share', 'Steam'),
@@ -78,13 +85,18 @@ List<String> steamRootCandidates() => [
           'Steam'),
     ].where((root) => Directory(root).existsSync()).toList();
 
-/// True when any Steam root has a Proton build.
-bool hasAnyProtonInstall() {
+/// Newest Proton build across every known Steam root. Used as a fallback when
+/// the game sits in a separate library that has no Proton next to it.
+String? findAnyProtonPath() {
   for (final root in steamRootCandidates()) {
-    if (findProtonPath(root, root) != null) return true;
+    final found = findProtonPath(root, root);
+    if (found != null) return found;
   }
-  return false;
+  return null;
 }
+
+/// True when any Steam root has a Proton build.
+bool hasAnyProtonInstall() => findAnyProtonPath() != null;
 
 /// The `$HOME` a Proton child needs so lsteamclient finds
 /// `$HOME/.steam/sdk64/steamclient.so`. Null when the real home already has it.

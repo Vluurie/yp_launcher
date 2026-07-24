@@ -54,13 +54,30 @@ abstract class PlatformAdapter {
   /// Launching works here but is unvalidated on real hardware.
   bool get isExperimental => false;
 
-  Future<LaunchCommand> buildLaunchCommand({
+  Future<LaunchCommand> buildNamsCommand({
+    required List<String> Function(String nierPath) namsArgs,
     required String namsExe,
     required String gameDir,
     required String gameExe,
     required String launcherDir,
     required AppLocalizations l10n,
   });
+
+  Future<LaunchCommand> buildLaunchCommand({
+    required String namsExe,
+    required String gameDir,
+    required String gameExe,
+    required String launcherDir,
+    required AppLocalizations l10n,
+  }) =>
+      buildNamsCommand(
+        namsArgs: namsRunArgs,
+        namsExe: namsExe,
+        gameDir: gameDir,
+        gameExe: gameExe,
+        launcherDir: launcherDir,
+        l10n: l10n,
+      );
 
   Future<bool> isGameRunning();
 

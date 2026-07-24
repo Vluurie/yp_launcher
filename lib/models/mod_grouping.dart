@@ -1,36 +1,56 @@
 import 'package:yp_launcher/models/installed_mod.dart';
 
 enum ModGroupKind {
+  mixed,
+  wax,
   outfit2b,
   outfit9s,
   outfitA2,
   outfitOther,
   weapon,
+  accessory,
+  item,
   enemy,
+  worldProp,
+  modelVariant,
+  map,
   effect,
   scripting,
   localization,
+  ui,
   cutscene,
   audio,
   texture,
+  misc,
+  archive,
   native,
   other,
 }
 
 const List<ModGroupKind> modGroupOrder = [
   ModGroupKind.native,
+  ModGroupKind.mixed,
+  ModGroupKind.wax,
   ModGroupKind.outfit2b,
   ModGroupKind.outfit9s,
   ModGroupKind.outfitA2,
   ModGroupKind.outfitOther,
   ModGroupKind.weapon,
+  ModGroupKind.accessory,
+  ModGroupKind.item,
   ModGroupKind.enemy,
+  ModGroupKind.worldProp,
+  ModGroupKind.modelVariant,
+  ModGroupKind.map,
   ModGroupKind.effect,
   ModGroupKind.scripting,
   ModGroupKind.localization,
+  ModGroupKind.ui,
   ModGroupKind.cutscene,
   ModGroupKind.audio,
   ModGroupKind.texture,
+  ModGroupKind.misc,
+  ModGroupKind.archive,
   ModGroupKind.other,
 ];
 
@@ -64,34 +84,59 @@ ModGroupKind? playerSlotGroup(String fileName) {
 Set<ModGroupKind> groupsForMod(InstalledMod mod) {
   if (mod.kind == ModKind.native) return {ModGroupKind.native};
 
+  if (mod.data?.hasCompatConfig == true) return {ModGroupKind.wax};
+
   final groups = <ModGroupKind>{};
 
   for (final player in mod.data?.players ?? const <PlayerModelEntry>[]) {
     final group = playerSlotGroup(player.fileName);
     groups.add(group ?? ModGroupKind.outfitOther);
   }
-  if (groups.isNotEmpty) return groups;
+  final hasOutfitGroup = groups.isNotEmpty;
 
   final categories = <DataCategory>{
     for (final e in mod.data?.entries ?? const <DataDirEntry>[]) e.category,
   };
 
-  for (final entry in const {
-    DataCategory.player3d: ModGroupKind.outfitOther,
-    DataCategory.weapon3d: ModGroupKind.weapon,
-    DataCategory.enemy3d: ModGroupKind.enemy,
+  for (final entry in {
+    if (!hasOutfitGroup) DataCategory.player: ModGroupKind.outfitOther,
+    DataCategory.weapon: ModGroupKind.weapon,
+    DataCategory.accessory: ModGroupKind.accessory,
+    DataCategory.item: ModGroupKind.item,
+    DataCategory.enemy: ModGroupKind.enemy,
+    DataCategory.worldProp: ModGroupKind.worldProp,
+    DataCategory.modelVariant: ModGroupKind.modelVariant,
+    DataCategory.map: ModGroupKind.map,
     DataCategory.effects: ModGroupKind.effect,
     DataCategory.scripting: ModGroupKind.scripting,
     DataCategory.localization: ModGroupKind.localization,
+    DataCategory.ui: ModGroupKind.ui,
     DataCategory.cutscenes: ModGroupKind.cutscene,
     DataCategory.audio: ModGroupKind.audio,
+    DataCategory.misc: ModGroupKind.misc,
+    DataCategory.archive: ModGroupKind.archive,
   }.entries) {
     if (categories.contains(entry.key)) groups.add(entry.value);
   }
+
+  if (_distinctGroupKinds(groups) >= 3) return {ModGroupKind.mixed};
   if (groups.isNotEmpty) return groups;
 
   if (mod.kind == ModKind.texture) return {ModGroupKind.texture};
   return {ModGroupKind.other};
+}
+
+const Set<ModGroupKind> _outfitGroups = {
+  ModGroupKind.outfit2b,
+  ModGroupKind.outfit9s,
+  ModGroupKind.outfitA2,
+  ModGroupKind.outfitOther,
+};
+
+int _distinctGroupKinds(Set<ModGroupKind> groups) {
+  final nonOutfit = groups.where((g) => !_outfitGroups.contains(g)).length;
+  final hasOutfit = groups.any(_outfitGroups.contains);
+  return nonOutfit + (hasOutfit ? 1 : 0);
 }
 
 Map<ModGroupKind, List<InstalledMod>> groupMods(List<InstalledMod> mods) {

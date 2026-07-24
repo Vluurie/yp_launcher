@@ -235,14 +235,14 @@ class _ReadyStepState extends ConsumerState<ReadyStep> {
 
     final controller = ref.read(appStateControllerProvider.notifier);
     controller.setPlayButtonState(PlayButtonState.loading);
-    controller.setStatus(AppStrings.statusLaunching);
+    controller.setStatus(LaunchStatus.launching);
 
     ProcessService.startNierAutomata(
       installDirectory: widget.selectedPath!,
       l10n: AppLocalizations.of(context)!,
       onProcessStopped: () async {
         controller.setPlayButtonState(PlayButtonState.idle);
-        controller.setStatus(AppStrings.statusStopped);
+        controller.setStatus(LaunchStatus.stopped);
         if (Platform.isWindows) {
           try {
             if (await windowManager.isMinimized()) {
@@ -255,7 +255,7 @@ class _ReadyStepState extends ConsumerState<ReadyStep> {
     ).then((outcome) async {
       if (outcome.started) {
         controller.setPlayButtonState(PlayButtonState.running);
-        controller.setStatus(AppStrings.statusRunning);
+        controller.setStatus(LaunchStatus.running);
         if (Platform.isWindows) {
           try {
             final prefs = await SharedPreferences.getInstance();

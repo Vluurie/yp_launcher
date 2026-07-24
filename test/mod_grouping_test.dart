@@ -69,7 +69,7 @@ void main() {
   group('non-outfit mods group by category', () {
     test('weapons', () {
       expect(
-        groupsForMod(_mod(id: 'w', categories: [DataCategory.weapon3d])),
+        groupsForMod(_mod(id: 'w', categories: [DataCategory.weapon])),
         {ModGroupKind.weapon},
       );
     });
@@ -97,7 +97,7 @@ void main() {
         id: 'n',
         kind: ModKind.native,
         playerFiles: ['pl0000.dat'],
-        categories: [DataCategory.player3d],
+        categories: [DataCategory.player],
       );
       expect(groupsForMod(mod), {ModGroupKind.native},
           reason: 'native mods must not be duplicated into outfit groups');
@@ -111,9 +111,9 @@ void main() {
       expect(grouped[ModGroupKind.native]!.single.id, 'n');
     });
 
-    test('player3d data without recognised slots is an outfit', () {
+    test('player data without recognised slots is an outfit', () {
       expect(
-        groupsForMod(_mod(id: 'p', categories: [DataCategory.player3d])),
+        groupsForMod(_mod(id: 'p', categories: [DataCategory.player])),
         {ModGroupKind.outfitOther},
       );
     });
@@ -122,7 +122,7 @@ void main() {
   group('groupMods', () {
     test('orders groups by modGroupOrder and keeps every mod', () {
       final mods = [
-        _mod(id: 'weapon', categories: [DataCategory.weapon3d]),
+        _mod(id: 'weapon', categories: [DataCategory.weapon]),
         _mod(id: 'a2', playerFiles: ['pl0100.dat']),
         _mod(id: 'twob', playerFiles: ['pl0000.dat']),
         _mod(id: 'nams', kind: ModKind.native),

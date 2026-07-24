@@ -24,6 +24,440 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tooltipDiscord => 'Discord';
 
   @override
+  String get tooltipLanguage => 'Language';
+
+  @override
+  String get languageSupportNotice =>
+      'Translations are community-made or auto-generated and may be inaccurate. The maintainers speak English only - please ask for help in English.';
+
+  @override
+  String get tooltipCopyCommand =>
+      'Copy the NAMS command to clipboard so you can paste it into a terminal and start the game manually.';
+
+  @override
+  String get notificationCommandCopied =>
+      'Launch command copied - paste it into a terminal to start the game manually.';
+
+  @override
+  String get notificationCommandNotReady =>
+      'Could not build launch command - launcher binaries are not ready yet.';
+
+  @override
+  String get textureAutoRecommended => 'Auto (recommended)';
+
+  @override
+  String get detectionDlcPresent => 'DLC: present';
+
+  @override
+  String get detectionDlcNotDetected => 'DLC: not detected';
+
+  @override
+  String get detectionDlcPresentTooltip =>
+      'DLC data100.cpk found. Mods that ship DLC-only outfit files (pl000d, pl010d, pl020d) will install as-is.';
+
+  @override
+  String get detectionDlcNotDetectedTooltip =>
+      'No DLC detected. Mods that ship DLC-only outfit files (pl000d, pl010d, pl020d) will be installed under the non-DLC names (pl0000, pl0100, pl0200) so they show up in-game.';
+
+  @override
+  String get detectionExeWolfLimitBreak => 'EXE: Wolf Limit Break';
+
+  @override
+  String get detectionExeOriginal => 'EXE: Original';
+
+  @override
+  String get detectionExeMissing => 'EXE: missing';
+
+  @override
+  String get detectionExeUnrecognised => 'EXE: unrecognised';
+
+  @override
+  String get detectionExeUnrecognisedTooltip =>
+      'NieRAutomata.exe is present but its hash is not in our known list. NAMS will still run; this is just a heads-up that we have not seen this exact build.';
+
+  @override
+  String get detectionExeWolfLimitBreakTooltip =>
+      'Wolf Limit Break NieRAutomata.exe detected. NAMS does not need this patch and was never tested against it. The game may still launch, but performance issues, memory crashes, or mod incompatibilities are possible. For full support, restore the original Steam executable (verify game files in Steam).';
+
+  @override
+  String get detectionExeLegacyWin7 => 'EXE: Windows 7 build';
+
+  @override
+  String get detectionExeLegacyWin7Tooltip =>
+      'This is the legacy Windows 7/8 NieRAutomata.exe. NAMS needs the Windows 10/11 Steam build and cannot launch this one. It is common on Proton/Linux, where Steam sometimes downloads the Windows 7 executable.\n\nHow to fix it:\n1. Delete every .exe in your NieRAutomata game folder.\n2. In Steam, set Proton to \'Proton Experimental\' (right click the game > Properties > Compatibility).\n3. In Steam, right click the game > Properties > Installed Files > Verify integrity of game files.\n4. Launch the game once through Steam so it keeps the correct executable, then use the launcher again.';
+
+  @override
+  String get launchOptionsTitle => 'LAUNCH OPTIONS';
+
+  @override
+  String get launchWrapperTitle => 'LAUNCH WRAPPER (LINUX)';
+
+  @override
+  String get launchWrapperDesc =>
+      'Prepend a command in front of the game launch, e.g. gamescope or mangohud. The launcher runs the game through Proton, so Steam launch options do not apply here. Leave empty to launch normally. Applies on the next launch.';
+
+  @override
+  String get launchWrapperHint => 'gamescope -w 2560 -h 1440 -f --';
+
+  @override
+  String get launchWrapperExample =>
+      'Examples:\ngamescope -w 2560 -h 1440 -f --\nmangohud\ngamemoderun';
+
+  @override
+  String get tabLauncherSettings => 'Troubleshooting';
+
+  @override
+  String get troubleWrongExeTitle => 'Wrong game version';
+
+  @override
+  String get troubleWrongExeSummary =>
+      'This is the legacy Windows 7/8 NieRAutomata.exe. NAMS cannot launch it.';
+
+  @override
+  String get troubleMissingFilesTitle => 'Missing launcher files';
+
+  @override
+  String troubleMissingFilesSummary(String files) {
+    return 'Missing: $files';
+  }
+
+  @override
+  String get troubleMissingFilesDesc =>
+      'These files are part of the portable launcher but are gone. Antivirus (usually Windows Defender) most likely quarantined them. Exclude the launcher folder from your antivirus and restore the files, or re-download the launcher.';
+
+  @override
+  String get troubleRecentErrorsTitle => 'Recent NAMS errors';
+
+  @override
+  String get troubleFoldersTitle => 'Open folders';
+
+  @override
+  String get troubleFoldersDesc =>
+      'Quick access to the folders a maintainer may ask you to open.';
+
+  @override
+  String get troubleOpenGame => 'Game folder';
+
+  @override
+  String get troubleOpenNamsConfig => 'NAMS config';
+
+  @override
+  String get troubleOpenLogs => 'Logs';
+
+  @override
+  String get troubleOpenBins => 'Launcher folder';
+
+  @override
+  String get troubleClearCacheTitle => 'Clear cache';
+
+  @override
+  String get troubleClearCacheDesc =>
+      'Delete cached state that can go stale: log files, the detection cache, the mod\'s NAMS settings.json, and the runtime extract stamp. Your mods and game files are not touched.';
+
+  @override
+  String get troubleClearCacheButton => 'Clear cache';
+
+  @override
+  String get troubleClearCacheConfirm =>
+      'This deletes logs, the detection cache, the mod\'s in-game settings.json, and forces a runtime re-extract on next start. Mods and game files stay untouched. Continue?';
+
+  @override
+  String troubleClearCacheDone(int count) {
+    return 'Cache cleared ($count log files removed).';
+  }
+
+  @override
+  String get verifyInstallTitle => 'INSTALL DIAGNOSTICS';
+
+  @override
+  String get verifyInstallDesc =>
+      'Run NAMS\'s built-in checks to diagnose why the game may not launch (wrong Windows build, missing Steam files, permissions).';
+
+  @override
+  String get verifyInstallButton => 'Verify installation';
+
+  @override
+  String get verifyInstallRunning => 'Checking...';
+
+  @override
+  String get verifyInstallOk => 'All checks passed.';
+
+  @override
+  String get verifyInstallFailed => 'Some checks failed. See details below.';
+
+  @override
+  String get verifyNoRuntime =>
+      'Cannot verify: no Proton/Wine runtime found for this install.';
+
+  @override
+  String get verifySteamNotRunning =>
+      'Cannot verify: Steam must be running and own the game.';
+
+  @override
+  String get verifyInstallError =>
+      'Could not run the check. Make sure a game folder is selected.';
+
+  @override
+  String get verifyInstallNoGameDir => 'Select your game folder first.';
+
+  @override
+  String get verifyCheckSteamInstall => 'Steam installation';
+
+  @override
+  String get verifyCheckNierExe => 'Game executable';
+
+  @override
+  String get verifyCheckSteamApi64 => 'Steam API library';
+
+  @override
+  String get verifyCheckRuntimeWritable => 'Runtime writable';
+
+  @override
+  String get verifyCheckRuntimeCached => 'Runtime library cached';
+
+  @override
+  String get launchOptionMinimizeOnLaunch => 'Minimize launcher while playing';
+
+  @override
+  String get launchOptionPreferDedicatedGpu => 'Prefer dedicated GPU';
+
+  @override
+  String get launchOptionPreferDedicatedGpuTooltip =>
+      'Tells the system to run the game on the dedicated graphics card instead of the power-saving one. Only matters on PCs with two GPUs (e.g. gaming laptops).';
+
+  @override
+  String get failTitlePanic => 'NAMS crashed';
+
+  @override
+  String get failTitleUnknown => 'Game launch failed';
+
+  @override
+  String get failExplanationPanic =>
+      'NAMS hit an unrecoverable error before the game could start. This is almost always a bug — please share the report below with the maintainer.';
+
+  @override
+  String get failExplanationUnknown =>
+      'The game did not start within 60 seconds and no error was reported.';
+
+  @override
+  String get failHintPanicShare =>
+      'Copy the full report below and send it to the maintainer.';
+
+  @override
+  String get failHintPanicReboot =>
+      'Try once more after rebooting — sometimes a stale handle clears itself.';
+
+  @override
+  String get failHintUnknownSpawned =>
+      'NAMS seems to have spawned but the game window never appeared.';
+
+  @override
+  String get failHintUnknownTaskManager =>
+      'Check Task Manager — is NieRAutomata.exe running but invisible? Kill it and retry.';
+
+  @override
+  String get failHintUnknownOtherLauncher =>
+      'Make sure no other launcher / DRM tool is holding the exe (FAR, Special K, etc).';
+
+  @override
+  String get failTitleNamsFailure => 'NAMS reported a failure';
+
+  @override
+  String get failExplanationNamsFailure =>
+      'A NAMS check failed before the game could run. See the report below for details.';
+
+  @override
+  String get failHintShareReport =>
+      'Copy the full report below and share it for diagnosis.';
+
+  @override
+  String get failTitleInstallNotFound => 'NieR:Automata install not found';
+
+  @override
+  String get failExplanationInstallNotFound =>
+      'NAMS could not resolve your NieR:Automata install. The saved path may be wrong, or Steam autodetect failed.';
+
+  @override
+  String get failHintRepickDirectory =>
+      'Re-pick your game directory in the launcher to refresh the saved path.';
+
+  @override
+  String get failHintVerifyFiles =>
+      'Verify game files in Steam (Library → NieR:Automata → Properties → Local Files → Verify).';
+
+  @override
+  String get failTitleFolderCreate => 'Could not create a needed folder';
+
+  @override
+  String get failExplanationFolderCreate =>
+      'NAMS could not create a directory next to NAMS.exe. The install folder may be read-only.';
+
+  @override
+  String get failHintWritableFolder =>
+      'Make sure the launcher install folder (where NAMS.exe lives) is writable.';
+
+  @override
+  String get failHintProgramFiles =>
+      'If it is in Program Files or OneDrive-synced, move the launcher to a normal folder or right-click → \"Always keep on this device\".';
+
+  @override
+  String get failTitleRuntimePrep => 'Runtime preparation failed';
+
+  @override
+  String get failExplanationRuntimePrep =>
+      'NAMS could not prepare its runtime (game.bin / steam_api64.dll). This is usually a writability or antivirus problem.';
+
+  @override
+  String get failHintAntivirusExclusions =>
+      'Add the launcher install folder AND your game folder to your antivirus exclusions, then retry.';
+
+  @override
+  String get failHintWritableCache =>
+      'Make sure the install folder is writable so the runtime cache can be built.';
+
+  @override
+  String get failTitleHostFailure => 'NAMS host failure';
+
+  @override
+  String get failExplanationHostFailure =>
+      'NAMS could not load and start the game host (game.bin). This is usually an environment or corruption issue.';
+
+  @override
+  String get failHintReboot =>
+      'Reboot and try again — sometimes a stale handle clears itself.';
+
+  @override
+  String get failHintPersistShare =>
+      'If it persists, copy the full report and send it to the maintainer.';
+
+  @override
+  String get failTitleSteamNotRunning => 'Steam not running / not logged in';
+
+  @override
+  String get failExplanationSteamNotRunning =>
+      'NAMS could not reach a logged-in Steam session. Steam must be running and signed in.';
+
+  @override
+  String get failHintStartSteam =>
+      'Start Steam and sign in, then launch again.';
+
+  @override
+  String get failTitleSteamNotOwned =>
+      'Steam account does not own NieR:Automata';
+
+  @override
+  String get failExplanationSteamNotOwned =>
+      'The signed-in Steam account does not own NieR:Automata.';
+
+  @override
+  String get failHintSignInOwner =>
+      'Sign into the Steam account that owns NieR:Automata.';
+
+  @override
+  String get failTitleSteamCheckFailed => 'Steam check failed';
+
+  @override
+  String get failExplanationSteamCheckFailed =>
+      'NAMS hit an internal error while verifying Steam ownership.';
+
+  @override
+  String get failHintRestartSteam =>
+      'Restart Steam and the launcher, then try again.';
+
+  @override
+  String get failTitleInvalidArgs => 'Invalid launch arguments';
+
+  @override
+  String get failExplanationInvalidArgs =>
+      'The launcher passed arguments NAMS could not parse. This is a launcher bug.';
+
+  @override
+  String get failTitleExitedUnexpectedly => 'Game exited unexpectedly';
+
+  @override
+  String get failExplanationExitedUnexpectedly =>
+      'NAMS started the game but it exited with a non-zero code. The game may have crashed.';
+
+  @override
+  String get failHintCheckLogViewer =>
+      'Check the in-app log viewer (nams.log) for the crash details.';
+
+  @override
+  String get failHeadlinePanicked => 'NAMS panicked';
+
+  @override
+  String get failSectionWhatHappened => 'What happened';
+
+  @override
+  String get failSectionReportedByNams => 'Reported by NAMS';
+
+  @override
+  String get failSectionTryThis => 'Try this';
+
+  @override
+  String get failSectionDiagnosticDetail => 'Diagnostic detail';
+
+  @override
+  String get failSectionLaunchManually => 'Launch manually from a terminal';
+
+  @override
+  String get failSectionRawOutput => 'Raw output';
+
+  @override
+  String get failManualCommandHint =>
+      'If the launcher UI keeps failing for you, paste this into a terminal to start the game manually. It is the exact same command the Play button runs.';
+
+  @override
+  String get failDetailOs => 'OS';
+
+  @override
+  String get failDetailCause => 'Cause';
+
+  @override
+  String get failDetailSuggested => 'Suggested';
+
+  @override
+  String get failActionCopyReport => 'Copy report';
+
+  @override
+  String get failActionOpenLogFile => 'Open log file';
+
+  @override
+  String get logDetailOs => 'OS';
+
+  @override
+  String get logDetailLocale => 'Locale';
+
+  @override
+  String get logNoModsInstalled => 'No mods installed.';
+
+  @override
+  String get logSectionSystem => 'System';
+
+  @override
+  String get logSectionModsNams => 'Mods (NAMS)';
+
+  @override
+  String get logSectionCutscenes => 'Cutscenes';
+
+  @override
+  String get logSectionTextures => 'Textures';
+
+  @override
+  String get tooltipOpenInModManager => 'Open in Mod Manager';
+
+  @override
+  String get tooltipOpenInCutscenesTab => 'Open in Cutscenes tab';
+
+  @override
+  String tooltipOpenInTexturesTab(String name) {
+    return '$name\n\nOpen in Textures tab';
+  }
+
+  @override
+  String get actionCancel => 'Cancel';
+
+  @override
   String get tooltipMinimize => 'Minimize';
 
   @override
@@ -164,6 +598,20 @@ class AppLocalizationsEn extends AppLocalizations {
       'ReShade detected - disabled by default. NAMS already ships a patched native depth-of-field, so ReShade is optional. Re-enable it any time in the NAMS config tab (Disable ReShade Loading → off).';
 
   @override
+  String get notifyNaiomMigrated =>
+      'Found your old NAIOM settings - imported into nams.toml. Check the NAIOM tab. You can remove the old NAIOM files (dinput8.dll, NAIOM.ini) from the game folder.';
+
+  @override
+  String notifyNaiomSkipped(String entries) {
+    return 'Some NAIOM bindings use keys NAMS does not support and were not imported: $entries. Rebind them in the NAIOM tab.';
+  }
+
+  @override
+  String notifyPlatformUnsupported(String platform) {
+    return 'No Windows compatibility layer found on $platform, so the game cannot be started from here. Mods, textures and configs all still work. Install CrossOver and put NieR:Automata in a bottle to enable launching.';
+  }
+
+  @override
   String get notifyReShadeIncompatible =>
       'ReShade with addon/ImGui support detected - incompatible. Use standard ReShade without addon support.';
 
@@ -224,11 +672,18 @@ class AppLocalizationsEn extends AppLocalizations {
       'Running NieR:Automata on this system needs CrossOver, which runs Windows programs on macOS. It was not found in /Applications.\n\nWithout it the launcher can still manage mods, textures and configs - only starting the game is unavailable.\n\nHow to fix it:\n1. Install CrossOver from codeweavers.com.\n2. Install Steam and NieR:Automata inside a CrossOver bottle.\n3. Select NieRAutomata.exe from inside that bottle in this launcher.';
 
   @override
+  String get errorNoCompatLayerLinux => 'No Proton or Wine found';
+
+  @override
+  String get errorNoCompatLayerLinuxBody =>
+      'Running NieR:Automata on Linux needs Proton (recommended) or Wine, and none was found.\n\nWithout it the launcher can still manage mods, textures and configs - only starting the game is unavailable.\n\nHow to fix it:\n1. In Steam, install a Proton build (Proton Experimental works well). If it is on another drive, the launcher now checks every Steam library.\n2. Make sure you selected NieRAutomata.exe from inside your Steam library (a path containing steamapps/common).\n3. Or set YP_PROTON_PATH to your proton binary before starting the launcher, e.g. YP_PROTON_PATH=\"\$HOME/.steam/steam/steamapps/common/Proton - Experimental/proton\".';
+
+  @override
   String get errorProtonMissing => 'Proton not found';
 
   @override
   String errorProtonMissingBody(String path) {
-    return 'The configured Proton runtime is missing at:\n$path\n\nReinstall Proton through Steam, or select the game executable from inside a CrossOver bottle instead.';
+    return 'The configured Proton runtime is missing at:\n$path\n\nReinstall Proton through Steam, or set YP_PROTON_PATH to a valid proton binary before starting the launcher.';
   }
 
   @override
@@ -438,6 +893,301 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tabCutscenes => 'Cutscenes';
+
+  @override
+  String get tabThirdParty => 'Third Party';
+
+  @override
+  String get thirdPartyTitle => 'Third Party Runtimes';
+
+  @override
+  String get thirdPartySubtitle =>
+      'ReShade and 3DMigoto, loaded by NAMS from a managed folder. No renaming, no DLL conflicts.';
+
+  @override
+  String get thirdPartyReShadeHeader => 'RESHADE';
+
+  @override
+  String get thirdPartyMigotoHeader => '3DMIGOTO';
+
+  @override
+  String get thirdPartyReShadeHowto =>
+      'Install ReShade normally into your NieRAutomata folder (pick dxgi as the API). The launcher moves it into NAMS and sets up the paths for you.';
+
+  @override
+  String get thirdPartyMigotoHowto =>
+      'Drop a 3DMigoto shader-mod archive here. The launcher installs it and sets the loader target so NAMS hooks it.';
+
+  @override
+  String get thirdPartyStatusInstalled => 'Installed';
+
+  @override
+  String get thirdPartyStatusNotInstalled => 'Not installed';
+
+  @override
+  String get thirdPartyStatusFoundInGame =>
+      'Found in your game folder — click Import to set it up for NAMS.';
+
+  @override
+  String get thirdPartyEnable => 'Enable';
+
+  @override
+  String get thirdPartyImport => 'Import into NAMS';
+
+  @override
+  String get thirdPartyRepair => 'Repair';
+
+  @override
+  String get thirdPartyRemove => 'Remove';
+
+  @override
+  String get thirdPartyGetReShade => 'Get ReShade';
+
+  @override
+  String get thirdPartyShadersMissing =>
+      'No effects installed yet — add a preset or shader pack, or they won\'t do anything.';
+
+  @override
+  String get thirdPartyOpenFolder => 'Open folder';
+
+  @override
+  String thirdPartyPresetsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count presets',
+      one: '1 preset',
+      zero: 'No presets',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get thirdPartyInstallCard => 'INSTALL';
+
+  @override
+  String get thirdPartyDropHere => 'Drop a ReShade preset / 3DMigoto mod here';
+
+  @override
+  String get thirdPartyImported => 'Imported into NAMS';
+
+  @override
+  String get thirdPartyInstalled => 'Installed';
+
+  @override
+  String get thirdPartyInstallFailed => 'Could not install this file';
+
+  @override
+  String get thirdPartyRedirectMods =>
+      'This is a game-data mod — use the Mod Manager tab.';
+
+  @override
+  String get thirdPartyRedirectTextures =>
+      'This is a texture pack — use the Textures tab.';
+
+  @override
+  String get thirdPartyUnsupported => 'This file type is not supported here.';
+
+  @override
+  String get thirdPartyLodModPrompt =>
+      'This is a LodMod. NAMS has LodMod built in — import its settings into the LodMod tab?';
+
+  @override
+  String get thirdPartyStatusActive => 'Active';
+
+  @override
+  String get thirdPartyStatusInactive => 'Installed, disabled in NAMS tab';
+
+  @override
+  String get thirdPartyVersion => 'Version';
+
+  @override
+  String get thirdPartyAddonBuild => 'Addon build';
+
+  @override
+  String get thirdPartyPresets => 'PRESETS';
+
+  @override
+  String get thirdPartyNonePresets => 'No presets installed';
+
+  @override
+  String get thirdPartyShaderRepos => 'SHADERS';
+
+  @override
+  String get thirdPartyNoneShaders => 'No shaders — effects won\'t compile';
+
+  @override
+  String thirdPartyShaderCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count effects',
+      one: '1 effect',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get thirdPartyAddons => 'ADDONS';
+
+  @override
+  String get thirdPartyFiles => 'FILES';
+
+  @override
+  String get thirdPartyShaderFixes => 'ShaderFixes';
+
+  @override
+  String thirdPartyShaderFixCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count fixes',
+      one: '1 fix',
+      zero: 'none',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get thirdPartyLoaderTarget => 'Loader target';
+
+  @override
+  String get thirdPartyHunting => 'Hunting';
+
+  @override
+  String get thirdPartyHuntingOn => 'on';
+
+  @override
+  String thirdPartyUpdateTitle(String name) {
+    return 'Replace installed $name?';
+  }
+
+  @override
+  String thirdPartyUpdateBody(String name) {
+    return '$name is already installed. The file you dropped is a different build. Replace the installed one with it?';
+  }
+
+  @override
+  String get thirdPartyUpdateInstalledLabel => 'Installed now';
+
+  @override
+  String get thirdPartyUpdateIncomingLabel => 'You dropped';
+
+  @override
+  String get thirdPartyUpdateReplace => 'Replace';
+
+  @override
+  String get thirdPartyUpdateKeep => 'Keep current';
+
+  @override
+  String get thirdPartyUpdateSkipped => 'Kept the installed version.';
+
+  @override
+  String get thirdPartyD3dCompilerMissing =>
+      'No d3dcompiler_47.dll here. Under Wine, ReShade falls back to Wine\'s stub and effects won\'t compile. Reinstall a ReShade build that ships it, or drop a native d3dcompiler_47.dll into this folder.';
+
+  @override
+  String get thirdPartyBanner =>
+      'The tools on this tab are third-party software. NAMS only loads them. It does not implement them and cannot change how they behave. Anything you install through them runs on its own, so correctness, compatibility and safety are your responsibility. If something misbehaves, that is on the tool or the mod, not on NAMS.';
+
+  @override
+  String get thirdPartyConfigSection => 'SETTINGS';
+
+  @override
+  String get thirdPartyRestartRequired => 'applied on next game start';
+
+  @override
+  String get thirdPartyReShadePerformanceMode => 'Performance mode';
+
+  @override
+  String get thirdPartyReShadePerformanceModeHint =>
+      'Skip effect recompilation on launch. Turn off while tuning effects.';
+
+  @override
+  String get thirdPartyReShadeShowFps => 'Show FPS';
+
+  @override
+  String get thirdPartyReShadeShowFpsHint =>
+      'Draw the frame rate in the ReShade overlay corner.';
+
+  @override
+  String get thirdPartyReShadeShowClock => 'Show clock';
+
+  @override
+  String get thirdPartyReShadeShowClockHint =>
+      'Draw the current time in the ReShade overlay corner.';
+
+  @override
+  String get thirdPartyReShadeActivePreset => 'Active preset';
+
+  @override
+  String get thirdPartyReShadeOverlayKey => 'Overlay key';
+
+  @override
+  String get thirdPartyReShadeNoKey => 'unset';
+
+  @override
+  String get thirdPartyMigotoHunting => 'Hunting';
+
+  @override
+  String get thirdPartyMigotoHuntingOff => 'Off';
+
+  @override
+  String get thirdPartyMigotoHuntingOn => 'On';
+
+  @override
+  String get thirdPartyMigotoHuntingNoMarking => 'On, no marking';
+
+  @override
+  String get thirdPartyMigotoHuntingHint =>
+      'Developer mode: cycle shaders to find and dump them. Leave off for normal play.';
+
+  @override
+  String get thirdPartyMigotoMarkingMode => 'Marking mode';
+
+  @override
+  String get thirdPartyMigotoMarkingModeHint =>
+      'How the hunted shader is highlighted in-game: skip (no change), original, pink, or mono.';
+
+  @override
+  String get thirdPartyMigotoMarkingSkip => 'Skip';
+
+  @override
+  String get thirdPartyMigotoMarkingOriginal => 'Original';
+
+  @override
+  String get thirdPartyMigotoMarkingPink => 'Pink';
+
+  @override
+  String get thirdPartyMigotoMarkingMono => 'Mono';
+
+  @override
+  String get thirdPartyMigotoVerboseOverlay => 'Verbose overlay';
+
+  @override
+  String get thirdPartyMigotoVerboseOverlayHint =>
+      'Show detailed 3DMigoto status text on screen. Useful while debugging, noisy otherwise.';
+
+  @override
+  String get thirdPartyMigotoCacheShaders => 'Cache shaders';
+
+  @override
+  String get thirdPartyMigotoCacheShadersHint =>
+      'Reuse compiled shaders across launches. Turn off only when debugging fixes.';
+
+  @override
+  String get thirdPartyMigotoCheckForegroundWindow => 'Only hook in foreground';
+
+  @override
+  String get thirdPartyMigotoCheckForegroundWindowHint =>
+      'Only apply the overlay and hotkeys when the game window is focused.';
+
+  @override
+  String get thirdPartyConfigApplied => 'Settings saved.';
+
+  @override
+  String get thirdPartyConfigNoIni =>
+      'No config file yet — install writes one.';
 
   @override
   String get tabSectionGeneral => 'General';
@@ -685,6 +1435,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String modSideInstalledTextures(String names) {
     return 'Also installed bundled texture pack(s) into nams/inject/textures/: $names';
+  }
+
+  @override
+  String modLooseUnpairedWarning(String names) {
+    return 'Installed, but some files are missing their vanilla pair (.dat/.dtt): $names. The mod may not work fully.';
   }
 
   @override
@@ -1144,6 +1899,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get diagnosticsButton => 'Generate diagnostics';
 
   @override
+  String get diagnosticsSubtitle =>
+      'Collect a full report of your install (game files, mods, ReShade/3DMigoto, settings) to share when asking for help.';
+
+  @override
+  String get copyCommandTitle => 'Manual launch command';
+
+  @override
+  String get copyCommandDesc =>
+      'If the game will not start from the launcher, copy the NAMS command and run it in a terminal. NAMS prints why it failed there, which is the fastest way to find the cause.';
+
+  @override
+  String get copyCommandButton => 'Copy command';
+
+  @override
   String get diagnosticsTitle => 'Diagnostics summary';
 
   @override
@@ -1364,6 +2133,74 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get diagnosticsSectionGameRootExtras =>
       'Game root extras (non-vanilla)';
+
+  @override
+  String get diagnosticsSectionGameIdentity => 'Game identity';
+
+  @override
+  String get diagnosticsSectionNamsHealth => 'NAMS health';
+
+  @override
+  String get diagnosticsSectionReshade => 'ReShade';
+
+  @override
+  String get diagnosticsSectionMigoto => '3DMigoto';
+
+  @override
+  String get diagnosticsSectionTexturePacks => 'Texture packs';
+
+  @override
+  String get diagnosticsSectionVanillaDrops => 'Files dropped in vanilla data/';
+
+  @override
+  String get diagnosticsSectionNonDefault => 'Non-default settings';
+
+  @override
+  String get diagnosticsSectionRecentIssues => 'Recent NAMS issues';
+
+  @override
+  String diagnosticsExeVariant(String variant) {
+    return 'exe: $variant';
+  }
+
+  @override
+  String get diagnosticsExeUnsupported => 'unsupported build';
+
+  @override
+  String get diagnosticsDlcPresent => 'DLC';
+
+  @override
+  String get diagnosticsGameRunning => 'running';
+
+  @override
+  String get diagnosticsNamsPresent => 'NAMS.exe';
+
+  @override
+  String diagnosticsMissingFiles(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count missing files',
+      one: '1 missing file',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get diagnosticsInstalled => 'installed';
+
+  @override
+  String get diagnosticsEnabled => 'enabled';
+
+  @override
+  String get diagnosticsShadersMissing => 'shaders missing';
+
+  @override
+  String get diagnosticsTexturePacksUnavailable =>
+      'NAMS texture query unavailable';
+
+  @override
+  String get diagnosticsExtraFile => 'extra';
 
   @override
   String diagnosticsFileCount(int count) {
@@ -1771,6 +2608,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'Skip automatic ReShade DLL detection from the reshade/ folder and does not load it anymore.';
 
   @override
+  String get labelDisable3dmigotoLoading => 'Disable 3DMigoto Loading';
+
+  @override
+  String get tooltipDisable3dmigotoLoading =>
+      'Skip loading the 3DMigoto runtime from thirdparty/3dmigoto/. Turn off to stop loading shader mods.';
+
+  @override
   String get labelDisableTextureInjection => 'Disable Texture Injection';
 
   @override
@@ -1783,6 +2627,14 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get tooltipOutfitSwapVisualEffects =>
       'Play the visual effects during an outfit hot-swap: the pod spawn-in blinder animation, the curtain, and the hacking-screen glitch filter. Turn off for an instant, effect-free swap - the model still reloads. Takes effect immediately, no restart needed.';
+
+  @override
+  String get labelExperimentalDefaultOutfits =>
+      'Default Outfits (experimental)';
+
+  @override
+  String get tooltipExperimentalDefaultOutfits =>
+      'Lets you mark installed outfit mods as active from the moment the game starts, as if their files were placed in the game\'s data folder. When on, the mod details panel shows a star button per player model to set it as the boot default. Off by default while the feature stabilizes. Requires a game restart.';
 
   @override
   String get labelDisableSplashScreen => 'Disable Splash Screen';
@@ -2471,6 +3323,29 @@ class AppLocalizationsEn extends AppLocalizations {
       'Playing with a controller? These settings are designed for mouse and keyboard, but some of them - especially the camera and aiming fixes - also affect controller input. If you switch back to playing on a controller, disable those settings first to restore the original gamepad feel.';
 
   @override
+  String get cardCheatEngine => 'CHEAT ENGINE';
+
+  @override
+  String get cheatTableConvertDesc =>
+      'Got a Cheat Engine table (.CT) that does not work with NAMS? Fix it here. The fixed copy is saved next to your original file.';
+
+  @override
+  String get cheatTableConvertButton => 'Fix cheat table...';
+
+  @override
+  String cheatTableConvertSuccess(String file) {
+    return 'Fixed! Saved as $file';
+  }
+
+  @override
+  String get cheatTableConvertNone =>
+      'This table already works with NAMS - nothing to fix.';
+
+  @override
+  String get cheatTableConvertError =>
+      'Could not fix this table. Make sure the file is a valid .CT file.';
+
+  @override
   String get naiomBetaBadge => 'BETA';
 
   @override
@@ -2998,6 +3873,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get modFilterAll => 'All';
 
   @override
+  String get modCollapseAll => 'Collapse all groups';
+
+  @override
+  String get modExpandAll => 'Expand all groups';
+
+  @override
   String get modBulkInstall => 'Bulk install from folder';
 
   @override
@@ -3018,6 +3899,34 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get modLooseInstall => 'Install loose files from folder';
+
+  @override
+  String get modLooseInstallScanning => 'Scanning folder for loose game files…';
+
+  @override
+  String get modLooseInstallNone =>
+      'No loose game files (.dat / .dtt) found in that folder.';
+
+  @override
+  String modLooseInstallBusy(int count) {
+    return 'Installing $count loose files…';
+  }
+
+  @override
+  String modLooseInstallProgress(int done, int total) {
+    return 'Copying $done of $total files…';
+  }
+
+  @override
+  String get modLooseInstallFinalizing => 'Placing files into the mod…';
+
+  @override
+  String modLooseInstallDone(int count, String id) {
+    return 'Installed $count loose files into $id.';
+  }
+
+  @override
   String get modGroup2b => '2B OUTFITS';
 
   @override
@@ -3033,7 +3942,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get modGroupWeapons => 'WEAPONS';
 
   @override
+  String get modGroupAccessories => 'ACCESSORIES';
+
+  @override
+  String get modGroupItems => 'ITEMS';
+
+  @override
   String get modGroupEnemies => 'ENEMIES';
+
+  @override
+  String get modGroupWorldProps => 'WORLD PROPS';
+
+  @override
+  String get modGroupModelVariants => 'MODEL VARIANTS';
+
+  @override
+  String get modGroupMaps => 'MAPS / STAGES';
+
+  @override
+  String get modGroupUi => 'UI / FONTS';
+
+  @override
+  String get modGroupMisc => 'MISC TEXTURES';
+
+  @override
+  String get modGroupArchives => 'CPK ARCHIVES';
 
   @override
   String get modGroupEffects => 'EFFECTS';
@@ -3060,8 +3993,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get modGroupOther => 'OTHER';
 
   @override
+  String get modGroupMixed => 'MIXED CONTENT';
+
+  @override
+  String get modGroupWax => 'WAX COMPACT';
+
+  @override
   String get modGroupMultiHint =>
       'This mod replaces models for several characters, so it is listed under each of them.';
+
+  @override
+  String get modGroupMixedHint =>
+      'This mod changes several kinds of content at once. Click it to see everything it includes and which categories it touches.';
 
   @override
   String get modRename => 'Rename';
@@ -3166,6 +4109,35 @@ class AppLocalizationsEn extends AppLocalizations {
   String get modConflictsLabel => 'Conflicts';
 
   @override
+  String get modLoadOrderHint =>
+      'These mods replace the same files. Drag to reorder - top wins.';
+
+  @override
+  String get modConflictKeep => 'KEEP THIS';
+
+  @override
+  String get modConflictResolve => 'RESOLVE';
+
+  @override
+  String get modConflictDialogTitle => 'Which mod should win?';
+
+  @override
+  String modConflictKeepTooltip(String id) {
+    return 'Keep $id and disable the others';
+  }
+
+  @override
+  String modConflictPickBody(int mods, int files) {
+    String _temp0 = intl.Intl.pluralLogic(
+      files,
+      locale: localeName,
+      other: '$files files',
+      one: 'file',
+    );
+    return '$mods enabled mods replace the same $_temp0. Pick the one to keep - the others get disabled.';
+  }
+
+  @override
   String modConflictOverlapFile(String otherId, String file) {
     return '$otherId also ships $file';
   }
@@ -3189,6 +4161,65 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get modEnableTooltip =>
       'Mod is loaded by NAMS. Click to disable without removing the files.';
+
+  @override
+  String get modDefaultTooltip =>
+      'Active from game start, as if its files were in NieRAutomata/data. Click to turn off.';
+
+  @override
+  String get modSetDefaultTooltip =>
+      'Make this mod active from game start, without copying anything into NieRAutomata/data.';
+
+  @override
+  String get modSetDefaultOutfitTooltip =>
+      'Wear this from game start, without copying anything into NieRAutomata/data. Replaces whichever outfit is currently the default - only one can be.';
+
+  @override
+  String get modDefaultChip => 'DEFAULT';
+
+  @override
+  String get modDefaultKindOutfitBare => 'outfit';
+
+  @override
+  String get modDefaultKindOutfitConfig => 'outfit + config';
+
+  @override
+  String get modDefaultKindOutfitAnimation => 'animation';
+
+  @override
+  String get modDefaultKindOutfitBareTooltip =>
+      'Replaces the model files directly. Only one outfit can be the default at a time.';
+
+  @override
+  String get modDefaultKindOutfitConfigTooltip =>
+      'This mod ships an outfit config, so its mesh rules and effects load with it. Only one outfit can be the default at a time.';
+
+  @override
+  String get modDefaultKindOutfitAnimationTooltip =>
+      'Animation data, not an outfit. Stays active underneath whatever outfit you wear.';
+
+  @override
+  String get modDefaultReplaceTitle => 'Replace the default?';
+
+  @override
+  String modDefaultReplaceBody(String model, String current, String next) {
+    return '$model is currently worn from game start by \"$current\".\n\nMaking \"$next\" the default removes that, since only one mod can dress a character at a time.';
+  }
+
+  @override
+  String get modDefaultReplaceConfirm => 'Replace';
+
+  @override
+  String get modDefaultOutfitAuto => 'Default outfit';
+
+  @override
+  String get modDefaultOutfitPickTooltip =>
+      'This mod ships several outfits. Pick the one you want to wear from game start. \"Default outfit\" is the one worn without an item.';
+
+  @override
+  String modDefaultRowTooltip(String files) {
+    return 'Active from game start: $files';
+  }
 
   @override
   String get modDisableNotice => 'Disabled - takes effect on next game start.';
@@ -3409,6 +4440,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get modInstallReasonUnknownDrop =>
       'Unknown drop - the folder doesn\'t match any supported mod layout.';
+
+  @override
+  String get modInstallReasonUnsupportedNasa =>
+      'This is a NASA mod (contains sadfutago.cpk), which this launcher does not support.';
 
   @override
   String get modInstallReasonInvalidMixed =>

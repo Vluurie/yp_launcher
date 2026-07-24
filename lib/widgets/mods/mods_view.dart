@@ -8,7 +8,9 @@ import 'package:yp_launcher/l10n/app_localizations.dart';
 import 'package:yp_launcher/models/installed_mod.dart';
 import 'package:yp_launcher/models/mod_grouping.dart';
 import 'package:yp_launcher/providers/app_state.dart';
+import 'package:yp_launcher/providers/default_mods_state.dart';
 import 'package:yp_launcher/providers/disabled_mods_state.dart';
+import 'package:yp_launcher/providers/mod_load_order_state.dart';
 import 'package:yp_launcher/providers/mod_names_state.dart';
 import 'package:yp_launcher/providers/mod_profiles_state.dart';
 import 'package:yp_launcher/widgets/mods/mod_group_header.dart';
@@ -87,6 +89,8 @@ class _ModsViewState extends ConsumerState<ModsView> {
       ref.read(modProfilesStateControllerProvider.notifier).load(dir);
       ref.read(modsStateControllerProvider.notifier).loadMods(dir);
       ref.read(disabledModsStateControllerProvider.notifier).load(dir);
+      ref.read(defaultModsStateControllerProvider.notifier).load(dir);
+      ref.read(modLoadOrderStateControllerProvider.notifier).load(dir);
       ref.read(modNamesStateControllerProvider.notifier).load(dir);
       _restartWatcher(dir);
     });
@@ -164,7 +168,7 @@ class _ModsViewState extends ConsumerState<ModsView> {
           : l10n.modDropNotAMod;
       notif.addNotification(NotificationItem(
         id: 'mod_drop_reject_${DateTime.now().millisecondsSinceEpoch}',
-        message: message,
+        message: (l10n) => message,
         icon: Icons.error_outline,
         color: AppColors.error,
         type: NotificationType.general,
@@ -203,7 +207,7 @@ class _ModsViewState extends ConsumerState<ModsView> {
       final isTextureOnly = detect.errorReason == 'texture_only';
       notif.addNotification(NotificationItem(
         id: 'mod_install_fail_${DateTime.now().millisecondsSinceEpoch}',
-        message: isTextureOnly
+        message: (l10n) => isTextureOnly
             ? l10n.modInstallReasonTextureOnly
             : l10n.modInstallFailed(
                 _localizeReason(l10n, detect.errorReason ?? 'unknown_drop')),
@@ -305,7 +309,7 @@ class _ModsViewState extends ConsumerState<ModsView> {
       setState(() => _selectedId = result.installedId);
       notif.addNotification(NotificationItem(
         id: 'mod_installed_${DateTime.now().millisecondsSinceEpoch}',
-        message: l10n.modInstalled(result.installedId ?? ''),
+        message: (l10n) => l10n.modInstalled(result.installedId ?? ''),
         icon: Icons.check_circle,
         color: AppColors.success,
         type: NotificationType.general,
@@ -313,7 +317,7 @@ class _ModsViewState extends ConsumerState<ModsView> {
       if (result.sideInstalledTexturePacks.isNotEmpty) {
         notif.addNotification(NotificationItem(
           id: 'mod_side_textures_${DateTime.now().millisecondsSinceEpoch}',
-          message: l10n.modSideInstalledTextures(
+          message: (l10n) => l10n.modSideInstalledTextures(
             result.sideInstalledTexturePacks.join(', '),
           ),
           icon: Icons.texture,
@@ -321,10 +325,20 @@ class _ModsViewState extends ConsumerState<ModsView> {
           type: NotificationType.general,
         ));
       }
+      if (result.unpairedWarnings.isNotEmpty) {
+        notif.addNotification(NotificationItem(
+          id: 'mod_unpaired_${DateTime.now().millisecondsSinceEpoch}',
+          message: (l10n) =>
+              l10n.modLooseUnpairedWarning(result.unpairedWarnings.join(', ')),
+          icon: Icons.warning_amber,
+          color: AppColors.warning,
+          type: NotificationType.general,
+        ));
+      }
     } else {
       notif.addNotification(NotificationItem(
         id: 'mod_install_fail_${DateTime.now().millisecondsSinceEpoch}',
-        message: l10n.modInstallFailed(_localizeReason(l10n, result.errorMessage ?? 'unknown')),
+        message: (l10n) => l10n.modInstallFailed(_localizeReason(l10n, result.errorMessage ?? 'unknown')),
         icon: Icons.error_outline,
         color: AppColors.error,
         type: NotificationType.general,
@@ -443,7 +457,7 @@ class _ModsViewState extends ConsumerState<ModsView> {
     if (installed > 0) {
       notif.addNotification(NotificationItem(
         id: 'mod_variants_${DateTime.now().millisecondsSinceEpoch}',
-        message: l10n.modVariantInstalledToast(installed),
+        message: (l10n) => l10n.modVariantInstalledToast(installed),
         icon: Icons.check_circle,
         color: AppColors.success,
         type: NotificationType.general,
@@ -452,7 +466,7 @@ class _ModsViewState extends ConsumerState<ModsView> {
     for (final f in failures) {
       notif.addNotification(NotificationItem(
         id: 'mod_variant_fail_${DateTime.now().millisecondsSinceEpoch}_$f',
-        message: l10n.modInstallFailed(f),
+        message: (l10n) => l10n.modInstallFailed(f),
         icon: Icons.error_outline,
         color: AppColors.error,
         type: NotificationType.general,
@@ -467,6 +481,7 @@ class _ModsViewState extends ConsumerState<ModsView> {
       case 'native_empty': return l10n.modInstallReasonNativeEmpty;
       case 'data_empty': return l10n.modInstallReasonDataEmpty;
       case 'texture_only': return l10n.modInstallReasonTextureOnly;
+      case 'unsupported_nasa': return l10n.modInstallReasonUnsupportedNasa;
       case 'archive_extract_failed': return l10n.modInstallReasonArchiveExtractFailed;
       default:
         if (code.startsWith('move_failed')) return l10n.modInstallReasonMoveFailed;
@@ -532,7 +547,7 @@ class _ModsViewState extends ConsumerState<ModsView> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(ctx).pop(false),
-              child: Text('Cancel', style: TextStyle(color: AppColors.textMuted, fontSize: AppSizes.fontSM(ctx))),
+              child: Text(AppLocalizations.of(ctx)!.actionCancel, style: TextStyle(color: AppColors.textMuted, fontSize: AppSizes.fontSM(ctx))),
             ),
             TextButton(
               onPressed: () => Navigator.of(ctx).pop(true),
@@ -569,7 +584,7 @@ class _ModsViewState extends ConsumerState<ModsView> {
     if (_selectedId == mod.id) setState(() => _selectedId = null);
     ref.read(notificationStateControllerProvider.notifier).addNotification(NotificationItem(
           id: 'mod_uninstalled_${DateTime.now().millisecondsSinceEpoch}',
-          message: l10n.modUninstalled(mod.id),
+          message: (l10n) => l10n.modUninstalled(mod.id),
           icon: Icons.delete_outline,
           color: AppColors.textMuted,
           type: NotificationType.general,
@@ -671,7 +686,11 @@ class _ModsViewState extends ConsumerState<ModsView> {
                                 ),
                               ),
                               SizedBox(width: AppSizes.spacingSM(context)),
+                              _collapseAllButton(l10n, data.mods),
+                              SizedBox(width: AppSizes.spacingSM(context)),
                               _bulkInstallButton(l10n),
+                              SizedBox(width: AppSizes.spacingSM(context)),
+                              _looseInstallButton(l10n),
                               SizedBox(width: AppSizes.spacingSM(context)),
                               _helpIconButton(l10n),
                             ],
@@ -754,6 +773,31 @@ class _ModsViewState extends ConsumerState<ModsView> {
     );
   }
 
+  Widget _collapseAllButton(AppLocalizations l10n, List<InstalledMod> mods) {
+    final allGroups = groupMods(mods).keys.toSet();
+    final allCollapsed =
+        allGroups.isNotEmpty && _collapsedGroups.containsAll(allGroups);
+    return HoverIconButton(
+      tooltip: allCollapsed ? l10n.modExpandAll : l10n.modCollapseAll,
+      bordered: false,
+      padding: EdgeInsets.all(AppSizes.paddingXS(context)),
+      icon: Icon(
+        allCollapsed ? Icons.unfold_more : Icons.unfold_less,
+        size: AppSizes.iconLG(context),
+        color: AppColors.textMuted,
+      ),
+      onTap: () => setState(() {
+        if (allCollapsed) {
+          _collapsedGroups.clear();
+        } else {
+          _collapsedGroups
+            ..clear()
+            ..addAll(allGroups);
+        }
+      }),
+    );
+  }
+
   Future<void> _handleBulkInstall() async {
     final l10n = AppLocalizations.of(context)!;
     final notif = ref.read(notificationStateControllerProvider.notifier);
@@ -772,7 +816,7 @@ class _ModsViewState extends ConsumerState<ModsView> {
       setState(() => _busy = false);
       notif.addNotification(NotificationItem(
         id: 'bulk_none_${DateTime.now().millisecondsSinceEpoch}',
-        message: l10n.modBulkInstallNone,
+        message: (l10n) => l10n.modBulkInstallNone,
         icon: Icons.info_outline,
         color: AppColors.warning,
         type: NotificationType.general,
@@ -811,7 +855,7 @@ class _ModsViewState extends ConsumerState<ModsView> {
 
     notif.addNotification(NotificationItem(
       id: 'bulk_done_${DateTime.now().millisecondsSinceEpoch}',
-      message: l10n.modBulkInstallDone(installed, archives.length),
+      message: (l10n) => l10n.modBulkInstallDone(installed, archives.length),
       icon: Icons.check_circle,
       color: installed == archives.length ? AppColors.success : AppColors.warning,
       type: NotificationType.general,
@@ -819,11 +863,149 @@ class _ModsViewState extends ConsumerState<ModsView> {
     for (final f in failures) {
       notif.addNotification(NotificationItem(
         id: 'bulk_fail_${DateTime.now().millisecondsSinceEpoch}_$f',
-        message: l10n.modInstallFailed(f),
+        message: (l10n) => l10n.modInstallFailed(f),
         icon: Icons.error_outline,
         color: AppColors.error,
         type: NotificationType.general,
       ));
+    }
+  }
+
+  Widget _looseInstallButton(AppLocalizations l10n) {
+    return HoverIconButton(
+      tooltip: l10n.modLooseInstall,
+      bordered: false,
+      padding: EdgeInsets.all(AppSizes.paddingXS(context)),
+      icon: Icon(
+        Icons.note_add_outlined,
+        size: AppSizes.iconLG(context),
+        color: AppColors.textMuted,
+      ),
+      onTap: _handleLooseInstall,
+    );
+  }
+
+  Future<void> _handleLooseInstall() async {
+    final l10n = AppLocalizations.of(context)!;
+    final notif = ref.read(notificationStateControllerProvider.notifier);
+
+    final folder = await FilePicker.getDirectoryPath();
+    if (folder == null || !mounted) return;
+
+    setState(() {
+      _busy = true;
+      _busyMessage = l10n.modLooseInstallScanning;
+    });
+
+    final count = await IsolateService.run(_countLooseFilesSync, folder);
+    if (!mounted) return;
+    if (count == 0) {
+      setState(() => _busy = false);
+      notif.addNotification(NotificationItem(
+        id: 'loose_none_${DateTime.now().millisecondsSinceEpoch}',
+        message: (l10n) => l10n.modLooseInstallNone,
+        icon: Icons.info_outline,
+        color: AppColors.warning,
+        type: NotificationType.general,
+      ));
+      return;
+    }
+
+    setState(() => _busyMessage = l10n.modLooseInstallBusy(count));
+
+    InstallResult result;
+    try {
+      result = await withBusyGuard(
+        ref,
+        () => _installLooseFolder(
+          folder,
+          (done) {
+            if (mounted) {
+              setState(() =>
+                  _busyMessage = l10n.modLooseInstallProgress(done, count));
+            }
+          },
+          () {
+            if (mounted) {
+              setState(() => _busyMessage = l10n.modLooseInstallFinalizing);
+            }
+          },
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+    if (!mounted) return;
+
+    await ref.read(modsStateControllerProvider.notifier).loadMods(_gameDir);
+    if (!mounted) return;
+
+    if (result.success) {
+      notif.addNotification(NotificationItem(
+        id: 'loose_done_${DateTime.now().millisecondsSinceEpoch}',
+        message: (l10n) =>
+            l10n.modLooseInstallDone(count, result.installedId ?? ''),
+        icon: Icons.check_circle,
+        color: AppColors.success,
+        type: NotificationType.general,
+      ));
+      if (result.unpairedWarnings.isNotEmpty) {
+        notif.addNotification(NotificationItem(
+          id: 'loose_unpaired_${DateTime.now().millisecondsSinceEpoch}',
+          message: (l10n) =>
+              l10n.modLooseUnpairedWarning(result.unpairedWarnings.join(', ')),
+          icon: Icons.warning_amber,
+          color: AppColors.warning,
+          type: NotificationType.general,
+        ));
+      }
+    } else {
+      notif.addNotification(NotificationItem(
+        id: 'loose_fail_${DateTime.now().millisecondsSinceEpoch}',
+        message: (l10n) =>
+            l10n.modInstallFailed(_localizeReason(l10n, result.errorMessage ?? 'unknown')),
+        icon: Icons.error_outline,
+        color: AppColors.error,
+        type: NotificationType.general,
+      ));
+    }
+  }
+
+  Future<InstallResult> _installLooseFolder(
+    String folder,
+    void Function(int done) onCopyProgress,
+    VoidCallback onFinalizing,
+  ) async {
+    final staged = await IsolateService.runWithProgress<String, String?>(
+      _stageLooseFilesSync,
+      folder,
+      (msg) {
+        final done = int.tryParse(msg);
+        if (done != null) onCopyProgress(done);
+      },
+    );
+    if (staged == null) return const InstallResult.fail('data_empty');
+    onFinalizing();
+    try {
+      final baseName = prettifyModId(p.basename(folder));
+      var name = baseName;
+      for (var attempt = 2; attempt < 100; attempt++) {
+        final result = await ModsService.install(
+          _gameDir,
+          staged,
+          requestedName: name,
+        );
+        if (result.success ||
+            result.errorMessage?.startsWith('exists:') != true) {
+          return result;
+        }
+        name = '$baseName $attempt';
+      }
+      return const InstallResult.fail('exists');
+    } finally {
+      try {
+        Directory(staged).deleteSync(recursive: true);
+      } catch (_) {}
     }
   }
 
@@ -1149,6 +1331,41 @@ List<String> _findArchivesSync(String root) {
   scan(dir, 1);
   out.sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
   return out;
+}
+
+int _countLooseFilesSync(String root) {
+  final dir = Directory(root);
+  if (!dir.existsSync()) return 0;
+  var count = 0;
+  for (final entity in dir.listSync(followLinks: false).whereType<File>()) {
+    final ext = p.extension(entity.path).toLowerCase();
+    if (ext == '.dat' || ext == '.dtt') count++;
+  }
+  return count;
+}
+
+String? _stageLooseFilesSync(String root, void Function(String) report) {
+  final dir = Directory(root);
+  if (!dir.existsSync()) return null;
+  final loose = dir
+      .listSync(followLinks: false)
+      .whereType<File>()
+      .where((f) {
+        final ext = p.extension(f.path).toLowerCase();
+        return ext == '.dat' || ext == '.dtt';
+      })
+      .toList();
+  if (loose.isEmpty) return null;
+  final staged = Directory.systemTemp.createTempSync('yp_loose_stage_');
+  var done = 0;
+  for (final f in loose) {
+    f.copySync(p.join(staged.path, p.basename(f.path)));
+    done++;
+    if (done % 100 == 0 || done == loose.length) {
+      report('$done');
+    }
+  }
+  return staged.path;
 }
 
 /// Subdirs accepted INSIDE a `data/` overlay. Includes everything NAMS
