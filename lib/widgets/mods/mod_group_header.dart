@@ -144,7 +144,7 @@ class _ModGroupHeaderState extends State<ModGroupHeader> {
                 ),
                 child: Text(
                   '${widget.count}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 11,
                     color: AppColors.textMuted,
                     fontWeight: FontWeight.w500,

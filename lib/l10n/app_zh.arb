@@ -5,6 +5,8 @@
   "tooltipNamsSource": "NAMS 项目源代码",
   "tooltipGuide": "指南",
   "tooltipDiscord": "Discord",
+  "themeToggleToNier": "切换到 NieR 主题",
+  "themeToggleToDark": "切换到深色主题",
   "tooltipLanguage": "语言",
   "languageSupportNotice": "翻译由社区提供或自动生成，可能存在不准确之处。维护者仅使用英语 — 寻求帮助时请使用英语提问。",
   "tooltipCopyCommand": "将 NAMS 命令复制到剪贴板，以便粘贴到终端中手动启动游戏。",

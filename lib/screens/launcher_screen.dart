@@ -7,8 +7,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:yp_launcher/constants/app_strings.dart';
 import 'package:yp_launcher/l10n/app_localizations.dart';
-import 'package:yp_launcher/l10n/app_localizations_en.dart';
 import 'package:yp_launcher/widgets/directory_selector.dart';
+import 'package:yp_launcher/widgets/language_selector.dart';
 import 'package:yp_launcher/widgets/hover_button.dart';
 import 'package:yp_launcher/widgets/play_button.dart';
 import 'package:yp_launcher/widgets/textures/textures_view.dart';
@@ -17,10 +17,11 @@ import 'package:yp_launcher/widgets/windows_title_bar.dart';
 import 'package:yp_launcher/providers/app_state.dart';
 import 'package:yp_launcher/providers/config_state.dart';
 import 'package:yp_launcher/providers/nams_settings_state.dart';
-import 'package:yp_launcher/providers/locale_state.dart';
 import 'package:yp_launcher/providers/log_state.dart';
 import 'package:yp_launcher/providers/notification_state.dart';
+import 'package:yp_launcher/providers/app_theme_state.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
+import 'package:yp_launcher/theme/app_theme.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
 import 'package:yp_launcher/widgets/log_panel.dart';
 import 'package:yp_launcher/widgets/notification_banner.dart';
@@ -138,13 +139,13 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
             child: Text(l10n.stay,
-                style: const TextStyle(color: AppColors.textMuted)),
+                style: TextStyle(color: AppColors.textMuted)),
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
             child: Text(
               busyCount > 0 ? l10n.busyCloseForce : l10n.discard,
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppColors.error,
                 fontWeight: FontWeight.bold,
               ),
@@ -211,7 +212,7 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const SizedBox(
+                      SizedBox(
                         width: 40,
                         height: 40,
                         child: CircularProgressIndicator(
@@ -358,14 +359,14 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
                 onPressed: () => Navigator.of(ctx).pop(false),
                 child: Text(
                   cl10n.stay,
-                  style: const TextStyle(color: AppColors.textMuted),
+                  style: TextStyle(color: AppColors.textMuted),
                 ),
               ),
               TextButton(
                 onPressed: () => Navigator.of(ctx).pop(true),
                 child: Text(
                   cl10n.discard,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.error,
                     fontWeight: FontWeight.bold,
                   ),
@@ -567,7 +568,9 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
                   AppStrings.discordUrl,
                 ),
                 SizedBox(width: AppSizes.spacingSM(context)),
-                _buildLanguageSelector(l10n),
+                _buildThemeToggle(l10n),
+                SizedBox(width: AppSizes.spacingSM(context)),
+                LanguageSelector(menuKey: _languageMenuKey),
               ],
             ),
           ),
@@ -866,114 +869,6 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
     );
   }
 
-  Widget _buildLanguageSelector(AppLocalizations l10n) {
-    final current =
-        ref.watch(localeControllerProvider) ??
-        Localizations.localeOf(context);
-    return PopupMenuButton<Locale>(
-      key: _languageMenuKey,
-      tooltip: '',
-      color: AppColors.backgroundCard,
-      position: PopupMenuPosition.under,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppSizes.borderRadius(context)),
-        side: const BorderSide(color: AppColors.borderLight),
-      ),
-      onSelected: (locale) =>
-          ref.read(localeControllerProvider.notifier).setLocale(locale),
-      itemBuilder: (context) => [
-        for (final locale in kSupportedLocales)
-          PopupMenuItem<Locale>(
-            value: locale,
-            child: Row(
-              children: [
-                Icon(
-                  locale.languageCode == current.languageCode
-                      ? Icons.check
-                      : Icons.language,
-                  size: AppSizes.iconSM(context),
-                  color: locale.languageCode == current.languageCode
-                      ? AppColors.accentPrimary
-                      : AppColors.textSecondary,
-                ),
-                SizedBox(width: AppSizes.spacingSM(context)),
-                Text(
-                  localeDisplayName(locale),
-                  style: TextStyle(
-                    color: locale.languageCode == current.languageCode
-                        ? AppColors.accentPrimary
-                        : AppColors.textPrimary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        const PopupMenuDivider(),
-        PopupMenuItem<Locale>(
-          enabled: false,
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 240),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Icon(
-                      Icons.info_outline,
-                      size: AppSizes.iconSM(context),
-                      color: AppColors.warning,
-                    ),
-                    SizedBox(width: AppSizes.spacingSM(context)),
-                    Expanded(
-                      child: Text(
-                        l10n.languageSupportNotice,
-                        style: TextStyle(
-                          fontSize: AppSizes.fontXS(context),
-                          color: AppColors.textMuted,
-                          height: 1.35,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                if (current.languageCode != 'en') ...[
-                  SizedBox(height: AppSizes.spacingSM(context) / 2),
-                  Padding(
-                    padding: EdgeInsets.only(
-                      left: AppSizes.iconSM(context) + AppSizes.spacingSM(context),
-                    ),
-                    child: Text(
-                      AppLocalizationsEn().languageSupportNotice,
-                      style: TextStyle(
-                        fontSize: AppSizes.fontXS(context),
-                        color: AppColors.textMuted.withValues(alpha: 0.7),
-                        height: 1.35,
-                        fontStyle: FontStyle.italic,
-                      ),
-                    ),
-                  ),
-                ],
-              ],
-            ),
-          ),
-        ),
-      ],
-      child: HoverIconButton(
-        tooltip: l10n.tooltipLanguage,
-        bordered: false,
-        padding: EdgeInsets.all(AppSizes.paddingXS(context)),
-        radius: AppSizes.borderRadius(context),
-        onTap: () => _languageMenuKey.currentState?.showButtonMenu(),
-        icon: Icon(
-          Icons.language,
-          size: AppSizes.iconMD(context),
-          color: AppColors.accentPrimary,
-        ),
-      ),
-    );
-  }
 
   Widget _buildLinkIcon(IconData icon, String tooltip, String url) {
     return HoverIconButton(
@@ -995,6 +890,23 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
     );
   }
 
+  Widget _buildThemeToggle(AppLocalizations l10n) {
+    final id = ref.watch(appThemeControllerProvider);
+    final isNier = id == AppThemeId.nier;
+    return HoverIconButton(
+      tooltip: isNier ? l10n.themeToggleToDark : l10n.themeToggleToNier,
+      bordered: false,
+      padding: EdgeInsets.all(AppSizes.paddingXS(context)),
+      radius: AppSizes.borderRadius(context),
+      onTap: () =>
+          ref.read(appThemeControllerProvider.notifier).toggle(),
+      icon: Icon(
+        isNier ? Icons.dark_mode_outlined : Icons.wb_sunny_outlined,
+        size: AppSizes.iconMD(context),
+        color: AppColors.accentPrimary,
+      ),
+    );
+  }
 }
 
 class _HoverTextLink extends StatefulWidget {

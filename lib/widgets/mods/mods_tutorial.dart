@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:yp_launcher/theme/nier_curves.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:yp_launcher/l10n/app_localizations.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
@@ -202,7 +203,7 @@ class _TutorialOverlayState extends State<_TutorialOverlay>
       duration: const Duration(milliseconds: 1500),
     )..repeat(reverse: true);
     _pulse = Tween<double>(begin: 0.45, end: 1.0).animate(
-      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+      CurvedAnimation(parent: _pulseController, curve: NierCurves.smooth),
     );
   }
 
@@ -412,11 +413,11 @@ class _TutorialCard extends StatelessWidget {
         border: Border.all(
           color: AppColors.accentPrimary.withValues(alpha: 0.5),
         ),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
             color: AppColors.shadow,
             blurRadius: 18,
-            offset: Offset(0, 6),
+            offset: const Offset(0, 6),
           ),
         ],
       ),
@@ -438,7 +439,7 @@ class _TutorialCard extends StatelessWidget {
                 ),
                 child: Text(
                   '${index + 1} / $total',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.accentPrimary,
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
@@ -533,7 +534,7 @@ class _TutorialCard extends StatelessWidget {
                   onPressed: onBack,
                   child: Text(
                     l10n.modsTutorialBack,
-                    style: const TextStyle(color: AppColors.textMuted),
+                    style: TextStyle(color: AppColors.textMuted),
                   ),
                 ),
               const Spacer(),
@@ -541,7 +542,7 @@ class _TutorialCard extends StatelessWidget {
                 onPressed: onSkip,
                 child: Text(
                   l10n.modsTutorialSkip,
-                  style: const TextStyle(color: AppColors.textMuted),
+                  style: TextStyle(color: AppColors.textMuted),
                 ),
               ),
               const SizedBox(width: 4),

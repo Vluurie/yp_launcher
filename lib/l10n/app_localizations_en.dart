@@ -24,6 +24,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tooltipDiscord => 'Discord';
 
   @override
+  String get themeToggleToNier => 'Switch to NieR theme';
+
+  @override
+  String get themeToggleToDark => 'Switch to dark theme';
+
+  @override
   String get tooltipLanguage => 'Language';
 
   @override

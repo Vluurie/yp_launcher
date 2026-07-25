@@ -24,6 +24,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get tooltipDiscord => 'Discord';
 
   @override
+  String get themeToggleToNier => '切换到 NieR 主题';
+
+  @override
+  String get themeToggleToDark => '切换到深色主题';
+
+  @override
   String get tooltipLanguage => '语言';
 
   @override

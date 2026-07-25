@@ -59,7 +59,7 @@ class _LodmodViewState extends ConsumerState<LodmodView> {
           _buildHeader(context, config, notifier, gameDir),
           Expanded(
             child: config.isLoading
-                ? const Center(
+                ? Center(
                     child: CircularProgressIndicator(
                       color: AppColors.accentPrimary,
                     ),
@@ -83,7 +83,7 @@ class _LodmodViewState extends ConsumerState<LodmodView> {
         horizontal: AppSizes.cardPaddingH(context),
         vertical: AppSizes.cardPaddingV(context),
       ),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: AppColors.surfaceMedium,
         border: Border(bottom: BorderSide(color: AppColors.borderLight)),
       ),
@@ -266,14 +266,14 @@ class _LodmodViewState extends ConsumerState<LodmodView> {
                 onPressed: () => Navigator.of(ctx).pop(false),
                 child: Text(
                   MaterialLocalizations.of(ctx).cancelButtonLabel,
-                  style: const TextStyle(color: AppColors.textMuted),
+                  style: TextStyle(color: AppColors.textMuted),
                 ),
               ),
               TextButton(
                 onPressed: () => Navigator.of(ctx).pop(true),
                 child: Text(
                   l10n.lodModResetConfirmAction,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.error,
                     fontWeight: FontWeight.bold,
                   ),

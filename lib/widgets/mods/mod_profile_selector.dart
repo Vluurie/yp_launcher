@@ -64,7 +64,7 @@ class ModProfileSelector extends ConsumerWidget {
         ),
         if (state.isLoading) ...[
           SizedBox(width: AppSizes.spacingSM(context)),
-          const SizedBox(
+          SizedBox(
             width: 14,
             height: 14,
             child: CircularProgressIndicator(
@@ -293,7 +293,7 @@ class ModProfileSelector extends ConsumerWidget {
                       ),
                       child: Row(
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.folder_outlined,
                             size: 16,
                             color: AppColors.error,

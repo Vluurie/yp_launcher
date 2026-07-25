@@ -76,11 +76,11 @@ class _LaunchFailureDialogState extends State<_LaunchFailureDialog> {
           color: AppColors.backgroundCard,
           borderRadius: BorderRadius.circular(AppSizes.borderRadius(context)),
           border: Border.all(color: accent.withValues(alpha: 0.55)),
-          boxShadow: const [
+          boxShadow: [
             BoxShadow(
               color: AppColors.shadow,
               blurRadius: 18,
-              offset: Offset(0, 6),
+              offset: const Offset(0, 6),
             ),
           ],
         ),
@@ -121,7 +121,7 @@ class _LaunchFailureDialogState extends State<_LaunchFailureDialog> {
       ),
       decoration: BoxDecoration(
         color: AppColors.surfaceMedium,
-        border: const Border(bottom: BorderSide(color: AppColors.borderLight)),
+        border: Border(bottom: BorderSide(color: AppColors.borderLight)),
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(AppSizes.borderRadius(context)),
           topRight: Radius.circular(AppSizes.borderRadius(context)),
@@ -406,7 +406,7 @@ class _LaunchFailureDialogState extends State<_LaunchFailureDialog> {
             ),
             decoration: BoxDecoration(
               color: accent.withValues(alpha: 0.10),
-              border: const Border(
+              border: Border(
                 bottom: BorderSide(color: AppColors.borderLight),
               ),
               borderRadius: const BorderRadius.only(

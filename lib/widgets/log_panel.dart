@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:yp_launcher/theme/nier_curves.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:yp_launcher/constants/app_strings.dart';
@@ -22,6 +23,7 @@ class LogPanelState extends ConsumerState<LogPanel>
   late AnimationController _controller;
   late Animation<Offset> _slideAnimation;
   final ScrollController _scrollController = ScrollController();
+  final ScrollController _hScrollController = ScrollController();
   final TextEditingController _searchController = TextEditingController();
   bool _autoScroll = true;
   int _lastEntryCount = 0;
@@ -36,7 +38,7 @@ class LogPanelState extends ConsumerState<LogPanel>
     _slideAnimation = Tween<Offset>(
       begin: const Offset(1, 0),
       end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+    ).animate(CurvedAnimation(parent: _controller, curve: NierCurves.smooth));
     _controller.forward();
     _scrollController.addListener(_onScroll);
   }
@@ -65,6 +67,7 @@ class LogPanelState extends ConsumerState<LogPanel>
     _searchController.dispose();
     _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
+    _hScrollController.dispose();
     _controller.dispose();
     super.dispose();
   }
@@ -85,7 +88,7 @@ class LogPanelState extends ConsumerState<LogPanel>
       position: _slideAnimation,
       child: Container(
         width: AppSizes.logPanelWidth(context),
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: AppColors.logBackground,
           border: Border(
             left: BorderSide(color: AppColors.borderMedium, width: 1.5),
@@ -94,7 +97,7 @@ class LogPanelState extends ConsumerState<LogPanel>
             BoxShadow(
               color: AppColors.shadow,
               blurRadius: 8,
-              offset: Offset(-2, 0),
+              offset: const Offset(-2, 0),
             ),
           ],
         ),
@@ -105,7 +108,7 @@ class LogPanelState extends ConsumerState<LogPanel>
             _buildSearchBar(context, logData, l10n),
             Expanded(
               child: logData.isLoading && logData.activeEntries.isEmpty
-                  ? const Center(
+                  ? Center(
                       child: CircularProgressIndicator(
                         color: AppColors.accentPrimary,
                       ),
@@ -138,7 +141,7 @@ class LogPanelState extends ConsumerState<LogPanel>
     final notifier = ref.read(logStateControllerProvider.notifier);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: AppColors.logHeaderBackground,
         border: Border(bottom: BorderSide(color: AppColors.borderLight)),
       ),
@@ -213,7 +216,7 @@ class LogPanelState extends ConsumerState<LogPanel>
   ) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: AppColors.logHeaderBackground,
         border: Border(bottom: BorderSide(color: AppColors.borderLight)),
       ),
@@ -247,7 +250,7 @@ class LogPanelState extends ConsumerState<LogPanel>
                 _scrollController.animateTo(
                   _scrollController.position.maxScrollExtent,
                   duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeOut,
+                  curve: NierCurves.fill,
                 );
               }
             },
@@ -277,7 +280,7 @@ class LogPanelState extends ConsumerState<LogPanel>
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: AppColors.logHeaderBackground,
         border: Border(bottom: BorderSide(color: AppColors.borderLight)),
       ),
@@ -323,18 +326,38 @@ class LogPanelState extends ConsumerState<LogPanel>
   Widget _buildLogList(List<LogEntry> entries) {
     final rowHeight = AppSizes.fontXS(context) * 1.35 + 8;
     return SelectionArea(
-      child: Scrollbar(
-        controller: _scrollController,
-        thumbVisibility: true,
-        child: ListView.builder(
-          controller: _scrollController,
-          padding: const EdgeInsets.symmetric(vertical: 2),
-          itemCount: entries.length,
-          itemExtent: rowHeight,
-          addAutomaticKeepAlives: false,
-          itemBuilder: (context, index) =>
-              _buildLogEntry(context, entries[index], index),
-        ),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          const contentWidth = 2400.0;
+          final rowWidth = contentWidth > constraints.maxWidth
+              ? contentWidth
+              : constraints.maxWidth;
+          return Scrollbar(
+            controller: _hScrollController,
+            thumbVisibility: true,
+            notificationPredicate: (n) => n.metrics.axis == Axis.horizontal,
+            child: SingleChildScrollView(
+              controller: _hScrollController,
+              scrollDirection: Axis.horizontal,
+              child: SizedBox(
+                width: rowWidth,
+                child: Scrollbar(
+                  controller: _scrollController,
+                  thumbVisibility: true,
+                  child: ListView.builder(
+                    controller: _scrollController,
+                    padding: const EdgeInsets.symmetric(vertical: 2),
+                    itemCount: entries.length,
+                    itemExtent: rowHeight,
+                    addAutomaticKeepAlives: false,
+                    itemBuilder: (context, index) =>
+                        _buildLogEntry(context, entries[index], index),
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -401,7 +424,8 @@ class LogPanelState extends ConsumerState<LogPanel>
           ],
         ),
         maxLines: 1,
-        overflow: TextOverflow.ellipsis,
+        softWrap: false,
+        overflow: TextOverflow.clip,
       ),
     );
   }

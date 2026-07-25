@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:yp_launcher/services/platform_gate.dart';
 import 'package:flutter/material.dart';
+import 'package:yp_launcher/theme/nier_curves.dart';
 import 'package:path/path.dart' as path;
 import 'package:toml/toml.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -604,11 +605,11 @@ class _AnimatedWarningState extends State<AnimatedWarning>
     _slide = Tween<Offset>(
       begin: const Offset(-1.0, 0),
       end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
+    ).animate(CurvedAnimation(parent: _controller, curve: NierCurves.fill));
     _fade = Tween<double>(
       begin: 0.0,
       end: 1.0,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
+    ).animate(CurvedAnimation(parent: _controller, curve: NierCurves.rise));
     _controller.forward();
   }
 

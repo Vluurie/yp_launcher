@@ -264,7 +264,7 @@ class _PreferDedicatedGpuToggleState extends State<PreferDedicatedGpuToggle> {
                     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     activeColor: AppColors.accentPrimary,
                     checkColor: AppColors.backgroundPrimary,
-                    side: const BorderSide(
+                    side: BorderSide(
                       color: AppColors.borderMedium,
                       width: 1.2,
                     ),
@@ -347,7 +347,7 @@ class _MinimizeOnLaunchToggleState extends State<MinimizeOnLaunchToggle> {
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   activeColor: AppColors.accentPrimary,
                   checkColor: AppColors.backgroundPrimary,
-                  side: const BorderSide(
+                  side: BorderSide(
                     color: AppColors.borderMedium,
                     width: 1.2,
                   ),

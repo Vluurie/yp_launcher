@@ -31,7 +31,7 @@ class BusyOverlay extends StatelessWidget {
                 SizedBox(
                   width: AppSizes.iconLG(context),
                   height: AppSizes.iconLG(context),
-                  child: const CircularProgressIndicator(
+                  child: CircularProgressIndicator(
                     strokeWidth: 2,
                     color: AppColors.accentPrimary,
                   ),

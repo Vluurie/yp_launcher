@@ -1263,7 +1263,7 @@ class _ModsViewState extends ConsumerState<ModsView> {
         child: SizedBox(
           width: AppSizes.iconLG(context),
           height: AppSizes.iconLG(context),
-          child: const CircularProgressIndicator(strokeWidth: 2, color: AppColors.accentPrimary),
+          child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.accentPrimary),
         ),
       );
     }

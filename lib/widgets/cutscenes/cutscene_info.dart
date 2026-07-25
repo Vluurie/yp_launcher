@@ -18,11 +18,11 @@ class CutsceneInfoCard extends StatelessWidget {
         color: AppColors.backgroundCard,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: AppColors.borderLight),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
             color: AppColors.shadow,
             blurRadius: 4,
-            offset: Offset(0, 2),
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -32,9 +32,9 @@ class CutsceneInfoCard extends StatelessWidget {
           Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               color: AppColors.surfaceMedium,
-              borderRadius: BorderRadius.only(
+              borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(8),
                 topRight: Radius.circular(8),
               ),
@@ -133,7 +133,7 @@ class CutsceneHeader extends StatelessWidget {
         horizontal: AppSizes.cardPaddingH(context),
         vertical: AppSizes.cardPaddingV(context),
       ),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: AppColors.surfaceMedium,
         border: Border(bottom: BorderSide(color: AppColors.borderLight)),
       ),
@@ -266,7 +266,7 @@ class CutsceneMigrationBanner extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.warning_amber, size: 20, color: AppColors.warning),
+          Icon(Icons.warning_amber, size: 20, color: AppColors.warning),
           SizedBox(width: AppSizes.paddingMD(context)),
           Expanded(
             child: Column(

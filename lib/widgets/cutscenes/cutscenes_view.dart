@@ -122,7 +122,7 @@ class _CutscenesViewState extends ConsumerState<CutscenesView> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const CircularProgressIndicator(color: AppColors.accentPrimary),
+                        CircularProgressIndicator(color: AppColors.accentPrimary),
                         if (_progressText.isNotEmpty) ...[
                           SizedBox(height: AppSizes.spacingLG(context)),
                           Text(_progressText, style: TextStyle(fontSize: AppSizes.fontSM(context), color: AppColors.textMuted)),

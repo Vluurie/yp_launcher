@@ -139,7 +139,7 @@ class _SelectGameStepState extends ConsumerState<SelectGameStep> {
                               ),
                             ),
                             const SizedBox(width: 10),
-                            const Icon(
+                            Icon(
                               Icons.arrow_forward,
                               size: 16,
                               color: AppColors.accentPrimary,
@@ -157,7 +157,7 @@ class _SelectGameStepState extends ConsumerState<SelectGameStep> {
               onPressed: () => Navigator.of(ctx).pop(),
               child: Text(
                 l.buttonCancel,
-                style: const TextStyle(color: AppColors.textMuted),
+                style: TextStyle(color: AppColors.textMuted),
               ),
             ),
           ],
@@ -242,7 +242,7 @@ class _SelectGameStepState extends ConsumerState<SelectGameStep> {
             ),
             child: Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.check_circle,
                   color: AppColors.success,
                   size: 22,
@@ -272,7 +272,7 @@ class _SelectGameStepState extends ConsumerState<SelectGameStep> {
                   onPressed: _selectManually,
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.textSecondary,
-                    side: const BorderSide(color: AppColors.borderMedium),
+                    side: BorderSide(color: AppColors.borderMedium),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(6),
                     ),
@@ -364,7 +364,7 @@ class _SelectGameStepState extends ConsumerState<SelectGameStep> {
                 onPressed: _selectManually,
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.textSecondary,
-                  side: const BorderSide(color: AppColors.borderMedium),
+                  side: BorderSide(color: AppColors.borderMedium),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(6),
                   ),

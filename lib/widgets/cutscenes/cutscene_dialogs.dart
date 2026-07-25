@@ -28,12 +28,19 @@ Future<String?> showCutsceneMergeDialog(
             children: [
               Text(
                 l10n.cutsceneMergeTitle,
-                style: TextStyle(fontSize: AppSizes.fontXL(ctx), color: AppColors.accentPrimary, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: AppSizes.fontXL(ctx),
+                  color: AppColors.accentPrimary,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               SizedBox(height: AppSizes.spacingLG(ctx)),
               Text(
                 l10n.cutsceneMergeDescription,
-                style: TextStyle(fontSize: AppSizes.fontSM(ctx), color: AppColors.textSecondary),
+                style: TextStyle(
+                  fontSize: AppSizes.fontSM(ctx),
+                  color: AppColors.textSecondary,
+                ),
               ),
               SizedBox(height: AppSizes.paddingLG(ctx)),
               Flexible(
@@ -45,20 +52,29 @@ Future<String?> showCutsceneMergeDialog(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        ...mods.map((mod) => Padding(
-                          padding: EdgeInsets.only(bottom: AppSizes.spacingSM(ctx)),
-                          child: OutlinedButton.icon(
-                            onPressed: () => Navigator.of(ctx).pop(mod.name),
-                            icon: const Icon(Icons.merge_type, size: 16),
-                            label: Text(l10n.cutsceneMergeAddTo(mod.name)),
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: AppColors.accentPrimary,
-                              side: const BorderSide(color: AppColors.accentPrimary),
-                              padding: EdgeInsets.symmetric(vertical: AppSizes.paddingMD(ctx), horizontal: AppSizes.paddingLG(ctx)),
-                              alignment: Alignment.centerLeft,
+                        ...mods.map(
+                          (mod) => Padding(
+                            padding: EdgeInsets.only(
+                              bottom: AppSizes.spacingSM(ctx),
+                            ),
+                            child: OutlinedButton.icon(
+                              onPressed: () => Navigator.of(ctx).pop(mod.name),
+                              icon: const Icon(Icons.merge_type, size: 16),
+                              label: Text(l10n.cutsceneMergeAddTo(mod.name)),
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: AppColors.accentPrimary,
+                                side: BorderSide(
+                                  color: AppColors.accentPrimary,
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                  vertical: AppSizes.paddingMD(ctx),
+                                  horizontal: AppSizes.paddingLG(ctx),
+                                ),
+                                alignment: Alignment.centerLeft,
+                              ),
                             ),
                           ),
-                        )),
+                        ),
                       ],
                     ),
                   ),
@@ -74,7 +90,10 @@ Future<String?> showCutsceneMergeDialog(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.surfaceLight,
                     foregroundColor: AppColors.textPrimary,
-                    padding: EdgeInsets.symmetric(vertical: AppSizes.paddingMD(ctx), horizontal: AppSizes.paddingLG(ctx)),
+                    padding: EdgeInsets.symmetric(
+                      vertical: AppSizes.paddingMD(ctx),
+                      horizontal: AppSizes.paddingLG(ctx),
+                    ),
                     alignment: Alignment.centerLeft,
                   ),
                 ),
@@ -85,7 +104,10 @@ Future<String?> showCutsceneMergeDialog(
                 children: [
                   TextButton(
                     onPressed: () => Navigator.of(ctx).pop(null),
-                    child: Text(l10n.cancelButton, style: const TextStyle(color: AppColors.textMuted)),
+                    child: Text(
+                      l10n.cancelButton,
+                      style: TextStyle(color: AppColors.textMuted),
+                    ),
                   ),
                 ],
               ),
@@ -145,24 +167,18 @@ Future<String?> showCutsceneNamingDialog(
               filled: true,
               fillColor: AppColors.inputBackground,
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(
-                  AppSizes.borderRadius(ctx),
-                ),
-                borderSide: const BorderSide(color: AppColors.borderMedium),
+                borderRadius: BorderRadius.circular(AppSizes.borderRadius(ctx)),
+                borderSide: BorderSide(color: AppColors.borderMedium),
               ),
               enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(
-                  AppSizes.borderRadius(ctx),
-                ),
-                borderSide: const BorderSide(color: AppColors.borderMedium),
+                borderRadius: BorderRadius.circular(AppSizes.borderRadius(ctx)),
+                borderSide: BorderSide(color: AppColors.borderMedium),
               ),
               focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(
-                  AppSizes.borderRadius(ctx),
-                ),
-                borderSide: const BorderSide(color: AppColors.accentPrimary),
+                borderRadius: BorderRadius.circular(AppSizes.borderRadius(ctx)),
+                borderSide: BorderSide(color: AppColors.accentPrimary),
               ),
-              counterStyle: const TextStyle(color: AppColors.textMuted),
+              counterStyle: TextStyle(color: AppColors.textMuted),
             ),
             onSubmitted: (v) => Navigator.of(ctx).pop(v),
           ),
@@ -173,14 +189,14 @@ Future<String?> showCutsceneNamingDialog(
           onPressed: () => Navigator.of(ctx).pop(null),
           child: Text(
             AppLocalizations.of(ctx)!.buttonCancel,
-            style: const TextStyle(color: AppColors.textMuted),
+            style: TextStyle(color: AppColors.textMuted),
           ),
         ),
         TextButton(
           onPressed: () => Navigator.of(ctx).pop(controller.text),
           child: Text(
             AppLocalizations.of(ctx)!.buttonInstall,
-            style: const TextStyle(
+            style: TextStyle(
               color: AppColors.accentPrimary,
               fontWeight: FontWeight.bold,
             ),
@@ -218,14 +234,14 @@ Future<bool> showDeleteCutsceneConfirmDialog(
           onPressed: () => Navigator.of(ctx).pop(false),
           child: Text(
             AppLocalizations.of(ctx)!.buttonCancel,
-            style: const TextStyle(color: AppColors.textMuted),
+            style: TextStyle(color: AppColors.textMuted),
           ),
         ),
         TextButton(
           onPressed: () => Navigator.of(ctx).pop(true),
           child: Text(
             AppLocalizations.of(ctx)!.buttonDelete,
-            style: const TextStyle(
+            style: TextStyle(
               color: AppColors.error,
               fontWeight: FontWeight.bold,
             ),

@@ -88,7 +88,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
           _buildHeader(context, config, notifier, gameDir),
           Expanded(
             child: config.isLoading
-                ? const Center(
+                ? Center(
                     child: CircularProgressIndicator(
                       color: AppColors.accentPrimary,
                     ),
@@ -112,7 +112,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
         horizontal: AppSizes.cardPaddingH(context),
         vertical: AppSizes.cardPaddingV(context),
       ),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: AppColors.surfaceMedium,
         border: Border(bottom: BorderSide(color: AppColors.borderLight)),
       ),
@@ -239,7 +239,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                           padding: EdgeInsets.symmetric(
                             vertical: AppSizes.paddingXS(context),
                           ),
-                          child: const Divider(
+                          child: Divider(
                             height: 1,
                             color: AppColors.borderLight,
                           ),

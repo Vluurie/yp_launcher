@@ -5,6 +5,8 @@
   "tooltipNamsSource": "NAMS-Projektquellcode",
   "tooltipGuide": "Anleitung",
   "tooltipDiscord": "Discord",
+  "themeToggleToNier": "Zum NieR-Theme wechseln",
+  "themeToggleToDark": "Zum dunklen Theme wechseln",
   "tooltipLanguage": "Sprache",
   "languageSupportNotice": "Übersetzungen stammen aus der Community oder wurden automatisch erstellt und können ungenau sein. Die Maintainer sprechen nur Englisch – bitte stelle Fragen auf Englisch.",
   "tooltipCopyCommand": "Kopiert den NAMS-Befehl in die Zwischenablage, damit du ihn in ein Terminal einfügen und das Spiel manuell starten kannst.",

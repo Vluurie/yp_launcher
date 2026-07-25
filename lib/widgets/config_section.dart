@@ -24,7 +24,7 @@ class ConfigSection extends StatelessWidget {
               letterSpacing: 1.0,
             ),
           ),
-          const Divider(color: AppColors.borderLight, height: 8),
+          Divider(color: AppColors.borderLight, height: 8),
           ...children,
         ],
       ),

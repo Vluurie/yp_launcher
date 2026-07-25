@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:yp_launcher/theme/nier_curves.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yp_launcher/l10n/app_localizations.dart';
 import 'package:yp_launcher/providers/notification_state.dart';
@@ -58,11 +59,11 @@ class _ToastItemState extends State<_ToastItem>
     _slideAnimation = Tween<Offset>(
       begin: const Offset(1.0, 0),
       end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
+    ).animate(CurvedAnimation(parent: _controller, curve: NierCurves.fill));
     _fadeAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
+    ).animate(CurvedAnimation(parent: _controller, curve: NierCurves.rise));
     _controller.forward();
   }
 

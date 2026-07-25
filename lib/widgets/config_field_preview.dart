@@ -346,7 +346,7 @@ class _ComparisonDialogState extends State<_ComparisonDialog> {
                                 errorBuilder: (_, __, ___) => Container(
                                   color: AppColors.surfaceMedium,
                                   alignment: Alignment.center,
-                                  child: const Icon(
+                                  child: Icon(
                                     Icons.image_not_supported,
                                     color: AppColors.textMuted,
                                     size: 48,

@@ -160,7 +160,7 @@ class _ReadyStepState extends ConsumerState<ReadyStep> {
                     onChanged: (v) =>
                         setState(() => _createShortcut = v ?? false),
                     activeColor: AppColors.accentPrimary,
-                    side: const BorderSide(color: AppColors.borderMedium),
+                    side: BorderSide(color: AppColors.borderMedium),
                   ),
                 ),
                 const SizedBox(width: 10),

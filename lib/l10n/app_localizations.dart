@@ -132,6 +132,18 @@ abstract class AppLocalizations {
   /// **'Discord'**
   String get tooltipDiscord;
 
+  /// No description provided for @themeToggleToNier.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch to NieR theme'**
+  String get themeToggleToNier;
+
+  /// No description provided for @themeToggleToDark.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch to dark theme'**
+  String get themeToggleToDark;
+
   /// No description provided for @tooltipLanguage.
   ///
   /// In en, this message translates to:

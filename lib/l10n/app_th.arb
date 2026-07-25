@@ -5,6 +5,8 @@
   "tooltipNamsSource": "ซอร์สของโปรเจกต์ NAMS",
   "tooltipGuide": "คู่มือ",
   "tooltipDiscord": "Discord",
+  "themeToggleToNier": "สลับไปธีม NieR",
+  "themeToggleToDark": "สลับไปธีมมืด",
   "tooltipLanguage": "ภาษา",
   "languageSupportNotice": "คำแปลจัดทำโดยชุมชนหรือสร้างขึ้นโดยอัตโนมัติและอาจไม่ถูกต้อง ผู้ดูแลสื่อสารภาษาอังกฤษเท่านั้น โปรดขอความช่วยเหลือเป็นภาษาอังกฤษ",
   "tooltipCopyCommand": "คัดลอกคำสั่ง NAMS ไปยังคลิปบอร์ด เพื่อให้คุณนำไปวางในเทอร์มินัลและเริ่มเกมด้วยตนเอง",

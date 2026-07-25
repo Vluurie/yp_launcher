@@ -338,7 +338,7 @@ class _DesktopMenuItemState<T> extends State<_DesktopMenuItem<T>> {
               SizedBox(
                 width: 14,
                 child: selected
-                    ? const Icon(
+                    ? Icon(
                         Icons.check,
                         size: 12,
                         color: AppColors.accentPrimary,

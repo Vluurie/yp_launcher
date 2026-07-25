@@ -43,7 +43,7 @@ final class NamsSettingsStateControllerProvider
 }
 
 String _$namsSettingsStateControllerHash() =>
-    r'1c1d197fbcb37ad50cf3bfd0a8d93210cdde6a2c';
+    r'8da3d59b32d2a0a8f20460831db97837e6a7fca0';
 
 abstract class _$NamsSettingsStateController
     extends $Notifier<NamsSettingsData> {

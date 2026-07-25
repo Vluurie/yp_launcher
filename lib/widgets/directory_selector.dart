@@ -87,7 +87,7 @@ class _DirectorySelectorState extends ConsumerState<DirectorySelector> {
                 child: _searching
                     ? Row(
                         children: [
-                          const SizedBox(
+                          SizedBox(
                             width: 12,
                             height: 12,
                             child: CircularProgressIndicator(
@@ -341,7 +341,7 @@ class _DirectorySelectorState extends ConsumerState<DirectorySelector> {
                 ),
               ),
               const SizedBox(height: 8),
-              const Divider(color: AppColors.borderLight),
+              Divider(color: AppColors.borderLight),
               const SizedBox(height: 4),
               Text(
                 dl10n.notYourGame,
@@ -357,7 +357,7 @@ class _DirectorySelectorState extends ConsumerState<DirectorySelector> {
               onPressed: () => Navigator.of(ctx).pop('deep'),
               style: OutlinedButton.styleFrom(
                 foregroundColor: AppColors.accentPrimary,
-                side: const BorderSide(color: AppColors.accentPrimary),
+                side: BorderSide(color: AppColors.accentPrimary),
               ),
               child: Text(dl10n.searchAllDrives),
             ),

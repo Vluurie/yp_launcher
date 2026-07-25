@@ -24,6 +24,12 @@ class AppLocalizationsTh extends AppLocalizations {
   String get tooltipDiscord => 'Discord';
 
   @override
+  String get themeToggleToNier => 'สลับไปธีม NieR';
+
+  @override
+  String get themeToggleToDark => 'สลับไปธีมมืด';
+
+  @override
   String get tooltipLanguage => 'ภาษา';
 
   @override

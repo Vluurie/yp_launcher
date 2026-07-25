@@ -31,14 +31,14 @@ Future<bool?> showTextureCrossInstallDialog({
           onPressed: () => Navigator.of(ctx).pop(false),
           child: Text(
             l10n.buttonNo,
-            style: const TextStyle(color: AppColors.textMuted),
+            style: TextStyle(color: AppColors.textMuted),
           ),
         ),
         TextButton(
           onPressed: () => Navigator.of(ctx).pop(true),
           child: Text(
             l10n.buttonYes,
-            style: const TextStyle(color: AppColors.accentPrimary),
+            style: TextStyle(color: AppColors.accentPrimary),
           ),
         ),
       ],
@@ -67,14 +67,14 @@ Future<String?> showTextureNamingDialog({
       content: TextField(
         controller: controller,
         autofocus: true,
-        style: const TextStyle(color: AppColors.textPrimary),
+        style: TextStyle(color: AppColors.textPrimary),
         decoration: InputDecoration(
           hintText: l10n.outfitNameHint,
-          hintStyle: const TextStyle(color: AppColors.textMuted),
+          hintStyle: TextStyle(color: AppColors.textMuted),
           enabledBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: AppColors.borderLight),
           ),
-          focusedBorder: const UnderlineInputBorder(
+          focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: AppColors.accentPrimary),
           ),
         ),
@@ -85,14 +85,14 @@ Future<String?> showTextureNamingDialog({
           onPressed: () => Navigator.of(ctx).pop(null),
           child: Text(
             l10n.buttonCancel,
-            style: const TextStyle(color: AppColors.textMuted),
+            style: TextStyle(color: AppColors.textMuted),
           ),
         ),
         TextButton(
           onPressed: () => Navigator.of(ctx).pop(controller.text),
           child: Text(
             l10n.buttonInstall,
-            style: const TextStyle(color: AppColors.accentPrimary),
+            style: TextStyle(color: AppColors.accentPrimary),
           ),
         ),
       ],
@@ -149,7 +149,7 @@ Future<String?> showTextureMergeDialog({
                             label: Text(l10n.textureMergeAddTo(folder)),
                             style: OutlinedButton.styleFrom(
                               foregroundColor: AppColors.accentPrimary,
-                              side: const BorderSide(color: AppColors.accentPrimary),
+                              side: BorderSide(color: AppColors.accentPrimary),
                               padding: EdgeInsets.symmetric(vertical: AppSizes.paddingMD(ctx), horizontal: AppSizes.paddingLG(ctx)),
                               alignment: Alignment.centerLeft,
                             ),
@@ -181,7 +181,7 @@ Future<String?> showTextureMergeDialog({
                 children: [
                   TextButton(
                     onPressed: () => Navigator.of(ctx).pop(null),
-                    child: Text(l10n.cancelButton, style: const TextStyle(color: AppColors.textMuted)),
+                    child: Text(l10n.cancelButton, style: TextStyle(color: AppColors.textMuted)),
                   ),
                 ],
               ),

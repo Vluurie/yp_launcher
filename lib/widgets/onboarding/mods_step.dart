@@ -7,6 +7,7 @@ import 'package:yp_launcher/models/installed_mod.dart';
 import 'package:yp_launcher/providers/mods_state.dart';
 import 'package:yp_launcher/services/mods_service.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
+import 'package:yp_launcher/theme/nier_curves.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
 import 'package:yp_launcher/widgets/mods/mod_drop_zone.dart';
 import 'package:yp_launcher/widgets/mods/mod_naming.dart';
@@ -99,7 +100,7 @@ class _ModsStepState extends ConsumerState<ModsStep> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
+            Icon(
               Icons.download_for_offline_outlined,
               size: 22,
               color: AppColors.accentPrimary,
@@ -141,7 +142,7 @@ class _ModsStepState extends ConsumerState<ModsStep> {
             padding: const EdgeInsets.symmetric(vertical: 24),
             child: Column(
               children: [
-                const CircularProgressIndicator(
+                CircularProgressIndicator(
                   color: AppColors.accentPrimary,
                 ),
                 const SizedBox(height: 10),
@@ -173,7 +174,7 @@ class _ModsStepState extends ConsumerState<ModsStep> {
             ),
             child: Row(
               children: [
-                const Icon(Icons.error_outline,
+                Icon(Icons.error_outline,
                     size: 16, color: AppColors.error),
                 const SizedBox(width: 8),
                 Expanded(
@@ -202,7 +203,7 @@ class _ModsStepState extends ConsumerState<ModsStep> {
             ),
             child: Row(
               children: [
-                const Icon(Icons.warning_amber,
+                Icon(Icons.warning_amber,
                     size: 16, color: AppColors.warning),
                 const SizedBox(width: 8),
                 Expanded(
@@ -240,7 +241,7 @@ class _ModsStepState extends ConsumerState<ModsStep> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.check_circle,
                         size: 13,
                         color: AppColors.success,
@@ -515,8 +516,8 @@ class _ModsStepState extends ConsumerState<ModsStep> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Padding(
-              padding: EdgeInsets.only(top: 1),
+            Padding(
+              padding: const EdgeInsets.only(top: 1),
               child: Icon(
                 Icons.checkroom,
                 size: 15,
@@ -537,14 +538,14 @@ class _ModsStepState extends ConsumerState<ModsStep> {
                       children: [
                         TextSpan(
                           text: '${l.onboardingOutfitHintHeader}. ',
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: AppColors.accentPrimary,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
                         TextSpan(
                           text: body,
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: AppColors.textSecondary,
                           ),
                         ),
@@ -565,35 +566,10 @@ class _ModsStepState extends ConsumerState<ModsStep> {
                         ),
                       ),
                       const SizedBox(width: 6),
-                      InkWell(
+                      _MultiOutfitLink(
+                        label: l.onboardingOutfitHintMultiOutfitLink,
                         onTap: () => _openMultiOutfitLink(
                           l.onboardingOutfitHintMultiOutfitUrl,
-                        ),
-                        borderRadius: BorderRadius.circular(3),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 4,
-                            vertical: 2,
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Icon(
-                                Icons.open_in_new,
-                                size: 11,
-                                color: AppColors.accentPrimary,
-                              ),
-                              const SizedBox(width: 3),
-                              Text(
-                                l.onboardingOutfitHintMultiOutfitLink,
-                                style: TextStyle(
-                                  fontSize: AppSizes.fontXS(context),
-                                  color: AppColors.accentPrimary,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
                         ),
                       ),
                     ],
@@ -635,5 +611,68 @@ class _ModsStepState extends ConsumerState<ModsStep> {
         await launchUrl(uri, mode: LaunchMode.externalApplication);
       }
     } catch (_) {}
+  }
+}
+
+class _MultiOutfitLink extends StatefulWidget {
+  final String label;
+  final VoidCallback onTap;
+
+  const _MultiOutfitLink({required this.label, required this.onTap});
+
+  @override
+  State<_MultiOutfitLink> createState() => _MultiOutfitLinkState();
+}
+
+class _MultiOutfitLinkState extends State<_MultiOutfitLink> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = AppColors.accentPrimary;
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 120),
+          curve: NierCurves.smooth,
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+          decoration: BoxDecoration(
+            color: _hovered
+                ? color.withValues(alpha: 0.16)
+                : Colors.transparent,
+            border: Border.all(
+              color: color.withValues(alpha: _hovered ? 0.6 : 0.3),
+            ),
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.open_in_new,
+                size: 11,
+                color: color,
+              ),
+              const SizedBox(width: 3),
+              Text(
+                widget.label,
+                style: TextStyle(
+                  fontSize: AppSizes.fontXS(context),
+                  color: color,
+                  fontWeight: FontWeight.w600,
+                  decoration:
+                      _hovered ? TextDecoration.underline : TextDecoration.none,
+                  decorationColor: color,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

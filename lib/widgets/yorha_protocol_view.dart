@@ -61,7 +61,7 @@ class _YorhaProtocolViewState extends ConsumerState<YorhaProtocolView> {
           _buildHeader(context, data, notifier),
           Expanded(
             child: data.isLoading
-                ? const Center(
+                ? Center(
                     child: CircularProgressIndicator(
                       color: AppColors.accentPrimary,
                     ),
@@ -95,7 +95,7 @@ class _YorhaProtocolViewState extends ConsumerState<YorhaProtocolView> {
         horizontal: AppSizes.cardPaddingH(context),
         vertical: AppSizes.cardPaddingV(context),
       ),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: AppColors.surfaceMedium,
         border: Border(bottom: BorderSide(color: AppColors.borderLight)),
       ),
