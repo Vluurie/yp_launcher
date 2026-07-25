@@ -9,6 +9,7 @@ import 'package:yp_launcher/theme/app_colors.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
 import 'package:path/path.dart' as p;
 import 'package:yp_launcher/widgets/app_dropdown.dart';
+import 'package:yp_launcher/widgets/collapsible_card.dart';
 import 'package:yp_launcher/widgets/config_field_bool.dart';
 import 'package:yp_launcher/widgets/header_info_icon.dart';
 import 'package:yp_launcher/widgets/hover_button.dart';
@@ -180,6 +181,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            _descriptionBanner(context, l10n.namsDescription),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -320,7 +322,8 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                             NamsFields.experimentalDefaultOutfits.key,
                             v,
                           ),
-                          tooltip: NamsFields.experimentalDefaultOutfits
+                          tooltip: NamsFields
+                              .experimentalDefaultOutfits
                               .tooltip!(l10n),
                         ),
                       ]),
@@ -541,10 +544,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
     final l10n = AppLocalizations.of(context)!;
     final value = (heap[key] as int?) ?? 0;
     final isCustom = value != 0 && !_heapPresetBytes.contains(value);
-    final items = [
-      ..._heapPresetBytes,
-      if (isCustom) value,
-    ];
+    final items = [..._heapPresetBytes, if (isCustom) value];
 
     return Padding(
       padding: EdgeInsets.symmetric(vertical: AppSizes.paddingXS(context)),
@@ -577,8 +577,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
             items: items,
             highlight: value != 0,
             itemLabel: (v) => _heapLabel(l10n, v),
-            onChanged: (v) =>
-                notifier.updateNams(key, v, section: 'heap'),
+            onChanged: (v) => notifier.updateNams(key, v, section: 'heap'),
           ),
         ],
       ),
@@ -586,51 +585,39 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
   }
 
   Widget _card(BuildContext context, String title, List<Widget> children) {
+    return CollapsibleCard(title: title, children: children);
+  }
+
+  Widget _descriptionBanner(BuildContext context, String text) {
     return Container(
+      width: double.infinity,
       margin: EdgeInsets.only(bottom: AppSizes.paddingLG(context)),
+      padding: EdgeInsets.symmetric(
+        horizontal: AppSizes.paddingMD(context),
+        vertical: AppSizes.paddingSM(context),
+      ),
       decoration: BoxDecoration(
-        color: AppColors.backgroundCard,
+        color: AppColors.surfaceLight,
         borderRadius: BorderRadius.circular(AppSizes.borderRadius(context)),
         border: Border.all(color: AppColors.borderLight),
-        boxShadow: const [
-          BoxShadow(
-            color: AppColors.shadow,
-            blurRadius: 4,
-            offset: Offset(0, 2),
-          ),
-        ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.symmetric(
-              horizontal: AppSizes.cardPaddingH(context),
-              vertical: AppSizes.cardPaddingV(context),
-            ),
-            decoration: BoxDecoration(
-              color: AppColors.surfaceMedium,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(AppSizes.borderRadius(context)),
-                topRight: Radius.circular(AppSizes.borderRadius(context)),
-              ),
-            ),
-            child: Text(
-              title,
-              style: TextStyle(
-                fontSize: AppSizes.fontSM(context),
-                fontWeight: FontWeight.bold,
-                color: AppColors.accentPrimary,
-                letterSpacing: 1.0,
-              ),
-            ),
+          Icon(
+            Icons.info_outline,
+            size: AppSizes.iconLG(context),
+            color: AppColors.textSecondary,
           ),
-          Padding(
-            padding: EdgeInsets.all(AppSizes.cardPaddingH(context)),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: children,
+          SizedBox(width: AppSizes.spacingMD(context)),
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(
+                fontSize: AppSizes.fontXS(context),
+                color: AppColors.textSecondary,
+                height: 1.4,
+              ),
             ),
           ),
         ],

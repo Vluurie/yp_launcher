@@ -321,6 +321,7 @@ class LogPanelState extends ConsumerState<LogPanel>
   }
 
   Widget _buildLogList(List<LogEntry> entries) {
+    final rowHeight = AppSizes.fontXS(context) * 1.35 + 8;
     return SelectionArea(
       child: Scrollbar(
         controller: _scrollController,
@@ -329,6 +330,8 @@ class LogPanelState extends ConsumerState<LogPanel>
           controller: _scrollController,
           padding: const EdgeInsets.symmetric(vertical: 2),
           itemCount: entries.length,
+          itemExtent: rowHeight,
+          addAutomaticKeepAlives: false,
           itemBuilder: (context, index) =>
               _buildLogEntry(context, entries[index], index),
         ),
@@ -350,6 +353,7 @@ class LogPanelState extends ConsumerState<LogPanel>
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      alignment: Alignment.centerLeft,
       decoration: BoxDecoration(
         color: bgColor,
         border: isWarn
@@ -394,9 +398,10 @@ class LogPanelState extends ConsumerState<LogPanel>
                 fontFamily: 'monospace',
               ),
             ),
-            const TextSpan(text: '\n', style: TextStyle(fontSize: 0.1)),
           ],
         ),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
       ),
     );
   }

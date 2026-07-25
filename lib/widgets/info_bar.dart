@@ -25,8 +25,14 @@ final showLaunchWarningsProvider = StateProvider<bool>((ref) => false);
 class InfoBar extends ConsumerWidget {
   final GlobalKey? logPanelKey;
   final VoidCallback onOpenLogs;
+  final Widget? leading;
 
-  const InfoBar({super.key, this.logPanelKey, required this.onOpenLogs});
+  const InfoBar({
+    super.key,
+    this.logPanelKey,
+    required this.onOpenLogs,
+    this.leading,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -36,84 +42,113 @@ class InfoBar extends ConsumerWidget {
 
     final gameDir = appState.selectedDirectory;
 
-    return Positioned(
-      bottom: AppSizes.infoBarBottom(context),
-      left: AppSizes.infoBarPaddingH(context),
-      right: AppSizes.infoBarPaddingH(context),
-      child: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: AppSizes.cardPaddingH(context),
-          vertical: AppSizes.cardPaddingV(context),
-        ),
-        decoration: BoxDecoration(
-          color: AppColors.backgroundCard,
-          borderRadius: BorderRadius.circular(AppSizes.borderRadius(context)),
-          border: Border.all(color: AppColors.borderLight),
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Wrap(
-                spacing: AppSizes.spacingSM(context),
-                runSpacing: AppSizes.spacingSM(context),
-                crossAxisAlignment: WrapCrossAlignment.center,
-                alignment: WrapAlignment.start,
-                children: [
-                  DetectionChip(gameDir: gameDir, type: 'exe', iconOnly: true),
-                  DetectionChip(gameDir: gameDir, type: 'dlc', iconOnly: true),
-                  DetectionChip(gameDir: gameDir, type: 'lodmod', iconOnly: true),
-                  DetectionChip(gameDir: gameDir, type: 'reshade', iconOnly: true),
-                  DetectionChip(gameDir: gameDir, type: 'textures', iconOnly: true),
-                  DetectionChip(gameDir: gameDir, type: 'mods', iconOnly: true),
-                  DetectionChip(gameDir: gameDir, type: 'cutscene', iconOnly: true),
-                ],
+    final buttons = Wrap(
+      spacing: AppSizes.spacingMD(context),
+      runSpacing: AppSizes.spacingSM(context),
+      alignment: WrapAlignment.end,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: [
+          _InfoBarButton(
+            label: l10n.infoBarLogs,
+            tooltip: l10n.tooltipOpenLogs,
+            onTap: () {
+              ref.read(logPanelOpenProvider.notifier).state = true;
+              ref.read(logStateControllerProvider.notifier).loadLogs();
+            },
+          ),
+          if (PlatformGate.isWindows)
+            _InfoBarButton(
+              label: l10n.infoBarShortcut,
+              tooltip: l10n.tooltipCreateShortcut,
+              onTap: () async {
+                final success = await ShortcutService.createDesktopShortcut(
+                  gameDirectory: gameDir,
+                );
+                final notifier = ref.read(
+                  notificationStateControllerProvider.notifier,
+                );
+                notifier.addNotification(
+                  NotificationItem(
+                    id: 'shortcut_${DateTime.now().millisecondsSinceEpoch}',
+                    message: (l10n) => success
+                        ? l10n.notifyShortcutCreated
+                        : l10n.notifyShortcutFailed,
+                    icon: success ? Icons.check_circle : Icons.error_outline,
+                    color: success ? AppColors.success : AppColors.error,
+                    type: NotificationType.shortcut,
+                  ),
+                );
+              },
+            ),
+        ],
+    );
+
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: AppSizes.cardPaddingH(context),
+        vertical: AppSizes.cardPaddingV(context),
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.backgroundCard,
+        borderRadius: BorderRadius.circular(AppSizes.borderRadius(context)),
+        border: Border.all(color: AppColors.borderLight),
+      ),
+      child: Row(
+        children: [
+          if (leading != null) leading!,
+          Expanded(child: buttons),
+        ],
+      ),
+    );
+  }
+}
+
+/// Vertical strip of detection status icons, meant to be pinned to the right
+/// edge of the launcher tab where nothing else competes for space.
+class DetectionStatusStrip extends ConsumerWidget {
+  const DetectionStatusStrip({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final appState = ref.watch(appStateControllerProvider);
+    if (!appState.isDirectorySelected) return const SizedBox.shrink();
+    final gameDir = appState.selectedDirectory;
+
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: AppSizes.chipPaddingH(context),
+        vertical: AppSizes.chipPaddingV(context),
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.backgroundCard.withValues(alpha: 0.7),
+        borderRadius: BorderRadius.circular(AppSizes.borderRadius(context)),
+        border: Border.all(color: AppColors.borderLight),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (final type in const [
+            'exe',
+            'dlc',
+            'lodmod',
+            'reshade',
+            'textures',
+            'mods',
+            'cutscene',
+          ])
+            Padding(
+              key: ValueKey('detection_$type'),
+              padding: EdgeInsets.symmetric(
+                vertical: AppSizes.spacingSM(context) / 2,
+              ),
+              child: DetectionChip(
+                key: ValueKey('detection_chip_$type'),
+                gameDir: gameDir,
+                type: type,
+                iconOnly: true,
               ),
             ),
-            SizedBox(width: AppSizes.spacingMD(context)),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _InfoBarButton(
-                  label: l10n.infoBarLogs,
-                  tooltip: l10n.tooltipOpenLogs,
-                  onTap: () {
-                    ref.read(logPanelOpenProvider.notifier).state = true;
-                    ref.read(logStateControllerProvider.notifier).loadLogs();
-                  },
-                ),
-                if (PlatformGate.isWindows) ...[
-                  SizedBox(width: AppSizes.spacingMD(context)),
-                  _InfoBarButton(
-                    label: l10n.infoBarShortcut,
-                    tooltip: l10n.tooltipCreateShortcut,
-                    onTap: () async {
-                      final success =
-                          await ShortcutService.createDesktopShortcut(
-                            gameDirectory: gameDir,
-                          );
-                      final notifier = ref.read(
-                        notificationStateControllerProvider.notifier,
-                      );
-                      notifier.addNotification(
-                        NotificationItem(
-                          id: 'shortcut_${DateTime.now().millisecondsSinceEpoch}',
-                          message: (l10n) => success
-                              ? l10n.notifyShortcutCreated
-                              : l10n.notifyShortcutFailed,
-                          icon: success
-                              ? Icons.check_circle
-                              : Icons.error_outline,
-                          color: success ? AppColors.success : AppColors.error,
-                          type: NotificationType.shortcut,
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ],
-            ),
-          ],
-        ),
+        ],
       ),
     );
   }
@@ -192,12 +227,29 @@ class DetectionChip extends ConsumerStatefulWidget {
   ConsumerState<DetectionChip> createState() => _DetectionChipState();
 }
 
+class _DetectionResult {
+  final bool detected;
+  final bool warning;
+  final String kind;
+  final int count;
+  final int count2;
+  final bool flag;
+  final ExeVariant? variant;
+
+  const _DetectionResult({
+    required this.detected,
+    required this.kind,
+    this.warning = false,
+    this.count = 0,
+    this.count2 = 0,
+    this.flag = false,
+    this.variant,
+  });
+}
+
 class _DetectionChipState extends ConsumerState<DetectionChip> {
-  bool _detected = false;
-  String _label = '';
+  _DetectionResult? _result;
   bool _checked = false;
-  bool _warning = false;
-  String? _tooltip;
   int _lastRefresh = -1;
 
   static int _spawnOrderCounter = 0;
@@ -222,37 +274,30 @@ class _DetectionChipState extends ConsumerState<DetectionChip> {
     if (old.gameDir != widget.gameDir) _detect();
   }
 
+  void _apply(_DetectionResult result) {
+    if (!mounted) return;
+    setState(() {
+      _result = result;
+      _checked = true;
+    });
+  }
+
   Future<void> _detect() async {
-    final l10n = AppLocalizations.of(context)!;
     switch (widget.type) {
       case 'lodmod':
         final tomlPath = path.join(widget.gameDir, 'nams', 'lodmod.toml');
         final raw = await TomlService.readTomlFile(tomlPath);
+        var enabled = false;
         if (raw.isNotEmpty) {
-          final values = TomlService.parse(raw);
-          final enabled = values[LodModFields.enabled.key] == true;
-          if (mounted)
-            setState(() {
-              _detected = enabled;
-              _label = enabled ? l10n.chipLodModOn : l10n.chipLodModOff;
-              _checked = true;
-            });
-        } else {
-          if (mounted)
-            setState(() {
-              _detected = false;
-              _label = l10n.chipLodModOff;
-              _checked = true;
-            });
+          enabled = TomlService.parse(raw)[LodModFields.enabled.key] == true;
         }
+        _apply(_DetectionResult(detected: enabled, kind: 'lodmod'));
       case 'reshade':
         final status = await ReShadeDetection.detectReShade(widget.gameDir);
-        if (mounted)
-          setState(() {
-            _detected = status == ReShadeStatus.detected;
-            _label = l10n.chipReShade;
-            _checked = true;
-          });
+        _apply(_DetectionResult(
+          detected: status == ReShadeStatus.detected,
+          kind: 'reshade',
+        ));
       case 'textures':
         final injectDirPath =
             path.join(widget.gameDir, 'nams', 'inject', 'textures');
@@ -267,125 +312,115 @@ class _DetectionChipState extends ConsumerState<DetectionChip> {
           ),
         );
         final hasSkRes = await skRes.exists();
-        if (count > 0 || hasSkRes) {
-          final parts = <String>[];
-          if (count > 0) parts.add(l10n.chipInjectedCount(count));
-          if (hasSkRes) parts.add(l10n.chipSkRes);
-          if (mounted)
-            setState(() {
-              _detected = true;
-              _label = l10n.chipTexturesCount(parts.join(', '));
-              _checked = true;
-            });
-        } else {
-          if (mounted)
-            setState(() {
-              _detected = false;
-              _label = l10n.chipNoTextures;
-              _checked = true;
-            });
-        }
+        _apply(_DetectionResult(
+          detected: count > 0 || hasSkRes,
+          kind: 'textures',
+          count: count,
+          flag: hasSkRes,
+        ));
       case 'mods':
         final modsDirPath = path.join(widget.gameDir, 'nams', 'mods');
         final count = await IsolateService.run(
           _countEntriesSync,
           _CountParams(dirPath: modsDirPath, dirsOnly: true),
         );
-        if (count > 0) {
-          if (mounted)
-            setState(() {
-              _detected = true;
-              _label = l10n.chipModsCount(count);
-              _checked = true;
-            });
-          return;
-        }
-        if (mounted)
-          setState(() {
-            _detected = false;
-            _label = l10n.chipNoMods;
-            _checked = true;
-          });
+        _apply(_DetectionResult(
+          detected: count > 0,
+          kind: 'mods',
+          count: count,
+        ));
       case 'cutscene':
         final result = await CutsceneDetectionService.scan(widget.gameDir);
-        if (result.filesScanned > 0 && result.hasHdCutscenes) {
-          final codec = result.needsH264 ? 'H264' : 'MPEG-2';
-          if (mounted)
-            setState(() {
-              _detected = true;
-              _label = l10n.chipCutsceneMod(
-                result.largestWidth,
-                result.largestHeight,
-                codec,
-              );
-              _checked = true;
-            });
-        } else {
-          if (mounted)
-            setState(() {
-              _detected = false;
-              _label = l10n.chipNoCutsceneMod;
-              _checked = true;
-            });
-        }
+        final has = result.filesScanned > 0 && result.hasHdCutscenes;
+        _apply(_DetectionResult(
+          detected: has,
+          kind: 'cutscene',
+          count: result.largestWidth,
+          count2: result.largestHeight,
+          flag: result.needsH264,
+        ));
       case 'dlc':
         final has = await GameDetection.hasDlc(widget.gameDir);
-        if (!mounted) return;
-        setState(() {
-          _detected = has;
-          _warning = false;
-          _label =
-              has ? l10n.detectionDlcPresent : l10n.detectionDlcNotDetected;
-          _tooltip = has
-              ? l10n.detectionDlcPresentTooltip
-              : l10n.detectionDlcNotDetectedTooltip;
-          _checked = true;
-        });
+        _apply(_DetectionResult(detected: has, kind: 'dlc'));
       case 'exe':
         final variant = await GameDetection.detectExeVariant(widget.gameDir);
-        if (!mounted) return;
-        switch (variant) {
+        _apply(_DetectionResult(
+          detected: variant != ExeVariant.missing &&
+              variant != ExeVariant.unknown,
+          warning: variant == ExeVariant.wolfLimitBreak ||
+              variant == ExeVariant.legacyWindows7,
+          kind: 'exe',
+          variant: variant,
+        ));
+    }
+  }
+
+  ({String label, String? tooltip}) _localize(
+    _DetectionResult r,
+    AppLocalizations l10n,
+  ) {
+    switch (r.kind) {
+      case 'lodmod':
+        return (
+          label: r.detected ? l10n.chipLodModOn : l10n.chipLodModOff,
+          tooltip: null,
+        );
+      case 'reshade':
+        return (label: l10n.chipReShade, tooltip: null);
+      case 'textures':
+        if (!r.detected) return (label: l10n.chipNoTextures, tooltip: null);
+        final parts = <String>[];
+        if (r.count > 0) parts.add(l10n.chipInjectedCount(r.count));
+        if (r.flag) parts.add(l10n.chipSkRes);
+        return (label: l10n.chipTexturesCount(parts.join(', ')), tooltip: null);
+      case 'mods':
+        return (
+          label: r.detected ? l10n.chipModsCount(r.count) : l10n.chipNoMods,
+          tooltip: null,
+        );
+      case 'cutscene':
+        if (!r.detected) return (label: l10n.chipNoCutsceneMod, tooltip: null);
+        return (
+          label: l10n.chipCutsceneMod(
+            r.count,
+            r.count2,
+            r.flag ? 'H264' : 'MPEG-2',
+          ),
+          tooltip: null,
+        );
+      case 'dlc':
+        return (
+          label: r.detected
+              ? l10n.detectionDlcPresent
+              : l10n.detectionDlcNotDetected,
+          tooltip: r.detected
+              ? l10n.detectionDlcPresentTooltip
+              : l10n.detectionDlcNotDetectedTooltip,
+        );
+      case 'exe':
+        switch (r.variant!) {
           case ExeVariant.wolfLimitBreak:
-            setState(() {
-              _detected = true;
-              _warning = true;
-              _label = l10n.detectionExeWolfLimitBreak;
-              _tooltip = l10n.detectionExeWolfLimitBreakTooltip;
-              _checked = true;
-            });
+            return (
+              label: l10n.detectionExeWolfLimitBreak,
+              tooltip: l10n.detectionExeWolfLimitBreakTooltip,
+            );
           case ExeVariant.legacyWindows7:
-            setState(() {
-              _detected = true;
-              _warning = true;
-              _label = l10n.detectionExeLegacyWin7;
-              _tooltip = l10n.detectionExeLegacyWin7Tooltip;
-              _checked = true;
-            });
+            return (
+              label: l10n.detectionExeLegacyWin7,
+              tooltip: l10n.detectionExeLegacyWin7Tooltip,
+            );
           case ExeVariant.original:
-            setState(() {
-              _detected = true;
-              _warning = false;
-              _label = l10n.detectionExeOriginal;
-              _tooltip = null;
-              _checked = true;
-            });
+            return (label: l10n.detectionExeOriginal, tooltip: null);
           case ExeVariant.missing:
-            setState(() {
-              _detected = false;
-              _warning = false;
-              _label = l10n.detectionExeMissing;
-              _tooltip = null;
-              _checked = true;
-            });
+            return (label: l10n.detectionExeMissing, tooltip: null);
           case ExeVariant.unknown:
-            setState(() {
-              _detected = false;
-              _warning = false;
-              _label = l10n.detectionExeUnrecognised;
-              _tooltip = l10n.detectionExeUnrecognisedTooltip;
-              _checked = true;
-            });
+            return (
+              label: l10n.detectionExeUnrecognised,
+              tooltip: l10n.detectionExeUnrecognisedTooltip,
+            );
         }
+      default:
+        return (label: '', tooltip: null);
     }
   }
 
@@ -396,19 +431,28 @@ class _DetectionChipState extends ConsumerState<DetectionChip> {
       _lastRefresh = refresh;
       if (_checked) _detect();
     }
-    if (!_checked) return const SizedBox.shrink();
-    final color = _warning
+    final result = _result;
+    if (!_checked || result == null) return const SizedBox.shrink();
+
+    final l10n = AppLocalizations.of(context)!;
+    final text = _localize(result, l10n);
+    final label = text.label;
+    final tooltip = text.tooltip;
+
+    final color = result.warning
         ? AppColors.warning
-        : (_detected ? AppColors.success : AppColors.textMuted);
-    final icon = _warning
+        : (result.detected ? AppColors.success : AppColors.textMuted);
+    final icon = result.warning
         ? Icons.warning_amber_rounded
-        : (_detected ? Icons.check_circle : Icons.remove_circle_outline);
+        : (result.detected
+            ? Icons.check_circle
+            : Icons.remove_circle_outline);
     final typeIcon = _typeIcon(widget.type);
 
     if (widget.iconOnly) {
-      final tooltipMsg = _tooltip != null && _tooltip!.isNotEmpty
-          ? '$_label\n\n$_tooltip'
-          : _label;
+      final tooltipMsg = tooltip != null && tooltip.isNotEmpty
+          ? '$label\n\n$tooltip'
+          : label;
       return Tooltip(
         message: tooltipMsg,
         child: Container(
@@ -462,7 +506,7 @@ class _DetectionChipState extends ConsumerState<DetectionChip> {
         ),
         SizedBox(width: AppSizes.spacingSM(context)),
         Text(
-          _label,
+          label,
           style: TextStyle(
             fontSize: AppSizes.fontXS(context),
             fontWeight: FontWeight.bold,
@@ -471,8 +515,8 @@ class _DetectionChipState extends ConsumerState<DetectionChip> {
         ),
       ],
     );
-    if (_tooltip == null) return row;
-    return Tooltip(message: _tooltip!, child: row);
+    if (tooltip == null) return row;
+    return Tooltip(message: tooltip, child: row);
   }
 
   IconData _typeIcon(String type) {

@@ -1,3 +1,7 @@
+import 'dart:async';
+import 'dart:io';
+
+import 'package:path/path.dart' as p;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:yp_launcher/providers/app_state.dart';
 import 'package:yp_launcher/services/nams_settings_service.dart';
@@ -63,8 +67,17 @@ class NamsSettingsData {
 
 @Riverpod(keepAlive: true)
 class NamsSettingsStateController extends _$NamsSettingsStateController {
+  StreamSubscription<FileSystemEvent>? _watchSub;
+  String? _watchedPath;
+  Timer? _reloadDebounce;
+  DateTime _lastSelfWrite = DateTime.fromMillisecondsSinceEpoch(0);
+
   @override
   NamsSettingsData build() {
+    ref.onDispose(() {
+      _reloadDebounce?.cancel();
+      _watchSub?.cancel();
+    });
     return const NamsSettingsData();
   }
 
@@ -72,10 +85,51 @@ class NamsSettingsStateController extends _$NamsSettingsStateController {
     state = state.copyWith(isLoading: true);
     final gameDir = _gameDir;
     final settings = await NamsSettingsService.loadSettings(gameDir);
+    final settingsPath =
+        await NamsSettingsService.resolveSettingsPath(gameDir);
     state = NamsSettingsData(
       settings: settings,
-      settingsPath: await NamsSettingsService.resolveSettingsPath(gameDir),
+      settingsPath: settingsPath,
     );
+    _watchSettingsFile(settingsPath);
+  }
+
+  void _watchSettingsFile(String? settingsPath) {
+    if (settingsPath == null) return;
+    final dirPath = p.dirname(settingsPath);
+    if (_watchedPath == dirPath && _watchSub != null) return;
+    _watchSub?.cancel();
+    _watchSub = null;
+    _watchedPath = null;
+
+    final dir = Directory(dirPath);
+    if (!dir.existsSync()) return;
+
+    try {
+      _watchSub = dir.watch().listen(
+        (event) {
+          if (p.equals(event.path, settingsPath)) {
+            _scheduleExternalReload();
+          }
+        },
+        onError: (_) {},
+      );
+      _watchedPath = dirPath;
+    } catch (_) {}
+  }
+
+  void _scheduleExternalReload() {
+    _reloadDebounce?.cancel();
+    _reloadDebounce = Timer(const Duration(milliseconds: 400), () async {
+      if (state.hasUnsavedChanges) return;
+      if (DateTime.now().difference(_lastSelfWrite) <
+          const Duration(seconds: 2)) {
+        return;
+      }
+      final gameDir = _gameDir;
+      final settings = await NamsSettingsService.loadSettings(gameDir);
+      state = state.copyWith(settings: settings);
+    });
   }
 
   String? get _gameDir {
@@ -138,6 +192,7 @@ class NamsSettingsStateController extends _$NamsSettingsStateController {
   }
 
   Future<bool> saveSettings() async {
+    _lastSelfWrite = DateTime.now();
     final saved = await NamsSettingsService.saveSettings(state.settings, _gameDir);
     if (saved) state = state.copyWith(hasUnsavedChanges: false);
     return saved;
@@ -145,6 +200,12 @@ class NamsSettingsStateController extends _$NamsSettingsStateController {
 
   Future<void> discardChanges() async {
     await loadSettings();
+  }
+
+  Future<void> reloadIfClean() async {
+    if (state.hasUnsavedChanges) return;
+    final settings = await NamsSettingsService.loadSettings(_gameDir);
+    state = state.copyWith(settings: settings);
   }
 
   Map<String, dynamic> _deepCopy(Map<String, dynamic> source) {

@@ -74,6 +74,7 @@ class ProcessService {
       }
 
       await ModsService.syncDlcSlots(installDirectory);
+      await LogService.clearLog(AppStrings.namsLogName);
 
       LaunchCommand command;
       try {

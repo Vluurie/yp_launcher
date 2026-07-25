@@ -85,10 +85,47 @@ void main() {
       expect(IniPatch.getKey(out, 'Loader', 'target'), 'NAMS.exe');
     });
 
-    test('uncomments and replaces a commented key', () {
+    test('leaves a commented key as a comment and adds the active key', () {
       const ini = '[Hunting]\n;hunting = 1\n';
       final out = IniPatch.setKey(ini, 'Hunting', 'hunting', '0');
       expect(IniPatch.getKey(out, 'Hunting', 'hunting'), '0');
+      // The comment must remain a comment, not become a second active key.
+      expect(
+        RegExp(r'^hunting = ', multiLine: true).allMatches(out).length,
+        1,
+        reason: 'active key must appear exactly once:\n$out',
+      );
+      expect(out.contains(';hunting = 1'), isTrue);
+    });
+
+    test('does not duplicate a key when a comment mentions it', () {
+      // Real 3DMigoto d3dx.ini ships a documentation comment above the
+      // active key. setKey must replace the active key in place, not treat
+      // the comment as a match and append a duplicate.
+      const ini = '[System]\n'
+          '; hook = all is the safest option\n'
+          'hook = recommended\n'
+          'proxy_d3d11 =\n';
+      final out = IniPatch.setKey(ini, 'System', 'hook', 'recommended');
+      expect(
+        RegExp(r'^hook = ', multiLine: true).allMatches(out).length,
+        1,
+        reason: 'hook must not be duplicated:\n$out',
+      );
+      expect(IniPatch.getKey(out, 'System', 'hook'), 'recommended');
+    });
+
+    test('applying the same key twice is idempotent', () {
+      const ini = '[System]\nload_library_redirect = 1\n';
+      var out = IniPatch.setKey(ini, 'System', 'load_library_redirect', '0');
+      out = IniPatch.setKey(out, 'System', 'load_library_redirect', '0');
+      expect(
+        RegExp(r'^load_library_redirect = ', multiLine: true)
+            .allMatches(out)
+            .length,
+        1,
+      );
+      expect(IniPatch.getKey(out, 'System', 'load_library_redirect'), '0');
     });
 
     test('does not bleed into the next section', () {

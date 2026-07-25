@@ -584,18 +584,6 @@ class _DiagnosticsDialogState extends ConsumerState<_DiagnosticsDialog> {
               ),
           ],
         ),
-      if (r.recentLogIssues.isNotEmpty)
-        _sectionCard(
-          context,
-          icon: Icons.report_gmailerrorred_outlined,
-          title: l10n.diagnosticsSectionRecentIssues,
-          accent: AppColors.error,
-          trailing: _countBadge(r.recentLogIssues.length),
-          children: [
-            for (final e in r.recentLogIssues.reversed.take(8))
-              _mutedLine(context, '${e.level} ${e.module}: ${e.message}'),
-          ],
-        ),
       if (r.dataDirContents.isNotEmpty)
         _sectionCard(
           context,

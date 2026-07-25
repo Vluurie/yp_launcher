@@ -1242,6 +1242,14 @@ class AppLocalizationsZh extends AppLocalizations {
       'NAMS 内置的画质补丁，灵感来自 emoose 的 Automata-LodMod。可消除 LOD 物体弹出、锐化阴影和环境光遮蔽、强制包括植被在内的所有物体投射阴影、禁用手动剔除以避免物体突然出现或消失，并移除暗角。';
 
   @override
+  String get namsDescription =>
+      'NAMS 是托管《尼尔：机械纪元》的模组加载器。它在自己的进程中启动游戏，在运行时加载你的模组，并应用这些引擎设置。这些选项控制校验、内容功能、插件/ReShade/3DMigoto 的加载以及内存堆大小。';
+
+  @override
+  String get yorhaProtocolDescription =>
+      'YP Devkit（YorHa Protocol）是由 NAMS 加载的模组与开发者插件。其完整工具集——判定框/光源/骨骼可视化、自由镜头与拍照模式、实体生成、HAP 脚本树、物品生成器等等——位于游戏内的叠加界面中，按 F1 打开。此标签页可让你从启动器方便地调整其按键绑定、工作区开关、作弊和敌人随机化器；这些也都可以在游戏内更改。';
+
+  @override
   String get dropModelModHere => '将模型模组文件夹或压缩包拖放到此处';
 
   @override

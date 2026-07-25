@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -49,6 +50,9 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
   final _logPanelKey = GlobalKey<LogPanelState>();
   final _languageMenuKey = GlobalKey<PopupMenuButtonState<Locale>>();
   bool? _onboardingComplete;
+  bool _launchOptionsOpen = false;
+  final Set<int> _visitedTabs = {0};
+  Timer? _warmupTimer;
 
   /// Matches the hosts where main() initializes window_manager.
   static bool get _managesWindow =>
@@ -83,11 +87,13 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
           if (next != _selectedTab) _switchTab(next);
         },
       );
+      _startWarmup();
     });
   }
 
   @override
   void dispose() {
+    _warmupTimer?.cancel();
     if (_managesWindow) {
       windowManager.removeListener(this);
     }
@@ -171,16 +177,76 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
     }
   }
 
+  Widget _buildSplash(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.backgroundPrimary,
+      body: Column(
+        children: [
+          if (PlatformGate.isWindows) const WindowsTitleBar(),
+          Expanded(
+            child: Stack(
+              children: [
+                AutomatoBackground(
+                  ref: ref,
+                  showBackgroundSVG: true,
+                  showMenuLines: true,
+                  backgroundColor: AppColors.backgroundPrimary,
+                  gradientColor: AppColors.backgroundSecondary,
+                  backgroundSvgConfig: const BackgroundSvgConfig(
+                    animateInner: true,
+                    animateOuter: true,
+                    showDual: true,
+                  ),
+                  linesConfig: LinesConfig(
+                    lineColor: AppColors.borderLight.withValues(alpha: 0.2),
+                    strokeWidth: 1.0,
+                    spacing: 10.0,
+                    drawVerticalLines: true,
+                    drawHorizontalLines: true,
+                    enableFlicker: false,
+                    flickerDuration: const Duration(milliseconds: 4000),
+                  ),
+                ),
+                Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const SizedBox(
+                        width: 40,
+                        height: 40,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.5,
+                          color: AppColors.accentPrimary,
+                        ),
+                      ),
+                      SizedBox(height: AppSizes.spacingLG(context)),
+                      Text(
+                        AppLocalizations.of(context)!.appTitle,
+                        style: TextStyle(
+                          fontSize: AppSizes.fontLG(context),
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textSecondary,
+                          letterSpacing: 1.5,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final appState = ref.watch(appStateControllerProvider);
     final hasDir = appState.isDirectorySelected;
 
     if (_onboardingComplete == null) {
-      return const Scaffold(
-        backgroundColor: AppColors.backgroundPrimary,
-        body: SizedBox.shrink(),
-      );
+      return _buildSplash(context);
     }
 
     if (_onboardingComplete == false) {
@@ -318,20 +384,57 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
     ref.read(activeTabProvider.notifier).state = index;
   }
 
+  void _startWarmup() {
+    var next = 1;
+    _warmupTimer = Timer.periodic(const Duration(milliseconds: 350), (timer) {
+      while (next < 10 && _visitedTabs.contains(next)) {
+        next++;
+      }
+      if (next >= 10) {
+        timer.cancel();
+        return;
+      }
+      if (mounted) setState(() => _visitedTabs.add(next));
+      next++;
+    });
+  }
+
+  Widget _tabAt(int index) {
+    switch (index) {
+      case 0:
+        return _buildLauncherTab();
+      case 1:
+        return const SettingsView();
+      case 2:
+        return const LodmodView();
+      case 3:
+        return const TexturesView();
+      case 4:
+        return const YorhaProtocolView();
+      case 5:
+        return const ModsView();
+      case 6:
+        return const NaiomView();
+      case 7:
+        return const CutscenesView();
+      case 8:
+        return const LauncherSettingsView();
+      case 9:
+        return const ThirdPartyView();
+      default:
+        return const SizedBox.shrink();
+    }
+  }
+
   Widget _buildTabContent() {
+    _visitedTabs.add(_selectedTab);
     return IndexedStack(
       index: _selectedTab,
       children: [
-        _buildLauncherTab(),
-        const SettingsView(),
-        const LodmodView(),
-        const TexturesView(),
-        const YorhaProtocolView(),
-        const ModsView(),
-        const NaiomView(),
-        const CutscenesView(),
-        const LauncherSettingsView(),
-        const ThirdPartyView(),
+        for (var i = 0; i < 10; i++)
+          _visitedTabs.contains(i)
+              ? _tabAt(i)
+              : const SizedBox.shrink(),
       ],
     );
   }
@@ -388,36 +491,26 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
               ),
             ),
           ),
-        Center(
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: AppSizes.paddingXL(context),
+        Positioned(
+          top: AppSizes.paddingMD(context) + 56,
+          left: 0,
+          right: 56,
+          bottom: _footerReserve(context),
+          child: Center(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.symmetric(
+                horizontal: AppSizes.paddingXL(context),
+                vertical: AppSizes.paddingMD(context),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const PlayButton(),
+                  SizedBox(height: AppSizes.spacingSM(context)),
+                  _buildStatusLine(),
+                ],
+              ),
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const PlayButton(),
-                SizedBox(height: AppSizes.spacingSM(context)),
-                _buildStatusLine(),
-              ],
-            ),
-          ),
-        ),
-        Positioned.fill(
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final gapEnd = constraints.maxWidth / 2 -
-                  AppSizes.playButtonWidth(context) / 2;
-              return Padding(
-                padding: EdgeInsets.only(
-                  right: constraints.maxWidth - gapEnd,
-                ),
-                child: Align(
-                  alignment: const Alignment(0, -0.35),
-                  child: _buildLaunchOptionsPanel(context),
-                ),
-              );
-            },
           ),
         ),
         Positioned(
@@ -479,74 +572,38 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
             ),
           ),
         ),
-        InfoBar(
-          logPanelKey: _logPanelKey,
-          onOpenLogs: () {
-            ref.read(logPanelOpenProvider.notifier).state = true;
-            ref.read(logStateControllerProvider.notifier).loadLogs();
-          },
+        Positioned(
+          top: AppSizes.paddingMD(context) + 56,
+          bottom: _footerReserve(context),
+          right: AppSizes.infoBarPaddingH(context),
+          child: const Center(
+            child: SingleChildScrollView(
+              child: DetectionStatusStrip(),
+            ),
+          ),
         ),
         Positioned(
           bottom: AppSizes.spacingMD(context),
           left: AppSizes.infoBarPaddingH(context),
           right: AppSizes.infoBarPaddingH(context),
-          child: Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: AppSizes.chipPaddingH(context),
-              vertical: AppSizes.chipPaddingV(context) + 2,
-            ),
-            decoration: BoxDecoration(
-              color: AppColors.backgroundCard.withValues(alpha: 0.7),
-              borderRadius: BorderRadius.circular(
-                AppSizes.borderRadius(context),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              InfoBar(
+                logPanelKey: _logPanelKey,
+                leading: _buildLaunchOptionsHeader(context),
+                onOpenLogs: () {
+                  ref.read(logPanelOpenProvider.notifier).state = true;
+                  ref.read(logStateControllerProvider.notifier).loadLogs();
+                },
               ),
-            ),
-            child: Wrap(
-              alignment: WrapAlignment.center,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: [
-                Text(
-                  l10n.helpPrefix,
-                  style: TextStyle(
-                    fontSize: AppSizes.fontXS(context),
-                    color: AppColors.textMuted,
-                  ),
-                ),
-                _HoverTextLink(
-                  label: l10n.helpNaoLauncher,
-                  url: AppStrings.naoLauncherUrl,
-                ),
-                Text(
-                  l10n.helpOr,
-                  style: TextStyle(
-                    fontSize: AppSizes.fontXS(context),
-                    color: AppColors.textMuted,
-                  ),
-                ),
-                _HoverTextLink(
-                  label: l10n.helpCommandLine,
-                  url: AppStrings.cliDocsUrl,
-                ),
-                Text(
-                  l10n.helpJoinDiscord,
-                  style: TextStyle(
-                    fontSize: AppSizes.fontXS(context),
-                    color: AppColors.textMuted,
-                  ),
-                ),
-                _HoverTextLink(
-                  label: l10n.helpDiscord,
-                  url: AppStrings.discordUrl,
-                ),
-                Text(
-                  l10n.helpSuffix,
-                  style: TextStyle(
-                    fontSize: AppSizes.fontXS(context),
-                    color: AppColors.textMuted,
-                  ),
-                ),
-              ],
-            ),
+              SizedBox(height: AppSizes.spacingSM(context)),
+              SizedBox(
+                width: double.infinity,
+                child: _buildHelpText(l10n),
+              ),
+            ],
           ),
         ),
         const PersistentWarningBanner(),
@@ -570,55 +627,174 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
             ),
           ),
         ],
+        if (_launchOptionsOpen) ...[
+          Positioned.fill(
+            child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () => setState(() => _launchOptionsOpen = false),
+            ),
+          ),
+          Positioned(
+            left: AppSizes.infoBarPaddingH(context),
+            bottom: _footerReserve(context) + 40,
+            child: _buildLaunchOptionsExpanded(context),
+          ),
+        ],
       ],
     );
   }
 
-  Widget _buildLaunchOptionsPanel(BuildContext context) {
+  double _footerReserve(BuildContext context) {
+    return AppSizes.spacingMD(context) + 88;
+  }
+
+  Widget _buildHelpText(AppLocalizations l10n) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: AppSizes.chipPaddingH(context),
+        vertical: AppSizes.chipPaddingV(context) + 2,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.backgroundCard.withValues(alpha: 0.7),
+        borderRadius: BorderRadius.circular(AppSizes.borderRadius(context)),
+      ),
+      child: Wrap(
+        alignment: WrapAlignment.center,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: [
+          Text(
+            l10n.helpPrefix,
+            style: TextStyle(
+              fontSize: AppSizes.fontXS(context),
+              color: AppColors.textMuted,
+            ),
+          ),
+          _HoverTextLink(
+            label: l10n.helpNaoLauncher,
+            url: AppStrings.naoLauncherUrl,
+          ),
+          Text(
+            l10n.helpOr,
+            style: TextStyle(
+              fontSize: AppSizes.fontXS(context),
+              color: AppColors.textMuted,
+            ),
+          ),
+          _HoverTextLink(
+            label: l10n.helpCommandLine,
+            url: AppStrings.cliDocsUrl,
+          ),
+          Text(
+            l10n.helpJoinDiscord,
+            style: TextStyle(
+              fontSize: AppSizes.fontXS(context),
+              color: AppColors.textMuted,
+            ),
+          ),
+          _HoverTextLink(
+            label: l10n.helpDiscord,
+            url: AppStrings.discordUrl,
+          ),
+          Text(
+            l10n.helpSuffix,
+            style: TextStyle(
+              fontSize: AppSizes.fontXS(context),
+              color: AppColors.textMuted,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  List<Widget> _launchOptionItems() {
+    return const [
+      MinimizeOnLaunchToggle(),
+      PreferDedicatedGpuToggle(),
+    ];
+  }
+
+  Widget _buildLaunchOptionsHeader(BuildContext context) {
     if (!Platform.isWindows && !Platform.isLinux) {
       return const SizedBox.shrink();
     }
+    final l10n = AppLocalizations.of(context)!;
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(AppSizes.borderRadius(context)),
+        onTap: () => setState(() => _launchOptionsOpen = !_launchOptionsOpen),
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: AppSizes.paddingMD(context),
+            vertical: AppSizes.paddingSM(context),
+          ),
+          decoration: BoxDecoration(
+            color: AppColors.backgroundCard.withValues(alpha: 0.7),
+            borderRadius: BorderRadius.circular(AppSizes.borderRadius(context)),
+            border: Border.all(
+              color: AppColors.borderLight.withValues(alpha: 0.7),
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.tune,
+                size: AppSizes.iconSM(context),
+                color: AppColors.accentPrimary,
+              ),
+              const SizedBox(width: 6),
+              Text(
+                l10n.launchOptionsTitle,
+                style: TextStyle(
+                  fontSize: AppSizes.fontXS(context),
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.accentPrimary,
+                  letterSpacing: 1.0,
+                ),
+              ),
+              const SizedBox(width: 6),
+              AnimatedRotation(
+                turns: _launchOptionsOpen ? 0.5 : 0,
+                duration: const Duration(milliseconds: 150),
+                child: Icon(
+                  Icons.keyboard_arrow_up,
+                  size: AppSizes.iconSM(context),
+                  color: AppColors.accentPrimary,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLaunchOptionsExpanded(BuildContext context) {
     return ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 280),
+      constraints: BoxConstraints(
+        maxWidth: 300,
+        maxHeight: MediaQuery.sizeOf(context).height * 0.5,
+      ),
       child: Container(
         padding: EdgeInsets.symmetric(
           horizontal: AppSizes.paddingMD(context),
           vertical: AppSizes.paddingSM(context),
         ),
         decoration: BoxDecoration(
-          color: AppColors.backgroundCard.withValues(alpha: 0.55),
+          color: AppColors.backgroundCard.withValues(alpha: 0.95),
           borderRadius: BorderRadius.circular(AppSizes.borderRadius(context)),
           border: Border.all(
             color: AppColors.borderLight.withValues(alpha: 0.7),
           ),
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.tune,
-                  size: AppSizes.iconSM(context),
-                  color: AppColors.accentPrimary,
-                ),
-                const SizedBox(width: 6),
-                Text(
-                  AppLocalizations.of(context)!.launchOptionsTitle,
-                  style: TextStyle(
-                    fontSize: AppSizes.fontXS(context),
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.accentPrimary,
-                    letterSpacing: 1.0,
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: AppSizes.spacingSM(context)),
-            const MinimizeOnLaunchToggle(),
-            const PreferDedicatedGpuToggle(),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: _launchOptionItems(),
+          ),
         ),
       ),
     );

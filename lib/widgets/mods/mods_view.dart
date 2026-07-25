@@ -22,6 +22,7 @@ import 'package:yp_launcher/services/archive_service.dart';
 import 'package:yp_launcher/services/isolate_service.dart';
 import 'package:yp_launcher/services/mods_service.dart';
 import 'package:yp_launcher/providers/notification_state.dart';
+import 'package:yp_launcher/widgets/header_info_icon.dart';
 import 'package:yp_launcher/widgets/hover_button.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
@@ -127,16 +128,66 @@ class _ModsViewState extends ConsumerState<ModsView> {
 
   Future<void> _handleDrop(List<String> paths) async {
     if (ref.read(activeTabProvider) != 5) return;
+    final looseFiles = <String>[];
+    final rest = <String>[];
     for (final path in paths) {
+      if (FileSystemEntity.isFileSync(path) &&
+          !ArchiveService.isArchive(path) &&
+          ModsService.isLooseDataFile(p.basename(path))) {
+        looseFiles.add(path);
+      } else {
+        rest.add(path);
+      }
+    }
+    if (looseFiles.length == 1) {
+      rest.insert(0, looseFiles.removeLast());
+    }
+    if (looseFiles.isNotEmpty) {
+      await _installLooseFileDrop(looseFiles);
+    }
+    for (final path in rest) {
       if (!mounted) return;
       await _installFromPath(path);
+    }
+  }
+
+  Future<void> _installLooseFileDrop(List<String> files) async {
+    final l10n = AppLocalizations.of(context)!;
+    setState(() {
+      _busy = true;
+      _busyMessage = l10n.modDropAnalyzing;
+    });
+    String? staged;
+    try {
+      staged = await IsolateService.run(_stageDroppedLooseFilesSync, files);
+    } catch (_) {}
+    if (!mounted) return;
+    setState(() => _busy = false);
+    if (staged == null) {
+      ref.read(notificationStateControllerProvider.notifier).addNotification(
+            NotificationItem(
+              id: 'mod_drop_reject_${DateTime.now().millisecondsSinceEpoch}',
+              message: (l10n) => l10n.modDropNotAMod,
+              icon: Icons.error_outline,
+              color: AppColors.error,
+              type: NotificationType.general,
+            ),
+          );
+      return;
+    }
+    try {
+      await _installFromPath(staged);
+    } finally {
+      try {
+        Directory(p.dirname(staged)).deleteSync(recursive: true);
+      } catch (_) {}
     }
   }
 
   Future<void> _handleBrowseFile() async {
     final result = await FilePicker.pickFiles(
       type: FileType.custom,
-      allowedExtensions: const ['zip', '7z', 'rar'],
+      allowedExtensions: const ['zip', '7z', 'rar', 'dat', 'dtt', 'cpk'],
     );
     final picked = result?.files.single.path;
     if (picked == null) return;
@@ -655,96 +706,81 @@ class _ModsViewState extends ConsumerState<ModsView> {
           color: AppColors.backgroundPrimary,
           child: Padding(
             padding: EdgeInsets.all(AppSizes.contentPadding(context)),
-            child: Row(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                _headerBar(l10n),
+                SizedBox(height: AppSizes.spacingMD(context)),
                 Expanded(
-                  flex: 6,
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      const estimatedRowHeight = 52.0;
-                      final headerReserve =
-                          AppSizes.spacingMD(context) +
-                              AppSizes.spacingSM(context) +
-                              48; // selector + spacing fudge
-                      final approxListHeight =
-                          constraints.maxHeight - headerReserve;
-                      final wouldOverflow =
-                          data.mods.length * estimatedRowHeight >
-                              approxListHeight;
-                      final showSearch = wouldOverflow ||
-                          (_filter.isNotEmpty && data.mods.isNotEmpty);
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: KeyedSubtree(
-                                  key: _profileSelectorKey,
-                                  child: const ModProfileSelector(),
-                                ),
-                              ),
-                              SizedBox(width: AppSizes.spacingSM(context)),
-                              _collapseAllButton(l10n, data.mods),
-                              SizedBox(width: AppSizes.spacingSM(context)),
-                              _bulkInstallButton(l10n),
-                              SizedBox(width: AppSizes.spacingSM(context)),
-                              _looseInstallButton(l10n),
-                              SizedBox(width: AppSizes.spacingSM(context)),
-                              _helpIconButton(l10n),
-                            ],
-                          ),
-                          SizedBox(height: AppSizes.spacingMD(context)),
-                          if (showSearch) ...[
-                            _searchBar(l10n),
-                            SizedBox(height: AppSizes.spacingSM(context)),
-                          ],
-                          Expanded(
-                            child: KeyedSubtree(
-                              key: _listKey,
-                              child: _list(filtered, data.isLoading, l10n),
-                            ),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                ),
-                SizedBox(width: AppSizes.spacingLG(context)),
-                Expanded(
-                  flex: 5,
-                  child: Column(
+                  child: Row(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      SizedBox(
-                        height: 120,
-                        child: KeyedSubtree(
-                          key: _dropZoneKey,
-                          child: ModDropZone(
-                            onDrop: _handleDrop,
-                            onBrowse: _handleBrowseFile,
-                            onBrowseFolder: _handleBrowseFolder,
-                          ),
+                      Expanded(
+                        flex: 6,
+                        child: LayoutBuilder(
+                          builder: (context, constraints) {
+                            const estimatedRowHeight = 52.0;
+                            final wouldOverflow =
+                                data.mods.length * estimatedRowHeight >
+                                    constraints.maxHeight - 48;
+                            final showSearch = wouldOverflow ||
+                                (_filter.isNotEmpty && data.mods.isNotEmpty);
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (showSearch) ...[
+                                  _searchBar(l10n),
+                                  SizedBox(height: AppSizes.spacingSM(context)),
+                                ],
+                                Expanded(
+                                  child: KeyedSubtree(
+                                    key: _listKey,
+                                    child: _list(filtered, data.isLoading, l10n),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
                         ),
                       ),
-                      SizedBox(height: AppSizes.spacingMD(context)),
+                      SizedBox(width: AppSizes.spacingLG(context)),
                       Expanded(
-                        child: KeyedSubtree(
-                          key: _detailKey,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: AppColors.backgroundCard,
-                              borderRadius: BorderRadius.circular(
-                                AppSizes.borderRadius(context),
+                        flex: 5,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            SizedBox(
+                              height: 120,
+                              child: KeyedSubtree(
+                                key: _dropZoneKey,
+                                child: ModDropZone(
+                                  onDrop: _handleDrop,
+                                  onBrowse: _handleBrowseFile,
+                                  onBrowseFolder: _handleBrowseFolder,
+                                ),
                               ),
-                              border: Border.all(color: AppColors.borderLight),
                             ),
-                            child: ModDetailPanel(
-                              mod: selected,
-                              onUninstall: _confirmAndUninstall,
+                            SizedBox(height: AppSizes.spacingMD(context)),
+                            Expanded(
+                              child: KeyedSubtree(
+                                key: _detailKey,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: AppColors.backgroundCard,
+                                    borderRadius: BorderRadius.circular(
+                                      AppSizes.borderRadius(context),
+                                    ),
+                                    border: Border.all(
+                                        color: AppColors.borderLight),
+                                  ),
+                                  child: ModDetailPanel(
+                                    mod: selected,
+                                    onUninstall: _confirmAndUninstall,
+                                  ),
+                                ),
+                              ),
                             ),
-                          ),
+                          ],
                         ),
                       ),
                     ],
@@ -759,42 +795,75 @@ class _ModsViewState extends ConsumerState<ModsView> {
     );
   }
 
-  Widget _bulkInstallButton(AppLocalizations l10n) {
-    return HoverIconButton(
-      tooltip: l10n.modBulkInstall,
-      bordered: false,
-      padding: EdgeInsets.all(AppSizes.paddingXS(context)),
-      icon: Icon(
-        Icons.library_add_outlined,
-        size: AppSizes.iconLG(context),
-        color: AppColors.textMuted,
+  Widget _headerBar(AppLocalizations l10n) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: AppSizes.cardPaddingH(context),
+        vertical: AppSizes.cardPaddingV(context),
       ),
-      onTap: _handleBulkInstall,
+      decoration: BoxDecoration(
+        color: AppColors.surfaceMedium,
+        borderRadius: BorderRadius.circular(AppSizes.borderRadius(context)),
+        border: Border.all(color: AppColors.borderLight),
+      ),
+      child: Row(
+        children: [
+          Text(
+            l10n.headerMods,
+            style: TextStyle(
+              fontSize: AppSizes.fontXL(context),
+              fontWeight: FontWeight.bold,
+              color: AppColors.textPrimary,
+              letterSpacing: 1.0,
+            ),
+          ),
+          if (_gameDir.isNotEmpty)
+            HeaderInfoIcon(
+              tooltip: l10n.modIntroBody,
+              revealPath: p.join(_gameDir, 'nams', 'mods'),
+              isFile: false,
+            ),
+          SizedBox(width: AppSizes.spacingLG(context)),
+          Expanded(
+            child: KeyedSubtree(
+              key: _profileSelectorKey,
+              child: const ModProfileSelector(),
+            ),
+          ),
+          SizedBox(width: AppSizes.spacingLG(context)),
+          _bulkInstallButton(l10n),
+          SizedBox(width: AppSizes.spacingSM(context)),
+          _looseInstallButton(l10n),
+          SizedBox(width: AppSizes.spacingSM(context)),
+          _helpIconButton(l10n),
+        ],
+      ),
     );
   }
 
-  Widget _collapseAllButton(AppLocalizations l10n, List<InstalledMod> mods) {
-    final allGroups = groupMods(mods).keys.toSet();
-    final allCollapsed =
-        allGroups.isNotEmpty && _collapsedGroups.containsAll(allGroups);
+  Widget _toolbarButton({
+    required IconData icon,
+    required String tooltip,
+    required VoidCallback? onTap,
+  }) {
     return HoverIconButton(
-      tooltip: allCollapsed ? l10n.modExpandAll : l10n.modCollapseAll,
-      bordered: false,
-      padding: EdgeInsets.all(AppSizes.paddingXS(context)),
+      tooltip: tooltip,
+      onTap: onTap,
+      borderColor: AppColors.borderMedium,
+      padding: EdgeInsets.all(AppSizes.paddingSM(context)),
       icon: Icon(
-        allCollapsed ? Icons.unfold_more : Icons.unfold_less,
-        size: AppSizes.iconLG(context),
-        color: AppColors.textMuted,
+        icon,
+        size: AppSizes.iconMD(context),
+        color: AppColors.textSecondary,
       ),
-      onTap: () => setState(() {
-        if (allCollapsed) {
-          _collapsedGroups.clear();
-        } else {
-          _collapsedGroups
-            ..clear()
-            ..addAll(allGroups);
-        }
-      }),
+    );
+  }
+
+  Widget _bulkInstallButton(AppLocalizations l10n) {
+    return _toolbarButton(
+      icon: Icons.library_add_outlined,
+      tooltip: l10n.modBulkInstall,
+      onTap: _handleBulkInstall,
     );
   }
 
@@ -872,15 +941,9 @@ class _ModsViewState extends ConsumerState<ModsView> {
   }
 
   Widget _looseInstallButton(AppLocalizations l10n) {
-    return HoverIconButton(
+    return _toolbarButton(
+      icon: Icons.note_add_outlined,
       tooltip: l10n.modLooseInstall,
-      bordered: false,
-      padding: EdgeInsets.all(AppSizes.paddingXS(context)),
-      icon: Icon(
-        Icons.note_add_outlined,
-        size: AppSizes.iconLG(context),
-        color: AppColors.textMuted,
-      ),
       onTap: _handleLooseInstall,
     );
   }
@@ -1058,10 +1121,20 @@ class _ModsViewState extends ConsumerState<ModsView> {
       child: Tooltip(
         message: l10n.modsTutorialHelpTooltip,
         child: PopupMenuButton<TutorialKind>(
-          icon: Icon(
-            Icons.help_outline,
-            size: AppSizes.iconLG(context),
-            color: AppColors.textMuted,
+          padding: EdgeInsets.zero,
+          splashRadius: 1,
+          tooltip: '',
+          child: Container(
+            padding: EdgeInsets.all(AppSizes.paddingSM(context)),
+            decoration: BoxDecoration(
+              border: Border.all(color: AppColors.borderMedium),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Icon(
+              Icons.help_outline,
+              size: AppSizes.iconMD(context),
+              color: AppColors.textSecondary,
+            ),
           ),
           color: AppColors.backgroundCard,
           onSelected: (kind) => _startTutorial(kind),
@@ -1286,7 +1359,7 @@ class _ModsViewState extends ConsumerState<ModsView> {
     }
     if (FileSystemEntity.isFileSync(sourcePath)) {
       return _ModDropClassification(
-        valid: _isLoosePlFile(p.basename(sourcePath)),
+        valid: ModsService.isLooseDataFile(p.basename(sourcePath)),
       );
     }
     if (FileSystemEntity.isDirectorySync(sourcePath)) {
@@ -1342,6 +1415,28 @@ int _countLooseFilesSync(String root) {
     if (ext == '.dat' || ext == '.dtt') count++;
   }
   return count;
+}
+
+String? _stageDroppedLooseFilesSync(List<String> files) {
+  if (files.isEmpty) return null;
+  final root = Directory.systemTemp.createTempSync('yp_loose_drop_');
+  final sub = Directory(
+      p.join(root.path, p.basenameWithoutExtension(files.first)))
+    ..createSync();
+  var copied = 0;
+  for (final f in files) {
+    try {
+      File(f).copySync(p.join(sub.path, p.basename(f)));
+      copied++;
+    } catch (_) {}
+  }
+  if (copied == 0) {
+    try {
+      root.deleteSync(recursive: true);
+    } catch (_) {}
+    return null;
+  }
+  return sub.path;
 }
 
 String? _stageLooseFilesSync(String root, void Function(String) report) {
@@ -1427,10 +1522,9 @@ _ModDropClassification _classifyEntryPaths(Iterable<String> rawEntries) {
     // or a data/<subdir> anywhere below the root means at least one installable
     // variant exists. detectDrop resolves which; here we just don't reject.
     final last = segments.last;
-    if (_isLoosePlFile(last) ||
+    if (ModsService.isLooseDataFile(last) ||
         last == 'mod.toml' ||
-        last.endsWith('.dds') ||
-        last.endsWith('.cpk')) {
+        last.endsWith('.dds')) {
       hasRealModSignal = true;
       continue;
     }
@@ -1541,8 +1635,7 @@ List<String> _stripOneWrapper(List<String> entries) {
       wrapper == 'data' ||
       wrapper == 'movie' ||
       _modRootDataSubdirs.contains(wrapper) ||
-      wrapper.endsWith('.cpk') ||
-      _isLoosePlFile(wrapper)) {
+      ModsService.isLooseDataFile(wrapper)) {
     return entries;
   }
   return entries
