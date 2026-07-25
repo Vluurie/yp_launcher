@@ -24,6 +24,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tooltipDiscord => 'Discord';
 
   @override
+  String get themeToggleToNier => 'Switch to NieR theme';
+
+  @override
+  String get themeToggleToDark => 'Switch to dark theme';
+
+  @override
   String get tooltipLanguage => 'Language';
 
   @override
@@ -1286,6 +1292,14 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get lodModDescription =>
       'Visual quality patches built into NAMS, inspired by Automata-LodMod by emoose. Removes LOD pop-in, sharpens shadows and ambient occlusion, forces shadow casting on all objects including foliage, disables manual culling so objects don\'t pop in/out, and removes the vignette.';
+
+  @override
+  String get namsDescription =>
+      'NAMS is the mod loader that hosts NieR:Automata. It launches the game inside its own process, loads your mods at runtime, and applies these engine settings. These options control validation, content features, plugin/ReShade/3DMigoto loading, and memory heap sizes.';
+
+  @override
+  String get yorhaProtocolDescription =>
+      'YP Devkit (YorHa Protocol) is a modding and developer plugin loaded by NAMS. Its full toolkit — hitbox/light/bone visualizers, a freecam and Photo Mode, entity spawning, the HAP script tree, an item spawner, and more — lives in an in-game overlay you open with F1. This tab is a convenient place to adjust its keybinds, workspace toggles, cheats, and enemy randomizer from the launcher; all of it can also be changed in-game.';
 
   @override
   String get dropModelModHere => 'Drop model mod folder or archive here';

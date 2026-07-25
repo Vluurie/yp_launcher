@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
+import 'package:yp_launcher/theme/nier_curves.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
 
 class CollapsibleCard extends StatefulWidget {
@@ -30,11 +31,11 @@ class _CollapsibleCardState extends State<CollapsibleCard> {
         color: AppColors.backgroundCard,
         borderRadius: radius,
         border: Border.all(color: AppColors.borderLight),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
             color: AppColors.shadow,
             blurRadius: 4,
-            offset: Offset(0, 2),
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -79,7 +80,7 @@ class _CollapsibleCardState extends State<CollapsibleCard> {
           ),
           AnimatedSize(
             duration: const Duration(milliseconds: 180),
-            curve: Curves.easeInOut,
+            curve: NierCurves.smooth,
             alignment: Alignment.topCenter,
             child: _collapsed
                 ? const SizedBox(width: double.infinity)

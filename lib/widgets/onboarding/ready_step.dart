@@ -160,7 +160,7 @@ class _ReadyStepState extends ConsumerState<ReadyStep> {
                     onChanged: (v) =>
                         setState(() => _createShortcut = v ?? false),
                     activeColor: AppColors.accentPrimary,
-                    side: const BorderSide(color: AppColors.borderMedium),
+                    side: BorderSide(color: AppColors.borderMedium),
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -260,7 +260,7 @@ class _ReadyStepState extends ConsumerState<ReadyStep> {
           try {
             final prefs = await SharedPreferences.getInstance();
             final shouldMinimize =
-                prefs.getBool(AppStrings.prefKeyMinimizeOnLaunch) ?? true;
+                prefs.getBool(AppStrings.prefKeyMinimizeOnLaunch) ?? false;
             if (shouldMinimize) {
               await Future.delayed(const Duration(seconds: 3));
               if (ref.read(appStateControllerProvider).playButtonState ==

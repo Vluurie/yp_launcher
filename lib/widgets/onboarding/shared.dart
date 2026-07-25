@@ -59,8 +59,8 @@ class OnboardingChoiceButton extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (selected)
-              const Padding(
-                padding: EdgeInsets.only(right: 10),
+              Padding(
+                padding: const EdgeInsets.only(right: 10),
                 child: Icon(
                   Icons.check_circle,
                   size: 20,
@@ -91,7 +91,7 @@ class OnboardingBackButton extends StatelessWidget {
       height: 48,
       child: TextButton.icon(
         onPressed: onTap,
-        icon: const Icon(
+        icon: Icon(
           Icons.arrow_back,
           size: 18,
           color: AppColors.textMuted,

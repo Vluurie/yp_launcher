@@ -27,7 +27,7 @@ class TextureHeader extends StatelessWidget {
         horizontal: AppSizes.cardPaddingH(context),
         vertical: AppSizes.cardPaddingV(context),
       ),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: AppColors.surfaceMedium,
         border: Border(bottom: BorderSide(color: AppColors.borderLight)),
       ),

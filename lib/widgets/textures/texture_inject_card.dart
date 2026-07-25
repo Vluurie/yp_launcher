@@ -51,11 +51,11 @@ class TextureInjectCard extends StatelessWidget {
         color: AppColors.backgroundCard,
         borderRadius: BorderRadius.circular(AppSizes.borderRadius(context)),
         border: Border.all(color: AppColors.borderLight),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
             color: AppColors.shadow,
             blurRadius: 4,
-            offset: Offset(0, 2),
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -216,7 +216,7 @@ class TextureInjectCard extends StatelessWidget {
                         ),
                         child: Row(
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.image,
                               size: 14,
                               color: AppColors.textMuted,

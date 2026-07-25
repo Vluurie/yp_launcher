@@ -93,24 +93,34 @@ class WindowsTitleBar extends ConsumerWidget {
           title: Text(
             l10n.busyCloseTitle,
             style: TextStyle(
-                fontSize: AppSizes.fontXL(ctx), color: AppColors.warning),
+              fontSize: AppSizes.fontXL(ctx),
+              color: AppColors.warning,
+            ),
           ),
           content: Text(
             l10n.busyCloseBody,
             style: TextStyle(
-                fontSize: AppSizes.fontMD(ctx), color: AppColors.textSecondary),
+              fontSize: AppSizes.fontMD(ctx),
+              color: AppColors.textSecondary,
+            ),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(ctx).pop(),
-              child: Text(l10n.stay,
-                  style: const TextStyle(color: AppColors.textMuted)),
+              child: Text(
+                l10n.stay,
+                style: TextStyle(color: AppColors.textMuted),
+              ),
             ),
             TextButton(
               onPressed: () => exit(0),
-              child: Text(l10n.busyCloseForce,
-                  style: const TextStyle(
-                      color: AppColors.error, fontWeight: FontWeight.bold)),
+              child: Text(
+                l10n.busyCloseForce,
+                style: TextStyle(
+                  color: AppColors.error,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ],
         ),
@@ -118,8 +128,12 @@ class WindowsTitleBar extends ConsumerWidget {
       return;
     }
 
-    final configUnsaved = ref.read(configStateControllerProvider).hasUnsavedChanges;
-    final settingsUnsaved = ref.read(namsSettingsStateControllerProvider).hasUnsavedChanges;
+    final configUnsaved = ref
+        .read(configStateControllerProvider)
+        .hasUnsavedChanges;
+    final settingsUnsaved = ref
+        .read(namsSettingsStateControllerProvider)
+        .hasUnsavedChanges;
 
     if (!configUnsaved && !settingsUnsaved) {
       exit(0);
@@ -129,11 +143,38 @@ class WindowsTitleBar extends ConsumerWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: AppColors.backgroundCard,
-        title: Text(l10n.unsavedChangesTitle, style: TextStyle(fontSize: AppSizes.fontXL(ctx), color: AppColors.textPrimary)),
-        content: Text(l10n.unsavedChangesMessage, style: TextStyle(fontSize: AppSizes.fontMD(ctx), color: AppColors.textSecondary)),
+        title: Text(
+          l10n.unsavedChangesTitle,
+          style: TextStyle(
+            fontSize: AppSizes.fontXL(ctx),
+            color: AppColors.textPrimary,
+          ),
+        ),
+        content: Text(
+          l10n.unsavedChangesMessage,
+          style: TextStyle(
+            fontSize: AppSizes.fontMD(ctx),
+            color: AppColors.textSecondary,
+          ),
+        ),
         actions: [
-          TextButton(onPressed: () => Navigator.of(ctx).pop(), child: Text(l10n.stay, style: const TextStyle(color: AppColors.textMuted))),
-          TextButton(onPressed: () => exit(0), child: Text(l10n.discard, style: const TextStyle(color: AppColors.error, fontWeight: FontWeight.bold))),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: Text(
+              l10n.stay,
+              style: TextStyle(color: AppColors.textMuted),
+            ),
+          ),
+          TextButton(
+            onPressed: () => exit(0),
+            child: Text(
+              l10n.discard,
+              style: TextStyle(
+                color: AppColors.error,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
         ],
       ),
     );

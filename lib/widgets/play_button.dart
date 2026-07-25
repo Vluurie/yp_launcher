@@ -153,7 +153,7 @@ class PlayButton extends ConsumerWidget {
                 try {
                   final prefs = await SharedPreferences.getInstance();
                   final shouldMinimize =
-                      prefs.getBool(AppStrings.prefKeyMinimizeOnLaunch) ?? true;
+                      prefs.getBool(AppStrings.prefKeyMinimizeOnLaunch) ?? false;
                   if (shouldMinimize) {
                     await Future.delayed(const Duration(seconds: 3));
                     if (ref
@@ -264,7 +264,7 @@ class _PreferDedicatedGpuToggleState extends State<PreferDedicatedGpuToggle> {
                     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     activeColor: AppColors.accentPrimary,
                     checkColor: AppColors.backgroundPrimary,
-                    side: const BorderSide(
+                    side: BorderSide(
                       color: AppColors.borderMedium,
                       width: 1.2,
                     ),
@@ -313,7 +313,7 @@ class _MinimizeOnLaunchToggleState extends State<MinimizeOnLaunchToggle> {
     final prefs = await SharedPreferences.getInstance();
     if (!mounted) return;
     setState(() {
-      _enabled = prefs.getBool(AppStrings.prefKeyMinimizeOnLaunch) ?? true;
+      _enabled = prefs.getBool(AppStrings.prefKeyMinimizeOnLaunch) ?? false;
     });
   }
 
@@ -326,7 +326,7 @@ class _MinimizeOnLaunchToggleState extends State<MinimizeOnLaunchToggle> {
   @override
   Widget build(BuildContext context) {
     if (!PlatformGate.isWindows) return const SizedBox.shrink();
-    final value = _enabled ?? true;
+    final value = _enabled ?? false;
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -342,12 +342,12 @@ class _MinimizeOnLaunchToggleState extends State<MinimizeOnLaunchToggle> {
                 height: 16,
                 child: Checkbox(
                   value: value,
-                  onChanged: (v) => _set(v ?? true),
+                  onChanged: (v) => _set(v ?? false),
                   visualDensity: VisualDensity.compact,
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   activeColor: AppColors.accentPrimary,
                   checkColor: AppColors.backgroundPrimary,
-                  side: const BorderSide(
+                  side: BorderSide(
                     color: AppColors.borderMedium,
                     width: 1.2,
                   ),

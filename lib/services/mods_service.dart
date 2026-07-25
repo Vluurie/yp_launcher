@@ -21,6 +21,9 @@ class ModsService {
   static String modsDir(String gameDir) =>
       path.join(gameDir, 'nams', 'mods');
 
+  static bool isLooseDataFile(String fileName) =>
+      _dataDirForLooseFile(fileName) != null || _isCpkFile(fileName);
+
   static Future<List<TexturePack>> detectTexturePacks(String root) {
     return IsolateService.run(_detectTexturePacksParam, root);
   }
@@ -53,6 +56,18 @@ class ModsService {
       }
       tempDir = extracted;
       workDir = extracted;
+    } else if (FileSystemEntity.isFileSync(sourcePath)) {
+      final staged = await _stageLooseFileDrop(sourcePath);
+      if (staged == null) {
+        return DetectedDrop(
+          unwrappedRoot: sourcePath,
+          kind: ModKind.unknown,
+          suggestedId: '',
+          errorReason: 'unknown_drop',
+        );
+      }
+      tempDir = staged;
+      workDir = staged;
     }
     final params = _DetectParams(
       workDir: workDir,
@@ -85,6 +100,13 @@ class ModsService {
       }
       tempDir = extracted;
       workDir = extracted;
+    } else if (FileSystemEntity.isFileSync(sourcePath)) {
+      final staged = await _stageLooseFileDrop(sourcePath);
+      if (staged == null) {
+        return const InstallResult.fail('unknown_drop');
+      }
+      tempDir = staged;
+      workDir = staged;
     }
     try {
       final hasDlc = await GameDetection.hasDlc(gameDir);
@@ -757,6 +779,17 @@ bool _hasCpk(String contentRoot) {
     }
   }
   return false;
+}
+
+Future<String?> _stageLooseFileDrop(String sourcePath) async {
+  if (!ModsService.isLooseDataFile(path.basename(sourcePath))) return null;
+  try {
+    final dir = Directory.systemTemp.createTempSync('yp_loose_drop_');
+    await File(sourcePath).copy(path.join(dir.path, path.basename(sourcePath)));
+    return dir.path;
+  } catch (_) {
+    return null;
+  }
 }
 
 String? _dataDirForLooseFile(String fileName) {

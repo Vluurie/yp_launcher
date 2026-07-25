@@ -73,18 +73,18 @@ class _DiagnosticsLoadingDialog extends StatelessWidget {
           border: Border.all(
             color: AppColors.accentPrimary.withValues(alpha: 0.4),
           ),
-          boxShadow: const [
+          boxShadow: [
             BoxShadow(
               color: AppColors.shadow,
               blurRadius: 12,
-              offset: Offset(0, 4),
+              offset: const Offset(0, 4),
             ),
           ],
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const SizedBox(
+            SizedBox(
               width: 22,
               height: 22,
               child: CircularProgressIndicator(
@@ -154,11 +154,11 @@ class _DiagnosticsDialogState extends ConsumerState<_DiagnosticsDialog> {
           border: Border.all(
             color: AppColors.accentPrimary.withValues(alpha: 0.45),
           ),
-          boxShadow: const [
+          boxShadow: [
             BoxShadow(
               color: AppColors.shadow,
               blurRadius: 18,
-              offset: Offset(0, 6),
+              offset: const Offset(0, 6),
             ),
           ],
         ),
@@ -277,7 +277,7 @@ class _DiagnosticsDialogState extends ConsumerState<_DiagnosticsDialog> {
       ),
       decoration: BoxDecoration(
         color: AppColors.surfaceMedium,
-        border: const Border(
+        border: Border(
           bottom: BorderSide(color: AppColors.borderLight),
         ),
         borderRadius: BorderRadius.only(
@@ -298,7 +298,7 @@ class _DiagnosticsDialogState extends ConsumerState<_DiagnosticsDialog> {
                 color: AppColors.accentPrimary.withValues(alpha: 0.5),
               ),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.medical_information_outlined,
               size: 20,
               color: AppColors.accentPrimary,
@@ -584,18 +584,6 @@ class _DiagnosticsDialogState extends ConsumerState<_DiagnosticsDialog> {
               ),
           ],
         ),
-      if (r.recentLogIssues.isNotEmpty)
-        _sectionCard(
-          context,
-          icon: Icons.report_gmailerrorred_outlined,
-          title: l10n.diagnosticsSectionRecentIssues,
-          accent: AppColors.error,
-          trailing: _countBadge(r.recentLogIssues.length),
-          children: [
-            for (final e in r.recentLogIssues.reversed.take(8))
-              _mutedLine(context, '${e.level} ${e.module}: ${e.message}'),
-          ],
-        ),
       if (r.dataDirContents.isNotEmpty)
         _sectionCard(
           context,
@@ -685,7 +673,7 @@ class _DiagnosticsDialogState extends ConsumerState<_DiagnosticsDialog> {
             ),
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.08),
-              border: const Border(
+              border: Border(
                 bottom: BorderSide(color: AppColors.borderLight),
               ),
               borderRadius: const BorderRadius.only(
@@ -739,7 +727,7 @@ class _DiagnosticsDialogState extends ConsumerState<_DiagnosticsDialog> {
       ),
       child: Text(
         '$n',
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 10,
           fontWeight: FontWeight.bold,
           color: AppColors.accentPrimary,

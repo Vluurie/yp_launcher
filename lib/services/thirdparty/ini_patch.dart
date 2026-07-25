@@ -63,8 +63,8 @@ class IniPatch {
   }
 
   static bool _isKeyLine(String line, String key) {
-    var t = line.trim();
-    if (t.startsWith(';')) t = t.substring(1).trim();
+    final t = line.trim();
+    if (t.startsWith(';')) return false;
     return t.toLowerCase().startsWith(key.toLowerCase()) &&
         t.substring(key.length).trimLeft().startsWith('=');
   }

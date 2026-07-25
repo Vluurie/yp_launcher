@@ -511,8 +511,7 @@ class DiagnosticsService {
     }
     b.writeln('Texture packs (NAMS): '
         '${r.texturePacksAvailable ? r.texturePacks.length.toString() : "unavailable"}   '
-        'Non-default settings: ${r.configDeltas.length}   '
-        'Recent issues: ${r.recentLogIssues.length}');
+        'Non-default settings: ${r.configDeltas.length}');
     b.writeln('');
     b.writeln(
         'Mods (NAMS): ${r.mods.length}   '

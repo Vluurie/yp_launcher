@@ -116,6 +116,74 @@ void main() {
     });
   });
 
+  group('single loose file drop', () {
+    test('isLooseDataFile recognizes data files and cpk', () {
+      expect(ModsService.isLooseDataFile('corehap.dat'), isTrue);
+      expect(ModsService.isLooseDataFile('pl0000.dtt'), isTrue);
+      expect(ModsService.isLooseDataFile('archive.cpk'), isTrue);
+      expect(ModsService.isLooseDataFile('readme.txt'), isFalse);
+      expect(ModsService.isLooseDataFile('setup.exe'), isFalse);
+    });
+
+    test('detectDrop accepts a bare corehap.dat file path', () async {
+      final tmp = Directory.systemTemp.createTempSync('yp_loose_file_');
+      final file = File(p.join(tmp.path, 'corehap.dat'))
+        ..writeAsBytesSync(List<int>.filled(32, 0));
+      addTearDown(() {
+        try {
+          tmp.deleteSync(recursive: true);
+        } catch (_) {}
+      });
+
+      final detected = await ModsService.detectDrop(file.path);
+      expect(detected.kind, ModKind.data,
+          reason: 'bare file rejected: ${detected.errorReason}');
+      expect(detected.suggestedId, 'corehap');
+    });
+
+    test('install from a bare file path places it under data/core', () async {
+      final tmp = Directory.systemTemp.createTempSync('yp_loose_file_');
+      final file = File(p.join(tmp.path, 'corehap.dat'))
+        ..writeAsBytesSync(List<int>.filled(32, 0));
+      final gameDir = Directory.systemTemp.createTempSync('yp_loose_file_g_');
+      addTearDown(() {
+        try {
+          tmp.deleteSync(recursive: true);
+        } catch (_) {}
+        try {
+          gameDir.deleteSync(recursive: true);
+        } catch (_) {}
+      });
+
+      final result = await ModsService.install(
+        gameDir.path,
+        file.path,
+        requestedName: 'corehap',
+      );
+      expect(result.success, isTrue, reason: result.errorMessage);
+      final dest = File(p.join(
+          _expectedDir(gameDir.path, result.installedId!, 'core'),
+          'corehap.dat'));
+      expect(dest.existsSync(), isTrue, reason: 'expected at ${dest.path}');
+      expect(file.existsSync(), isTrue,
+          reason: 'source file must stay untouched');
+    });
+
+    test('unrecognized bare file is rejected', () async {
+      final tmp = Directory.systemTemp.createTempSync('yp_loose_file_');
+      final file = File(p.join(tmp.path, 'readme.txt'))..writeAsStringSync('x');
+      addTearDown(() {
+        try {
+          tmp.deleteSync(recursive: true);
+        } catch (_) {}
+      });
+
+      final detected = await ModsService.detectDrop(file.path);
+      expect(detected.kind, ModKind.unknown);
+      expect(detected.errorReason, 'unknown_drop');
+    });
+  });
+
   group('unpaired warning semantics', () {
     test('paired stem dropped without its .dtt warns', () async {
       final stem = LooseFilePaths.stemsWithVanillaPair.first;

@@ -122,7 +122,7 @@ class _CutscenesViewState extends ConsumerState<CutscenesView> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const CircularProgressIndicator(color: AppColors.accentPrimary),
+                        CircularProgressIndicator(color: AppColors.accentPrimary),
                         if (_progressText.isNotEmpty) ...[
                           SizedBox(height: AppSizes.spacingLG(context)),
                           Text(_progressText, style: TextStyle(fontSize: AppSizes.fontSM(context), color: AppColors.textMuted)),
@@ -142,37 +142,53 @@ class _CutscenesViewState extends ConsumerState<CutscenesView> {
                             CutsceneMigrationBanner(directOverrides: _directOverrides),
                             const SizedBox(height: 16),
                           ],
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: Column(
+                          LayoutBuilder(
+                            builder: (context, constraints) {
+                              final stack = constraints.maxWidth < 760;
+                              final leftCol = Column(
+                                children: [
+                                  CutsceneDropZone(
+                                    installing: _installing,
+                                    progressText: _progressText,
+                                    progressPercent: _progressPercent,
+                                    onDrop: (paths) {
+                                      if (ref.read(activeTabProvider) != 7) {
+                                        return;
+                                      }
+                                      _installService.handleDrop(paths);
+                                    },
+                                    onBrowse: _installService.handleBrowse,
+                                    onBrowseFolder:
+                                        _installService.handleBrowseFolder,
+                                  ),
+                                  const SizedBox(height: 16),
+                                  const CutsceneInfoCard(),
+                                ],
+                              );
+                              final rightCol = CutsceneInstalledList(
+                                mods: _mods,
+                                onDelete: _installService.deleteMod,
+                              );
+                              if (stack) {
+                                return Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
                                   children: [
-                                    CutsceneDropZone(
-                                      installing: _installing,
-                                      progressText: _progressText,
-                                      progressPercent: _progressPercent,
-                                      onDrop: (paths) {
-                                        if (ref.read(activeTabProvider) != 7) return;
-                                        _installService.handleDrop(paths);
-                                      },
-                                      onBrowse: _installService.handleBrowse,
-                                      onBrowseFolder:
-                                          _installService.handleBrowseFolder,
-                                    ),
-                                    const SizedBox(height: 16),
-                                    const CutsceneInfoCard(),
+                                    leftCol,
+                                    SizedBox(height: AppSizes.spacingLG(context)),
+                                    rightCol,
                                   ],
-                                ),
-                              ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: CutsceneInstalledList(
-                                  mods: _mods,
-                                  onDelete: _installService.deleteMod,
-                                ),
-                              ),
-                            ],
+                                );
+                              }
+                              return Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(child: leftCol),
+                                  SizedBox(width: AppSizes.spacingLG(context)),
+                                  Expanded(child: rightCol),
+                                ],
+                              );
+                            },
                           ),
                         ],
                       ),

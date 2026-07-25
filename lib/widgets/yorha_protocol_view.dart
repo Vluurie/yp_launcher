@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yp_launcher/l10n/app_localizations.dart';
+import 'package:yp_launcher/providers/app_state.dart';
 import 'package:yp_launcher/providers/nams_settings_state.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
+import 'package:yp_launcher/widgets/collapsible_card.dart';
 import 'package:yp_launcher/widgets/config_field_bool.dart';
 import 'package:yp_launcher/widgets/header_info_icon.dart';
 import 'package:yp_launcher/widgets/hover_button.dart';
@@ -41,6 +43,14 @@ class _YorhaProtocolViewState extends ConsumerState<YorhaProtocolView> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(appStateControllerProvider, (prev, next) {
+      final stopped = prev?.playButtonState == PlayButtonState.running &&
+          next.playButtonState != PlayButtonState.running;
+      if (stopped) {
+        ref.read(namsSettingsStateControllerProvider.notifier).reloadIfClean();
+      }
+    });
+
     final data = ref.watch(namsSettingsStateControllerProvider);
     final notifier = ref.read(namsSettingsStateControllerProvider.notifier);
 
@@ -51,7 +61,7 @@ class _YorhaProtocolViewState extends ConsumerState<YorhaProtocolView> {
           _buildHeader(context, data, notifier),
           Expanded(
             child: data.isLoading
-                ? const Center(
+                ? Center(
                     child: CircularProgressIndicator(
                       color: AppColors.accentPrimary,
                     ),
@@ -85,7 +95,7 @@ class _YorhaProtocolViewState extends ConsumerState<YorhaProtocolView> {
         horizontal: AppSizes.cardPaddingH(context),
         vertical: AppSizes.cardPaddingV(context),
       ),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: AppColors.surfaceMedium,
         border: Border(bottom: BorderSide(color: AppColors.borderLight)),
       ),
@@ -147,340 +157,372 @@ class _YorhaProtocolViewState extends ConsumerState<YorhaProtocolView> {
     final randomizer = data.randomizerConfig;
     final cheats = data.cheatsConfig;
 
-    return Row(
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          flex: 3,
-          child: Column(
-            children: [
-              _card(context, l10n.cardKeybinds, [
-                _keybindRow(
-                  context,
-                  YpKeybindFields.openWorkspace.label(l10n),
-                  (mainBinds[YpKeybindFields.openWorkspace.key] as String?) ??
-                      YpKeybindFields.openWorkspace.defaultValue,
-                  (v) => notifier.updateKeybind(
-                    YpKeybindFields.openWorkspace.section!,
-                    YpKeybindFields.openWorkspace.key,
-                    v,
-                  ),
-                  tooltip: YpKeybindFields.openWorkspace.tooltip!(l10n),
-                ),
-                _keybindRow(
-                  context,
-                  YpKeybindFields.freezeGame.label(l10n),
-                  (ypBinds[YpKeybindFields.freezeGame.key] as String?) ??
-                      YpKeybindFields.freezeGame.defaultValue,
-                  (v) => notifier.updateKeybind(
-                    YpKeybindFields.freezeGame.section!,
-                    YpKeybindFields.freezeGame.key,
-                    v,
-                  ),
-                  tooltip: YpKeybindFields.freezeGame.tooltip!(l10n),
-                ),
-                _keybindRow(
-                  context,
-                  YpKeybindFields.maxSpeed.label(l10n),
-                  (ypBinds[YpKeybindFields.maxSpeed.key] as String?) ??
-                      YpKeybindFields.maxSpeed.defaultValue,
-                  (v) => notifier.updateKeybind(
-                    YpKeybindFields.maxSpeed.section!,
-                    YpKeybindFields.maxSpeed.key,
-                    v,
-                  ),
-                  tooltip: YpKeybindFields.maxSpeed.tooltip!(l10n),
-                ),
-                _keybindRow(
-                  context,
-                  YpKeybindFields.freeCam.label(l10n),
-                  (ypBinds[YpKeybindFields.freeCam.key] as String?) ??
-                      YpKeybindFields.freeCam.defaultValue,
-                  (v) => notifier.updateKeybind(
-                    YpKeybindFields.freeCam.section!,
-                    YpKeybindFields.freeCam.key,
-                    v,
-                  ),
-                  tooltip: YpKeybindFields.freeCam.tooltip!(l10n),
-                ),
-                _keybindRow(
-                  context,
-                  YpKeybindFields.phaseJump.label(l10n),
-                  (ypBinds[YpKeybindFields.phaseJump.key] as String?) ??
-                      YpKeybindFields.phaseJump.defaultValue,
-                  (v) => notifier.updateKeybind(
-                    YpKeybindFields.phaseJump.section!,
-                    YpKeybindFields.phaseJump.key,
-                    v,
-                  ),
-                  tooltip: YpKeybindFields.phaseJump.tooltip!(l10n),
-                ),
-                _keybindRow(
-                  context,
-                  YpKeybindFields.toggleGameInput.label(l10n),
-                  (ypBinds[YpKeybindFields.toggleGameInput.key] as String?) ??
-                      YpKeybindFields.toggleGameInput.defaultValue,
-                  (v) => notifier.updateKeybind(
-                    YpKeybindFields.toggleGameInput.section!,
-                    YpKeybindFields.toggleGameInput.key,
-                    v,
-                  ),
-                  tooltip: YpKeybindFields.toggleGameInput.tooltip!(l10n),
-                ),
-                _keybindRow(
-                  context,
-                  YpKeybindFields.advanceFrame.label(l10n),
-                  (ypBinds[YpKeybindFields.advanceFrame.key] as String?) ??
-                      YpKeybindFields.advanceFrame.defaultValue,
-                  (v) => notifier.updateKeybind(
-                    YpKeybindFields.advanceFrame.section!,
-                    YpKeybindFields.advanceFrame.key,
-                    v,
-                  ),
-                  tooltip: YpKeybindFields.advanceFrame.tooltip!(l10n),
-                ),
-                _keybindRow(
-                  context,
-                  YpKeybindFields.devMode.label(l10n),
-                  (ypBinds[YpKeybindFields.devMode.key] as String?) ??
-                      YpKeybindFields.devMode.defaultValue,
-                  (v) => notifier.updateKeybind(
-                    YpKeybindFields.devMode.section!,
-                    YpKeybindFields.devMode.key,
-                    v,
-                  ),
-                  tooltip: YpKeybindFields.devMode.tooltip!(l10n),
-                ),
-                _keybindRow(
-                  context,
-                  YpKeybindFields.warpSave1.label(l10n),
-                  (ypBinds[YpKeybindFields.warpSave1.key] as String?) ??
-                      YpKeybindFields.warpSave1.defaultValue,
-                  (v) => notifier.updateKeybind(
-                    YpKeybindFields.warpSave1.section!,
-                    YpKeybindFields.warpSave1.key,
-                    v,
-                  ),
-                  tooltip: YpKeybindFields.warpSave1.tooltip!(l10n),
-                ),
-                _keybindRow(
-                  context,
-                  YpKeybindFields.warpGoto1.label(l10n),
-                  (ypBinds[YpKeybindFields.warpGoto1.key] as String?) ??
-                      YpKeybindFields.warpGoto1.defaultValue,
-                  (v) => notifier.updateKeybind(
-                    YpKeybindFields.warpGoto1.section!,
-                    YpKeybindFields.warpGoto1.key,
-                    v,
-                  ),
-                  tooltip: YpKeybindFields.warpGoto1.tooltip!(l10n),
-                ),
-                _keybindRow(
-                  context,
-                  YpKeybindFields.warpSave2.label(l10n),
-                  (ypBinds[YpKeybindFields.warpSave2.key] as String?) ??
-                      YpKeybindFields.warpSave2.defaultValue,
-                  (v) => notifier.updateKeybind(
-                    YpKeybindFields.warpSave2.section!,
-                    YpKeybindFields.warpSave2.key,
-                    v,
-                  ),
-                  tooltip: YpKeybindFields.warpSave2.tooltip!(l10n),
-                ),
-                _keybindRow(
-                  context,
-                  YpKeybindFields.warpGoto2.label(l10n),
-                  (ypBinds[YpKeybindFields.warpGoto2.key] as String?) ??
-                      YpKeybindFields.warpGoto2.defaultValue,
-                  (v) => notifier.updateKeybind(
-                    YpKeybindFields.warpGoto2.section!,
-                    YpKeybindFields.warpGoto2.key,
-                    v,
-                  ),
-                  tooltip: YpKeybindFields.warpGoto2.tooltip!(l10n),
-                ),
-              ]),
-              _card(context, l10n.cardWorkspace, [
-                ConfigFieldBool(
-                  label: YpWorkspaceFields.gameKeybindsGlobal.label(l10n),
-                  value: data.gameKeybindsGlobal,
-                  onChanged: (v) => notifier.updateToggle(
-                    YpWorkspaceFields.gameKeybindsGlobal.key,
-                    v,
-                  ),
-                  tooltip: YpWorkspaceFields.gameKeybindsGlobal.tooltip!(l10n),
-                ),
-                ConfigFieldBool(
-                  label: YpWorkspaceFields.loadingSpeedupEnabled.label(l10n),
-                  value: data.loadingSpeedupEnabled,
-                  onChanged: (v) => notifier.updateToggle(
-                    YpWorkspaceFields.loadingSpeedupEnabled.key,
-                    v,
-                  ),
-                  tooltip: YpWorkspaceFields.loadingSpeedupEnabled.tooltip!(
-                    l10n,
-                  ),
-                ),
-                ConfigFieldBool(
-                  label: YpWorkspaceFields.shadersEnabled.label(l10n),
-                  value: data.shadersEnabled,
-                  onChanged: (v) => notifier.updateToggle(
-                    YpWorkspaceFields.shadersEnabled.key,
-                    v,
-                  ),
-                  tooltip: YpWorkspaceFields.shadersEnabled.tooltip!(l10n),
-                ),
-                ConfigFieldBool(
-                  label: YpWorkspaceFields.soundEnabled.label(l10n),
-                  value: data.soundEnabled,
-                  onChanged: (v) => notifier.updateToggle(
-                    YpWorkspaceFields.soundEnabled.key,
-                    v,
-                  ),
-                  tooltip: YpWorkspaceFields.soundEnabled.tooltip!(l10n),
-                ),
-              ]),
-            ],
-          ),
-        ),
-        SizedBox(width: AppSizes.paddingMD(context)),
-        Expanded(
-          flex: 3,
-          child: Column(
-            children: [
-              _card(context, l10n.cardCheats, [
-                ConfigFieldFloat(
-                  label: YpCheatsFields.damageMultiplier.label(l10n),
-                  value:
-                      (cheats[YpCheatsFields.damageMultiplier.key] as num?)
-                          ?.toDouble() ??
-                      YpCheatsFields.damageMultiplier.defaultValue,
-                  onChanged: (v) => notifier.updateCheat(
-                    YpCheatsFields.damageMultiplier.key,
-                    v,
-                  ),
-                  tooltip: YpCheatsFields.damageMultiplier.tooltip!(l10n),
-                ),
-                ConfigFieldBool(
-                  label: YpCheatsFields.syncEnemyLevels.label(l10n),
-                  value: cheats[YpCheatsFields.syncEnemyLevels.key] == true,
-                  onChanged: (v) => notifier.updateCheat(
-                    YpCheatsFields.syncEnemyLevels.key,
-                    v,
-                  ),
-                  tooltip: YpCheatsFields.syncEnemyLevels.tooltip!(l10n),
-                ),
-                ConfigFieldBool(
-                  label: YpCheatsFields.infiniteHealth.label(l10n),
-                  value: cheats[YpCheatsFields.infiniteHealth.key] == true,
-                  onChanged: (v) => notifier.updateCheat(
-                    YpCheatsFields.infiniteHealth.key,
-                    v,
-                  ),
-                  tooltip: YpCheatsFields.infiniteHealth.tooltip!(l10n),
-                ),
-                ConfigFieldBool(
-                  label: YpCheatsFields.infiniteJump.label(l10n),
-                  value: cheats[YpCheatsFields.infiniteJump.key] == true,
-                  onChanged: (v) =>
-                      notifier.updateCheat(YpCheatsFields.infiniteJump.key, v),
-                  tooltip: YpCheatsFields.infiniteJump.tooltip!(l10n),
-                ),
-                ConfigFieldBool(
-                  label: YpCheatsFields.noPodCooldown.label(l10n),
-                  value: cheats[YpCheatsFields.noPodCooldown.key] == true,
-                  onChanged: (v) =>
-                      notifier.updateCheat(YpCheatsFields.noPodCooldown.key, v),
-                  tooltip: YpCheatsFields.noPodCooldown.tooltip!(l10n),
-                ),
-                ConfigFieldBool(
-                  label: YpCheatsFields.infiniteAirDash.label(l10n),
-                  value: cheats[YpCheatsFields.infiniteAirDash.key] == true,
-                  onChanged: (v) => notifier.updateCheat(
-                    YpCheatsFields.infiniteAirDash.key,
-                    v,
-                  ),
-                  tooltip: YpCheatsFields.infiniteAirDash.tooltip!(l10n),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: AppSizes.paddingXS(context)),
-                  child: Text(
-                    l10n.cheatsAppliedNote,
-                    style: TextStyle(
-                      fontSize: AppSizes.fontXS(context),
-                      color: AppColors.textMuted,
-                      fontStyle: FontStyle.italic,
+        _descriptionBanner(context, l10n.yorhaProtocolDescription),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              flex: 3,
+              child: Column(
+                children: [
+                  _card(context, l10n.cardKeybinds, [
+                    _keybindRow(
+                      context,
+                      YpKeybindFields.openWorkspace.label(l10n),
+                      (mainBinds[YpKeybindFields.openWorkspace.key]
+                              as String?) ??
+                          YpKeybindFields.openWorkspace.defaultValue,
+                      (v) => notifier.updateKeybind(
+                        YpKeybindFields.openWorkspace.section!,
+                        YpKeybindFields.openWorkspace.key,
+                        v,
+                      ),
+                      tooltip: YpKeybindFields.openWorkspace.tooltip!(l10n),
                     ),
-                  ),
-                ),
-              ]),
-              _card(context, l10n.cardRandomizer, [
-                ConfigFieldBool(
-                  label: YpRandomizerFields.autoStartOnStartup.label(l10n),
-                  value:
-                      randomizer[YpRandomizerFields.autoStartOnStartup.key] ==
-                      true,
-                  onChanged: (v) => notifier.updateRandomizer(
-                    YpRandomizerFields.autoStartOnStartup.key,
-                    v,
-                  ),
-                  tooltip: YpRandomizerFields.autoStartOnStartup.tooltip!(l10n),
-                ),
-                ConfigFieldBool(
-                  label: YpRandomizerFields.randomizeGroundEnemies.label(l10n),
-                  value:
-                      randomizer[YpRandomizerFields
+                    _keybindRow(
+                      context,
+                      YpKeybindFields.freezeGame.label(l10n),
+                      (ypBinds[YpKeybindFields.freezeGame.key] as String?) ??
+                          YpKeybindFields.freezeGame.defaultValue,
+                      (v) => notifier.updateKeybind(
+                        YpKeybindFields.freezeGame.section!,
+                        YpKeybindFields.freezeGame.key,
+                        v,
+                      ),
+                      tooltip: YpKeybindFields.freezeGame.tooltip!(l10n),
+                    ),
+                    _keybindRow(
+                      context,
+                      YpKeybindFields.maxSpeed.label(l10n),
+                      (ypBinds[YpKeybindFields.maxSpeed.key] as String?) ??
+                          YpKeybindFields.maxSpeed.defaultValue,
+                      (v) => notifier.updateKeybind(
+                        YpKeybindFields.maxSpeed.section!,
+                        YpKeybindFields.maxSpeed.key,
+                        v,
+                      ),
+                      tooltip: YpKeybindFields.maxSpeed.tooltip!(l10n),
+                    ),
+                    _keybindRow(
+                      context,
+                      YpKeybindFields.freeCam.label(l10n),
+                      (ypBinds[YpKeybindFields.freeCam.key] as String?) ??
+                          YpKeybindFields.freeCam.defaultValue,
+                      (v) => notifier.updateKeybind(
+                        YpKeybindFields.freeCam.section!,
+                        YpKeybindFields.freeCam.key,
+                        v,
+                      ),
+                      tooltip: YpKeybindFields.freeCam.tooltip!(l10n),
+                    ),
+                    _keybindRow(
+                      context,
+                      YpKeybindFields.phaseJump.label(l10n),
+                      (ypBinds[YpKeybindFields.phaseJump.key] as String?) ??
+                          YpKeybindFields.phaseJump.defaultValue,
+                      (v) => notifier.updateKeybind(
+                        YpKeybindFields.phaseJump.section!,
+                        YpKeybindFields.phaseJump.key,
+                        v,
+                      ),
+                      tooltip: YpKeybindFields.phaseJump.tooltip!(l10n),
+                    ),
+                    _keybindRow(
+                      context,
+                      YpKeybindFields.toggleGameInput.label(l10n),
+                      (ypBinds[YpKeybindFields.toggleGameInput.key]
+                              as String?) ??
+                          YpKeybindFields.toggleGameInput.defaultValue,
+                      (v) => notifier.updateKeybind(
+                        YpKeybindFields.toggleGameInput.section!,
+                        YpKeybindFields.toggleGameInput.key,
+                        v,
+                      ),
+                      tooltip: YpKeybindFields.toggleGameInput.tooltip!(l10n),
+                    ),
+                    _keybindRow(
+                      context,
+                      YpKeybindFields.advanceFrame.label(l10n),
+                      (ypBinds[YpKeybindFields.advanceFrame.key] as String?) ??
+                          YpKeybindFields.advanceFrame.defaultValue,
+                      (v) => notifier.updateKeybind(
+                        YpKeybindFields.advanceFrame.section!,
+                        YpKeybindFields.advanceFrame.key,
+                        v,
+                      ),
+                      tooltip: YpKeybindFields.advanceFrame.tooltip!(l10n),
+                    ),
+                    _keybindRow(
+                      context,
+                      YpKeybindFields.devMode.label(l10n),
+                      (ypBinds[YpKeybindFields.devMode.key] as String?) ??
+                          YpKeybindFields.devMode.defaultValue,
+                      (v) => notifier.updateKeybind(
+                        YpKeybindFields.devMode.section!,
+                        YpKeybindFields.devMode.key,
+                        v,
+                      ),
+                      tooltip: YpKeybindFields.devMode.tooltip!(l10n),
+                    ),
+                    _keybindRow(
+                      context,
+                      YpKeybindFields.warpSave1.label(l10n),
+                      (ypBinds[YpKeybindFields.warpSave1.key] as String?) ??
+                          YpKeybindFields.warpSave1.defaultValue,
+                      (v) => notifier.updateKeybind(
+                        YpKeybindFields.warpSave1.section!,
+                        YpKeybindFields.warpSave1.key,
+                        v,
+                      ),
+                      tooltip: YpKeybindFields.warpSave1.tooltip!(l10n),
+                    ),
+                    _keybindRow(
+                      context,
+                      YpKeybindFields.warpGoto1.label(l10n),
+                      (ypBinds[YpKeybindFields.warpGoto1.key] as String?) ??
+                          YpKeybindFields.warpGoto1.defaultValue,
+                      (v) => notifier.updateKeybind(
+                        YpKeybindFields.warpGoto1.section!,
+                        YpKeybindFields.warpGoto1.key,
+                        v,
+                      ),
+                      tooltip: YpKeybindFields.warpGoto1.tooltip!(l10n),
+                    ),
+                    _keybindRow(
+                      context,
+                      YpKeybindFields.warpSave2.label(l10n),
+                      (ypBinds[YpKeybindFields.warpSave2.key] as String?) ??
+                          YpKeybindFields.warpSave2.defaultValue,
+                      (v) => notifier.updateKeybind(
+                        YpKeybindFields.warpSave2.section!,
+                        YpKeybindFields.warpSave2.key,
+                        v,
+                      ),
+                      tooltip: YpKeybindFields.warpSave2.tooltip!(l10n),
+                    ),
+                    _keybindRow(
+                      context,
+                      YpKeybindFields.warpGoto2.label(l10n),
+                      (ypBinds[YpKeybindFields.warpGoto2.key] as String?) ??
+                          YpKeybindFields.warpGoto2.defaultValue,
+                      (v) => notifier.updateKeybind(
+                        YpKeybindFields.warpGoto2.section!,
+                        YpKeybindFields.warpGoto2.key,
+                        v,
+                      ),
+                      tooltip: YpKeybindFields.warpGoto2.tooltip!(l10n),
+                    ),
+                  ]),
+                  _card(context, l10n.cardWorkspace, [
+                    ConfigFieldBool(
+                      label: YpWorkspaceFields.gameKeybindsGlobal.label(l10n),
+                      value: data.gameKeybindsGlobal,
+                      onChanged: (v) => notifier.updateToggle(
+                        YpWorkspaceFields.gameKeybindsGlobal.key,
+                        v,
+                      ),
+                      tooltip: YpWorkspaceFields.gameKeybindsGlobal.tooltip!(
+                        l10n,
+                      ),
+                    ),
+                    ConfigFieldBool(
+                      label: YpWorkspaceFields.loadingSpeedupEnabled.label(
+                        l10n,
+                      ),
+                      value: data.loadingSpeedupEnabled,
+                      onChanged: (v) => notifier.updateToggle(
+                        YpWorkspaceFields.loadingSpeedupEnabled.key,
+                        v,
+                      ),
+                      tooltip: YpWorkspaceFields.loadingSpeedupEnabled.tooltip!(
+                        l10n,
+                      ),
+                    ),
+                    ConfigFieldBool(
+                      label: YpWorkspaceFields.shadersEnabled.label(l10n),
+                      value: data.shadersEnabled,
+                      onChanged: (v) => notifier.updateToggle(
+                        YpWorkspaceFields.shadersEnabled.key,
+                        v,
+                      ),
+                      tooltip: YpWorkspaceFields.shadersEnabled.tooltip!(l10n),
+                    ),
+                    ConfigFieldBool(
+                      label: YpWorkspaceFields.soundEnabled.label(l10n),
+                      value: data.soundEnabled,
+                      onChanged: (v) => notifier.updateToggle(
+                        YpWorkspaceFields.soundEnabled.key,
+                        v,
+                      ),
+                      tooltip: YpWorkspaceFields.soundEnabled.tooltip!(l10n),
+                    ),
+                  ]),
+                ],
+              ),
+            ),
+            SizedBox(width: AppSizes.paddingMD(context)),
+            Expanded(
+              flex: 3,
+              child: Column(
+                children: [
+                  _card(context, l10n.cardCheats, [
+                    ConfigFieldFloat(
+                      label: YpCheatsFields.damageMultiplier.label(l10n),
+                      value:
+                          (cheats[YpCheatsFields.damageMultiplier.key] as num?)
+                              ?.toDouble() ??
+                          YpCheatsFields.damageMultiplier.defaultValue,
+                      onChanged: (v) => notifier.updateCheat(
+                        YpCheatsFields.damageMultiplier.key,
+                        v,
+                      ),
+                      tooltip: YpCheatsFields.damageMultiplier.tooltip!(l10n),
+                    ),
+                    ConfigFieldBool(
+                      label: YpCheatsFields.syncEnemyLevels.label(l10n),
+                      value: cheats[YpCheatsFields.syncEnemyLevels.key] == true,
+                      onChanged: (v) => notifier.updateCheat(
+                        YpCheatsFields.syncEnemyLevels.key,
+                        v,
+                      ),
+                      tooltip: YpCheatsFields.syncEnemyLevels.tooltip!(l10n),
+                    ),
+                    ConfigFieldBool(
+                      label: YpCheatsFields.infiniteHealth.label(l10n),
+                      value: cheats[YpCheatsFields.infiniteHealth.key] == true,
+                      onChanged: (v) => notifier.updateCheat(
+                        YpCheatsFields.infiniteHealth.key,
+                        v,
+                      ),
+                      tooltip: YpCheatsFields.infiniteHealth.tooltip!(l10n),
+                    ),
+                    ConfigFieldBool(
+                      label: YpCheatsFields.infiniteJump.label(l10n),
+                      value: cheats[YpCheatsFields.infiniteJump.key] == true,
+                      onChanged: (v) => notifier.updateCheat(
+                        YpCheatsFields.infiniteJump.key,
+                        v,
+                      ),
+                      tooltip: YpCheatsFields.infiniteJump.tooltip!(l10n),
+                    ),
+                    ConfigFieldBool(
+                      label: YpCheatsFields.noPodCooldown.label(l10n),
+                      value: cheats[YpCheatsFields.noPodCooldown.key] == true,
+                      onChanged: (v) => notifier.updateCheat(
+                        YpCheatsFields.noPodCooldown.key,
+                        v,
+                      ),
+                      tooltip: YpCheatsFields.noPodCooldown.tooltip!(l10n),
+                    ),
+                    ConfigFieldBool(
+                      label: YpCheatsFields.infiniteAirDash.label(l10n),
+                      value: cheats[YpCheatsFields.infiniteAirDash.key] == true,
+                      onChanged: (v) => notifier.updateCheat(
+                        YpCheatsFields.infiniteAirDash.key,
+                        v,
+                      ),
+                      tooltip: YpCheatsFields.infiniteAirDash.tooltip!(l10n),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                        top: AppSizes.paddingXS(context),
+                      ),
+                      child: Text(
+                        l10n.cheatsAppliedNote,
+                        style: TextStyle(
+                          fontSize: AppSizes.fontXS(context),
+                          color: AppColors.textMuted,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ),
+                  ]),
+                  _card(context, l10n.cardRandomizer, [
+                    ConfigFieldBool(
+                      label: YpRandomizerFields.autoStartOnStartup.label(l10n),
+                      value:
+                          randomizer[YpRandomizerFields
+                              .autoStartOnStartup
+                              .key] ==
+                          true,
+                      onChanged: (v) => notifier.updateRandomizer(
+                        YpRandomizerFields.autoStartOnStartup.key,
+                        v,
+                      ),
+                      tooltip: YpRandomizerFields.autoStartOnStartup.tooltip!(
+                        l10n,
+                      ),
+                    ),
+                    ConfigFieldBool(
+                      label: YpRandomizerFields.randomizeGroundEnemies.label(
+                        l10n,
+                      ),
+                      value:
+                          randomizer[YpRandomizerFields
+                              .randomizeGroundEnemies
+                              .key] ==
+                          true,
+                      onChanged: (v) => notifier.updateRandomizer(
+                        YpRandomizerFields.randomizeGroundEnemies.key,
+                        v,
+                      ),
+                      tooltip: YpRandomizerFields
                           .randomizeGroundEnemies
-                          .key] ==
-                      true,
-                  onChanged: (v) => notifier.updateRandomizer(
-                    YpRandomizerFields.randomizeGroundEnemies.key,
-                    v,
-                  ),
-                  tooltip: YpRandomizerFields.randomizeGroundEnemies.tooltip!(
-                    l10n,
-                  ),
-                ),
-                ConfigFieldBool(
-                  label: YpRandomizerFields.randomizeFlyingEnemies.label(l10n),
-                  value:
-                      randomizer[YpRandomizerFields
+                          .tooltip!(l10n),
+                    ),
+                    ConfigFieldBool(
+                      label: YpRandomizerFields.randomizeFlyingEnemies.label(
+                        l10n,
+                      ),
+                      value:
+                          randomizer[YpRandomizerFields
+                              .randomizeFlyingEnemies
+                              .key] ==
+                          true,
+                      onChanged: (v) => notifier.updateRandomizer(
+                        YpRandomizerFields.randomizeFlyingEnemies.key,
+                        v,
+                      ),
+                      tooltip: YpRandomizerFields
                           .randomizeFlyingEnemies
-                          .key] ==
-                      true,
-                  onChanged: (v) => notifier.updateRandomizer(
-                    YpRandomizerFields.randomizeFlyingEnemies.key,
-                    v,
-                  ),
-                  tooltip: YpRandomizerFields.randomizeFlyingEnemies.tooltip!(
-                    l10n,
-                  ),
-                ),
-                ConfigFieldBool(
-                  label: YpRandomizerFields.allowBigEnemies.label(l10n),
-                  value:
-                      randomizer[YpRandomizerFields.allowBigEnemies.key] ==
-                      true,
-                  onChanged: (v) => notifier.updateRandomizer(
-                    YpRandomizerFields.allowBigEnemies.key,
-                    v,
-                  ),
-                  tooltip: YpRandomizerFields.allowBigEnemies.tooltip!(l10n),
-                ),
-                ConfigFieldBool(
-                  label: YpRandomizerFields.includeDlcEnemies.label(l10n),
-                  value:
-                      randomizer[YpRandomizerFields.includeDlcEnemies.key] ==
-                      true,
-                  onChanged: (v) => notifier.updateRandomizer(
-                    YpRandomizerFields.includeDlcEnemies.key,
-                    v,
-                  ),
-                  tooltip: YpRandomizerFields.includeDlcEnemies.tooltip!(l10n),
-                ),
-              ]),
-            ],
-          ),
+                          .tooltip!(l10n),
+                    ),
+                    ConfigFieldBool(
+                      label: YpRandomizerFields.allowBigEnemies.label(l10n),
+                      value:
+                          randomizer[YpRandomizerFields.allowBigEnemies.key] ==
+                          true,
+                      onChanged: (v) => notifier.updateRandomizer(
+                        YpRandomizerFields.allowBigEnemies.key,
+                        v,
+                      ),
+                      tooltip: YpRandomizerFields.allowBigEnemies.tooltip!(
+                        l10n,
+                      ),
+                    ),
+                    ConfigFieldBool(
+                      label: YpRandomizerFields.includeDlcEnemies.label(l10n),
+                      value:
+                          randomizer[YpRandomizerFields
+                              .includeDlcEnemies
+                              .key] ==
+                          true,
+                      onChanged: (v) => notifier.updateRandomizer(
+                        YpRandomizerFields.includeDlcEnemies.key,
+                        v,
+                      ),
+                      tooltip: YpRandomizerFields.includeDlcEnemies.tooltip!(
+                        l10n,
+                      ),
+                    ),
+                  ]),
+                ],
+              ),
+            ),
+          ],
         ),
       ],
     );
@@ -498,33 +540,44 @@ class _YorhaProtocolViewState extends ConsumerState<YorhaProtocolView> {
       key: rowKey,
       padding: EdgeInsets.symmetric(vertical: AppSizes.paddingXS(context)),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
-            child: tooltip != null
-                ? Tooltip(
-                    message: tooltip,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: AppSizes.fontSM(context),
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                if (tooltip != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 3),
                     child: Text(
-                      label,
+                      tooltip,
                       style: TextStyle(
-                        fontSize: AppSizes.fontSM(context),
-                        color: AppColors.textSecondary,
+                        fontSize: AppSizes.fontXS(context),
+                        color: AppColors.textMuted,
+                        height: 1.3,
                       ),
                     ),
-                  )
-                : Text(
-                    label,
-                    style: TextStyle(
-                      fontSize: AppSizes.fontSM(context),
-                      color: AppColors.textSecondary,
-                    ),
                   ),
+              ],
+            ),
           ),
-          SizedBox(
-            width: 100,
-            child: ConfigFieldKeybind(
-              label: '',
-              value: value,
-              onChanged: onChanged,
+          SizedBox(width: AppSizes.spacingMD(context)),
+          Padding(
+            padding: const EdgeInsets.only(top: 2),
+            child: SizedBox(
+              width: 100,
+              child: ConfigFieldKeybind(
+                label: '',
+                value: value,
+                onChanged: onChanged,
+              ),
             ),
           ),
         ],
@@ -533,51 +586,39 @@ class _YorhaProtocolViewState extends ConsumerState<YorhaProtocolView> {
   }
 
   Widget _card(BuildContext context, String title, List<Widget> children) {
+    return CollapsibleCard(title: title, children: children);
+  }
+
+  Widget _descriptionBanner(BuildContext context, String text) {
     return Container(
-      margin: EdgeInsets.only(bottom: AppSizes.paddingMD(context)),
+      width: double.infinity,
+      margin: EdgeInsets.only(bottom: AppSizes.paddingLG(context)),
+      padding: EdgeInsets.symmetric(
+        horizontal: AppSizes.paddingMD(context),
+        vertical: AppSizes.paddingSM(context),
+      ),
       decoration: BoxDecoration(
-        color: AppColors.backgroundCard,
+        color: AppColors.surfaceLight,
         borderRadius: BorderRadius.circular(AppSizes.borderRadius(context)),
         border: Border.all(color: AppColors.borderLight),
-        boxShadow: const [
-          BoxShadow(
-            color: AppColors.shadow,
-            blurRadius: 4,
-            offset: Offset(0, 2),
-          ),
-        ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.symmetric(
-              horizontal: AppSizes.cardPaddingH(context),
-              vertical: AppSizes.cardPaddingV(context),
-            ),
-            decoration: BoxDecoration(
-              color: AppColors.surfaceMedium,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(AppSizes.borderRadius(context)),
-                topRight: Radius.circular(AppSizes.borderRadius(context)),
-              ),
-            ),
-            child: Text(
-              title,
-              style: TextStyle(
-                fontSize: AppSizes.fontSM(context),
-                fontWeight: FontWeight.bold,
-                color: AppColors.accentPrimary,
-                letterSpacing: 1.0,
-              ),
-            ),
+          Icon(
+            Icons.info_outline,
+            size: AppSizes.iconLG(context),
+            color: AppColors.textSecondary,
           ),
-          Padding(
-            padding: EdgeInsets.all(AppSizes.cardPaddingH(context)),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: children,
+          SizedBox(width: AppSizes.spacingMD(context)),
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(
+                fontSize: AppSizes.fontXS(context),
+                color: AppColors.textSecondary,
+                height: 1.4,
+              ),
             ),
           ),
         ],

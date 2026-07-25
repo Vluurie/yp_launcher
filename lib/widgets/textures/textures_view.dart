@@ -533,7 +533,7 @@ class _TexturesViewState extends ConsumerState<TexturesView> {
               ),
           Expanded(
             child: config.isLoading
-                ? const Center(
+                ? Center(
                     child: CircularProgressIndicator(
                       color: AppColors.accentPrimary,
                     ),
@@ -768,11 +768,11 @@ class _TexturesViewState extends ConsumerState<TexturesView> {
         color: AppColors.backgroundCard,
         borderRadius: BorderRadius.circular(AppSizes.borderRadius(context)),
         border: Border.all(color: AppColors.borderLight),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
             color: AppColors.shadow,
             blurRadius: 4,
-            offset: Offset(0, 2),
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -832,7 +832,7 @@ class _TexturesViewState extends ConsumerState<TexturesView> {
                 padding: EdgeInsets.only(bottom: AppSizes.paddingXS(context)),
                 child: Row(
                   children: [
-                    const Icon(Icons.image, size: 14, color: AppColors.textMuted),
+                    Icon(Icons.image, size: 14, color: AppColors.textMuted),
                     SizedBox(width: AppSizes.spacingMD(context)),
                     Expanded(
                       child: ClickableName(
@@ -916,7 +916,7 @@ class _TexturesViewState extends ConsumerState<TexturesView> {
                           EdgeInsets.only(bottom: AppSizes.paddingXS(context)),
                       child: Row(
                         children: [
-                          const Icon(Icons.link,
+                          Icon(Icons.link,
                               size: 14, color: AppColors.accentPrimary),
                           SizedBox(width: AppSizes.spacingMD(context)),
                           Expanded(
@@ -952,11 +952,11 @@ class _TexturesViewState extends ConsumerState<TexturesView> {
         color: AppColors.backgroundCard,
         borderRadius: BorderRadius.circular(AppSizes.borderRadius(context)),
         border: Border.all(color: AppColors.borderLight),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
             color: AppColors.shadow,
             blurRadius: 4,
-            offset: Offset(0, 2),
+            offset: const Offset(0, 2),
           ),
         ],
       ),

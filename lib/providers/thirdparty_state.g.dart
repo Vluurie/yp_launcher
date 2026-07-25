@@ -42,7 +42,7 @@ final class ThirdPartyStateControllerProvider
 }
 
 String _$thirdPartyStateControllerHash() =>
-    r'8cb1842d050dbaf0c40d8fde5da6826594ecd173';
+    r'853fe6596b39eb9739921035254ff6e4d81d17b4';
 
 abstract class _$ThirdPartyStateController extends $Notifier<ThirdPartyData> {
   ThirdPartyData build();

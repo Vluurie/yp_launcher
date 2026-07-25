@@ -224,7 +224,7 @@ class _LoadOrderItemState extends ConsumerState<LoadOrderItem> {
                 ),
                 child: Text(
                   widget.priority!,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 9,
                     fontWeight: FontWeight.bold,
                     color: AppColors.accentPrimary,

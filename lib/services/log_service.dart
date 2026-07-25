@@ -30,6 +30,15 @@ class LogService {
     );
   }
 
+  static Future<void> clearLog(String filename) async {
+    try {
+      final file = File(path.join(logsDirectory, filename));
+      if (await file.exists()) {
+        await file.writeAsString('', flush: true);
+      }
+    } catch (_) {}
+  }
+
   static Future<List<LogEntry>> readLog(String filename) async {
     final file = File(path.join(logsDirectory, filename));
     if (!await file.exists()) return [];

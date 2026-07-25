@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:path/path.dart' as path;
 import 'package:flutter/material.dart';
+import 'package:yp_launcher/theme/nier_curves.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:automato_theme/automato_theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,6 +13,8 @@ import 'package:yp_launcher/services/detection/reshade_detection.dart';
 import 'package:yp_launcher/services/nams_settings_service.dart';
 import 'package:yp_launcher/services/platform_gate.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
+import 'package:yp_launcher/theme/app_sizes.dart';
+import 'package:yp_launcher/widgets/language_selector.dart';
 import 'package:yp_launcher/widgets/onboarding/first_playthrough_step.dart';
 import 'package:yp_launcher/widgets/onboarding/migration_step.dart';
 import 'package:yp_launcher/widgets/onboarding/mods_step.dart';
@@ -171,8 +174,8 @@ class _OnboardingWizardState extends ConsumerState<OnboardingWizard> {
                 Expanded(
                   child: AnimatedSwitcher(
                     duration: const Duration(milliseconds: 300),
-                    switchInCurve: Curves.easeOut,
-                    switchOutCurve: Curves.easeIn,
+                    switchInCurve: NierCurves.fill,
+                    switchOutCurve: NierCurves.rise,
                     transitionBuilder: (child, animation) {
                       return FadeTransition(
                         opacity: animation,
@@ -201,6 +204,11 @@ class _OnboardingWizardState extends ConsumerState<OnboardingWizard> {
               ],
             ),
           ),
+        ),
+        Positioned(
+          top: AppSizes.paddingLG(context),
+          left: AppSizes.paddingLG(context),
+          child: const LanguageSelector(),
         ),
       ],
     );

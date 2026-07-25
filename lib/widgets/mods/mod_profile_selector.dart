@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:path/path.dart' as p;
 import 'package:yp_launcher/l10n/app_localizations.dart';
 import 'package:yp_launcher/models/mod_profile.dart';
 import 'package:yp_launcher/providers/app_state.dart';
@@ -11,7 +10,6 @@ import 'package:yp_launcher/services/mod_profiles_service.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
 import 'package:yp_launcher/widgets/app_dropdown.dart';
-import 'package:yp_launcher/widgets/header_info_icon.dart';
 import 'package:yp_launcher/widgets/hover_button.dart';
 
 class ModProfileSelector extends ConsumerWidget {
@@ -32,94 +30,85 @@ class ModProfileSelector extends ConsumerWidget {
         profiles.length > 1 && state.activeName.isNotEmpty && !gameRunning;
     final canAct = !state.isLoading && gameDir.isNotEmpty && !gameRunning;
 
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: AppSizes.cardPaddingH(context),
-        vertical: AppSizes.cardPaddingV(context),
-      ),
-      decoration: const BoxDecoration(
-        color: AppColors.surfaceMedium,
-        border: Border(bottom: BorderSide(color: AppColors.borderLight)),
-      ),
-      child: Row(
-        children: [
-          Text(
-            l10n.headerMods,
-            style: TextStyle(
-              fontSize: AppSizes.fontXL(context),
-              fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
-              letterSpacing: 1.0,
-            ),
+    return _profileRow(
+      context, ref, l10n, profiles, state, gameDir, canAct, canDelete,
+      gameRunning,
+    );
+  }
+
+  Widget _profileRow(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+    List<ModProfile> profiles,
+    ModProfileState state,
+    String gameDir,
+    bool canAct,
+    bool canDelete,
+    bool gameRunning,
+  ) {
+    return Row(
+      children: [
+        Text(
+          l10n.modProfileLabel,
+          style: TextStyle(
+            fontSize: AppSizes.fontSM(context),
+            color: AppColors.textSecondary,
+            letterSpacing: 0.4,
+            fontWeight: FontWeight.w600,
           ),
-          if (gameDir.isNotEmpty)
-            HeaderInfoIcon(
-              tooltip: l10n.modIntroBody,
-              revealPath: p.join(gameDir, 'nams', 'mods'),
-              isFile: false,
-            ),
-          SizedBox(width: AppSizes.spacingLG(context)),
-          Text(
-            l10n.modProfileLabel,
-            style: TextStyle(
-              fontSize: AppSizes.fontXS(context),
-              color: AppColors.textMuted,
-              letterSpacing: 0.6,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+        ),
+        SizedBox(width: AppSizes.spacingSM(context)),
+        Flexible(
+          child: _buildDropdown(context, ref, profiles, state, gameDir, canAct),
+        ),
+        if (state.isLoading) ...[
           SizedBox(width: AppSizes.spacingSM(context)),
-          Flexible(
-            child: _buildDropdown(context, ref, profiles, state, gameDir, canAct),
-          ),
-          if (state.isLoading) ...[
-            SizedBox(width: AppSizes.spacingSM(context)),
-            const SizedBox(
-              width: 14,
-              height: 14,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                color: AppColors.accentPrimary,
-              ),
+          SizedBox(
+            width: 14,
+            height: 14,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              color: AppColors.accentPrimary,
             ),
-          ],
-          SizedBox(width: AppSizes.spacingMD(context)),
-          _iconAction(
-            context,
-            icon: Icons.add,
-            tooltip: gameRunning
-                ? l10n.modProfileLockedRunning
-                : l10n.modProfileNewButton,
-            color: AppColors.accentPrimary,
-            enabled: canAct,
-            onTap: () => _showNewDialog(context, ref, state, gameDir),
-          ),
-          SizedBox(width: AppSizes.paddingXS(context)),
-          _iconAction(
-            context,
-            icon: Icons.edit_outlined,
-            tooltip: gameRunning
-                ? l10n.modProfileLockedRunning
-                : l10n.modProfileRenameButton,
-            color: AppColors.accentPrimary,
-            enabled: canAct && profiles.isNotEmpty,
-            onTap: () => _showRenameDialog(context, ref, state, gameDir),
-          ),
-          SizedBox(width: AppSizes.paddingXS(context)),
-          _iconAction(
-            context,
-            icon: Icons.delete_outline,
-            tooltip: gameRunning
-                ? l10n.modProfileLockedRunning
-                : (canDelete
-                    ? l10n.modProfileDeleteButton
-                    : l10n.modProfileErrorDeleteLast),
-            color: AppColors.error,
-            enabled: canAct && canDelete,
-            onTap: () => _showDeleteDialog(context, ref, state, gameDir),
           ),
         ],
-      ),
+        SizedBox(width: AppSizes.spacingMD(context)),
+        _iconAction(
+          context,
+          icon: Icons.add,
+          tooltip: gameRunning
+              ? l10n.modProfileLockedRunning
+              : l10n.modProfileNewButton,
+          color: AppColors.accentPrimary,
+          enabled: canAct,
+          onTap: () => _showNewDialog(context, ref, state, gameDir),
+        ),
+        SizedBox(width: AppSizes.spacingSM(context)),
+        _iconAction(
+          context,
+          icon: Icons.edit_outlined,
+          tooltip: gameRunning
+              ? l10n.modProfileLockedRunning
+              : l10n.modProfileRenameButton,
+          color: AppColors.accentPrimary,
+          enabled: canAct && profiles.isNotEmpty,
+          onTap: () => _showRenameDialog(context, ref, state, gameDir),
+        ),
+        SizedBox(width: AppSizes.spacingSM(context)),
+        _iconAction(
+          context,
+          icon: Icons.delete_outline,
+          tooltip: gameRunning
+              ? l10n.modProfileLockedRunning
+              : (canDelete
+                  ? l10n.modProfileDeleteButton
+                  : l10n.modProfileErrorDeleteLast),
+          color: AppColors.error,
+          enabled: canAct && canDelete,
+          onTap: () => _showDeleteDialog(context, ref, state, gameDir),
+        ),
+      ],
     );
   }
 
@@ -131,15 +120,15 @@ class ModProfileSelector extends ConsumerWidget {
     required bool enabled,
     required VoidCallback onTap,
   }) {
-    final effectiveColor = enabled ? color : AppColors.textMuted;
     return HoverIconButton(
       tooltip: tooltip,
       onTap: enabled ? onTap : null,
-      borderColor: effectiveColor,
+      borderColor: enabled ? color : AppColors.borderLight,
+      padding: EdgeInsets.all(AppSizes.paddingSM(context)),
       icon: Icon(
         icon,
-        size: AppSizes.iconSM(context),
-        color: effectiveColor,
+        size: AppSizes.iconMD(context),
+        color: enabled ? color : AppColors.textMuted,
       ),
     );
   }
@@ -161,6 +150,7 @@ class ModProfileSelector extends ConsumerWidget {
       value: value,
       items: names,
       itemLabel: (n) => n,
+      minWidth: 96,
       maxWidth: 200,
       highlight: true,
       onChanged: !canAct
@@ -303,7 +293,7 @@ class ModProfileSelector extends ConsumerWidget {
                       ),
                       child: Row(
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.folder_outlined,
                             size: 16,
                             color: AppColors.error,

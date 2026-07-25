@@ -3,7 +3,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:automato_theme/automato_theme.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:yp_launcher/providers/app_theme_state.dart';
+import 'package:yp_launcher/theme/app_colors.dart';
+import 'package:yp_launcher/theme/app_theme.dart';
 import 'package:yp_launcher/l10n/app_localizations.dart';
 import 'package:yp_launcher/providers/locale_state.dart';
 import 'package:yp_launcher/screens/launcher_screen.dart';
@@ -47,6 +51,8 @@ void main(List<String> args) async {
 
   unawaited(LauncherSetupService.ensureReady());
 
+  await _loadAppTheme();
+
   final themeNotifier = await AutomatoThemeNotifier.loadFromPreferences();
 
   runApp(
@@ -59,11 +65,23 @@ void main(List<String> args) async {
   );
 }
 
+Future<void> _loadAppTheme() async {
+  try {
+    final prefs = await SharedPreferences.getInstance();
+    final saved = prefs.getString('app_theme');
+    AppColors.active = AppTheme.byId(
+      saved == AppThemeId.nier.name ? AppThemeId.nier : AppThemeId.dark,
+    );
+  } catch (_) {}
+}
+
 class YoRHaProtocolLauncher extends ConsumerWidget {
   const YoRHaProtocolLauncher({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final themeId = ref.watch(appThemeControllerProvider);
+    final appTheme = AppColors.active;
     final themeState = ref.watch(automatoThemeNotifierProvider);
     final baseTheme = themeState.theme;
     final gameFont = GoogleFonts.rajdhaniTextTheme(baseTheme.textTheme);
@@ -74,28 +92,63 @@ class YoRHaProtocolLauncher extends ConsumerWidget {
       supportedLocales: AppLocalizations.supportedLocales,
       locale: ref.watch(localeControllerProvider),
       theme: baseTheme.copyWith(
-        textTheme: gameFont,
+        brightness: appTheme.brightness,
+        scaffoldBackgroundColor: AppColors.backgroundPrimary,
+        canvasColor: AppColors.backgroundPrimary,
+        colorScheme: ColorScheme(
+          brightness: appTheme.brightness,
+          primary: AppColors.accentPrimary,
+          onPrimary: AppColors.buttonText,
+          secondary: AppColors.accentSecondary,
+          onSecondary: AppColors.buttonText,
+          surface: AppColors.backgroundCard,
+          onSurface: AppColors.textPrimary,
+          error: AppColors.error,
+          onError: AppColors.buttonText,
+        ),
+        dialogTheme: DialogThemeData(
+          backgroundColor: AppColors.backgroundCard,
+        ),
+        snackBarTheme: SnackBarThemeData(
+          backgroundColor: AppColors.backgroundCard,
+          contentTextStyle: gameFont.bodyMedium?.copyWith(
+            color: AppColors.textPrimary,
+          ),
+        ),
+        checkboxTheme: CheckboxThemeData(
+          fillColor: WidgetStateProperty.resolveWith(
+            (states) => states.contains(WidgetState.selected)
+                ? AppColors.accentPrimary
+                : Colors.transparent,
+          ),
+          checkColor: WidgetStateProperty.all(AppColors.buttonText),
+          side: BorderSide(color: AppColors.borderMedium, width: 1.2),
+        ),
+        textTheme: gameFont.apply(
+          bodyColor: AppColors.textPrimary,
+          displayColor: AppColors.textPrimary,
+        ),
         tooltipTheme: TooltipThemeData(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
           margin: const EdgeInsets.all(4),
           constraints: const BoxConstraints(maxWidth: 320),
           decoration: BoxDecoration(
-            color: const Color(0xFF222228).withValues(alpha: 0.96),
+            color: AppColors.backgroundCard.withValues(alpha: 0.96),
             borderRadius: BorderRadius.circular(6),
             border: Border.all(
-              color: const Color(0xFFD4A86A).withValues(alpha: 0.35),
+              color: AppColors.accentPrimary.withValues(alpha: 0.35),
               width: 1,
             ),
-            boxShadow: const [
+            boxShadow: [
               BoxShadow(
-                color: Color(0x66000000),
+                color: AppColors.shadow,
                 blurRadius: 12,
-                offset: Offset(0, 3),
+                offset: const Offset(0, 3),
               ),
             ],
           ),
           textStyle: gameFont.bodySmall?.copyWith(
-            color: const Color(0xFFEDE6D8),
+            color: AppColors.textSecondary,
             fontSize: 12.5,
             height: 1.35,
             letterSpacing: 0.2,
@@ -103,7 +156,7 @@ class YoRHaProtocolLauncher extends ConsumerWidget {
           waitDuration: const Duration(milliseconds: 350),
         ),
       ),
-      home: const LauncherScreen(),
+      home: LauncherScreen(key: ValueKey(themeId)),
     );
   }
 }

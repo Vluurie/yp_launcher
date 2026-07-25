@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:yp_launcher/theme/nier_curves.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yp_launcher/l10n/app_localizations.dart';
 import 'package:yp_launcher/providers/app_state.dart';
@@ -35,7 +36,7 @@ class ConfigPanelState extends ConsumerState<ConfigPanel>
     _slideAnimation = Tween<Offset>(
       begin: const Offset(1, 0),
       end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+    ).animate(CurvedAnimation(parent: _controller, curve: NierCurves.smooth));
     _controller.forward();
   }
 
@@ -60,7 +61,7 @@ class ConfigPanelState extends ConsumerState<ConfigPanel>
       position: _slideAnimation,
       child: Container(
         width: AppSizes.titleBarButtonWidth,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: AppColors.backgroundCard,
           border: Border(
             left: BorderSide(color: AppColors.borderMedium, width: 1.5),
@@ -69,7 +70,7 @@ class ConfigPanelState extends ConsumerState<ConfigPanel>
             BoxShadow(
               color: AppColors.shadow,
               blurRadius: 8,
-              offset: Offset(-2, 0),
+              offset: const Offset(-2, 0),
             ),
           ],
         ),
@@ -78,7 +79,7 @@ class ConfigPanelState extends ConsumerState<ConfigPanel>
             _buildHeader(context, config, configNotifier, gameDir),
             Expanded(
               child: config.isLoading
-                  ? const Center(
+                  ? Center(
                       child: CircularProgressIndicator(
                         color: AppColors.accentPrimary,
                       ),
@@ -102,7 +103,7 @@ class ConfigPanelState extends ConsumerState<ConfigPanel>
   ) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: AppColors.surfaceMedium,
         border: Border(bottom: BorderSide(color: AppColors.borderLight)),
       ),

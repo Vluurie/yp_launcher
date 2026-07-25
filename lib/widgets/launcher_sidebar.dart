@@ -3,6 +3,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yp_launcher/constants/app_strings.dart';
 import 'package:yp_launcher/l10n/app_localizations.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
+import 'package:yp_launcher/theme/app_theme.dart';
+import 'package:yp_launcher/theme/nier_curves.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
 
 class SidebarKeys {
@@ -102,7 +104,7 @@ class _LauncherSidebarState extends State<LauncherSidebar> {
     final showLabels = AppSizes.sidebarLabelsVisible(context);
     return Container(
       width: AppSizes.sidebarWidth(context),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: AppColors.surfaceMedium,
         border: Border(right: BorderSide(color: AppColors.borderLight)),
       ),
@@ -170,7 +172,7 @@ class _VersionFooter extends StatelessWidget {
         horizontal: AppSizes.cardPaddingH(context),
         vertical: AppSizes.spacingSM(context),
       ),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         border: Border(top: BorderSide(color: AppColors.borderLight)),
       ),
       child: Tooltip(
@@ -368,23 +370,52 @@ class _SidebarTab extends StatefulWidget {
   State<_SidebarTab> createState() => _SidebarTabState();
 }
 
-class _SidebarTabState extends State<_SidebarTab> {
+class _SidebarTabState extends State<_SidebarTab>
+    with SingleTickerProviderStateMixin {
   bool _hovered = false;
+  late final AnimationController _fill = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 260),
+  );
+
+  @override
+  void dispose() {
+    _fill.dispose();
+    super.dispose();
+  }
+
+  void _setHover(bool hovered) {
+    if (_hovered == hovered) return;
+    setState(() => _hovered = hovered);
+    if (hovered) {
+      _fill.forward();
+    } else {
+      _fill.reverse();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final iconColor = widget.active
-        ? AppColors.accentPrimary
-        : _hovered
-            ? AppColors.textPrimary
-            : AppColors.textMuted;
-    final textColor = widget.active
-        ? AppColors.accentPrimary
-        : _hovered
-            ? AppColors.textPrimary
-            : AppColors.textSecondary;
+    final isNier = AppColors.active.id == AppThemeId.nier;
+    final tab = MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => _setHover(true),
+      onExit: (_) => _setHover(false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: SizedBox(
+          height: AppSizes.sidebarRowHeight(context),
+          child: isNier ? _buildNier(context) : _buildDefault(context),
+        ),
+      ),
+    );
 
-    final row = Row(
+    if (widget.showLabel) return tab;
+    return Tooltip(message: widget.item.label, child: tab);
+  }
+
+  Widget _buildRow(Color iconColor, Color textColor, FontWeight weight) {
+    return Row(
       mainAxisAlignment: widget.showLabel
           ? MainAxisAlignment.start
           : MainAxisAlignment.center,
@@ -398,8 +429,7 @@ class _SidebarTabState extends State<_SidebarTab> {
               widget.item.label,
               style: TextStyle(
                 fontSize: AppSizes.fontSM(context),
-                fontWeight:
-                    widget.active ? FontWeight.w600 : FontWeight.normal,
+                fontWeight: weight,
                 color: textColor,
                 letterSpacing: 0.3,
               ),
@@ -409,40 +439,78 @@ class _SidebarTabState extends State<_SidebarTab> {
         ],
       ],
     );
+  }
 
-    final tab = MouseRegion(
-      cursor: SystemMouseCursors.click,
-      onEnter: (_) => setState(() => _hovered = true),
-      onExit: (_) => setState(() => _hovered = false),
-      child: GestureDetector(
-        onTap: widget.onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 100),
-          height: AppSizes.sidebarRowHeight(context),
-          decoration: BoxDecoration(
+  Widget _buildDefault(BuildContext context) {
+    final iconColor = widget.active
+        ? AppColors.accentPrimary
+        : _hovered
+            ? AppColors.textPrimary
+            : AppColors.textMuted;
+    final textColor = widget.active
+        ? AppColors.accentPrimary
+        : _hovered
+            ? AppColors.textPrimary
+            : AppColors.textSecondary;
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 100),
+      decoration: BoxDecoration(
+        color: widget.active
+            ? AppColors.accentPrimary.withValues(alpha: 0.10)
+            : _hovered
+                ? AppColors.surfaceLight
+                : Colors.transparent,
+        border: Border(
+          left: BorderSide(
             color: widget.active
-                ? AppColors.accentPrimary.withValues(alpha: 0.10)
-                : _hovered
-                    ? AppColors.surfaceLight
-                    : Colors.transparent,
-            border: Border(
-              left: BorderSide(
-                color: widget.active
-                    ? AppColors.accentPrimary
-                    : Colors.transparent,
-                width: 3,
-              ),
-            ),
+                ? AppColors.accentPrimary
+                : Colors.transparent,
+            width: 3,
           ),
-          child: row,
         ),
       ),
+      child: _buildRow(
+        iconColor,
+        textColor,
+        widget.active ? FontWeight.w600 : FontWeight.normal,
+      ),
     );
+  }
 
-    if (widget.showLabel) return tab;
-    return Tooltip(
-      message: widget.item.label,
-      child: tab,
+  Widget _buildNier(BuildContext context) {
+    final fillCurve = CurvedAnimation(parent: _fill, curve: NierCurves.fill);
+    return AnimatedBuilder(
+      animation: fillCurve,
+      builder: (context, _) {
+        final t = widget.active ? 1.0 : fillCurve.value;
+        final ink = AppColors.textPrimary;
+        final paper = AppColors.backgroundPrimary;
+        final fg = Color.lerp(ink, paper, t)!;
+        return Stack(
+          children: [
+            Positioned.fill(
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: FractionallySizedBox(
+                  widthFactor: t,
+                  child: ColoredBox(color: ink),
+                ),
+              ),
+            ),
+            Positioned(
+              left: 0,
+              top: 0,
+              bottom: 0,
+              child: Container(width: 3, color: ink.withValues(alpha: t)),
+            ),
+            _buildRow(
+              fg,
+              fg,
+              widget.active ? FontWeight.w600 : FontWeight.normal,
+            ),
+          ],
+        );
+      },
     );
   }
 }

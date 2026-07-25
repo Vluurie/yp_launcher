@@ -9,6 +9,7 @@ class AppDropdown<T> extends StatefulWidget {
   final String Function(T) itemLabel;
   final ValueChanged<T>? onChanged;
   final double? maxWidth;
+  final double? minWidth;
   final bool highlight;
   final IconData? icon;
 
@@ -19,6 +20,7 @@ class AppDropdown<T> extends StatefulWidget {
     required this.itemLabel,
     required this.onChanged,
     this.maxWidth,
+    this.minWidth,
     this.highlight = false,
     this.icon,
   });
@@ -158,8 +160,11 @@ class _AppDropdownState<T> extends State<AppDropdown<T>> {
           child: AnimatedContainer(
             key: _triggerKey,
             duration: const Duration(milliseconds: 100),
-            constraints: widget.maxWidth != null
-                ? BoxConstraints(maxWidth: widget.maxWidth!)
+            constraints: (widget.maxWidth != null || widget.minWidth != null)
+                ? BoxConstraints(
+                    minWidth: widget.minWidth ?? 0.0,
+                    maxWidth: widget.maxWidth ?? double.infinity,
+                  )
                 : null,
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
             decoration: BoxDecoration(
@@ -333,7 +338,7 @@ class _DesktopMenuItemState<T> extends State<_DesktopMenuItem<T>> {
               SizedBox(
                 width: 14,
                 child: selected
-                    ? const Icon(
+                    ? Icon(
                         Icons.check,
                         size: 12,
                         color: AppColors.accentPrimary,

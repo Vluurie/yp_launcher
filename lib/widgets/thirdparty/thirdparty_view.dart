@@ -250,14 +250,14 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
             onPressed: () => Navigator.of(ctx).pop(false),
             child: Text(
               l10n.thirdPartyUpdateKeep,
-              style: const TextStyle(color: AppColors.textMuted),
+              style: TextStyle(color: AppColors.textMuted),
             ),
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
             child: Text(
               l10n.thirdPartyUpdateReplace,
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppColors.accentPrimary,
                 fontWeight: FontWeight.bold,
               ),
@@ -829,8 +829,8 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
         color: AppColors.backgroundCard,
         borderRadius: BorderRadius.circular(AppSizes.borderRadius(context)),
         border: Border.all(color: AppColors.borderLight),
-        boxShadow: const [
-          BoxShadow(color: AppColors.shadow, blurRadius: 4, offset: Offset(0, 2)),
+        boxShadow: [
+          BoxShadow(color: AppColors.shadow, blurRadius: 4, offset: const Offset(0, 2)),
         ],
       ),
       child: Column(

@@ -19,7 +19,6 @@ import 'package:yp_launcher/services/platform_gate.dart';
 import 'package:yp_launcher/services/process_service.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
-import 'package:yp_launcher/constants/app_strings.dart';
 import 'package:yp_launcher/widgets/diagnostics_dialog.dart';
 import 'package:yp_launcher/widgets/hover_button.dart';
 
@@ -40,7 +39,6 @@ class _LauncherSettingsViewState extends ConsumerState<LauncherSettingsView> {
 
   List<String> _missingFiles = const [];
   ExeVariant? _exeVariant;
-  List<LogEntry> _recentErrors = const [];
   Map<String, String> _launcherPaths = const {};
 
   @override
@@ -61,7 +59,6 @@ class _LauncherSettingsViewState extends ConsumerState<LauncherSettingsView> {
     List<String> missing = const [];
     Map<String, String> paths = const {};
     ExeVariant? variant;
-    List<LogEntry> errors = const [];
     try {
       missing = await LauncherSetupService.findMissingFiles();
     } catch (_) {}
@@ -73,18 +70,11 @@ class _LauncherSettingsViewState extends ConsumerState<LauncherSettingsView> {
         variant = await GameDetection.detectExeVariant(gameDir);
       } catch (_) {}
     }
-    try {
-      final entries = await LogService.readLog(AppStrings.namsLogName);
-      final errs =
-          entries.where((e) => e.level == 'ERROR' || e.level == 'WARN').toList();
-      errors = errs.length > 8 ? errs.sublist(errs.length - 8) : errs;
-    } catch (_) {}
     if (!mounted) return;
     setState(() {
       _missingFiles = missing;
       _launcherPaths = paths;
       _exeVariant = variant;
-      _recentErrors = errors;
     });
   }
 
@@ -177,10 +167,6 @@ class _LauncherSettingsViewState extends ConsumerState<LauncherSettingsView> {
                             SizedBox(
                                 width: w,
                                 child: _clearCacheCard(context, l10n)),
-                            if (_recentErrors.isNotEmpty)
-                              SizedBox(
-                                  width: w,
-                                  child: _recentErrorsCard(context, l10n)),
                           ],
                         );
                       },
@@ -202,7 +188,7 @@ class _LauncherSettingsViewState extends ConsumerState<LauncherSettingsView> {
         horizontal: AppSizes.cardPaddingH(context),
         vertical: AppSizes.cardPaddingV(context),
       ),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: AppColors.surfaceMedium,
         border: Border(bottom: BorderSide(color: AppColors.borderLight)),
       ),
@@ -239,7 +225,7 @@ class _LauncherSettingsViewState extends ConsumerState<LauncherSettingsView> {
             SizedBox(
               width: AppSizes.iconSM(context),
               height: AppSizes.iconSM(context),
-              child: const CircularProgressIndicator(
+              child: CircularProgressIndicator(
                 strokeWidth: 2,
                 color: AppColors.accentPrimary,
               ),
@@ -373,26 +359,6 @@ class _LauncherSettingsViewState extends ConsumerState<LauncherSettingsView> {
     ], accent: AppColors.error);
   }
 
-  Widget _recentErrorsCard(BuildContext context, AppLocalizations l10n) {
-    return _card(context, l10n.troubleRecentErrorsTitle, [
-      for (final e in _recentErrors.reversed)
-        Padding(
-          padding: EdgeInsets.only(bottom: AppSizes.paddingXS(context)),
-          child: Text(
-            '${e.level} ${e.module}: ${e.message}',
-            style: TextStyle(
-              fontSize: AppSizes.fontXS(context),
-              color: e.level == 'ERROR'
-                  ? AppColors.error
-                  : AppColors.warning,
-              fontFamily: 'monospace',
-              height: 1.35,
-            ),
-          ),
-        ),
-    ], accent: AppColors.warning);
-  }
-
   Widget _clearCacheCard(BuildContext context, AppLocalizations l10n) {
     return _card(context, l10n.troubleClearCacheTitle, [
       Text(
@@ -436,13 +402,13 @@ class _LauncherSettingsViewState extends ConsumerState<LauncherSettingsView> {
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
             child: Text(l10n.diagnosticsClose,
-                style: const TextStyle(color: AppColors.textMuted)),
+                style: TextStyle(color: AppColors.textMuted)),
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
             child: Text(
               l10n.troubleClearCacheButton,
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppColors.warning,
                 fontWeight: FontWeight.bold,
               ),
@@ -660,11 +626,11 @@ class _LauncherSettingsViewState extends ConsumerState<LauncherSettingsView> {
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(AppSizes.borderRadius(context)),
-            borderSide: const BorderSide(color: AppColors.borderLight),
+            borderSide: BorderSide(color: AppColors.borderLight),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(AppSizes.borderRadius(context)),
-            borderSide: const BorderSide(color: AppColors.accentPrimary),
+            borderSide: BorderSide(color: AppColors.accentPrimary),
           ),
         ),
       ),
