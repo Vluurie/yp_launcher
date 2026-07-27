@@ -62,14 +62,20 @@ jobs:
           Copy-Item -Recurse build\windows\x64\runner\Release "dist\YoRHa Protocol Launcher"
           Remove-Item "dist\YoRHa Protocol Launcher\yp_launcher.exe"
           Compress-Archive -Path "dist\YoRHa Protocol Launcher" -DestinationPath "dist\YoRHa.Protocol.Launcher.v$version.zip"
+      - name: fetch vc_redist
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory vc_redist | Out-Null
+          curl.exe -fL -o vc_redist\vc_redist.x64.exe https://download.visualstudio.microsoft.com/download/pr/9b0d1fa5-c16d-4ee8-97f0-c2734086ece8/CC0FF0EB1DC3F5188AE6300FAEF32BF5BEEBA4BDD6E8E445A9184072096B713B/VC_redist.x64.exe
+          if ((Get-FileHash vc_redist\vc_redist.x64.exe -Algorithm SHA256).Hash -ne 'CC0FF0EB1DC3F5188AE6300FAEF32BF5BEEBA4BDD6E8E445A9184072096B713B') { throw 'vc_redist checksum mismatch' }
       - name: build installer
         shell: pwsh
         run: |
           $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
           if (-not (Test-Path $iscc)) { $iscc = (Get-Command iscc.exe -ErrorAction Stop).Source }
-          & $iscc "/DAppVersion=$env:VERSION" "/DSourceDir=$PWD\dist\YoRHa Protocol Launcher" "/O$PWD\dist" windows\installer.iss
+          & $iscc "/DAppVersion=$env:VERSION" "/DSourceDir=$PWD\dist\YoRHa Protocol Launcher" "/DVCRedistDir=$PWD\vc_redist" "/O$PWD\dist" windows\installer.iss
           if ($LASTEXITCODE -ne 0) { throw "ISCC failed with exit code $LASTEXITCODE" }
-          Remove-Item -Recurse -Force "dist\YoRHa Protocol Launcher"
+          Remove-Item -Recurse -Force "dist\YoRHa Protocol Launcher", vc_redist
       - uses: actions/upload-artifact@v4
         with:
           name: windows
