@@ -67,8 +67,8 @@ Filename: "{app}\{#AppExe}"; Description: "{cm:LaunchProgram,{#AppName}}"; Flags
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}"
 
-#ifdef VCRedistDir
 [Code]
+#ifdef VCRedistDir
 function VCRedistNeeded: Boolean;
 var
   Bld: Cardinal;
@@ -78,3 +78,24 @@ begin
     Result := Bld < 29913;
 end;
 #endif
+
+procedure CurStepChanged(CurStep: TSetupStep);
+var
+  Dir, PrefsFile, Lang: String;
+begin
+  if CurStep <> ssPostInstall then
+    exit;
+  Dir := ExpandConstant('{userappdata}\YoRHa Protocol\YoRHa Protocol Launcher');
+  PrefsFile := Dir + '\shared_preferences.json';
+  if FileExists(PrefsFile) then
+    exit;
+  Lang := 'en';
+  if ActiveLanguage = 'german' then
+    Lang := 'de'
+  else if ActiveLanguage = 'thai' then
+    Lang := 'th'
+  else if ActiveLanguage = 'chinesesimplified' then
+    Lang := 'zh';
+  if ForceDirectories(Dir) then
+    SaveStringToFile(PrefsFile, '{"flutter.app_locale":"' + Lang + '"}', False);
+end;
