@@ -13,8 +13,13 @@ AppName={#AppName}
 AppVersion={#AppVersion}
 AppPublisher=Native Application Modding System
 AppPublisherURL=https://github.com/Vluurie/yp_launcher
+AppSupportURL=https://github.com/Vluurie/yp_launcher/issues
+AppUpdatesURL=https://github.com/Vluurie/yp_launcher/releases
+AppCopyright=Copyright (c) 2026 Vluurie
 AppMutex=YoRHaProtocolLauncher
+MinVersion=10.0.17763
 DefaultDirName={localappdata}\Programs\{#AppName}
+LicenseFile=..\LICENSE
 PrivilegesRequired=lowest
 DisableProgramGroupPage=yes
 OutputBaseFilename=YoRHa.Protocol.Launcher.Setup.v{#AppVersion}
@@ -26,12 +31,25 @@ ArchitecturesInstallIn64BitMode=x64compatible
 Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern
+SetupLogging=yes
+WizardImageFile=wizard.png
+WizardSmallImageFile=wizard_small.png
+DisableWelcomePage=no
+
+[Languages]
+Name: "english"; MessagesFile: "compiler:Default.isl"
+Name: "german"; MessagesFile: "compiler:Languages\German.isl"
+Name: "thai"; MessagesFile: "compiler:Languages\Thai.isl"
+#ifdef ChineseIsl
+Name: "chinesesimplified"; MessagesFile: "{#ChineseIsl}"
+#endif
 
 [Tasks]
 Name: desktopicon; Description: "{cm:CreateDesktopIcon}"; Flags: unchecked
 
 [Files]
 Source: "{#SourceDir}\*"; DestDir: "{app}"; Flags: recursesubdirs createallsubdirs ignoreversion
+Source: "..\LICENSE"; DestDir: "{app}"; DestName: "LICENSE.txt"; Flags: ignoreversion
 #ifdef VCRedistDir
 Source: "{#VCRedistDir}\vc_redist.x64.exe"; DestDir: "{tmp}"; Flags: deleteafterinstall; Check: VCRedistNeeded
 #endif
