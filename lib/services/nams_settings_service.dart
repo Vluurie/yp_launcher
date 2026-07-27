@@ -42,6 +42,19 @@ class NamsSettingsService {
     return true;
   }
 
+  static Future<void> seedOverlayLanguage(
+    String? gameDir,
+    String languageCode,
+  ) async {
+    try {
+      final settings = await loadSettings(gameDir);
+      final existing = settings['overlayLanguage'];
+      if (existing is String && existing.isNotEmpty) return;
+      settings['overlayLanguage'] = languageCode;
+      await saveSettings(settings, gameDir);
+    } catch (_) {}
+  }
+
   static const Map<String, dynamic> _defaultSettings = {
     'firstPlaythrough': true, 
     'keybinds': {

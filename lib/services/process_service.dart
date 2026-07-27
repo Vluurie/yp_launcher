@@ -12,8 +12,10 @@ import 'package:yp_launcher/services/launch_wrapper_service.dart';
 import 'package:yp_launcher/services/launcher_setup_service.dart';
 import 'package:yp_launcher/services/log_service.dart';
 import 'package:yp_launcher/services/mods_service.dart';
+import 'package:yp_launcher/services/nams_settings_service.dart';
 import 'package:yp_launcher/services/platform/platform_adapter.dart';
 import 'package:yp_launcher/services/wine/launch_command.dart';
+import 'package:yp_launcher/providers/locale_state.dart';
 
 class LaunchOutcome {
   final bool started;
@@ -25,6 +27,18 @@ class LaunchOutcome {
 }
 
 class ProcessService {
+  static Future<String> _effectiveLocaleCode() async {
+    String? code;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      code = prefs.getString(AppStrings.prefKeyLocale);
+    } catch (_) {}
+    code ??= PlatformDispatcher.instance.locale.languageCode;
+    final supported =
+        kSupportedLocales.any((locale) => locale.languageCode == code);
+    return supported ? code : 'en';
+  }
+
   static Future<LaunchOutcome> startNierAutomata({
     required String installDirectory,
     required VoidCallback onProcessStopped,
@@ -74,6 +88,10 @@ class ProcessService {
       }
 
       await ModsService.syncDlcSlots(installDirectory);
+      await NamsSettingsService.seedOverlayLanguage(
+        installDirectory,
+        await _effectiveLocaleCode(),
+      );
       await LogService.clearLog(AppStrings.namsLogName);
 
       LaunchCommand command;
