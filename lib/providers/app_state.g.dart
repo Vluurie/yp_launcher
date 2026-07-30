@@ -10,11 +10,11 @@ part of 'app_state.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(AppStateController)
-const appStateControllerProvider = AppStateControllerProvider._();
+final appStateControllerProvider = AppStateControllerProvider._();
 
 final class AppStateControllerProvider
     extends $NotifierProvider<AppStateController, AppState> {
-  const AppStateControllerProvider._()
+  AppStateControllerProvider._()
     : super(
         from: null,
         argument: null,
@@ -49,7 +49,6 @@ abstract class _$AppStateController extends $Notifier<AppState> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<AppState, AppState>;
     final element =
         ref.element
@@ -59,6 +58,6 @@ abstract class _$AppStateController extends $Notifier<AppState> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }

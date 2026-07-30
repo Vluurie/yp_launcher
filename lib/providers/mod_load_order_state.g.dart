@@ -10,12 +10,12 @@ part of 'mod_load_order_state.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(ModLoadOrderStateController)
-const modLoadOrderStateControllerProvider =
+final modLoadOrderStateControllerProvider =
     ModLoadOrderStateControllerProvider._();
 
 final class ModLoadOrderStateControllerProvider
     extends $NotifierProvider<ModLoadOrderStateController, ModLoadOrderData> {
-  const ModLoadOrderStateControllerProvider._()
+  ModLoadOrderStateControllerProvider._()
     : super(
         from: null,
         argument: null,
@@ -51,7 +51,6 @@ abstract class _$ModLoadOrderStateController
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<ModLoadOrderData, ModLoadOrderData>;
     final element =
         ref.element
@@ -61,6 +60,6 @@ abstract class _$ModLoadOrderStateController
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }

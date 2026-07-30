@@ -10,11 +10,11 @@ part of 'thirdparty_state.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(ThirdPartyStateController)
-const thirdPartyStateControllerProvider = ThirdPartyStateControllerProvider._();
+final thirdPartyStateControllerProvider = ThirdPartyStateControllerProvider._();
 
 final class ThirdPartyStateControllerProvider
     extends $NotifierProvider<ThirdPartyStateController, ThirdPartyData> {
-  const ThirdPartyStateControllerProvider._()
+  ThirdPartyStateControllerProvider._()
     : super(
         from: null,
         argument: null,
@@ -49,7 +49,6 @@ abstract class _$ThirdPartyStateController extends $Notifier<ThirdPartyData> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<ThirdPartyData, ThirdPartyData>;
     final element =
         ref.element
@@ -59,6 +58,6 @@ abstract class _$ThirdPartyStateController extends $Notifier<ThirdPartyData> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }

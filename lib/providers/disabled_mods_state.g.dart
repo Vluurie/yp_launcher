@@ -10,12 +10,12 @@ part of 'disabled_mods_state.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(DisabledModsStateController)
-const disabledModsStateControllerProvider =
+final disabledModsStateControllerProvider =
     DisabledModsStateControllerProvider._();
 
 final class DisabledModsStateControllerProvider
     extends $NotifierProvider<DisabledModsStateController, DisabledModsData> {
-  const DisabledModsStateControllerProvider._()
+  DisabledModsStateControllerProvider._()
     : super(
         from: null,
         argument: null,
@@ -51,7 +51,6 @@ abstract class _$DisabledModsStateController
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<DisabledModsData, DisabledModsData>;
     final element =
         ref.element
@@ -61,6 +60,6 @@ abstract class _$DisabledModsStateController
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }

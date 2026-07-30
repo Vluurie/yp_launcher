@@ -10,12 +10,12 @@ part of 'mod_profiles_state.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(ModProfilesStateController)
-const modProfilesStateControllerProvider =
+final modProfilesStateControllerProvider =
     ModProfilesStateControllerProvider._();
 
 final class ModProfilesStateControllerProvider
     extends $NotifierProvider<ModProfilesStateController, ModProfileState> {
-  const ModProfilesStateControllerProvider._()
+  ModProfilesStateControllerProvider._()
     : super(
         from: null,
         argument: null,
@@ -50,7 +50,6 @@ abstract class _$ModProfilesStateController extends $Notifier<ModProfileState> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<ModProfileState, ModProfileState>;
     final element =
         ref.element
@@ -60,6 +59,6 @@ abstract class _$ModProfilesStateController extends $Notifier<ModProfileState> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }
