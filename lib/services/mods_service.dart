@@ -547,6 +547,7 @@ List<InstalledMod> _listInstalledSync(_ListInstalledParams p) {
 
 InstalledMod? _scanInstalledMod(String rootPath, String id, String gameDir) {
   final contentRoot = _unwrapSingleChild(rootPath);
+  _normalizeMisplacedWaxConfigDirs(contentRoot);
   final manifest = ModManifestService.loadSync(contentRoot);
   final kind = _classifyKind(contentRoot);
 
@@ -564,6 +565,7 @@ InstalledMod? _scanInstalledMod(String rootPath, String id, String gameDir) {
   if (dataDir.existsSync() || hasCompat) {
     data = _scanData(
       dataDir,
+      configRoot: contentRoot,
       hasCompatConfig: hasCompat,
       hasOutfitConfig: _hasOutfitConfig(contentRoot),
       outfitsByStem: _scanOutfitChoices(contentRoot),
@@ -830,7 +832,52 @@ bool _hasConfigIn(String contentRoot, Set<String> subdirs) {
       if (_hasConfigSubdirAt(inner.path, subdirs)) return true;
     }
   }
-  return _hasConfigSubdirAt(contentRoot, subdirs);
+  if (_hasConfigSubdirAt(contentRoot, subdirs)) return true;
+  for (final wrapper in _misplacedConfigWrapperDirs(contentRoot)) {
+    if (_hasConfigSubdirAt(wrapper, subdirs)) return true;
+  }
+  return false;
+}
+
+List<String> _misplacedConfigWrapperDirs(String contentRoot) {
+  final dir = Directory(contentRoot);
+  if (!dir.existsSync()) return const [];
+  final out = <String>[];
+  for (final sub in dir.listSync().whereType<Directory>()) {
+    final name = path.basename(sub.path);
+    final lower = name.toLowerCase();
+    if (name.startsWith('.') || name.startsWith('_')) continue;
+    if (_modPayloadDirs.contains(lower)) continue;
+    if (_isTextureWrapper(lower)) continue;
+    if (dataDirCategoryTable.containsKey(lower)) continue;
+    if (_compatConfigSubdirs.contains(lower)) continue;
+    if (_isMisplacedConfigWrapper(sub.path)) out.add(sub.path);
+  }
+  return out;
+}
+
+bool _isMisplacedConfigWrapper(String root) {
+  if (!_hasConfigSubdirAt(root, _compatConfigSubdirs)) return false;
+  if (Directory(path.join(root, 'wax')).existsSync()) return false;
+  if (Directory(path.join(root, 'entities')).existsSync()) return false;
+  if (_dataHasSubdirs(Directory(path.join(root, 'data')))) return false;
+  if (_hasLooseDataDir(root)) return false;
+  if (_hasLooseDataFiles(root)) return false;
+  if (_hasCpk(root)) return false;
+  return true;
+}
+
+void _normalizeMisplacedWaxConfigDirs(String root) {
+  final wrappers = _misplacedConfigWrapperDirs(root);
+  if (wrappers.isEmpty) return;
+  final waxMods = path.join(root, 'wax', 'mods');
+  for (final wrapper in wrappers) {
+    try {
+      Directory(waxMods).createSync(recursive: true);
+      final destName = _uniqueChildName(waxMods, path.basename(wrapper));
+      _moveDirectory(wrapper, path.join(waxMods, destName));
+    } catch (_) {}
+  }
 }
 
 bool _hasConfigSubdirAt(String root, Set<String> subdirs) {
@@ -900,6 +947,9 @@ Map<String, List<OutfitChoice>> _scanOutfitChoices(String contentRoot) {
     }
   }
   readDir(contentRoot);
+  for (final wrapper in _misplacedConfigWrapperDirs(contentRoot)) {
+    readDir(wrapper);
+  }
 
   for (final list in byStem.values) {
     list.sort((a, b) => a.outfitId.compareTo(b.outfitId));
@@ -982,12 +1032,14 @@ int _countAssetEntries(Directory dir) {
 
 DataSummary _scanData(
   Directory dataDir, {
+  required String configRoot,
   required bool hasCompatConfig,
   required bool hasOutfitConfig,
   Map<String, List<OutfitChoice>> outfitsByStem = const {},
 }) {
   final entries = <DataDirEntry>[];
   final players = <PlayerModelEntry>[];
+  final archives = <DataArchivePair>[];
 
   if (dataDir.existsSync()) {
     final cpks = dataDir
@@ -1020,13 +1072,45 @@ DataSummary _scanData(
         }
       }
     }
+    final archiveFiles = <String, ({String stem, String? dat, String? dtt})>{};
+    for (final file
+        in dataDir
+            .listSync(recursive: true, followLinks: false)
+            .whereType<File>()) {
+      final base = path.basename(file.path);
+      final lower = base.toLowerCase();
+      if (!lower.endsWith('.dat') && !lower.endsWith('.dtt')) continue;
+      final stem = base.substring(0, base.length - 4);
+      final key =
+          '${path.dirname(file.path).toLowerCase()}/${stem.toLowerCase()}';
+      final current = archiveFiles[key];
+      archiveFiles[key] = (
+        stem: current?.stem ?? stem,
+        dat: lower.endsWith('.dat') ? file.path : current?.dat,
+        dtt: lower.endsWith('.dtt') ? file.path : current?.dtt,
+      );
+    }
+    for (final pair in archiveFiles.values) {
+      final normalizedStem = pair.stem.toLowerCase();
+      archives.add(
+        DataArchivePair(
+          stem: pair.stem,
+          label: playerModelLookup[normalizedStem] ?? pair.stem,
+          configRoot: configRoot,
+          datPath: pair.dat,
+          dttPath: pair.dtt,
+        ),
+      );
+    }
   }
 
   entries.sort((a, b) => a.dirName.compareTo(b.dirName));
   players.sort((a, b) => a.fileName.compareTo(b.fileName));
+  archives.sort((a, b) => a.label.compareTo(b.label));
   return DataSummary(
     entries: entries,
     players: players,
+    archives: archives,
     hasCompatConfig: hasCompatConfig,
     hasOutfitConfig: hasOutfitConfig,
     outfitsByStem: outfitsByStem,
@@ -1168,6 +1252,7 @@ DetectedDrop _detectDropSync(_DetectParams p) {
   if (dataDir.existsSync() || hasCompat) {
     data = _scanData(
       dataDir,
+      configRoot: unwrapped,
       hasCompatConfig: hasCompat,
       hasOutfitConfig: _hasOutfitConfig(unwrapped),
       outfitsByStem: _scanOutfitChoices(unwrapped),
@@ -1306,6 +1391,7 @@ InstallResult _installSync(_InstallParams p) {
   _normalizeLooseDataDirs(workRoot);
   final unpairedWarnings = _normalizeLooseDataFiles(workRoot);
   _normalizeCpks(workRoot);
+  _normalizeMisplacedWaxConfigDirs(workRoot);
 
   final modsRoot = ModsService.modsDir(p.gameDir);
   final targetId = _sanitizeId(p.requestedName?.isNotEmpty == true
@@ -1413,6 +1499,7 @@ List<InstallResult> _installBatchSync(_InstallBatchParams p) {
     _normalizeLooseDataDirs(targetDir.path);
     final unpairedWarnings = _normalizeLooseDataFiles(targetDir.path);
     _normalizeCpks(targetDir.path);
+    _normalizeMisplacedWaxConfigDirs(targetDir.path);
 
     final localSubPaths = _stageSiblingTextureSets(
       dropRoot,

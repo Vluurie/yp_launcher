@@ -7,6 +7,7 @@ import 'package:yp_launcher/providers/default_mods_state.dart';
 import 'package:yp_launcher/providers/disabled_mods_state.dart';
 import 'package:yp_launcher/providers/mod_names_state.dart';
 import 'package:yp_launcher/providers/mods_state.dart';
+import 'package:yp_launcher/providers/three_d_inspector_state.dart';
 import 'package:yp_launcher/services/default_mods_service.dart';
 import 'package:yp_launcher/services/reveal_service.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
@@ -15,6 +16,7 @@ import 'package:yp_launcher/widgets/app_dropdown.dart';
 import 'package:yp_launcher/widgets/bundled_link_chip.dart';
 import 'package:yp_launcher/widgets/hover_button.dart';
 import 'package:yp_launcher/widgets/mods/mod_kind_badge.dart';
+import 'package:yp_launcher/widgets/three_d_inspector/three_d_inspector_preview.dart';
 
 class ModDetailPanel extends ConsumerWidget {
   final InstalledMod? mod;
@@ -318,6 +320,12 @@ class ModDetailPanel extends ConsumerWidget {
               .setDefault(gameDir, relPath, target, outfitId: id),
         ));
       }
+    }
+
+    for (final archive in d.archives) {
+      lines.add(
+        _ThreeDInspectorEntry(archive: archive, modId: mod.id),
+      );
     }
 
     for (final e in d.entries) {
@@ -767,6 +775,38 @@ class ModDetailPanel extends ConsumerWidget {
 
   void _openFolder(String dirPath) {
     revealInFileManager(dirPath);
+  }
+}
+
+class _ThreeDInspectorEntry extends ConsumerWidget {
+  final DataArchivePair archive;
+  final String modId;
+
+  const _ThreeDInspectorEntry({
+    required this.archive,
+    required this.modId,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final probe = ref.watch(threeDArchiveProbeProvider(archive));
+    return probe.when(
+      data: (result) {
+        if (result.candidates.isEmpty) return const SizedBox.shrink();
+        final defaults = ref.watch(defaultModsStateControllerProvider);
+        final outfitId = defaults.outfitIdOf(
+          'mods/$modId/pl/${archive.stem.toLowerCase()}',
+        );
+        return ThreeDInspectorPreview(
+          key: ValueKey('${archive.configRoot}|${archive.stem}'),
+          archive: archive,
+          probe: result,
+          initialOutfitId: outfitId,
+        );
+      },
+      loading: () => const SizedBox.shrink(),
+      error: (_, _) => const SizedBox.shrink(),
+    );
   }
 }
 

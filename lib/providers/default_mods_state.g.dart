@@ -10,12 +10,12 @@ part of 'default_mods_state.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(DefaultModsStateController)
-const defaultModsStateControllerProvider =
+final defaultModsStateControllerProvider =
     DefaultModsStateControllerProvider._();
 
 final class DefaultModsStateControllerProvider
     extends $NotifierProvider<DefaultModsStateController, DefaultModsData> {
-  const DefaultModsStateControllerProvider._()
+  DefaultModsStateControllerProvider._()
     : super(
         from: null,
         argument: null,
@@ -50,7 +50,6 @@ abstract class _$DefaultModsStateController extends $Notifier<DefaultModsData> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<DefaultModsData, DefaultModsData>;
     final element =
         ref.element
@@ -60,6 +59,6 @@ abstract class _$DefaultModsStateController extends $Notifier<DefaultModsData> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }

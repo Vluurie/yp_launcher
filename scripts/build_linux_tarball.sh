@@ -16,7 +16,9 @@ file assets/bins/7zz | grep -q "ELF 64-bit.*x86-64" \
 
 flutter clean
 flutter pub get
+cargo build --manifest-path rust/Cargo.toml --release
 flutter build linux --release
+cp rust/target/release/libyp_3d_inspector.so "$BUNDLE/lib/"
 
 rm -rf "$STAGE" "$TARBALL"
 cp -r "$BUNDLE" "$STAGE"

@@ -10,11 +10,11 @@ part of 'locale_state.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(LocaleController)
-const localeControllerProvider = LocaleControllerProvider._();
+final localeControllerProvider = LocaleControllerProvider._();
 
 final class LocaleControllerProvider
     extends $NotifierProvider<LocaleController, Locale?> {
-  const LocaleControllerProvider._()
+  LocaleControllerProvider._()
     : super(
         from: null,
         argument: null,
@@ -48,7 +48,6 @@ abstract class _$LocaleController extends $Notifier<Locale?> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<Locale?, Locale?>;
     final element =
         ref.element
@@ -58,6 +57,6 @@ abstract class _$LocaleController extends $Notifier<Locale?> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }

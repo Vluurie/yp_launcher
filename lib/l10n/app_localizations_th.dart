@@ -929,6 +929,40 @@ class AppLocalizationsTh extends AppLocalizations {
       'วางไฟล์เก็บถาวรม็อด shader ของ 3DMigoto ที่นี่ ตัวเรียกใช้งานจะติดตั้งและตั้งค่าเป้าหมายตัวโหลดเพื่อให้ NAMS hook ได้';
 
   @override
+  String get thirdPartyGameModsHeader => 'ม็อดเกม';
+
+  @override
+  String get thirdPartyGameModsHowto =>
+      'วางไฟล์ม็อด (.dll) ที่สร้างมาสำหรับเกมต้นฉบับที่นี่ เช่น ตัวจับเวลา speedrun เครื่องมือโกง และเครื่องมืออื่นที่คล้ายกัน ตัวเรียกใช้งานจะตั้งค่าให้ทำงานภายใต้ NAMS แต่ไม่สามารถตรวจสอบได้ว่าม็อดทำอะไรบ้าง ม็อดใดก็ตามอาจทำให้เกมแครชได้ ควรเพิ่มเฉพาะไฟล์ที่คุณไว้ใจ และปิดม็อดด้านล่างหากเกมเริ่มทำงานผิดปกติ';
+
+  @override
+  String get thirdPartyGameModsNone => 'ยังไม่ได้ติดตั้งม็อดเกม';
+
+  @override
+  String get thirdPartyWaxRejected =>
+      'WAX ใช้ร่วมกับ NAMS ไม่ได้ เพราะทั้งคู่ทำงานแบบเดียวกัน หากใช้พร้อมกันเกมจะแครช ชุดและไอเทมของ WAX ให้ใช้ผ่านแท็บม็อดแทน';
+
+  @override
+  String thirdPartyGameModsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count DLL',
+      zero: 'ไม่มี DLL',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get thirdPartyGameModsDisabledChip => 'ปิดใช้งาน';
+
+  @override
+  String get thirdPartyGameModsToggleHint => 'ปิดม็อดนี้โดยไม่ต้องลบ';
+
+  @override
+  String get thirdPartyGameModsRemoveOne => 'ลบม็อดนี้';
+
+  @override
   String get thirdPartyStatusInstalled => 'ติดตั้งแล้ว';
 
   @override
@@ -2631,11 +2665,39 @@ class AppLocalizationsTh extends AppLocalizations {
       'ข้ามการโหลดรันไทม์ 3DMigoto จาก thirdparty/3dmigoto/ ปิดเพื่อหยุดโหลดม็อด shader';
 
   @override
+  String get labelDisableGameModsLoading => 'ปิดการโหลดม็อดเกม';
+
+  @override
+  String get tooltipDisableGameModsLoading =>
+      'หยุดโหลดม็อดที่อยู่ในแท็บบุคคลที่สามหัวข้อ “ม็อดเกม” เช่น ตัวจับเวลา speedrun และเครื่องมือโกง เปิดตัวเลือกนี้เพื่อเล่นโดยไม่ใช้ม็อดเหล่านั้นโดยไม่ต้องลบไฟล์';
+
+  @override
   String get labelDisableTextureInjection => 'ปิดการฉีดเท็กซ์เจอร์';
 
   @override
   String get tooltipDisableTextureInjection =>
       'ข้ามการฉีดเท็กซ์เจอร์จากโฟลเดอร์ม็อด มีประโยชน์สำหรับแยกปัญหา หรือเมื่อไม่ต้องการใช้ม็อดเท็กซ์เจอร์แม้จะติดตั้งไว้';
+
+  @override
+  String get labelHideSubtitleOverlay => 'ซ่อนโอเวอร์เลย์คำบรรยาย';
+
+  @override
+  String get tooltipHideSubtitleOverlay =>
+      'ซ่อนแถบสีดำและโอเวอร์เลย์คำบรรยายระหว่างคัตซีน มีผลกับคัตซีนเท่านั้น เมนู คำอธิบายไอเทม และบทสนทนาปกติจะไม่เปลี่ยนแปลง';
+
+  @override
+  String get labelKeepSubtitleText => 'คงข้อความคำบรรยายไว้';
+
+  @override
+  String get tooltipKeepSubtitleText =>
+      'ลบเฉพาะพื้นหลังสีเข้มด้านหลังคำบรรยาย และคงตัวข้อความให้อ่านได้ ต้องเปิด “ซ่อนโอเวอร์เลย์คำบรรยาย” ก่อน';
+
+  @override
+  String get labelHideSubtitleInEvents => 'ซ่อนในฉากอีเวนต์ด้วย (ทดลอง)';
+
+  @override
+  String get tooltipHideSubtitleInEvents =>
+      'อยู่ในขั้นทดลอง ใช้กับฉากอีเวนต์ในเอนจินด้วย ไม่ใช่แค่วิดีโอที่เรนเดอร์ไว้ล่วงหน้า อาจข้ามบางฉากหรือซ่อนข้อความที่ต้องการเก็บไว้ ปิดหากพบความผิดปกติ ต้องเปิด “ซ่อนโอเวอร์เลย์คำบรรยาย” ก่อน';
 
   @override
   String get labelOutfitSwapVisualEffects => 'เอฟเฟกต์ภาพตอนสลับชุด';
@@ -3840,6 +3902,9 @@ class AppLocalizationsTh extends AppLocalizations {
   }
 
   @override
+  String get cutsceneSubtitleCard => 'คำบรรยายและแถบสีดำ';
+
+  @override
   String get cutsceneStatusHd => 'HD';
 
   @override
@@ -4097,6 +4162,125 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get modDataPlayerModels => 'โมเดลผู้เล่น';
+
+  @override
+  String get threeDInspectorOpen => 'เปิดตัวตรวจสอบ 3 มิติ';
+
+  @override
+  String get threeDInspectorClose => 'ปิดตัวตรวจสอบ 3 มิติ';
+
+  @override
+  String get threeDInspectorResetCamera => 'รีเซ็ตกล้อง';
+
+  @override
+  String get threeDInspectorControls =>
+      'ลากซ้าย: หมุน · ลากขวา: เลื่อน · ล้อเมาส์: ซูม · Esc: ปิด';
+
+  @override
+  String get threeDInspectorVertices => 'จุดยอด';
+
+  @override
+  String get threeDInspectorTriangles => 'สามเหลี่ยม';
+
+  @override
+  String get threeDInspectorLod => 'ระดับรายละเอียด';
+
+  @override
+  String get threeDInspectorMeshes => 'เมช';
+
+  @override
+  String get threeDInspectorExpand => 'ขยายตัวตรวจสอบ 3 มิติ';
+
+  @override
+  String get threeDInspectorOutfit => 'ชุด';
+
+  @override
+  String get threeDInspectorVariant => 'รูปแบบโมเดล';
+
+  @override
+  String get threeDInspectorVariantNormal => 'ปกติ';
+
+  @override
+  String get threeDInspectorVariantDamaged => 'เสียหาย';
+
+  @override
+  String get threeDInspectorVariantBase => 'พื้นฐาน';
+
+  @override
+  String get threeDInspectorVariantSelfDestruct => 'ทำลายตัวเอง';
+
+  @override
+  String get threeDInspectorVariantDamagedLeft => 'เสียหายด้านซ้าย';
+
+  @override
+  String get threeDInspectorVariantDamagedRight => 'เสียหายด้านขวา';
+
+  @override
+  String get threeDInspectorVariantDamagedHoles => 'เสียหายเป็นรู';
+
+  @override
+  String get threeDInspectorVariantDamaged2bHand => 'เสียหายที่มือ 2B';
+
+  @override
+  String get threeDInspectorVariantArmor => 'ชุดเกราะ';
+
+  @override
+  String get threeDInspectorVariantDlc => 'DLC';
+
+  @override
+  String get threeDInspectorVariantDlcDamaged => 'DLC เสียหาย';
+
+  @override
+  String get threeDInspectorVariantDlcDamagedLeft => 'DLC เสียหายด้านซ้าย';
+
+  @override
+  String get threeDInspectorVariantDlcDamagedRight => 'DLC เสียหายด้านขวา';
+
+  @override
+  String get threeDInspectorVariantDlcDamagedHoles => 'DLC เสียหายเป็นรู';
+
+  @override
+  String get threeDInspectorVariantDlcDamaged2bHand => 'DLC เสียหายที่มือ 2B';
+
+  @override
+  String get threeDInspectorVariantBerserk => 'คลั่ง';
+
+  @override
+  String threeDInspectorOutfitNumber(int id) {
+    return 'ชุด $id';
+  }
+
+  @override
+  String get threeDInspectorStates => 'สถานะ';
+
+  @override
+  String get threeDInspectorStateSelfDestructed => 'ทำลายตัวเอง / เสียหาย';
+
+  @override
+  String get threeDInspectorStateEyemask => 'ผ้าปิดตา';
+
+  @override
+  String get threeDInspectorStateCombat => 'การต่อสู้';
+
+  @override
+  String get threeDInspectorStatePrologue => 'บทนำ';
+
+  @override
+  String get threeDInspectorStateHoly => 'ศักดิ์สิทธิ์';
+
+  @override
+  String get threeDInspectorStateNoRight => 'สูญเสียด้านขวา';
+
+  @override
+  String get threeDInspectorStateTower => 'หอคอย';
+
+  @override
+  String get threeDInspectorStateWig => 'วิกแทนที่เส้นผมของร่างกาย';
+
+  @override
+  String threeDInspectorMissingMeshes(int count) {
+    return 'ไม่พบเมชที่กำหนดค่าไว้ $count รายการ';
+  }
 
   @override
   String get modRequiresLabel => 'ต้องใช้';

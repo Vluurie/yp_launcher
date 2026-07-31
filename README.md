@@ -66,7 +66,7 @@ scattered across your system, so your setup stays with the game folder.
 
 Most people should just download a release above. This section is for developers.
 
-You'll need the Flutter SDK (Dart `^3.9.2`). Then:
+You'll need the Flutter SDK (Dart `^3.9.2`) and the Rust toolchain. Then:
 
 ```bash
 flutter pub get
@@ -82,7 +82,7 @@ the `7zz` binary must be ad-hoc signed (`codesign --force --sign - 7zz`).
 Build commands:
 
 ```bash
-flutter build windows                # Windows
+./scripts/build_windows.ps1          # Windows
 ./scripts/build_macos_dmg.sh         # macOS  -> build/YP-Launcher-<version>.dmg
 ./scripts/build_linux_tarball.sh     # Linux  -> tarball
 ./scripts/build_linux_appimage.sh    # Linux  -> AppImage

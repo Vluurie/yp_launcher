@@ -10,11 +10,11 @@ part of 'log_state.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(LogStateController)
-const logStateControllerProvider = LogStateControllerProvider._();
+final logStateControllerProvider = LogStateControllerProvider._();
 
 final class LogStateControllerProvider
     extends $NotifierProvider<LogStateController, LogData> {
-  const LogStateControllerProvider._()
+  LogStateControllerProvider._()
     : super(
         from: null,
         argument: null,
@@ -49,7 +49,6 @@ abstract class _$LogStateController extends $Notifier<LogData> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<LogData, LogData>;
     final element =
         ref.element
@@ -59,6 +58,6 @@ abstract class _$LogStateController extends $Notifier<LogData> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }

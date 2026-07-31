@@ -11,6 +11,7 @@ import 'package:yp_launcher/widgets/cutscenes/cutscene_drop_zone.dart';
 import 'package:yp_launcher/widgets/cutscenes/cutscene_info.dart';
 import 'package:yp_launcher/widgets/cutscenes/cutscene_installed_list.dart';
 import 'package:yp_launcher/widgets/cutscenes/cutscene_isolates.dart';
+import 'package:yp_launcher/widgets/cutscenes/cutscene_subtitle_card.dart';
 
 class CutscenesView extends ConsumerStatefulWidget {
   const CutscenesView({super.key});
@@ -161,6 +162,8 @@ class _CutscenesViewState extends ConsumerState<CutscenesView> {
                                     onBrowseFolder:
                                         _installService.handleBrowseFolder,
                                   ),
+                                  const SizedBox(height: 16),
+                                  const CutsceneSubtitleCard(),
                                   const SizedBox(height: 16),
                                   const CutsceneInfoCard(),
                                 ],

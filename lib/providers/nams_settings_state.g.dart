@@ -10,12 +10,12 @@ part of 'nams_settings_state.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(NamsSettingsStateController)
-const namsSettingsStateControllerProvider =
+final namsSettingsStateControllerProvider =
     NamsSettingsStateControllerProvider._();
 
 final class NamsSettingsStateControllerProvider
     extends $NotifierProvider<NamsSettingsStateController, NamsSettingsData> {
-  const NamsSettingsStateControllerProvider._()
+  NamsSettingsStateControllerProvider._()
     : super(
         from: null,
         argument: null,
@@ -51,7 +51,6 @@ abstract class _$NamsSettingsStateController
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<NamsSettingsData, NamsSettingsData>;
     final element =
         ref.element
@@ -61,6 +60,6 @@ abstract class _$NamsSettingsStateController
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }

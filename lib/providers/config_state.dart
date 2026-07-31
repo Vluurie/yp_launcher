@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/legacy.dart';
 import 'package:path/path.dart' as path;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:yp_launcher/models/config_fields.dart';
+import 'package:yp_launcher/providers/app_state.dart';
+import 'package:yp_launcher/providers/default_mods_state.dart';
 import 'package:yp_launcher/services/nams_config_service.dart';
 import 'package:yp_launcher/services/cutscene_detection_service.dart';
 import 'package:yp_launcher/services/toml_service.dart';
@@ -136,6 +138,36 @@ class ConfigStateController extends _$ConfigStateController {
     );
   }
 
+  Future<void> updateNamsNow(
+    String gameDir,
+    String key,
+    dynamic value, {
+    String? section,
+  }) async {
+    final namsPath = path.join(gameDir, 'nams', 'nams.toml');
+    final raw = await TomlService.readTomlFile(namsPath);
+    final parsed = TomlService.parse(raw);
+
+    final merged = Map<String, dynamic>.from(parsed);
+    if (section == null) {
+      merged[key] = value;
+    } else {
+      var parent = merged;
+      for (final part in section.split('.')) {
+        final child = Map<String, dynamic>.from(
+          (parent[part] as Map<String, dynamic>?) ?? const {},
+        );
+        parent[part] = child;
+        parent = child;
+      }
+      parent[key] = value;
+    }
+
+    final newRaw = TomlService.updateToml(raw, merged);
+    await TomlService.writeTomlFile(namsPath, newRaw);
+    state = state.copyWith(namsValues: merged, namsRawContent: newRaw);
+  }
+
   void updateNams(String key, dynamic value, {String? section}) {
     final updated = Map<String, dynamic>.from(state.namsValues);
     if (section != null) {
@@ -263,6 +295,10 @@ class ConfigStateController extends _$ConfigStateController {
     final lodmodPath = path.join(gameDir, 'nams', 'lodmod.toml');
     final texturePath = path.join(gameDir, 'nams', 'texture_injection.toml');
 
+    final defaultOutfitsKey = NamsFields.experimentalDefaultOutfits.key;
+    final defaultOutfitsWas =
+        TomlService.parse(state.namsRawContent)[defaultOutfitsKey] == true;
+
     final updatedNams = TomlService.updateToml(
       state.namsRawContent,
       state.namsValues,
@@ -286,6 +322,13 @@ class ConfigStateController extends _$ConfigStateController {
       textureInjectionRawContent: updatedTexture,
       hasUnsavedChanges: false,
     );
+
+    if ((state.namsValues[defaultOutfitsKey] == true) != defaultOutfitsWas) {
+      await ref
+          .read(defaultModsStateControllerProvider.notifier)
+          .load(gameDir);
+      ref.read(detectionRefreshProvider.notifier).state++;
+    }
   }
 
   Future<void> discardChanges(String gameDir) async {

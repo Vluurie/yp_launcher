@@ -10,11 +10,11 @@ part of 'mod_names_state.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(ModNamesStateController)
-const modNamesStateControllerProvider = ModNamesStateControllerProvider._();
+final modNamesStateControllerProvider = ModNamesStateControllerProvider._();
 
 final class ModNamesStateControllerProvider
     extends $NotifierProvider<ModNamesStateController, ModNamesData> {
-  const ModNamesStateControllerProvider._()
+  ModNamesStateControllerProvider._()
     : super(
         from: null,
         argument: null,
@@ -49,7 +49,6 @@ abstract class _$ModNamesStateController extends $Notifier<ModNamesData> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<ModNamesData, ModNamesData>;
     final element =
         ref.element
@@ -59,6 +58,6 @@ abstract class _$ModNamesStateController extends $Notifier<ModNamesData> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }

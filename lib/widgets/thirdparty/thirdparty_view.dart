@@ -65,7 +65,7 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
   Future<void> _browse() async {
     final result = await FilePicker.pickFiles(
       type: FileType.custom,
-      allowedExtensions: const ['zip', '7z', 'rar', 'ini', 'exe'],
+      allowedExtensions: const ['zip', '7z', 'rar', 'ini', 'exe', 'dll'],
     );
     final path = result?.files.single.path;
     if (path != null) await _installFromPath(path);
@@ -102,8 +102,9 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
       }
       extracted = Directory(out);
       sourceRoot = out;
-    } else if (path.toLowerCase().endsWith('.ini')) {
-      final tmp = Directory.systemTemp.createTempSync('yp_tp_ini_');
+    } else if (path.toLowerCase().endsWith('.ini') ||
+        path.toLowerCase().endsWith('.dll')) {
+      final tmp = Directory.systemTemp.createTempSync('yp_tp_file_');
       FileOps.copyFileInto(path, tmp.path);
       extracted = tmp;
       sourceRoot = tmp.path;
@@ -117,6 +118,7 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
         case ThirdPartyKind.reshadeWholeInstall:
         case ThirdPartyKind.reshadePreset:
         case ThirdPartyKind.migoto:
+        case ThirdPartyKind.gameMod:
           final update = await notifier.wouldUpdate(c);
           if (update != null) {
             if (!mounted) return;
@@ -135,6 +137,10 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
             _notify((l10n) => l10n.thirdPartyInstallFailed, Icons.error_outline,
                 AppColors.error);
           }
+          break;
+        case ThirdPartyKind.incompatibleModloader:
+          _notify((l10n) => l10n.thirdPartyWaxRejected, Icons.block,
+              AppColors.error);
           break;
         case ThirdPartyKind.gameData:
           _notify((l10n) => l10n.thirdPartyRedirectMods, Icons.info_outline,
@@ -159,8 +165,16 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
     }
   }
 
-  String _runtimeName(ThirdPartyRuntime which) =>
-      which == ThirdPartyRuntime.reshade ? 'ReShade' : '3DMigoto';
+  String _runtimeName(ThirdPartyRuntime which) {
+    switch (which) {
+      case ThirdPartyRuntime.reshade:
+        return 'ReShade';
+      case ThirdPartyRuntime.migoto:
+        return '3DMigoto';
+      case ThirdPartyRuntime.gameMods:
+        return AppLocalizations.of(context)!.thirdPartyGameModsHeader;
+    }
+  }
 
   Widget _updateDiff(
     AppLocalizations l10n,
@@ -326,6 +340,7 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     _migotoCard(l10n, data.migoto),
+                    _gameModsCard(l10n, data.gameMods),
                   ],
                 );
                 if (stack) {
@@ -610,6 +625,112 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
         onChanged: (v) => apply(c.copyWith(checkForegroundWindow: v)),
       ),
     ]);
+  }
+
+  Widget _gameModsCard(AppLocalizations l10n, ThirdPartyRuntimeStatus status) {
+    final info = status.gameModsInfo ?? const GameModsInfo();
+
+    if (info.mods.isEmpty) {
+      return _card(l10n.thirdPartyGameModsHeader, [
+        _statusRow(l10n, status, false),
+        SizedBox(height: AppSizes.spacingSM(context)),
+        _howto(l10n.thirdPartyGameModsHowto),
+      ]);
+    }
+
+    return _card(
+      l10n.thirdPartyGameModsHeader,
+      [
+        _howto(l10n.thirdPartyGameModsHowto),
+        Text(
+          l10n.thirdPartyGameModsCount(info.mods.length),
+          style: TextStyle(
+            fontSize: AppSizes.fontXS(context),
+            fontWeight: FontWeight.bold,
+            color: AppColors.textMuted,
+            letterSpacing: 0.5,
+          ),
+        ),
+        for (final mod in info.mods) _gameModRow(l10n, mod),
+      ],
+      trailing: _statusChip(l10n, status.enabled),
+      actions: _iconActions(
+        l10n,
+        ThirdPartyPaths.gameMods(),
+        ThirdPartyRuntime.gameMods,
+      ),
+    );
+  }
+
+  Widget _gameModRow(AppLocalizations l10n, GameModEntry mod) {
+    final color = mod.disabled ? AppColors.textMuted : AppColors.textSecondary;
+    return Padding(
+      padding: EdgeInsets.only(top: AppSizes.spacingSM(context)),
+      child: Row(
+        children: [
+          Tooltip(
+            message: l10n.thirdPartyGameModsToggleHint,
+            child: SizedBox(
+              width: 36,
+              height: 20,
+              child: FittedBox(
+                fit: BoxFit.contain,
+                child: Switch(
+                  value: !mod.disabled,
+                  onChanged: (v) => ref
+                      .read(thirdPartyStateControllerProvider.notifier)
+                      .setGameModDisabled(mod.fileName, !v),
+                  activeThumbColor: AppColors.accentPrimary,
+                  activeTrackColor:
+                      AppColors.accentPrimary.withValues(alpha: 0.4),
+                  inactiveThumbColor: AppColors.textMuted,
+                  inactiveTrackColor: AppColors.borderLight,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(width: AppSizes.spacingMD(context)),
+          Expanded(
+            child: Text(
+              mod.sizeLabel == null
+                  ? mod.fileName
+                  : '${mod.fileName} · ${mod.sizeLabel}',
+              style: TextStyle(
+                fontSize: AppSizes.fontXS(context),
+                color: color,
+                decoration:
+                    mod.disabled ? TextDecoration.lineThrough : null,
+              ),
+            ),
+          ),
+          if (mod.disabled)
+            Padding(
+              padding: EdgeInsets.only(right: AppSizes.spacingSM(context)),
+              child: Text(
+                l10n.thirdPartyGameModsDisabledChip,
+                style: TextStyle(
+                  fontSize: AppSizes.fontXS(context),
+                  color: AppColors.textMuted,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ),
+          HoverIconButton(
+            bordered: false,
+            padding: const EdgeInsets.all(4),
+            tooltip: l10n.thirdPartyGameModsRemoveOne,
+            icon: Icon(
+              Icons.delete_outline,
+              size: AppSizes.iconSM(context),
+              color: AppColors.error,
+            ),
+            onTap: () => ref
+                .read(thirdPartyStateControllerProvider.notifier)
+                .removeGameMod(mod.fileName),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _loaderRow(AppLocalizations l10n, MigotoInfo info) {

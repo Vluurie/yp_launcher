@@ -1,9 +1,11 @@
-enum ThirdPartyRuntime { reshade, migoto }
+enum ThirdPartyRuntime { reshade, migoto, gameMods }
 
 enum ThirdPartyKind {
   reshadeWholeInstall,
   reshadePreset,
   migoto,
+  gameMod,
+  incompatibleModloader,
   lodmod,
   textures,
   gameData,
@@ -25,6 +27,7 @@ class ThirdPartyClassification {
   final bool isAddonBuild;
   final bool hasShaders;
   final int presetCount;
+  final List<String> gameModDlls;
 
   const ThirdPartyClassification({
     required this.kind,
@@ -37,6 +40,7 @@ class ThirdPartyClassification {
     this.isAddonBuild = false,
     this.hasShaders = false,
     this.presetCount = 0,
+    this.gameModDlls = const [],
   });
 
   ThirdPartyClassification withSourceName(String? name) =>
@@ -51,7 +55,32 @@ class ThirdPartyClassification {
         isAddonBuild: isAddonBuild,
         hasShaders: hasShaders,
         presetCount: presetCount,
+        gameModDlls: gameModDlls,
       );
+}
+
+class GameModEntry {
+  final String fileName;
+  final String? sizeLabel;
+  final bool disabled;
+
+  const GameModEntry({
+    required this.fileName,
+    this.sizeLabel,
+    this.disabled = false,
+  });
+}
+
+class GameModsInfo {
+  final List<GameModEntry> mods;
+  final bool hasConfig;
+
+  const GameModsInfo({
+    this.mods = const [],
+    this.hasConfig = false,
+  });
+
+  int get enabledCount => mods.where((m) => !m.disabled).length;
 }
 
 class ReShadeInfo {
@@ -205,6 +234,7 @@ class ThirdPartyRuntimeStatus {
   final bool hasShaderFixes;
   final ReShadeInfo? reshadeInfo;
   final MigotoInfo? migotoInfo;
+  final GameModsInfo? gameModsInfo;
 
   const ThirdPartyRuntimeStatus({
     this.installed = false,
@@ -214,6 +244,7 @@ class ThirdPartyRuntimeStatus {
     this.hasShaderFixes = false,
     this.reshadeInfo,
     this.migotoInfo,
+    this.gameModsInfo,
   });
 }
 

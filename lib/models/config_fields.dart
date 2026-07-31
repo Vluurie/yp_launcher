@@ -154,11 +154,42 @@ class NamsFields {
     tooltip: (l) => l.tooltipDisable3dmigotoLoading,
   );
 
+  static final disableGameModsLoading = ConfigField<bool>(
+    key: 'disable_game_mods_loading',
+    defaultValue: false,
+    label: (l) => l.labelDisableGameModsLoading,
+    tooltip: (l) => l.tooltipDisableGameModsLoading,
+  );
+
   static final disableTextureInjection = ConfigField<bool>(
     key: 'disable_texture_injection',
     defaultValue: false,
     label: (l) => l.labelDisableTextureInjection,
     tooltip: (l) => l.tooltipDisableTextureInjection,
+  );
+
+  static final hideSubtitleOverlay = ConfigField<bool>(
+    key: 'hide_subtitle_overlay',
+    defaultValue: false,
+    section: 'cutscene',
+    label: (l) => l.labelHideSubtitleOverlay,
+    tooltip: (l) => l.tooltipHideSubtitleOverlay,
+  );
+
+  static final keepSubtitleText = ConfigField<bool>(
+    key: 'keep_subtitle_text',
+    defaultValue: false,
+    section: 'cutscene',
+    label: (l) => l.labelKeepSubtitleText,
+    tooltip: (l) => l.tooltipKeepSubtitleText,
+  );
+
+  static final hideSubtitleInEvents = ConfigField<bool>(
+    key: 'hide_subtitle_in_events',
+    defaultValue: false,
+    section: 'cutscene',
+    label: (l) => l.labelHideSubtitleInEvents,
+    tooltip: (l) => l.tooltipHideSubtitleInEvents,
   );
 
   static final disableSplashScreen = ConfigField<bool>(

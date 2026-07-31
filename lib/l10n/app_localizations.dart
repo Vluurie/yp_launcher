@@ -1728,6 +1728,54 @@ abstract class AppLocalizations {
   /// **'Drop a 3DMigoto shader-mod archive here. The launcher installs it and sets the loader target so NAMS hooks it.'**
   String get thirdPartyMigotoHowto;
 
+  /// No description provided for @thirdPartyGameModsHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'GAME MODS'**
+  String get thirdPartyGameModsHeader;
+
+  /// No description provided for @thirdPartyGameModsHowto.
+  ///
+  /// In en, this message translates to:
+  /// **'Drop mod files (.dll) here that were made for the original game — speedrun timers, trainers and similar tools. The launcher sets them up to run under NAMS, but it cannot check what a mod actually does: any of them can crash the game. Only add files you trust, and turn one off below if the game starts misbehaving.'**
+  String get thirdPartyGameModsHowto;
+
+  /// No description provided for @thirdPartyGameModsNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No game mods installed'**
+  String get thirdPartyGameModsNone;
+
+  /// No description provided for @thirdPartyWaxRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'WAX cannot be used with NAMS. Both do the same job, so running them together crashes the game. Your WAX outfits and items work in the Mods tab instead.'**
+  String get thirdPartyWaxRejected;
+
+  /// No description provided for @thirdPartyGameModsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No DLLs} =1{1 DLL} other{{count} DLLs}}'**
+  String thirdPartyGameModsCount(int count);
+
+  /// No description provided for @thirdPartyGameModsDisabledChip.
+  ///
+  /// In en, this message translates to:
+  /// **'Disabled'**
+  String get thirdPartyGameModsDisabledChip;
+
+  /// No description provided for @thirdPartyGameModsToggleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn this mod off without deleting it.'**
+  String get thirdPartyGameModsToggleHint;
+
+  /// No description provided for @thirdPartyGameModsRemoveOne.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this mod'**
+  String get thirdPartyGameModsRemoveOne;
+
   /// No description provided for @thirdPartyStatusInstalled.
   ///
   /// In en, this message translates to:
@@ -4632,6 +4680,18 @@ abstract class AppLocalizations {
   /// **'Skip loading the 3DMigoto runtime from thirdparty/3dmigoto/. Turn off to stop loading shader mods.'**
   String get tooltipDisable3dmigotoLoading;
 
+  /// No description provided for @labelDisableGameModsLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Disable Game Mod Loading'**
+  String get labelDisableGameModsLoading;
+
+  /// No description provided for @tooltipDisableGameModsLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop loading the mods listed in the Third Party tab under Game Mods, such as speedrun timers and trainers. Turn this on to play without them without having to delete anything.'**
+  String get tooltipDisableGameModsLoading;
+
   /// No description provided for @labelDisableTextureInjection.
   ///
   /// In en, this message translates to:
@@ -4643,6 +4703,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Skip texture injection from the mods folder. Useful for isolating issues or if you don\'t want to use texture mods even though they are installed.'**
   String get tooltipDisableTextureInjection;
+
+  /// No description provided for @labelHideSubtitleOverlay.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide Subtitle Overlay'**
+  String get labelHideSubtitleOverlay;
+
+  /// No description provided for @tooltipHideSubtitleOverlay.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide the black bars and caption overlay shown during cutscenes. Only affects cutscenes - menus, item descriptions and normal dialogue stay untouched.'**
+  String get tooltipHideSubtitleOverlay;
+
+  /// No description provided for @labelKeepSubtitleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep Subtitle Text'**
+  String get labelKeepSubtitleText;
+
+  /// No description provided for @tooltipKeepSubtitleText.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove only the dark backdrop behind the captions and keep the text itself readable. Requires Hide Subtitle Overlay.'**
+  String get tooltipKeepSubtitleText;
+
+  /// No description provided for @labelHideSubtitleInEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'Also Hide In Event Scenes (Experimental)'**
+  String get labelHideSubtitleInEvents;
+
+  /// No description provided for @tooltipHideSubtitleInEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'EXPERIMENTAL. Also apply during in-engine event scenes, not just pre-rendered movies. May miss some scenes or hide text you wanted to keep - turn off if anything looks wrong. Requires Hide Subtitle Overlay.'**
+  String get tooltipHideSubtitleInEvents;
 
   /// No description provided for @labelOutfitSwapVisualEffects.
   ///
@@ -6647,6 +6743,12 @@ abstract class AppLocalizations {
   /// **'Bundled with {modId}'**
   String cutsceneBundledWith(String modId);
 
+  /// No description provided for @cutsceneSubtitleCard.
+  ///
+  /// In en, this message translates to:
+  /// **'SUBTITLES & BLACK BARS'**
+  String get cutsceneSubtitleCard;
+
   /// No description provided for @cutsceneStatusHd.
   ///
   /// In en, this message translates to:
@@ -7108,6 +7210,234 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Player models'**
   String get modDataPlayerModels;
+
+  /// No description provided for @threeDInspectorOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open 3D inspector'**
+  String get threeDInspectorOpen;
+
+  /// No description provided for @threeDInspectorClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Close 3D inspector'**
+  String get threeDInspectorClose;
+
+  /// No description provided for @threeDInspectorResetCamera.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset camera'**
+  String get threeDInspectorResetCamera;
+
+  /// No description provided for @threeDInspectorControls.
+  ///
+  /// In en, this message translates to:
+  /// **'Left drag: orbit · Right drag: pan · Wheel: zoom · Esc: close'**
+  String get threeDInspectorControls;
+
+  /// No description provided for @threeDInspectorVertices.
+  ///
+  /// In en, this message translates to:
+  /// **'vertices'**
+  String get threeDInspectorVertices;
+
+  /// No description provided for @threeDInspectorTriangles.
+  ///
+  /// In en, this message translates to:
+  /// **'triangles'**
+  String get threeDInspectorTriangles;
+
+  /// No description provided for @threeDInspectorLod.
+  ///
+  /// In en, this message translates to:
+  /// **'LOD'**
+  String get threeDInspectorLod;
+
+  /// No description provided for @threeDInspectorMeshes.
+  ///
+  /// In en, this message translates to:
+  /// **'Meshes'**
+  String get threeDInspectorMeshes;
+
+  /// No description provided for @threeDInspectorExpand.
+  ///
+  /// In en, this message translates to:
+  /// **'Expand 3D inspector'**
+  String get threeDInspectorExpand;
+
+  /// No description provided for @threeDInspectorOutfit.
+  ///
+  /// In en, this message translates to:
+  /// **'Outfit'**
+  String get threeDInspectorOutfit;
+
+  /// No description provided for @threeDInspectorVariant.
+  ///
+  /// In en, this message translates to:
+  /// **'Model variant'**
+  String get threeDInspectorVariant;
+
+  /// No description provided for @threeDInspectorVariantNormal.
+  ///
+  /// In en, this message translates to:
+  /// **'Normal'**
+  String get threeDInspectorVariantNormal;
+
+  /// No description provided for @threeDInspectorVariantDamaged.
+  ///
+  /// In en, this message translates to:
+  /// **'Damaged'**
+  String get threeDInspectorVariantDamaged;
+
+  /// No description provided for @threeDInspectorVariantBase.
+  ///
+  /// In en, this message translates to:
+  /// **'Base'**
+  String get threeDInspectorVariantBase;
+
+  /// No description provided for @threeDInspectorVariantSelfDestruct.
+  ///
+  /// In en, this message translates to:
+  /// **'Self-destruct'**
+  String get threeDInspectorVariantSelfDestruct;
+
+  /// No description provided for @threeDInspectorVariantDamagedLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'Broken left'**
+  String get threeDInspectorVariantDamagedLeft;
+
+  /// No description provided for @threeDInspectorVariantDamagedRight.
+  ///
+  /// In en, this message translates to:
+  /// **'Broken right'**
+  String get threeDInspectorVariantDamagedRight;
+
+  /// No description provided for @threeDInspectorVariantDamagedHoles.
+  ///
+  /// In en, this message translates to:
+  /// **'Broken holes'**
+  String get threeDInspectorVariantDamagedHoles;
+
+  /// No description provided for @threeDInspectorVariantDamaged2bHand.
+  ///
+  /// In en, this message translates to:
+  /// **'Broken 2B hand'**
+  String get threeDInspectorVariantDamaged2bHand;
+
+  /// No description provided for @threeDInspectorVariantArmor.
+  ///
+  /// In en, this message translates to:
+  /// **'Armor'**
+  String get threeDInspectorVariantArmor;
+
+  /// No description provided for @threeDInspectorVariantDlc.
+  ///
+  /// In en, this message translates to:
+  /// **'DLC'**
+  String get threeDInspectorVariantDlc;
+
+  /// No description provided for @threeDInspectorVariantDlcDamaged.
+  ///
+  /// In en, this message translates to:
+  /// **'DLC damaged'**
+  String get threeDInspectorVariantDlcDamaged;
+
+  /// No description provided for @threeDInspectorVariantDlcDamagedLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'DLC broken left'**
+  String get threeDInspectorVariantDlcDamagedLeft;
+
+  /// No description provided for @threeDInspectorVariantDlcDamagedRight.
+  ///
+  /// In en, this message translates to:
+  /// **'DLC broken right'**
+  String get threeDInspectorVariantDlcDamagedRight;
+
+  /// No description provided for @threeDInspectorVariantDlcDamagedHoles.
+  ///
+  /// In en, this message translates to:
+  /// **'DLC broken holes'**
+  String get threeDInspectorVariantDlcDamagedHoles;
+
+  /// No description provided for @threeDInspectorVariantDlcDamaged2bHand.
+  ///
+  /// In en, this message translates to:
+  /// **'DLC broken 2B hand'**
+  String get threeDInspectorVariantDlcDamaged2bHand;
+
+  /// No description provided for @threeDInspectorVariantBerserk.
+  ///
+  /// In en, this message translates to:
+  /// **'Berserk'**
+  String get threeDInspectorVariantBerserk;
+
+  /// No description provided for @threeDInspectorOutfitNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Outfit {id}'**
+  String threeDInspectorOutfitNumber(int id);
+
+  /// No description provided for @threeDInspectorStates.
+  ///
+  /// In en, this message translates to:
+  /// **'States'**
+  String get threeDInspectorStates;
+
+  /// No description provided for @threeDInspectorStateSelfDestructed.
+  ///
+  /// In en, this message translates to:
+  /// **'Self-destructed / broken'**
+  String get threeDInspectorStateSelfDestructed;
+
+  /// No description provided for @threeDInspectorStateEyemask.
+  ///
+  /// In en, this message translates to:
+  /// **'Eyemask'**
+  String get threeDInspectorStateEyemask;
+
+  /// No description provided for @threeDInspectorStateCombat.
+  ///
+  /// In en, this message translates to:
+  /// **'Combat'**
+  String get threeDInspectorStateCombat;
+
+  /// No description provided for @threeDInspectorStatePrologue.
+  ///
+  /// In en, this message translates to:
+  /// **'Prologue'**
+  String get threeDInspectorStatePrologue;
+
+  /// No description provided for @threeDInspectorStateHoly.
+  ///
+  /// In en, this message translates to:
+  /// **'Holy'**
+  String get threeDInspectorStateHoly;
+
+  /// No description provided for @threeDInspectorStateNoRight.
+  ///
+  /// In en, this message translates to:
+  /// **'Right side lost'**
+  String get threeDInspectorStateNoRight;
+
+  /// No description provided for @threeDInspectorStateTower.
+  ///
+  /// In en, this message translates to:
+  /// **'Tower'**
+  String get threeDInspectorStateTower;
+
+  /// No description provided for @threeDInspectorStateWig.
+  ///
+  /// In en, this message translates to:
+  /// **'Wig replaces body hair'**
+  String get threeDInspectorStateWig;
+
+  /// No description provided for @threeDInspectorMissingMeshes.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} configured mesh(es) not found'**
+  String threeDInspectorMissingMeshes(int count);
 
   /// No description provided for @modRequiresLabel.
   ///

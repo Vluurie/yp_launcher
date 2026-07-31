@@ -67,6 +67,11 @@ class _ModsViewState extends ConsumerState<ModsView> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _maybeReload();
       ref.listenManual(appStateControllerProvider, (_, __) => _maybeReload());
+      ref.listenManual<int>(detectionRefreshProvider, (_, __) {
+        final dir = _gameDir;
+        if (dir.isEmpty || !mounted) return;
+        ref.read(defaultModsStateControllerProvider.notifier).load(dir);
+      });
     });
   }
 

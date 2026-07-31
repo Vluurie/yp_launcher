@@ -370,6 +370,21 @@
   "thirdPartyMigotoHeader": "3DMIGOTO",
   "thirdPartyReShadeHowto": "ติดตั้ง ReShade ตามปกติลงในโฟลเดอร์ NieRAutomata (เลือก dxgi เป็น API) ตัวเรียกใช้งานจะย้ายไฟล์เข้า NAMS และตั้งค่าพาธให้คุณ",
   "thirdPartyMigotoHowto": "วางไฟล์เก็บถาวรม็อด shader ของ 3DMigoto ที่นี่ ตัวเรียกใช้งานจะติดตั้งและตั้งค่าเป้าหมายตัวโหลดเพื่อให้ NAMS hook ได้",
+  "thirdPartyGameModsHeader": "ม็อดเกม",
+  "thirdPartyGameModsHowto": "วางไฟล์ม็อด (.dll) ที่สร้างมาสำหรับเกมต้นฉบับที่นี่ เช่น ตัวจับเวลา speedrun เครื่องมือโกง และเครื่องมืออื่นที่คล้ายกัน ตัวเรียกใช้งานจะตั้งค่าให้ทำงานภายใต้ NAMS แต่ไม่สามารถตรวจสอบได้ว่าม็อดทำอะไรบ้าง ม็อดใดก็ตามอาจทำให้เกมแครชได้ ควรเพิ่มเฉพาะไฟล์ที่คุณไว้ใจ และปิดม็อดด้านล่างหากเกมเริ่มทำงานผิดปกติ",
+  "thirdPartyGameModsNone": "ยังไม่ได้ติดตั้งม็อดเกม",
+  "thirdPartyWaxRejected": "WAX ใช้ร่วมกับ NAMS ไม่ได้ เพราะทั้งคู่ทำงานแบบเดียวกัน หากใช้พร้อมกันเกมจะแครช ชุดและไอเทมของ WAX ให้ใช้ผ่านแท็บม็อดแทน",
+  "thirdPartyGameModsCount": "{count, plural, =0{ไม่มี DLL} other{{count} DLL}}",
+  "@thirdPartyGameModsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "thirdPartyGameModsDisabledChip": "ปิดใช้งาน",
+  "thirdPartyGameModsToggleHint": "ปิดม็อดนี้โดยไม่ต้องลบ",
+  "thirdPartyGameModsRemoveOne": "ลบม็อดนี้",
   "thirdPartyStatusInstalled": "ติดตั้งแล้ว",
   "thirdPartyStatusNotInstalled": "ยังไม่ได้ติดตั้ง",
   "thirdPartyStatusFoundInGame": "พบในโฟลเดอร์เกมของคุณ คลิก นำเข้า เพื่อตั้งค่าให้ใช้กับ NAMS",
@@ -1064,6 +1079,14 @@
   "tooltipDisable3dmigotoLoading": "ข้ามการโหลดรันไทม์ 3DMigoto จาก thirdparty/3dmigoto/ ปิดเพื่อหยุดโหลดม็อด shader",
   "labelDisableTextureInjection": "ปิดการฉีดเท็กซ์เจอร์",
   "tooltipDisableTextureInjection": "ข้ามการฉีดเท็กซ์เจอร์จากโฟลเดอร์ม็อด มีประโยชน์สำหรับแยกปัญหา หรือเมื่อไม่ต้องการใช้ม็อดเท็กซ์เจอร์แม้จะติดตั้งไว้",
+  "labelDisableGameModsLoading": "ปิดการโหลดม็อดเกม",
+  "tooltipDisableGameModsLoading": "หยุดโหลดม็อดที่อยู่ในแท็บบุคคลที่สามหัวข้อ “ม็อดเกม” เช่น ตัวจับเวลา speedrun และเครื่องมือโกง เปิดตัวเลือกนี้เพื่อเล่นโดยไม่ใช้ม็อดเหล่านั้นโดยไม่ต้องลบไฟล์",
+  "labelHideSubtitleOverlay": "ซ่อนโอเวอร์เลย์คำบรรยาย",
+  "tooltipHideSubtitleOverlay": "ซ่อนแถบสีดำและโอเวอร์เลย์คำบรรยายระหว่างคัตซีน มีผลกับคัตซีนเท่านั้น เมนู คำอธิบายไอเทม และบทสนทนาปกติจะไม่เปลี่ยนแปลง",
+  "labelKeepSubtitleText": "คงข้อความคำบรรยายไว้",
+  "tooltipKeepSubtitleText": "ลบเฉพาะพื้นหลังสีเข้มด้านหลังคำบรรยาย และคงตัวข้อความให้อ่านได้ ต้องเปิด “ซ่อนโอเวอร์เลย์คำบรรยาย” ก่อน",
+  "labelHideSubtitleInEvents": "ซ่อนในฉากอีเวนต์ด้วย (ทดลอง)",
+  "tooltipHideSubtitleInEvents": "อยู่ในขั้นทดลอง ใช้กับฉากอีเวนต์ในเอนจินด้วย ไม่ใช่แค่วิดีโอที่เรนเดอร์ไว้ล่วงหน้า อาจข้ามบางฉากหรือซ่อนข้อความที่ต้องการเก็บไว้ ปิดหากพบความผิดปกติ ต้องเปิด “ซ่อนโอเวอร์เลย์คำบรรยาย” ก่อน",
   "labelOutfitSwapVisualEffects": "เอฟเฟกต์ภาพตอนสลับชุด",
   "tooltipOutfitSwapVisualEffects": "เล่นเอฟเฟกต์ภาพระหว่าง hot-swap ชุด: แอนิเมชัน blinder ตอน Pod ปรากฏ ม่าน และฟิลเตอร์ glitch ของหน้าจอแฮ็ก ปิดเพื่อสลับทันทีโดยไม่มีเอฟเฟกต์ โมเดลยังคงโหลดใหม่ มีผลทันที ไม่ต้องรีสตาร์ต",
   "labelExperimentalDefaultOutfits": "ชุดเริ่มต้น (ทดลอง)",
@@ -1754,6 +1777,7 @@
       }
     }
   },
+  "cutsceneSubtitleCard": "คำบรรยายและแถบสีดำ",
   "cutsceneStatusHd": "HD",
   "cutsceneStatusHdTooltip": "[cutscene] hd_cutscenes ใน nams.toml ต้องเป็น true เพื่อโหลดม็อดคัตซีน HD",
   "cutsceneStatusH264": "H264",
@@ -1888,6 +1912,58 @@
   "modNativeBundles": "ชุดเนทีฟ",
   "modDataContent": "เนื้อหา data",
   "modDataPlayerModels": "โมเดลผู้เล่น",
+  "threeDInspectorOpen": "เปิดตัวตรวจสอบ 3 มิติ",
+  "threeDInspectorClose": "ปิดตัวตรวจสอบ 3 มิติ",
+  "threeDInspectorResetCamera": "รีเซ็ตกล้อง",
+  "threeDInspectorControls": "ลากซ้าย: หมุน · ลากขวา: เลื่อน · ล้อเมาส์: ซูม · Esc: ปิด",
+  "threeDInspectorVertices": "จุดยอด",
+  "threeDInspectorTriangles": "สามเหลี่ยม",
+  "threeDInspectorLod": "ระดับรายละเอียด",
+  "threeDInspectorMeshes": "เมช",
+  "threeDInspectorExpand": "ขยายตัวตรวจสอบ 3 มิติ",
+  "threeDInspectorOutfit": "ชุด",
+  "threeDInspectorVariant": "รูปแบบโมเดล",
+  "threeDInspectorVariantNormal": "ปกติ",
+  "threeDInspectorVariantDamaged": "เสียหาย",
+  "threeDInspectorVariantBase": "พื้นฐาน",
+  "threeDInspectorVariantSelfDestruct": "ทำลายตัวเอง",
+  "threeDInspectorVariantDamagedLeft": "เสียหายด้านซ้าย",
+  "threeDInspectorVariantDamagedRight": "เสียหายด้านขวา",
+  "threeDInspectorVariantDamagedHoles": "เสียหายเป็นรู",
+  "threeDInspectorVariantDamaged2bHand": "เสียหายที่มือ 2B",
+  "threeDInspectorVariantArmor": "ชุดเกราะ",
+  "threeDInspectorVariantDlc": "DLC",
+  "threeDInspectorVariantDlcDamaged": "DLC เสียหาย",
+  "threeDInspectorVariantDlcDamagedLeft": "DLC เสียหายด้านซ้าย",
+  "threeDInspectorVariantDlcDamagedRight": "DLC เสียหายด้านขวา",
+  "threeDInspectorVariantDlcDamagedHoles": "DLC เสียหายเป็นรู",
+  "threeDInspectorVariantDlcDamaged2bHand": "DLC เสียหายที่มือ 2B",
+  "threeDInspectorVariantBerserk": "คลั่ง",
+  "threeDInspectorOutfitNumber": "ชุด {id}",
+  "@threeDInspectorOutfitNumber": {
+    "placeholders": {
+      "id": {
+        "type": "int"
+      }
+    }
+  },
+  "threeDInspectorStates": "สถานะ",
+  "threeDInspectorStateSelfDestructed": "ทำลายตัวเอง / เสียหาย",
+  "threeDInspectorStateEyemask": "ผ้าปิดตา",
+  "threeDInspectorStateCombat": "การต่อสู้",
+  "threeDInspectorStatePrologue": "บทนำ",
+  "threeDInspectorStateHoly": "ศักดิ์สิทธิ์",
+  "threeDInspectorStateNoRight": "สูญเสียด้านขวา",
+  "threeDInspectorStateTower": "หอคอย",
+  "threeDInspectorStateWig": "วิกแทนที่เส้นผมของร่างกาย",
+  "threeDInspectorMissingMeshes": "ไม่พบเมชที่กำหนดค่าไว้ {count} รายการ",
+  "@threeDInspectorMissingMeshes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "modRequiresLabel": "ต้องใช้",
   "modRequiresPluginsLabel": "ต้องใช้ปลั๊กอิน",
   "modRequiresMissing": "หายไป",

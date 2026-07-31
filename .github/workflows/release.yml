@@ -31,6 +31,7 @@ jobs:
         with:
           channel: stable
           cache: true
+      - uses: dtolnay/rust-toolchain@stable
       - name: fetch 7-zip
         shell: pwsh
         run: |
@@ -52,7 +53,7 @@ jobs:
       - name: remove test-only 7zz
         shell: pwsh
         run: Remove-Item assets\bins\7zz
-      - run: flutter build windows --release
+      - run: pwsh scripts/build_windows.ps1
       - name: package
         shell: pwsh
         run: |
@@ -99,6 +100,7 @@ jobs:
         with:
           channel: stable
           cache: true
+      - uses: dtolnay/rust-toolchain@stable
       - name: fetch 7zz
         run: |
           curl -fL -o /tmp/7z.tar.xz https://github.com/ip7z/7zip/releases/download/26.02/7z2602-mac.tar.xz
@@ -129,6 +131,7 @@ jobs:
         with:
           channel: stable
           cache: true
+      - uses: dtolnay/rust-toolchain@stable
       - name: fetch 7zz
         run: |
           curl -fL -o /tmp/7z.tar.xz https://github.com/ip7z/7zip/releases/download/26.02/7z2602-linux-x64.tar.xz

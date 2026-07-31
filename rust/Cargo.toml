@@ -1,0 +1,16 @@
+[package]
+name = "yp_3d_inspector"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "staticlib"]
+
+[dependencies]
+flutter_rust_bridge = { version = "=2.11.1", default-features = false, features = ["anyhow", "dart-opaque", "log", "portable-atomic", "rust-async", "thread-pool", "user-utils", "backtrace"] }
+image = { version = "0.25.10", default-features = false, features = ["dds"] }
+three-d = { version = "=0.19.0", default-features = false, features = ["window"] }
+winit = "=0.28.7"
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(frb_expand)'] }
