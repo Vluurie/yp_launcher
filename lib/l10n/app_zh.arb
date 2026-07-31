@@ -370,6 +370,21 @@
   "thirdPartyMigotoHeader": "3DMIGOTO",
   "thirdPartyReShadeHowto": "像平常一样将 ReShade 安装到你的 NieRAutomata 文件夹（API 选择 dxgi）。启动器会将其移入 NAMS 并为你设置好路径。",
   "thirdPartyMigotoHowto": "将 3DMigoto 着色器模组压缩包拖到这里。启动器会安装它并设置加载目标，以便 NAMS 挂钩。",
+  "thirdPartyGameModsHeader": "游戏模组",
+  "thirdPartyGameModsHowto": "将为原版游戏制作的模组文件（.dll）拖到这里，例如速通计时器、修改器等工具。启动器会配置它们以在 NAMS 下运行，但无法检查模组实际会做什么：任何模组都可能导致游戏崩溃。请只添加你信任的文件，若游戏出现异常，可在下方关闭对应模组。",
+  "thirdPartyGameModsNone": "未安装游戏模组",
+  "thirdPartyWaxRejected": "WAX 无法与 NAMS 一起使用。两者功能相同，同时运行会导致游戏崩溃。你的 WAX 服装和物品请改用模组标签页。",
+  "thirdPartyGameModsCount": "{count, plural, =0{无 DLL} other{{count} 个 DLL}}",
+  "@thirdPartyGameModsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "thirdPartyGameModsDisabledChip": "已禁用",
+  "thirdPartyGameModsToggleHint": "关闭此模组但不删除它。",
+  "thirdPartyGameModsRemoveOne": "删除此模组",
   "thirdPartyStatusInstalled": "已安装",
   "thirdPartyStatusNotInstalled": "未安装",
   "thirdPartyStatusFoundInGame": "在游戏文件夹中找到 — 点击导入以为 NAMS 设置。",
@@ -1046,6 +1061,14 @@
   "tooltipDisable3dmigotoLoading": "不再从 thirdparty/3dmigoto/ 加载 3DMigoto 运行时。关闭以停止加载着色器模组。",
   "labelDisableTextureInjection": "禁用纹理注入",
   "tooltipDisableTextureInjection": "跳过从模组文件夹注入纹理。适合排查问题，或在已安装纹理模组但不想使用时启用。",
+  "labelDisableGameModsLoading": "禁用游戏模组加载",
+  "tooltipDisableGameModsLoading": "停止加载第三方标签页“游戏模组”下的模组，例如速通计时器和修改器。开启后即可在不删除文件的情况下不使用它们。",
+  "labelHideSubtitleOverlay": "隐藏字幕遮罩",
+  "tooltipHideSubtitleOverlay": "隐藏过场动画中的黑边和字幕遮罩。仅影响过场动画，菜单、物品说明和普通对话不受影响。",
+  "labelKeepSubtitleText": "保留字幕文字",
+  "tooltipKeepSubtitleText": "仅移除字幕后方的深色背景，保留文字本身可读。需先启用“隐藏字幕遮罩”。",
+  "labelHideSubtitleInEvents": "同时隐藏引擎事件场景（实验性）",
+  "tooltipHideSubtitleInEvents": "实验性功能。同时应用于引擎内事件场景，而不仅是预渲染影片。可能遗漏部分场景或隐藏你想保留的文字，如有异常请关闭。需先启用“隐藏字幕遮罩”。",
   "labelOutfitSwapVisualEffects": "服装切换视觉效果",
   "tooltipOutfitSwapVisualEffects": "在热切换服装时播放视觉效果：Pod 出现时的致盲动画、帷幕以及骇入画面故障滤镜。关闭后将立即完成无特效切换，但模型仍会重新加载。立即生效，无需重启。",
   "labelExperimentalDefaultOutfits": "默认服装（实验性）",
@@ -1736,6 +1759,7 @@
       }
     }
   },
+  "cutsceneSubtitleCard": "字幕与黑边",
   "cutsceneStatusHd": "高清",
   "cutsceneStatusHdTooltip": "nams.toml 中的 [cutscene] hd_cutscenes；必须设为 true，高清过场动画模组才能加载。",
   "cutsceneStatusH264": "H264",
@@ -1870,6 +1894,58 @@
   "modNativeBundles": "原生包",
   "modDataContent": "数据内容",
   "modDataPlayerModels": "玩家模型",
+  "threeDInspectorOpen": "打开 3D 检查器",
+  "threeDInspectorClose": "关闭 3D 检查器",
+  "threeDInspectorResetCamera": "重置相机",
+  "threeDInspectorControls": "左键拖动：旋转 · 右键拖动：平移 · 滚轮：缩放 · Esc：关闭",
+  "threeDInspectorVertices": "顶点",
+  "threeDInspectorTriangles": "三角形",
+  "threeDInspectorLod": "细节层级",
+  "threeDInspectorMeshes": "网格",
+  "threeDInspectorExpand": "展开 3D 检查器",
+  "threeDInspectorOutfit": "服装",
+  "threeDInspectorVariant": "模型变体",
+  "threeDInspectorVariantNormal": "普通",
+  "threeDInspectorVariantDamaged": "破损",
+  "threeDInspectorVariantBase": "基础",
+  "threeDInspectorVariantSelfDestruct": "自毁",
+  "threeDInspectorVariantDamagedLeft": "左侧破损",
+  "threeDInspectorVariantDamagedRight": "右侧破损",
+  "threeDInspectorVariantDamagedHoles": "孔洞破损",
+  "threeDInspectorVariantDamaged2bHand": "2B手部破损",
+  "threeDInspectorVariantArmor": "装甲",
+  "threeDInspectorVariantDlc": "DLC",
+  "threeDInspectorVariantDlcDamaged": "DLC 破损",
+  "threeDInspectorVariantDlcDamagedLeft": "DLC 左侧破损",
+  "threeDInspectorVariantDlcDamagedRight": "DLC 右侧破损",
+  "threeDInspectorVariantDlcDamagedHoles": "DLC 孔洞破损",
+  "threeDInspectorVariantDlcDamaged2bHand": "DLC 2B手部破损",
+  "threeDInspectorVariantBerserk": "狂暴",
+  "threeDInspectorOutfitNumber": "服装 {id}",
+  "@threeDInspectorOutfitNumber": {
+    "placeholders": {
+      "id": {
+        "type": "int"
+      }
+    }
+  },
+  "threeDInspectorStates": "状态",
+  "threeDInspectorStateSelfDestructed": "自毁 / 破损",
+  "threeDInspectorStateEyemask": "眼罩",
+  "threeDInspectorStateCombat": "战斗",
+  "threeDInspectorStatePrologue": "序章",
+  "threeDInspectorStateHoly": "圣洁",
+  "threeDInspectorStateNoRight": "失去右侧",
+  "threeDInspectorStateTower": "塔",
+  "threeDInspectorStateWig": "假发替代本体头发",
+  "threeDInspectorMissingMeshes": "未找到 {count} 个配置的网格",
+  "@threeDInspectorMissingMeshes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "modRequiresLabel": "需要",
   "modRequiresPluginsLabel": "需要插件",
   "modRequiresMissing": "缺失",

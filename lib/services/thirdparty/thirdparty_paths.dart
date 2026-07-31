@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:path/path.dart' as path;
 import 'package:yp_launcher/constants/app_strings.dart';
 import 'package:yp_launcher/services/detection/graphics_dll_id.dart';
@@ -26,6 +27,9 @@ class ThirdPartyPaths {
 
   static String migoto() =>
       path.join(root(), AppStrings.migotoDirName);
+
+  static String gameMods() =>
+      path.join(root(), AppStrings.gameModsDirName);
 }
 
 String baseName(String rel) {
@@ -122,6 +126,54 @@ DllHit? findGraphicsDll(String root, GraphicsDll want) {
     return true;
   });
   return hit;
+}
+
+const _waxMarker = '_wax loaded_';
+
+bool isIncompatibleModloader(String filePath) {
+  try {
+    final f = File(filePath);
+    if (!f.existsSync()) return false;
+    final bytes = f.readAsBytesSync();
+    return _containsAscii(bytes, _waxMarker);
+  } catch (_) {
+    return false;
+  }
+}
+
+bool _containsAscii(Uint8List haystack, String needle) {
+  final n = needle.codeUnits;
+  if (n.isEmpty || n.length > haystack.length) return false;
+  final last = haystack.length - n.length;
+  for (var i = 0; i <= last; i++) {
+    if (haystack[i] != n[0]) continue;
+    var match = true;
+    for (var j = 1; j < n.length; j++) {
+      if (haystack[i + j] != n[j]) {
+        match = false;
+        break;
+      }
+    }
+    if (match) return true;
+  }
+  return false;
+}
+
+List<String> findIncompatibleModloaderDlls(String root) => FileOps.filesWhere(
+      root,
+      (rel, full) =>
+          baseName(rel).endsWith('.dll') && isIncompatibleModloader(full),
+    ).map((f) => f.path).toList();
+
+List<String> findGameModDlls(String root) {
+  final out = FileOps.filesWhere(root, (rel, full) {
+    if (!baseName(rel).endsWith('.dll')) return false;
+    if (isIncompatibleModloader(full)) return false;
+    return GraphicsDllId.identifyFile(full) == GraphicsDll.none;
+  }).map((f) => f.path).toList();
+  out.sort((a, b) =>
+      path.basename(a).toLowerCase().compareTo(path.basename(b).toLowerCase()));
+  return out;
 }
 
 List<String> findInnerArchives(String root) {

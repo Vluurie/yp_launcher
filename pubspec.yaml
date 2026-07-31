@@ -2,7 +2,7 @@ name: yp_launcher
 description: "Simple Launcher for YoRHa Protocol with Mod Managing and NAMS Config Editing."
 
 publish_to: 'none'
-version: 2.2.1+1
+version: 2.2.2+1
 
 environment:
   sdk: ^3.9.2
@@ -63,6 +63,7 @@ dependencies:
   intl: any
   toml: ^0.18.0
   flutter_markdown_plus: ^1.0.7
+  flutter_rust_bridge: 2.11.1
 
 dev_dependencies:
   # Riverpod code generation

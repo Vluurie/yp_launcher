@@ -78,6 +78,34 @@ class PlayerModelEntry {
   const PlayerModelEntry({required this.fileName, required this.label});
 }
 
+class DataArchivePair {
+  final String stem;
+  final String label;
+  final String configRoot;
+  final String? datPath;
+  final String? dttPath;
+
+  const DataArchivePair({
+    required this.stem,
+    required this.label,
+    required this.configRoot,
+    this.datPath,
+    this.dttPath,
+  });
+
+  @override
+  int get hashCode => Object.hash(stem, configRoot, datPath, dttPath);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is DataArchivePair &&
+          stem == other.stem &&
+          configRoot == other.configRoot &&
+          datPath == other.datPath &&
+          dttPath == other.dttPath;
+}
+
 /// One outfit a mod's config declares for a character.
 ///
 /// A mod may ship several, in which case a boot default has to say which one
@@ -97,6 +125,7 @@ class OutfitChoice {
 class DataSummary {
   final List<DataDirEntry> entries;
   final List<PlayerModelEntry> players;
+  final List<DataArchivePair> archives;
   final bool hasCompatConfig;
   final bool hasOutfitConfig;
 
@@ -106,6 +135,7 @@ class DataSummary {
   const DataSummary({
     this.entries = const [],
     this.players = const [],
+    this.archives = const [],
     this.hasCompatConfig = false,
     this.hasOutfitConfig = false,
     this.outfitsByStem = const {},

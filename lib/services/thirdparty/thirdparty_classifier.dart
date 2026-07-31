@@ -19,6 +19,13 @@ class ThirdPartyClassifier {
       );
     }
 
+    if (findIncompatibleModloaderDlls(root).isNotEmpty) {
+      return ThirdPartyClassification(
+        kind: ThirdPartyKind.incompatibleModloader,
+        sourceRoot: root,
+      );
+    }
+
     final lodmodIni = FileOps.filesWhere(
       root,
       (rel, _) => rel == 'lodmod.ini' || rel.endsWith('/lodmod.ini'),
@@ -106,6 +113,15 @@ class ThirdPartyClassifier {
       return ThirdPartyClassification(
         kind: ThirdPartyKind.gameData,
         sourceRoot: root,
+      );
+    }
+
+    final gameModDlls = findGameModDlls(root);
+    if (gameModDlls.isNotEmpty) {
+      return ThirdPartyClassification(
+        kind: ThirdPartyKind.gameMod,
+        sourceRoot: root,
+        gameModDlls: gameModDlls,
       );
     }
 

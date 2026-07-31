@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:path/path.dart' as p;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:yp_launcher/providers/app_state.dart';
+import 'package:yp_launcher/services/thirdparty/game_mods_runtime.dart';
 import 'package:yp_launcher/services/thirdparty/graphics_runtime.dart';
 import 'package:yp_launcher/services/thirdparty/migoto_runtime.dart';
 import 'package:yp_launcher/services/thirdparty/reshade_runtime.dart';
@@ -15,12 +16,14 @@ part 'thirdparty_state.g.dart';
 class ThirdPartyData {
   final ThirdPartyRuntimeStatus reshade;
   final ThirdPartyRuntimeStatus migoto;
+  final ThirdPartyRuntimeStatus gameMods;
   final bool isLoading;
   final bool busy;
 
   const ThirdPartyData({
     this.reshade = const ThirdPartyRuntimeStatus(),
     this.migoto = const ThirdPartyRuntimeStatus(),
+    this.gameMods = const ThirdPartyRuntimeStatus(),
     this.isLoading = false,
     this.busy = false,
   });
@@ -28,12 +31,14 @@ class ThirdPartyData {
   ThirdPartyData copyWith({
     ThirdPartyRuntimeStatus? reshade,
     ThirdPartyRuntimeStatus? migoto,
+    ThirdPartyRuntimeStatus? gameMods,
     bool? isLoading,
     bool? busy,
   }) {
     return ThirdPartyData(
       reshade: reshade ?? this.reshade,
       migoto: migoto ?? this.migoto,
+      gameMods: gameMods ?? this.gameMods,
       isLoading: isLoading ?? this.isLoading,
       busy: busy ?? this.busy,
     );
@@ -44,6 +49,7 @@ class ThirdPartyData {
 class ThirdPartyStateController extends _$ThirdPartyStateController {
   static const reshade = ReShadeRuntime();
   static const migoto = MigotoRuntime();
+  static const gameMods = GameModsRuntime();
 
   StreamSubscription<FileSystemEvent>? _watchSub;
   String? _watchedDir;
@@ -63,17 +69,24 @@ class ThirdPartyStateController extends _$ThirdPartyStateController {
     return dir.isEmpty ? null : dir;
   }
 
-  GraphicsRuntime _runtime(ThirdPartyRuntime which) =>
-      which == ThirdPartyRuntime.reshade ? reshade : migoto;
+  GraphicsRuntime _runtime(ThirdPartyRuntime which) {
+    switch (which) {
+      case ThirdPartyRuntime.reshade:
+        return reshade;
+      case ThirdPartyRuntime.migoto:
+        return migoto;
+      case ThirdPartyRuntime.gameMods:
+        return gameMods;
+    }
+  }
 
   Future<void> refresh() async {
     final gameDir = _gameDir;
     if (gameDir == null) return;
     state = state.copyWith(isLoading: true);
     await _autoImportFromGameRoot(gameDir);
-    final r = await reshade.status(gameDir);
-    final m = await migoto.status(gameDir);
-    state = state.copyWith(reshade: r, migoto: m, isLoading: false);
+    await _refreshInternal(gameDir);
+    state = state.copyWith(isLoading: false);
     _startWatching(gameDir);
   }
 
@@ -122,16 +135,19 @@ class ThirdPartyStateController extends _$ThirdPartyStateController {
     return ThirdPartyClassifier.classify(extractedRoot);
   }
 
+  static const _installers = <GraphicsRuntime>[reshade, migoto, gameMods];
+
+  GraphicsRuntime? _installerFor(ThirdPartyClassification c) {
+    for (final r in _installers) {
+      if (r.canInstall(c)) return r;
+    }
+    return null;
+  }
+
   Future<ThirdPartyUpdateInfo?> wouldUpdate(ThirdPartyClassification c) async {
     final gameDir = _gameDir;
     if (gameDir == null) return null;
-    final runtime = reshade.canInstall(c)
-        ? reshade as GraphicsRuntime
-        : migoto.canInstall(c)
-            ? migoto
-            : null;
-    if (runtime == null) return null;
-    return runtime.wouldUpdate(gameDir, c);
+    return _installerFor(c)?.wouldUpdate(gameDir, c);
   }
 
   Future<ThirdPartyInstallResult?> install(
@@ -140,11 +156,7 @@ class ThirdPartyStateController extends _$ThirdPartyStateController {
     final gameDir = _gameDir;
     if (gameDir == null) return null;
     return _withBusy(() async {
-      final runtime = reshade.canInstall(c)
-          ? reshade as GraphicsRuntime
-          : migoto.canInstall(c)
-              ? migoto
-              : null;
+      final runtime = _installerFor(c);
       if (runtime == null) return null;
       final result = await runtime.install(gameDir, c);
       await _refreshInternal(gameDir);
@@ -183,6 +195,22 @@ class ThirdPartyStateController extends _$ThirdPartyStateController {
     await _refreshInternal(gameDir);
   }
 
+  Future<void> setGameModDisabled(String fileName, bool disabled) async {
+    final gameDir = _gameDir;
+    if (gameDir == null) return;
+    await gameMods.setModDisabled(gameDir, fileName, disabled);
+    await _refreshInternal(gameDir);
+  }
+
+  Future<void> removeGameMod(String fileName) async {
+    final gameDir = _gameDir;
+    if (gameDir == null) return;
+    await _withBusy(() async {
+      await gameMods.removeMod(gameDir, fileName);
+      await _refreshInternal(gameDir);
+    });
+  }
+
   Future<void> remove(ThirdPartyRuntime which) async {
     final gameDir = _gameDir;
     if (gameDir == null) return;
@@ -204,6 +232,7 @@ class ThirdPartyStateController extends _$ThirdPartyStateController {
   Future<void> _refreshInternal(String gameDir) async {
     final r = await reshade.status(gameDir);
     final m = await migoto.status(gameDir);
-    state = state.copyWith(reshade: r, migoto: m);
+    final g = await gameMods.status(gameDir);
+    state = state.copyWith(reshade: r, migoto: m, gameMods: g);
   }
 }

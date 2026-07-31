@@ -893,6 +893,40 @@ class AppLocalizationsZh extends AppLocalizations {
       '将 3DMigoto 着色器模组压缩包拖到这里。启动器会安装它并设置加载目标，以便 NAMS 挂钩。';
 
   @override
+  String get thirdPartyGameModsHeader => '游戏模组';
+
+  @override
+  String get thirdPartyGameModsHowto =>
+      '将为原版游戏制作的模组文件（.dll）拖到这里，例如速通计时器、修改器等工具。启动器会配置它们以在 NAMS 下运行，但无法检查模组实际会做什么：任何模组都可能导致游戏崩溃。请只添加你信任的文件，若游戏出现异常，可在下方关闭对应模组。';
+
+  @override
+  String get thirdPartyGameModsNone => '未安装游戏模组';
+
+  @override
+  String get thirdPartyWaxRejected =>
+      'WAX 无法与 NAMS 一起使用。两者功能相同，同时运行会导致游戏崩溃。你的 WAX 服装和物品请改用模组标签页。';
+
+  @override
+  String thirdPartyGameModsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count 个 DLL',
+      zero: '无 DLL',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get thirdPartyGameModsDisabledChip => '已禁用';
+
+  @override
+  String get thirdPartyGameModsToggleHint => '关闭此模组但不删除它。';
+
+  @override
+  String get thirdPartyGameModsRemoveOne => '删除此模组';
+
+  @override
   String get thirdPartyStatusInstalled => '已安装';
 
   @override
@@ -2536,11 +2570,38 @@ class AppLocalizationsZh extends AppLocalizations {
       '不再从 thirdparty/3dmigoto/ 加载 3DMigoto 运行时。关闭以停止加载着色器模组。';
 
   @override
+  String get labelDisableGameModsLoading => '禁用游戏模组加载';
+
+  @override
+  String get tooltipDisableGameModsLoading =>
+      '停止加载第三方标签页“游戏模组”下的模组，例如速通计时器和修改器。开启后即可在不删除文件的情况下不使用它们。';
+
+  @override
   String get labelDisableTextureInjection => '禁用纹理注入';
 
   @override
   String get tooltipDisableTextureInjection =>
       '跳过从模组文件夹注入纹理。适合排查问题，或在已安装纹理模组但不想使用时启用。';
+
+  @override
+  String get labelHideSubtitleOverlay => '隐藏字幕遮罩';
+
+  @override
+  String get tooltipHideSubtitleOverlay =>
+      '隐藏过场动画中的黑边和字幕遮罩。仅影响过场动画，菜单、物品说明和普通对话不受影响。';
+
+  @override
+  String get labelKeepSubtitleText => '保留字幕文字';
+
+  @override
+  String get tooltipKeepSubtitleText => '仅移除字幕后方的深色背景，保留文字本身可读。需先启用“隐藏字幕遮罩”。';
+
+  @override
+  String get labelHideSubtitleInEvents => '同时隐藏引擎事件场景（实验性）';
+
+  @override
+  String get tooltipHideSubtitleInEvents =>
+      '实验性功能。同时应用于引擎内事件场景，而不仅是预渲染影片。可能遗漏部分场景或隐藏你想保留的文字，如有异常请关闭。需先启用“隐藏字幕遮罩”。';
 
   @override
   String get labelOutfitSwapVisualEffects => '服装切换视觉效果';
@@ -3685,6 +3746,9 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String get cutsceneSubtitleCard => '字幕与黑边';
+
+  @override
   String get cutsceneStatusHd => '高清';
 
   @override
@@ -3933,6 +3997,124 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get modDataPlayerModels => '玩家模型';
+
+  @override
+  String get threeDInspectorOpen => '打开 3D 检查器';
+
+  @override
+  String get threeDInspectorClose => '关闭 3D 检查器';
+
+  @override
+  String get threeDInspectorResetCamera => '重置相机';
+
+  @override
+  String get threeDInspectorControls => '左键拖动：旋转 · 右键拖动：平移 · 滚轮：缩放 · Esc：关闭';
+
+  @override
+  String get threeDInspectorVertices => '顶点';
+
+  @override
+  String get threeDInspectorTriangles => '三角形';
+
+  @override
+  String get threeDInspectorLod => '细节层级';
+
+  @override
+  String get threeDInspectorMeshes => '网格';
+
+  @override
+  String get threeDInspectorExpand => '展开 3D 检查器';
+
+  @override
+  String get threeDInspectorOutfit => '服装';
+
+  @override
+  String get threeDInspectorVariant => '模型变体';
+
+  @override
+  String get threeDInspectorVariantNormal => '普通';
+
+  @override
+  String get threeDInspectorVariantDamaged => '破损';
+
+  @override
+  String get threeDInspectorVariantBase => '基础';
+
+  @override
+  String get threeDInspectorVariantSelfDestruct => '自毁';
+
+  @override
+  String get threeDInspectorVariantDamagedLeft => '左侧破损';
+
+  @override
+  String get threeDInspectorVariantDamagedRight => '右侧破损';
+
+  @override
+  String get threeDInspectorVariantDamagedHoles => '孔洞破损';
+
+  @override
+  String get threeDInspectorVariantDamaged2bHand => '2B手部破损';
+
+  @override
+  String get threeDInspectorVariantArmor => '装甲';
+
+  @override
+  String get threeDInspectorVariantDlc => 'DLC';
+
+  @override
+  String get threeDInspectorVariantDlcDamaged => 'DLC 破损';
+
+  @override
+  String get threeDInspectorVariantDlcDamagedLeft => 'DLC 左侧破损';
+
+  @override
+  String get threeDInspectorVariantDlcDamagedRight => 'DLC 右侧破损';
+
+  @override
+  String get threeDInspectorVariantDlcDamagedHoles => 'DLC 孔洞破损';
+
+  @override
+  String get threeDInspectorVariantDlcDamaged2bHand => 'DLC 2B手部破损';
+
+  @override
+  String get threeDInspectorVariantBerserk => '狂暴';
+
+  @override
+  String threeDInspectorOutfitNumber(int id) {
+    return '服装 $id';
+  }
+
+  @override
+  String get threeDInspectorStates => '状态';
+
+  @override
+  String get threeDInspectorStateSelfDestructed => '自毁 / 破损';
+
+  @override
+  String get threeDInspectorStateEyemask => '眼罩';
+
+  @override
+  String get threeDInspectorStateCombat => '战斗';
+
+  @override
+  String get threeDInspectorStatePrologue => '序章';
+
+  @override
+  String get threeDInspectorStateHoly => '圣洁';
+
+  @override
+  String get threeDInspectorStateNoRight => '失去右侧';
+
+  @override
+  String get threeDInspectorStateTower => '塔';
+
+  @override
+  String get threeDInspectorStateWig => '假发替代本体头发';
+
+  @override
+  String threeDInspectorMissingMeshes(int count) {
+    return '未找到 $count 个配置的网格';
+  }
 
   @override
   String get modRequiresLabel => '需要';

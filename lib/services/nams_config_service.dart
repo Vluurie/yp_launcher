@@ -79,6 +79,7 @@ experimental_default_outfits = false
 
 disable_reshade_loading = false
 disable_3dmigoto_loading = false
+disable_game_mods_loading = false
 disable_texture_injection = false
 
 # Skip the startup splash window shown while the game loads. Vanilla revealed
@@ -149,6 +150,9 @@ aim_mode_toggle = ""
 [cutscene]
 hd_cutscenes = false
 enable_h264 = false
+hide_subtitle_overlay = false
+keep_subtitle_text = false
+hide_subtitle_in_events = false
 
 [heap]
 global_heap_extra = 0
@@ -287,7 +291,29 @@ aim_mode_toggle = ""
 hd_cutscenes = false
 # Enable H264 codec for USM playback. Required for H264-encoded cutscene mods.
 enable_h264 = false
+# Hide the black bars and caption overlay shown during cutscenes. Only affects
+# cutscenes; menus, item descriptions and normal dialogue are untouched.
+hide_subtitle_overlay = false
+# Keep the caption text and remove only the dark backdrop behind it.
+keep_subtitle_text = false
+# EXPERIMENTAL. Also apply during in-engine event scenes, not just pre-rendered
+# movies. May miss scenes or hide text you wanted to keep.
+hide_subtitle_in_events = false
 ''';
+
+  static const _newCutsceneKeyBlocks = <String, String>{
+    'hide_subtitle_overlay':
+        '# Hide the black bars and caption overlay shown during cutscenes. Only\n'
+        '# affects cutscenes; menus and normal dialogue are untouched.\n'
+        'hide_subtitle_overlay = false',
+    'keep_subtitle_text':
+        '# Keep the caption text and remove only the dark backdrop behind it.\n'
+        'keep_subtitle_text = false',
+    'hide_subtitle_in_events':
+        '# EXPERIMENTAL. Also apply during in-engine event scenes, not just\n'
+        '# pre-rendered movies. May miss scenes or hide text you wanted to keep.\n'
+        'hide_subtitle_in_events = false',
+  };
 
   static const _mouseKeyRenames = <String, String>{
     'fix_aim_acceleration': 'aim_mode',
@@ -458,6 +484,12 @@ enable_h264 = false
           '# Skip loading ReShade from thirdparty/reshade/. Managed by the Third\n'
           '# Party tab; set to true to run without ReShade.\n'
           'disable_reshade_loading = false\n',
+      NamsFields.disableGameModsLoading.key:
+          '# Skip loading third-party game-offset mods from thirdparty/game/.\n'
+          '# These are DLLs built for a stock NieRAutomata.exe; NAMS rewrites\n'
+          '# their imports so game.bin answers as the main module. Managed by\n'
+          '# the Third Party tab. Per-DLL tweaks: thirdparty/game/game.toml\n'
+          'disable_game_mods_loading = false\n',
       NamsFields.loadingStallHints.key:
           '# Show escalating hints when the "Loading Map" screen takes too long.\n'
           'loading_stall_hints = true\n',
@@ -558,6 +590,32 @@ enable_h264 = false
     if (!content.contains('[cutscene]')) {
       content += _cutsceneSectionDefault;
       modified = true;
+    } else {
+      final missingCutscene = <String>[];
+      for (final entry in _newCutsceneKeyBlocks.entries) {
+        final re = RegExp('^${entry.key}\\s*=', multiLine: true);
+        if (!re.hasMatch(content)) {
+          missingCutscene.add(entry.value);
+        }
+      }
+      if (missingCutscene.isNotEmpty) {
+        final afterCutscene =
+            content.indexOf('[cutscene]') + '[cutscene]'.length;
+        final nextSection = content.indexOf(
+          RegExp(r'^\[', multiLine: true),
+          afterCutscene,
+        );
+        final block = '${missingCutscene.join('\n')}\n';
+        if (nextSection == -1) {
+          final sep = content.endsWith('\n') ? '' : '\n';
+          content = '$content$sep$block';
+        } else {
+          content =
+              '${content.substring(0, nextSection)}$block\n'
+              '${content.substring(nextSection)}';
+        }
+        modified = true;
+      }
     }
 
     if (modified) {

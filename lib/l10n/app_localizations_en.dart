@@ -925,6 +925,42 @@ class AppLocalizationsEn extends AppLocalizations {
       'Drop a 3DMigoto shader-mod archive here. The launcher installs it and sets the loader target so NAMS hooks it.';
 
   @override
+  String get thirdPartyGameModsHeader => 'GAME MODS';
+
+  @override
+  String get thirdPartyGameModsHowto =>
+      'Drop mod files (.dll) here that were made for the original game — speedrun timers, trainers and similar tools. The launcher sets them up to run under NAMS, but it cannot check what a mod actually does: any of them can crash the game. Only add files you trust, and turn one off below if the game starts misbehaving.';
+
+  @override
+  String get thirdPartyGameModsNone => 'No game mods installed';
+
+  @override
+  String get thirdPartyWaxRejected =>
+      'WAX cannot be used with NAMS. Both do the same job, so running them together crashes the game. Your WAX outfits and items work in the Mods tab instead.';
+
+  @override
+  String thirdPartyGameModsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count DLLs',
+      one: '1 DLL',
+      zero: 'No DLLs',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get thirdPartyGameModsDisabledChip => 'Disabled';
+
+  @override
+  String get thirdPartyGameModsToggleHint =>
+      'Turn this mod off without deleting it.';
+
+  @override
+  String get thirdPartyGameModsRemoveOne => 'Delete this mod';
+
+  @override
   String get thirdPartyStatusInstalled => 'Installed';
 
   @override
@@ -2629,11 +2665,40 @@ class AppLocalizationsEn extends AppLocalizations {
       'Skip loading the 3DMigoto runtime from thirdparty/3dmigoto/. Turn off to stop loading shader mods.';
 
   @override
+  String get labelDisableGameModsLoading => 'Disable Game Mod Loading';
+
+  @override
+  String get tooltipDisableGameModsLoading =>
+      'Stop loading the mods listed in the Third Party tab under Game Mods, such as speedrun timers and trainers. Turn this on to play without them without having to delete anything.';
+
+  @override
   String get labelDisableTextureInjection => 'Disable Texture Injection';
 
   @override
   String get tooltipDisableTextureInjection =>
       'Skip texture injection from the mods folder. Useful for isolating issues or if you don\'t want to use texture mods even though they are installed.';
+
+  @override
+  String get labelHideSubtitleOverlay => 'Hide Subtitle Overlay';
+
+  @override
+  String get tooltipHideSubtitleOverlay =>
+      'Hide the black bars and caption overlay shown during cutscenes. Only affects cutscenes - menus, item descriptions and normal dialogue stay untouched.';
+
+  @override
+  String get labelKeepSubtitleText => 'Keep Subtitle Text';
+
+  @override
+  String get tooltipKeepSubtitleText =>
+      'Remove only the dark backdrop behind the captions and keep the text itself readable. Requires Hide Subtitle Overlay.';
+
+  @override
+  String get labelHideSubtitleInEvents =>
+      'Also Hide In Event Scenes (Experimental)';
+
+  @override
+  String get tooltipHideSubtitleInEvents =>
+      'EXPERIMENTAL. Also apply during in-engine event scenes, not just pre-rendered movies. May miss some scenes or hide text you wanted to keep - turn off if anything looks wrong. Requires Hide Subtitle Overlay.';
 
   @override
   String get labelOutfitSwapVisualEffects => 'Outfit Swap Visual Effects';
@@ -3852,6 +3917,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get cutsceneSubtitleCard => 'SUBTITLES & BLACK BARS';
+
+  @override
   String get cutsceneStatusHd => 'HD';
 
   @override
@@ -4109,6 +4177,125 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get modDataPlayerModels => 'Player models';
+
+  @override
+  String get threeDInspectorOpen => 'Open 3D inspector';
+
+  @override
+  String get threeDInspectorClose => 'Close 3D inspector';
+
+  @override
+  String get threeDInspectorResetCamera => 'Reset camera';
+
+  @override
+  String get threeDInspectorControls =>
+      'Left drag: orbit · Right drag: pan · Wheel: zoom · Esc: close';
+
+  @override
+  String get threeDInspectorVertices => 'vertices';
+
+  @override
+  String get threeDInspectorTriangles => 'triangles';
+
+  @override
+  String get threeDInspectorLod => 'LOD';
+
+  @override
+  String get threeDInspectorMeshes => 'Meshes';
+
+  @override
+  String get threeDInspectorExpand => 'Expand 3D inspector';
+
+  @override
+  String get threeDInspectorOutfit => 'Outfit';
+
+  @override
+  String get threeDInspectorVariant => 'Model variant';
+
+  @override
+  String get threeDInspectorVariantNormal => 'Normal';
+
+  @override
+  String get threeDInspectorVariantDamaged => 'Damaged';
+
+  @override
+  String get threeDInspectorVariantBase => 'Base';
+
+  @override
+  String get threeDInspectorVariantSelfDestruct => 'Self-destruct';
+
+  @override
+  String get threeDInspectorVariantDamagedLeft => 'Broken left';
+
+  @override
+  String get threeDInspectorVariantDamagedRight => 'Broken right';
+
+  @override
+  String get threeDInspectorVariantDamagedHoles => 'Broken holes';
+
+  @override
+  String get threeDInspectorVariantDamaged2bHand => 'Broken 2B hand';
+
+  @override
+  String get threeDInspectorVariantArmor => 'Armor';
+
+  @override
+  String get threeDInspectorVariantDlc => 'DLC';
+
+  @override
+  String get threeDInspectorVariantDlcDamaged => 'DLC damaged';
+
+  @override
+  String get threeDInspectorVariantDlcDamagedLeft => 'DLC broken left';
+
+  @override
+  String get threeDInspectorVariantDlcDamagedRight => 'DLC broken right';
+
+  @override
+  String get threeDInspectorVariantDlcDamagedHoles => 'DLC broken holes';
+
+  @override
+  String get threeDInspectorVariantDlcDamaged2bHand => 'DLC broken 2B hand';
+
+  @override
+  String get threeDInspectorVariantBerserk => 'Berserk';
+
+  @override
+  String threeDInspectorOutfitNumber(int id) {
+    return 'Outfit $id';
+  }
+
+  @override
+  String get threeDInspectorStates => 'States';
+
+  @override
+  String get threeDInspectorStateSelfDestructed => 'Self-destructed / broken';
+
+  @override
+  String get threeDInspectorStateEyemask => 'Eyemask';
+
+  @override
+  String get threeDInspectorStateCombat => 'Combat';
+
+  @override
+  String get threeDInspectorStatePrologue => 'Prologue';
+
+  @override
+  String get threeDInspectorStateHoly => 'Holy';
+
+  @override
+  String get threeDInspectorStateNoRight => 'Right side lost';
+
+  @override
+  String get threeDInspectorStateTower => 'Tower';
+
+  @override
+  String get threeDInspectorStateWig => 'Wig replaces body hair';
+
+  @override
+  String threeDInspectorMissingMeshes(int count) {
+    return '$count configured mesh(es) not found';
+  }
 
   @override
   String get modRequiresLabel => 'Requires';

@@ -49,6 +49,7 @@ void main() {
         NamsFields.outfitSwapVisualEffects,
         NamsFields.disableReShadeLoading,
         NamsFields.disable3dmigotoLoading,
+        NamsFields.disableGameModsLoading,
         NamsFields.disableTextureInjection,
         NamsFields.disableSplashScreen,
         NamsFields.fixWindTimerBug,
@@ -308,6 +309,82 @@ global_heap_extra = 0
     });
 
     test('rename migration is idempotent', () async {
+      final gameDir = _gameDirWith(oldMouseConfig);
+      addTearDown(() => gameDir.deleteSync(recursive: true));
+
+      await NamsConfigService.ensureConfigs(gameDir.path);
+      final first =
+          File(p.join(gameDir.path, 'nams', 'nams.toml')).readAsStringSync();
+      await NamsConfigService.ensureConfigs(gameDir.path);
+      final second =
+          File(p.join(gameDir.path, 'nams', 'nams.toml')).readAsStringSync();
+
+      expect(second, first);
+    });
+
+    test('subtitle keys are added to an existing [cutscene] section', () async {
+      final gameDir = _gameDirWith(oldMouseConfig);
+      addTearDown(() => gameDir.deleteSync(recursive: true));
+
+      await NamsConfigService.ensureConfigs(gameDir.path);
+      final cfg = _readNams(gameDir);
+      final raw =
+          File(p.join(gameDir.path, 'nams', 'nams.toml')).readAsStringSync();
+      final cutscene = cfg['cutscene'] as Map<String, dynamic>;
+
+      for (final f in [
+        NamsFields.hideSubtitleOverlay,
+        NamsFields.keepSubtitleText,
+        NamsFields.hideSubtitleInEvents,
+      ]) {
+        expect(cutscene.containsKey(f.key), isTrue,
+            reason: '${f.key} must be added to [cutscene]');
+        expect(cutscene[f.key], f.defaultValue);
+      }
+
+      expect(cutscene['hd_cutscenes'], isTrue,
+          reason: 'existing auto-detected value must survive');
+      expect(raw.indexOf('hide_subtitle_overlay'),
+          lessThan(raw.indexOf('[heap]')),
+          reason: 'new keys must land inside [cutscene], not at EOF');
+    });
+
+    test('a config with no [cutscene] section gains the full section',
+        () async {
+      final gameDir = _gameDirWith('validate_model_data = false\n');
+      addTearDown(() => gameDir.deleteSync(recursive: true));
+
+      await NamsConfigService.ensureConfigs(gameDir.path);
+      final cutscene =
+          _readNams(gameDir)['cutscene'] as Map<String, dynamic>;
+
+      expect(cutscene['hide_subtitle_overlay'], isFalse);
+      expect(cutscene['keep_subtitle_text'], isFalse);
+      expect(cutscene['hide_subtitle_in_events'], isFalse);
+    });
+
+    test('game mods flag is added to an old config', () async {
+      final gameDir = _gameDirWith('''validate_model_data = false
+disable_reshade_loading = false
+disable_3dmigoto_loading = false
+
+[mouse]
+sensitivity = 2.0
+''');
+      addTearDown(() => gameDir.deleteSync(recursive: true));
+
+      await NamsConfigService.ensureConfigs(gameDir.path);
+      final cfg = _readNams(gameDir);
+      final raw =
+          File(p.join(gameDir.path, 'nams', 'nams.toml')).readAsStringSync();
+
+      expect(cfg[NamsFields.disableGameModsLoading.key], isFalse);
+      expect(raw.indexOf('disable_game_mods_loading'),
+          lessThan(raw.indexOf('[mouse]')),
+          reason: 'must be inserted as a top-level key, not into [mouse]');
+    });
+
+    test('cutscene migration is idempotent', () async {
       final gameDir = _gameDirWith(oldMouseConfig);
       addTearDown(() => gameDir.deleteSync(recursive: true));
 

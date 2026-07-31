@@ -370,6 +370,21 @@
   "thirdPartyMigotoHeader": "3DMIGOTO",
   "thirdPartyReShadeHowto": "Install ReShade normally into your NieRAutomata folder (pick dxgi as the API). The launcher moves it into NAMS and sets up the paths for you.",
   "thirdPartyMigotoHowto": "Drop a 3DMigoto shader-mod archive here. The launcher installs it and sets the loader target so NAMS hooks it.",
+  "thirdPartyGameModsHeader": "GAME MODS",
+  "thirdPartyGameModsHowto": "Drop mod files (.dll) here that were made for the original game — speedrun timers, trainers and similar tools. The launcher sets them up to run under NAMS, but it cannot check what a mod actually does: any of them can crash the game. Only add files you trust, and turn one off below if the game starts misbehaving.",
+  "thirdPartyGameModsNone": "No game mods installed",
+  "thirdPartyWaxRejected": "WAX cannot be used with NAMS. Both do the same job, so running them together crashes the game. Your WAX outfits and items work in the Mods tab instead.",
+  "thirdPartyGameModsCount": "{count, plural, =0{No DLLs} =1{1 DLL} other{{count} DLLs}}",
+  "@thirdPartyGameModsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "thirdPartyGameModsDisabledChip": "Disabled",
+  "thirdPartyGameModsToggleHint": "Turn this mod off without deleting it.",
+  "thirdPartyGameModsRemoveOne": "Delete this mod",
   "thirdPartyStatusInstalled": "Installed",
   "thirdPartyStatusNotInstalled": "Not installed",
   "thirdPartyStatusFoundInGame": "Found in your game folder — click Import to set it up for NAMS.",
@@ -1044,8 +1059,16 @@
   "tooltipDisableReShadeLoading": "Skip automatic ReShade DLL detection from the reshade/ folder and does not load it anymore.",
   "labelDisable3dmigotoLoading": "Disable 3DMigoto Loading",
   "tooltipDisable3dmigotoLoading": "Skip loading the 3DMigoto runtime from thirdparty/3dmigoto/. Turn off to stop loading shader mods.",
+  "labelDisableGameModsLoading": "Disable Game Mod Loading",
+  "tooltipDisableGameModsLoading": "Stop loading the mods listed in the Third Party tab under Game Mods, such as speedrun timers and trainers. Turn this on to play without them without having to delete anything.",
   "labelDisableTextureInjection": "Disable Texture Injection",
   "tooltipDisableTextureInjection": "Skip texture injection from the mods folder. Useful for isolating issues or if you don't want to use texture mods even though they are installed.",
+  "labelHideSubtitleOverlay": "Hide Subtitle Overlay",
+  "tooltipHideSubtitleOverlay": "Hide the black bars and caption overlay shown during cutscenes. Only affects cutscenes - menus, item descriptions and normal dialogue stay untouched.",
+  "labelKeepSubtitleText": "Keep Subtitle Text",
+  "tooltipKeepSubtitleText": "Remove only the dark backdrop behind the captions and keep the text itself readable. Requires Hide Subtitle Overlay.",
+  "labelHideSubtitleInEvents": "Also Hide In Event Scenes (Experimental)",
+  "tooltipHideSubtitleInEvents": "EXPERIMENTAL. Also apply during in-engine event scenes, not just pre-rendered movies. May miss some scenes or hide text you wanted to keep - turn off if anything looks wrong. Requires Hide Subtitle Overlay.",
   "labelOutfitSwapVisualEffects": "Outfit Swap Visual Effects",
   "tooltipOutfitSwapVisualEffects": "Play the visual effects during an outfit hot-swap: the pod spawn-in blinder animation, the curtain, and the hacking-screen glitch filter. Turn off for an instant, effect-free swap - the model still reloads. Takes effect immediately, no restart needed.",
   "labelExperimentalDefaultOutfits": "Default Outfits (experimental)",
@@ -1736,6 +1759,7 @@
       }
     }
   },
+  "cutsceneSubtitleCard": "SUBTITLES & BLACK BARS",
   "cutsceneStatusHd": "HD",
   "cutsceneStatusHdTooltip": "[cutscene] hd_cutscenes in nams.toml - must be true for HD cutscene mods to load.",
   "cutsceneStatusH264": "H264",
@@ -1850,6 +1874,58 @@
   "modNativeBundles": "Native bundles",
   "modDataContent": "Data content",
   "modDataPlayerModels": "Player models",
+  "threeDInspectorOpen": "Open 3D inspector",
+  "threeDInspectorClose": "Close 3D inspector",
+  "threeDInspectorResetCamera": "Reset camera",
+  "threeDInspectorControls": "Left drag: orbit · Right drag: pan · Wheel: zoom · Esc: close",
+  "threeDInspectorVertices": "vertices",
+  "threeDInspectorTriangles": "triangles",
+  "threeDInspectorLod": "LOD",
+  "threeDInspectorMeshes": "Meshes",
+  "threeDInspectorExpand": "Expand 3D inspector",
+  "threeDInspectorOutfit": "Outfit",
+  "threeDInspectorVariant": "Model variant",
+  "threeDInspectorVariantNormal": "Normal",
+  "threeDInspectorVariantDamaged": "Damaged",
+  "threeDInspectorVariantBase": "Base",
+  "threeDInspectorVariantSelfDestruct": "Self-destruct",
+  "threeDInspectorVariantDamagedLeft": "Broken left",
+  "threeDInspectorVariantDamagedRight": "Broken right",
+  "threeDInspectorVariantDamagedHoles": "Broken holes",
+  "threeDInspectorVariantDamaged2bHand": "Broken 2B hand",
+  "threeDInspectorVariantArmor": "Armor",
+  "threeDInspectorVariantDlc": "DLC",
+  "threeDInspectorVariantDlcDamaged": "DLC damaged",
+  "threeDInspectorVariantDlcDamagedLeft": "DLC broken left",
+  "threeDInspectorVariantDlcDamagedRight": "DLC broken right",
+  "threeDInspectorVariantDlcDamagedHoles": "DLC broken holes",
+  "threeDInspectorVariantDlcDamaged2bHand": "DLC broken 2B hand",
+  "threeDInspectorVariantBerserk": "Berserk",
+  "threeDInspectorOutfitNumber": "Outfit {id}",
+  "@threeDInspectorOutfitNumber": {
+    "placeholders": {
+      "id": {
+        "type": "int"
+      }
+    }
+  },
+  "threeDInspectorStates": "States",
+  "threeDInspectorStateSelfDestructed": "Self-destructed / broken",
+  "threeDInspectorStateEyemask": "Eyemask",
+  "threeDInspectorStateCombat": "Combat",
+  "threeDInspectorStatePrologue": "Prologue",
+  "threeDInspectorStateHoly": "Holy",
+  "threeDInspectorStateNoRight": "Right side lost",
+  "threeDInspectorStateTower": "Tower",
+  "threeDInspectorStateWig": "Wig replaces body hair",
+  "threeDInspectorMissingMeshes": "{count} configured mesh(es) not found",
+  "@threeDInspectorMissingMeshes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "modRequiresLabel": "Requires",
   "modRequiresPluginsLabel": "Requires plugins",
   "modRequiresMissing": "missing",

@@ -370,6 +370,21 @@
   "thirdPartyMigotoHeader": "3DMIGOTO",
   "thirdPartyReShadeHowto": "Installiere ReShade ganz normal in deinen NieRAutomata-Ordner (wähle dxgi als API). Der Launcher verschiebt es nach NAMS und richtet die Pfade ein.",
   "thirdPartyMigotoHowto": "Zieh ein 3DMigoto-Shader-Mod-Archiv hierher. Der Launcher installiert es und setzt das Loader-Target, damit NAMS es einhakt.",
+  "thirdPartyGameModsHeader": "SPIEL-MODS",
+  "thirdPartyGameModsHowto": "Zieh Mod-Dateien (.dll) hierher, die für das Originalspiel gemacht wurden – Speedrun-Timer, Trainer und ähnliche Tools. Der Launcher richtet sie für NAMS ein, kann aber nicht prüfen, was ein Mod tatsächlich tut: jeder davon kann das Spiel zum Absturz bringen. Füge nur Dateien hinzu, denen du vertraust, und schalte einen Mod unten ab, wenn sich das Spiel merkwürdig verhält.",
+  "thirdPartyGameModsNone": "Keine Spiel-Mods installiert",
+  "thirdPartyWaxRejected": "WAX lässt sich nicht mit NAMS verwenden. Beide machen dasselbe, deshalb stürzt das Spiel ab, wenn sie zusammen laufen. Deine WAX-Outfits und -Items funktionieren stattdessen über den Mods-Tab.",
+  "thirdPartyGameModsCount": "{count, plural, =0{Keine DLLs} =1{1 DLL} other{{count} DLLs}}",
+  "@thirdPartyGameModsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "thirdPartyGameModsDisabledChip": "Deaktiviert",
+  "thirdPartyGameModsToggleHint": "Diesen Mod ausschalten, ohne ihn zu löschen.",
+  "thirdPartyGameModsRemoveOne": "Diesen Mod löschen",
   "thirdPartyStatusInstalled": "Installiert",
   "thirdPartyStatusNotInstalled": "Nicht installiert",
   "thirdPartyStatusFoundInGame": "Im Spielordner gefunden — klicke auf Importieren, um es für NAMS einzurichten.",
@@ -1044,8 +1059,16 @@
   "tooltipDisableReShadeLoading": "Überspringt die automatische Erkennung der ReShade-DLL im Ordner reshade/ und lädt sie nicht mehr.",
   "labelDisable3dmigotoLoading": "3DMigoto-Laden deaktivieren",
   "tooltipDisable3dmigotoLoading": "Lädt die 3DMigoto-Runtime aus thirdparty/3dmigoto/ nicht mehr. Ausschalten, um Shader-Mods nicht zu laden.",
+  "labelDisableGameModsLoading": "Laden von Spiel-Mods deaktivieren",
+  "tooltipDisableGameModsLoading": "Lädt die Mods aus dem Third-Party-Tab unter „Spiel-Mods“ nicht mehr, etwa Speedrun-Timer und Trainer. Aktiviere dies, um ohne sie zu spielen, ohne etwas löschen zu müssen.",
   "labelDisableTextureInjection": "Texturinjektion deaktivieren",
   "tooltipDisableTextureInjection": "Überspringt die Texturinjektion aus dem Mods-Ordner. Nützlich zur Fehlereingrenzung oder wenn du installierte Textur-Mods nicht verwenden möchtest.",
+  "labelHideSubtitleOverlay": "Untertitel-Overlay ausblenden",
+  "tooltipHideSubtitleOverlay": "Blendet die schwarzen Balken und das Untertitel-Overlay während Zwischensequenzen aus. Betrifft nur Zwischensequenzen – Menüs, Gegenstandsbeschreibungen und normale Dialoge bleiben unverändert.",
+  "labelKeepSubtitleText": "Untertitel-Text behalten",
+  "tooltipKeepSubtitleText": "Entfernt nur den dunklen Hintergrund hinter den Untertiteln und lässt den Text selbst lesbar. Erfordert „Untertitel-Overlay ausblenden“.",
+  "labelHideSubtitleInEvents": "Auch in Event-Szenen ausblenden (Experimentell)",
+  "tooltipHideSubtitleInEvents": "EXPERIMENTELL. Wirkt auch bei In-Engine-Event-Szenen, nicht nur bei vorgerenderten Videos. Einzelne Szenen können übersprungen oder Texte ausgeblendet werden, die du behalten wolltest – bei Problemen ausschalten. Erfordert „Untertitel-Overlay ausblenden“.",
   "labelOutfitSwapVisualEffects": "Visuelle Effekte beim Outfit-Wechsel",
   "tooltipOutfitSwapVisualEffects": "Spielt beim direkten Outfit-Wechsel die visuellen Effekte ab: die Blendenanimation beim Erscheinen des Pods, den Vorhang und den Glitch-Filter des Hacking-Bildschirms. Deaktiviere dies für einen sofortigen Wechsel ohne Effekte – das Modell wird weiterhin neu geladen. Wirkt sofort, kein Neustart erforderlich.",
   "labelExperimentalDefaultOutfits": "Standard-Outfits (experimentell)",
@@ -1736,6 +1759,7 @@
       }
     }
   },
+  "cutsceneSubtitleCard": "UNTERTITEL & SCHWARZE BALKEN",
   "cutsceneStatusHd": "HD",
   "cutsceneStatusHdTooltip": "[cutscene] hd_cutscenes in nams.toml – muss true sein, damit HD-Cutscene-Mods geladen werden.",
   "cutsceneStatusH264": "H264",
@@ -1870,6 +1894,58 @@
   "modNativeBundles": "Native Pakete",
   "modDataContent": "Dateninhalt",
   "modDataPlayerModels": "Spielermodelle",
+  "threeDInspectorOpen": "3D-Inspektor öffnen",
+  "threeDInspectorClose": "3D-Inspektor schließen",
+  "threeDInspectorResetCamera": "Kamera zurücksetzen",
+  "threeDInspectorControls": "Links ziehen: Drehen · Rechts ziehen: Verschieben · Mausrad: Zoomen · Esc: Schließen",
+  "threeDInspectorVertices": "Eckpunkte",
+  "threeDInspectorTriangles": "Dreiecke",
+  "threeDInspectorLod": "Detailstufe",
+  "threeDInspectorMeshes": "Modellteile",
+  "threeDInspectorExpand": "3D-Inspektor vergrößern",
+  "threeDInspectorOutfit": "Outfit",
+  "threeDInspectorVariant": "Modellvariante",
+  "threeDInspectorVariantNormal": "Normal",
+  "threeDInspectorVariantDamaged": "Beschädigt",
+  "threeDInspectorVariantBase": "Basis",
+  "threeDInspectorVariantSelfDestruct": "Selbstzerstörung",
+  "threeDInspectorVariantDamagedLeft": "Beschädigt (links)",
+  "threeDInspectorVariantDamagedRight": "Beschädigt (rechts)",
+  "threeDInspectorVariantDamagedHoles": "Beschädigt (Löcher)",
+  "threeDInspectorVariantDamaged2bHand": "Beschädigt (2B-Hand)",
+  "threeDInspectorVariantArmor": "Rüstung",
+  "threeDInspectorVariantDlc": "DLC",
+  "threeDInspectorVariantDlcDamaged": "DLC beschädigt",
+  "threeDInspectorVariantDlcDamagedLeft": "DLC beschädigt (links)",
+  "threeDInspectorVariantDlcDamagedRight": "DLC beschädigt (rechts)",
+  "threeDInspectorVariantDlcDamagedHoles": "DLC beschädigt (Löcher)",
+  "threeDInspectorVariantDlcDamaged2bHand": "DLC beschädigt (2B-Hand)",
+  "threeDInspectorVariantBerserk": "Berserker",
+  "threeDInspectorOutfitNumber": "Outfit {id}",
+  "@threeDInspectorOutfitNumber": {
+    "placeholders": {
+      "id": {
+        "type": "int"
+      }
+    }
+  },
+  "threeDInspectorStates": "Zustände",
+  "threeDInspectorStateSelfDestructed": "Selbstzerstört / beschädigt",
+  "threeDInspectorStateEyemask": "Augenmaske",
+  "threeDInspectorStateCombat": "Kampf",
+  "threeDInspectorStatePrologue": "Prolog",
+  "threeDInspectorStateHoly": "Heilig",
+  "threeDInspectorStateNoRight": "Rechte Seite verloren",
+  "threeDInspectorStateTower": "Turm",
+  "threeDInspectorStateWig": "Perücke ersetzt Körperhaar",
+  "threeDInspectorMissingMeshes": "{count} konfigurierte Modellteile nicht gefunden",
+  "@threeDInspectorMissingMeshes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "modRequiresLabel": "Erfordert",
   "modRequiresPluginsLabel": "Erfordert Plugins",
   "modRequiresMissing": "fehlt",

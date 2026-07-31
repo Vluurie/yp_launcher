@@ -12,6 +12,7 @@ class AppDropdown<T> extends StatefulWidget {
   final double? minWidth;
   final bool highlight;
   final IconData? icon;
+  final bool menuMatchesTriggerWidth;
 
   const AppDropdown({
     super.key,
@@ -23,6 +24,7 @@ class AppDropdown<T> extends StatefulWidget {
     this.minWidth,
     this.highlight = false,
     this.icon,
+    this.menuMatchesTriggerWidth = false,
   });
 
   @override
@@ -80,18 +82,32 @@ class _AppDropdownState<T> extends State<AppDropdown<T>> {
                     maxWidth: 480,
                     maxHeight: 320,
                   ),
-                  child: IntrinsicWidth(
-                    child: _MenuPanel<T>(
-                      items: widget.items,
-                      selectedValue: widget.value,
-                      itemLabel: widget.itemLabel,
-                      onPick: (it) {
-                        _removeOverlay();
-                        widget.onChanged?.call(it);
-                      },
-                      onDismiss: _removeOverlay,
-                    ),
-                  ),
+                  child: widget.menuMatchesTriggerWidth
+                      ? SizedBox(
+                          width: size.width,
+                          child: _MenuPanel<T>(
+                            items: widget.items,
+                            selectedValue: widget.value,
+                            itemLabel: widget.itemLabel,
+                            onPick: (it) {
+                              _removeOverlay();
+                              widget.onChanged?.call(it);
+                            },
+                            onDismiss: _removeOverlay,
+                          ),
+                        )
+                      : IntrinsicWidth(
+                          child: _MenuPanel<T>(
+                            items: widget.items,
+                            selectedValue: widget.value,
+                            itemLabel: widget.itemLabel,
+                            onPick: (it) {
+                              _removeOverlay();
+                              widget.onChanged?.call(it);
+                            },
+                            onDismiss: _removeOverlay,
+                          ),
+                        ),
                 ),
               ),
             ),
@@ -179,15 +195,18 @@ class _AppDropdownState<T> extends State<AppDropdown<T>> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Flexible(
-                  child: Text(
-                    selectedLabel,
-                    softWrap: false,
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                    style: TextStyle(
-                      fontSize: AppSizes.fontSM(context),
-                      color: textColor,
-                      fontWeight: FontWeight.w600,
+                  child: Tooltip(
+                    message: selectedLabel,
+                    child: Text(
+                      selectedLabel,
+                      softWrap: false,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      style: TextStyle(
+                        fontSize: AppSizes.fontSM(context),
+                        color: textColor,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ),
@@ -347,16 +366,19 @@ class _DesktopMenuItemState<T> extends State<_DesktopMenuItem<T>> {
               ),
               const SizedBox(width: 6),
               Flexible(
-                child: Text(
-                  widget.label,
-                  softWrap: false,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                  style: TextStyle(
-                    fontSize: AppSizes.fontSM(context),
-                    color: fg,
-                    fontWeight:
-                        selected ? FontWeight.w700 : FontWeight.w500,
+                child: Tooltip(
+                  message: widget.label,
+                  child: Text(
+                    widget.label,
+                    softWrap: false,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                    style: TextStyle(
+                      fontSize: AppSizes.fontSM(context),
+                      color: fg,
+                      fontWeight:
+                          selected ? FontWeight.w700 : FontWeight.w500,
+                    ),
                   ),
                 ),
               ),
