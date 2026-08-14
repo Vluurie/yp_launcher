@@ -99,6 +99,12 @@ class CutsceneSubtitleCard extends ConsumerWidget {
                     onChanged: (v) => set(NamsFields.hideSubtitleInEvents, v),
                   ),
                 ],
+                ConfigFieldBool(
+                  label: NamsFields.solidLetterboxBars.label(l10n),
+                  tooltip: NamsFields.solidLetterboxBars.tooltip?.call(l10n),
+                  value: valueOf(NamsFields.solidLetterboxBars),
+                  onChanged: (v) => set(NamsFields.solidLetterboxBars, v),
+                ),
               ],
             ),
           ),

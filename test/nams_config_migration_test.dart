@@ -53,6 +53,8 @@ void main() {
         NamsFields.disableTextureInjection,
         NamsFields.disableSplashScreen,
         NamsFields.fixWindTimerBug,
+        NamsFields.disableDebugHotkeys,
+        NamsFields.disableInputFeatures,
       ];
 
       for (final f in expected) {
@@ -87,6 +89,13 @@ sensitivity = 2.0
           reason: 'disable_3dmigoto_loading migrated into an old config');
       expect(cfg[NamsFields.disableReShadeLoading.key], isFalse,
           reason: 'disable_reshade_loading migrated into an old config');
+      expect(cfg[NamsFields.disableDebugHotkeys.key], isTrue,
+          reason: 'disable_debug_hotkeys migrated into an old config');
+      expect(cfg[NamsFields.disableInputFeatures.key], isFalse,
+          reason: 'disable_input_features migrated into an old config');
+      expect((cfg['cutscene'] as Map)[NamsFields.solidLetterboxBars.key],
+          isFalse,
+          reason: 'solid_letterbox_bars migrated into [cutscene]');
 
       expect((cfg['mouse'] as Map)['sensitivity'], 2.0,
           reason: 'existing [mouse] values must survive migration');
@@ -99,6 +108,36 @@ sensitivity = 2.0
         expect((cfg['mouse'] as Map).containsKey(key), isFalse,
             reason: '$key must not land inside [mouse]');
       }
+    });
+
+    test('solid_letterbox_bars lands in an existing [cutscene] section',
+        () async {
+      final gameDir = _gameDirWith('''validate_model_data = false
+
+[cutscene]
+hd_cutscenes = true
+enable_h264 = true
+hide_subtitle_overlay = true
+keep_subtitle_text = true
+hide_subtitle_in_events = false
+
+[heap]
+global_heap_extra = 0
+''');
+      addTearDown(() => gameDir.deleteSync(recursive: true));
+
+      await NamsConfigService.ensureConfigs(gameDir.path);
+      final cfg = _readNams(gameDir);
+      final cutscene = cfg['cutscene'] as Map;
+
+      expect(cutscene[NamsFields.solidLetterboxBars.key], isFalse);
+      expect(cutscene['hd_cutscenes'], isTrue,
+          reason: 'existing [cutscene] values must survive migration');
+      expect(cutscene['hide_subtitle_overlay'], isTrue);
+      expect(cfg.containsKey(NamsFields.solidLetterboxBars.key), isFalse,
+          reason: 'solid_letterbox_bars must not land at top level');
+      expect((cfg['heap'] as Map)['global_heap_extra'], 0,
+          reason: 'the following [heap] section must stay intact');
     });
 
     test('migration keeps validate_scripts off, matching the NAMS default',

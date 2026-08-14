@@ -359,6 +359,15 @@ class _YorhaProtocolViewState extends ConsumerState<YorhaProtocolView> {
                       ),
                       tooltip: YpWorkspaceFields.soundEnabled.tooltip!(l10n),
                     ),
+                    ConfigFieldBool(
+                      label: YpWorkspaceFields.impeller.label(l10n),
+                      value: data.impeller,
+                      onChanged: (v) => notifier.updateToggle(
+                        YpWorkspaceFields.impeller.key,
+                        v,
+                      ),
+                      tooltip: YpWorkspaceFields.impeller.tooltip!(l10n),
+                    ),
                   ]),
                 ],
               ),

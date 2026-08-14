@@ -56,5 +56,47 @@ void main() {
     expect(loaded['firstPlaythrough'], isFalse);
     expect(loaded['shadersEnabled'], isFalse);
   });
+
+  test('impeller defaults to true when the key is absent', () async {
+    final bottle = tree.addBottle('Steam');
+    final gameDir = p.join(bottle, 'drive_c', 'game');
+
+    await NamsSettingsService.saveSettings({'firstPlaythrough': false}, gameDir);
+
+    expect(await NamsSettingsService.loadImpeller(gameDir), isTrue);
+  });
+
+  test('impeller defaults to true when the key is not a bool', () async {
+    final bottle = tree.addBottle('Steam');
+    final gameDir = p.join(bottle, 'drive_c', 'game');
+
+    await NamsSettingsService.saveSettings({'impeller': 'yes'}, gameDir);
+
+    expect(await NamsSettingsService.loadImpeller(gameDir), isTrue);
+  });
+
+  test('writing impeller keeps every other key intact', () async {
+    final bottle = tree.addBottle('Steam');
+    final gameDir = p.join(bottle, 'drive_c', 'game');
+
+    await NamsSettingsService.saveSettings({
+      'firstPlaythrough': false,
+      'overlayLanguage': 'de',
+      'keybinds': {
+        'main': {'yorha_protocol': 'F2'},
+      },
+      'randomizerConfig': {'autoStartOnStartup': true},
+    }, gameDir);
+
+    expect(await NamsSettingsService.saveImpeller(gameDir, false), isTrue);
+
+    final loaded = await NamsSettingsService.loadSettings(gameDir);
+    expect(loaded['impeller'], isFalse);
+    expect(loaded['firstPlaythrough'], isFalse);
+    expect(loaded['overlayLanguage'], 'de');
+    expect((loaded['keybinds'] as Map)['main']['yorha_protocol'], 'F2');
+    expect((loaded['randomizerConfig'] as Map)['autoStartOnStartup'], isTrue);
+    expect(await NamsSettingsService.loadImpeller(gameDir), isFalse);
+  });
   }, skip: skipOnWindows);
 }

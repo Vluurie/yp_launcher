@@ -2716,11 +2716,32 @@ class AppLocalizationsEn extends AppLocalizations {
       'Lets you mark installed outfit mods as active from the moment the game starts, as if their files were placed in the game\'s data folder. When on, the mod details panel shows a star button per player model to set it as the boot default. Off by default while the feature stabilizes. Requires a game restart.';
 
   @override
+  String get labelSolidLetterboxBars => 'Solid Letterbox Bars';
+
+  @override
+  String get tooltipSolidLetterboxBars =>
+      'Draw the cutscene letterbox as opaque black bars of equal height, instead of the vanilla translucent and uneven ones (76 top, 154 bottom). Works on its own, and takes precedence over Hide Subtitle Overlay when both are on.';
+
+  @override
   String get labelDisableSplashScreen => 'Disable Splash Screen';
 
   @override
   String get tooltipDisableSplashScreen =>
       'Skip the startup splash window shown while the game loads. The original game revealed its window before it was ready, causing resize and flicker artifacts; NAMS finished the splash so the window is only revealed once ready. Turning this on brings those vanilla startup artifacts back.';
+
+  @override
+  String get labelDisableDebugHotkeys => 'Ignore Developer Hotkeys';
+
+  @override
+  String get tooltipDisableDebugHotkeys =>
+      'The retail build still contains the developer hotkeys Shift+3, Shift+6, Shift+K and Shift+L. They reset the render scale and force every render target to a fixed 1600x900 instead of your display resolution, which rebuilds the whole post-processing chain and leaves the image looking wrong until you restart. On by default. Turn off to get the vanilla debug keys back.';
+
+  @override
+  String get labelDisableInputFeatures => 'Disable Input Features';
+
+  @override
+  String get tooltipDisableInputFeatures =>
+      'Turn off the whole mouse and keyboard layer. The game keeps its stock input handling and everything below is ignored. Requires restart.';
 
   @override
   String get tooltipValidateModelDataSettings =>
@@ -2953,6 +2974,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tooltipSound => 'Workspace UI interaction sound.';
+
+  @override
+  String get labelImpeller => 'Impeller Renderer';
+
+  @override
+  String get tooltipImpeller =>
+      'Render the overlay with Flutter\'s Impeller renderer instead of Skia. On by default. Turn off if the overlay shows visual glitches or fails to appear on your GPU. Takes effect on the next game start.';
 
   @override
   String get labelDamageMultiplier => 'Damage Multiplier';

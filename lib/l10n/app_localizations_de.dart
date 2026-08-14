@@ -2763,11 +2763,32 @@ class AppLocalizationsDe extends AppLocalizations {
       'Ermöglicht es, installierte Outfit-Mods ab Spielstart zu aktivieren, so als lägen ihre Dateien im data-Ordner des Spiels. Wenn aktiviert, zeigt das Mod-Detailfenster pro Spielermodell einen Stern-Button, um es als Standard beim Start festzulegen. Standardmäßig aus, solange sich die Funktion stabilisiert. Erfordert einen Spielneustart.';
 
   @override
+  String get labelSolidLetterboxBars => 'Deckende Letterbox-Balken';
+
+  @override
+  String get tooltipSolidLetterboxBars =>
+      'Zeichnet die Letterbox in Zwischensequenzen als deckend schwarze Balken gleicher Höhe statt der durchscheinenden und ungleichen Originalbalken (76 oben, 154 unten). Funktioniert eigenständig und hat Vorrang vor „Untertitel-Overlay ausblenden“, wenn beides aktiv ist.';
+
+  @override
   String get labelDisableSplashScreen => 'Startbildschirm deaktivieren';
 
   @override
   String get tooltipDisableSplashScreen =>
       'Überspringt das Startfenster, das während des Ladens des Spiels angezeigt wird. Das ursprüngliche Spiel zeigte sein Fenster, bevor es bereit war, was Größenänderungs- und Flackerartefakte verursachte; NAMS vervollständigt den Startbildschirm, sodass das Fenster erst sichtbar wird, wenn es bereit ist. Durch Aktivieren dieser Option kehren die ursprünglichen Startartefakte zurück.';
+
+  @override
+  String get labelDisableDebugHotkeys => 'Entwickler-Hotkeys ignorieren';
+
+  @override
+  String get tooltipDisableDebugHotkeys =>
+      'Die Verkaufsversion enthält noch die Entwickler-Hotkeys Shift+3, Shift+6, Shift+K und Shift+L. Sie setzen die Renderskalierung zurück und erzwingen für alle Render-Targets feste 1600x900 statt deiner Bildschirmauflösung. Dadurch wird die gesamte Post-Processing-Kette neu aufgebaut und das Bild bleibt bis zum Neustart fehlerhaft. Standardmäßig aktiviert. Ausschalten, um die originalen Debug-Tasten zurückzubekommen.';
+
+  @override
+  String get labelDisableInputFeatures => 'Eingabefunktionen deaktivieren';
+
+  @override
+  String get tooltipDisableInputFeatures =>
+      'Schaltet die gesamte Maus- und Tastaturschicht ab. Das Spiel behält seine originale Eingabeverarbeitung, alles darunter wird ignoriert. Erfordert Neustart.';
 
   @override
   String get tooltipValidateModelDataSettings =>
@@ -3004,6 +3025,13 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get tooltipSound =>
       'Ton bei Interaktionen mit der Benutzeroberfläche des Arbeitsbereichs.';
+
+  @override
+  String get labelImpeller => 'Impeller-Renderer';
+
+  @override
+  String get tooltipImpeller =>
+      'Rendert das Overlay mit Flutters Impeller-Renderer statt mit Skia. Standardmäßig aktiviert. Ausschalten, wenn das Overlay Grafikfehler zeigt oder auf deiner GPU nicht erscheint. Wird beim nächsten Spielstart wirksam.';
 
   @override
   String get labelDamageMultiplier => 'Schadensmultiplikator';

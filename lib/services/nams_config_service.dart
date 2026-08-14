@@ -90,6 +90,14 @@ disable_splash_screen = false
 
 fix_wind_timer_bug = true
 
+# Ignore the leftover developer hotkeys Shift+3/6/K/L, which force every render
+# target to 1600x900 and break the look until you restart.
+disable_debug_hotkeys = true
+
+# Master switch for the mouse and keyboard layer. When true, all mouse and
+# keybind settings are ignored and the game keeps stock input. Requires restart.
+disable_input_features = false
+
 [mouse]
 fix_camera_acceleration = false
 sensitivity = 2.0
@@ -153,6 +161,7 @@ enable_h264 = false
 hide_subtitle_overlay = false
 keep_subtitle_text = false
 hide_subtitle_in_events = false
+solid_letterbox_bars = false
 
 [heap]
 global_heap_extra = 0
@@ -299,6 +308,9 @@ keep_subtitle_text = false
 # EXPERIMENTAL. Also apply during in-engine event scenes, not just pre-rendered
 # movies. May miss scenes or hide text you wanted to keep.
 hide_subtitle_in_events = false
+# Draw the letterbox as solid black bars of equal height instead of vanilla's
+# translucent, uneven ones. Wins over hide_subtitle_overlay when both are set.
+solid_letterbox_bars = false
 ''';
 
   static const _newCutsceneKeyBlocks = <String, String>{
@@ -313,6 +325,10 @@ hide_subtitle_in_events = false
         '# EXPERIMENTAL. Also apply during in-engine event scenes, not just\n'
         '# pre-rendered movies. May miss scenes or hide text you wanted to keep.\n'
         'hide_subtitle_in_events = false',
+    'solid_letterbox_bars':
+        '# Draw the letterbox as solid black bars of equal height instead of\n'
+        "# vanilla's translucent, uneven ones. Wins over hide_subtitle_overlay.\n"
+        'solid_letterbox_bars = false',
   };
 
   static const _mouseKeyRenames = <String, String>{
@@ -496,6 +512,14 @@ hide_subtitle_in_events = false
       NamsFields.fixWindTimerBug.key:
           '# Fix the vanilla bug where wind animation stops after max playtime.\n'
           'fix_wind_timer_bug = true\n',
+      NamsFields.disableDebugHotkeys.key:
+          '# Ignore the leftover developer hotkeys Shift+3/6/K/L, which force every\n'
+          '# render target to 1600x900 and break the look until you restart.\n'
+          'disable_debug_hotkeys = true\n',
+      NamsFields.disableInputFeatures.key:
+          '# Master switch for the mouse and keyboard layer. When true, all mouse\n'
+          '# and keybind settings are ignored and the game keeps stock input. Restart.\n'
+          'disable_input_features = false\n',
     };
     for (final entry in topLevelAdditions.entries) {
       if (content.contains(entry.key)) continue;
