@@ -4764,6 +4764,18 @@ abstract class AppLocalizations {
   /// **'Lets you mark installed outfit mods as active from the moment the game starts, as if their files were placed in the game\'s data folder. When on, the mod details panel shows a star button per player model to set it as the boot default. Off by default while the feature stabilizes. Requires a game restart.'**
   String get tooltipExperimentalDefaultOutfits;
 
+  /// No description provided for @labelSolidLetterboxBars.
+  ///
+  /// In en, this message translates to:
+  /// **'Solid Letterbox Bars'**
+  String get labelSolidLetterboxBars;
+
+  /// No description provided for @tooltipSolidLetterboxBars.
+  ///
+  /// In en, this message translates to:
+  /// **'Draw the cutscene letterbox as opaque black bars of equal height, instead of the vanilla translucent and uneven ones (76 top, 154 bottom). Works on its own, and takes precedence over Hide Subtitle Overlay when both are on.'**
+  String get tooltipSolidLetterboxBars;
+
   /// No description provided for @labelDisableSplashScreen.
   ///
   /// In en, this message translates to:
@@ -4775,6 +4787,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Skip the startup splash window shown while the game loads. The original game revealed its window before it was ready, causing resize and flicker artifacts; NAMS finished the splash so the window is only revealed once ready. Turning this on brings those vanilla startup artifacts back.'**
   String get tooltipDisableSplashScreen;
+
+  /// No description provided for @labelDisableDebugHotkeys.
+  ///
+  /// In en, this message translates to:
+  /// **'Ignore Developer Hotkeys'**
+  String get labelDisableDebugHotkeys;
+
+  /// No description provided for @tooltipDisableDebugHotkeys.
+  ///
+  /// In en, this message translates to:
+  /// **'The retail build still contains the developer hotkeys Shift+3, Shift+6, Shift+K and Shift+L. They reset the render scale and force every render target to a fixed 1600x900 instead of your display resolution, which rebuilds the whole post-processing chain and leaves the image looking wrong until you restart. On by default. Turn off to get the vanilla debug keys back.'**
+  String get tooltipDisableDebugHotkeys;
+
+  /// No description provided for @labelDisableInputFeatures.
+  ///
+  /// In en, this message translates to:
+  /// **'Disable Input Features'**
+  String get labelDisableInputFeatures;
+
+  /// No description provided for @tooltipDisableInputFeatures.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn off the whole mouse and keyboard layer. The game keeps its stock input handling and everything below is ignored. Requires restart.'**
+  String get tooltipDisableInputFeatures;
 
   /// No description provided for @tooltipValidateModelDataSettings.
   ///
@@ -5195,6 +5231,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Workspace UI interaction sound.'**
   String get tooltipSound;
+
+  /// No description provided for @labelImpeller.
+  ///
+  /// In en, this message translates to:
+  /// **'Impeller Renderer'**
+  String get labelImpeller;
+
+  /// No description provided for @tooltipImpeller.
+  ///
+  /// In en, this message translates to:
+  /// **'Render the overlay with Flutter\'s Impeller renderer instead of Skia. On by default. Turn off if the overlay shows visual glitches or fails to appear on your GPU. Takes effect on the next game start.'**
+  String get tooltipImpeller;
 
   /// No description provided for @labelDamageMultiplier.
   ///

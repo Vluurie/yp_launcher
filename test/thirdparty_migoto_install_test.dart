@@ -115,7 +115,9 @@ void main() {
       expect(result.ok, isTrue);
 
       final dest = migoto.installDir(game.path);
-      expect(File(p.join(dest, 'd3d11.dll')).existsSync(), isTrue);
+      expect(File(p.join(dest, '3dmigoto.dll')).existsSync(), isTrue);
+      expect(File(p.join(dest, 'd3d11.dll')).existsSync(), isFalse,
+          reason: 'the loader dll is renamed so NAMS owns d3d11.dll');
       expect(Directory(p.join(dest, 'ShaderFixes')).existsSync(), isTrue);
 
       expect(p.isWithin(launcherDir.path, dest), isTrue,

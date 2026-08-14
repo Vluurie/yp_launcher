@@ -2618,11 +2618,32 @@ class AppLocalizationsZh extends AppLocalizations {
       '可将已安装的服装 Mod 设为游戏启动时即生效，如同将其文件放入游戏的 data 文件夹。开启后，Mod 详情面板会为每个玩家模型显示一个星标按钮，用于将其设为启动默认项。功能稳定前默认关闭。需要重启游戏。';
 
   @override
+  String get labelSolidLetterboxBars => '不透明黑边';
+
+  @override
+  String get tooltipSolidLetterboxBars =>
+      '将过场动画的黑边绘制为等高的不透明黑色条，取代原版半透明且高度不一致的黑边（上 76，下 154）。可单独使用；若同时启用“隐藏字幕遮罩”，则以此项为准。';
+
+  @override
   String get labelDisableSplashScreen => '禁用启动画面';
 
   @override
   String get tooltipDisableSplashScreen =>
       '跳过游戏加载时显示的启动画面窗口。原版游戏会在窗口准备完成前就将其显示出来，导致缩放和闪烁问题；NAMS 完善了启动画面，使窗口仅在准备好后显示。启用此选项会重新带回原版启动时的这些问题。';
+
+  @override
+  String get labelDisableDebugHotkeys => '忽略开发者快捷键';
+
+  @override
+  String get tooltipDisableDebugHotkeys =>
+      '零售版仍保留了开发者快捷键 Shift+3、Shift+6、Shift+K 和 Shift+L。它们会重置渲染缩放，并将所有渲染目标强制设为固定的 1600x900，而非你的显示器分辨率，从而重建整条后期处理链，画面在重启前都会显示异常。默认启用。关闭可恢复原版调试按键。';
+
+  @override
+  String get labelDisableInputFeatures => '禁用输入功能';
+
+  @override
+  String get tooltipDisableInputFeatures =>
+      '关闭整个鼠标与键盘层。游戏将保持原版输入处理方式，下方所有设置都会被忽略。需重启生效。';
 
   @override
   String get tooltipValidateModelDataSettings => '以对话框显示模型验证错误，而不是静默失败。';
@@ -2835,6 +2856,13 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get tooltipSound => '工作区 UI 交互音效。';
+
+  @override
+  String get labelImpeller => 'Impeller 渲染器';
+
+  @override
+  String get tooltipImpeller =>
+      '使用 Flutter 的 Impeller 渲染器（而非 Skia）绘制叠加层。默认启用。如果叠加层出现画面异常或在你的显卡上无法显示，请关闭此项。下次启动游戏时生效。';
 
   @override
   String get labelDamageMultiplier => '伤害倍率';

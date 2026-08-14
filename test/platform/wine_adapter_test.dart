@@ -206,7 +206,7 @@ void main() {
         ),
         throwsA(isA<LaunchUnavailable>()),
       );
-    });
+    }, skip: skipOnWindows);
 
     test('buildNamsCommand routes verify args through the same runtime',
         () async {

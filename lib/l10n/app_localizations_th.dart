@@ -2714,11 +2714,32 @@ class AppLocalizationsTh extends AppLocalizations {
       'ให้คุณกำหนดม็อดชุดที่ติดตั้งให้ทำงานตั้งแต่เกมเริ่ม ราวกับวางไฟล์ไว้ในโฟลเดอร์ data ของเกม เมื่อเปิด แผงรายละเอียดม็อดจะแสดงปุ่มดาวสำหรับโมเดลผู้เล่นแต่ละตัวเพื่อกำหนดเป็นค่าเริ่มต้นตอนบูต ปิดไว้เป็นค่าเริ่มต้นระหว่างที่ฟีเจอร์ยังปรับเสถียรภาพ ต้องรีสตาร์ตเกม';
 
   @override
+  String get labelSolidLetterboxBars => 'แถบเลตเตอร์บ็อกซ์ทึบ';
+
+  @override
+  String get tooltipSolidLetterboxBars =>
+      'วาดแถบเลตเตอร์บ็อกซ์ของคัตซีนเป็นแถบสีดำทึบที่มีความสูงเท่ากัน แทนแบบต้นฉบับที่โปร่งแสงและสูงไม่เท่ากัน (บน 76 ล่าง 154) ใช้งานได้ด้วยตัวเอง และจะมีผลเหนือ “ซ่อนโอเวอร์เลย์คำบรรยาย” เมื่อเปิดทั้งสองอย่าง';
+
+  @override
   String get labelDisableSplashScreen => 'ปิด Splash Screen';
 
   @override
   String get tooltipDisableSplashScreen =>
       'ข้ามหน้าต่าง splash ตอนเริ่มเกมที่แสดงระหว่างโหลด เกมต้นฉบับเปิดหน้าต่างก่อนพร้อมใช้งาน ทำให้เกิดอาการปรับขนาดและกระพริบ NAMS ทำ splash ให้สมบูรณ์เพื่อให้หน้าต่างแสดงเมื่อพร้อมเท่านั้น การเปิดตัวเลือกนี้จะนำอาการเริ่มเกมแบบวานิลลากลับมา';
+
+  @override
+  String get labelDisableDebugHotkeys => 'ไม่สนใจปุ่มลัดของนักพัฒนา';
+
+  @override
+  String get tooltipDisableDebugHotkeys =>
+      'ตัวเกมเวอร์ชันขายจริงยังมีปุ่มลัดของนักพัฒนา Shift+3, Shift+6, Shift+K และ Shift+L อยู่ ปุ่มเหล่านี้จะรีเซ็ตสเกลการเรนเดอร์และบังคับให้เรนเดอร์ทาร์เก็ตทั้งหมดเป็น 1600x900 แทนความละเอียดจอของคุณ ทำให้ระบบ post-processing ถูกสร้างใหม่ทั้งชุดและภาพจะผิดเพี้ยนจนกว่าจะรีสตาร์ต เปิดใช้งานโดยค่าเริ่มต้น ปิดเพื่อให้ปุ่มดีบักแบบวานิลลากลับมา';
+
+  @override
+  String get labelDisableInputFeatures => 'ปิดฟีเจอร์อินพุต';
+
+  @override
+  String get tooltipDisableInputFeatures =>
+      'ปิดชั้นเมาส์และคีย์บอร์ดทั้งหมด เกมจะใช้การจัดการอินพุตแบบเดิม และทุกอย่างด้านล่างจะถูกละเว้น ต้องรีสตาร์ต';
 
   @override
   String get tooltipValidateModelDataSettings =>
@@ -2945,6 +2966,13 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get tooltipSound => 'เสียงตอบสนองของ UI เวิร์กสเปซ';
+
+  @override
+  String get labelImpeller => 'ตัวเรนเดอร์ Impeller';
+
+  @override
+  String get tooltipImpeller =>
+      'เรนเดอร์โอเวอร์เลย์ด้วยตัวเรนเดอร์ Impeller ของ Flutter แทน Skia เปิดใช้งานโดยค่าเริ่มต้น ปิดหากโอเวอร์เลย์แสดงผลผิดเพี้ยนหรือไม่ปรากฏบน GPU ของคุณ มีผลเมื่อเริ่มเกมครั้งถัดไป';
 
   @override
   String get labelDamageMultiplier => 'ตัวคูณความเสียหาย';

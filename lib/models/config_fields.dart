@@ -192,11 +192,34 @@ class NamsFields {
     tooltip: (l) => l.tooltipHideSubtitleInEvents,
   );
 
+  static final solidLetterboxBars = ConfigField<bool>(
+    key: 'solid_letterbox_bars',
+    defaultValue: false,
+    section: 'cutscene',
+    label: (l) => l.labelSolidLetterboxBars,
+    tooltip: (l) => l.tooltipSolidLetterboxBars,
+  );
+
   static final disableSplashScreen = ConfigField<bool>(
     key: 'disable_splash_screen',
     defaultValue: false,
     label: (l) => l.labelDisableSplashScreen,
     tooltip: (l) => l.tooltipDisableSplashScreen,
+  );
+
+  static final disableDebugHotkeys = ConfigField<bool>(
+    key: 'disable_debug_hotkeys',
+    defaultValue: true,
+    label: (l) => l.labelDisableDebugHotkeys,
+    tooltip: (l) => l.tooltipDisableDebugHotkeys,
+  );
+
+  static final disableInputFeatures = ConfigField<bool>(
+    key: 'disable_input_features',
+    defaultValue: false,
+    restartRequired: true,
+    label: (l) => l.labelDisableInputFeatures,
+    tooltip: (l) => l.tooltipDisableInputFeatures,
   );
 
   static final fixCameraAcceleration = ConfigField<bool>(
@@ -1030,6 +1053,14 @@ class YpWorkspaceFields {
     defaultValue: false,
     label: (l) => l.labelSound,
     tooltip: (l) => l.tooltipSound,
+  );
+
+  static final impeller = ConfigField<bool>(
+    key: 'impeller',
+    defaultValue: true,
+    restartRequired: true,
+    label: (l) => l.labelImpeller,
+    tooltip: (l) => l.tooltipImpeller,
   );
 }
 

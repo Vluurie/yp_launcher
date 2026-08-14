@@ -235,6 +235,18 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                           ),
                           tooltip: NamsFields.fixWindTimerBug.tooltip!(l10n),
                         ),
+                        ConfigFieldBool(
+                          label: NamsFields.disableDebugHotkeys.label(l10n),
+                          value:
+                              nams[NamsFields.disableDebugHotkeys.key] != false,
+                          onChanged: (v) => notifier.updateNams(
+                            NamsFields.disableDebugHotkeys.key,
+                            v,
+                          ),
+                          tooltip: NamsFields.disableDebugHotkeys.tooltip!(
+                            l10n,
+                          ),
+                        ),
                         Padding(
                           padding: EdgeInsets.symmetric(
                             vertical: AppSizes.paddingXS(context),

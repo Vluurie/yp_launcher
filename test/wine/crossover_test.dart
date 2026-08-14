@@ -95,7 +95,7 @@ void main() {
       final script = tree.addWineScript();
 
       expect(tree.run(findCrossOverWine, wineCommand: script), script);
-    });
+    }, skip: skipOnWindows);
 
     test('a missing override resolves to nothing', () {
       final found = tree.run(

@@ -55,8 +55,31 @@ class NamsSettingsService {
     } catch (_) {}
   }
 
+  static const String impellerKey = 'impeller';
+
+  static Future<bool> loadImpeller(String? gameDir) async {
+    try {
+      final settings = await loadSettings(gameDir);
+      final value = settings[impellerKey];
+      return value is bool ? value : true;
+    } catch (_) {
+      return true;
+    }
+  }
+
+  static Future<bool> saveImpeller(String? gameDir, bool enabled) async {
+    try {
+      final settings = await loadSettings(gameDir);
+      settings[impellerKey] = enabled;
+      return await saveSettings(settings, gameDir);
+    } catch (_) {
+      return false;
+    }
+  }
+
   static const Map<String, dynamic> _defaultSettings = {
-    'firstPlaythrough': true, 
+    'firstPlaythrough': true,
+    'impeller': true,
     'keybinds': {
       'main': {'yorha_protocol': 'F1'},
       'yorha_protocol': {

@@ -47,6 +47,11 @@ class NamsSettingsData {
   Map<String, dynamic> get ypKeybinds =>
       (keybinds['yorha_protocol'] as Map<String, dynamic>?) ?? {};
 
+  bool get impeller {
+    final value = settings[NamsSettingsService.impellerKey];
+    return value is bool ? value : true;
+  }
+
   bool get gameKeybindsGlobal => settings['gameKeybindsGlobal'] == true;
   bool get loadingSpeedupEnabled => settings['loadingSpeedupEnabled'] == true;
   bool get shadersEnabled => settings['shadersEnabled'] == true;

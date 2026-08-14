@@ -57,6 +57,11 @@ class _NaiomViewState extends ConsumerState<NaiomView> {
 
   bool _boolOf(ConfigField<bool> f) => _mouse[f.key] == true;
 
+  bool get _inputFeaturesDisabled =>
+      ref.watch(configStateControllerProvider)
+          .namsValues[NamsFields.disableInputFeatures.key] ==
+      true;
+
   double _doubleOf(ConfigField<double> f) =>
       (_mouse[f.key] as num?)?.toDouble() ?? f.defaultValue;
 
@@ -210,14 +215,15 @@ class _NaiomViewState extends ConsumerState<NaiomView> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           _controllerBanner(context),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(child: _buildLeftColumn(context)),
-                              SizedBox(width: AppSizes.spacingLG(context)),
-                              Expanded(child: _buildRightColumn(context)),
-                            ],
-                          ),
+                          if (!_inputFeaturesDisabled)
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(child: _buildLeftColumn(context)),
+                                SizedBox(width: AppSizes.spacingLG(context)),
+                                Expanded(child: _buildRightColumn(context)),
+                              ],
+                            ),
                         ],
                       ),
                     ),
@@ -542,33 +548,50 @@ class _NaiomViewState extends ConsumerState<NaiomView> {
         borderRadius: BorderRadius.circular(AppSizes.borderRadius(context)),
         border: Border.all(color: AppColors.borderLight),
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(
-            Icons.sports_esports_outlined,
-            size: AppSizes.iconLG(context),
-            color: AppColors.textSecondary,
-          ),
-          SizedBox(width: AppSizes.spacingMD(context)),
-          Expanded(
-            child: Text(
-              l10n.naiomControllerNote,
-              style: TextStyle(
-                fontSize: AppSizes.fontXS(context),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.sports_esports_outlined,
+                size: AppSizes.iconLG(context),
                 color: AppColors.textSecondary,
-                height: 1.4,
               ),
-            ),
+              SizedBox(width: AppSizes.spacingMD(context)),
+              Expanded(
+                child: Text(
+                  l10n.naiomControllerNote,
+                  style: TextStyle(
+                    fontSize: AppSizes.fontXS(context),
+                    color: AppColors.textSecondary,
+                    height: 1.4,
+                  ),
+                ),
+              ),
+              if (_hasNonDefaults()) ...[
+                SizedBox(width: AppSizes.spacingMD(context)),
+                HoverButton(
+                  label: l10n.lodModResetButton,
+                  color: AppColors.warning,
+                  onTap: () => _confirmReset(context),
+                ),
+              ],
+            ],
           ),
-          if (_hasNonDefaults()) ...[
-            SizedBox(width: AppSizes.spacingMD(context)),
-            HoverButton(
-              label: l10n.lodModResetButton,
-              color: AppColors.warning,
-              onTap: () => _confirmReset(context),
-            ),
-          ],
+          Divider(
+            height: AppSizes.spacingLG(context),
+            color: AppColors.borderLight,
+          ),
+          ConfigFieldBool(
+            label: NamsFields.disableInputFeatures.label(l10n),
+            tooltip: NamsFields.disableInputFeatures.tooltip!(l10n),
+            value: _inputFeaturesDisabled,
+            onChanged: (v) => ref
+                .read(configStateControllerProvider.notifier)
+                .updateNams(NamsFields.disableInputFeatures.key, v),
+          ),
         ],
       ),
     );
