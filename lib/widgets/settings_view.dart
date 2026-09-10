@@ -10,6 +10,8 @@ import 'package:yp_launcher/theme/app_sizes.dart';
 import 'package:path/path.dart' as p;
 import 'package:yp_launcher/widgets/app_dropdown.dart';
 import 'package:yp_launcher/widgets/collapsible_card.dart';
+import 'package:yp_launcher/widgets/config_error_banner.dart';
+import 'package:yp_launcher/widgets/two_column_layout.dart';
 import 'package:yp_launcher/widgets/config_field_bool.dart';
 import 'package:yp_launcher/widgets/header_info_icon.dart';
 import 'package:yp_launcher/widgets/hover_button.dart';
@@ -170,7 +172,10 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
     final l10n = AppLocalizations.of(context)!;
     final nams = config.namsValues;
 
-    final heap = (nams['heap'] as Map<String, dynamic>?) ?? {};
+    final rawHeap = nams['heap'];
+    final heap = rawHeap is Map<String, dynamic>
+        ? rawHeap
+        : <String, dynamic>{};
 
     return Scrollbar(
       controller: _scrollController,
@@ -181,308 +186,287 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if (config.namsError != null)
+              ConfigErrorBanner(
+                fileName: 'nams.toml',
+                error: config.namsError!,
+              ),
             _descriptionBanner(context, l10n.namsDescription),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Column(
-                    children: [
-                      _card(context, l10n.cardGeneral, [
-                        ConfigFieldBool(
-                          label: NamsFields.validateModelData.label(l10n),
-                          value: nams[NamsFields.validateModelData.key] == true,
-                          onChanged: (v) => notifier.updateNams(
-                            NamsFields.validateModelData.key,
-                            v,
-                          ),
-                          tooltip: NamsFields.validateModelData.tooltip!(l10n),
+            TwoColumnLayout(
+              left: Column(
+                children: [
+                  _card(context, l10n.cardGeneral, [
+                    ConfigFieldBool(
+                      label: NamsFields.validateModelData.label(l10n),
+                      value: nams[NamsFields.validateModelData.key] == true,
+                      onChanged: (v) => notifier.updateNams(
+                        NamsFields.validateModelData.key,
+                        v,
+                      ),
+                      tooltip: NamsFields.validateModelData.tooltip!(l10n),
+                    ),
+                    ConfigPreviewImage(
+                      image: 'assets/images/config/validate_model_data.jpg',
+                      label: l10n.previewValidationDialog,
+                    ),
+                    ConfigFieldBool(
+                      label: NamsFields.validateScripts.label(l10n),
+                      value: nams[NamsFields.validateScripts.key] == true,
+                      onChanged: (v) => notifier.updateNams(
+                        NamsFields.validateScripts.key,
+                        v,
+                      ),
+                      tooltip: NamsFields.validateScripts.tooltip!(l10n),
+                    ),
+                    ConfigPreviewImage(
+                      image: 'assets/images/config/script_error_validation.jpg',
+                      label: l10n.previewScriptErrorDialog,
+                    ),
+                    ConfigFieldBool(
+                      label: NamsFields.loadingStallHints.label(l10n),
+                      value: nams[NamsFields.loadingStallHints.key] != false,
+                      onChanged: (v) => notifier.updateNams(
+                        NamsFields.loadingStallHints.key,
+                        v,
+                      ),
+                      tooltip: NamsFields.loadingStallHints.tooltip!(l10n),
+                    ),
+                    ConfigFieldBool(
+                      label: NamsFields.fixWindTimerBug.label(l10n),
+                      value: nams[NamsFields.fixWindTimerBug.key] != false,
+                      onChanged: (v) => notifier.updateNams(
+                        NamsFields.fixWindTimerBug.key,
+                        v,
+                      ),
+                      tooltip: NamsFields.fixWindTimerBug.tooltip!(l10n),
+                    ),
+                    ConfigFieldBool(
+                      label: NamsFields.disableDebugHotkeys.label(l10n),
+                      value: nams[NamsFields.disableDebugHotkeys.key] != false,
+                      onChanged: (v) => notifier.updateNams(
+                        NamsFields.disableDebugHotkeys.key,
+                        v,
+                      ),
+                      tooltip: NamsFields.disableDebugHotkeys.tooltip!(l10n),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        vertical: AppSizes.paddingXS(context),
+                      ),
+                      child: Divider(height: 1, color: AppColors.borderLight),
+                    ),
+                    Text(
+                      l10n.cheatTableConvertDesc,
+                      style: TextStyle(
+                        fontSize: AppSizes.fontXS(context),
+                        color: AppColors.textMuted,
+                        height: 1.4,
+                      ),
+                    ),
+                    SizedBox(height: AppSizes.spacingMD(context)),
+                    Row(
+                      children: [
+                        HoverButton(
+                          label: l10n.cheatTableConvertButton,
+                          color: AppColors.accentPrimary,
+                          onTap: _convertCheatTable,
                         ),
-                        ConfigPreviewImage(
-                          image: 'assets/images/config/validate_model_data.jpg',
-                          label: l10n.previewValidationDialog,
+                      ],
+                    ),
+                    if (_ctResult != null)
+                      Padding(
+                        padding: EdgeInsets.only(
+                          top: AppSizes.paddingSM(context),
                         ),
-                        ConfigFieldBool(
-                          label: NamsFields.validateScripts.label(l10n),
-                          value: nams[NamsFields.validateScripts.key] == true,
-                          onChanged: (v) => notifier.updateNams(
-                            NamsFields.validateScripts.key,
-                            v,
-                          ),
-                          tooltip: NamsFields.validateScripts.tooltip!(l10n),
-                        ),
-                        ConfigPreviewImage(
-                          image:
-                              'assets/images/config/script_error_validation.jpg',
-                          label: l10n.previewScriptErrorDialog,
-                        ),
-                        ConfigFieldBool(
-                          label: NamsFields.loadingStallHints.label(l10n),
-                          value:
-                              nams[NamsFields.loadingStallHints.key] != false,
-                          onChanged: (v) => notifier.updateNams(
-                            NamsFields.loadingStallHints.key,
-                            v,
-                          ),
-                          tooltip: NamsFields.loadingStallHints.tooltip!(l10n),
-                        ),
-                        ConfigFieldBool(
-                          label: NamsFields.fixWindTimerBug.label(l10n),
-                          value: nams[NamsFields.fixWindTimerBug.key] != false,
-                          onChanged: (v) => notifier.updateNams(
-                            NamsFields.fixWindTimerBug.key,
-                            v,
-                          ),
-                          tooltip: NamsFields.fixWindTimerBug.tooltip!(l10n),
-                        ),
-                        ConfigFieldBool(
-                          label: NamsFields.disableDebugHotkeys.label(l10n),
-                          value:
-                              nams[NamsFields.disableDebugHotkeys.key] != false,
-                          onChanged: (v) => notifier.updateNams(
-                            NamsFields.disableDebugHotkeys.key,
-                            v,
-                          ),
-                          tooltip: NamsFields.disableDebugHotkeys.tooltip!(
-                            l10n,
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                            vertical: AppSizes.paddingXS(context),
-                          ),
-                          child: Divider(
-                            height: 1,
-                            color: AppColors.borderLight,
-                          ),
-                        ),
-                        Text(
-                          l10n.cheatTableConvertDesc,
-                          style: TextStyle(
-                            fontSize: AppSizes.fontXS(context),
-                            color: AppColors.textMuted,
-                            height: 1.4,
-                          ),
-                        ),
-                        SizedBox(height: AppSizes.spacingMD(context)),
-                        Row(
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            HoverButton(
-                              label: l10n.cheatTableConvertButton,
-                              color: AppColors.accentPrimary,
-                              onTap: _convertCheatTable,
+                            Icon(
+                              _ctSuccess
+                                  ? Icons.check_circle_outline
+                                  : Icons.info_outline,
+                              size: 14,
+                              color: _ctSuccess
+                                  ? AppColors.success
+                                  : AppColors.warning,
                             ),
-                          ],
-                        ),
-                        if (_ctResult != null)
-                          Padding(
-                            padding: EdgeInsets.only(
-                              top: AppSizes.paddingSM(context),
-                            ),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Icon(
-                                  _ctSuccess
-                                      ? Icons.check_circle_outline
-                                      : Icons.info_outline,
-                                  size: 14,
+                            const SizedBox(width: 6),
+                            Expanded(
+                              child: Text(
+                                _ctResult!,
+                                style: TextStyle(
+                                  fontSize: AppSizes.fontXS(context),
                                   color: _ctSuccess
                                       ? AppColors.success
                                       : AppColors.warning,
+                                  height: 1.35,
                                 ),
-                                const SizedBox(width: 6),
-                                Expanded(
-                                  child: Text(
-                                    _ctResult!,
-                                    style: TextStyle(
-                                      fontSize: AppSizes.fontXS(context),
-                                      color: _ctSuccess
-                                          ? AppColors.success
-                                          : AppColors.warning,
-                                      height: 1.35,
-                                    ),
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
-                          ),
-                      ]),
-                      _card(context, l10n.cardContentFeatures, [
-                        Padding(
-                          padding: EdgeInsets.only(
-                            bottom: AppSizes.spacingMD(context),
-                          ),
-                          child: Text(
-                            l10n.contentFeaturesDescription,
-                            style: TextStyle(
-                              fontSize: AppSizes.fontXS(context),
-                              color: AppColors.textMuted,
-                              fontStyle: FontStyle.italic,
-                            ),
-                          ),
+                          ],
                         ),
-                        ..._contentToggles(context, nams, notifier, l10n),
-                        ConfigFieldBool(
-                          label: NamsFields.experimentalDefaultOutfits.label(
-                            l10n,
-                          ),
-                          value:
-                              nams[NamsFields.experimentalDefaultOutfits.key] ==
-                              true,
-                          onChanged: (v) => notifier.updateNams(
-                            NamsFields.experimentalDefaultOutfits.key,
-                            v,
-                          ),
-                          tooltip: NamsFields
-                              .experimentalDefaultOutfits
-                              .tooltip!(l10n),
+                      ),
+                  ]),
+                  _card(context, l10n.cardContentFeatures, [
+                    Padding(
+                      padding: EdgeInsets.only(
+                        bottom: AppSizes.spacingMD(context),
+                      ),
+                      child: Text(
+                        l10n.contentFeaturesDescription,
+                        style: TextStyle(
+                          fontSize: AppSizes.fontXS(context),
+                          color: AppColors.textMuted,
+                          fontStyle: FontStyle.italic,
                         ),
-                      ]),
-                    ],
-                  ),
-                ),
-                SizedBox(width: AppSizes.spacingLG(context)),
-                Expanded(
-                  child: Column(
-                    children: [
-                      _card(context, l10n.cardLoading, [
-                        ConfigFieldBool(
-                          label: NamsFields.disablePluginLoading.label(l10n),
-                          value:
-                              nams[NamsFields.disablePluginLoading.key] == true,
-                          onChanged: (v) => notifier.updateNams(
-                            NamsFields.disablePluginLoading.key,
-                            v,
-                          ),
-                          tooltip: NamsFields.disablePluginLoading.tooltip!(
-                            l10n,
-                          ),
+                      ),
+                    ),
+                    ..._contentToggles(context, nams, notifier, l10n),
+                    ConfigFieldBool(
+                      label: NamsFields.experimentalDefaultOutfits.label(l10n),
+                      value:
+                          nams[NamsFields.experimentalDefaultOutfits.key] ==
+                          true,
+                      onChanged: (v) => notifier.updateNams(
+                        NamsFields.experimentalDefaultOutfits.key,
+                        v,
+                      ),
+                      tooltip: NamsFields.experimentalDefaultOutfits.tooltip!(
+                        l10n,
+                      ),
+                    ),
+                  ]),
+                ],
+              ),
+              right: Column(
+                children: [
+                  _card(context, l10n.cardLoading, [
+                    ConfigFieldBool(
+                      label: NamsFields.disablePluginLoading.label(l10n),
+                      value: nams[NamsFields.disablePluginLoading.key] == true,
+                      onChanged: (v) => notifier.updateNams(
+                        NamsFields.disablePluginLoading.key,
+                        v,
+                      ),
+                      tooltip: NamsFields.disablePluginLoading.tooltip!(l10n),
+                    ),
+                    ConfigFieldBool(
+                      label: NamsFields.disableContentFeatures.label(l10n),
+                      value:
+                          nams[NamsFields.disableContentFeatures.key] == true,
+                      onChanged: (v) => notifier.updateNams(
+                        NamsFields.disableContentFeatures.key,
+                        v,
+                      ),
+                      tooltip: NamsFields.disableContentFeatures.tooltip!(l10n),
+                    ),
+                    ConfigFieldBool(
+                      label: NamsFields.disableReShadeLoading.label(l10n),
+                      value: nams[NamsFields.disableReShadeLoading.key] == true,
+                      onChanged: (v) => notifier.updateNams(
+                        NamsFields.disableReShadeLoading.key,
+                        v,
+                      ),
+                      tooltip: NamsFields.disableReShadeLoading.tooltip!(l10n),
+                    ),
+                    ConfigFieldBool(
+                      label: NamsFields.disable3dmigotoLoading.label(l10n),
+                      value:
+                          nams[NamsFields.disable3dmigotoLoading.key] == true,
+                      onChanged: (v) => notifier.updateNams(
+                        NamsFields.disable3dmigotoLoading.key,
+                        v,
+                      ),
+                      tooltip: NamsFields.disable3dmigotoLoading.tooltip!(l10n),
+                    ),
+                    ConfigFieldBool(
+                      label: NamsFields.disableTextureInjection.label(l10n),
+                      value:
+                          nams[NamsFields.disableTextureInjection.key] == true,
+                      onChanged: (v) => notifier.updateNams(
+                        NamsFields.disableTextureInjection.key,
+                        v,
+                      ),
+                      tooltip: NamsFields.disableTextureInjection.tooltip!(
+                        l10n,
+                      ),
+                    ),
+                    ConfigFieldBool(
+                      label: NamsFields.disableSplashScreen.label(l10n),
+                      value: nams[NamsFields.disableSplashScreen.key] == true,
+                      onChanged: (v) => notifier.updateNams(
+                        NamsFields.disableSplashScreen.key,
+                        v,
+                      ),
+                      tooltip: NamsFields.disableSplashScreen.tooltip!(l10n),
+                    ),
+                    ConfigFieldBool(
+                      label: NamsFields.skipStartupLogos.label(l10n),
+                      value: nams[NamsFields.skipStartupLogos.key] == true,
+                      onChanged: (v) => notifier.updateNams(
+                        NamsFields.skipStartupLogos.key,
+                        v,
+                      ),
+                      tooltip: NamsFields.skipStartupLogos.tooltip!(l10n),
+                    ),
+                  ]),
+                  _card(context, l10n.cardHeapOverrides, [
+                    Padding(
+                      padding: EdgeInsets.only(
+                        bottom: AppSizes.spacingMD(context),
+                      ),
+                      child: Text(
+                        l10n.heapOverridesDescription,
+                        style: TextStyle(
+                          fontSize: AppSizes.fontXS(context),
+                          color: AppColors.textMuted,
+                          fontStyle: FontStyle.italic,
                         ),
-                        ConfigFieldBool(
-                          label: NamsFields.disableContentFeatures.label(l10n),
-                          value:
-                              nams[NamsFields.disableContentFeatures.key] ==
-                              true,
-                          onChanged: (v) => notifier.updateNams(
-                            NamsFields.disableContentFeatures.key,
-                            v,
-                          ),
-                          tooltip: NamsFields.disableContentFeatures.tooltip!(
-                            l10n,
-                          ),
-                        ),
-                        ConfigFieldBool(
-                          label: NamsFields.disableReShadeLoading.label(l10n),
-                          value:
-                              nams[NamsFields.disableReShadeLoading.key] ==
-                              true,
-                          onChanged: (v) => notifier.updateNams(
-                            NamsFields.disableReShadeLoading.key,
-                            v,
-                          ),
-                          tooltip: NamsFields.disableReShadeLoading.tooltip!(
-                            l10n,
-                          ),
-                        ),
-                        ConfigFieldBool(
-                          label: NamsFields.disable3dmigotoLoading.label(l10n),
-                          value:
-                              nams[NamsFields.disable3dmigotoLoading.key] ==
-                              true,
-                          onChanged: (v) => notifier.updateNams(
-                            NamsFields.disable3dmigotoLoading.key,
-                            v,
-                          ),
-                          tooltip: NamsFields.disable3dmigotoLoading.tooltip!(
-                            l10n,
-                          ),
-                        ),
-                        ConfigFieldBool(
-                          label: NamsFields.disableTextureInjection.label(l10n),
-                          value:
-                              nams[NamsFields.disableTextureInjection.key] ==
-                              true,
-                          onChanged: (v) => notifier.updateNams(
-                            NamsFields.disableTextureInjection.key,
-                            v,
-                          ),
-                          tooltip: NamsFields.disableTextureInjection.tooltip!(
-                            l10n,
-                          ),
-                        ),
-                        ConfigFieldBool(
-                          label: NamsFields.disableSplashScreen.label(l10n),
-                          value:
-                              nams[NamsFields.disableSplashScreen.key] == true,
-                          onChanged: (v) => notifier.updateNams(
-                            NamsFields.disableSplashScreen.key,
-                            v,
-                          ),
-                          tooltip: NamsFields.disableSplashScreen.tooltip!(
-                            l10n,
-                          ),
-                        ),
-                      ]),
-                      _card(context, l10n.cardHeapOverrides, [
-                        Padding(
-                          padding: EdgeInsets.only(
-                            bottom: AppSizes.spacingMD(context),
-                          ),
-                          child: Text(
-                            l10n.heapOverridesDescription,
-                            style: TextStyle(
-                              fontSize: AppSizes.fontXS(context),
-                              color: AppColors.textMuted,
-                              fontStyle: FontStyle.italic,
-                            ),
-                          ),
-                        ),
-                        _heapField(
-                          context,
-                          NamsFields.globalHeapExtra.label(l10n),
-                          NamsFields.globalHeapExtra.key,
-                          heap,
-                          notifier,
-                          l10n.heapScriptEngineDesc,
-                        ),
-                        _heapField(
-                          context,
-                          NamsFields.plFileHeapExtra.label(l10n),
-                          NamsFields.plFileHeapExtra.key,
-                          heap,
-                          notifier,
-                          l10n.heapPlayerModelsDesc,
-                        ),
-                        _heapField(
-                          context,
-                          NamsFields.plVramHeapExtra.label(l10n),
-                          NamsFields.plVramHeapExtra.key,
-                          heap,
-                          notifier,
-                          l10n.heapPlayerTexturesDesc,
-                        ),
-                        _heapField(
-                          context,
-                          NamsFields.emBgFileHeapExtra.label(l10n),
-                          NamsFields.emBgFileHeapExtra.key,
-                          heap,
-                          notifier,
-                          l10n.heapEnemyBgModelsDesc,
-                        ),
-                        _heapField(
-                          context,
-                          NamsFields.emBgVramHeapExtra.label(l10n),
-                          NamsFields.emBgVramHeapExtra.key,
-                          heap,
-                          notifier,
-                          l10n.heapEnemyBgTexturesDesc,
-                        ),
-                      ]),
-                    ],
-                  ),
-                ),
-              ],
+                      ),
+                    ),
+                    _heapField(
+                      context,
+                      NamsFields.globalHeapExtra.label(l10n),
+                      NamsFields.globalHeapExtra.key,
+                      heap,
+                      notifier,
+                      l10n.heapScriptEngineDesc,
+                    ),
+                    _heapField(
+                      context,
+                      NamsFields.plFileHeapExtra.label(l10n),
+                      NamsFields.plFileHeapExtra.key,
+                      heap,
+                      notifier,
+                      l10n.heapPlayerModelsDesc,
+                    ),
+                    _heapField(
+                      context,
+                      NamsFields.plVramHeapExtra.label(l10n),
+                      NamsFields.plVramHeapExtra.key,
+                      heap,
+                      notifier,
+                      l10n.heapPlayerTexturesDesc,
+                    ),
+                    _heapField(
+                      context,
+                      NamsFields.emBgFileHeapExtra.label(l10n),
+                      NamsFields.emBgFileHeapExtra.key,
+                      heap,
+                      notifier,
+                      l10n.heapEnemyBgModelsDesc,
+                    ),
+                    _heapField(
+                      context,
+                      NamsFields.emBgVramHeapExtra.label(l10n),
+                      NamsFields.emBgVramHeapExtra.key,
+                      heap,
+                      notifier,
+                      l10n.heapEnemyBgTexturesDesc,
+                    ),
+                  ]),
+                ],
+              ),
             ),
           ],
         ),
@@ -528,6 +512,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
       NamsFields.contentItems,
       NamsFields.contentAccessories,
       NamsFields.contentAssembleMeshes,
+      NamsFields.contentEffectAreas,
       NamsFields.contentQuestIntegration,
       NamsFields.contentEffectsApplier,
       NamsFields.contentEquipTracker,
@@ -554,7 +539,10 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
     String description,
   ) {
     final l10n = AppLocalizations.of(context)!;
-    final value = (heap[key] as int?) ?? 0;
+    final rawValue = heap[key];
+    final value = rawValue is int
+        ? rawValue
+        : (rawValue is num ? rawValue.toInt() : 0);
     final isCustom = value != 0 && !_heapPresetBytes.contains(value);
     final items = [..._heapPresetBytes, if (isCustom) value];
 

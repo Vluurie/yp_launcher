@@ -91,11 +91,7 @@ class OnboardingBackButton extends StatelessWidget {
       height: 48,
       child: TextButton.icon(
         onPressed: onTap,
-        icon: Icon(
-          Icons.arrow_back,
-          size: 18,
-          color: AppColors.textMuted,
-        ),
+        icon: Icon(Icons.arrow_back, size: 18, color: AppColors.textMuted),
         label: Text(
           AppLocalizations.of(context)!.buttonBack,
           style: TextStyle(

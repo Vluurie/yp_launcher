@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:yp_launcher/widgets/app_dialog.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:yp_launcher/constants/app_strings.dart';
@@ -85,7 +86,7 @@ class _SelectGameStepState extends ConsumerState<SelectGameStep> {
       context: context,
       builder: (ctx) {
         final l = AppLocalizations.of(ctx)!;
-        return AlertDialog(
+        return AppDialog(
           backgroundColor: AppColors.backgroundCard,
           title: Text(
             l.onboardingSelectInstallation,
@@ -200,11 +201,15 @@ class _SelectGameStepState extends ConsumerState<SelectGameStep> {
   }
 
   bool _rejectOutsidePrefix(String exePath) {
-    final reason = PlatformAdapter.current
-        .rejectGameSelection(exePath, AppLocalizations.of(context)!);
+    final reason = PlatformAdapter.current.rejectGameSelection(
+      exePath,
+      AppLocalizations.of(context)!,
+    );
     if (reason == null) return false;
 
-    ref.read(notificationStateControllerProvider.notifier).addNotification(
+    ref
+        .read(notificationStateControllerProvider.notifier)
+        .addNotification(
           NotificationItem(
             id: 'game_outside_prefix',
             message: (l10n) => reason,
@@ -242,11 +247,7 @@ class _SelectGameStepState extends ConsumerState<SelectGameStep> {
             ),
             child: Row(
               children: [
-                Icon(
-                  Icons.check_circle,
-                  color: AppColors.success,
-                  size: 22,
-                ),
+                Icon(Icons.check_circle, color: AppColors.success, size: 22),
                 const SizedBox(width: 12),
                 Expanded(
                   child: SelectableText(

@@ -3,14 +3,14 @@ import 'package:path/path.dart' as path;
 import 'package:yp_launcher/services/isolate_service.dart';
 import 'package:yp_launcher/services/toml_service.dart';
 
-
 class ModLoadOrderService {
   ModLoadOrderService._();
 
   static String _filePath(String gameDir) =>
       path.join(gameDir, 'nams', 'mod_load_order.toml');
 
-  static const _defaultFile = '''# Decides which mod wins when two mods replace the same game file.
+  static const _defaultFile =
+      '''# Decides which mod wins when two mods replace the same game file.
 # Mods not listed here keep no defined order between each other.
 # Restart the game after editing.
 #
@@ -67,7 +67,5 @@ void _saveSync(_SaveParams p) {
       ? file.readAsStringSync()
       : ModLoadOrderService._defaultFile;
 
-  file.writeAsStringSync(
-    TomlService.updateToml(raw, {'load_order': p.order}),
-  );
+  file.writeAsStringSync(TomlService.updateToml(raw, {'load_order': p.order}));
 }

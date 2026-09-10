@@ -156,14 +156,14 @@ void main() {
       final proton = tree.addProton('GE-Proton');
 
       final gameExe = p.join(gameDir, 'NieRAutomata.exe');
-      final cmd = buildProtonLaunchCommand(
-        namsExe: '/run/bins/NAMS.exe',
-        gameDir: gameDir,
-        gameExe: gameExe,
-        launcherDir: '/run/bins',
-        protonPath: proton,
-        namsArgs: namsRunArgs,
-      );
+      final cmd = tree.runNative(() => buildProtonLaunchCommand(
+            namsExe: '/run/bins/NAMS.exe',
+            gameDir: gameDir,
+            gameExe: gameExe,
+            launcherDir: '/run/bins',
+            protonPath: proton,
+            namsArgs: namsRunArgs,
+          ));
 
       expect(cmd, isNotNull);
       expect(cmd!.label, 'Proton');
@@ -173,5 +173,96 @@ void main() {
       expect(cmd.env!['SteamAppId'], nierSteamAppId);
       expect(cmd.env!['STEAM_COMPAT_DATA_PATH'], endsWith('524220'));
     }, skip: skipOnWindows);
+
+    test(
+        'a game in a second library keeps compatdata there but points the '
+        'client install at the real steam root', () {
+      final tree = FakeSteamTree.create();
+      addTearDown(tree.dispose);
+      final root = tree.addSteamRoot();
+      final library = p.join(tree.home, 'ssd', 'SteamLibrary');
+      final gameDir = tree.addNier(library: library);
+      final proton = tree.addProton('GE-Proton');
+
+      final cmd = tree.runNative(() => buildProtonLaunchCommand(
+            namsExe: '/run/bins/NAMS.exe',
+            gameDir: gameDir,
+            gameExe: p.join(gameDir, 'NieRAutomata.exe'),
+            launcherDir: '/run/bins',
+            protonPath: proton,
+            namsArgs: namsRunArgs,
+          ));
+
+      expect(cmd, isNotNull);
+      expect(cmd!.env!['STEAM_COMPAT_CLIENT_INSTALL_PATH'], root);
+      expect(
+        cmd.env!['STEAM_COMPAT_DATA_PATH'],
+        p.join(library, 'steamapps', 'compatdata', nierSteamAppId),
+      );
+    }, skip: skipOnWindows);
+  });
+
+  group('formatLaunchCommandScript', () {
+    const proton = LaunchCommand(
+      command: '/steam/GE-Proton/proton',
+      args: ['run', '/run/bins/NAMS.exe'],
+      cwd: '/run/bins',
+      label: 'Proton',
+      env: {
+        'STEAM_COMPAT_DATA_PATH': '/mnt/games/Lib/steamapps/compatdata/524220',
+        'STEAM_COMPAT_CLIENT_INSTALL_PATH': '/home/d/.steam/steam',
+      },
+    );
+
+    test('posix script exports the env inline before the command', () {
+      expect(
+        formatLaunchCommandScript(proton, windows: false),
+        "cd '/run/bins' && "
+        "STEAM_COMPAT_DATA_PATH='/mnt/games/Lib/steamapps/compatdata/524220' "
+        "STEAM_COMPAT_CLIENT_INSTALL_PATH='/home/d/.steam/steam' "
+        "'/steam/GE-Proton/proton' 'run' '/run/bins/NAMS.exe'",
+      );
+    });
+
+    test('quotes env values with spaces', () {
+      const spaced = LaunchCommand(
+        command: 'wine',
+        args: ['NAMS.exe'],
+        cwd: '/r',
+        label: 'Wine',
+        env: {'WINEPREFIX': '/home/d/My Games/pfx'},
+      );
+      expect(
+        formatLaunchCommandScript(spaced, windows: false),
+        "cd '/r' && WINEPREFIX='/home/d/My Games/pfx' 'wine' 'NAMS.exe'",
+      );
+    });
+
+    test('windows script sets the env line by line', () {
+      const win = LaunchCommand(
+        command: r'C:\yp\NAMS.exe',
+        args: ['run'],
+        cwd: r'C:\yp',
+        label: 'Windows',
+        env: {'SteamAppId': '524220'},
+      );
+      expect(
+        formatLaunchCommandScript(win, windows: true),
+        'cd /d "C:\\yp"\r\nset SteamAppId=524220\r\n"C:\\yp\\NAMS.exe" "run"',
+      );
+    });
+
+    test('no env yields the bare command', () {
+      const bare = LaunchCommand(
+        command: 'wine',
+        args: ['NAMS.exe'],
+        cwd: '/r',
+        label: 'Wine',
+      );
+      expect(
+        formatLaunchCommandScript(bare, windows: false),
+        "cd '/r' && 'wine' 'NAMS.exe'",
+      );
+    });
   });
 }

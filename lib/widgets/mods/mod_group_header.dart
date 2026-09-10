@@ -40,8 +40,7 @@ IconData modGroupIcon(ModGroupKind kind) {
     ModGroupKind.outfit2b ||
     ModGroupKind.outfit9s ||
     ModGroupKind.outfitA2 ||
-    ModGroupKind.outfitOther =>
-      Icons.checkroom_outlined,
+    ModGroupKind.outfitOther => Icons.checkroom_outlined,
     ModGroupKind.weapon => Icons.gavel_outlined,
     ModGroupKind.accessory => Icons.diamond_outlined,
     ModGroupKind.item => Icons.inventory_2_outlined,

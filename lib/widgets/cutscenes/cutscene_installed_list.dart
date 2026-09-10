@@ -74,7 +74,11 @@ class CutsceneInstalledList extends StatelessWidget {
                       ),
                     ),
                   )
-                : Column(children: mods.map((mod) => _buildModTile(context, mod)).toList()),
+                : Column(
+                    children: mods
+                        .map((mod) => _buildModTile(context, mod))
+                        .toList(),
+                  ),
           ),
         ],
       ),
@@ -90,7 +94,9 @@ class CutsceneInstalledList extends StatelessWidget {
         ? l10n.cutsceneUsmCount(mod.usmCount)
         : l10n.cutsceneMatchCount(mod.matchingOriginals.length, mod.usmCount);
 
-    final resolutionText = mod.maxWidth > 0 ? '${mod.maxWidth}x${mod.maxHeight}' : '';
+    final resolutionText = mod.maxWidth > 0
+        ? '${mod.maxWidth}x${mod.maxHeight}'
+        : '';
     final codecText = mod.hasH264 ? 'H264' : (mod.usmCount > 0 ? 'MPEG-2' : '');
 
     return _ModTileHover(
@@ -178,8 +184,9 @@ class _ModTileHoverState extends ConsumerState<_ModTileHover> {
 
   @override
   Widget build(BuildContext context) {
-    final disabled =
-        ref.watch(disabledModsStateControllerProvider).isDisabled(_relPath);
+    final disabled = ref
+        .watch(disabledModsStateControllerProvider)
+        .isDisabled(_relPath);
     return MouseRegion(
       onEnter: (_) => setState(() => _hovered = true),
       onExit: (_) => setState(() => _hovered = false),
@@ -201,144 +208,179 @@ class _ModTileHoverState extends ConsumerState<_ModTileHover> {
         child: Opacity(
           opacity: disabled ? 0.45 : 1.0,
           child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: _ClickableName(
-                    name: widget.mod.name,
-                    folderPath: widget.mod.fullPath,
-                  ),
-                ),
-                Tooltip(
-                  message: disabled
-                      ? AppLocalizations.of(context)!.modDisabledTooltip
-                      : AppLocalizations.of(context)!.modEnableTooltip,
-                  child: InkWell(
-                    onTap: () {
-                      final gameDir =
-                          ref.read(appStateControllerProvider).selectedDirectory;
-                      ref
-                          .read(disabledModsStateControllerProvider.notifier)
-                          .setDisabled(gameDir, _relPath, !disabled);
-                    },
-                    borderRadius: BorderRadius.circular(4),
-                    hoverColor: AppColors.success.withValues(alpha: 0.15),
-                    child: Padding(
-                      padding: const EdgeInsets.all(4),
-                      child: Icon(
-                        disabled ? Icons.toggle_off_outlined : Icons.toggle_on,
-                        size: AppSizes.iconLG(context),
-                        color: disabled ? AppColors.textMuted : AppColors.success,
-                      ),
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: _ClickableName(
+                      name: widget.mod.name,
+                      folderPath: widget.mod.fullPath,
                     ),
                   ),
-                ),
-                if (widget.mod.bundledWithModId == null)
-                  InkWell(
-                    onTap: widget.onDelete,
-                    borderRadius: BorderRadius.circular(4),
-                    hoverColor: AppColors.error.withValues(alpha: 0.15),
-                    splashColor: AppColors.error.withValues(alpha: 0.2),
-                    child: Padding(
-                      padding: const EdgeInsets.all(6),
-                      child: Icon(
-                        Icons.delete_outline,
-                        size: AppSizes.iconMD(context),
-                        color: AppColors.error,
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-            const SizedBox(height: 4),
-            Wrap(
-              spacing: 6,
-              runSpacing: 4,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: [
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(widget.statusIcon, size: 14, color: widget.statusColor),
-                    const SizedBox(width: 6),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 2,
-                      ),
-                      decoration: BoxDecoration(
-                        color: widget.statusColor.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Text(
-                        widget.statusText,
-                        style: TextStyle(
-                          fontSize: AppSizes.fontXS(context),
-                          fontWeight: FontWeight.bold,
-                          color: widget.statusColor,
+                  Tooltip(
+                    message: disabled
+                        ? AppLocalizations.of(context)!.modDisabledTooltip
+                        : AppLocalizations.of(context)!.modEnableTooltip,
+                    child: InkWell(
+                      onTap: () {
+                        final gameDir = ref
+                            .read(appStateControllerProvider)
+                            .selectedDirectory;
+                        ref
+                            .read(disabledModsStateControllerProvider.notifier)
+                            .setDisabled(gameDir, _relPath, !disabled);
+                      },
+                      borderRadius: BorderRadius.circular(4),
+                      hoverColor: AppColors.success.withValues(alpha: 0.15),
+                      child: Padding(
+                        padding: const EdgeInsets.all(4),
+                        child: Icon(
+                          disabled
+                              ? Icons.toggle_off_outlined
+                              : Icons.toggle_on,
+                          size: AppSizes.iconLG(context),
+                          color: disabled
+                              ? AppColors.textMuted
+                              : AppColors.success,
                         ),
                       ),
                     ),
-                  ],
-                ),
-                if (widget.resolutionText.isNotEmpty)
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: AppColors.accentPrimary.withValues(alpha: 0.1),
+                  ),
+                  if (widget.mod.bundledWithModId == null)
+                    InkWell(
+                      onTap: widget.onDelete,
                       borderRadius: BorderRadius.circular(4),
+                      hoverColor: AppColors.error.withValues(alpha: 0.15),
+                      splashColor: AppColors.error.withValues(alpha: 0.2),
+                      child: Padding(
+                        padding: const EdgeInsets.all(6),
+                        child: Icon(
+                          Icons.delete_outline,
+                          size: AppSizes.iconMD(context),
+                          color: AppColors.error,
+                        ),
+                      ),
                     ),
-                    child: Text(widget.resolutionText, style: TextStyle(fontSize: AppSizes.fontXS(context), fontWeight: FontWeight.bold, color: AppColors.accentPrimary)),
-                  ),
-                if (widget.codecText.isNotEmpty)
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: widget.codecText == 'H264' ? AppColors.success.withValues(alpha: 0.15) : AppColors.textMuted.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text(widget.codecText, style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: widget.codecText == 'H264' ? AppColors.success : AppColors.textMuted)),
-                  ),
-                if (widget.mod.bundledWithModId != null)
-                  BundledLinkChip(
-                    icon: Icons.extension_outlined,
-                    label: AppLocalizations.of(context)!.cutsceneBundledWith(
-                      widget.mod.bundledWithModId!,
-                    ),
-                    tooltip: AppLocalizations.of(
-                      context,
-                    )!.tooltipOpenInModManager,
-                    onTap: () {
-                      ref.read(pendingTabSelectionProvider.notifier).state =
-                          TabSelectionRequest(
-                        tabIndex: 5,
-                        key: widget.mod.bundledWithModId!,
-                      );
-                      ref.read(activeTabProvider.notifier).state = 5;
-                    },
-                  ),
-              ],
-            ),
-            if (!widget.allValid) ...[
-              const SizedBox(height: 6),
-              Tooltip(
-                message: AppLocalizations.of(context)!.tooltipMissingOriginals(
-                  widget.mod.missingOriginals.join(", "),
-                ),
-                child: Text(
-                  AppLocalizations.of(context)!.cutsceneMismatchHint,
-                  style: TextStyle(
-                    fontSize: AppSizes.fontXS(context),
-                    color: AppColors.textMuted,
-                    height: 1.3,
-                  ),
-                ),
+                ],
               ),
+              const SizedBox(height: 4),
+              Wrap(
+                spacing: 6,
+                runSpacing: 4,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        widget.statusIcon,
+                        size: 14,
+                        color: widget.statusColor,
+                      ),
+                      const SizedBox(width: 6),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: widget.statusColor.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          widget.statusText,
+                          style: TextStyle(
+                            fontSize: AppSizes.fontXS(context),
+                            fontWeight: FontWeight.bold,
+                            color: widget.statusColor,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (widget.resolutionText.isNotEmpty)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.accentPrimary.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        widget.resolutionText,
+                        style: TextStyle(
+                          fontSize: AppSizes.fontXS(context),
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.accentPrimary,
+                        ),
+                      ),
+                    ),
+                  if (widget.codecText.isNotEmpty)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: widget.codecText == 'H264'
+                            ? AppColors.success.withValues(alpha: 0.15)
+                            : AppColors.textMuted.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        widget.codecText,
+                        style: TextStyle(
+                          fontSize: 9,
+                          fontWeight: FontWeight.bold,
+                          color: widget.codecText == 'H264'
+                              ? AppColors.success
+                              : AppColors.textMuted,
+                        ),
+                      ),
+                    ),
+                  if (widget.mod.bundledWithModId != null)
+                    BundledLinkChip(
+                      icon: Icons.extension_outlined,
+                      label: AppLocalizations.of(
+                        context,
+                      )!.cutsceneBundledWith(widget.mod.bundledWithModId!),
+                      tooltip: AppLocalizations.of(
+                        context,
+                      )!.tooltipOpenInModManager,
+                      onTap: () {
+                        ref
+                            .read(pendingTabSelectionProvider.notifier)
+                            .state = TabSelectionRequest(
+                          tabIndex: 5,
+                          key: widget.mod.bundledWithModId!,
+                        );
+                        ref.read(activeTabProvider.notifier).state = 5;
+                      },
+                    ),
+                ],
+              ),
+              if (!widget.allValid) ...[
+                const SizedBox(height: 6),
+                Tooltip(
+                  message: AppLocalizations.of(context)!
+                      .tooltipMissingOriginals(
+                        widget.mod.missingOriginals.join(", "),
+                      ),
+                  child: Text(
+                    AppLocalizations.of(context)!.cutsceneMismatchHint,
+                    style: TextStyle(
+                      fontSize: AppSizes.fontXS(context),
+                      color: AppColors.textMuted,
+                      height: 1.3,
+                    ),
+                  ),
+                ),
+              ],
             ],
-          ],
-        ),
+          ),
         ),
       ),
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:yp_launcher/widgets/app_dialog.dart';
 import 'package:yp_launcher/l10n/app_localizations.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
@@ -10,7 +11,7 @@ Future<bool?> showTextureCrossInstallDialog({
   final l10n = AppLocalizations.of(context)!;
   return showDialog<bool>(
     context: context,
-    builder: (ctx) => AlertDialog(
+    builder: (ctx) => AppDialog(
       backgroundColor: AppColors.backgroundCard,
       title: Text(
         l10n.mixedModDetected,
@@ -49,16 +50,18 @@ Future<bool?> showTextureCrossInstallDialog({
 Future<String?> showTextureNamingDialog({
   required BuildContext context,
   required String defaultName,
-  required String character,
+  String? character,
 }) {
   final l10n = AppLocalizations.of(context)!;
   final controller = TextEditingController(text: defaultName);
   return showDialog<String>(
     context: context,
-    builder: (ctx) => AlertDialog(
+    builder: (ctx) => AppDialog(
       backgroundColor: AppColors.backgroundCard,
       title: Text(
-        l10n.nameOutfitTitle(character),
+        character == null
+            ? l10n.texturesPackNameTitle
+            : l10n.nameOutfitTitle(character),
         style: TextStyle(
           color: AppColors.accentPrimary,
           fontSize: AppSizes.fontLG(ctx),
@@ -124,12 +127,19 @@ Future<String?> showTextureMergeDialog({
             children: [
               Text(
                 l10n.textureMergeTitle,
-                style: TextStyle(fontSize: AppSizes.fontXL(ctx), color: AppColors.accentPrimary, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: AppSizes.fontXL(ctx),
+                  color: AppColors.accentPrimary,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               SizedBox(height: AppSizes.spacingLG(ctx)),
               Text(
                 l10n.textureMergeDescription,
-                style: TextStyle(fontSize: AppSizes.fontSM(ctx), color: AppColors.textSecondary),
+                style: TextStyle(
+                  fontSize: AppSizes.fontSM(ctx),
+                  color: AppColors.textSecondary,
+                ),
               ),
               SizedBox(height: AppSizes.paddingLG(ctx)),
               Flexible(
@@ -141,20 +151,29 @@ Future<String?> showTextureMergeDialog({
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        ...detectedFolders.map((folder) => Padding(
-                          padding: EdgeInsets.only(bottom: AppSizes.spacingSM(ctx)),
-                          child: OutlinedButton.icon(
-                            onPressed: () => Navigator.of(ctx).pop(folder),
-                            icon: const Icon(Icons.merge_type, size: 16),
-                            label: Text(l10n.textureMergeAddTo(folder)),
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: AppColors.accentPrimary,
-                              side: BorderSide(color: AppColors.accentPrimary),
-                              padding: EdgeInsets.symmetric(vertical: AppSizes.paddingMD(ctx), horizontal: AppSizes.paddingLG(ctx)),
-                              alignment: Alignment.centerLeft,
+                        ...detectedFolders.map(
+                          (folder) => Padding(
+                            padding: EdgeInsets.only(
+                              bottom: AppSizes.spacingSM(ctx),
+                            ),
+                            child: OutlinedButton.icon(
+                              onPressed: () => Navigator.of(ctx).pop(folder),
+                              icon: const Icon(Icons.merge_type, size: 16),
+                              label: Text(l10n.textureMergeAddTo(folder)),
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: AppColors.accentPrimary,
+                                side: BorderSide(
+                                  color: AppColors.accentPrimary,
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                  vertical: AppSizes.paddingMD(ctx),
+                                  horizontal: AppSizes.paddingLG(ctx),
+                                ),
+                                alignment: Alignment.centerLeft,
+                              ),
                             ),
                           ),
-                        )),
+                        ),
                       ],
                     ),
                   ),
@@ -170,7 +189,10 @@ Future<String?> showTextureMergeDialog({
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.surfaceLight,
                     foregroundColor: AppColors.textPrimary,
-                    padding: EdgeInsets.symmetric(vertical: AppSizes.paddingMD(ctx), horizontal: AppSizes.paddingLG(ctx)),
+                    padding: EdgeInsets.symmetric(
+                      vertical: AppSizes.paddingMD(ctx),
+                      horizontal: AppSizes.paddingLG(ctx),
+                    ),
                     alignment: Alignment.centerLeft,
                   ),
                 ),
@@ -181,7 +203,10 @@ Future<String?> showTextureMergeDialog({
                 children: [
                   TextButton(
                     onPressed: () => Navigator.of(ctx).pop(null),
-                    child: Text(l10n.cancelButton, style: TextStyle(color: AppColors.textMuted)),
+                    child: Text(
+                      l10n.cancelButton,
+                      style: TextStyle(color: AppColors.textMuted),
+                    ),
                   ),
                 ],
               ),
@@ -192,4 +217,3 @@ Future<String?> showTextureMergeDialog({
     ),
   );
 }
-

@@ -74,6 +74,11 @@ class LogService {
   /// The first emission contains the full current file content. Subsequent
   /// emissions contain only entries appended since the previous read.
   /// When the file is truncated or replaced, we restart from the beginning.
+  /// How much of an existing log file is read when the panel opens. Only the
+  /// newest entries are ever shown, so parsing a long backlog would stall the
+  /// UI for nothing.
+  static const _tailBytes = 512 * 1024;
+
   static Stream<List<LogEntry>> watchLog(
     String filename, {
     Duration interval = const Duration(milliseconds: 750),
@@ -83,6 +88,7 @@ class LogService {
     Timer? timer;
     var lastSize = 0;
     var leftover = '';
+    var firstRead = true;
 
     Future<void> tick() async {
       try {
@@ -102,14 +108,32 @@ class LogService {
         }
         if (size == lastSize) return;
 
+        var from = lastSize;
+        var startedMidLine = false;
+        if (firstRead) {
+          firstRead = false;
+          // Only the tail is ever shown, so skip parsing an old backlog.
+          if (size > _tailBytes) {
+            from = size - _tailBytes;
+            leftover = '';
+            startedMidLine = true;
+          }
+        }
+
         final raf = await file.open();
         try {
-          await raf.setPosition(lastSize);
-          final bytes = await raf.read(size - lastSize);
+          await raf.setPosition(from);
+          final bytes = await raf.read(size - from);
           lastSize = size;
-          final text = leftover + String.fromCharCodes(bytes);
+          var text = leftover + String.fromCharCodes(bytes);
+          if (startedMidLine) {
+            final firstBreak = text.indexOf('\n');
+            text = firstBreak == -1 ? '' : text.substring(firstBreak + 1);
+          }
           final newlineIdx = text.lastIndexOf('\n');
-          final consumable = newlineIdx == -1 ? '' : text.substring(0, newlineIdx);
+          final consumable = newlineIdx == -1
+              ? ''
+              : text.substring(0, newlineIdx);
           leftover = newlineIdx == -1 ? text : text.substring(newlineIdx + 1);
           if (consumable.isEmpty) return;
           final entries = consumable

@@ -541,7 +541,7 @@ class AppLocalizationsZh extends AppLocalizations {
       '高清纹理 - 将纹理放入 nams/inject/textures/，也可从 SK_Res/ 自动读取。';
 
   @override
-  String get featureLodMod => 'LOD Mod - 内置阴影、细节和物体弹出等画面调整。默认关闭。';
+  String get featureLodMod => 'LOD Mod Ext - 内置阴影、细节和物体弹出等画面调整。默认关闭。';
 
   @override
   String get tooltipEditConfigs => '无需编辑文件即可更改画面设置';
@@ -566,7 +566,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get notifyLodModMigrated =>
-      '已找到旧的 LodMod.ini 设置，并导入 lodmod.toml，同时启用了 LodMod。';
+      '已找到旧的 LodMod.ini 设置，并导入 lodmod.toml，同时启用了 LodMod Ext。';
 
   @override
   String get notifyReShadeDetected =>
@@ -680,7 +680,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get headerNams => 'NAMS';
 
   @override
-  String get headerLodMod => 'LOD MOD';
+  String get headerLodMod => 'LOD MOD EXT';
 
   @override
   String get headerTextures => '纹理';
@@ -705,7 +705,8 @@ class AppLocalizationsZh extends AppLocalizations {
       '编辑 nams/texture_injection.toml';
 
   @override
-  String get tooltipEditsSettingsJson => '编辑 %APPDATA%\\NAMS\\settings.json';
+  String get tooltipEditsSettingsJson =>
+      '编辑 nams\\_internal\\cache\\settings.json';
 
   @override
   String get tooltipEditsNaiom =>
@@ -723,6 +724,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get cardHeapOverrides => '堆内存覆盖';
+
+  @override
+  String get cardPerformance => '性能';
 
   @override
   String get cardLevelOfDetail => '细节层次';
@@ -854,7 +858,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get tabNams => 'NAMS';
 
   @override
-  String get tabLodMod => 'LOD Mod';
+  String get tabLodMod => 'LOD Mod Ext';
 
   @override
   String get tabNaiom => 'NAIOM';
@@ -870,6 +874,459 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get tabThirdParty => '第三方';
+
+  @override
+  String get tabDocs => '制作模组';
+
+  @override
+  String get tabTools => '工具';
+
+  @override
+  String get toolsIconsTitle => '图标';
+
+  @override
+  String get toolsIconsDesc =>
+      '你的模组附带的所有 misctex 图标。替换其一即可更换图片或尺寸——游戏按名称读取，因此名称必须保持不变。';
+
+  @override
+  String get toolsIconsHotReload => '无需重启：可在游戏运行时替换图标，然后退出物品栏再重新打开，新图片就已生效。';
+
+  @override
+  String get toolsIconsEmpty => '还没有图标。可用“制作模组”中的道具或武器生成器创建，或在下方添加。';
+
+  @override
+  String get toolsIconsAdd => '从图片添加图标';
+
+  @override
+  String get toolsIconsConvert => '转换图片';
+
+  @override
+  String get toolsIconsAdjust => '调整图标';
+
+  @override
+  String get toolsIconsNotMisctex => '这不是图标文件。请选择 misctex_*.dat。';
+
+  @override
+  String get toolsIconsPick => '选择已有图标';
+
+  @override
+  String get toolsIconsNewTitle => '新建图标';
+
+  @override
+  String get toolsIconsNewMod => '模组文件夹';
+
+  @override
+  String get toolsIconsNewNoMods => '还没有模组文件夹。请先创建一个模组。';
+
+  @override
+  String get toolsIconsNewName => '贴图名称';
+
+  @override
+  String get toolsIconsNewNameHint => 'item_thumb_8500';
+
+  @override
+  String get toolsIconsNewHint => '游戏通过此名称查找图标。';
+
+  @override
+  String get toolsIconsNewCreate => '继续';
+
+  @override
+  String get toolsIconsNew => '新建图标';
+
+  @override
+  String get toolsIconsReplace => '替换';
+
+  @override
+  String get toolsIconsDelete => '删除';
+
+  @override
+  String toolsIconsDeleteConfirm(String name) {
+    return '删除 $name？.dat 与 .dtt 文件都会被移除，引用它的道具将回退为占位图。';
+  }
+
+  @override
+  String toolsIconsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count 个图标',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get toolsNeedsGameDir => '请先在启动器中选择你的游戏文件夹。';
+
+  @override
+  String get docsSearchHint => '搜索文档';
+
+  @override
+  String get docsNoResults => '未找到任何内容。';
+
+  @override
+  String docsResultCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count 个结果',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get docsCategoryNative => '模组制作指南';
+
+  @override
+  String get docsCategoryScripting => '脚本编写';
+
+  @override
+  String get docsCategoryResources => '参考表';
+
+  @override
+  String get docsCategoryAuthoring => '工具开发';
+
+  @override
+  String get docsOnThisPage => '本页内容';
+
+  @override
+  String get docsHome => '从这里开始';
+
+  @override
+  String get docsHeroTitle => '制作你自己的模组';
+
+  @override
+  String get docsHeroBody => '新的道具、武器、服装、任务，乃至完整的剧情场景。入门无需编程，所需的一切都在这一页。';
+
+  @override
+  String get docsHeroCta => '5 分钟做出第一个模组';
+
+  @override
+  String get docsHeroTime => '5 分钟';
+
+  @override
+  String get docsPathBeginner => '从未做过模组';
+
+  @override
+  String get docsPathBeginnerBody => '先添加一个新道具，然后了解模组文件夹的结构。';
+
+  @override
+  String get docsPathContent => '向游戏添加内容';
+
+  @override
+  String get docsPathContentBody => '道具、武器、服装、配件、任务、邮件、音乐等等。';
+
+  @override
+  String get docsPathScripting => '编写世界脚本';
+
+  @override
+  String get docsPathScriptingBody => '让事件在恰当的时刻发生：生成、触发、镜头、过场动画。';
+
+  @override
+  String get docsSectionGuides => '指南';
+
+  @override
+  String get docsEnglishOnly => '文档目前仅提供英文版本。';
+
+  @override
+  String get docsBackToLauncher => '返回启动器';
+
+  @override
+  String get docsEdit => '编辑此页';
+
+  @override
+  String docsLinkCopied(String url) {
+    return '无法打开浏览器。链接已复制：$url';
+  }
+
+  @override
+  String get docsReload => '从磁盘重新加载';
+
+  @override
+  String get docsSaveFile => '保存到文件';
+
+  @override
+  String get docsPreview => '刷新预览';
+
+  @override
+  String get thumbnailTitle => '图标';
+
+  @override
+  String get thumbnailDrop => '将图片拖到这里';
+
+  @override
+  String get thumbnailDropHint => 'PNG、JPEG、WebP、BMP 或 TGA，转换由启动器完成。';
+
+  @override
+  String get thumbnailSize => '尺寸';
+
+  @override
+  String get thumbnailSizeHint => '拖动边角可调整大小。DXT5，须为 4 的倍数。';
+
+  @override
+  String get thumbnailSizeFixed => '此类图片尺寸固定。其他尺寸在游戏中会超出边框。';
+
+  @override
+  String thumbnailScaled(int percent) {
+    return '预览已缩放至 $percent%，图标仍按完整尺寸写入。';
+  }
+
+  @override
+  String get thumbnailCreate => '创建图标';
+
+  @override
+  String get thumbnailUse => '使用这张图片';
+
+  @override
+  String get thumbnailPending => '已就绪，将在创建道具时写入。';
+
+  @override
+  String get thumbnailHotReload => '在游戏中重新打开物品栏即可看到替换后的图标，无需重启。';
+
+  @override
+  String get thumbnailOpen => '设置图标';
+
+  @override
+  String get thumbnailChange => '更换图标';
+
+  @override
+  String get thumbnailReplace => '替换';
+
+  @override
+  String get thumbnailRemove => '移除';
+
+  @override
+  String get thumbnailDone => '图标已保存在道具旁边。';
+
+  @override
+  String get thumbnailWorking => '转换中...';
+
+  @override
+  String get thumbnailNoItem => '请先创建道具，然后再为它设置图标。';
+
+  @override
+  String get errTextureUnreadable => '无法读取该图标，它可能已损坏或格式不受支持。';
+
+  @override
+  String get errImageUnreadable => '无法将该文件读取为图像。请使用 PNG、JPEG、WebP、BMP 或 TGA。';
+
+  @override
+  String get errImageSizeOutOfRange => '尺寸必须介于 4 到 4096 像素之间。';
+
+  @override
+  String get errImageSizeNotMultipleOfFour => '宽度和高度必须是 4 的倍数。';
+
+  @override
+  String get errArchiveEmpty => '没有可打包的内容。';
+
+  @override
+  String errArchiveExtensionTooLong(String name) {
+    return '$name 的扩展名超过三个字符。';
+  }
+
+  @override
+  String get errWeaponNothingToConvert =>
+      '该模组没有可转换的模型或贴图。它需要包含 wta 的 .dat 和包含 wmb 的 .dtt。';
+
+  @override
+  String get errWeaponClassMismatch => '武器只能替换同类武器。长枪无法变成剑——动作会保留自被替换的武器。';
+
+  @override
+  String errFileReadFailed(String detail) {
+    return '无法读取文件：$detail';
+  }
+
+  @override
+  String errFileWriteFailed(String detail) {
+    return '无法写入文件：$detail';
+  }
+
+  @override
+  String errDirectoryCreateFailed(String detail) {
+    return '无法创建文件夹：$detail';
+  }
+
+  @override
+  String errUnknownCode(int code, String detail) {
+    return '出现问题（代码 $code）。$detail';
+  }
+
+  @override
+  String get itemBuilderTitle => '现在就做一个';
+
+  @override
+  String get itemBuilderBody => '填好这些内容，启动器会替你写入文件。你可以在下方看到生成的结果，之后也能手动修改。';
+
+  @override
+  String get itemBuilderName => '菜单中显示的名称';
+
+  @override
+  String get itemBuilderNameHint => '生锈的螺栓';
+
+  @override
+  String get itemBuilderDescription => '描述';
+
+  @override
+  String get itemBuilderDescriptionHint => '一颗螺栓。它经历过更好的时光。';
+
+  @override
+  String get itemBuilderModId => '模组文件夹';
+
+  @override
+  String get itemBuilderCarry => '玩家可携带数量';
+
+  @override
+  String get itemBuilderSellable => '可出售';
+
+  @override
+  String get itemBuilderSellPrice => '售价';
+
+  @override
+  String get itemBuilderAutoGive => '自动给予玩家';
+
+  @override
+  String get itemBuilderAutoGiveHint => '否则你需要商店或任务奖励来发放它。';
+
+  @override
+  String get itemBuilderIdLabel => '道具 ID';
+
+  @override
+  String get itemBuilderIdHint => '已为你选好。每个道具都需要一个无人占用的 ID。';
+
+  @override
+  String get itemBuilderPreview => '这就是将要写入的文件';
+
+  @override
+  String get itemBuilderCreate => '创建道具';
+
+  @override
+  String itemBuilderCreated(String path) {
+    return '已写入 $path';
+  }
+
+  @override
+  String get itemBuilderNeedsName => '请先给它取个名字。';
+
+  @override
+  String get itemBuilderNeedsGameDir => '请先在启动器中选择你的游戏文件夹。';
+
+  @override
+  String get itemBuilderExists => '该 ID 已被占用，请换一个。';
+
+  @override
+  String get itemBuilderOpenFolder => '显示文件';
+
+  @override
+  String get firstModTitle => '边读边做';
+
+  @override
+  String get firstModBody => '每一步都会把真实文件写入你的游戏文件夹。做完之后你就拥有一个可用的模组。';
+
+  @override
+  String get firstModStep1 => '创建模组文件夹';
+
+  @override
+  String get firstModStep1Detail => 'nams\\mods\\my_first_mod\\entities\\';
+
+  @override
+  String get firstModEdit => '打开编辑器';
+
+  @override
+  String get firstModExplainManifest =>
+      '这是模组的标识文件。NAMS 会先读取它，以确认模组存在。display_name 和 author 可以随意修改，但 id 必须保持小写且不含空格，因为其他模组会通过它引用你的模组。';
+
+  @override
+  String get firstModExplainItem =>
+      '文件名决定了它是什么：item_9999.toml 表示 ID 为 9999 的道具。重命名文件即可更改 ID。文件内的 [text.name] 是菜单中显示的名称，[text.help] 是描述。写入之前不妨改改名字。';
+
+  @override
+  String get tomlEditorValid => 'TOML 有效。NAMS 将读取：';
+
+  @override
+  String get tomlEditorInvalid => '这还不是有效的 TOML，NAMS 会跳过该文件。';
+
+  @override
+  String get tomlEditorReset => '恢复示例';
+
+  @override
+  String get tomlEditorWrite => '写入文件';
+
+  @override
+  String get firstModStep2 => '写入 mod.toml';
+
+  @override
+  String get firstModStep2Detail => 'NAMS 最先读取的标识文件。';
+
+  @override
+  String get firstModStep3 => '添加测试石子';
+
+  @override
+  String get firstModStep3Detail => 'entities\\item_9999.toml';
+
+  @override
+  String get firstModStep4 => '检查 NAMS 能否找到它';
+
+  @override
+  String get firstModStep4Detail => '对你的安装运行 NAMS verify。';
+
+  @override
+  String get firstModDo => '执行';
+
+  @override
+  String get firstModDone => '完成';
+
+  @override
+  String get firstModRedo => '重新写入';
+
+  @override
+  String get firstModVerify => '校验';
+
+  @override
+  String get firstModOpenFolder => '打开文件夹';
+
+  @override
+  String get firstModReset => '移除此模组';
+
+  @override
+  String get firstModNoGameDir => '请先在启动器中选择你的游戏文件夹。';
+
+  @override
+  String get firstModFinished => '模组已就位。重启游戏后，测试石子就会出现在你的物品栏里。';
+
+  @override
+  String firstModFailed(String error) {
+    return '无法写入文件：$error';
+  }
+
+  @override
+  String get docsCopy => '复制';
+
+  @override
+  String get docsCopied => '已复制';
+
+  @override
+  String get docsNativeBlurb => '在文本文件中描述你想要的内容，NAMS 便会加载它。大多数模组都从这里开始。';
+
+  @override
+  String get docsScriptingBlurb => '当事件需要在特定时机发生时：生成、触发、镜头，乃至完整的剧情场景。';
+
+  @override
+  String get docsSectionReference => '参考表';
+
+  @override
+  String get docsReferenceBody => '可查询的所有 ID：道具、武器、芯片、特效、网格。';
+
+  @override
+  String get docsBrowseAll => '浏览所有页面';
+
+  @override
+  String docsPagesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count 个页面',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get thirdPartyTitle => '第三方运行时';
@@ -890,14 +1347,14 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get thirdPartyMigotoHowto =>
-      '将 3DMigoto 着色器模组压缩包拖到这里。启动器会安装它并设置加载目标，以便 NAMS 挂钩。';
+      '3DMigoto 着色器模组压缩包通过顶部的拖放区安装。启动器会设置加载目标，以便 NAMS 挂接它。';
 
   @override
   String get thirdPartyGameModsHeader => '游戏模组';
 
   @override
   String get thirdPartyGameModsHowto =>
-      '将为原版游戏制作的模组文件（.dll）拖到这里，例如速通计时器、修改器等工具。启动器会配置它们以在 NAMS 下运行，但无法检查模组实际会做什么：任何模组都可能导致游戏崩溃。请只添加你信任的文件，若游戏出现异常，可在下方关闭对应模组。';
+      '为原版游戏制作的模组 DLL（速通计时器、修改器等）通过顶部的拖放区安装。启动器会让它们在 NAMS 下运行，但无法检查模组实际做什么：任何一个都可能导致游戏崩溃。只添加你信任的文件，如果游戏异常，请在下方关闭对应模组。';
 
   @override
   String get thirdPartyGameModsNone => '未安装游戏模组';
@@ -971,7 +1428,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get thirdPartyInstallCard => '安装';
 
   @override
-  String get thirdPartyDropHere => '将 ReShade 预设 / 3DMigoto 模组拖到这里';
+  String get thirdPartyDropHere => '将 ReShade 预设、3DMigoto 模组或游戏模组 DLL 拖到这里';
 
   @override
   String get thirdPartyImported => '已导入到 NAMS';
@@ -993,7 +1450,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get thirdPartyLodModPrompt =>
-      '这是 LodMod。NAMS 已内置 LodMod — 是否将其设置导入到 LodMod 标签页？';
+      '这是 LodMod。NAMS 已内置 LodMod Ext — 是否将其设置导入到 LodMod Ext 标签页？';
 
   @override
   String get thirdPartyStatusActive => '已启用';
@@ -1218,10 +1675,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get tooltipFaq => '我还需要其他模组吗？';
 
   @override
-  String get chipLodModOn => 'LOD MOD 已开启';
+  String get chipLodModOn => 'LOD MOD EXT 已开启';
 
   @override
-  String get chipLodModOff => 'LOD MOD 已关闭';
+  String get chipLodModOff => 'LOD MOD EXT 已关闭';
 
   @override
   String get chipReShade => 'ReShade';
@@ -1279,7 +1736,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get lodModDescription =>
-      'NAMS 内置的画质补丁，灵感来自 emoose 的 Automata-LodMod。可消除 LOD 物体弹出、锐化阴影和环境光遮蔽、强制包括植被在内的所有物体投射阴影、禁用手动剔除以避免物体突然出现或消失，并移除暗角。';
+      'NAMS 内置的画质补丁，灵感来自 emoose 的 Automata-LodMod，并在其基础上大幅扩展——这正是 Ext 的由来。可消除 LOD 物体弹出、锐化阴影和环境光遮蔽、强制包括植被在内的所有物体投射阴影、禁用手动剔除以避免物体突然出现或消失，并移除暗角。此外还新增了阴影级联与逐级模糊、重写的泛光、全局光照、带事件保护的 FPS 解锁、FXAA、渲染缩放以及高分辨率地图网格。';
+
+  @override
+  String get comparisonResolutionNote => '本标签页中的所有对比图均在 2560x1440 分辨率下截取。';
 
   @override
   String get namsDescription =>
@@ -1404,6 +1864,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get installedToTextures => '已安装到：nams/inject/textures/';
+
+  @override
+  String get texturesPackNameTitle => '为纹理包命名';
 
   @override
   String get installingTextures => '正在安装纹理...';
@@ -2210,7 +2673,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get tipHdCutscenes => '高清过场动画模组会自动检测并配置';
 
   @override
-  String get tipLodModPreviews => 'LOD Mod 设置附带调整前/后的预览图';
+  String get tipLodModPreviews => 'LOD Mod Ext 设置附带调整前/后的预览图';
 
   @override
   String get tipFaqButton => '使用常见问题按钮查看 YoRHa Protocol 会替代哪些模组';
@@ -2231,7 +2694,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get sectionTextureInjection => '纹理注入';
 
   @override
-  String get sectionLodMod => 'LOD MOD';
+  String get sectionLodMod => 'LOD MOD EXT';
 
   @override
   String get sectionLevelOfDetail => '细节层次';
@@ -2267,7 +2730,7 @@ class AppLocalizationsZh extends AppLocalizations {
       '无论尺寸大小，将所有纹理预加载到内存中。可消除所有纹理突然出现造成的卡顿，但需要 32GB 以上内存，并会显著延长启动时间。';
 
   @override
-  String get labelEnableLodMod => '启用 LodMod';
+  String get labelEnableLodMod => '启用 LodMod Ext';
 
   @override
   String get tooltipEnableLodMod => '所有 LodMod 画面补丁/重写功能的总开关。';
@@ -2277,7 +2740,19 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get tooltipLodMultiplier =>
-      '控制 LOD（细节层次）的绘制距离。0 = 禁用 LOD（最佳画质，无物体弹出）；1 = 原版；10 以上可在不完全禁用 LOD 的情况下减少 AO 渗漏。数值越低，画面越好，但可能降低性能。';
+      '控制模型何时切换到较低的细节层次。0 = 禁用 LOD（最佳画质，无物体弹出）；0.75 = 较低细节层次在更靠近镜头处生效，GPU 负担更小，模型消失的距离保持原版；1 = 原版；10 = 远处保持高细节，有助于减少 AO 渗漏。';
+
+  @override
+  String get lodMultiplierOptionQuality => '0 - 最佳画质';
+
+  @override
+  String get lodMultiplierOptionPerformance => '0.75 - 性能';
+
+  @override
+  String get lodMultiplierOptionVanilla => '1 - 原版';
+
+  @override
+  String get lodMultiplierOptionFar => '10 - 远处高细节';
 
   @override
   String get labelDisableManualCulling => '禁用手动剔除';
@@ -2390,14 +2865,15 @@ class AppLocalizationsZh extends AppLocalizations {
   String get labelGiEnabled => '启用全局光照';
 
   @override
-  String get tooltipGiEnabled => 'FAR 风格的全局光照。以牺牲部分光照准确性换取大幅 FPS 提升。';
+  String get tooltipGiEnabled =>
+      'FAR 所称的全局光照：每帧都有一个逐像素的计算过程遍历所有已加载的反射立方体贴图，选出最近的。开启后，只有离相机最近的立方体贴图留在遍历中，其余跳过。FAR 的做法按加载顺序截断列表，你周围的立方体贴图也可能被丢弃，附近的表面会变得暗淡发黑。这里保留离你最近的，近处看到的东西保留光照和反射，同时计算仍然更省。只有远处反射使用更粗糙的立方体贴图。立即生效。';
 
   @override
-  String get labelGiWorkgroupSize => 'GI 工作组大小';
+  String get labelGiWorkgroupSize => '保留的反射立方体贴图';
 
   @override
   String get tooltipGiWorkgroupSize =>
-      '每次 GI 调度处理的光照体积数量。128 = 原版质量；64/32/16 会逐级加快，但结果更粗糙。数值越低，越是以光照精度换取 FPS。';
+      '离相机最近的多少个反射立方体贴图留在逐像素遍历中。128 = 原版保留的全部；64/32/16 = 逐级更省，远处反射更粗糙。';
 
   @override
   String get labelGiMinLightExtent => 'GI 最小光源范围';
@@ -2410,48 +2886,312 @@ class AppLocalizationsZh extends AppLocalizations {
   String get cardExperimental => '实验性';
 
   @override
+  String get cardBloom => '泛光';
+
+  @override
+  String configParseErrorTitle(String file) {
+    return '无法读取 $file';
+  }
+
+  @override
+  String get configParseErrorBody =>
+      '该文件不是有效的 TOML。启动器将显示默认值，并且在文件能够重新解析之前不会写入该文件。请在文本编辑器中修复并保存，启动器会自动重新读取。';
+
+  @override
+  String get subheadingHighGrids => '高分辨率地图网格';
+
+  @override
+  String get highGridsWipTitle => '开发中';
+
+  @override
+  String get highGridsWipBody =>
+      '此功能尚未完成。更高环数所需的剔除规则还有待编写，因此远处的网格可能会显示本属于其他位置的地图部件。';
+
+  @override
+  String get highGridsWipContribute =>
+      '欢迎贡献：下面的规则列表正是需要填充的部分。可以使用 YP Devkit（Map Manager -> Mesh Picker）在游戏中直接选取网格和网格 ID，并直接写入规则。';
+
+  @override
+  String get subheadingFrameRate => '帧率';
+
+  @override
+  String get subheadingRendering => '渲染';
+
+  @override
+  String get bloomReferenceVanilla => '原版';
+
+  @override
+  String get bloom2017Button => '设为 2017 泛光';
+
+  @override
+  String get bloom2017Tooltip =>
+      '将泛光参考高度设为 900，即 2017 版本的泛光范围。此后泛光在任何分辨率下都保持该范围，而不会随分辨率缩放并在高分辨率下产生闪烁。不改动模糊宽度。实时生效。';
+
+  @override
+  String get labelBloomReferenceHeight => '泛光参考高度';
+
+  @override
+  String get tooltipBloomReferenceHeight =>
+      '修复高分辨率下的泛光闪烁。0 = 原版 2021（泛光金字塔随分辨率缩放，导致明亮边缘闪烁）。900 = 在任何分辨率下都使用 2017 年的泛光范围。范围 360-4320。';
+
+  @override
+  String get labelBloomKernelReferenceHeight => '泛光模糊宽度';
+
+  @override
+  String get tooltipBloomKernelReferenceHeight =>
+      '模糊宽度所参照的高度。0 = 原版（高分辨率下模糊相对于画面会缩小）。设为其他值则会在任何分辨率下都将模糊宽度固定到该高度。保持渲染目标为完整尺寸，因此可以替代泛光参考高度使用。范围 360-4320。';
+
+  @override
+  String get labelBloomExtraBlur => '额外泛光模糊';
+
+  @override
+  String get tooltipBloomExtraBlur => '额外的模糊轮次，使光晕更宽更亮，以 0.1 为步长。0 = 原版。';
+
+  @override
+  String get bloomDropLevelsOff => '关闭';
+
+  @override
+  String get bloomDropLevelsWidest => '最宽的一层';
+
+  @override
+  String get bloomDropLevelsTwoWidest => '最宽的两层';
+
+  @override
+  String get labelBloomDropCoarseLevels => '移除宽泛光层';
+
+  @override
+  String get tooltipBloomDropCoarseLevels =>
+      '移除会闪烁抖动的泛光层，同时保留光源周围的小光晕。0 = 原版，1 = 移除最宽的一层，2 = 移除最宽的两层。基于 Void 的 Bloom Fix。';
+
+  @override
+  String get labelHighGridsEnabled => '启用高分辨率地图网格';
+
+  @override
+  String get tooltipHighGridsEnabled =>
+      '在你周围保持更多地图以高分辨率加载。原版只加载 7 个网格，其余部分都渲染为低分辨率地形。会占用内存、增加加载时间，并降低帧率，因为额外的网格同样需要渲染。开发中：剔除规则尚不完整。 开启此项时也会同时开启“禁用手动剔除”，关闭时则一并关闭。';
+
+  @override
+  String get labelHighGridsRings => '网格环数';
+
+  @override
+  String get tooltipHighGridsRings =>
+      '在你周围保持加载的高分辨率网格六边形环数。1 = 原版（7 个网格），2 = 19，3 = 37，4 = 61。每个网格约占用 100 MB 堆内存，因此更高的值需要更多内存且加载更久。同时也会降低帧率，因为所有这些几何体都要被绘制。4 是经过测试的值。';
+
+  @override
+  String get labelHighGridsFarLoadInterval => '远处网格加载间隔';
+
+  @override
+  String get tooltipHighGridsFarLoadInterval =>
+      '创建第一环以外的两个网格之间等待的帧数。第一环内的网格始终每帧创建一个。数值越低加载越快但可能卡顿；越高越流畅但填充更慢。即时生效。';
+
+  @override
+  String get labelHighGridsRoomRings => '按区域覆盖环数';
+
+  @override
+  String get tooltipHighGridsRoomRings =>
+      '在特定区域使用更少的环。像水淹城市这样的封闭区域，如果周围加载过多，会显示其他地方的地图部分。不能超过全局环数。';
+
+  @override
+  String get labelHighGridsBlockedInRoom => '区域内屏蔽的网格';
+
+  @override
+  String get tooltipHighGridsBlockedInRoom =>
+      '当你在某个区域内时永不加载的网格。适用于某个网格从本不该看到它的位置可见的情况。网格 ID 是网格编号的后 4 位十六进制数字，因此在每个故事阶段都能匹配。';
+
+  @override
+  String get labelHighGridsBlockedFromGrid => '从网格屏蔽的网格';
+
+  @override
+  String get tooltipHighGridsBlockedFromGrid =>
+      '当你站在某个特定网格上时永不加载的网格。适用于屏蔽整个区域范围过大的情况。';
+
+  @override
+  String get labelContentEffectAreas => '效果区域';
+
+  @override
+  String get tooltipContentEffectAreas => '模组在房间中放置的效果。重新进入房间后生效。';
+
+  @override
+  String get labelSkipStartupLogos => '跳过启动动画';
+
+  @override
+  String get tooltipSkipStartupLogos =>
+      '跳过加载时的 Platinum Games / Square Enix 标志动画。加载本身不受影响。';
+
+  @override
+  String get labelShadowCascades => '阴影级联';
+
+  @override
+  String get tooltipShadowCascades =>
+      '4 = 原版，8 增加四个远距离级联（实验性）。为 8 时阴影图集按 4x4 平铺，每个级联只得到四分之一分辨率，请相应提高阴影分辨率。';
+
+  @override
+  String get labelShadowCascadeRange => '级联范围';
+
+  @override
+  String get tooltipShadowCascadeRange => '四个额外级联超出原版阴影距离的范围。';
+
+  @override
+  String get labelShadowBlurScale => '每级联阴影模糊';
+
+  @override
+  String get tooltipShadowBlurScale =>
+      '对游戏自身模糊的乘数，由近及远。1.0 = 不变，0.5 = 模糊减半，接触阴影更锐利。实时生效。';
+
+  @override
+  String get labelDisableHdr => '禁用 HDR';
+
+  @override
+  String get tooltipDisableHdr =>
+      '即使在 HDR 显示器上也以 SDR 运行，等同于 Special K 的 HideHDRSupport。如果 HDR 看起来发白就开启。实时生效，但交换链重建可能需要一小段时间，期间帧率可能明显下降；若未生效，请重启游戏。';
+
+  @override
+  String get labelRenderScale => '渲染缩放';
+
+  @override
+  String get tooltipRenderScale =>
+      '内部分辨率（实验性）。2.0 以两倍分辨率渲染后缩回，可消除大部分锯齿和闪烁。0.5 以一半分辨率渲染后放大：画面更柔和，GPU 工作量只有四分之一，适合弱显卡。GPU 开销为系数的平方。所有显示模式均可用。实时生效，但交换链重建可能需要一小段时间，期间帧率可能明显下降；若未生效，请重启游戏。';
+
+  @override
+  String get labelFxaa => 'FXAA';
+
+  @override
+  String get tooltipFxaa => '低成本边缘平滑。请将游戏内抗锯齿设为关。实时生效。';
+
+  @override
+  String get labelMsaaPrepassFix => 'MSAA 黑点修复';
+
+  @override
+  String get tooltipMsaaPrepassFix =>
+      '修复开启游戏内抗锯齿（MSAA）时树叶、草和头发上的黑点。无性能开销。实时生效。';
+
+  @override
+  String get labelMsaaShadowMaskFix => 'MSAA 亮边修复';
+
+  @override
+  String get tooltipMsaaShadowMaskFix =>
+      '去除开启游戏内抗锯齿（MSAA）时阴影中角色和物体周围的亮边。无性能开销。实时生效。';
+
+  @override
+  String get labelConstantBufferDedup => '跳过未更改的着色器参数';
+
+  @override
+  String get tooltipConstantBufferDedup =>
+      '提升性能。每次绘制都会读取一小块参数——变换、材质设置、光照值。原版每帧都会把它们全部重新上传到显卡，多达数千次，即使内容毫无变化。原版本身就带有能跳过未更改数据块的比较逻辑，却从未真正执行到。约有一半的上传是多余的。实时生效。';
+
+  @override
+  String get labelAoFadeFix => 'AO 穿墙修复';
+
+  @override
+  String get tooltipAoFadeFix =>
+      '阻止环境光遮蔽（AO）透过墙壁显示并在模型切换 LOD 时跳动。LOD 交叉淡入淡出期间，游戏会把两个 LOD 版本都实心绘制进 AO 深度，于是几乎看不见的几何体也会产生 AO。此修复跳过该额外绘制。LOD 倍率设为 0 也能掩盖此问题，因为那样根本没有 LOD 切换；此修复消除根源并保留 LOD。无开销。实时生效。';
+
+  @override
+  String get labelHighGridsHiddenMeshes => '隐藏网格';
+
+  @override
+  String get tooltipHighGridsHiddenMeshes =>
+      '加载足够环数后隐藏的低细节占位网格。名称可用 YP Devkit 的 Mesh Picker 查找。Grid 0x0 对所有网格生效。';
+
+  @override
+  String get labelTextureHotReload => '热重载';
+
+  @override
+  String get tooltipTextureHotReload => '监视纹理文件夹，在游戏运行时应用修改的 .dds。同尺寸修改立即生效。';
+
+  @override
+  String get gridRuleMesh => '网格';
+
+  @override
+  String get gridRuleFromRings => '自环数';
+
+  @override
+  String shadowBlurCascade(int n) {
+    return '级联 $n';
+  }
+
+  @override
+  String get gridRuleRoom => '区域';
+
+  @override
+  String get gridRuleRings => '环数';
+
+  @override
+  String get gridRuleGrid => '网格';
+
+  @override
+  String get gridRuleFromGrid => '站立于';
+
+  @override
+  String get gridRuleAdd => '添加规则';
+
+  @override
+  String get gridRuleEmpty => '无规则 - 所有网格正常加载。';
+
+  @override
+  String highGridsCellCount(int rings, int cells) {
+    String _temp0 = intl.Intl.pluralLogic(
+      rings,
+      locale: localeName,
+      other: '$rings 环 - $cells 个网格',
+      one: '1 环 - 7 个网格（原版）',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get lodModResetButton => '恢复默认值';
 
   @override
-  String get lodModResetConfirmTitle => '重置 LodMod 设置？';
+  String get lodModResetConfirmTitle => '重置 LodMod Ext 设置？';
 
   @override
   String get lodModResetConfirmBody =>
-      '这会把此选项卡中的所有 LodMod 字段恢复为默认值，并覆盖当前值。要继续吗？';
+      '这会把此选项卡中的所有 LodMod Ext 字段恢复为默认值，并覆盖当前值。要继续吗？';
 
   @override
   String get lodModResetConfirmAction => '重置';
 
   @override
-  String get lodModResetToast => 'LodMod 设置已恢复默认值';
+  String get lodModResetToast => 'LodMod Ext 设置已恢复默认值';
 
   @override
-  String get experimentalWarningTitle => '实验性功能——可能造成故障';
-
-  @override
-  String get experimentalWarningBody =>
-      '这些设置会绕过引擎依赖的游戏限制。它们不受支持，而且已知会导致问题。仅在你清楚自己所做操作时启用。NAMS 和启动器不会针对由这些设置引发的问题进行调试。';
+  String get experimentalWarningBody => '这些是实验性功能。在首次通关时请三思后再使用，以免影响你的游戏体验。';
 
   @override
   String get labelFpsUncapInMenus => '解除菜单 / 加载时的 FPS 限制';
 
   @override
   String get tooltipFpsUncapInMenus =>
-      '移除菜单和加载画面中的 60 FPS 锁定。加载体感更快，菜单动画也更流畅。安全：不会影响实际游戏。\n\n如果游戏启动时此功能已经启用，则可实时切换。如果启动时处于禁用状态，之后再启用需要重启游戏。';
+      '移除菜单和加载画面中的 60 FPS 锁定。加载体感更快，菜单动画也更流畅。安全：不会影响实际游戏。实时生效。';
 
   @override
   String get labelFpsUncapInGameplay => '解除游戏过程中的 FPS 限制';
 
   @override
   String get tooltipFpsUncapInGameplay =>
-      '移除游戏过程中的 60 FPS 锁定。警告：NieR:Automata 的物理、动画和过场动画时序都与 60 FPS 锁定绑定。解除限制会导致物理异常（跳跃高度、闪避无敌帧）、动画速度变化、过场动画音画不同步，以及脚本流程软锁。只有在你完全清楚自己接受的取舍时才使用。\n\n如果游戏启动时此功能已经启用，则可实时切换。如果启动时处于禁用状态，之后再启用需要重启游戏。';
+      '移除游戏过程中的 60 FPS 锁定。警告：NieR:Automata 的物理、动画和过场动画时序都与 60 FPS 锁定绑定。解除限制会导致物理异常（跳跃高度、闪避无敌帧）、动画速度变化、过场动画音画不同步，以及脚本流程软锁。只有在你完全清楚自己接受的取舍时才使用。实时生效。';
 
   @override
   String get labelFpsLimit => 'FPS 上限';
 
   @override
+  String get labelFpsCapInHacking => '黑入时恢复限帧';
+
+  @override
+  String get tooltipFpsCapInHacking =>
+      '黑入小游戏运行时回到原版 60 FPS 限制，即使已开启游戏内解锁。小游戏的计时基于 60 FPS。实时生效。';
+
+  @override
+  String get labelFpsCapInEvents => '事件中恢复限帧';
+
+  @override
+  String get tooltipFpsCapInEvents =>
+      '过场动画、事件、影片或字幕运行时回到原版 60 FPS 限制。事件脚本基于 60 FPS，否则可能卡死。实时生效。';
+
+  @override
   String get tooltipFpsLimit =>
-      '解除限制时应用的 FPS 上限。0 = 无限制；其他有效范围为 60–1000（超出范围的值会被 NAMS 限制）。低于 60 的值会被限制，因为游戏内部的自旋等待循环会忽略比原版 60 FPS 目标更长的帧时间。提示：将上限设为显示器刷新率的一半，会比原版 60 FPS 获得更平滑的运动效果（例如 144Hz 设为 72、165Hz 设为 82、240Hz 设为 120）。';
+      '解除限制时应用的 FPS 上限。0 = 无限制；其他有效范围为 1–1000（超出范围的值会被 NAMS 限制）。30 设定的帧时间与游戏自带 30 FPS 模式相同。解除限制期间采用忙等待，上限越低，每帧空转的 CPU 核心时间就越长。提示：将上限设为显示器刷新率的一半，会比原版 60 FPS 获得更平滑的运动效果（例如 144Hz 设为 72、165Hz 设为 82、240Hz 设为 120）。';
 
   @override
   String get tutorialValidateModel => '模组模型损坏时会直接提示，而不是静默失败。';
@@ -2735,6 +3475,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get comparison8192 => '8192';
 
   @override
+  String get comparisonCubemaps16 => '16 cubemaps';
+
+  @override
+  String get comparisonCubemaps128 => '128 cubemaps';
+
+  @override
   String get comparisonDefault => '默认';
 
   @override
@@ -2748,6 +3494,27 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get comparisonOff => '关闭';
+
+  @override
+  String get comparisonOn => '开启';
+
+  @override
+  String get comparisonBloom2021 => '2021';
+
+  @override
+  String get comparisonBloom2017 => '2017';
+
+  @override
+  String get comparisonHighGrids7 => '7 个网格（原版）';
+
+  @override
+  String get comparisonHighGrids61 => '61 个网格（4 环）';
+
+  @override
+  String get comparisonCascades4 => '4 级联（原版）';
+
+  @override
+  String get comparisonCascades8 => '8 级联';
 
   @override
   String get comparison30 => '3.0';
@@ -2858,11 +3625,11 @@ class AppLocalizationsZh extends AppLocalizations {
   String get tooltipSound => '工作区 UI 交互音效。';
 
   @override
-  String get labelImpeller => 'Impeller 渲染器';
+  String get labelImpeller => 'Impeller 渲染器（实验性）';
 
   @override
   String get tooltipImpeller =>
-      '使用 Flutter 的 Impeller 渲染器（而非 Skia）绘制叠加层。默认启用。如果叠加层出现画面异常或在你的显卡上无法显示，请关闭此项。下次启动游戏时生效。';
+      '使用 Flutter 的 Impeller 渲染器（而非 Skia）绘制叠加层。默认关闭：已有多名用户遇到崩溃。可以先试用，如果游戏运行稳定，就能保留它以便按 F1 时叠加层启动更快。开启后叠加层中的图像将无法显示，只有世界地图卡片除外。下次启动游戏时生效。';
 
   @override
   String get labelDamageMultiplier => '伤害倍率';
@@ -2986,6 +3753,12 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get tooltipThirdPersonCharFollow => '移动时保留游戏的自动镜头跟随，就像使用手柄一样。';
+
+  @override
+  String get labelThirdPersonSmoothing => '镜头平滑';
+
+  @override
+  String get tooltipThirdPersonSmoothing => '镜头跟随鼠标的缓动程度。0 = 立即跟随，1 = 游戏自带的平滑。';
 
   @override
   String get labelThirdPersonSensX => '水平灵敏度';
@@ -4516,4 +5289,499 @@ class AppLocalizationsZh extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get weaponConvertTitle => '武器转换器';
+
+  @override
+  String get weaponConvertDesc =>
+      '拖入下载的武器模组。它通常会覆盖一把原版武器；启动器会把它移到空闲位，这样什么都不会被替换。';
+
+  @override
+  String get weaponConvertDropTitle => '拖入武器模组';
+
+  @override
+  String get weaponConvertDropHint => '把 .dat 或 .dtt 拖到这里，或点击选择。两个文件必须在同一文件夹中。';
+
+  @override
+  String get weaponConvertDropInvalid => '这不是武器文件。应为类似 wp0003.dat 的文件。';
+
+  @override
+  String get weaponConvertNeedsBothFiles => '.dat 和 .dtt 必须在同一文件夹中。';
+
+  @override
+  String get weaponConvertDetected => '已从文件名读取武器类型。新位保持该类型——动作随之而来。';
+
+  @override
+  String get weaponConvertNextSlot => '换一个位';
+
+  @override
+  String get weaponConvertRun => '移动到空闲位';
+
+  @override
+  String weaponConvertDone(String stem) {
+    return '已写入为 $stem';
+  }
+
+  @override
+  String weaponConvertNextStep(String objId) {
+    return '模型已就位。要让它成为独立武器，请用上面的生成器创建一把 obj_id 为 $objId 的武器。';
+  }
+
+  @override
+  String get weaponPreviewFailed => '此模型无法在这里显示。这不影响转换。';
+
+  @override
+  String get weaponBuilderTitle => '武器生成器';
+
+  @override
+  String get weaponBuilderDesc => '填写名称和伤害数值，启动器会挑选空闲武器位并写入文件。';
+
+  @override
+  String get weaponBuilderDropTitle => '拖入你的武器模型';
+
+  @override
+  String get weaponBuilderDropHint => '你武器的 .dat / .dtt 文件对。';
+
+  @override
+  String get weaponBuilderNeedsModel => '请先拖入你的武器模型。';
+
+  @override
+  String get weaponBuilderModelReady => '将成为一把独立武器，不会覆盖任何东西。';
+
+  @override
+  String get weaponBuilderName => '武器名称';
+
+  @override
+  String get weaponBuilderNameHint => '显示在物品栏中，例如：白之契约';
+
+  @override
+  String get weaponBuilderDescription => '描述';
+
+  @override
+  String get weaponBuilderDescriptionHint => '玩家查看武器时显示';
+
+  @override
+  String get weaponBuilderType => '武器类型';
+
+  @override
+  String get weaponTypeSmallSword => '小型剑';
+
+  @override
+  String get weaponTypeLargeSword => '大型剑';
+
+  @override
+  String get weaponTypeSpear => '长枪';
+
+  @override
+  String get weaponTypeCombatBracer => '格斗武器';
+
+  @override
+  String get weaponBuilderLevels => '强化等级';
+
+  @override
+  String get weaponBuilderAddLevel => '添加等级';
+
+  @override
+  String weaponBuilderLevelNumber(int n) {
+    return '等级 $n';
+  }
+
+  @override
+  String get weaponBuilderDamage => '伤害';
+
+  @override
+  String get weaponBuilderItemId => '物品栏编号';
+
+  @override
+  String get weaponBuilderObjId => '武器编号';
+
+  @override
+  String get weaponBuilderObjIdHint =>
+      '两个编号都由模组文件夹名推导而来，不同的名称会得到不同的武器编号。这样你发布的模组就不会与别人的冲突。想换编号就改文件夹名。';
+
+  @override
+  String get weaponBuilderNeedsGameDir => '请先选择你的 NieR:Automata 文件夹。';
+
+  @override
+  String get weaponBuilderNeedsName => '请给武器起个名字。';
+
+  @override
+  String get weaponBuilderNoFreeSlot => '此武器类型已没有空闲模型位。';
+
+  @override
+  String get weaponBuilderCreate => '创建武器';
+
+  @override
+  String get weaponBuilderEffects => '特殊效果';
+
+  @override
+  String get weaponBuilderAddEffect => '添加效果';
+
+  @override
+  String get weaponBuilderEffectsHint => '可选。装备该武器时效果会改变游戏表现——伤害、速度、闪避、免疫。';
+
+  @override
+  String get weaponBuilderTrailNormal => '攻击轨迹';
+
+  @override
+  String get weaponBuilderTrailBerserk => '攻击轨迹（狂暴）';
+
+  @override
+  String get weaponBuilderTrailHint =>
+      '0 到 665 之间的任意效果。590-641 是武器轨迹，其他数值可用游戏中的任何效果。435 和 436 会崩溃，已跳过。';
+
+  @override
+  String get weaponBuilderEffectWhen => '仅限于';
+
+  @override
+  String get weaponBuilderEffectWhenAny => '所有人';
+
+  @override
+  String get weaponBuilderEffectOn => '启用';
+
+  @override
+  String get weaponBuilderIcon => '道具栏图标';
+
+  @override
+  String get weaponBuilderIconHint => '显示在道具栏和商店中。';
+
+  @override
+  String get weaponBuilderStoryIcon => '故事图片';
+
+  @override
+  String get weaponBuilderStoryIconHint => '显示在武器故事文本旁。';
+
+  @override
+  String get weaponBuilderDetails => '菜单文本';
+
+  @override
+  String get weaponBuilderHelpShort => '简短说明';
+
+  @override
+  String get weaponBuilderHelpShortHint => '一行文字，用于狭窄的菜单位置';
+
+  @override
+  String get weaponBuilderStory => '武器故事';
+
+  @override
+  String get weaponBuilderStoryHint => '显示在武器页面上的故事文本';
+
+  @override
+  String weaponBuilderSkillName(int n) {
+    return '技能 $n 名称';
+  }
+
+  @override
+  String weaponBuilderSkillDesc(int n) {
+    return '技能 $n 效果';
+  }
+
+  @override
+  String get weaponBuilderSkillNameHint => '如果武器没有技能，请留空';
+
+  @override
+  String get weaponBuilderSkillDescHint => '该技能的作用';
+
+  @override
+  String get weaponBuilderTraitId => '特性';
+
+  @override
+  String get weaponBuilderTraitNone => '无';
+
+  @override
+  String get weaponBuilderUpgrades => '强化费用';
+
+  @override
+  String get weaponBuilderAddUpgrade => '添加强化';
+
+  @override
+  String weaponBuilderUpgradeLevel(int n) {
+    return '至 $n 级';
+  }
+
+  @override
+  String get weaponBuilderUpgradeCost => '费用';
+
+  @override
+  String get weaponBuilderUpgradeHint => '没有强化条目时，武器无法在铁匠处强化。';
+
+  @override
+  String get outfitBuilderTitle => '服装生成器';
+
+  @override
+  String get outfitBuilderDesc => '拖入玩家模型，选择每种状态下显示哪些网格，启动器会为你写好服装和道具文件。';
+
+  @override
+  String get outfitBuilderDropTitle => '拖入玩家模型';
+
+  @override
+  String get outfitBuilderDropHint => '把 .dat 或 .dtt 文件拖到这里，或点击选择。';
+
+  @override
+  String get outfitBuilderDropInvalid => '这不是 .dat 或 .dtt 文件。';
+
+  @override
+  String get outfitBuilderDropUnknownModel =>
+      '这不是已知的玩家模型。应为 pl0000、pl000d（2B），pl0200、pl020d（9S），pl0100、pl010d（A2）。';
+
+  @override
+  String get outfitBuilderCharacterDetected => '角色已从模型文件读取。想换角色，拖入另一个模型即可。';
+
+  @override
+  String get outfitBuilderNoModelInArchive => '该存档中没有找到模型。';
+
+  @override
+  String outfitBuilderMeshesInModel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '此模型中有 $count 个网格',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get outfitBuilderAcquisitionTitle => '玩家如何获得';
+
+  @override
+  String get outfitBuilderAutoGive => '直接放入背包';
+
+  @override
+  String get outfitBuilderAutoGiveHint => '读取存档时加入，不用去找就已经有了。';
+
+  @override
+  String get outfitBuilderInShop => '在商店出售';
+
+  @override
+  String get outfitBuilderInShopHint => '写入一条商店记录，让玩家可以购买。';
+
+  @override
+  String get outfitBuilderShopName => '商店';
+
+  @override
+  String get shopStateRouteABeforeRuinsCollapse => '路线 A，废墟都市崩塌前';
+
+  @override
+  String get shopStateRouteAAfterRuinsCollapse => '路线 A，废墟都市崩塌后';
+
+  @override
+  String get shopStateRouteBBeforeRuinsCollapse => '路线 B，废墟都市崩塌前';
+
+  @override
+  String get shopStateRouteBAfterRuinsCollapse => '路线 B，废墟都市崩塌后';
+
+  @override
+  String get shopStateRouteC => '路线 C/D，或已达成结局 A 与 B';
+
+  @override
+  String get shopStateEndingCOrD => '已达成结局 C 或 D';
+
+  @override
+  String get shopStateEndingCAndD => '已达成结局 C 与 D';
+
+  @override
+  String get outfitBuilderShopStateAll => '全部';
+
+  @override
+  String get outfitBuilderShopState => '剧情阶段';
+
+  @override
+  String get outfitBuilderShopStateHint => '商店从剧情的哪个阶段开始出售。0 表示一开始。';
+
+  @override
+  String get outfitBuilderBuyPrice => '价格';
+
+  @override
+  String get outfitMeshMore => '选项';
+
+  @override
+  String get outfitMeshPreviewToggle => '仅在预览中显示或隐藏此网格';
+
+  @override
+  String get logWrapOn => '换行显示长行';
+
+  @override
+  String get logWrapOff => '截断长行';
+
+  @override
+  String get outfitMeshAlways => '始终显示';
+
+  @override
+  String get outfitMeshCombatOnly => '仅战斗中';
+
+  @override
+  String get outfitMeshOutOfCombatOnly => '仅非战斗时';
+
+  @override
+  String get outfitMeshEyemaskOnly => '仅戴眼罩时';
+
+  @override
+  String get outfitMeshNoEyemaskOnly => '仅不戴眼罩时';
+
+  @override
+  String get outfitMeshFeatherOnly => '仅未受损时';
+
+  @override
+  String get outfitMeshBrokenOnly => '仅受损时';
+
+  @override
+  String get outfitMeshNever => '从不显示';
+
+  @override
+  String get outfitMeshHideOnSelfDestruct => '自毁后消失';
+
+  @override
+  String get outfitMeshHairsprayTint => '被发胶染色';
+
+  @override
+  String get outfitMeshReplacedByWig => '被假发替换';
+
+  @override
+  String get outfitBuilderName => '服装名称';
+
+  @override
+  String get outfitBuilderNameHint => '显示在衣柜中，例如：黑色长裙';
+
+  @override
+  String get outfitBuilderDescription => '道具说明';
+
+  @override
+  String get outfitBuilderDescriptionHint => '玩家查看道具时显示';
+
+  @override
+  String get outfitBuilderModId => '模组文件夹';
+
+  @override
+  String get outfitBuilderOutfitId => '服装 ID';
+
+  @override
+  String get outfitBuilderItemId => '道具 ID';
+
+  @override
+  String get outfitBuilderIdHint => '两个 ID 都会自动分配，只有在你想指定特定数字时才需要修改。';
+
+  @override
+  String get outfitBuilderIdTaken => '该服装 ID 在此角色上已被占用。';
+
+  @override
+  String get outfitBuilderCopyModel => '把模型复制到模组中';
+
+  @override
+  String get outfitBuilderCopyModelHint =>
+      '将 .dat 和 .dtt 放入 data/pl/，让模组可以独立运行。';
+
+  @override
+  String get outfitBuilderNeedsGameDir => '请先选择你的 NieR:Automata 文件夹。';
+
+  @override
+  String get outfitBuilderNeedsName => '请给服装起个名字。';
+
+  @override
+  String get outfitBuilderNeedsModel => '请先拖入一个玩家模型。';
+
+  @override
+  String get outfitBuilderCreate => '创建服装';
+
+  @override
+  String outfitBuilderCreated(String path) {
+    return '已创建：$path';
+  }
+
+  @override
+  String get outfitBuilderOpenFolder => '打开文件夹';
+
+  @override
+  String get outfitBuilderPreview => '将写入为';
+
+  @override
+  String get outfitStateBase => '基础';
+
+  @override
+  String get outfitStateBaseHint =>
+      '正常状态下可见的网格。只要你在任何地方勾选了内容，其余全部先隐藏，只显示你选中的部分。';
+
+  @override
+  String get outfitStateCombat => '战斗中';
+
+  @override
+  String get outfitStateCombatHint => '战斗时在基础之上额外显示。原版在这里放战斗表情。';
+
+  @override
+  String get outfitStateNonCombat => '非战斗';
+
+  @override
+  String get outfitStateNonCombatHint => '非战斗时显示。原版在这里放普通表情。';
+
+  @override
+  String get outfitStateEyemask => '戴着眼罩';
+
+  @override
+  String get outfitStateEyemaskHint => '戴着眼罩时显示。原版在这里列出 Eyemask 网格。';
+
+  @override
+  String get outfitStateNonEyemask => '摘下眼罩';
+
+  @override
+  String get outfitStateNonEyemaskHint => '摘下眼罩时显示，例如装备了伪装护目镜。原版在这里列出睫毛。';
+
+  @override
+  String get outfitStateSelfDestructShow => '自毁后显示';
+
+  @override
+  String get outfitStateSelfDestructShowHint => '角色自毁后显示。';
+
+  @override
+  String get outfitStateSelfDestructHide => '自毁后隐藏';
+
+  @override
+  String get outfitStateSelfDestructHideHint => '角色自毁后隐藏。原版在这里隐藏裙子。';
+
+  @override
+  String get outfitStateBroken => '羽毛隐藏';
+
+  @override
+  String get outfitStateBrokenHint => '羽毛未绘制时显示。这与自毁是两个不同的状态。';
+
+  @override
+  String get outfitStateNonBroken => '羽毛显示';
+
+  @override
+  String get outfitStateNonBrokenHint => '羽毛正常绘制时显示，也就是通常情况。';
+
+  @override
+  String get outfitStateWig => '假发';
+
+  @override
+  String get outfitStateWigHint => '由假发代替身体绘制的网格。装上假发时这些会被隐藏。原版在这里列出 Hair。';
+
+  @override
+  String get outfitStateHairspray => '发胶染色';
+
+  @override
+  String get outfitStateHairsprayHint => '被发胶染色的网格。这些只会变色，不会显示或隐藏。留空则使用 Hair。';
+
+  @override
+  String get outfitStatePrologue => '序章';
+
+  @override
+  String get outfitStatePrologueHint => '序章中 9S 严重受损时，替换基础网格。';
+
+  @override
+  String get outfitStateHoly => '破洞';
+
+  @override
+  String get outfitStateHolyHint => '9S 满身破洞时替换基础网格。';
+
+  @override
+  String get outfitStateNoRight => '失去右臂';
+
+  @override
+  String get outfitStateNoRightHint => '9S 失去右臂后替换基础网格。';
+
+  @override
+  String get outfitStateTower => '塔';
+
+  @override
+  String get outfitStateTowerHint => '在塔中替换基础网格。';
 }

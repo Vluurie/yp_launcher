@@ -66,9 +66,6 @@ class GpuPreferenceService {
     required bool enabled,
   }) {
     if (!enabled || !Platform.isLinux) return baseEnv;
-    return {
-      ...?baseEnv,
-      ...linuxDedicatedGpuEnv,
-    };
+    return {...?baseEnv, ...linuxDedicatedGpuEnv};
   }
 }

@@ -55,3 +55,23 @@ app.*.map.json
 
 # Large local test fixtures (not committed); small ones are versioned
 test/fixtures/cpk_mod_709.zip
+
+# Documentation tab and its features - work in progress, not committed yet
+assets/docs/
+lib/widgets/docs/
+lib/services/docs/
+lib/widgets/tools_view.dart
+lib/widgets/misctex_card.dart
+lib/widgets/icon_name_dialog.dart
+lib/services/misctex_scan_service.dart
+test/misctex_scan_test.dart
+test/docs_images_test.dart
+test/docs_marker_test.dart
+test/docs_service_test.dart
+test/first_mod_test.dart
+test/item_builder_test.dart
+test/item_category_test.dart
+test/outfit_builder_service_test.dart
+test/weapon_builder_service_test.dart
+test/weapon_convert_service_test.dart
+test/tmp_cmp_test.dart

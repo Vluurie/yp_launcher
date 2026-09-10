@@ -159,11 +159,20 @@ class _Category {
 }
 
 class LaunchFailureParser {
-  static final _errorHeader = RegExp(r'^ERROR\[(\d+)\]\s+(.+)$', multiLine: true);
-  static final _panicHeader = RegExp(r'^PANIC\[(\d+)\]\s+(.+)$', multiLine: true);
+  static final _errorHeader = RegExp(
+    r'^ERROR\[(\d+)\]\s+(.+)$',
+    multiLine: true,
+  );
+  static final _panicHeader = RegExp(
+    r'^PANIC\[(\d+)\]\s+(.+)$',
+    multiLine: true,
+  );
   static final _phaseLine = RegExp(r'^\s*Phase:\s*(.+)$', multiLine: true);
   static final _osErrorLine = RegExp(r'^\s*OS error:\s*(.+)$', multiLine: true);
-  static final _causeLine = RegExp(r'^\s*Likely cause:\s*(.+)$', multiLine: true);
+  static final _causeLine = RegExp(
+    r'^\s*Likely cause:\s*(.+)$',
+    multiLine: true,
+  );
   static final _fixLine = RegExp(r'^\s*Try:\s*(.+)$', multiLine: true);
 
   static LaunchFailure? parse(

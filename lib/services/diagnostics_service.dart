@@ -180,8 +180,7 @@ class DiagnosticsService {
             'sk': <String>[],
             'wax': <String>[],
           }
-        : await IsolateService.run<_TextureScanParams,
-            Map<String, dynamic>>(
+        : await IsolateService.run<_TextureScanParams, Map<String, dynamic>>(
             _scanTexturesSync,
             _TextureScanParams(gameDir: gameDir),
           );
@@ -198,19 +197,19 @@ class DiagnosticsService {
 
     final namsToml = gameDir.isEmpty
         ? ''
-        : await TomlService.readTomlFile(
-            p.join(gameDir, 'nams', 'nams.toml'));
+        : await TomlService.readTomlFile(p.join(gameDir, 'nams', 'nams.toml'));
     final lodmodToml = gameDir.isEmpty
         ? ''
         : await TomlService.readTomlFile(
-            p.join(gameDir, 'nams', 'lodmod.toml'));
+            p.join(gameDir, 'nams', 'lodmod.toml'),
+          );
     final textureInjToml = gameDir.isEmpty
         ? ''
         : await TomlService.readTomlFile(
-            p.join(gameDir, 'nams', 'texture_injection.toml'));
+            p.join(gameDir, 'nams', 'texture_injection.toml'),
+          );
 
-    final launcherDir =
-        await LauncherSetupService.getLauncherDirectory();
+    final launcherDir = await LauncherSetupService.getLauncherDirectory();
 
     final gameIdentity = await _collectGameIdentity(gameDir);
     final vanillaDropped = gameDir.isEmpty
@@ -218,10 +217,15 @@ class DiagnosticsService {
         : await IsolateService.run(_scanVanillaSync, gameDir);
     final thirdParty = await _collectThirdParty(gameDir);
     final namsHealth = await _collectNamsHealth(launchCommandPreview);
-    final texturePacksResult =
-        gameDir.isEmpty ? null : await _quiet(() => NamsCliService.texturesList(gameDir));
+    final texturePacksResult = gameDir.isEmpty
+        ? null
+        : await _quiet(() => NamsCliService.texturesList(gameDir));
     final recentLogIssues = await _collectRecentIssues();
-    final configDeltas = _collectConfigDeltas(namsToml, lodmodToml, textureInjToml);
+    final configDeltas = _collectConfigDeltas(
+      namsToml,
+      lodmodToml,
+      textureInjToml,
+    );
     final gameRunning =
         await _quiet(() => PlatformAdapter.current.isGameRunning()) ?? false;
     final preferDedicatedGpu = await _collectGpuPref();
@@ -300,7 +304,8 @@ class DiagnosticsService {
       final exeSize = exeFile.existsSync() ? exeFile.lengthSync() : null;
       return GameIdentity(
         exeVariant: variant.name,
-        exeVariantSupported: variant == ExeVariant.original ||
+        exeVariantSupported:
+            variant == ExeVariant.original ||
             variant == ExeVariant.wolfLimitBreak,
         hasDlc: hasDlc,
         exeSize: exeSize,
@@ -313,9 +318,11 @@ class DiagnosticsService {
 
   static Future<ThirdPartyReport> _collectThirdParty(String gameDir) async {
     if (gameDir.isEmpty) return const ThirdPartyReport();
-    final reshade = await _quiet(() => const ReShadeRuntime().status(gameDir)) ??
+    final reshade =
+        await _quiet(() => const ReShadeRuntime().status(gameDir)) ??
         const ThirdPartyRuntimeStatus();
-    final migoto = await _quiet(() => const MigotoRuntime().status(gameDir)) ??
+    final migoto =
+        await _quiet(() => const MigotoRuntime().status(gameDir)) ??
         const ThirdPartyRuntimeStatus();
     return ThirdPartyReport(reshade: reshade, migoto: migoto);
   }
@@ -365,7 +372,11 @@ class DiagnosticsService {
     _diffFields(deltas, 'nams.toml', namsToml, _diagNamsFields);
     _diffFields(deltas, 'lodmod.toml', lodmodToml, _diagLodmodFields);
     _diffFields(
-        deltas, 'texture_injection.toml', textureInjToml, _diagTextureFields);
+      deltas,
+      'texture_injection.toml',
+      textureInjToml,
+      _diagTextureFields,
+    );
     return deltas;
   }
 
@@ -386,17 +397,22 @@ class DiagnosticsService {
       final actual = _lookup(parsed, f.section, f.key);
       if (actual == null) continue;
       if (actual.toString() == f.defaultValue.toString()) continue;
-      out.add(ConfigDelta(
-        file: file,
-        key: f.section == null ? f.key : '${f.section}.${f.key}',
-        value: actual.toString(),
-        defaultValue: f.defaultValue.toString(),
-      ));
+      out.add(
+        ConfigDelta(
+          file: file,
+          key: f.section == null ? f.key : '${f.section}.${f.key}',
+          value: actual.toString(),
+          defaultValue: f.defaultValue.toString(),
+        ),
+      );
     }
   }
 
   static dynamic _lookup(
-      Map<String, dynamic> parsed, String? section, String key) {
+    Map<String, dynamic> parsed,
+    String? section,
+    String key,
+  ) {
     if (section == null) return parsed[key];
     final parts = section.split('.');
     dynamic node = parsed;
@@ -488,52 +504,68 @@ class DiagnosticsService {
     final b = StringBuffer();
     b.writeln('YP Launcher Diagnostics');
     b.writeln('Generated: ${r.generatedAt.toIso8601String()}');
-    b.writeln('Launcher: ${r.launcherInfo['Launcher version'] ?? '?'}   '
-        'OS: ${r.systemInfo['OS']} ${r.systemInfo['OS version']}');
+    b.writeln(
+      'Launcher: ${r.launcherInfo['Launcher version'] ?? '?'}   '
+      'OS: ${r.systemInfo['OS']} ${r.systemInfo['OS version']}',
+    );
     final gi = r.gameIdentity;
-    b.writeln('Game: exe=${gi.exeVariant} '
-        'supported=${gi.exeVariantSupported}   DLC=${gi.hasDlc}   '
-        'running=${r.gameRunning}');
-    b.writeln('NAMS: exe=${r.namsHealth.namsExePresent}   '
-        'missing=${r.namsHealth.missingFiles.length}   '
-        'vanilla data/ drops=${r.vanillaDropped.length}');
+    b.writeln(
+      'Game: exe=${gi.exeVariant} '
+      'supported=${gi.exeVariantSupported}   DLC=${gi.hasDlc}   '
+      'running=${r.gameRunning}',
+    );
+    b.writeln(
+      'NAMS: exe=${r.namsHealth.namsExePresent}   '
+      'missing=${r.namsHealth.missingFiles.length}   '
+      'vanilla data/ drops=${r.vanillaDropped.length}',
+    );
     final rs = r.thirdParty.reshade;
     if (rs.installed) {
-      b.writeln('ReShade: enabled=${rs.enabled}   '
-          'presets=${rs.presetCount}   shaders=${rs.reshadeInfo?.shaderCount ?? 0}'
-          '${rs.reshadeInfo?.version != null ? "   ${rs.reshadeInfo!.version}" : ""}');
+      b.writeln(
+        'ReShade: enabled=${rs.enabled}   '
+        'presets=${rs.presetCount}   shaders=${rs.reshadeInfo?.shaderCount ?? 0}'
+        '${rs.reshadeInfo?.version != null ? "   ${rs.reshadeInfo!.version}" : ""}',
+      );
     }
     final mi = r.thirdParty.migoto;
     if (mi.installed) {
-      b.writeln('3DMigoto: enabled=${mi.enabled}   '
-          'fixes=${mi.migotoInfo?.shaderFixCount ?? 0}   '
-          'loaderOk=${mi.migotoInfo?.loaderTargetOk ?? false}');
+      b.writeln(
+        '3DMigoto: enabled=${mi.enabled}   '
+        'fixes=${mi.migotoInfo?.shaderFixCount ?? 0}   '
+        'loaderOk=${mi.migotoInfo?.loaderTargetOk ?? false}',
+      );
     }
-    b.writeln('Texture packs (NAMS): '
-        '${r.texturePacksAvailable ? r.texturePacks.length.toString() : "unavailable"}   '
-        'Non-default settings: ${r.configDeltas.length}');
+    b.writeln(
+      'Texture packs (NAMS): '
+      '${r.texturePacksAvailable ? r.texturePacks.length.toString() : "unavailable"}   '
+      'Non-default settings: ${r.configDeltas.length}',
+    );
     b.writeln('');
     b.writeln(
-        'Mods (NAMS): ${r.mods.length}   '
-        'Disabled entries: ${r.disabledModsEntries.length}');
+      'Mods (NAMS): ${r.mods.length}   '
+      'Disabled entries: ${r.disabledModsEntries.length}',
+    );
     final modKinds = <ModKind, int>{};
     for (final m in r.mods) {
       modKinds[m.kind] = (modKinds[m.kind] ?? 0) + 1;
     }
     if (modKinds.isNotEmpty) {
-      b.writeln('  by kind: ' +
-          modKinds.entries
-              .map((e) => '${e.key.name}=${e.value}')
-              .join(', '));
+      b.writeln(
+        '  by kind: ' +
+            modKinds.entries.map((e) => '${e.key.name}=${e.value}').join(', '),
+      );
     }
-    b.writeln('Cutscene mods: ${r.cutsceneMods.length}   '
-        'HD: ${r.cutsceneDetection.hasHdCutscenes}   '
-        'H264: ${r.cutsceneDetection.needsH264}   '
-        'data/movie overrides: ${r.directOverrides.length}');
     b.writeln(
-        'Textures (nams/inject): ${r.namsTextures.length}   '
-        'SK_Res: ${r.skResTextures.length}   '
-        'WAX: ${r.waxTextures.length}');
+      'Cutscene mods: ${r.cutsceneMods.length}   '
+      'HD: ${r.cutsceneDetection.hasHdCutscenes}   '
+      'H264: ${r.cutsceneDetection.needsH264}   '
+      'data/movie overrides: ${r.directOverrides.length}',
+    );
+    b.writeln(
+      'Textures (nams/inject): ${r.namsTextures.length}   '
+      'SK_Res: ${r.skResTextures.length}   '
+      'WAX: ${r.waxTextures.length}',
+    );
     if (r.dataDirContents.isNotEmpty) {
       b.writeln('');
       b.writeln('Vanilla data/ overlay (suspicious if non-empty):');
@@ -558,7 +590,9 @@ class DiagnosticsService {
     }
     if (r.gameRootExtras.isNotEmpty) {
       b.writeln('');
-      b.writeln('Game root extras (non-vanilla): ${r.gameRootExtras.join(", ")}');
+      b.writeln(
+        'Game root extras (non-vanilla): ${r.gameRootExtras.join(", ")}',
+      );
     }
     return redact(b.toString(), r);
   }
@@ -588,11 +622,15 @@ class DiagnosticsService {
 
     final gi = r.gameIdentity;
     section('Game identity');
-    b.writeln('exe variant: ${gi.exeVariant} '
-        '(${gi.exeVariantSupported ? "supported" : "UNSUPPORTED"})');
+    b.writeln(
+      'exe variant: ${gi.exeVariant} '
+      '(${gi.exeVariantSupported ? "supported" : "UNSUPPORTED"})',
+    );
     if (gi.exeSize != null) {
-      b.writeln('exe size: ${_humanSize(gi.exeSize!)} '
-          '(win10/11 build match: ${gi.exeSizeMatchesWin10})');
+      b.writeln(
+        'exe size: ${_humanSize(gi.exeSize!)} '
+        '(win10/11 build match: ${gi.exeSizeMatchesWin10})',
+      );
     }
     b.writeln('DLC (3C3C Concert & Costume): ${gi.hasDlc}');
     if (gi.exeVariant == 'legacyWindows7') {
@@ -605,8 +643,10 @@ class DiagnosticsService {
     if (r.namsHealth.missingFiles.isEmpty) {
       b.writeln('Missing runtime files: none');
     } else {
-      b.writeln('!! Missing runtime files (AV/quarantine?): '
-          '${r.namsHealth.missingFiles.join(", ")}');
+      b.writeln(
+        '!! Missing runtime files (AV/quarantine?): '
+        '${r.namsHealth.missingFiles.join(", ")}',
+      );
     }
     if (r.namsHealth.launchCommandPreview != null) {
       b.writeln('');
@@ -614,7 +654,9 @@ class DiagnosticsService {
       b.writeln(r.namsHealth.launchCommandPreview!);
     }
 
-    section('Vanilla data/ drops (user-added files, ${r.vanillaDropped.length})');
+    section(
+      'Vanilla data/ drops (user-added files, ${r.vanillaDropped.length})',
+    );
     if (r.vanillaDropped.isEmpty) {
       b.writeln('(none — vanilla data/ is clean)');
     } else {
@@ -634,17 +676,21 @@ class DiagnosticsService {
 
     section('Texture packs (NAMS, structured)');
     if (!r.texturePacksAvailable) {
-      b.writeln('(NAMS texture query unavailable — NAMS.exe missing or failed)');
+      b.writeln(
+        '(NAMS texture query unavailable — NAMS.exe missing or failed)',
+      );
     } else if (r.texturePacks.isEmpty) {
       b.writeln('(none)');
     } else {
       for (final t in r.texturePacks) {
-        b.writeln('- ${t.name}  [${t.source}]  '
-            '${t.enabled ? "enabled" : "disabled"}  ${t.ddsCount} dds'
-            '${t.mod != null ? "  mod=${t.mod}" : ""}'
-            '${t.character != null ? "  char=${t.character}" : ""}'
-            '${t.outfitConditional ? "  outfit-conditional" : ""}'
-            '${t.loadOrderIndex != null ? "  order=${t.loadOrderIndex}" : ""}');
+        b.writeln(
+          '- ${t.name}  [${t.source}]  '
+          '${t.enabled ? "enabled" : "disabled"}  ${t.ddsCount} dds'
+          '${t.mod != null ? "  mod=${t.mod}" : ""}'
+          '${t.character != null ? "  char=${t.character}" : ""}'
+          '${t.outfitConditional ? "  outfit-conditional" : ""}'
+          '${t.loadOrderIndex != null ? "  order=${t.loadOrderIndex}" : ""}',
+        );
         b.writeln('    ${t.path}');
       }
     }
@@ -654,7 +700,9 @@ class DiagnosticsService {
       b.writeln('(all defaults)');
     } else {
       for (final d in r.configDeltas) {
-        b.writeln('  [${d.file}] ${d.key} = ${d.value}  (default ${d.defaultValue})');
+        b.writeln(
+          '  [${d.file}] ${d.key} = ${d.value}  (default ${d.defaultValue})',
+        );
       }
     }
 
@@ -680,23 +728,30 @@ class DiagnosticsService {
       }
     }
     if (r.mods.isNotEmpty) {
-      b.writeln('Totals by kind: ' +
-          byKind.entries.map((e) => '${e.key.name}=${e.value}').join(', '));
-      b.writeln('With warnings: $withWarnings   '
-          'With bundled assets: $withBundles   '
-          'Disabled prefixes affecting mods: ${_countDisabledMods(r)}');
+      b.writeln(
+        'Totals by kind: ' +
+            byKind.entries.map((e) => '${e.key.name}=${e.value}').join(', '),
+      );
+      b.writeln(
+        'With warnings: $withWarnings   '
+        'With bundled assets: $withBundles   '
+        'Disabled prefixes affecting mods: ${_countDisabledMods(r)}',
+      );
       b.writeln('');
     }
 
     for (final m in r.mods) {
-      final disabledByPrefix = disabledSet.any((p) =>
-          'mods/${m.id}' == p || 'mods/${m.id}'.startsWith('$p/'));
+      final disabledByPrefix = disabledSet.any(
+        (p) => 'mods/${m.id}' == p || 'mods/${m.id}'.startsWith('$p/'),
+      );
       final statusTag = disabledByPrefix ? '[DISABLED]' : '[enabled]';
       final warnTag = m.hasWarnings ? '  ⚠ warnings' : '';
 
-      b.writeln('- ${m.id}  $statusTag  [${m.kind.name}]'
-          '${m.manifest?.version != null ? "  v${m.manifest!.version}" : ""}'
-          '$warnTag');
+      b.writeln(
+        '- ${m.id}  $statusTag  [${m.kind.name}]'
+        '${m.manifest?.version != null ? "  v${m.manifest!.version}" : ""}'
+        '$warnTag',
+      );
       if (m.displayName.isNotEmpty && m.displayName != m.id) {
         b.writeln('    name:     ${m.displayName}');
       }
@@ -731,8 +786,10 @@ class DiagnosticsService {
           final bundles = n.bundlesByKind.entries
               .map((e) => '${e.key}=${e.value}')
               .join(', ');
-          b.writeln('    native:   bundles=[$bundles]'
-              '  entityFiles=${n.totalEntityFiles}');
+          b.writeln(
+            '    native:   bundles=[$bundles]'
+            '  entityFiles=${n.totalEntityFiles}',
+          );
         }
       }
 
@@ -750,8 +807,10 @@ class DiagnosticsService {
           final cats = byCategory.keys.toList()
             ..sort((a, b) => a.name.compareTo(b.name));
           for (final cat in cats) {
-            b.writeln('      ${cat.name}: '
-                '${byCategory[cat]} dir(s), ${byCategoryFiles[cat]} file(s)');
+            b.writeln(
+              '      ${cat.name}: '
+              '${byCategory[cat]} dir(s), ${byCategoryFiles[cat]} file(s)',
+            );
           }
           final entryNames = d.entries.map((e) => e.dirName).toList()..sort();
           b.writeln('      dirs: ${entryNames.join(", ")}');
@@ -770,19 +829,25 @@ class DiagnosticsService {
       }
 
       if (m.bundledTexturePacks.isNotEmpty) {
-        b.writeln('    bundled textures (${m.bundledTexturePacks.length}): '
-            '${m.bundledTexturePacks.join(", ")}');
+        b.writeln(
+          '    bundled textures (${m.bundledTexturePacks.length}): '
+          '${m.bundledTexturePacks.join(", ")}',
+        );
       }
       if (m.bundledCutscenes.isNotEmpty) {
-        b.writeln('    bundled cutscenes (${m.bundledCutscenes.length}): '
-            '${m.bundledCutscenes.join(", ")}');
+        b.writeln(
+          '    bundled cutscenes (${m.bundledCutscenes.length}): '
+          '${m.bundledCutscenes.join(", ")}',
+        );
       }
 
       if (m.conflicts.isNotEmpty) {
         b.writeln('    conflicts (${m.conflicts.length}):');
         for (final c in m.conflicts) {
-          b.writeln('      - vs ${c.otherModId} '
-              '[${_humanizeConflictKind(c.kind)}] ${c.detail}');
+          b.writeln(
+            '      - vs ${c.otherModId} '
+            '[${_humanizeConflictKind(c.kind)}] ${c.detail}',
+          );
         }
       }
     }
@@ -797,29 +862,31 @@ class DiagnosticsService {
       final origin = c.bundledWithModId == null
           ? 'standalone'
           : 'bundled with ${c.bundledWithModId}';
-      b.writeln('- ${c.name}  [$origin]  ${c.usmCount} USM'
-          '${c.hasH264 ? "  H264" : "  MPEG-2"}'
-          '${c.maxWidth > 0 ? "  ${c.maxWidth}x${c.maxHeight}" : ""}');
+      b.writeln(
+        '- ${c.name}  [$origin]  ${c.usmCount} USM'
+        '${c.hasH264 ? "  H264" : "  MPEG-2"}'
+        '${c.maxWidth > 0 ? "  ${c.maxWidth}x${c.maxHeight}" : ""}',
+      );
       b.writeln('    ${c.fullPath}');
       if (c.missingOriginals.isNotEmpty) {
-        b.writeln(
-            '    missing originals: ${c.missingOriginals.length}');
+        b.writeln('    missing originals: ${c.missingOriginals.length}');
       }
     }
     if (r.directOverrides.isNotEmpty) {
       b.writeln('');
-      b.writeln(
-          'Custom files in data/movie/ (${r.directOverrides.length}):');
+      b.writeln('Custom files in data/movie/ (${r.directOverrides.length}):');
       for (final f in r.directOverrides) {
         b.writeln('  - $f');
       }
     }
     b.writeln('');
-    b.writeln('hd_cutscenes flag detection: '
-        'hasHd=${r.cutsceneDetection.hasHdCutscenes}, '
-        'needsH264=${r.cutsceneDetection.needsH264}, '
-        'filesScanned=${r.cutsceneDetection.filesScanned}, '
-        'largest=${r.cutsceneDetection.largestWidth}x${r.cutsceneDetection.largestHeight}');
+    b.writeln(
+      'hd_cutscenes flag detection: '
+      'hasHd=${r.cutsceneDetection.hasHdCutscenes}, '
+      'needsH264=${r.cutsceneDetection.needsH264}, '
+      'filesScanned=${r.cutsceneDetection.filesScanned}, '
+      'largest=${r.cutsceneDetection.largestWidth}x${r.cutsceneDetection.largestHeight}',
+    );
 
     section('Texture packs');
     b.writeln('nams/inject/textures/ (${r.namsTextures.length}):');
@@ -896,7 +963,10 @@ class DiagnosticsService {
 
     section('nams/texture_injection.toml');
     b.writeln(
-        r.textureInjectionTomlRaw.isEmpty ? '(missing)' : r.textureInjectionTomlRaw);
+      r.textureInjectionTomlRaw.isEmpty
+          ? '(missing)'
+          : r.textureInjectionTomlRaw,
+    );
 
     return redact(b.toString(), r);
   }
@@ -906,8 +976,10 @@ class DiagnosticsService {
       b.writeln('(not installed)');
       return;
     }
-    b.writeln('installed: true   enabled: ${s.enabled}   '
-        'shadersMissing: ${s.shadersMissing}');
+    b.writeln(
+      'installed: true   enabled: ${s.enabled}   '
+      'shadersMissing: ${s.shadersMissing}',
+    );
     final info = s.reshadeInfo;
     if (info != null) {
       if (info.version != null) b.writeln('version: ${info.version}');
@@ -915,18 +987,24 @@ class DiagnosticsService {
         b.writeln('dll: ${info.dllName}   addonBuild: ${info.isAddonBuild}');
       }
       b.writeln('presets (${info.presets.length}): ${info.presets.join(", ")}');
-      b.writeln('shader repos (${info.shaderRepos.length}): '
-          '${info.shaderRepos.join(", ")}   effects: ${info.shaderCount}');
+      b.writeln(
+        'shader repos (${info.shaderRepos.length}): '
+        '${info.shaderRepos.join(", ")}   effects: ${info.shaderCount}',
+      );
       if (info.addons.isNotEmpty) {
         b.writeln('addons (${info.addons.length}): ${info.addons.join(", ")}');
       }
       if (info.d3dCompilerMissing) {
-        b.writeln('!! d3dcompiler_47.dll missing (Wine shaders will not compile)');
+        b.writeln(
+          '!! d3dcompiler_47.dll missing (Wine shaders will not compile)',
+        );
       }
       final c = info.config;
-      b.writeln('config: performanceMode=${c.performanceMode} '
-          'showFps=${c.showFps} showClock=${c.showClock}'
-          '${c.activePreset != null ? " activePreset=${c.activePreset}" : ""}');
+      b.writeln(
+        'config: performanceMode=${c.performanceMode} '
+        'showFps=${c.showFps} showClock=${c.showClock}'
+        '${c.activePreset != null ? " activePreset=${c.activePreset}" : ""}',
+      );
     }
   }
 
@@ -935,20 +1013,26 @@ class DiagnosticsService {
       b.writeln('(not installed)');
       return;
     }
-    b.writeln('installed: true   enabled: ${s.enabled}   '
-        'hasShaderFixes: ${s.hasShaderFixes}');
+    b.writeln(
+      'installed: true   enabled: ${s.enabled}   '
+      'hasShaderFixes: ${s.hasShaderFixes}',
+    );
     final info = s.migotoInfo;
     if (info != null) {
       b.writeln('files: ${info.files.join(", ")}');
-      b.writeln('loader target: ${info.loaderTarget ?? "?"} '
-          '(ok: ${info.loaderTargetOk})');
+      b.writeln(
+        'loader target: ${info.loaderTarget ?? "?"} '
+        '(ok: ${info.loaderTargetOk})',
+      );
       b.writeln('shader fixes: ${info.shaderFixCount}');
       if (info.shaderFixNames.isNotEmpty) {
         b.writeln('  from: ${info.shaderFixNames.join(", ")}');
       }
       final c = info.config;
-      b.writeln('config: hunting=${c.hunting.name} marking=${c.markingMode.name} '
-          'cacheShaders=${c.cacheShaders} verboseOverlay=${c.verboseOverlay}');
+      b.writeln(
+        'config: hunting=${c.hunting.name} marking=${c.markingMode.name} '
+        'cacheShaders=${c.cacheShaders} verboseOverlay=${c.verboseOverlay}',
+      );
     }
   }
 
@@ -1036,12 +1120,7 @@ class _ExtraScan {
   });
 }
 
-const _vanillaDataDirs = <String>{
-  'movie',
-  'enlighten',
-  'sound',
-  'movie_logo',
-};
+const _vanillaDataDirs = <String>{'movie', 'enlighten', 'sound', 'movie_logo'};
 
 const _vanillaGameRootEntries = <String>{
   'data',
@@ -1081,9 +1160,7 @@ _ExtraScan _scanExtrasSync(String gameDir) {
   }
 
   final skResPacks = <String>[];
-  final skBase = Directory(
-    p.join(gameDir, 'SK_Res', 'inject', 'textures'),
-  );
+  final skBase = Directory(p.join(gameDir, 'SK_Res', 'inject', 'textures'));
   if (skBase.existsSync()) {
     for (final exeDir in skBase.listSync().whereType<Directory>()) {
       for (final pack in exeDir.listSync().whereType<Directory>()) {
@@ -1216,11 +1293,13 @@ List<VanillaDirFinding> _scanVanillaSync(String gameDir) {
     if (entity is! File) continue;
     final name = p.basename(entity.path);
     if (_vanillaDataRootFiles.contains(name.toLowerCase())) continue;
-    findings.add(VanillaDirFinding(
-      path: 'data/$name',
-      sizeBytes: _lengthQuiet(entity),
-      bucket: 'data-root-loose',
-    ));
+    findings.add(
+      VanillaDirFinding(
+        path: 'data/$name',
+        sizeBytes: _lengthQuiet(entity),
+        bucket: 'data-root-loose',
+      ),
+    );
     if (findings.length >= _vanillaDropCap) break;
   }
 

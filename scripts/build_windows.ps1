@@ -8,4 +8,4 @@ flutter build windows --release
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 $bundle = 'build\windows\x64\runner\Release'
-Copy-Item 'rust\target\release\yp_3d_inspector.dll' $bundle
+Copy-Item 'rust\target\release\yp_formats.dll' $bundle

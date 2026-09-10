@@ -53,8 +53,7 @@ class GameModsRuntime extends GraphicsRuntime {
     ThirdPartyClassification c,
   ) async {
     for (final incoming in c.gameModDlls) {
-      final installed =
-          path.join(installDir(gameDir), path.basename(incoming));
+      final installed = path.join(installDir(gameDir), path.basename(incoming));
       if (!File(installed).existsSync()) continue;
       if (!FileOps.filesDiffer(incoming, installed)) continue;
       return ThirdPartyUpdateInfo(
@@ -105,14 +104,17 @@ class GameModsRuntime extends GraphicsRuntime {
     for (final entity in d.listSync().whereType<File>()) {
       final name = path.basename(entity.path);
       if (!name.toLowerCase().endsWith('.dll')) continue;
-      mods.add(GameModEntry(
-        fileName: name,
-        sizeLabel: FileOps.sizeLabel(entity.path),
-        disabled: disabled.contains(name.toLowerCase()),
-      ));
+      mods.add(
+        GameModEntry(
+          fileName: name,
+          sizeLabel: FileOps.sizeLabel(entity.path),
+          disabled: disabled.contains(name.toLowerCase()),
+        ),
+      );
     }
-    mods.sort((a, b) =>
-        a.fileName.toLowerCase().compareTo(b.fileName.toLowerCase()));
+    mods.sort(
+      (a, b) => a.fileName.toLowerCase().compareTo(b.fileName.toLowerCase()),
+    );
 
     return GameModsInfo(mods: mods, hasConfig: configFile.existsSync());
   }

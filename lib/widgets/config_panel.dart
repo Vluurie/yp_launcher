@@ -211,10 +211,7 @@ class ConfigPanelState extends ConsumerState<ConfigPanel>
           children: [
             ConfigFieldDropdown(
               label: l10n.labelVramBudget,
-              value:
-                  (tex[TextureInjectionFields.vramBudgetMb.key]
-                      as int?) ??
-                  TextureInjectionFields.vramBudgetMb.defaultValue,
+              value: TextureInjectionFields.vramBudgetMb.valueIn(tex),
               options: const [0, 1024, 2048, 4096, 8192],
               labels: const {0: 'Auto'},
               onChanged: (v) => notifier.updateTextureInjection(
@@ -263,9 +260,7 @@ class ConfigPanelState extends ConsumerState<ConfigPanel>
             children: [
               ConfigFieldFloat(
                 label: LodModFields.lodMultiplier.label(l10n),
-                value:
-                    (lod[LodModFields.lodMultiplier.key] as num?)?.toDouble() ??
-                    LodModFields.lodMultiplier.defaultValue,
+                value: LodModFields.lodMultiplier.valueIn(lod),
                 onChanged: (v) =>
                     notifier.updateLodmod(LodModFields.lodMultiplier.key, v),
                 tooltip: LodModFields.lodMultiplier.tooltip!(l10n),
@@ -288,9 +283,7 @@ class ConfigPanelState extends ConsumerState<ConfigPanel>
               ConfigFieldFloat(
                 label: LodModFields.aoMultiplierWidth.label(l10n),
                 value:
-                    (lod[LodModFields.aoMultiplierWidth.key] as num?)
-                        ?.toDouble() ??
-                    LodModFields.aoMultiplierWidth.defaultValue,
+                    LodModFields.aoMultiplierWidth.valueIn(lod),
                 onChanged: (v) => notifier.updateLodmod(
                   LodModFields.aoMultiplierWidth.key,
                   v,
@@ -300,9 +293,7 @@ class ConfigPanelState extends ConsumerState<ConfigPanel>
               ConfigFieldFloat(
                 label: LodModFields.aoMultiplierHeight.label(l10n),
                 value:
-                    (lod[LodModFields.aoMultiplierHeight.key] as num?)
-                        ?.toDouble() ??
-                    LodModFields.aoMultiplierHeight.defaultValue,
+                    LodModFields.aoMultiplierHeight.valueIn(lod),
                 onChanged: (v) => notifier.updateLodmod(
                   LodModFields.aoMultiplierHeight.key,
                   v,
@@ -318,8 +309,7 @@ class ConfigPanelState extends ConsumerState<ConfigPanel>
               ConfigFieldDropdown(
                 label: LodModFields.shadowResolution.label(l10n),
                 value:
-                    (lod[LodModFields.shadowResolution.key] as int?) ??
-                    LodModFields.shadowResolution.defaultValue,
+                    LodModFields.shadowResolution.valueIn(lod),
                 options: const [2048, 4096, 8192],
                 onChanged: (v) =>
                     notifier.updateLodmod(LodModFields.shadowResolution.key, v),
@@ -328,9 +318,7 @@ class ConfigPanelState extends ConsumerState<ConfigPanel>
               ConfigFieldFloat(
                 label: LodModFields.shadowDistanceMultiplier.label(l10n),
                 value:
-                    (lod[LodModFields.shadowDistanceMultiplier.key] as num?)
-                        ?.toDouble() ??
-                    LodModFields.shadowDistanceMultiplier.defaultValue,
+                    LodModFields.shadowDistanceMultiplier.valueIn(lod),
                 onChanged: (v) => notifier.updateLodmod(
                   LodModFields.shadowDistanceMultiplier.key,
                   v,
@@ -340,9 +328,7 @@ class ConfigPanelState extends ConsumerState<ConfigPanel>
               ConfigFieldFloat(
                 label: LodModFields.shadowDistanceMinimum.label(l10n),
                 value:
-                    (lod[LodModFields.shadowDistanceMinimum.key] as num?)
-                        ?.toDouble() ??
-                    LodModFields.shadowDistanceMinimum.defaultValue,
+                    LodModFields.shadowDistanceMinimum.valueIn(lod),
                 onChanged: (v) => notifier.updateLodmod(
                   LodModFields.shadowDistanceMinimum.key,
                   v,
@@ -352,9 +338,7 @@ class ConfigPanelState extends ConsumerState<ConfigPanel>
               ConfigFieldFloat(
                 label: LodModFields.shadowDistanceMaximum.label(l10n),
                 value:
-                    (lod[LodModFields.shadowDistanceMaximum.key] as num?)
-                        ?.toDouble() ??
-                    LodModFields.shadowDistanceMaximum.defaultValue,
+                    LodModFields.shadowDistanceMaximum.valueIn(lod),
                 onChanged: (v) => notifier.updateLodmod(
                   LodModFields.shadowDistanceMaximum.key,
                   v,
@@ -364,9 +348,7 @@ class ConfigPanelState extends ConsumerState<ConfigPanel>
               ConfigFieldFloat(
                 label: LodModFields.shadowDistancePss.label(l10n),
                 value:
-                    (lod[LodModFields.shadowDistancePss.key] as num?)
-                        ?.toDouble() ??
-                    LodModFields.shadowDistancePss.defaultValue,
+                    LodModFields.shadowDistancePss.valueIn(lod),
                 onChanged: (v) => notifier.updateLodmod(
                   LodModFields.shadowDistancePss.key,
                   v,
@@ -376,9 +358,7 @@ class ConfigPanelState extends ConsumerState<ConfigPanel>
               ConfigFieldFloat(
                 label: LodModFields.shadowFilterStrengthBias.label(l10n),
                 value:
-                    (lod[LodModFields.shadowFilterStrengthBias.key] as num?)
-                        ?.toDouble() ??
-                    LodModFields.shadowFilterStrengthBias.defaultValue,
+                    LodModFields.shadowFilterStrengthBias.valueIn(lod),
                 onChanged: (v) => notifier.updateLodmod(
                   LodModFields.shadowFilterStrengthBias.key,
                   v,
@@ -388,9 +368,7 @@ class ConfigPanelState extends ConsumerState<ConfigPanel>
               ConfigFieldFloat(
                 label: LodModFields.shadowFilterStrengthMinimum.label(l10n),
                 value:
-                    (lod[LodModFields.shadowFilterStrengthMinimum.key] as num?)
-                        ?.toDouble() ??
-                    LodModFields.shadowFilterStrengthMinimum.defaultValue,
+                    LodModFields.shadowFilterStrengthMinimum.valueIn(lod),
                 onChanged: (v) => notifier.updateLodmod(
                   LodModFields.shadowFilterStrengthMinimum.key,
                   v,
@@ -402,9 +380,7 @@ class ConfigPanelState extends ConsumerState<ConfigPanel>
               ConfigFieldFloat(
                 label: LodModFields.shadowFilterStrengthMaximum.label(l10n),
                 value:
-                    (lod[LodModFields.shadowFilterStrengthMaximum.key] as num?)
-                        ?.toDouble() ??
-                    LodModFields.shadowFilterStrengthMaximum.defaultValue,
+                    LodModFields.shadowFilterStrengthMaximum.valueIn(lod),
                 onChanged: (v) => notifier.updateLodmod(
                   LodModFields.shadowFilterStrengthMaximum.key,
                   v,

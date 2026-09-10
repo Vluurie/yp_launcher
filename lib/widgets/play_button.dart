@@ -29,8 +29,9 @@ class PlayButton extends ConsumerWidget {
     final isRunning = appState.playButtonState == PlayButtonState.running;
     final isSearching = ref.watch(autoSearchingProvider);
     final canLaunch = PlatformGate.canLaunchGame;
-    final buttonColor =
-        !canLaunch ? AppColors.textMuted : _getButtonColor(appState);
+    final buttonColor = !canLaunch
+        ? AppColors.textMuted
+        : _getButtonColor(appState);
 
     final button = SizedBox(
       width: AppSizes.playButtonWidth(context),
@@ -58,10 +59,7 @@ class PlayButton extends ConsumerWidget {
     );
 
     if (!canLaunch) {
-      return Tooltip(
-        message: l10n.playDisabledTooltip,
-        child: button,
-      );
+      return Tooltip(message: l10n.playDisabledTooltip, child: button);
     }
     return button;
   }
@@ -153,12 +151,11 @@ class PlayButton extends ConsumerWidget {
                 try {
                   final prefs = await SharedPreferences.getInstance();
                   final shouldMinimize =
-                      prefs.getBool(AppStrings.prefKeyMinimizeOnLaunch) ?? false;
+                      prefs.getBool(AppStrings.prefKeyMinimizeOnLaunch) ??
+                      false;
                   if (shouldMinimize) {
                     await Future.delayed(const Duration(seconds: 3));
-                    if (ref
-                            .read(appStateControllerProvider)
-                            .playButtonState ==
+                    if (ref.read(appStateControllerProvider).playButtonState ==
                         PlayButtonState.running) {
                       await windowManager.minimize();
                     }
@@ -264,10 +261,7 @@ class _PreferDedicatedGpuToggleState extends State<PreferDedicatedGpuToggle> {
                     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     activeColor: AppColors.accentPrimary,
                     checkColor: AppColors.backgroundPrimary,
-                    side: BorderSide(
-                      color: AppColors.borderMedium,
-                      width: 1.2,
-                    ),
+                    side: BorderSide(color: AppColors.borderMedium, width: 1.2),
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -347,10 +341,7 @@ class _MinimizeOnLaunchToggleState extends State<MinimizeOnLaunchToggle> {
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   activeColor: AppColors.accentPrimary,
                   checkColor: AppColors.backgroundPrimary,
-                  side: BorderSide(
-                    color: AppColors.borderMedium,
-                    width: 1.2,
-                  ),
+                  side: BorderSide(color: AppColors.borderMedium, width: 1.2),
                 ),
               ),
               const SizedBox(width: 8),

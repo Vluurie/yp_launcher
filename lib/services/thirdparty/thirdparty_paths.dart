@@ -18,18 +18,16 @@ class DllHit {
 class ThirdPartyPaths {
   ThirdPartyPaths._();
 
-  static String root() =>
-      path.join(LauncherSetupService.launcherDirectory,
-          AppStrings.thirdPartyDirName);
+  static String root() => path.join(
+    LauncherSetupService.launcherDirectory,
+    AppStrings.thirdPartyDirName,
+  );
 
-  static String reshade() =>
-      path.join(root(), AppStrings.reshadeDirName);
+  static String reshade() => path.join(root(), AppStrings.reshadeDirName);
 
-  static String migoto() =>
-      path.join(root(), AppStrings.migotoDirName);
+  static String migoto() => path.join(root(), AppStrings.migotoDirName);
 
-  static String gameMods() =>
-      path.join(root(), AppStrings.gameModsDirName);
+  static String gameMods() => path.join(root(), AppStrings.gameModsDirName);
 }
 
 String baseName(String rel) {
@@ -45,8 +43,9 @@ void ensureReShadeTree(String dest) {
     'reshade-addons',
     'reshade-cache',
   ]) {
-    Directory(path.join(dest, sub.replaceAll('/', path.separator)))
-        .createSync(recursive: true);
+    Directory(
+      path.join(dest, sub.replaceAll('/', path.separator)),
+    ).createSync(recursive: true);
   }
 }
 
@@ -75,12 +74,12 @@ bool hasReShadeShaders(String root) {
 }
 
 bool hasAddonFiles(String root) => FileOps.anyFile(
-      root,
-      (rel, _) =>
-          rel.endsWith('.addon') ||
-          rel.endsWith('.addon32') ||
-          rel.endsWith('.addon64'),
-    );
+  root,
+  (rel, _) =>
+      rel.endsWith('.addon') ||
+      rel.endsWith('.addon32') ||
+      rel.endsWith('.addon64'),
+);
 
 List<File> findPresets(String root) {
   return FileOps.filesWhere(root, (rel, full) {
@@ -160,10 +159,10 @@ bool _containsAscii(Uint8List haystack, String needle) {
 }
 
 List<String> findIncompatibleModloaderDlls(String root) => FileOps.filesWhere(
-      root,
-      (rel, full) =>
-          baseName(rel).endsWith('.dll') && isIncompatibleModloader(full),
-    ).map((f) => f.path).toList();
+  root,
+  (rel, full) =>
+      baseName(rel).endsWith('.dll') && isIncompatibleModloader(full),
+).map((f) => f.path).toList();
 
 List<String> findGameModDlls(String root) {
   final out = FileOps.filesWhere(root, (rel, full) {
@@ -171,8 +170,12 @@ List<String> findGameModDlls(String root) {
     if (isIncompatibleModloader(full)) return false;
     return GraphicsDllId.identifyFile(full) == GraphicsDll.none;
   }).map((f) => f.path).toList();
-  out.sort((a, b) =>
-      path.basename(a).toLowerCase().compareTo(path.basename(b).toLowerCase()));
+  out.sort(
+    (a, b) => path
+        .basename(a)
+        .toLowerCase()
+        .compareTo(path.basename(b).toLowerCase()),
+  );
   return out;
 }
 

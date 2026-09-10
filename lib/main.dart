@@ -1,23 +1,32 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:automato_theme/automato_theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:yp_launcher/services/window_state_service.dart';
 import 'package:yp_launcher/providers/app_theme_state.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
+import 'package:yp_launcher/theme/app_sizes.dart';
 import 'package:yp_launcher/theme/app_theme.dart';
+import 'package:yp_launcher/widgets/notification_banner.dart';
 import 'package:yp_launcher/l10n/app_localizations.dart';
 import 'package:yp_launcher/providers/locale_state.dart';
 import 'package:yp_launcher/screens/launcher_screen.dart';
 import 'package:yp_launcher/services/launcher_setup_service.dart';
 import 'package:yp_launcher/services/platform/platform_adapter.dart';
 import 'package:yp_launcher/services/platform_gate.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 void main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  LicenseRegistry.addLicense(() async* {
+    final license = await rootBundle.loadString('assets/fonts/OFL.txt');
+    yield LicenseEntryWithLineBreaks(const ['Rajdhani'], license);
+  });
 
   if (args.contains('--simulate-linux')) {
     PlatformGate.overrideAs = SimulatedOs.linux;
@@ -30,12 +39,15 @@ void main(List<String> args) async {
   if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
     await windowManager.ensureInitialized();
 
+    final restoredSize = await WindowStateService.savedSize();
+
     final windowOptions = WindowOptions(
-      size: const Size(1300, 750),
-      minimumSize: const Size(600, 420),
-      center: true,
-      backgroundColor:
-          PlatformAdapter.current.usesNativeTitleBar ? null : Colors.transparent,
+      size: restoredSize,
+      minimumSize: WindowStateService.minimumSize,
+      center: false,
+      backgroundColor: PlatformAdapter.current.usesNativeTitleBar
+          ? null
+          : Colors.transparent,
       skipTaskbar: false,
       titleBarStyle: PlatformAdapter.current.usesNativeTitleBar
           ? TitleBarStyle.normal
@@ -44,9 +56,12 @@ void main(List<String> args) async {
     );
 
     await windowManager.waitUntilReadyToShow(windowOptions, () async {
+      await WindowStateService.instance.restore();
       await windowManager.show();
       await windowManager.focus();
     });
+
+    WindowStateService.instance.start();
   }
 
   unawaited(LauncherSetupService.ensureReady());
@@ -84,7 +99,7 @@ class YoRHaProtocolLauncher extends ConsumerWidget {
     final appTheme = AppColors.active;
     final themeState = ref.watch(automatoThemeNotifierProvider);
     final baseTheme = themeState.theme;
-    final gameFont = GoogleFonts.rajdhaniTextTheme(baseTheme.textTheme);
+    final gameFont = baseTheme.textTheme.apply(fontFamily: 'Rajdhani');
     return MaterialApp(
       onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
       debugShowCheckedModeBanner: false,
@@ -106,9 +121,7 @@ class YoRHaProtocolLauncher extends ConsumerWidget {
           error: AppColors.error,
           onError: AppColors.buttonText,
         ),
-        dialogTheme: DialogThemeData(
-          backgroundColor: AppColors.backgroundCard,
-        ),
+        dialogTheme: DialogThemeData(backgroundColor: AppColors.backgroundCard),
         snackBarTheme: SnackBarThemeData(
           backgroundColor: AppColors.backgroundCard,
           contentTextStyle: gameFont.bodyMedium?.copyWith(
@@ -156,6 +169,21 @@ class YoRHaProtocolLauncher extends ConsumerWidget {
           waitDuration: const Duration(milliseconds: 350),
         ),
       ),
+      builder: (context, child) {
+        return Stack(
+          children: [
+            if (child != null) child,
+            Positioned(
+              bottom: AppSizes.paddingLG(context),
+              right: AppSizes.paddingLG(context),
+              child: Material(
+                type: MaterialType.transparency,
+                child: const NotificationBanners(),
+              ),
+            ),
+          ],
+        );
+      },
       home: LauncherScreen(key: ValueKey(themeId)),
     );
   }

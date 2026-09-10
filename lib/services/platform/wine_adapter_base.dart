@@ -20,9 +20,9 @@ abstract class WineAdapterBase extends PlatformAdapter {
 
   @override
   List<String> sevenZipCandidates(String runtimeDir) => [
-        p.join(runtimeDir, sevenZipExeName),
-        ...systemSevenZipCandidates,
-      ];
+    p.join(runtimeDir, sevenZipExeName),
+    ...systemSevenZipCandidates,
+  ];
 
   @override
   bool get canLaunchGame => isWineRuntimeAvailable();
@@ -146,16 +146,7 @@ abstract class WineAdapterBase extends PlatformAdapter {
   @override
   Future<String?> resolveNamsSettingsPath(String? gameDir) async {
     if (gameDir == null || gameDir.isEmpty) return null;
-    final prefix = inferWinePrefixFromPath(gameDir);
-    if (prefix != null) {
-      return p.join(getWineRoamingPath(prefix), 'NAMS', 'settings.json');
-    }
-    final steam = inferSteamContext(gameDir);
-    if (steam != null) {
-      final pfx = p.join(steam.compatDataPath, 'pfx');
-      return p.join(getWineRoamingPath(pfx), 'NAMS', 'settings.json');
-    }
-    return null;
+    return p.join(gameDir, 'nams', '_internal', 'cache', 'settings.json');
   }
 
   Future<bool> _pgrep(String pattern) async {

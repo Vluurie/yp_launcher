@@ -4,6 +4,8 @@
 // ignore_for_file: unused_import, unused_element, unnecessary_import, duplicate_ignore, invalid_use_of_internal_member, annotate_overrides, non_constant_identifier_names, curly_braces_in_flow_control_structures, prefer_const_literals_to_create_immutables, unused_field
 
 import 'api/inspector.dart';
+import 'api/texture.dart';
+import 'api/weapon.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'frb_generated.dart';
@@ -66,11 +68,11 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.11.1';
 
   @override
-  int get rustContentHash => 1479736252;
+  int get rustContentHash => 126338535;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
-        stem: 'yp_3d_inspector',
+        stem: 'yp_formats',
         ioDirectory: 'rust/target/release/',
         webPrefix: 'pkg/',
       );
@@ -78,6 +80,14 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
 
 abstract class RustLibApi extends BaseApi {
   void crateApiInspectorCloseModel({required BigInt sessionId});
+
+  Future<MiscTexResult> crateApiTextureCreateItemThumbnail({
+    required String sourceImagePath,
+    required String outputDir,
+    required String textureName,
+    required int width,
+    required int height,
+  });
 
   Future<void> crateApiInspectorInitApp();
 
@@ -90,6 +100,17 @@ abstract class RustLibApi extends BaseApi {
   Future<ArchiveProbe> crateApiInspectorProbeArchivePair({
     String? datPath,
     String? dttPath,
+  });
+
+  Future<TexturePreview> crateApiTextureReadMisctexPreview({
+    required String dttPath,
+  });
+
+  Future<WeaponRenameResult> crateApiWeaponRenameWeapon({
+    required String datPath,
+    required String dttPath,
+    required String toStem,
+    required String outDir,
   });
 
   Future<RenderFrame> crateApiInspectorRenderModel({
@@ -147,6 +168,53 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       const TaskConstMeta(debugName: "close_model", argNames: ["sessionId"]);
 
   @override
+  Future<MiscTexResult> crateApiTextureCreateItemThumbnail({
+    required String sourceImagePath,
+    required String outputDir,
+    required String textureName,
+    required int width,
+    required int height,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_String(sourceImagePath, serializer);
+          sse_encode_String(outputDir, serializer);
+          sse_encode_String(textureName, serializer);
+          sse_encode_u_32(width, serializer);
+          sse_encode_u_32(height, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 2,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_misc_tex_result,
+          decodeErrorData: sse_decode_misc_tex_error,
+        ),
+        constMeta: kCrateApiTextureCreateItemThumbnailConstMeta,
+        argValues: [sourceImagePath, outputDir, textureName, width, height],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiTextureCreateItemThumbnailConstMeta =>
+      const TaskConstMeta(
+        debugName: "create_item_thumbnail",
+        argNames: [
+          "sourceImagePath",
+          "outputDir",
+          "textureName",
+          "width",
+          "height",
+        ],
+      );
+
+  @override
   Future<void> crateApiInspectorInitApp() {
     return handler.executeNormal(
       NormalTask(
@@ -155,7 +223,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 2,
+            funcId: 3,
             port: port_,
           );
         },
@@ -189,7 +257,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 3,
+            funcId: 4,
             port: port_,
           );
         },
@@ -223,7 +291,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 4,
+            funcId: 5,
             port: port_,
           );
         },
@@ -243,6 +311,77 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         debugName: "probe_archive_pair",
         argNames: ["datPath", "dttPath"],
       );
+
+  @override
+  Future<TexturePreview> crateApiTextureReadMisctexPreview({
+    required String dttPath,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_String(dttPath, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 6,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_texture_preview,
+          decodeErrorData: sse_decode_misc_tex_error,
+        ),
+        constMeta: kCrateApiTextureReadMisctexPreviewConstMeta,
+        argValues: [dttPath],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiTextureReadMisctexPreviewConstMeta =>
+      const TaskConstMeta(
+        debugName: "read_misctex_preview",
+        argNames: ["dttPath"],
+      );
+
+  @override
+  Future<WeaponRenameResult> crateApiWeaponRenameWeapon({
+    required String datPath,
+    required String dttPath,
+    required String toStem,
+    required String outDir,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_String(datPath, serializer);
+          sse_encode_String(dttPath, serializer);
+          sse_encode_String(toStem, serializer);
+          sse_encode_String(outDir, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 7,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_weapon_rename_result,
+          decodeErrorData: sse_decode_weapon_rename_error,
+        ),
+        constMeta: kCrateApiWeaponRenameWeaponConstMeta,
+        argValues: [datPath, dttPath, toStem, outDir],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiWeaponRenameWeaponConstMeta => const TaskConstMeta(
+    debugName: "rename_weapon",
+    argNames: ["datPath", "dttPath", "toStem", "outDir"],
+  );
 
   @override
   Future<RenderFrame> crateApiInspectorRenderModel({
@@ -270,7 +409,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 5,
+            funcId: 8,
             port: port_,
           );
         },
@@ -316,7 +455,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 6,
+            funcId: 9,
             port: port_,
           );
         },
@@ -351,7 +490,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 7,
+            funcId: 10,
             port: port_,
           );
         },
@@ -427,6 +566,34 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  MiscTexError dco_decode_misc_tex_error(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2)
+      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return MiscTexError(
+      code: dco_decode_u_32(arr[0]),
+      detail: dco_decode_String(arr[1]),
+    );
+  }
+
+  @protected
+  MiscTexResult dco_decode_misc_tex_result(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 6)
+      throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
+    return MiscTexResult(
+      datPath: dco_decode_String(arr[0]),
+      dttPath: dco_decode_String(arr[1]),
+      width: dco_decode_u_32(arr[2]),
+      height: dco_decode_u_32(arr[3]),
+      datBytes: dco_decode_u_64(arr[4]),
+      dttBytes: dco_decode_u_64(arr[5]),
+    );
+  }
+
+  @protected
   ModelCandidate dco_decode_model_candidate(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
@@ -491,6 +658,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  TexturePreview dco_decode_texture_preview(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 3)
+      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+    return TexturePreview(
+      width: dco_decode_u_32(arr[0]),
+      height: dco_decode_u_32(arr[1]),
+      png: dco_decode_list_prim_u_8_strict(arr[2]),
+    );
+  }
+
+  @protected
   int dco_decode_u_32(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as int;
@@ -512,6 +692,33 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   void dco_decode_unit(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return;
+  }
+
+  @protected
+  WeaponRenameError dco_decode_weapon_rename_error(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2)
+      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return WeaponRenameError(
+      code: dco_decode_u_32(arr[0]),
+      detail: dco_decode_String(arr[1]),
+    );
+  }
+
+  @protected
+  WeaponRenameResult dco_decode_weapon_rename_result(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 5)
+      throw Exception('unexpected arr length: expect 5 but see ${arr.length}');
+    return WeaponRenameResult(
+      datPath: dco_decode_String(arr[0]),
+      dttPath: dco_decode_String(arr[1]),
+      fromStem: dco_decode_String(arr[2]),
+      toStem: dco_decode_String(arr[3]),
+      renamedEntries: dco_decode_list_String(arr[4]),
+    );
   }
 
   @protected
@@ -587,6 +794,33 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  MiscTexError sse_decode_misc_tex_error(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_code = sse_decode_u_32(deserializer);
+    var var_detail = sse_decode_String(deserializer);
+    return MiscTexError(code: var_code, detail: var_detail);
+  }
+
+  @protected
+  MiscTexResult sse_decode_misc_tex_result(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_datPath = sse_decode_String(deserializer);
+    var var_dttPath = sse_decode_String(deserializer);
+    var var_width = sse_decode_u_32(deserializer);
+    var var_height = sse_decode_u_32(deserializer);
+    var var_datBytes = sse_decode_u_64(deserializer);
+    var var_dttBytes = sse_decode_u_64(deserializer);
+    return MiscTexResult(
+      datPath: var_datPath,
+      dttPath: var_dttPath,
+      width: var_width,
+      height: var_height,
+      datBytes: var_datBytes,
+      dttBytes: var_dttBytes,
+    );
+  }
+
+  @protected
   ModelCandidate sse_decode_model_candidate(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var var_id = sse_decode_String(deserializer);
@@ -658,6 +892,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  TexturePreview sse_decode_texture_preview(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_width = sse_decode_u_32(deserializer);
+    var var_height = sse_decode_u_32(deserializer);
+    var var_png = sse_decode_list_prim_u_8_strict(deserializer);
+    return TexturePreview(width: var_width, height: var_height, png: var_png);
+  }
+
+  @protected
   int sse_decode_u_32(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return deserializer.buffer.getUint32();
@@ -678,6 +921,35 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   @protected
   void sse_decode_unit(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
+  }
+
+  @protected
+  WeaponRenameError sse_decode_weapon_rename_error(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_code = sse_decode_u_32(deserializer);
+    var var_detail = sse_decode_String(deserializer);
+    return WeaponRenameError(code: var_code, detail: var_detail);
+  }
+
+  @protected
+  WeaponRenameResult sse_decode_weapon_rename_result(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_datPath = sse_decode_String(deserializer);
+    var var_dttPath = sse_decode_String(deserializer);
+    var var_fromStem = sse_decode_String(deserializer);
+    var var_toStem = sse_decode_String(deserializer);
+    var var_renamedEntries = sse_decode_list_String(deserializer);
+    return WeaponRenameResult(
+      datPath: var_datPath,
+      dttPath: var_dttPath,
+      fromStem: var_fromStem,
+      toStem: var_toStem,
+      renamedEntries: var_renamedEntries,
+    );
   }
 
   @protected
@@ -755,6 +1027,27 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_misc_tex_error(MiscTexError self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_u_32(self.code, serializer);
+    sse_encode_String(self.detail, serializer);
+  }
+
+  @protected
+  void sse_encode_misc_tex_result(
+    MiscTexResult self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.datPath, serializer);
+    sse_encode_String(self.dttPath, serializer);
+    sse_encode_u_32(self.width, serializer);
+    sse_encode_u_32(self.height, serializer);
+    sse_encode_u_64(self.datBytes, serializer);
+    sse_encode_u_64(self.dttBytes, serializer);
+  }
+
+  @protected
   void sse_encode_model_candidate(
     ModelCandidate self,
     SseSerializer serializer,
@@ -806,6 +1099,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_texture_preview(
+    TexturePreview self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_u_32(self.width, serializer);
+    sse_encode_u_32(self.height, serializer);
+    sse_encode_list_prim_u_8_strict(self.png, serializer);
+  }
+
+  @protected
   void sse_encode_u_32(int self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     serializer.buffer.putUint32(self);
@@ -826,6 +1130,29 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   @protected
   void sse_encode_unit(void self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
+  }
+
+  @protected
+  void sse_encode_weapon_rename_error(
+    WeaponRenameError self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_u_32(self.code, serializer);
+    sse_encode_String(self.detail, serializer);
+  }
+
+  @protected
+  void sse_encode_weapon_rename_result(
+    WeaponRenameResult self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.datPath, serializer);
+    sse_encode_String(self.dttPath, serializer);
+    sse_encode_String(self.fromStem, serializer);
+    sse_encode_String(self.toStem, serializer);
+    sse_encode_list_String(self.renamedEntries, serializer);
   }
 
   @protected

@@ -16,11 +16,7 @@ class ConfigApplyMarker extends StatelessWidget {
     final color = restartRequired ? AppColors.warning : AppColors.success;
     return Tooltip(
       message: tip,
-      child: Icon(
-        icon,
-        size: 14,
-        color: color.withValues(alpha: 0.85),
-      ),
+      child: Icon(icon, size: 14, color: color.withValues(alpha: 0.85)),
     );
   }
 }

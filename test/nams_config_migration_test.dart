@@ -322,6 +322,7 @@ global_heap_extra = 0
       for (final key in [
         'third_person_mode',
         'third_person_char_follow',
+        'third_person_smoothing',
         'third_person_sensitivity_x',
         'third_person_sensitivity_y',
         'aim_crosshair',

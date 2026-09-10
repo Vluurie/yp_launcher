@@ -54,6 +54,10 @@ abstract class PlatformAdapter {
   /// Launching works here but is unvalidated on real hardware.
   bool get isExperimental => false;
 
+  /// True when the game runs through Wine or Proton rather than natively.
+  /// Some Windows-only helper DLLs crash the game there and are skipped.
+  bool get runsGameThroughWine => true;
+
   Future<LaunchCommand> buildNamsCommand({
     required List<String> Function(String nierPath) namsArgs,
     required String namsExe,
@@ -69,15 +73,14 @@ abstract class PlatformAdapter {
     required String gameExe,
     required String launcherDir,
     required AppLocalizations l10n,
-  }) =>
-      buildNamsCommand(
-        namsArgs: namsRunArgs,
-        namsExe: namsExe,
-        gameDir: gameDir,
-        gameExe: gameExe,
-        launcherDir: launcherDir,
-        l10n: l10n,
-      );
+  }) => buildNamsCommand(
+    namsArgs: namsRunArgs,
+    namsExe: namsExe,
+    gameDir: gameDir,
+    gameExe: gameExe,
+    launcherDir: launcherDir,
+    l10n: l10n,
+  );
 
   Future<bool> isGameRunning();
 
@@ -116,8 +119,8 @@ abstract class PlatformAdapter {
   }
 
   List<Directory> tempSweepRoots(String? gameDir) => [
-        Directory.systemTemp,
-        if (gameDir != null && gameDir.isNotEmpty)
-          Directory(p.join(gameDir, 'nams', '.tmp')),
-      ];
+    Directory.systemTemp,
+    if (gameDir != null && gameDir.isNotEmpty)
+      Directory(p.join(gameDir, 'nams', '.tmp')),
+  ];
 }

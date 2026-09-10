@@ -44,10 +44,9 @@ class ReShadeDetection {
     final current = currentValues[NamsFields.disableReShadeLoading.key];
     if (current == true) return false;
 
-    final updatedContent = TomlService.updateToml(
-      rawContent,
-      {NamsFields.disableReShadeLoading.key: true},
-    );
+    final updatedContent = TomlService.updateToml(rawContent, {
+      NamsFields.disableReShadeLoading.key: true,
+    });
     await TomlService.writeTomlFile(tomlPath, updatedContent);
     return true;
   }

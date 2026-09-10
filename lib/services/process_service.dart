@@ -20,9 +20,7 @@ import 'package:yp_launcher/providers/locale_state.dart';
 class LaunchOutcome {
   final bool started;
   final LaunchFailure? failure;
-  const LaunchOutcome.started()
-      : started = true,
-        failure = null;
+  const LaunchOutcome.started() : started = true, failure = null;
   const LaunchOutcome.failed(this.failure) : started = false;
 }
 
@@ -34,8 +32,9 @@ class ProcessService {
       code = prefs.getString(AppStrings.prefKeyLocale);
     } catch (_) {}
     code ??= PlatformDispatcher.instance.locale.languageCode;
-    final supported =
-        kSupportedLocales.any((locale) => locale.languageCode == code);
+    final supported = kSupportedLocales.any(
+      (locale) => locale.languageCode == code,
+    );
     return supported ? code : 'en';
   }
 
@@ -49,42 +48,53 @@ class ProcessService {
 
       final missing = await LauncherSetupService.findMissingFiles();
       if (missing.isNotEmpty) {
-        return LaunchOutcome.failed(LaunchFailure(
-          headline: l10n.errorFilesQuarantined(missing.join(', ')),
-          rawOutput:
-              'Missing required files in launcher directory:\n${missing.join('\n')}\n\n'
-              'These files were quarantined or removed by antivirus software.',
-        ));
+        return LaunchOutcome.failed(
+          LaunchFailure(
+            headline: l10n.errorFilesQuarantined(missing.join(', ')),
+            rawOutput:
+                'Missing required files in launcher directory:\n${missing.join('\n')}\n\n'
+                'These files were quarantined or removed by antivirus software.',
+          ),
+        );
       }
 
       if (!await LauncherSetupService.isLauncherDirWritable()) {
-        return LaunchOutcome.failed(LaunchFailure(
-          headline: l10n.errorDirNotWritable,
-          rawOutput: l10n.errorDirNotWritableBody(
-            LauncherSetupService.launcherDirectory,
+        return LaunchOutcome.failed(
+          LaunchFailure(
+            headline: l10n.errorDirNotWritable,
+            rawOutput: l10n.errorDirNotWritableBody(
+              LauncherSetupService.launcherDirectory,
+            ),
           ),
-        ));
+        );
       }
 
       final launcherPaths = await LauncherSetupService.getLauncherPaths();
 
       final nierExePath = path.join(installDirectory, AppStrings.gameExeName);
       if (!await File(nierExePath).exists()) {
-        return LaunchOutcome.failed(LaunchFailure(
-          headline: l10n.errorExeNotFound(installDirectory),
-          rawOutput:
-              'NieRAutomata.exe was not found at:\n$nierExePath\n\n'
-              'The game install path saved in the launcher may be wrong, '
-              'or the drive letter changed.',
-        ));
+        return LaunchOutcome.failed(
+          LaunchFailure(
+            headline: l10n.errorExeNotFound(installDirectory),
+            rawOutput:
+                'NieRAutomata.exe was not found at:\n$nierExePath\n\n'
+                'The game install path saved in the launcher may be wrong, '
+                'or the drive letter changed.',
+          ),
+        );
       }
 
       final namsDir = path.join(installDirectory, 'nams');
       if (!await LauncherSetupService.isDirWritable(namsDir)) {
-        return LaunchOutcome.failed(LaunchFailure(
-          headline: l10n.errorGameDirNotWritable,
-          rawOutput: l10n.errorGameDirNotWritableBody(installDirectory, namsDir),
-        ));
+        return LaunchOutcome.failed(
+          LaunchFailure(
+            headline: l10n.errorGameDirNotWritable,
+            rawOutput: l10n.errorGameDirNotWritableBody(
+              installDirectory,
+              namsDir,
+            ),
+          ),
+        );
       }
 
       await ModsService.syncDlcSlots(installDirectory);
@@ -117,13 +127,9 @@ class ProcessService {
       var preferGpu = true;
       try {
         final prefs = await SharedPreferences.getInstance();
-        preferGpu =
-            prefs.getBool(AppStrings.prefKeyPreferDedicatedGpu) ?? true;
+        preferGpu = prefs.getBool(AppStrings.prefKeyPreferDedicatedGpu) ?? true;
       } catch (_) {}
-      GpuPreferenceService.apply(
-        launcherPaths['namsExe']!,
-        enabled: preferGpu,
-      );
+      GpuPreferenceService.apply(launcherPaths['namsExe']!, enabled: preferGpu);
 
       final process = await Process.start(
         command.command,
@@ -158,24 +164,29 @@ class ProcessService {
       final combined = '${stdoutBuf.toString()}${stderrBuf.toString()}';
       final logPath = await _writeCapturedLog(combined, exitCode: exitCode);
 
-      final parsed = LaunchFailureParser.parse(combined, capturedLogPath: logPath);
+      final parsed = LaunchFailureParser.parse(
+        combined,
+        capturedLogPath: logPath,
+      );
       if (parsed != null) {
         return LaunchOutcome.failed(parsed);
       }
 
-      return LaunchOutcome.failed(LaunchFailure(
-        code: exitCode,
-        headline: 'NAMS exited with code $exitCode',
-        rawOutput: combined.isEmpty
-            ? '(NAMS produced no output)'
-            : combined,
-        capturedLogPath: logPath,
-      ));
+      return LaunchOutcome.failed(
+        LaunchFailure(
+          code: exitCode,
+          headline: 'NAMS exited with code $exitCode',
+          rawOutput: combined.isEmpty ? '(NAMS produced no output)' : combined,
+          capturedLogPath: logPath,
+        ),
+      );
     } catch (e) {
-      return LaunchOutcome.failed(LaunchFailure(
-        headline: 'Internal launcher error',
-        rawOutput: e.toString(),
-      ));
+      return LaunchOutcome.failed(
+        LaunchFailure(
+          headline: 'Internal launcher error',
+          rawOutput: e.toString(),
+        ),
+      );
     }
   }
 
@@ -220,28 +231,16 @@ class ProcessService {
       );
 
       if (Platform.isLinux) {
-        command =
-            LaunchWrapperService.wrap(command, await LaunchWrapperService.read());
+        command = LaunchWrapperService.wrap(
+          command,
+          await LaunchWrapperService.read(),
+        );
       }
 
-      final line = [command.command, ...command.args].map(_shellQuote).join(' ');
-      if (Platform.isWindows) {
-        return 'cd /d ${_shellQuote(command.cwd)}\r\n$line';
-      }
-      return 'cd ${_shellQuote(command.cwd)} && $line';
+      return formatLaunchCommandScript(command, windows: Platform.isWindows);
     } catch (_) {
       return null;
     }
-  }
-
-  static String _shellQuote(String value) {
-    if (value.isEmpty) return '""';
-    final needsQuoting = value.contains(' ') ||
-        value.contains('\t') ||
-        value.contains('"');
-    if (!needsQuoting) return value;
-    final escaped = value.replaceAll('"', r'\"');
-    return '"$escaped"';
   }
 
   static Future<bool> terminateNierAutomata() =>

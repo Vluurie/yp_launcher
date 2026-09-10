@@ -17,8 +17,7 @@ class LanguageSelector extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final current =
         ref.watch(localeControllerProvider) ?? Localizations.localeOf(context);
-    final effectiveKey =
-        menuKey ?? GlobalKey<PopupMenuButtonState<Locale>>();
+    final effectiveKey = menuKey ?? GlobalKey<PopupMenuButtonState<Locale>>();
     return PopupMenuButton<Locale>(
       key: effectiveKey,
       tooltip: '',
@@ -92,7 +91,8 @@ class LanguageSelector extends ConsumerWidget {
                   Padding(
                     padding: EdgeInsets.only(
                       left:
-                          AppSizes.iconSM(context) + AppSizes.spacingSM(context),
+                          AppSizes.iconSM(context) +
+                          AppSizes.spacingSM(context),
                     ),
                     child: Text(
                       AppLocalizationsEn().languageSupportNotice,

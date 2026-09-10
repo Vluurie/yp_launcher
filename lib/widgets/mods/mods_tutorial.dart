@@ -10,11 +10,7 @@ class TutorialStep {
   final String title;
   final String body;
 
-  const TutorialStep({
-    this.anchor,
-    required this.title,
-    required this.body,
-  });
+  const TutorialStep({this.anchor, required this.title, required this.body});
 }
 
 enum TutorialKind { ecosystem, installMod, profiles, supporting }
@@ -42,118 +38,114 @@ class ModsTutorialAnchors {
 List<TutorialStep> _stepsForEcosystem(
   AppLocalizations l10n,
   ModsTutorialAnchors a,
-) =>
-    [
-      TutorialStep(
-        title: l10n.modsTutorialEcosystemStep1Title,
-        body: l10n.modsTutorialEcosystemStep1Body,
-      ),
-      TutorialStep(
-        title: l10n.modsTutorialEcosystemStep2Title,
-        body: l10n.modsTutorialEcosystemStep2Body,
-      ),
-      TutorialStep(
-        title: l10n.modsTutorialEcosystemStep3Title,
-        body: l10n.modsTutorialEcosystemStep3Body,
-      ),
-      TutorialStep(
-        title: l10n.modsTutorialEcosystemStep4Title,
-        body: l10n.modsTutorialEcosystemStep4Body,
-      ),
-    ];
+) => [
+  TutorialStep(
+    title: l10n.modsTutorialEcosystemStep1Title,
+    body: l10n.modsTutorialEcosystemStep1Body,
+  ),
+  TutorialStep(
+    title: l10n.modsTutorialEcosystemStep2Title,
+    body: l10n.modsTutorialEcosystemStep2Body,
+  ),
+  TutorialStep(
+    title: l10n.modsTutorialEcosystemStep3Title,
+    body: l10n.modsTutorialEcosystemStep3Body,
+  ),
+  TutorialStep(
+    title: l10n.modsTutorialEcosystemStep4Title,
+    body: l10n.modsTutorialEcosystemStep4Body,
+  ),
+];
 
 List<TutorialStep> _stepsForSupporting(
   AppLocalizations l10n,
   ModsTutorialAnchors a,
-) =>
-    [
-      TutorialStep(
-        title: l10n.modsTutorialSupportingStep1Title,
-        body: l10n.modsTutorialSupportingStep1Body,
-      ),
-      TutorialStep(
-        title: l10n.modsTutorialSupportingStep2Title,
-        body: l10n.modsTutorialSupportingStep2Body,
-      ),
-      TutorialStep(
-        title: l10n.modsTutorialSupportingStep3Title,
-        body: l10n.modsTutorialSupportingStep3Body,
-      ),
-      TutorialStep(
-        title: l10n.modsTutorialSupportingStep4Title,
-        body: l10n.modsTutorialSupportingStep4Body,
-      ),
-      TutorialStep(
-        title: l10n.modsTutorialSupportingStep5Title,
-        body: l10n.modsTutorialSupportingStep5Body,
-      ),
-    ];
+) => [
+  TutorialStep(
+    title: l10n.modsTutorialSupportingStep1Title,
+    body: l10n.modsTutorialSupportingStep1Body,
+  ),
+  TutorialStep(
+    title: l10n.modsTutorialSupportingStep2Title,
+    body: l10n.modsTutorialSupportingStep2Body,
+  ),
+  TutorialStep(
+    title: l10n.modsTutorialSupportingStep3Title,
+    body: l10n.modsTutorialSupportingStep3Body,
+  ),
+  TutorialStep(
+    title: l10n.modsTutorialSupportingStep4Title,
+    body: l10n.modsTutorialSupportingStep4Body,
+  ),
+  TutorialStep(
+    title: l10n.modsTutorialSupportingStep5Title,
+    body: l10n.modsTutorialSupportingStep5Body,
+  ),
+];
 
 List<TutorialStep> _stepsForInstall(
   AppLocalizations l10n,
   ModsTutorialAnchors a,
-) =>
-    [
-      TutorialStep(
-        anchor: a.dropZoneKey,
-        title: l10n.modsTutorialInstallStep1Title,
-        body: l10n.modsTutorialInstallStep1Body,
-      ),
-      TutorialStep(
-        title: l10n.modsTutorialInstallStep2Title,
-        body: l10n.modsTutorialInstallStep2Body,
-      ),
-      TutorialStep(
-        anchor: a.listKey,
-        title: l10n.modsTutorialInstallStep3Title,
-        body: l10n.modsTutorialInstallStep3Body,
-      ),
-      TutorialStep(
-        anchor: a.detailKey,
-        title: l10n.modsTutorialInstallStep4Title,
-        body: l10n.modsTutorialInstallStep4Body,
-      ),
-      TutorialStep(
-        anchor: a.texturesTabKey,
-        title: l10n.modsTutorialInstallStep5Title,
-        body: l10n.modsTutorialInstallStep5Body,
-      ),
-      TutorialStep(
-        anchor: a.cutscenesTabKey,
-        title: l10n.modsTutorialInstallStep6Title,
-        body: l10n.modsTutorialInstallStep6Body,
-      ),
-      TutorialStep(
-        title: l10n.modsTutorialInstallStep7Title,
-        body: l10n.modsTutorialInstallStep7Body,
-      ),
-    ];
+) => [
+  TutorialStep(
+    anchor: a.dropZoneKey,
+    title: l10n.modsTutorialInstallStep1Title,
+    body: l10n.modsTutorialInstallStep1Body,
+  ),
+  TutorialStep(
+    title: l10n.modsTutorialInstallStep2Title,
+    body: l10n.modsTutorialInstallStep2Body,
+  ),
+  TutorialStep(
+    anchor: a.listKey,
+    title: l10n.modsTutorialInstallStep3Title,
+    body: l10n.modsTutorialInstallStep3Body,
+  ),
+  TutorialStep(
+    anchor: a.detailKey,
+    title: l10n.modsTutorialInstallStep4Title,
+    body: l10n.modsTutorialInstallStep4Body,
+  ),
+  TutorialStep(
+    anchor: a.texturesTabKey,
+    title: l10n.modsTutorialInstallStep5Title,
+    body: l10n.modsTutorialInstallStep5Body,
+  ),
+  TutorialStep(
+    anchor: a.cutscenesTabKey,
+    title: l10n.modsTutorialInstallStep6Title,
+    body: l10n.modsTutorialInstallStep6Body,
+  ),
+  TutorialStep(
+    title: l10n.modsTutorialInstallStep7Title,
+    body: l10n.modsTutorialInstallStep7Body,
+  ),
+];
 
 List<TutorialStep> _stepsForProfiles(
   AppLocalizations l10n,
   ModsTutorialAnchors a,
-) =>
-    [
-      TutorialStep(
-        anchor: a.profileSelectorKey,
-        title: l10n.modsTutorialProfilesStep1Title,
-        body: l10n.modsTutorialProfilesStep1Body,
-      ),
-      TutorialStep(
-        anchor: a.profileSelectorKey,
-        title: l10n.modsTutorialProfilesStep2Title,
-        body: l10n.modsTutorialProfilesStep2Body,
-      ),
-      TutorialStep(
-        anchor: a.profileSelectorKey,
-        title: l10n.modsTutorialProfilesStep3Title,
-        body: l10n.modsTutorialProfilesStep3Body,
-      ),
-      TutorialStep(
-        title: l10n.modsTutorialProfilesStep4Title,
-        body: l10n.modsTutorialProfilesStep4Body,
-      ),
-    ];
+) => [
+  TutorialStep(
+    anchor: a.profileSelectorKey,
+    title: l10n.modsTutorialProfilesStep1Title,
+    body: l10n.modsTutorialProfilesStep1Body,
+  ),
+  TutorialStep(
+    anchor: a.profileSelectorKey,
+    title: l10n.modsTutorialProfilesStep2Title,
+    body: l10n.modsTutorialProfilesStep2Body,
+  ),
+  TutorialStep(
+    anchor: a.profileSelectorKey,
+    title: l10n.modsTutorialProfilesStep3Title,
+    body: l10n.modsTutorialProfilesStep3Body,
+  ),
+  TutorialStep(
+    title: l10n.modsTutorialProfilesStep4Title,
+    body: l10n.modsTutorialProfilesStep4Body,
+  ),
+];
 
 Future<void> showModsTutorial(
   BuildContext context, {
@@ -275,15 +267,17 @@ class _TutorialOverlayState extends State<_TutorialOverlay>
                   builder: (_, __) => Container(
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: AppColors.accentPrimary
-                            .withValues(alpha: _pulse.value),
+                        color: AppColors.accentPrimary.withValues(
+                          alpha: _pulse.value,
+                        ),
                         width: 2,
                       ),
                       borderRadius: BorderRadius.circular(6),
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.accentPrimary
-                              .withValues(alpha: _pulse.value * 0.35),
+                          color: AppColors.accentPrimary.withValues(
+                            alpha: _pulse.value * 0.35,
+                          ),
                           blurRadius: 14,
                           spreadRadius: 1,
                         ),
@@ -331,12 +325,16 @@ class _TutorialOverlayState extends State<_TutorialOverlay>
         left = rect.left - margin - cardWidth;
         top = rect.top;
       } else if (spaceBelow >= 180) {
-        left = (rect.center.dx - cardWidth / 2)
-            .clamp(margin, screen.width - cardWidth - margin);
+        left = (rect.center.dx - cardWidth / 2).clamp(
+          margin,
+          screen.width - cardWidth - margin,
+        );
         top = rect.bottom + margin;
       } else {
-        left = (rect.center.dx - cardWidth / 2)
-            .clamp(margin, screen.width - cardWidth - margin);
+        left = (rect.center.dx - cardWidth / 2).clamp(
+          margin,
+          screen.width - cardWidth - margin,
+        );
         top = margin;
       }
 
@@ -429,10 +427,7 @@ class _TutorialCard extends StatelessWidget {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8,
-                  vertical: 3,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
                   color: AppColors.accentPrimary.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(4),
@@ -500,9 +495,11 @@ class _TutorialCard extends StatelessWidget {
                       code: TextStyle(
                         fontSize: codeSize,
                         color: AppColors.accentPrimary,
-                        fontFamily: 'monospace',
-                        backgroundColor:
-                            AppColors.accentPrimary.withValues(alpha: 0.08),
+                        fontFamily: AppSizes.monoFamily,
+                        fontFamilyFallback: AppSizes.monoFallback,
+                        backgroundColor: AppColors.accentPrimary.withValues(
+                          alpha: 0.08,
+                        ),
                       ),
                       codeblockDecoration: BoxDecoration(
                         color: AppColors.surfaceLight,

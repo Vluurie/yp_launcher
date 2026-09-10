@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:yp_launcher/widgets/app_dialog.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yp_launcher/l10n/app_localizations.dart';
 import 'package:yp_launcher/models/config_fields.dart';
@@ -8,6 +9,7 @@ import 'package:yp_launcher/theme/app_colors.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
 import 'package:path/path.dart' as p;
 import 'package:yp_launcher/widgets/collapsible_card.dart';
+import 'package:yp_launcher/widgets/config_error_banner.dart';
 import 'package:yp_launcher/widgets/config_field_bool.dart';
 import 'package:yp_launcher/widgets/config_field_cursor_file.dart';
 import 'package:yp_launcher/widgets/config_field_slider.dart';
@@ -17,6 +19,7 @@ import 'package:yp_launcher/widgets/config_field_preview.dart'
 import 'package:yp_launcher/widgets/config_field_virtual_key.dart';
 import 'package:yp_launcher/widgets/header_info_icon.dart';
 import 'package:yp_launcher/widgets/hover_button.dart';
+import 'package:yp_launcher/widgets/two_column_layout.dart';
 
 class NaiomView extends ConsumerStatefulWidget {
   const NaiomView({super.key});
@@ -47,29 +50,45 @@ class _NaiomViewState extends ConsumerState<NaiomView> {
     super.dispose();
   }
 
-  Map<String, dynamic> get _mouse =>
-      (ref.watch(configStateControllerProvider).namsValues['mouse']
-          as Map<String, dynamic>?) ??
-      const {};
+  Map<String, dynamic> get _mouse {
+    final raw = ref.watch(configStateControllerProvider).namsValues['mouse'];
+    return raw is Map<String, dynamic> ? raw : const {};
+  }
 
-  Map<String, dynamic> get _bindings =>
-      (_mouse['bindings'] as Map<String, dynamic>?) ?? const {};
+  Map<String, dynamic> get _bindings {
+    final raw = _mouse['bindings'];
+    return raw is Map<String, dynamic> ? raw : const {};
+  }
 
   bool _boolOf(ConfigField<bool> f) => _mouse[f.key] == true;
 
   bool get _inputFeaturesDisabled =>
-      ref.watch(configStateControllerProvider)
+      ref
+          .watch(configStateControllerProvider)
           .namsValues[NamsFields.disableInputFeatures.key] ==
       true;
 
-  double _doubleOf(ConfigField<double> f) =>
-      (_mouse[f.key] as num?)?.toDouble() ?? f.defaultValue;
+  double _doubleOf(ConfigField<double> f) {
+    final raw = _mouse[f.key];
+    return raw is num ? raw.toDouble() : f.defaultValue;
+  }
 
-  String _stringOf(ConfigField<String> f) =>
-      (_mouse[f.key] as String?) ?? f.defaultValue;
+  String _stringOf(ConfigField<String> f) {
+    final raw = _mouse[f.key];
+    return raw is String ? raw : f.defaultValue;
+  }
 
-  String _bindingOf(ConfigField<String> f) =>
-      (_bindings[f.key] as String?) ?? '';
+  String _bindingOf(ConfigField<String> f) {
+    final raw = _bindings[f.key];
+    return raw is String ? raw : '';
+  }
+
+  int get _debugMenuKey {
+    final raw = _mouse[NamsFields.miscOpenDebugMenu.key];
+    if (raw is int) return raw;
+    if (raw is num) return raw.toInt();
+    return NamsFields.miscOpenDebugMenu.defaultValue;
+  }
 
   void _setMouse(ConfigField f, dynamic value) {
     ref
@@ -91,6 +110,7 @@ class _NaiomViewState extends ConsumerState<NaiomView> {
 
   static final List<ConfigField<double>> _mouseDoubles = [
     NamsFields.sensitivity,
+    NamsFields.thirdPersonSmoothing,
     NamsFields.thirdPersonSensitivityX,
     NamsFields.thirdPersonSensitivityY,
     NamsFields.aimSensitivity,
@@ -108,9 +128,7 @@ class _NaiomViewState extends ConsumerState<NaiomView> {
     if (_mouseBools.any((f) => _boolOf(f) != f.defaultValue)) return true;
     if (_mouseDoubles.any((f) => _doubleOf(f) != f.defaultValue)) return true;
     if (_mouseStrings.any((f) => _stringOf(f) != f.defaultValue)) return true;
-    final debugKey =
-        (_mouse[NamsFields.miscOpenDebugMenu.key] as int?) ??
-        NamsFields.miscOpenDebugMenu.defaultValue;
+    final debugKey = _debugMenuKey;
     if (debugKey != NamsFields.miscOpenDebugMenu.defaultValue) return true;
     return NamsBindingFields.all.any((f) => _bindingOf(f).isNotEmpty);
   }
@@ -138,7 +156,7 @@ class _NaiomViewState extends ConsumerState<NaiomView> {
     final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => AppDialog(
         backgroundColor: AppColors.backgroundCard,
         title: Text(
           l10n.naiomResetConfirmTitle,
@@ -214,15 +232,16 @@ class _NaiomViewState extends ConsumerState<NaiomView> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          if (config.namsError != null)
+                            ConfigErrorBanner(
+                              fileName: 'nams.toml',
+                              error: config.namsError!,
+                            ),
                           _controllerBanner(context),
                           if (!_inputFeaturesDisabled)
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(child: _buildLeftColumn(context)),
-                                SizedBox(width: AppSizes.spacingLG(context)),
-                                Expanded(child: _buildRightColumn(context)),
-                              ],
+                            TwoColumnLayout(
+                              left: _buildLeftColumn(context),
+                              right: _buildRightColumn(context),
                             ),
                         ],
                       ),
@@ -261,6 +280,7 @@ class _NaiomViewState extends ConsumerState<NaiomView> {
             child: Column(
               children: [
                 _bool(NamsFields.thirdPersonCharFollow, l10n),
+                _float(NamsFields.thirdPersonSmoothing, l10n),
                 _float(NamsFields.thirdPersonSensitivityX, l10n),
                 _float(NamsFields.thirdPersonSensitivityY, l10n),
               ],
@@ -309,9 +329,7 @@ class _NaiomViewState extends ConsumerState<NaiomView> {
           _bool(NamsFields.miscDisablePodPet, l10n),
           ConfigFieldVirtualKey(
             label: NamsFields.miscOpenDebugMenu.label(l10n),
-            value:
-                (_mouse[NamsFields.miscOpenDebugMenu.key] as int?) ??
-                NamsFields.miscOpenDebugMenu.defaultValue,
+            value: _debugMenuKey,
             onChanged: (v) => _setMouse(NamsFields.miscOpenDebugMenu, v),
             tooltip: NamsFields.miscOpenDebugMenu.tooltip!(l10n),
           ),
@@ -445,10 +463,7 @@ class _NaiomViewState extends ConsumerState<NaiomView> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Opacity(
-          opacity: 0.4,
-          child: IgnorePointer(child: child),
-        ),
+        Opacity(opacity: 0.4, child: IgnorePointer(child: child)),
         Padding(
           padding: EdgeInsets.only(
             left: AppSizes.paddingSM(context),
@@ -513,11 +528,7 @@ class _NaiomViewState extends ConsumerState<NaiomView> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(
-            Icons.warning_amber_rounded,
-            size: 16,
-            color: AppColors.warning,
-          ),
+          Icon(Icons.warning_amber_rounded, size: 16, color: AppColors.warning),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
@@ -643,11 +654,7 @@ class _NaiomViewState extends ConsumerState<NaiomView> {
     );
   }
 
-  Widget _buildHeader(
-    BuildContext context,
-    ConfigData config,
-    String gameDir,
-  ) {
+  Widget _buildHeader(BuildContext context, ConfigData config, String gameDir) {
     final l10n = AppLocalizations.of(context)!;
     final notifier = ref.read(configStateControllerProvider.notifier);
     return Container(

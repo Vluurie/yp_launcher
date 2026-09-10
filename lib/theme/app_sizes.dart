@@ -3,6 +3,18 @@ import 'package:flutter/widgets.dart';
 class AppSizes {
   AppSizes._();
 
+  static const monoFamily = 'Consolas';
+
+  static const monoFallback = <String>[
+    'Cascadia Mono',
+    'DejaVu Sans Mono',
+    'Liberation Mono',
+    'Noto Sans Mono',
+    'Menlo',
+    'Courier New',
+    'monospace',
+  ];
+
   static double fontXS(BuildContext context) => _scale(context, 13, 15, 17);
   static double fontSM(BuildContext context) => _scale(context, 14, 16, 19);
   static double fontMD(BuildContext context) => _scale(context, 15, 17, 20);
@@ -29,15 +41,13 @@ class AppSizes {
   static double checkboxSize(BuildContext context) =>
       _scale(context, 20, 23, 26);
 
-  static double logPanelWidth(BuildContext context) =>
-      _scale(context, 350, 480, 620);
-
   static double paddingXS(BuildContext context) => _scale(context, 2, 4, 6);
   static double paddingSM(BuildContext context) => _scale(context, 4, 6, 8);
   static double paddingMD(BuildContext context) => _scale(context, 6, 10, 14);
   static double paddingLG(BuildContext context) => _scale(context, 8, 14, 20);
   static double paddingXL(BuildContext context) => _scale(context, 12, 20, 32);
 
+  static double spacingXS(BuildContext context) => _scale(context, 1, 2, 3);
   static double spacingSM(BuildContext context) => _scale(context, 2, 4, 6);
   static double spacingMD(BuildContext context) => _scale(context, 4, 6, 8);
   static double spacingLG(BuildContext context) => _scale(context, 6, 10, 16);
@@ -67,12 +77,19 @@ class AppSizes {
   // Left navigation sidebar.
   static double sidebarWidth(BuildContext context) =>
       _scale(context, 64, 180, 200);
+  static double docsNavWidth(BuildContext context) =>
+      _scale(context, 150, 220, 280);
+  static double docsOutlineWidth(BuildContext context) =>
+      _scale(context, 120, 170, 220);
   static bool sidebarLabelsVisible(BuildContext context) =>
       MediaQuery.of(context).size.width >= 800;
   static double sidebarRowHeight(BuildContext context) =>
       _scale(context, 44, 38, 40);
   static double sidebarSectionGap(BuildContext context) =>
       _scale(context, 10, 14, 18);
+
+  static double dialogWidth(BuildContext context) =>
+      _scale(context, 400, 480, 560);
 
   static double _scale(
     BuildContext context,

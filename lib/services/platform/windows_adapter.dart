@@ -15,13 +15,16 @@ class WindowsAdapter extends PlatformAdapter {
   @override
   bool get needsRuntimeExtraction => false;
 
+  @override
+  bool get runsGameThroughWine => false;
+
   static String get windowsRuntimeDir => p.join(
-        p.dirname(Platform.resolvedExecutable),
-        'data',
-        'flutter_assets',
-        'assets',
-        'bins',
-      );
+    p.dirname(Platform.resolvedExecutable),
+    'data',
+    'flutter_assets',
+    'assets',
+    'bins',
+  );
 
   @override
   String get sevenZipExeName => '7z.exe';
@@ -50,13 +53,12 @@ class WindowsAdapter extends PlatformAdapter {
     required String gameExe,
     required String launcherDir,
     required AppLocalizations l10n,
-  }) async =>
-      buildNativeLaunchCommand(
-        namsExe: namsExe,
-        gameDir: gameDir,
-        launcherDir: launcherDir,
-        namsArgs: namsArgs,
-      );
+  }) async => buildNativeLaunchCommand(
+    namsExe: namsExe,
+    gameDir: gameDir,
+    launcherDir: launcherDir,
+    namsArgs: namsArgs,
+  );
 
   @override
   Future<bool> isGameRunning() async {
@@ -66,10 +68,9 @@ class WindowsAdapter extends PlatformAdapter {
         'IMAGENAME eq ${AppStrings.namsExeName}',
         '/NH',
       ]);
-      return result.stdout
-          .toString()
-          .toLowerCase()
-          .contains(AppStrings.namsExeName.toLowerCase());
+      return result.stdout.toString().toLowerCase().contains(
+        AppStrings.namsExeName.toLowerCase(),
+      );
     } catch (_) {
       return isWin32ProcessRunning(AppStrings.namsExeName);
     }
@@ -89,8 +90,7 @@ class WindowsAdapter extends PlatformAdapter {
 
   @override
   Future<String?> resolveNamsSettingsPath(String? gameDir) async {
-    final appData = Platform.environment['APPDATA'];
-    if (appData == null || appData.isEmpty) return null;
-    return p.join(appData, 'NAMS', 'settings.json');
+    if (gameDir == null || gameDir.isEmpty) return null;
+    return p.join(gameDir, 'nams', '_internal', 'cache', 'settings.json');
   }
 }

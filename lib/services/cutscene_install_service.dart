@@ -19,7 +19,12 @@ class CutsceneInstallService {
   final BuildContext context;
   final String cutscenesDir;
   final String originalMovieDir;
-  final void Function(bool installing, String progressText, double progressPercent) onProgress;
+  final void Function(
+    bool installing,
+    String progressText,
+    double progressPercent,
+  )
+  onProgress;
   final Future<void> Function() onReload;
   final List<CutsceneMod> Function() getMods;
 
@@ -35,8 +40,9 @@ class CutsceneInstallService {
 
   Future<bool> _dropContainsUsm(String sourcePath) async {
     if (ArchiveService.isArchive(sourcePath)) {
-      final found = await ArchiveService.archiveContainsExtension(
-          sourcePath, ['.usm']);
+      final found = await ArchiveService.archiveContainsExtension(sourcePath, [
+        '.usm',
+      ]);
       return found == true;
     }
     if (FileSystemEntity.isFileSync(sourcePath)) {
@@ -118,20 +124,27 @@ class CutsceneInstallService {
 
     if (ArchiveService.isArchive(sourcePath)) {
       onProgress(true, l10n.extractingArchive, 0);
-      notify(l10n.extractingArchive, Icons.hourglass_top, AppColors.accentPrimary);
+      notify(
+        l10n.extractingArchive,
+        Icons.hourglass_top,
+        AppColors.accentPrimary,
+      );
       final extracted = await ArchiveService.extract(
         sourcePath,
         onProgress: (percent, currentFile) {
           final label = currentFile == null || currentFile.isEmpty
               ? l10n.extractingArchivePercent((percent * 100).round())
               : l10n.extractingArchivePercentFile(
-                  (percent * 100).round(), currentFile);
+                  (percent * 100).round(),
+                  currentFile,
+                );
           onProgress(true, label, percent);
         },
       );
       if (extracted == null) {
         final detail = ArchiveService.lastExtractError ?? '';
-        final isDiskFull = detail.toLowerCase().contains('disk full') ||
+        final isDiskFull =
+            detail.toLowerCase().contains('disk full') ||
             detail.toLowerCase().contains('no space') ||
             detail.toLowerCase().contains('not enough space') ||
             detail.contains('exit 7') ||
@@ -139,8 +152,8 @@ class CutsceneInstallService {
         final msg = isDiskFull
             ? l10n.extractFailedDiskFull
             : detail.isNotEmpty
-                ? l10n.extractFailedDetail(detail)
-                : l10n.failedToExtractArchive;
+            ? l10n.extractFailedDetail(detail)
+            : l10n.failedToExtractArchive;
         notify(msg, Icons.error_outline, AppColors.error);
         onProgress(false, '', 0);
         return;
@@ -165,15 +178,14 @@ class CutsceneInstallService {
     String effectivePath,
     List<CutsceneMod> existingMods,
   ) async {
-
-    onProgress(
-      true,
-      AppLocalizations.of(context)!.cutsceneScanningArchive,
-      0,
-    );
+    onProgress(true, AppLocalizations.of(context)!.cutsceneScanningArchive, 0);
     final movieDir = await findMovieDir(effectivePath);
     if (movieDir == null) {
-      notify(AppLocalizations.of(context)!.noMovieFolderFound, Icons.movie_filter, AppColors.warning);
+      notify(
+        AppLocalizations.of(context)!.noMovieFolderFound,
+        Icons.movie_filter,
+        AppColors.warning,
+      );
       onProgress(false, '', 0);
       return;
     }
@@ -181,7 +193,10 @@ class CutsceneInstallService {
     final defaultName = sourcePath
         .split(RegExp(r'[\\/]'))
         .last
-        .replaceAll(RegExp(r'\.(zip|7z|rar|tar|gz|bz2)$', caseSensitive: false), '');
+        .replaceAll(
+          RegExp(r'\.(zip|7z|rar|tar|gz|bz2)$', caseSensitive: false),
+          '',
+        );
 
     String? name;
     if (existingMods.isNotEmpty) {
@@ -241,7 +256,12 @@ class CutsceneInstallService {
           final text = mbDone == '0'
               ? l10n.cutsceneCopyingFile(current, total, name)
               : l10n.cutsceneCopyingFileBytes(
-                  current, total, name, mbDone, mbTotal);
+                  current,
+                  total,
+                  name,
+                  mbDone,
+                  mbTotal,
+                );
           onProgress(true, text, message['percent'] as double);
         } else if (type == 'done') {
           count = message['count'] as int;
@@ -264,7 +284,11 @@ class CutsceneInstallService {
       await onReload();
       ref.read(detectionRefreshProvider.notifier).state++;
     } else {
-      notify(AppLocalizations.of(context)!.noUsmFilesFound, Icons.error_outline, AppColors.error);
+      notify(
+        AppLocalizations.of(context)!.noUsmFilesFound,
+        Icons.error_outline,
+        AppColors.error,
+      );
     }
   }
 

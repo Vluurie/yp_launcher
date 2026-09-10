@@ -16,8 +16,9 @@ class ModManifestService {
 
     final parsed = TomlService.parse(raw);
     final nested = parsed['mod'];
-    final Map<String, dynamic> section =
-        nested is Map<String, dynamic> ? nested : parsed;
+    final Map<String, dynamic> section = nested is Map<String, dynamic>
+        ? nested
+        : parsed;
 
     return ManifestInfo(
       id: _string(section['id']),
@@ -41,7 +42,11 @@ class ModManifestService {
 
   static List<String> _stringList(dynamic v) {
     if (v is List) {
-      return v.whereType<String>().map((s) => s.trim()).where((s) => s.isNotEmpty).toList();
+      return v
+          .whereType<String>()
+          .map((s) => s.trim())
+          .where((s) => s.isNotEmpty)
+          .toList();
     }
     return const [];
   }

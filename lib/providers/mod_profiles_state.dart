@@ -65,15 +65,14 @@ class ModProfilesStateController extends _$ModProfilesStateController {
     }
   }
 
-  Future<bool> rename(
-    String gameDir,
-    String oldName,
-    String newName,
-  ) async {
+  Future<bool> rename(String gameDir, String oldName, String newName) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final next =
-          await ModProfilesService.renameProfile(gameDir, oldName, newName);
+      final next = await ModProfilesService.renameProfile(
+        gameDir,
+        oldName,
+        newName,
+      );
       state = next;
       ref.read(detectionRefreshProvider.notifier).state++;
       return true;

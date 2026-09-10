@@ -127,23 +127,29 @@ void main() {
     setUp(() => tree = FakeBottleTree.create());
     tearDown(() => tree.dispose());
 
-    test('lands in the bottle Roaming dir', () async {
+    test('lands in the game dir cache', () async {
       final bottle = tree.addBottle('Steam');
       final gameDir = p.join(bottle, 'drive_c', 'game');
 
       expect(
         await adapter.resolveNamsSettingsPath(gameDir),
-        p.join(bottle, 'drive_c', 'users', 'crossover', 'AppData', 'Roaming',
-            'NAMS', 'settings.json'),
+        p.join(gameDir, 'nams', '_internal', 'cache', 'settings.json'),
       );
-    }, skip: skipOnWindows);
+    });
 
     test('is null before a game dir is known', () async {
       expect(await adapter.resolveNamsSettingsPath(null), isNull);
     });
 
-    test('is null for a game dir outside any prefix', () async {
-      expect(await adapter.resolveNamsSettingsPath('/Users/d/Games'), isNull);
+    test('is null for an empty game dir', () async {
+      expect(await adapter.resolveNamsSettingsPath(''), isNull);
+    });
+
+    test('does not depend on the game dir being inside a prefix', () async {
+      expect(
+        await adapter.resolveNamsSettingsPath('/Users/d/Games'),
+        p.join('/Users/d/Games', 'nams', '_internal', 'cache', 'settings.json'),
+      );
     });
   });
 

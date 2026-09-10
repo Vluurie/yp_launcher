@@ -4,6 +4,7 @@ import 'package:yp_launcher/constants/app_strings.dart';
 import 'package:yp_launcher/models/config_fields.dart';
 import 'package:yp_launcher/services/detection/graphics_dll_id.dart';
 import 'package:yp_launcher/services/file_ops.dart';
+import 'package:yp_launcher/services/platform/platform_adapter.dart';
 import 'package:yp_launcher/services/thirdparty/graphics_runtime.dart';
 import 'package:yp_launcher/services/thirdparty/ini_patch.dart';
 import 'package:yp_launcher/services/thirdparty/shaderfix_names.dart';
@@ -28,7 +29,8 @@ class MigotoRuntime extends GraphicsRuntime {
   String installDir(String gameDir) => ThirdPartyPaths.migoto();
 
   @override
-  bool canInstall(ThirdPartyClassification c) => c.kind == ThirdPartyKind.migoto;
+  bool canInstall(ThirdPartyClassification c) =>
+      c.kind == ThirdPartyKind.migoto;
 
   @override
   Future<ThirdPartyInstallResult> install(
@@ -88,6 +90,8 @@ class MigotoRuntime extends GraphicsRuntime {
         !File(path.join(dest, '3dmigoto.dll')).existsSync()) {
       dll.renameSync(path.join(dest, '3dmigoto.dll'));
     }
+
+    _parkWineIncompatibleDlls(dest);
   }
 
   DllHit? findGameRootDll(String gameDir) {
@@ -117,8 +121,11 @@ class MigotoRuntime extends GraphicsRuntime {
     }
     final sf = path.join(gameDir, 'ShaderFixes');
     if (Directory(sf).existsSync()) {
-      FileOps.mergeDirectory(sf, path.join(dest, 'ShaderFixes'),
-          overwrite: false);
+      FileOps.mergeDirectory(
+        sf,
+        path.join(dest, 'ShaderFixes'),
+        overwrite: false,
+      );
     }
 
     final ini = File(path.join(dest, migotoIniName));
@@ -134,7 +141,8 @@ class MigotoRuntime extends GraphicsRuntime {
   @override
   Future<ThirdPartyRuntimeStatus> status(String gameDir) async {
     final dir = installDir(gameDir);
-    final installed = Directory(dir).existsSync() &&
+    final installed =
+        Directory(dir).existsSync() &&
         (File(path.join(dir, 'd3d11.dll')).existsSync() ||
             File(path.join(dir, '3dmigoto.dll')).existsSync());
     return ThirdPartyRuntimeStatus(
@@ -189,7 +197,8 @@ class MigotoRuntime extends GraphicsRuntime {
       target = IniPatch.getKey(content, 'Loader', 'target');
       config = _parseConfig(content);
     }
-    final ok = target != null &&
+    final ok =
+        target != null &&
         target.toLowerCase().endsWith(loaderTarget.toLowerCase());
 
     return MigotoInfo(
@@ -205,17 +214,20 @@ class MigotoRuntime extends GraphicsRuntime {
   static MigotoConfig _parseConfig(String content) {
     return MigotoConfig(
       hunting: _huntingFrom(IniPatch.getKey(content, 'Hunting', 'hunting')),
-      markingMode:
-          _markingFrom(IniPatch.getKey(content, 'Hunting', 'marking_mode')),
-      verboseOverlay:
-          _boolFrom(IniPatch.getKey(content, 'Logging', 'verbose_overlay')),
-      cacheShaders:
-          _boolFrom(IniPatch.getKey(content, 'Rendering', 'cache_shaders'),
-              orElse: true),
+      markingMode: _markingFrom(
+        IniPatch.getKey(content, 'Hunting', 'marking_mode'),
+      ),
+      verboseOverlay: _boolFrom(
+        IniPatch.getKey(content, 'Logging', 'verbose_overlay'),
+      ),
+      cacheShaders: _boolFrom(
+        IniPatch.getKey(content, 'Rendering', 'cache_shaders'),
+        orElse: true,
+      ),
       checkForegroundWindow: _boolFrom(
-          IniPatch.getKey(content, 'Device', 'check_foreground_window')),
-      reloadFixesKey:
-          IniPatch.getKey(content, 'Hunting', 'reload_fixes') ?? '',
+        IniPatch.getKey(content, 'Device', 'check_foreground_window'),
+      ),
+      reloadFixesKey: IniPatch.getKey(content, 'Hunting', 'reload_fixes') ?? '',
       wipeCacheKey:
           IniPatch.getKey(content, 'Hunting', 'wipe_user_config') ?? '',
       toggleHuntKey:
@@ -259,13 +271,29 @@ class MigotoRuntime extends GraphicsRuntime {
     var s = ini.readAsStringSync();
     s = IniPatch.setKey(s, 'Hunting', 'hunting', _huntingTo(c.hunting));
     s = IniPatch.setKey(
-        s, 'Hunting', 'marking_mode', _markingTo(c.markingMode));
+      s,
+      'Hunting',
+      'marking_mode',
+      _markingTo(c.markingMode),
+    );
     s = IniPatch.setKey(
-        s, 'Logging', 'verbose_overlay', c.verboseOverlay ? '1' : '0');
+      s,
+      'Logging',
+      'verbose_overlay',
+      c.verboseOverlay ? '1' : '0',
+    );
     s = IniPatch.setKey(
-        s, 'Rendering', 'cache_shaders', c.cacheShaders ? '1' : '0');
-    s = IniPatch.setKey(s, 'Device', 'check_foreground_window',
-        c.checkForegroundWindow ? '1' : '0');
+      s,
+      'Rendering',
+      'cache_shaders',
+      c.cacheShaders ? '1' : '0',
+    );
+    s = IniPatch.setKey(
+      s,
+      'Device',
+      'check_foreground_window',
+      c.checkForegroundWindow ? '1' : '0',
+    );
     ini.writeAsStringSync(s);
   }
 
@@ -308,9 +336,33 @@ class MigotoRuntime extends GraphicsRuntime {
 
   void _placeSupportDlls(String src, String dest) {
     for (final name in supportDlls) {
-      final f =
-          FileOps.filesWhere(src, (rel, _) => baseName(rel) == name).firstOrNull;
+      if (_isWineIncompatible(name)) continue;
+      final f = FileOps.filesWhere(
+        src,
+        (rel, _) => baseName(rel) == name,
+      ).firstOrNull;
       if (f != null) FileOps.copyFileInto(f.path, dest, asName: name);
+    }
+    _parkWineIncompatibleDlls(dest);
+  }
+
+  static bool _isWineIncompatible(String name) =>
+      name == 'nvapi64.dll' && PlatformAdapter.current.runsGameThroughWine;
+
+  static const _parkedSuffix = '.disabled-on-wine';
+
+  void _parkWineIncompatibleDlls(String dest) {
+    if (!PlatformAdapter.current.runsGameThroughWine) return;
+    for (final name in supportDlls.where(_isWineIncompatible)) {
+      final file = File(path.join(dest, name));
+      if (!file.existsSync()) continue;
+      try {
+        file.renameSync(path.join(dest, '$name$_parkedSuffix'));
+      } catch (_) {
+        try {
+          file.deleteSync();
+        } catch (_) {}
+      }
     }
   }
 
@@ -350,11 +402,19 @@ class MigotoRuntime extends GraphicsRuntime {
     );
   }
 
+  static const namsCompatSystemKeys = <String, String>{
+    'hook': 'recommended',
+    'load_library_redirect': '1',
+    'allow_check_interface': '1',
+    'allow_create_device': '1',
+    'allow_platform_update': '1',
+  };
+
   static String patchNamsCompat(String content) {
     var s = content;
-    s = IniPatch.setKey(s, 'System', 'hook', 'recommended');
-    s = IniPatch.setKey(s, 'System', 'allow_create_device', '0');
-    s = IniPatch.setKey(s, 'System', 'load_library_redirect', '0');
+    for (final entry in namsCompatSystemKeys.entries) {
+      s = IniPatch.setKey(s, 'System', entry.key, entry.value);
+    }
     return s;
   }
 

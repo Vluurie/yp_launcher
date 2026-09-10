@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:yp_launcher/widgets/app_dialog.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yp_launcher/l10n/app_localizations.dart';
 import 'package:yp_launcher/models/installed_mod.dart';
@@ -14,6 +15,8 @@ import 'package:yp_launcher/theme/app_colors.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
 import 'package:yp_launcher/widgets/app_dropdown.dart';
 import 'package:yp_launcher/widgets/bundled_link_chip.dart';
+// DOCS-WIP: docs is work in progress for later
+// import 'package:yp_launcher/widgets/docs/docs_view.dart';
 import 'package:yp_launcher/widgets/hover_button.dart';
 import 'package:yp_launcher/widgets/mods/mod_kind_badge.dart';
 import 'package:yp_launcher/widgets/three_d_inspector/three_d_inspector_preview.dart';
@@ -202,32 +205,80 @@ class ModDetailPanel extends ConsumerWidget {
     );
   }
 
-  Widget _nativeSection(BuildContext context, NativeSummary n, AppLocalizations l10n) {
+  // DOCS-WIP: docs is work in progress for later
+  // ignore: unused_field
+  static const _kindDocPages = {
+    'item': '03_item.md',
+    'weapon': '04_weapon.md',
+    'weapon_patch': '30_weapon_patch.md',
+    'outfit': '05_outfit.md',
+    'accessory': '06_accessory.md',
+    'quest': '07_quest.md',
+    'mail': '08_mail.md',
+    'reward': '09_reward.md',
+    'voice_bank': '10_voice_lines.md',
+    'hairspray': '19_hairspray.md',
+    'shop': '03_item.md',
+    'shop_item': '03_item.md',
+    'ruby_patch': '24_ruby_patches.md',
+    'char_name': '12_translate.md',
+    'effect_area': '29_effect_areas.md',
+    'mesh_visibility': '28_mesh_visibility.md',
+    'music': '27_custom_music.md',
+    'scenario_variables': '23_scenario_variables.md',
+    'phase': '25_phases.md',
+    'graphic_adjust': '26_graphic_adjust.md',
+    'hap_group': '31_hap_groups.md',
+    'custom_map': '32_custom_maps.md',
+  };
+
+  Widget _kindRow(BuildContext context, String kind, int count) {
+    // DOCS-WIP: docs is work in progress for later
+    // final page = _kindDocPages[kind];
+    // if (page != null) {
+    //   return _KindDocRow(kind: kind, count: count, docPage: page);
+    // }
+    return Text(
+      '$kind: $count',
+      style: TextStyle(
+        fontSize: AppSizes.fontSM(context),
+        color: AppColors.textSecondary,
+      ),
+    );
+  }
+
+  Widget _nativeSection(
+    BuildContext context,
+    NativeSummary n,
+    AppLocalizations l10n,
+  ) {
     final lines = <Widget>[];
     final entries = n.bundlesByKind.entries.toList()
       ..sort((a, b) => a.key.compareTo(b.key));
     for (final e in entries) {
-      lines.add(Text(
-        '${e.key}: ${e.value}',
-        style: TextStyle(
-          fontSize: AppSizes.fontSM(context),
-          color: AppColors.textSecondary,
+      lines.add(
+        Padding(
+          padding: const EdgeInsets.only(bottom: 2),
+          child: _kindRow(context, e.key, e.value),
         ),
-      ));
+      );
     }
     if (lines.isEmpty) {
-      lines.add(Text(
-        l10n.modCountFiles(n.totalEntityFiles),
-        style: TextStyle(
-          fontSize: AppSizes.fontSM(context),
-          color: AppColors.textSecondary,
+      lines.add(
+        Text(
+          l10n.modCountFiles(n.totalEntityFiles),
+          style: TextStyle(
+            fontSize: AppSizes.fontSM(context),
+            color: AppColors.textSecondary,
+          ),
         ),
-      ));
+      );
     }
-    return _section(context, l10n.modNativeBundles, Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: lines,
-    ));
+    return _section(
+      context,
+      l10n.modNativeBundles,
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: lines),
+    );
   }
 
   Widget _dataSection(
@@ -240,42 +291,51 @@ class ModDetailPanel extends ConsumerWidget {
     final lines = <Widget>[];
 
     if (d.hasCompatConfig) {
-      lines.add(Padding(
-        padding: EdgeInsets.only(bottom: AppSizes.paddingSM(context)),
-        child: ModCompatChip(label: l10n.modCompatChip, tooltip: l10n.modCompatChipTooltip),
-      ));
+      lines.add(
+        Padding(
+          padding: EdgeInsets.only(bottom: AppSizes.paddingSM(context)),
+          child: ModCompatChip(
+            label: l10n.modCompatChip,
+            tooltip: l10n.modCompatChipTooltip,
+          ),
+        ),
+      );
     }
 
     if (d.players.isNotEmpty) {
       final defaults = ref.watch(defaultModsStateControllerProvider);
       final gameDir = ref.read(appStateControllerProvider).selectedDirectory;
       final seen = <String>{};
-      lines.add(Padding(
-        padding: EdgeInsets.only(bottom: AppSizes.paddingXS(context)),
-        child: Text(
-          l10n.modDataPlayerModels,
-          style: TextStyle(
-            fontSize: AppSizes.fontSM(context),
-            color: AppColors.textSecondary,
+      lines.add(
+        Padding(
+          padding: EdgeInsets.only(bottom: AppSizes.paddingXS(context)),
+          child: Text(
+            l10n.modDataPlayerModels,
+            style: TextStyle(
+              fontSize: AppSizes.fontSM(context),
+              color: AppColors.textSecondary,
+            ),
           ),
         ),
-      ));
+      );
       for (final p in d.players) {
         final stem = p.fileName.contains('.')
             ? p.fileName.substring(0, p.fileName.lastIndexOf('.'))
             : p.fileName;
         if (!seen.add(stem)) continue;
         if (!defaults.defaultOutfitsEnabled) {
-          lines.add(Padding(
-            padding: EdgeInsets.only(bottom: AppSizes.paddingXS(context)),
-            child: Text(
-              p.label,
-              style: TextStyle(
-                fontSize: AppSizes.fontSM(context),
-                color: AppColors.textSecondary,
+          lines.add(
+            Padding(
+              padding: EdgeInsets.only(bottom: AppSizes.paddingXS(context)),
+              child: Text(
+                p.label,
+                style: TextStyle(
+                  fontSize: AppSizes.fontSM(context),
+                  color: AppColors.textSecondary,
+                ),
               ),
             ),
-          ));
+          );
           continue;
         }
         final relPath = 'mods/${mod.id}/pl/$stem';
@@ -285,99 +345,122 @@ class ModDetailPanel extends ConsumerWidget {
           hasOutfitConfig: d.hasOutfitConfig,
         );
         final choices = d.outfitsByStem[stem] ?? const <OutfitChoice>[];
-        lines.add(_StemRow(
-          label: p.label,
-          kind: kind,
-          target: target,
-          choices: target == DefaultKind.outfitConfig ? choices : const [],
-          outfitId: defaults.outfitIdOf(relPath),
-          onTap: () async {
-            final notifier =
-                ref.read(defaultModsStateControllerProvider.notifier);
-            if (kind != null) {
-              await notifier.setDefault(gameDir, relPath, null);
-              return;
-            }
-            final replaced = defaults.wouldReplace(relPath, target);
-            if (replaced != null) {
-              final ok = await _confirmReplace(
-                context,
-                model: p.label,
-                current: _modLabel(ref, replaced.path),
-                next: mod.displayName,
+        lines.add(
+          _StemRow(
+            label: p.label,
+            kind: kind,
+            target: target,
+            choices: target == DefaultKind.outfitConfig ? choices : const [],
+            outfitId: defaults.outfitIdOf(relPath),
+            onTap: () async {
+              final notifier = ref.read(
+                defaultModsStateControllerProvider.notifier,
               );
-              if (!ok) return;
-            }
-            await notifier.setDefault(
-              gameDir,
-              relPath,
-              target,
-              outfitId: DefaultModsService.initialOutfitId(target, choices),
-            );
-          },
-          onOutfitChanged: (id) => ref
-              .read(defaultModsStateControllerProvider.notifier)
-              .setDefault(gameDir, relPath, target, outfitId: id),
-        ));
+              if (kind != null) {
+                await notifier.setDefault(gameDir, relPath, null);
+                return;
+              }
+              final replaced = defaults.wouldReplace(relPath, target);
+              if (replaced != null) {
+                final ok = await _confirmReplace(
+                  context,
+                  model: p.label,
+                  current: _modLabel(ref, replaced.path),
+                  next: mod.displayName,
+                );
+                if (!ok) return;
+              }
+              await notifier.setDefault(
+                gameDir,
+                relPath,
+                target,
+                outfitId: DefaultModsService.initialOutfitId(target, choices),
+              );
+            },
+            onOutfitChanged: (id) => ref
+                .read(defaultModsStateControllerProvider.notifier)
+                .setDefault(gameDir, relPath, target, outfitId: id),
+          ),
+        );
       }
     }
 
     for (final archive in d.archives) {
-      lines.add(
-        _ThreeDInspectorEntry(archive: archive, modId: mod.id),
-      );
+      lines.add(_ThreeDInspectorEntry(archive: archive, modId: mod.id));
     }
 
     for (final e in d.entries) {
       if (e.category == DataCategory.player && d.players.isNotEmpty) continue;
       final label = _categoryLabel(e.category, e.dirName);
-      lines.add(Padding(
-        padding: EdgeInsets.only(bottom: AppSizes.paddingXS(context)),
-        child: Text(
-          '$label: ${l10n.modCountFiles(e.fileCount)}',
-          style: TextStyle(
-            fontSize: AppSizes.fontSM(context),
-            color: AppColors.textSecondary,
+      lines.add(
+        Padding(
+          padding: EdgeInsets.only(bottom: AppSizes.paddingXS(context)),
+          child: Text(
+            '$label: ${l10n.modCountFiles(e.fileCount)}',
+            style: TextStyle(
+              fontSize: AppSizes.fontSM(context),
+              color: AppColors.textSecondary,
+            ),
           ),
         ),
-      ));
+      );
     }
 
     if (lines.isEmpty) {
-      lines.add(Text(
-        '—',
-        style: TextStyle(
-          fontSize: AppSizes.fontSM(context),
-          color: AppColors.textMuted,
+      lines.add(
+        Text(
+          '—',
+          style: TextStyle(
+            fontSize: AppSizes.fontSM(context),
+            color: AppColors.textMuted,
+          ),
         ),
-      ));
+      );
     }
 
-    return _section(context, l10n.modDataContent, Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: lines,
-    ));
+    return _section(
+      context,
+      l10n.modDataContent,
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: lines),
+    );
   }
 
   String _categoryLabel(DataCategory cat, String dirName) {
     switch (cat) {
-      case DataCategory.player: return 'Player models';
-      case DataCategory.weapon: return 'Weapons (wp)';
-      case DataCategory.enemy: return 'Enemies (em)';
-      case DataCategory.accessory: return 'Accessories / items (et)';
-      case DataCategory.item: return 'Items (it)';
-      case DataCategory.worldProp: return 'World props ($dirName)';
-      case DataCategory.modelVariant: return 'Model variants (um)';
-      case DataCategory.map: return 'Map ($dirName)';
-      case DataCategory.scripting: return 'Scripts ($dirName)';
-      case DataCategory.localization: return 'Localization ($dirName)';
-      case DataCategory.effects: return 'Effects ($dirName)';
-      case DataCategory.ui: return 'UI ($dirName)';
-      case DataCategory.misc: return 'Misc textures (misctex)';
-      case DataCategory.cutscenes: return 'Cutscenes (movie)';
-      case DataCategory.audio: return 'Audio (sound)';
-      case DataCategory.archive: return 'CPK archives';
-      case DataCategory.other: return 'Other ($dirName)';
+      case DataCategory.player:
+        return 'Player models';
+      case DataCategory.weapon:
+        return 'Weapons (wp)';
+      case DataCategory.enemy:
+        return 'Enemies (em)';
+      case DataCategory.accessory:
+        return 'Accessories / items (et)';
+      case DataCategory.item:
+        return 'Items (it)';
+      case DataCategory.worldProp:
+        return 'World props ($dirName)';
+      case DataCategory.modelVariant:
+        return 'Model variants (um)';
+      case DataCategory.map:
+        return 'Map ($dirName)';
+      case DataCategory.scripting:
+        return 'Scripts ($dirName)';
+      case DataCategory.localization:
+        return 'Localization ($dirName)';
+      case DataCategory.effects:
+        return 'Effects ($dirName)';
+      case DataCategory.ui:
+        return 'UI ($dirName)';
+      case DataCategory.misc:
+        return 'Misc textures (misctex)';
+      case DataCategory.cutscenes:
+        return 'Cutscenes (movie)';
+      case DataCategory.audio:
+        return 'Audio (sound)';
+      case DataCategory.archive:
+        return 'CPK archives';
+      case DataCategory.other:
+        return 'Other ($dirName)';
     }
   }
 
@@ -394,18 +477,20 @@ class ModDetailPanel extends ConsumerWidget {
         spacing: AppSizes.spacingMD(context),
         runSpacing: AppSizes.spacingSM(context),
         children: m.bundledTexturePacks
-            .map((name) => BundledLinkChip(
-                  icon: Icons.texture,
-                  label: BundledLinkChip.shortenLabel(name),
-                  tooltip: AppLocalizations.of(
-                    context,
-                  )!.tooltipOpenInTexturesTab(name),
-                  onTap: () {
-                    ref.read(pendingTabSelectionProvider.notifier).state =
-                        TabSelectionRequest(tabIndex: 3, key: name);
-                    ref.read(activeTabProvider.notifier).state = 3;
-                  },
-                ))
+            .map(
+              (name) => BundledLinkChip(
+                icon: Icons.texture,
+                label: BundledLinkChip.shortenLabel(name),
+                tooltip: AppLocalizations.of(
+                  context,
+                )!.tooltipOpenInTexturesTab(name),
+                onTap: () {
+                  ref.read(pendingTabSelectionProvider.notifier).state =
+                      TabSelectionRequest(tabIndex: 3, key: name);
+                  ref.read(activeTabProvider.notifier).state = 3;
+                },
+              ),
+            )
             .toList(),
       ),
     );
@@ -424,76 +509,89 @@ class ModDetailPanel extends ConsumerWidget {
         spacing: AppSizes.spacingMD(context),
         runSpacing: AppSizes.spacingSM(context),
         children: m.bundledCutscenes
-            .map((name) => BundledLinkChip(
-                  icon: Icons.movie_creation_outlined,
-                  label: name,
-                  tooltip: AppLocalizations.of(
-                    context,
-                  )!.tooltipOpenInCutscenesTab,
-                  onTap: () {
-                    ref.read(pendingTabSelectionProvider.notifier).state =
-                        TabSelectionRequest(tabIndex: 7, key: name);
-                    ref.read(activeTabProvider.notifier).state = 7;
-                  },
-                ))
+            .map(
+              (name) => BundledLinkChip(
+                icon: Icons.movie_creation_outlined,
+                label: name,
+                tooltip: AppLocalizations.of(
+                  context,
+                )!.tooltipOpenInCutscenesTab,
+                onTap: () {
+                  ref.read(pendingTabSelectionProvider.notifier).state =
+                      TabSelectionRequest(tabIndex: 7, key: name);
+                  ref.read(activeTabProvider.notifier).state = 7;
+                },
+              ),
+            )
             .toList(),
       ),
     );
   }
 
-  Widget _requiresSection(BuildContext context, InstalledMod m, AppLocalizations l10n) {
+  Widget _requiresSection(
+    BuildContext context,
+    InstalledMod m,
+    AppLocalizations l10n,
+  ) {
     final lines = <Widget>[];
     final missing = m.requiresMissing.toSet();
     final reqs = m.manifest?.requires ?? const <String>[];
     if (reqs.isNotEmpty) {
-      lines.add(Wrap(
-        spacing: AppSizes.spacingMD(context),
-        runSpacing: AppSizes.spacingSM(context),
-        children: reqs.map((id) {
-          final isMissing = missing.contains(id);
-          return Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: AppSizes.chipPaddingH(context),
-              vertical: AppSizes.chipPaddingV(context),
-            ),
-            decoration: BoxDecoration(
-              color: isMissing
-                  ? AppColors.error.withValues(alpha: 0.15)
-                  : AppColors.surfaceLight,
-              borderRadius: BorderRadius.circular(AppSizes.borderRadius(context) / 2),
-              border: Border.all(
+      lines.add(
+        Wrap(
+          spacing: AppSizes.spacingMD(context),
+          runSpacing: AppSizes.spacingSM(context),
+          children: reqs.map((id) {
+            final isMissing = missing.contains(id);
+            return Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: AppSizes.chipPaddingH(context),
+                vertical: AppSizes.chipPaddingV(context),
+              ),
+              decoration: BoxDecoration(
                 color: isMissing
-                    ? AppColors.error.withValues(alpha: 0.5)
-                    : AppColors.borderLight,
+                    ? AppColors.error.withValues(alpha: 0.15)
+                    : AppColors.surfaceLight,
+                borderRadius: BorderRadius.circular(
+                  AppSizes.borderRadius(context) / 2,
+                ),
+                border: Border.all(
+                  color: isMissing
+                      ? AppColors.error.withValues(alpha: 0.5)
+                      : AppColors.borderLight,
+                ),
               ),
-            ),
-            child: Text(
-              isMissing ? '$id (${l10n.modRequiresMissing})' : id,
-              style: TextStyle(
-                fontSize: AppSizes.fontXS(context),
-                color: isMissing ? AppColors.error : AppColors.textSecondary,
-                fontWeight: isMissing ? FontWeight.w600 : FontWeight.normal,
+              child: Text(
+                isMissing ? '$id (${l10n.modRequiresMissing})' : id,
+                style: TextStyle(
+                  fontSize: AppSizes.fontXS(context),
+                  color: isMissing ? AppColors.error : AppColors.textSecondary,
+                  fontWeight: isMissing ? FontWeight.w600 : FontWeight.normal,
+                ),
               ),
-            ),
-          );
-        }).toList(),
-      ));
+            );
+          }).toList(),
+        ),
+      );
     }
     final reqPlugins = m.manifest?.requiresPlugins ?? const <String>[];
     if (reqPlugins.isNotEmpty) {
       lines.add(SizedBox(height: AppSizes.spacingMD(context)));
-      lines.add(Text(
-        '${l10n.modRequiresPluginsLabel}: ${reqPlugins.join(", ")}',
-        style: TextStyle(
-          fontSize: AppSizes.fontSM(context),
-          color: AppColors.textMuted,
+      lines.add(
+        Text(
+          '${l10n.modRequiresPluginsLabel}: ${reqPlugins.join(", ")}',
+          style: TextStyle(
+            fontSize: AppSizes.fontSM(context),
+            color: AppColors.textMuted,
+          ),
         ),
-      ));
+      );
     }
-    return _section(context, l10n.modRequiresLabel, Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: lines,
-    ));
+    return _section(
+      context,
+      l10n.modRequiresLabel,
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: lines),
+    );
   }
 
   Widget _conflictsSection(
@@ -503,10 +601,10 @@ class ModDetailPanel extends ConsumerWidget {
     AppLocalizations l10n,
   ) {
     final disabledState = ref.watch(disabledModsStateControllerProvider);
-    final candidates = <String>{m.id, ...m.conflicts.map((c) => c.otherModId)}
-        .where((id) => !disabledState.isDisabled('mods/$id'))
-        .toList()
-      ..sort();
+    final candidates = <String>{
+      m.id,
+      ...m.conflicts.map((c) => c.otherModId),
+    }.where((id) => !disabledState.isDisabled('mods/$id')).toList()..sort();
 
     if (candidates.length < 2) return const SizedBox.shrink();
 
@@ -568,7 +666,7 @@ class ModDetailPanel extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     return showDialog<void>(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => AppDialog(
         backgroundColor: AppColors.surfaceMedium,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppSizes.borderRadius(ctx)),
@@ -592,8 +690,9 @@ class ModDetailPanel extends ConsumerWidget {
                 padding: EdgeInsets.all(AppSizes.paddingSM(ctx)),
                 decoration: BoxDecoration(
                   color: AppColors.warning.withValues(alpha: 0.10),
-                  borderRadius:
-                      BorderRadius.circular(AppSizes.borderRadius(ctx) / 2),
+                  borderRadius: BorderRadius.circular(
+                    AppSizes.borderRadius(ctx) / 2,
+                  ),
                   border: Border.all(
                     color: AppColors.warning.withValues(alpha: 0.35),
                   ),
@@ -623,8 +722,10 @@ class ModDetailPanel extends ConsumerWidget {
               SizedBox(height: AppSizes.spacingMD(ctx)),
               ConstrainedBox(
                 constraints: BoxConstraints(
-                  maxHeight:
-                      (MediaQuery.of(ctx).size.height * 0.4).clamp(180.0, 340.0),
+                  maxHeight: (MediaQuery.of(ctx).size.height * 0.4).clamp(
+                    180.0,
+                    340.0,
+                  ),
                 ),
                 child: _ConflictList(
                   candidates: candidates,
@@ -672,7 +773,7 @@ class ModDetailPanel extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final ok = await showDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => AppDialog(
         backgroundColor: AppColors.surfaceMedium,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppSizes.borderRadius(ctx)),
@@ -724,8 +825,9 @@ class ModDetailPanel extends ConsumerWidget {
     AppLocalizations l10n,
   ) {
     final relPath = 'mods/${m.id}';
-    final disabled =
-        ref.watch(disabledModsStateControllerProvider).isDisabled(relPath);
+    final disabled = ref
+        .watch(disabledModsStateControllerProvider)
+        .isDisabled(relPath);
     final iconSize = AppSizes.iconSM(context);
     return Wrap(
       spacing: AppSizes.spacingSM(context),
@@ -744,8 +846,9 @@ class ModDetailPanel extends ConsumerWidget {
         HoverIconButton(
           tooltip: disabled ? l10n.modEnable : l10n.modDisable,
           onTap: () {
-            final gameDir =
-                ref.read(appStateControllerProvider).selectedDirectory;
+            final gameDir = ref
+                .read(appStateControllerProvider)
+                .selectedDirectory;
             ref
                 .read(disabledModsStateControllerProvider.notifier)
                 .setDisabled(gameDir, relPath, !disabled);
@@ -782,10 +885,7 @@ class _ThreeDInspectorEntry extends ConsumerWidget {
   final DataArchivePair archive;
   final String modId;
 
-  const _ThreeDInspectorEntry({
-    required this.archive,
-    required this.modId,
-  });
+  const _ThreeDInspectorEntry({required this.archive, required this.modId});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -904,8 +1004,9 @@ class _ConflictChoiceState extends State<_ConflictChoice> {
             color: _hovered
                 ? AppColors.accentSecondary.withValues(alpha: 0.12)
                 : AppColors.surfaceLight,
-            borderRadius:
-                BorderRadius.circular(AppSizes.borderRadius(context) / 2),
+            borderRadius: BorderRadius.circular(
+              AppSizes.borderRadius(context) / 2,
+            ),
             border: Border.all(
               color: _hovered
                   ? AppColors.accentSecondary
@@ -931,8 +1032,9 @@ class _ConflictChoiceState extends State<_ConflictChoice> {
                     color: _hovered
                         ? AppColors.textPrimary
                         : AppColors.textSecondary,
-                    fontWeight:
-                        widget.isSelf ? FontWeight.w600 : FontWeight.normal,
+                    fontWeight: widget.isSelf
+                        ? FontWeight.w600
+                        : FontWeight.normal,
                     height: 1.3,
                   ),
                 ),
@@ -1047,8 +1149,9 @@ class _StemRow extends StatelessWidget {
                   items: [null, ...choices.map((c) => c.outfitId)],
                   itemLabel: (id) {
                     if (id == null) return l10n.modDefaultOutfitAuto;
-                    final match =
-                        choices.where((c) => c.outfitId == id).toList();
+                    final match = choices
+                        .where((c) => c.outfitId == id)
+                        .toList();
                     return match.isEmpty ? '$id' : match.first.name;
                   },
                   maxWidth: 170,
@@ -1080,8 +1183,7 @@ class _StemRow extends StatelessWidget {
               ),
             ),
           HoverIconButton(
-            tooltip:
-                starred ? l10n.modDefaultTooltip : tooltipOf(shown, l10n),
+            tooltip: starred ? l10n.modDefaultTooltip : tooltipOf(shown, l10n),
             onTap: onTap,
             bordered: false,
             borderColor: AppColors.accentSecondary,
@@ -1089,8 +1191,7 @@ class _StemRow extends StatelessWidget {
             icon: Icon(
               starred ? Icons.star : Icons.star_outline,
               size: AppSizes.iconSM(context),
-              color:
-                  starred ? AppColors.accentSecondary : AppColors.textMuted,
+              color: starred ? AppColors.accentSecondary : AppColors.textMuted,
             ),
           ),
         ],
@@ -1098,3 +1199,60 @@ class _StemRow extends StatelessWidget {
     );
   }
 }
+
+// DOCS-WIP: docs is work in progress for later
+// class _KindDocRow extends StatefulWidget {
+//   final String kind;
+//   final int count;
+//   final String docPage;
+//
+//   const _KindDocRow({
+//     required this.kind,
+//     required this.count,
+//     required this.docPage,
+//   });
+//
+//   @override
+//   State<_KindDocRow> createState() => _KindDocRowState();
+// }
+//
+// class _KindDocRowState extends State<_KindDocRow> {
+//   bool _hovered = false;
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return MouseRegion(
+//       cursor: SystemMouseCursors.click,
+//       onEnter: (_) => setState(() => _hovered = true),
+//       onExit: (_) => setState(() => _hovered = false),
+//       child: GestureDetector(
+//         onTap: () => DocsScreen.open(
+//           context,
+//           initialPath: 'assets/docs/native/${widget.docPage}',
+//         ),
+//         child: Row(
+//           mainAxisSize: MainAxisSize.min,
+//           children: [
+//             Text(
+//               '${widget.kind}: ${widget.count}',
+//               style: TextStyle(
+//                 fontSize: AppSizes.fontSM(context),
+//                 color: _hovered
+//                     ? AppColors.textPrimary
+//                     : AppColors.textSecondary,
+//               ),
+//             ),
+//             SizedBox(width: AppSizes.spacingSM(context)),
+//             Icon(
+//               Icons.menu_book_outlined,
+//               size: AppSizes.iconSM(context),
+//               color: _hovered
+//                   ? AppColors.accentPrimary
+//                   : AppColors.accentPrimary.withValues(alpha: 0.5),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }

@@ -128,10 +128,15 @@ class ReShadeRuntime extends GraphicsRuntime {
     ]) {
       final srcPath = path.join(gameDir, name);
       if (FileSystemEntity.isDirectorySync(srcPath)) {
-        FileOps.mergeDirectory(srcPath, path.join(dest, name), overwrite: false);
+        FileOps.mergeDirectory(
+          srcPath,
+          path.join(dest, name),
+          overwrite: false,
+        );
       } else if (File(srcPath).existsSync()) {
-        final into =
-            name == 'ReShadePreset.ini' ? path.join(dest, 'reshade-presets') : dest;
+        final into = name == 'ReShadePreset.ini'
+            ? path.join(dest, 'reshade-presets')
+            : dest;
         FileOps.copyFileInto(srcPath, into);
       }
     }
@@ -149,7 +154,8 @@ class ReShadeRuntime extends GraphicsRuntime {
   Future<ThirdPartyRuntimeStatus> status(String gameDir) async {
     final dir = installDir(gameDir);
     final dllHit = findGraphicsDll(dir, GraphicsDll.reshade);
-    final installed = Directory(dir).existsSync() &&
+    final installed =
+        Directory(dir).existsSync() &&
         (dllHit != null ||
             hasReShadeShaders(dir) ||
             File(path.join(dir, reshadeIniName)).existsSync());
@@ -164,10 +170,9 @@ class ReShadeRuntime extends GraphicsRuntime {
 
   ReShadeInfo _collectInfo(String dir, DllHit? dllHit) {
     final presetsDir = path.join(dir, 'reshade-presets');
-    final presets = findPresets(presetsDir)
-        .map((f) => path.basenameWithoutExtension(f.path))
-        .toList()
-      ..sort();
+    final presets = findPresets(
+      presetsDir,
+    ).map((f) => path.basenameWithoutExtension(f.path)).toList()..sort();
 
     final shadersDir = path.join(dir, 'reshade-shaders', 'Shaders');
     final repos = <String>{};
@@ -191,8 +196,7 @@ class ReShadeRuntime extends GraphicsRuntime {
           rel.endsWith('.addon') ||
           rel.endsWith('.addon32') ||
           rel.endsWith('.addon64'),
-    ).map((f) => path.basename(f.path)).toList()
-      ..sort();
+    ).map((f) => path.basename(f.path)).toList()..sort();
 
     final iniFile = File(path.join(dir, reshadeIniName));
     final config = iniFile.existsSync()
@@ -208,7 +212,8 @@ class ReShadeRuntime extends GraphicsRuntime {
       version: dllHit == null ? null : _readVersion(dllHit.file),
       dllName: dllHit == null ? null : path.basename(dllHit.file.path),
       d3dCompilerMissing:
-          Platform.isLinux && !File(path.join(dir, d3dCompilerName)).existsSync(),
+          Platform.isLinux &&
+          !File(path.join(dir, d3dCompilerName)).existsSync(),
       config: config,
     );
   }
@@ -216,10 +221,12 @@ class ReShadeRuntime extends GraphicsRuntime {
   static ReShadeConfig _parseConfig(String content) {
     final presetPath = IniPatch.getKey(content, 'GENERAL', 'PresetPath');
     return ReShadeConfig(
-      performanceMode:
-          _boolFrom(IniPatch.getKey(content, 'GENERAL', 'PerformanceMode')),
+      performanceMode: _boolFrom(
+        IniPatch.getKey(content, 'GENERAL', 'PerformanceMode'),
+      ),
       skipLoadingCheck: _boolFrom(
-          IniPatch.getKey(content, 'GENERAL', 'NoReloadOnInitException')),
+        IniPatch.getKey(content, 'GENERAL', 'NoReloadOnInitException'),
+      ),
       activePreset: presetPath == null
           ? null
           : path.basenameWithoutExtension(presetPath),
@@ -227,8 +234,10 @@ class ReShadeRuntime extends GraphicsRuntime {
       effectToggleKey: IniPatch.getKey(content, 'INPUT', 'KeyEffects') ?? '',
       screenshotKey: IniPatch.getKey(content, 'INPUT', 'KeyScreenshot') ?? '',
       screenshotPath: IniPatch.getKey(content, 'SCREENSHOT', 'SavePath'),
-      screenshotFormat: int.tryParse(
-              IniPatch.getKey(content, 'SCREENSHOT', 'FileFormat') ?? '') ??
+      screenshotFormat:
+          int.tryParse(
+            IniPatch.getKey(content, 'SCREENSHOT', 'FileFormat') ?? '',
+          ) ??
           1,
       showFps: _boolFrom(IniPatch.getKey(content, 'OVERLAY', 'ShowFPS')),
       showClock: _boolFrom(IniPatch.getKey(content, 'OVERLAY', 'ShowClock')),
@@ -245,7 +254,11 @@ class ReShadeRuntime extends GraphicsRuntime {
     if (!ini.existsSync()) return;
     var s = ini.readAsStringSync();
     s = IniPatch.setKey(
-        s, 'GENERAL', 'PerformanceMode', c.performanceMode ? '1' : '0');
+      s,
+      'GENERAL',
+      'PerformanceMode',
+      c.performanceMode ? '1' : '0',
+    );
     s = IniPatch.setKey(s, 'OVERLAY', 'ShowFPS', c.showFps ? '1' : '0');
     s = IniPatch.setKey(s, 'OVERLAY', 'ShowClock', c.showClock ? '1' : '0');
     ini.writeAsStringSync(s);
@@ -391,7 +404,8 @@ class ReShadeRuntime extends GraphicsRuntime {
       src,
       (rel, _) => baseName(rel) == d3dCompilerName,
     ).firstOrNull;
-    if (dll != null) FileOps.copyFileInto(dll.path, dest, asName: d3dCompilerName);
+    if (dll != null)
+      FileOps.copyFileInto(dll.path, dest, asName: d3dCompilerName);
   }
 
   static String fixIniPaths(String content) {

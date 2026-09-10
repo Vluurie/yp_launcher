@@ -15,6 +15,15 @@ void _writeTomlFileSync(Map<String, String> params) {
   file.writeAsStringSync(params['content']!);
 }
 
+class TomlParseResult {
+  final Map<String, dynamic> values;
+  final String? error;
+
+  const TomlParseResult({required this.values, this.error});
+
+  bool get ok => error == null;
+}
+
 class TomlService {
   static final _sectionRegex = RegExp(r'^\[([a-zA-Z_][\w.]*)\]$');
 
@@ -27,19 +36,6 @@ class TomlService {
       final next = current?[part];
       if (next is! Map<String, dynamic>) return null;
       current = next;
-    }
-    return current;
-  }
-
-  static Map<String, dynamic> _ensureSection(
-    Map<String, dynamic> root,
-    String path,
-  ) {
-    var current = root;
-    for (final part in path.split('.')) {
-      current =
-          current.putIfAbsent(part, () => <String, dynamic>{})
-              as Map<String, dynamic>;
     }
     return current;
   }
@@ -65,92 +61,41 @@ class TomlService {
       final doc = TomlDocument.parse(content);
       return _convertToml(doc.toMap());
     } catch (_) {
-      return _parseFallback(content);
+      return {};
     }
+  }
+
+  static TomlParseResult parseStrict(String content) {
+    if (content.trim().isEmpty) {
+      return const TomlParseResult(values: {});
+    }
+    try {
+      final doc = TomlDocument.parse(content);
+      return TomlParseResult(values: _convertToml(doc.toMap()));
+    } catch (e) {
+      return TomlParseResult(values: const {}, error: _describe(e));
+    }
+  }
+
+  static String _describe(Object error) {
+    final text = error.toString();
+    const prefix = 'TomlParserException: ';
+    if (text.startsWith(prefix)) return text.substring(prefix.length);
+    return text;
   }
 
   static Map<String, dynamic> _convertToml(Map<String, dynamic> map) {
     final result = <String, dynamic>{};
     for (final entry in map.entries) {
-      final value = entry.value;
-      if (value is Map<String, dynamic>) {
-        result[entry.key] = _convertToml(value);
-      } else if (value is BigInt) {
-        result[entry.key] = value.toInt();
-      } else {
-        result[entry.key] = value;
-      }
+      result[entry.key] = _convertTomlValue(entry.value);
     }
     return result;
   }
 
-  static Map<String, dynamic> _parseFallback(String content) {
-    final result = <String, dynamic>{};
-    String? currentSection;
-
-    for (final line in content.split('\n')) {
-      final trimmed = line.trim();
-      if (trimmed.isEmpty || trimmed.startsWith('#')) continue;
-
-      final sectionMatch = _sectionRegex.firstMatch(trimmed);
-      if (sectionMatch != null) {
-        currentSection = sectionMatch.group(1)!;
-        _ensureSection(result, currentSection);
-        continue;
-      }
-
-      final eqIndex = trimmed.indexOf('=');
-      if (eqIndex == -1) continue;
-
-      final key = trimmed.substring(0, eqIndex).trim();
-      var value = trimmed.substring(eqIndex + 1).trim();
-
-      if (!value.startsWith('"') && !value.startsWith("'")) {
-        final commentIdx = value.indexOf('#');
-        if (commentIdx != -1) {
-          value = value.substring(0, commentIdx).trim();
-        }
-      }
-
-      final parsed = _parseValueFallback(value);
-
-      if (currentSection != null) {
-        _ensureSection(result, currentSection)[key] = parsed;
-      } else {
-        result[key] = parsed;
-      }
-    }
-    return result;
-  }
-
-  static dynamic _parseValueFallback(String value) {
-    if (value == 'true') return true;
-    if (value == 'false') return false;
-
-    if (value.startsWith('[') && value.endsWith(']')) {
-      final inner = value.substring(1, value.length - 1).trim();
-      if (inner.isEmpty) return <String>[];
-      return inner.split(',').map((e) {
-        final trimmed = e.trim();
-        if (trimmed.startsWith('"') && trimmed.endsWith('"')) {
-          return trimmed.substring(1, trimmed.length - 1);
-        }
-        return trimmed;
-      }).toList();
-    }
-
-    if (value.startsWith('0x') || value.startsWith('0X')) {
-      final hexVal = int.tryParse(value);
-      if (hexVal != null) return hexVal;
-    }
-
-    final intVal = int.tryParse(value);
-    if (intVal != null && !value.contains('.')) return intVal;
-    final doubleVal = double.tryParse(value);
-    if (doubleVal != null) return doubleVal;
-    if (value.startsWith('"') && value.endsWith('"')) {
-      return value.substring(1, value.length - 1);
-    }
+  static dynamic _convertTomlValue(dynamic value) {
+    if (value is Map<String, dynamic>) return _convertToml(value);
+    if (value is BigInt) return value.toInt();
+    if (value is List) return value.map(_convertTomlValue).toList();
     return value;
   }
 
@@ -163,6 +108,7 @@ class TomlService {
     String? currentSection;
     final writtenTopLevel = <String>{};
     final writtenBySection = <String, Set<String>>{};
+    var firstSectionIndex = -1;
 
     void flushSection(String? section) {
       if (section == null) return;
@@ -183,8 +129,16 @@ class TomlService {
       result.add('');
     }
 
+    var skipUntilArrayEnd = 0;
+
     for (final line in lines) {
       final trimmed = line.trim();
+
+      if (skipUntilArrayEnd > 0) {
+        skipUntilArrayEnd += _bracketDelta(trimmed);
+        continue;
+      }
+
       if (trimmed.isEmpty || trimmed.startsWith('#')) {
         result.add(line);
         continue;
@@ -193,6 +147,13 @@ class TomlService {
       final sectionMatch = _sectionRegex.firstMatch(trimmed);
       if (sectionMatch != null) {
         flushSection(currentSection);
+        if (firstSectionIndex == -1) {
+          var insertAt = result.length;
+          while (insertAt > 0 && result[insertAt - 1].trim().isEmpty) {
+            insertAt--;
+          }
+          firstSectionIndex = insertAt;
+        }
         currentSection = sectionMatch.group(1)!;
         writtenBySection[currentSection] ??= <String>{};
         result.add(line);
@@ -206,6 +167,8 @@ class TomlService {
       }
 
       final key = trimmed.substring(0, eqIndex).trim();
+      final delta = _bracketDelta(trimmed.substring(eqIndex + 1));
+      if (delta > 0) skipUntilArrayEnd = delta;
 
       if (currentSection != null) {
         final sectionMap = _sectionIn(values, currentSection);
@@ -233,11 +196,16 @@ class TomlService {
         .where((e) => e.value is! Map && !writtenTopLevel.contains(e.key))
         .toList();
     if (missingTopLevel.isNotEmpty) {
-      if (result.isNotEmpty && result.last.trim().isNotEmpty) {
-        result.add('');
-      }
-      for (final entry in missingTopLevel) {
-        result.add('${entry.key} = ${_formatValue(entry.value)}');
+      final rendered = missingTopLevel
+          .map((e) => '${e.key} = ${_formatValue(e.value)}')
+          .toList();
+      if (firstSectionIndex == -1) {
+        if (result.isNotEmpty && result.last.trim().isNotEmpty) {
+          result.add('');
+        }
+        result.addAll(rendered);
+      } else {
+        result.insertAll(firstSectionIndex, rendered);
       }
     }
 
@@ -259,6 +227,27 @@ class TomlService {
     }
 
     return result.join('\n');
+  }
+
+  /// Net `[` minus `]` in [text], ignoring brackets inside quotes or comments.
+  /// A positive result means the value continues on the following lines.
+  static int _bracketDelta(String text) {
+    var depth = 0;
+    var inSingle = false;
+    var inDouble = false;
+    for (var i = 0; i < text.length; i++) {
+      final ch = text[i];
+      if (ch == "'" && !inDouble) {
+        inSingle = !inSingle;
+      } else if (ch == '"' && !inSingle) {
+        inDouble = !inDouble;
+      } else if (!inSingle && !inDouble) {
+        if (ch == '#') break;
+        if (ch == '[') depth++;
+        if (ch == ']') depth--;
+      }
+    }
+    return depth;
   }
 
   static String _formatValue(dynamic value) {

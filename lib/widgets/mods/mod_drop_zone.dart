@@ -57,57 +57,78 @@ class _ModDropZoneState extends State<ModDropZone> {
               color: _dragging
                   ? AppColors.accentPrimary.withValues(alpha: 0.10)
                   : _hovered
-                      ? AppColors.accentPrimary.withValues(alpha: 0.04)
-                      : AppColors.surfaceLight,
-              borderRadius: BorderRadius.circular(AppSizes.borderRadius(context)),
+                  ? AppColors.accentPrimary.withValues(alpha: 0.04)
+                  : AppColors.surfaceLight,
+              borderRadius: BorderRadius.circular(
+                AppSizes.borderRadius(context),
+              ),
               border: Border.all(
                 color: _dragging
                     ? AppColors.accentPrimary
                     : _hovered
-                        ? AppColors.accentPrimary.withValues(alpha: 0.5)
-                        : AppColors.borderLight,
+                    ? AppColors.accentPrimary.withValues(alpha: 0.5)
+                    : AppColors.borderLight,
                 width: _dragging ? 1.5 : 1.0,
               ),
             ),
-            child: Wrap(
-              alignment: WrapAlignment.center,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              spacing: AppSizes.spacingMD(context),
-              runSpacing: AppSizes.spacingSM(context),
-              children: [
-                Row(
-                  mainAxisSize: MainAxisSize.min,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final lineWidth = BoxConstraints(
+                  maxWidth: constraints.maxWidth,
+                );
+                return Wrap(
+                  alignment: WrapAlignment.center,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: AppSizes.spacingMD(context),
+                  runSpacing: AppSizes.spacingSM(context),
                   children: [
-                    Icon(
-                      _dragging ? Icons.file_download : Icons.add_box_outlined,
-                      size: AppSizes.iconMD(context),
-                      color: _dragging
-                          ? AppColors.accentPrimary
-                          : AppColors.textMuted,
-                    ),
-                    SizedBox(width: AppSizes.spacingMD(context)),
-                    Text(
-                      title,
-                      style: TextStyle(
-                        fontSize: AppSizes.fontMD(context),
-                        fontWeight: FontWeight.bold,
-                        color: _dragging
-                            ? AppColors.accentPrimary
-                            : AppColors.textSecondary,
+                    ConstrainedBox(
+                      constraints: lineWidth,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            _dragging
+                                ? Icons.file_download
+                                : Icons.add_box_outlined,
+                            size: AppSizes.iconMD(context),
+                            color: _dragging
+                                ? AppColors.accentPrimary
+                                : AppColors.textMuted,
+                          ),
+                          SizedBox(width: AppSizes.spacingMD(context)),
+                          Flexible(
+                            child: Text(
+                              title,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: AppSizes.fontMD(context),
+                                fontWeight: FontWeight.bold,
+                                color: _dragging
+                                    ? AppColors.accentPrimary
+                                    : AppColors.textSecondary,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
+                    ConstrainedBox(
+                      constraints: lineWidth,
+                      child: Text(
+                        hint,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: AppSizes.fontSM(context),
+                          color: AppColors.textMuted,
+                        ),
+                      ),
+                    ),
+                    if (widget.onBrowseFolder != null)
+                      _FolderButton(onTap: widget.onBrowseFolder!),
                   ],
-                ),
-                Text(
-                  hint,
-                  style: TextStyle(
-                    fontSize: AppSizes.fontSM(context),
-                    color: AppColors.textMuted,
-                  ),
-                ),
-                if (widget.onBrowseFolder != null)
-                  _FolderButton(onTap: widget.onBrowseFolder!),
-              ],
+                );
+              },
             ),
           ),
         ),
@@ -143,21 +164,23 @@ class _FolderButtonState extends State<_FolderButton> {
             Icon(
               Icons.folder_open,
               size: 14,
-              color: _hovered
-                  ? AppColors.accentPrimary
-                  : AppColors.textMuted,
+              color: _hovered ? AppColors.accentPrimary : AppColors.textMuted,
             ),
             const SizedBox(width: 6),
-            Text(
-              l10n.dropZoneBrowseFolder,
-              style: TextStyle(
-                fontSize: AppSizes.fontSM(context),
-                color: _hovered
-                    ? AppColors.accentPrimary
-                    : AppColors.textMuted,
-                decoration:
-                    _hovered ? TextDecoration.underline : TextDecoration.none,
-                decorationColor: AppColors.accentPrimary,
+            Flexible(
+              child: Text(
+                l10n.dropZoneBrowseFolder,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: AppSizes.fontSM(context),
+                  color: _hovered
+                      ? AppColors.accentPrimary
+                      : AppColors.textMuted,
+                  decoration: _hovered
+                      ? TextDecoration.underline
+                      : TextDecoration.none,
+                  decorationColor: AppColors.accentPrimary,
+                ),
               ),
             ),
           ],

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:yp_launcher/widgets/app_dialog.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:automato_theme/automato_theme.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -13,7 +14,6 @@ import 'package:yp_launcher/widgets/hover_button.dart';
 import 'package:yp_launcher/widgets/play_button.dart';
 import 'package:yp_launcher/widgets/textures/textures_view.dart';
 import 'package:yp_launcher/services/platform_gate.dart';
-import 'package:yp_launcher/widgets/windows_title_bar.dart';
 import 'package:yp_launcher/providers/app_state.dart';
 import 'package:yp_launcher/providers/config_state.dart';
 import 'package:yp_launcher/providers/nams_settings_state.dart';
@@ -24,7 +24,6 @@ import 'package:yp_launcher/theme/app_colors.dart';
 import 'package:yp_launcher/theme/app_theme.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
 import 'package:yp_launcher/widgets/log_panel.dart';
-import 'package:yp_launcher/widgets/notification_banner.dart';
 import 'package:yp_launcher/widgets/settings_view.dart';
 import 'package:yp_launcher/widgets/launcher_settings_view.dart';
 import 'package:yp_launcher/widgets/lodmod_view.dart';
@@ -32,10 +31,16 @@ import 'package:yp_launcher/widgets/yorha_protocol_view.dart';
 import 'package:yp_launcher/widgets/mods/mods_view.dart';
 import 'package:yp_launcher/widgets/cutscenes_view.dart';
 import 'package:yp_launcher/widgets/thirdparty/thirdparty_view.dart';
+// DOCS-WIP: docs is work in progress for later
+// import 'package:yp_launcher/widgets/docs/docs_view.dart' show DocsScreen;
+// DOCS-WIP: docs is work in progress for later
+// import 'package:yp_launcher/widgets/tools_view.dart';
 import 'package:yp_launcher/widgets/naiom_view.dart';
 import 'package:yp_launcher/widgets/onboarding_wizard.dart';
 import 'package:yp_launcher/widgets/info_bar.dart';
 import 'package:yp_launcher/widgets/launcher_sidebar.dart';
+import 'package:yp_launcher/widgets/windows_title_bar.dart';
+import 'package:yp_launcher/services/window_state_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LauncherScreen extends ConsumerStatefulWidget {
@@ -68,26 +73,22 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
       windowManager.setPreventClose(true);
     }
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(notificationStateControllerProvider.notifier).checkPlatformSupport();
+      ref
+          .read(notificationStateControllerProvider.notifier)
+          .checkPlatformSupport();
       _runCutsceneAutoDetect();
-      ref.listenManual<AppState>(
-        appStateControllerProvider,
-        (prev, next) {
-          if (prev?.selectedDirectory != next.selectedDirectory) {
-            _runCutsceneAutoDetect();
-          }
-        },
-      );
+      ref.listenManual<AppState>(appStateControllerProvider, (prev, next) {
+        if (prev?.selectedDirectory != next.selectedDirectory) {
+          _runCutsceneAutoDetect();
+        }
+      });
       ref.listenManual<int>(
         detectionRefreshProvider,
         (_, __) => _runCutsceneAutoDetect(),
       );
-      ref.listenManual<int>(
-        activeTabProvider,
-        (prev, next) {
-          if (next != _selectedTab) _switchTab(next);
-        },
-      );
+      ref.listenManual<int>(activeTabProvider, (prev, next) {
+        if (next != _selectedTab) _switchTab(next);
+      });
       _startWarmup();
     });
   }
@@ -104,12 +105,15 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
   @override
   void onWindowClose() async {
     final busyCount = ref.read(busyOperationsProvider);
-    final configUnsaved =
-        ref.read(configStateControllerProvider).hasUnsavedChanges;
-    final settingsUnsaved =
-        ref.read(namsSettingsStateControllerProvider).hasUnsavedChanges;
+    final configUnsaved = ref
+        .read(configStateControllerProvider)
+        .hasUnsavedChanges;
+    final settingsUnsaved = ref
+        .read(namsSettingsStateControllerProvider)
+        .hasUnsavedChanges;
 
     if (busyCount == 0 && !configUnsaved && !settingsUnsaved) {
+      await WindowStateService.instance.saveNow();
       await windowManager.setPreventClose(false);
       await windowManager.close();
       return;
@@ -119,7 +123,7 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
     final l10n = AppLocalizations.of(context)!;
     final shouldClose = await showDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => AppDialog(
         backgroundColor: AppColors.backgroundCard,
         title: Text(
           busyCount > 0 ? l10n.busyCloseTitle : l10n.unsavedChangesTitle,
@@ -138,8 +142,10 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text(l10n.stay,
-                style: TextStyle(color: AppColors.textMuted)),
+            child: Text(
+              l10n.stay,
+              style: TextStyle(color: AppColors.textMuted),
+            ),
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
@@ -155,6 +161,7 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
       ),
     );
     if (shouldClose == true) {
+      await WindowStateService.instance.saveNow();
       await windowManager.setPreventClose(false);
       await windowManager.close();
     }
@@ -163,9 +170,7 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
   void _runCutsceneAutoDetect() {
     final dir = ref.read(appStateControllerProvider).selectedDirectory;
     if (dir.isEmpty) return;
-    ref
-        .read(configStateControllerProvider.notifier)
-        .autoDetectCutscenes(dir);
+    ref.read(configStateControllerProvider.notifier).autoDetectCutscenes(dir);
   }
 
   Future<void> _checkOnboarding() async {
@@ -276,18 +281,7 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 if (hasDir) _buildSidebar(),
-                Expanded(
-                  child: Stack(
-                    children: [
-                      _buildTabContent(),
-                      Positioned(
-                        bottom: AppSizes.paddingLG(context),
-                        right: AppSizes.paddingLG(context),
-                        child: NotificationBanners(),
-                      ),
-                    ],
-                  ),
-                ),
+                Expanded(child: _buildTabContent()),
               ],
             ),
           ),
@@ -316,6 +310,11 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
   }
 
   Future<void> _switchTab(int index) async {
+    // DOCS-WIP: docs is work in progress for later
+    // if (index == docsTabIndex) {
+    //   await DocsScreen.open(context);
+    //   return;
+    // }
     if (_selectedTab == index) return;
     if (ref.read(texturesBusyProvider)) {
       if (mounted) {
@@ -323,7 +322,10 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
           SnackBar(
             content: Text(
               AppLocalizations.of(context)!.texturesBusyMessage,
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             backgroundColor: AppColors.accentPrimary,
             behavior: SnackBarBehavior.floating,
@@ -338,7 +340,7 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
         context: context,
         builder: (ctx) {
           final cl10n = AppLocalizations.of(ctx)!;
-          return AlertDialog(
+          return AppDialog(
             backgroundColor: AppColors.backgroundCard,
             title: Text(
               cl10n.unsavedChangesTitle,
@@ -388,10 +390,11 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
   void _startWarmup() {
     var next = 1;
     _warmupTimer = Timer.periodic(const Duration(milliseconds: 350), (timer) {
-      while (next < 10 && _visitedTabs.contains(next)) {
+      while (next < 12 &&
+          (next == docsTabIndex || _visitedTabs.contains(next))) {
         next++;
       }
-      if (next >= 10) {
+      if (next >= 12) {
         timer.cancel();
         return;
       }
@@ -422,6 +425,9 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
         return const LauncherSettingsView();
       case 9:
         return const ThirdPartyView();
+      // DOCS-WIP: docs is work in progress for later
+      // case 11:
+      //   return const ToolsView();
       default:
         return const SizedBox.shrink();
     }
@@ -432,10 +438,8 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
     return IndexedStack(
       index: _selectedTab,
       children: [
-        for (var i = 0; i < 10; i++)
-          _visitedTabs.contains(i)
-              ? _tabAt(i)
-              : const SizedBox.shrink(),
+        for (var i = 0; i < 12; i++)
+          _visitedTabs.contains(i) ? _tabAt(i) : const SizedBox.shrink(),
       ],
     );
   }
@@ -580,9 +584,7 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
           bottom: _footerReserve(context),
           right: AppSizes.infoBarPaddingH(context),
           child: const Center(
-            child: SingleChildScrollView(
-              child: DetectionStatusStrip(),
-            ),
+            child: SingleChildScrollView(child: DetectionStatusStrip()),
           ),
         ),
         Positioned(
@@ -602,10 +604,7 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
                 },
               ),
               SizedBox(height: AppSizes.spacingSM(context)),
-              SizedBox(
-                width: double.infinity,
-                child: _buildHelpText(l10n),
-              ),
+              SizedBox(width: double.infinity, child: _buildHelpText(l10n)),
             ],
           ),
         ),
@@ -694,10 +693,7 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
               color: AppColors.textMuted,
             ),
           ),
-          _HoverTextLink(
-            label: l10n.helpDiscord,
-            url: AppStrings.discordUrl,
-          ),
+          _HoverTextLink(label: l10n.helpDiscord, url: AppStrings.discordUrl),
           Text(
             l10n.helpSuffix,
             style: TextStyle(
@@ -711,10 +707,7 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
   }
 
   List<Widget> _launchOptionItems() {
-    return const [
-      MinimizeOnLaunchToggle(),
-      PreferDedicatedGpuToggle(),
-    ];
+    return const [MinimizeOnLaunchToggle(), PreferDedicatedGpuToggle()];
   }
 
   Widget _buildLaunchOptionsHeader(BuildContext context) {
@@ -869,7 +862,6 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
     );
   }
 
-
   Widget _buildLinkIcon(IconData icon, String tooltip, String url) {
     return HoverIconButton(
       tooltip: tooltip,
@@ -898,8 +890,7 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
       bordered: false,
       padding: EdgeInsets.all(AppSizes.paddingXS(context)),
       radius: AppSizes.borderRadius(context),
-      onTap: () =>
-          ref.read(appThemeControllerProvider.notifier).toggle(),
+      onTap: () => ref.read(appThemeControllerProvider.notifier).toggle(),
       icon: Icon(
         isNier ? Icons.dark_mode_outlined : Icons.wb_sunny_outlined,
         size: AppSizes.iconMD(context),

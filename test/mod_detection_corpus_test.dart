@@ -104,6 +104,11 @@ void main() {
                   '(belongs in Textures tab)');
               return;
             }
+            if (result.errorMessage == 'unsupported_nasa') {
+              stderr.writeln('SKIP NASA-compressed ${archive.path} '
+                  '(format is not supported)');
+              return;
+            }
             final entries =
                 listArchiveEntries(archive.path, bundledSevenZipPath());
             if (!archiveHasModContent(entries)) {

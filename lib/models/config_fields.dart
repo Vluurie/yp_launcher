@@ -24,6 +24,55 @@ class ConfigField<T> {
     this.allowedValues,
     this.restartRequired = false,
   });
+
+  Object? rawFrom(Map<String, dynamic> values) {
+    Map<String, dynamic>? current = values;
+    if (section != null) {
+      for (final part in section!.split('.')) {
+        final next = current?[part];
+        if (next is! Map<String, dynamic>) return null;
+        current = next;
+      }
+    }
+    return current?[key];
+  }
+}
+
+extension ConfigFieldBoolRead on ConfigField<bool> {
+  bool valueIn(Map<String, dynamic> values) {
+    final raw = rawFrom(values);
+    return raw is bool ? raw : defaultValue;
+  }
+}
+
+extension ConfigFieldIntRead on ConfigField<int> {
+  int valueIn(Map<String, dynamic> values) {
+    final raw = rawFrom(values);
+    if (raw is int) return raw;
+    if (raw is num) return raw.toInt();
+    return defaultValue;
+  }
+}
+
+extension ConfigFieldDoubleRead on ConfigField<double> {
+  double valueIn(Map<String, dynamic> values) {
+    final raw = rawFrom(values);
+    return raw is num ? raw.toDouble() : defaultValue;
+  }
+}
+
+extension ConfigFieldStringRead on ConfigField<String> {
+  String valueIn(Map<String, dynamic> values) {
+    final raw = rawFrom(values);
+    return raw is String ? raw : defaultValue;
+  }
+}
+
+extension ConfigFieldListRead on ConfigField<List<dynamic>> {
+  List<dynamic> valueIn(Map<String, dynamic> values) {
+    final raw = rawFrom(values);
+    return raw is List ? raw : defaultValue;
+  }
 }
 
 class NamsFields {
@@ -88,6 +137,13 @@ class NamsFields {
     defaultValue: true,
     label: (l) => l.labelContentAssembleMeshes,
     tooltip: (l) => l.tooltipContentAssembleMeshes,
+  );
+
+  static final contentEffectAreas = ConfigField<bool>(
+    key: 'content_effect_areas',
+    defaultValue: true,
+    label: (l) => l.labelContentEffectAreas,
+    tooltip: (l) => l.tooltipContentEffectAreas,
   );
 
   static final contentQuestIntegration = ConfigField<bool>(
@@ -207,6 +263,14 @@ class NamsFields {
     tooltip: (l) => l.tooltipDisableSplashScreen,
   );
 
+  static final skipStartupLogos = ConfigField<bool>(
+    key: 'skip_startup_logos',
+    defaultValue: false,
+    label: (l) => l.labelSkipStartupLogos,
+    tooltip: (l) => l.tooltipSkipStartupLogos,
+    restartRequired: true,
+  );
+
   static final disableDebugHotkeys = ConfigField<bool>(
     key: 'disable_debug_hotkeys',
     defaultValue: true,
@@ -257,6 +321,17 @@ class NamsFields {
     section: 'mouse',
     label: (l) => l.labelThirdPersonCharFollow,
     tooltip: (l) => l.tooltipThirdPersonCharFollow,
+  );
+
+  static final thirdPersonSmoothing = ConfigField<double>(
+    key: 'third_person_smoothing',
+    defaultValue: 0.0,
+    section: 'mouse',
+    label: (l) => l.labelThirdPersonSmoothing,
+    tooltip: (l) => l.tooltipThirdPersonSmoothing,
+    min: 0.0,
+    max: 1.0,
+    step: 0.05,
   );
 
   static final thirdPersonSensitivityX = ConfigField<double>(
@@ -708,16 +783,20 @@ class LodModFields {
     defaultValue: 0.0,
     label: (l) => l.labelLodMultiplier,
     tooltip: (l) => l.tooltipLodMultiplier,
-    allowedValues: const [0.0, 1.0, 10.0],
-    restartRequired: true,
+    allowedValues: const [0.0, 0.75, 1.0, 10.0],
   );
+
+  static const bloom2017ReferenceHeight = 900;
+
+  static const bloom2017Preset = <String, dynamic>{
+    'bloom_reference_height': bloom2017ReferenceHeight,
+  };
 
   static final disableManualCulling = ConfigField<bool>(
     key: 'disable_manual_culling',
     defaultValue: false,
     label: (l) => l.labelDisableManualCulling,
     tooltip: (l) => l.tooltipDisableManualCulling,
-    restartRequired: true,
   );
 
   static final aoMultiplierWidth = ConfigField<double>(
@@ -728,7 +807,6 @@ class LodModFields {
     min: 0.1,
     max: 2.0,
     step: 0.05,
-    restartRequired: true,
   );
 
   static final aoMultiplierHeight = ConfigField<double>(
@@ -739,7 +817,6 @@ class LodModFields {
     min: 0.1,
     max: 2.0,
     step: 0.05,
-    restartRequired: true,
   );
 
   static final disableVignette = ConfigField<bool>(
@@ -749,13 +826,123 @@ class LodModFields {
     tooltip: (l) => l.tooltipDisableVignette,
   );
 
+  static final bloomReferenceHeight = ConfigField<int>(
+    key: 'bloom_reference_height',
+    defaultValue: 0,
+    label: (l) => l.labelBloomReferenceHeight,
+    tooltip: (l) => l.tooltipBloomReferenceHeight,
+    min: 0,
+    max: 4320,
+    step: 20,
+  );
+
+  static final bloomKernelReferenceHeight = ConfigField<int>(
+    key: 'bloom_kernel_reference_height',
+    defaultValue: 0,
+    label: (l) => l.labelBloomKernelReferenceHeight,
+    tooltip: (l) => l.tooltipBloomKernelReferenceHeight,
+    min: 0,
+    max: 4320,
+    step: 20,
+  );
+
+  static const bloomReferenceMinimum = 360;
+
+  static final bloomExtraBlur = ConfigField<double>(
+    key: 'bloom_extra_blur',
+    defaultValue: 0.0,
+    label: (l) => l.labelBloomExtraBlur,
+    tooltip: (l) => l.tooltipBloomExtraBlur,
+    min: 0.0,
+    max: 4.0,
+    step: 0.1,
+  );
+
+  static final bloomDropCoarseLevels = ConfigField<int>(
+    key: 'bloom_drop_coarse_levels',
+    defaultValue: 0,
+    label: (l) => l.labelBloomDropCoarseLevels,
+    tooltip: (l) => l.tooltipBloomDropCoarseLevels,
+    allowedValues: const [0, 1, 2],
+  );
+
+  static final highGridsEnabled = ConfigField<bool>(
+    key: 'enabled',
+    defaultValue: false,
+    section: 'high_grids',
+    label: (l) => l.labelHighGridsEnabled,
+    tooltip: (l) => l.tooltipHighGridsEnabled,
+    restartRequired: true,
+  );
+
+  static final highGridsRings = ConfigField<int>(
+    key: 'rings',
+    defaultValue: 1,
+    section: 'high_grids',
+    label: (l) => l.labelHighGridsRings,
+    tooltip: (l) => l.tooltipHighGridsRings,
+    allowedValues: const [1, 2, 3, 4],
+    restartRequired: true,
+  );
+
+  static final highGridsFarLoadInterval = ConfigField<int>(
+    key: 'far_grid_load_interval',
+    defaultValue: 3,
+    section: 'high_grids',
+    label: (l) => l.labelHighGridsFarLoadInterval,
+    tooltip: (l) => l.tooltipHighGridsFarLoadInterval,
+    min: 1,
+    max: 60,
+  );
+
+  static final highGridsRoomRings = ConfigField<List<dynamic>>(
+    key: 'room_rings',
+    defaultValue: const [],
+    section: 'high_grids',
+    label: (l) => l.labelHighGridsRoomRings,
+    tooltip: (l) => l.tooltipHighGridsRoomRings,
+    restartRequired: true,
+  );
+
+  static final highGridsBlockedInRoom = ConfigField<List<dynamic>>(
+    key: 'blocked_in_room',
+    defaultValue: const [],
+    section: 'high_grids',
+    label: (l) => l.labelHighGridsBlockedInRoom,
+    tooltip: (l) => l.tooltipHighGridsBlockedInRoom,
+    restartRequired: true,
+  );
+
+  static final highGridsBlockedFromGrid = ConfigField<List<dynamic>>(
+    key: 'blocked_from_grid',
+    defaultValue: const [],
+    section: 'high_grids',
+    label: (l) => l.labelHighGridsBlockedFromGrid,
+    tooltip: (l) => l.tooltipHighGridsBlockedFromGrid,
+    restartRequired: true,
+  );
+
+  static const highGridsCellCounts = <int, int>{1: 7, 2: 19, 3: 37, 4: 61};
+
+  static const highGridsRooms = <int, String>{
+    0x100: 'Ruined City',
+    0x110: 'Resistance Camp',
+    0x120: 'Factory',
+    0x130: 'Amusement Park',
+    0x140: "Pascal's Village",
+    0x150: 'Desert',
+    0x160: 'Forest',
+    0x170: 'Flooded City',
+    0x200: 'City Ruins (Route B)',
+    0x520: 'Underground',
+  };
+
   static final shadowResolution = ConfigField<int>(
     key: 'shadow_resolution',
     defaultValue: 2048,
     label: (l) => l.labelShadowResolution,
     tooltip: (l) => l.tooltipShadowResolution,
-    allowedValues: const [512, 1024, 2048, 4096, 8192],
-    restartRequired: true,
+    allowedValues: const [512, 1024, 2048, 4096, 8192, 16384],
   );
 
   static final shadowDistanceMultiplier = ConfigField<double>(
@@ -833,7 +1020,6 @@ class LodModFields {
     defaultValue: false,
     label: (l) => l.labelHqShadowModels,
     tooltip: (l) => l.tooltipHqShadowModels,
-    restartRequired: true,
   );
 
   static final shadowModelForceAll = ConfigField<bool>(
@@ -841,7 +1027,6 @@ class LodModFields {
     defaultValue: false,
     label: (l) => l.labelForceAllShadowModels,
     tooltip: (l) => l.tooltipForceAllShadowModels,
-    restartRequired: true,
   );
 
   static final giEnabled = ConfigField<bool>(
@@ -859,14 +1044,95 @@ class LodModFields {
     allowedValues: const [16, 32, 64, 128],
   );
 
-  static final giMinLightExtent = ConfigField<double>(
-    key: 'gi_min_light_extent',
-    defaultValue: 0.0,
-    label: (l) => l.labelGiMinLightExtent,
-    tooltip: (l) => l.tooltipGiMinLightExtent,
-    min: 0.0,
-    max: 1.0,
+  static final shadowCascades = ConfigField<int>(
+    key: 'shadow_cascades',
+    defaultValue: 4,
+    label: (l) => l.labelShadowCascades,
+    tooltip: (l) => l.tooltipShadowCascades,
+    allowedValues: const [4, 8],
+    restartRequired: true,
+  );
+
+  static final shadowCascadeRange = ConfigField<double>(
+    key: 'shadow_cascade_range',
+    defaultValue: 4.0,
+    label: (l) => l.labelShadowCascadeRange,
+    tooltip: (l) => l.tooltipShadowCascadeRange,
+    min: 1.05,
+    max: 8.0,
     step: 0.05,
+    restartRequired: true,
+  );
+
+  static final shadowBlurScale = ConfigField<List<dynamic>>(
+    key: 'shadow_blur_scale',
+    defaultValue: const [1.0, 1.0, 1.0, 1.0],
+    label: (l) => l.labelShadowBlurScale,
+    tooltip: (l) => l.tooltipShadowBlurScale,
+    min: 0.0,
+    max: 2.0,
+    step: 0.05,
+  );
+
+  static final disableHdr = ConfigField<bool>(
+    key: 'disable_hdr',
+    defaultValue: false,
+    label: (l) => l.labelDisableHdr,
+    tooltip: (l) => l.tooltipDisableHdr,
+  );
+
+  static final renderScale = ConfigField<double>(
+    key: 'render_scale',
+    defaultValue: 1.0,
+    label: (l) => l.labelRenderScale,
+    tooltip: (l) => l.tooltipRenderScale,
+    min: 0.5,
+    max: 4.0,
+    step: 0.25,
+  );
+
+  static final fxaa = ConfigField<bool>(
+    key: 'fxaa',
+    defaultValue: false,
+    label: (l) => l.labelFxaa,
+    tooltip: (l) => l.tooltipFxaa,
+  );
+
+  static final msaaPrepassFix = ConfigField<bool>(
+    key: 'msaa_prepass_fix',
+    defaultValue: true,
+    label: (l) => l.labelMsaaPrepassFix,
+    tooltip: (l) => l.tooltipMsaaPrepassFix,
+  );
+
+  static final msaaShadowMaskFix = ConfigField<bool>(
+    key: 'msaa_shadow_mask_fix',
+    defaultValue: true,
+    label: (l) => l.labelMsaaShadowMaskFix,
+    tooltip: (l) => l.tooltipMsaaShadowMaskFix,
+  );
+
+  static final constantBufferDedup = ConfigField<bool>(
+    key: 'constant_buffer_dedup',
+    defaultValue: false,
+    label: (l) => l.labelConstantBufferDedup,
+    tooltip: (l) => l.tooltipConstantBufferDedup,
+  );
+
+  static final aoFadeFix = ConfigField<bool>(
+    key: 'ao_fade_fix',
+    defaultValue: true,
+    label: (l) => l.labelAoFadeFix,
+    tooltip: (l) => l.tooltipAoFadeFix,
+  );
+
+  static final highGridsHiddenMeshes = ConfigField<List<dynamic>>(
+    key: 'hidden_meshes',
+    defaultValue: const [],
+    section: 'high_grids',
+    label: (l) => l.labelHighGridsHiddenMeshes,
+    tooltip: (l) => l.tooltipHighGridsHiddenMeshes,
+    restartRequired: true,
   );
 
   static final fpsUncapInMenus = ConfigField<bool>(
@@ -881,6 +1147,20 @@ class LodModFields {
     defaultValue: false,
     label: (l) => l.labelFpsUncapInGameplay,
     tooltip: (l) => l.tooltipFpsUncapInGameplay,
+  );
+
+  static final fpsCapInHacking = ConfigField<bool>(
+    key: 'fps_cap_in_hacking',
+    defaultValue: true,
+    label: (l) => l.labelFpsCapInHacking,
+    tooltip: (l) => l.tooltipFpsCapInHacking,
+  );
+
+  static final fpsCapInEvents = ConfigField<bool>(
+    key: 'fps_cap_in_events',
+    defaultValue: true,
+    label: (l) => l.labelFpsCapInEvents,
+    tooltip: (l) => l.tooltipFpsCapInEvents,
   );
 
   static final fpsLimit = ConfigField<int>(
@@ -919,6 +1199,13 @@ class TextureInjectionFields {
     key: 'load_order',
     defaultValue: const [],
     label: (l) => l.cardTextureConfig,
+  );
+
+  static final hotReload = ConfigField<bool>(
+    key: 'hot_reload',
+    defaultValue: true,
+    label: (l) => l.labelTextureHotReload,
+    tooltip: (l) => l.tooltipTextureHotReload,
   );
 
   static final disabledPacks = ConfigField<List<String>>(
@@ -1057,7 +1344,7 @@ class YpWorkspaceFields {
 
   static final impeller = ConfigField<bool>(
     key: 'impeller',
-    defaultValue: true,
+    defaultValue: false,
     restartRequired: true,
     label: (l) => l.labelImpeller,
     tooltip: (l) => l.tooltipImpeller,

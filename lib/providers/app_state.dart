@@ -16,8 +16,9 @@ final texturesBusyProvider = StateProvider<bool>((ref) => false);
 /// open tab B and pre-select an item there, it sets this value and switches
 /// the active tab. Tab B reads it once on build, applies the selection, and
 /// clears it (returns null).
-final pendingTabSelectionProvider =
-    StateProvider<TabSelectionRequest?>((ref) => null);
+final pendingTabSelectionProvider = StateProvider<TabSelectionRequest?>(
+  (ref) => null,
+);
 
 class TabSelectionRequest {
   final int tabIndex;

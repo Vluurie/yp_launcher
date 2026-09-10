@@ -14,6 +14,7 @@ class ConfigFieldSlider extends StatelessWidget {
   final String? tooltip;
   final bool restartRequired;
   final bool showApplyMarker;
+  final String? valueLabel;
 
   const ConfigFieldSlider({
     super.key,
@@ -27,6 +28,7 @@ class ConfigFieldSlider extends StatelessWidget {
     this.tooltip,
     this.restartRequired = false,
     this.showApplyMarker = false,
+    this.valueLabel,
   });
 
   @override
@@ -62,7 +64,7 @@ class ConfigFieldSlider extends StatelessWidget {
               ),
               const SizedBox(width: 12),
               Text(
-                clamped.toStringAsFixed(decimals),
+                valueLabel ?? clamped.toStringAsFixed(decimals),
                 style: TextStyle(
                   fontSize: AppSizes.fontMD(context),
                   color: AppColors.accentPrimary,
@@ -91,10 +93,8 @@ class ConfigFieldSlider extends StatelessWidget {
               inactiveTrackColor: AppColors.borderLight,
               thumbColor: AppColors.accentPrimary,
               overlayColor: AppColors.accentPrimary.withValues(alpha: 0.15),
-              thumbShape:
-                  const RoundSliderThumbShape(enabledThumbRadius: 7),
-              overlayShape:
-                  const RoundSliderOverlayShape(overlayRadius: 16),
+              thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 7),
+              overlayShape: const RoundSliderOverlayShape(overlayRadius: 16),
               valueIndicatorColor: AppColors.accentPrimary,
             ),
             child: Slider(

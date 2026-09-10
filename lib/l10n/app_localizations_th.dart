@@ -572,7 +572,7 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get featureLodMod =>
-      'LOD Mod - การปรับภาพในตัว เช่น เงา รายละเอียด และอาการวัตถุโผล่ ตั้งค่าเริ่มต้นเป็นปิด';
+      'LOD Mod Ext - การปรับภาพในตัว เช่น เงา รายละเอียด และอาการวัตถุโผล่ ตั้งค่าเริ่มต้นเป็นปิด';
 
   @override
   String get tooltipEditConfigs => 'เปลี่ยนการตั้งค่าภาพโดยไม่ต้องแก้ไขไฟล์';
@@ -598,7 +598,7 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get notifyLodModMigrated =>
-      'พบการตั้งค่า LodMod.ini เดิมของคุณ นำเข้าไปยัง lodmod.toml และเปิดใช้งาน LodMod แล้ว';
+      'พบการตั้งค่า LodMod.ini เดิมของคุณ นำเข้าไปยัง lodmod.toml และเปิดใช้งาน LodMod Ext แล้ว';
 
   @override
   String get notifyReShadeDetected =>
@@ -715,7 +715,7 @@ class AppLocalizationsTh extends AppLocalizations {
   String get headerNams => 'NAMS';
 
   @override
-  String get headerLodMod => 'LOD MOD';
+  String get headerLodMod => 'LOD MOD EXT';
 
   @override
   String get headerTextures => 'เท็กซ์เจอร์';
@@ -740,7 +740,8 @@ class AppLocalizationsTh extends AppLocalizations {
       'แก้ไข nams/texture_injection.toml';
 
   @override
-  String get tooltipEditsSettingsJson => 'แก้ไข %APPDATA%\\NAMS\\settings.json';
+  String get tooltipEditsSettingsJson =>
+      'แก้ไข nams\\_internal\\cache\\settings.json';
 
   @override
   String get tooltipEditsNaiom =>
@@ -758,6 +759,9 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get cardHeapOverrides => 'การแทนค่าฮีป';
+
+  @override
+  String get cardPerformance => 'ประสิทธิภาพ';
 
   @override
   String get cardLevelOfDetail => 'ระดับรายละเอียด';
@@ -890,7 +894,7 @@ class AppLocalizationsTh extends AppLocalizations {
   String get tabNams => 'NAMS';
 
   @override
-  String get tabLodMod => 'LOD Mod';
+  String get tabLodMod => 'LOD Mod Ext';
 
   @override
   String get tabNaiom => 'NAIOM';
@@ -906,6 +910,485 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get tabThirdParty => 'บุคคลที่สาม';
+
+  @override
+  String get tabDocs => 'สร้างม็อด';
+
+  @override
+  String get tabTools => 'เครื่องมือ';
+
+  @override
+  String get toolsIconsTitle => 'ไอคอน';
+
+  @override
+  String get toolsIconsDesc =>
+      'ไอคอน misctex ทั้งหมดที่ม็อดของคุณมี เปลี่ยนอันใดอันหนึ่งเพื่อสลับรูปหรือปรับขนาด เกมอ่านจากชื่อ ดังนั้นชื่อต้องคงเดิม';
+
+  @override
+  String get toolsIconsHotReload =>
+      'ไม่ต้องรีสตาร์ท: เปลี่ยนไอคอนขณะเกมกำลังทำงาน แล้วออกจากกระเป๋าและเปิดใหม่ รูปใหม่จะแสดงทันที';
+
+  @override
+  String get toolsIconsEmpty =>
+      'ยังไม่มีไอคอน ใช้ตัวสร้างไอเทมหรืออาวุธในหน้า \"สร้างม็อด\" หรือเพิ่มด้านล่าง';
+
+  @override
+  String get toolsIconsAdd => 'เพิ่มไอคอนจากรูปภาพ';
+
+  @override
+  String get toolsIconsConvert => 'แปลงรูปภาพ';
+
+  @override
+  String get toolsIconsAdjust => 'ปรับแต่งไอคอน';
+
+  @override
+  String get toolsIconsNotMisctex =>
+      'นี่ไม่ใช่ไฟล์ไอคอน กรุณาเลือก misctex_*.dat';
+
+  @override
+  String get toolsIconsPick => 'เลือกไอคอนที่มีอยู่';
+
+  @override
+  String get toolsIconsNewTitle => 'ไอคอนใหม่';
+
+  @override
+  String get toolsIconsNewMod => 'โฟลเดอร์ม็อด';
+
+  @override
+  String get toolsIconsNewNoMods => 'ยังไม่มีโฟลเดอร์ม็อด กรุณาสร้างม็อดก่อน';
+
+  @override
+  String get toolsIconsNewName => 'ชื่อเท็กซ์เจอร์';
+
+  @override
+  String get toolsIconsNewNameHint => 'item_thumb_8500';
+
+  @override
+  String get toolsIconsNewHint => 'เกมค้นหาไอคอนจากชื่อนี้';
+
+  @override
+  String get toolsIconsNewCreate => 'ต่อไป';
+
+  @override
+  String get toolsIconsNew => 'ไอคอนใหม่';
+
+  @override
+  String get toolsIconsReplace => 'แทนที่';
+
+  @override
+  String get toolsIconsDelete => 'ลบ';
+
+  @override
+  String toolsIconsDeleteConfirm(String name) {
+    return 'ลบ $name หรือไม่? ไฟล์ .dat และ .dtt จะถูกลบ ไอเทมที่อ้างถึงจะกลับไปใช้รูปตัวแทน';
+  }
+
+  @override
+  String toolsIconsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ไอคอน',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get toolsNeedsGameDir => 'กรุณาเลือกโฟลเดอร์เกมในตัวเรียกใช้งานก่อน';
+
+  @override
+  String get docsSearchHint => 'ค้นหาเอกสาร';
+
+  @override
+  String get docsNoResults => 'ไม่พบข้อมูล';
+
+  @override
+  String docsResultCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ผลลัพธ์',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get docsCategoryNative => 'คู่มือการทำม็อด';
+
+  @override
+  String get docsCategoryScripting => 'การเขียนสคริปต์';
+
+  @override
+  String get docsCategoryResources => 'ตารางอ้างอิง';
+
+  @override
+  String get docsCategoryAuthoring => 'การพัฒนาเครื่องมือ';
+
+  @override
+  String get docsOnThisPage => 'ในหน้านี้';
+
+  @override
+  String get docsHome => 'เริ่มที่นี่';
+
+  @override
+  String get docsHeroTitle => 'สร้างม็อดของคุณเอง';
+
+  @override
+  String get docsHeroBody =>
+      'ไอเทม อาวุธ ชุด เควสต์ ไปจนถึงฉากที่กำกับได้ทั้งฉาก เริ่มต้นได้โดยไม่ต้องเขียนโค้ด และทุกอย่างที่ต้องใช้อยู่ในหน้านี้แล้ว';
+
+  @override
+  String get docsHeroCta => 'ม็อดแรกของคุณใน 5 นาที';
+
+  @override
+  String get docsHeroTime => '5 นาที';
+
+  @override
+  String get docsPathBeginner => 'ไม่เคยทำม็อดมาก่อน';
+
+  @override
+  String get docsPathBeginnerBody =>
+      'เริ่มจากไอเทมใหม่ชิ้นเดียว แล้วค่อยเรียนรู้โครงสร้างโฟลเดอร์ม็อด';
+
+  @override
+  String get docsPathContent => 'เพิ่มเนื้อหาลงในเกม';
+
+  @override
+  String get docsPathContentBody =>
+      'ไอเทม อาวุธ ชุด เครื่องประดับ เควสต์ จดหมาย เพลง และอื่น ๆ';
+
+  @override
+  String get docsPathScripting => 'เขียนสคริปต์ให้โลกในเกม';
+
+  @override
+  String get docsPathScriptingBody =>
+      'ทำให้สิ่งต่าง ๆ เกิดขึ้นในจังหวะที่ใช่: การเกิด ทริกเกอร์ กล้อง คัตซีน';
+
+  @override
+  String get docsSectionGuides => 'คู่มือ';
+
+  @override
+  String get docsEnglishOnly => 'ขณะนี้เอกสารมีให้อ่านเป็นภาษาอังกฤษเท่านั้น';
+
+  @override
+  String get docsBackToLauncher => 'กลับไปที่ตัวเรียกใช้งาน';
+
+  @override
+  String get docsEdit => 'แก้ไขหน้านี้';
+
+  @override
+  String docsLinkCopied(String url) {
+    return 'เปิดเบราว์เซอร์ไม่ได้ คัดลอกลิงก์แล้ว: $url';
+  }
+
+  @override
+  String get docsReload => 'โหลดใหม่จากดิสก์';
+
+  @override
+  String get docsSaveFile => 'บันทึกลงไฟล์';
+
+  @override
+  String get docsPreview => 'รีเฟรชตัวอย่าง';
+
+  @override
+  String get thumbnailTitle => 'ไอคอน';
+
+  @override
+  String get thumbnailDrop => 'ลากรูปภาพมาวางที่นี่';
+
+  @override
+  String get thumbnailDropHint =>
+      'PNG, JPEG, WebP, BMP หรือ TGA ตัวเรียกใช้งานจะแปลงให้เอง';
+
+  @override
+  String get thumbnailSize => 'ขนาด';
+
+  @override
+  String get thumbnailSizeHint =>
+      'ลากมุมเพื่อปรับขนาด DXT5 ต้องเป็นจำนวนเท่าของ 4';
+
+  @override
+  String get thumbnailSizeFixed =>
+      'ขนาดคงที่สำหรับภาพประเภทนี้ ขนาดอื่นจะล้นกรอบในเกม';
+
+  @override
+  String thumbnailScaled(int percent) {
+    return 'แสดงตัวอย่างที่ $percent% แต่ไอคอนจะถูกบันทึกในขนาดเต็ม';
+  }
+
+  @override
+  String get thumbnailCreate => 'สร้างไอคอน';
+
+  @override
+  String get thumbnailUse => 'ใช้รูปนี้';
+
+  @override
+  String get thumbnailPending => 'พร้อมแล้ว จะถูกเขียนเมื่อคุณสร้างไอเทม';
+
+  @override
+  String get thumbnailHotReload =>
+      'เปิดกระเป๋าในเกมอีกครั้งเพื่อดูไอคอนที่เปลี่ยนแล้ว ไม่ต้องรีสตาร์ท';
+
+  @override
+  String get thumbnailOpen => 'กำหนดไอคอน';
+
+  @override
+  String get thumbnailChange => 'เปลี่ยนไอคอน';
+
+  @override
+  String get thumbnailReplace => 'แทนที่';
+
+  @override
+  String get thumbnailRemove => 'ลบออก';
+
+  @override
+  String get thumbnailDone => 'บันทึกไอคอนไว้ข้างไอเทมของคุณแล้ว';
+
+  @override
+  String get thumbnailWorking => 'กำลังแปลง...';
+
+  @override
+  String get thumbnailNoItem => 'สร้างไอเทมก่อน แล้วจึงกำหนดไอคอนให้';
+
+  @override
+  String get errTextureUnreadable =>
+      'อ่านไอคอนนี้ไม่ได้ อาจเสียหายหรืออยู่ในรูปแบบที่ไม่รองรับ';
+
+  @override
+  String get errImageUnreadable =>
+      'ไม่สามารถอ่านไฟล์นี้เป็นรูปภาพได้ กรุณาใช้ PNG, JPEG, WebP, BMP หรือ TGA';
+
+  @override
+  String get errImageSizeOutOfRange => 'ขนาดต้องอยู่ระหว่าง 4 ถึง 4096 พิกเซล';
+
+  @override
+  String get errImageSizeNotMultipleOfFour =>
+      'ความกว้างและความสูงต้องเป็นจำนวนเท่าของ 4';
+
+  @override
+  String get errArchiveEmpty => 'ไม่มีอะไรให้แพ็ก';
+
+  @override
+  String errArchiveExtensionTooLong(String name) {
+    return 'นามสกุลไฟล์ของ $name ยาวเกินสามตัวอักษร';
+  }
+
+  @override
+  String get errWeaponNothingToConvert =>
+      'ม็อดนี้ไม่มีโมเดลหรือเท็กซ์เจอร์ให้แปลง ต้องมี .dat ที่มี wta และ .dtt ที่มี wmb';
+
+  @override
+  String get errWeaponClassMismatch =>
+      'อาวุธแทนที่ได้เฉพาะอาวุธประเภทเดียวกัน หอกกลายเป็นดาบไม่ได้ เพราะท่าทางจะยังเป็นของอาวุธที่ถูกแทนที่';
+
+  @override
+  String errFileReadFailed(String detail) {
+    return 'อ่านไฟล์ไม่สำเร็จ: $detail';
+  }
+
+  @override
+  String errFileWriteFailed(String detail) {
+    return 'เขียนไฟล์ไม่สำเร็จ: $detail';
+  }
+
+  @override
+  String errDirectoryCreateFailed(String detail) {
+    return 'สร้างโฟลเดอร์ไม่สำเร็จ: $detail';
+  }
+
+  @override
+  String errUnknownCode(int code, String detail) {
+    return 'เกิดข้อผิดพลาด (รหัส $code) $detail';
+  }
+
+  @override
+  String get itemBuilderTitle => 'ลองทำสักชิ้นเลย';
+
+  @override
+  String get itemBuilderBody =>
+      'กรอกข้อมูลนี้แล้วตัวเรียกใช้งานจะเขียนไฟล์ให้คุณ คุณดูผลลัพธ์ได้ด้านล่าง และแก้ไขเองภายหลังได้';
+
+  @override
+  String get itemBuilderName => 'ชื่อที่แสดงในเมนู';
+
+  @override
+  String get itemBuilderNameHint => 'สลักเกลียวขึ้นสนิม';
+
+  @override
+  String get itemBuilderDescription => 'คำอธิบาย';
+
+  @override
+  String get itemBuilderDescriptionHint =>
+      'สลักเกลียวตัวหนึ่ง เคยผ่านวันที่ดีกว่านี้มาแล้ว';
+
+  @override
+  String get itemBuilderModId => 'โฟลเดอร์ม็อด';
+
+  @override
+  String get itemBuilderCarry => 'จำนวนที่ผู้เล่นพกได้';
+
+  @override
+  String get itemBuilderSellable => 'ขายได้';
+
+  @override
+  String get itemBuilderSellPrice => 'ราคาขาย';
+
+  @override
+  String get itemBuilderAutoGive => 'มอบให้ผู้เล่นอัตโนมัติ';
+
+  @override
+  String get itemBuilderAutoGiveHint =>
+      'มิฉะนั้นคุณต้องใช้ร้านค้าหรือรางวัลเควสต์เพื่อมอบไอเทมนี้';
+
+  @override
+  String get itemBuilderIdLabel => 'รหัสไอเทม';
+
+  @override
+  String get itemBuilderIdHint =>
+      'เลือกให้คุณแล้ว ไอเทมทุกชิ้นต้องมีรหัสที่ไม่ซ้ำกับใคร';
+
+  @override
+  String get itemBuilderPreview => 'นี่คือไฟล์ที่จะถูกเขียน';
+
+  @override
+  String get itemBuilderCreate => 'สร้างไอเทม';
+
+  @override
+  String itemBuilderCreated(String path) {
+    return 'เขียนไปที่ $path';
+  }
+
+  @override
+  String get itemBuilderNeedsName => 'ตั้งชื่อให้มันก่อน';
+
+  @override
+  String get itemBuilderNeedsGameDir =>
+      'กรุณาเลือกโฟลเดอร์เกมในตัวเรียกใช้งานก่อน';
+
+  @override
+  String get itemBuilderExists => 'รหัสนี้ถูกใช้ไปแล้ว กรุณาเลือกรหัสอื่น';
+
+  @override
+  String get itemBuilderOpenFolder => 'แสดงไฟล์';
+
+  @override
+  String get firstModTitle => 'ลงมือทำไปพร้อมกับอ่าน';
+
+  @override
+  String get firstModBody =>
+      'แต่ละขั้นจะเขียนไฟล์จริงลงในโฟลเดอร์เกมของคุณ เมื่อจบแล้วคุณจะได้ม็อดที่ใช้งานได้';
+
+  @override
+  String get firstModStep1 => 'สร้างโฟลเดอร์ม็อด';
+
+  @override
+  String get firstModStep1Detail => 'nams\\mods\\my_first_mod\\entities\\';
+
+  @override
+  String get firstModEdit => 'เปิดตัวแก้ไข';
+
+  @override
+  String get firstModExplainManifest =>
+      'นี่คือไฟล์ระบุตัวตนของม็อด NAMS จะอ่านไฟล์นี้ก่อนเพื่อรู้ว่ามีม็อดอยู่ คุณเปลี่ยน display_name และ author ได้ตามใจ แต่ id ต้องเป็นตัวพิมพ์เล็กและไม่มีช่องว่าง เพราะม็อดอื่นใช้ค่านี้อ้างถึงม็อดของคุณ';
+
+  @override
+  String get firstModExplainItem =>
+      'ชื่อไฟล์เป็นตัวกำหนดว่านี่คืออะไร: item_9999.toml หมายถึงไอเทม id 9999 ถ้าเปลี่ยนชื่อไฟล์ก็เท่ากับเปลี่ยน id ภายในไฟล์ [text.name] คือชื่อที่แสดงในเมนู ส่วน [text.help] คือคำอธิบาย ลองเปลี่ยนชื่อดูก่อนเขียนไฟล์ได้เลย';
+
+  @override
+  String get tomlEditorValid => 'TOML ถูกต้อง NAMS จะอ่านสิ่งเหล่านี้:';
+
+  @override
+  String get tomlEditorInvalid =>
+      'ยังไม่ใช่ TOML ที่ถูกต้อง NAMS จะข้ามไฟล์นี้';
+
+  @override
+  String get tomlEditorReset => 'กลับไปใช้ตัวอย่าง';
+
+  @override
+  String get tomlEditorWrite => 'เขียนไฟล์';
+
+  @override
+  String get firstModStep2 => 'เขียน mod.toml';
+
+  @override
+  String get firstModStep2Detail => 'ไฟล์ระบุตัวตนที่ NAMS อ่านเป็นอันดับแรก';
+
+  @override
+  String get firstModStep3 => 'เพิ่ม Test Pebble';
+
+  @override
+  String get firstModStep3Detail => 'entities\\item_9999.toml';
+
+  @override
+  String get firstModStep4 => 'ตรวจว่า NAMS พบม็อดหรือไม่';
+
+  @override
+  String get firstModStep4Detail => 'รัน NAMS verify กับการติดตั้งของคุณ';
+
+  @override
+  String get firstModDo => 'ทำเลย';
+
+  @override
+  String get firstModDone => 'เสร็จแล้ว';
+
+  @override
+  String get firstModRedo => 'เขียนใหม่';
+
+  @override
+  String get firstModVerify => 'ตรวจสอบ';
+
+  @override
+  String get firstModOpenFolder => 'เปิดโฟลเดอร์';
+
+  @override
+  String get firstModReset => 'ลบม็อดนี้ออก';
+
+  @override
+  String get firstModNoGameDir => 'กรุณาเลือกโฟลเดอร์เกมในตัวเรียกใช้งานก่อน';
+
+  @override
+  String get firstModFinished =>
+      'ม็อดของคุณพร้อมแล้ว รีสตาร์ทเกมแล้วจะพบ Test Pebble ในกระเป๋าของคุณ';
+
+  @override
+  String firstModFailed(String error) {
+    return 'เขียนไฟล์ไม่สำเร็จ: $error';
+  }
+
+  @override
+  String get docsCopy => 'คัดลอก';
+
+  @override
+  String get docsCopied => 'คัดลอกแล้ว';
+
+  @override
+  String get docsNativeBlurb =>
+      'อธิบายสิ่งที่คุณต้องการในไฟล์ข้อความ แล้ว NAMS จะโหลดให้ ม็อดส่วนใหญ่เริ่มต้นจากตรงนี้';
+
+  @override
+  String get docsScriptingBlurb =>
+      'สำหรับสิ่งที่ต้องเกิดขึ้นตามจังหวะ: การเกิด ทริกเกอร์ กล้อง ไปจนถึงฉากที่กำกับทั้งฉาก';
+
+  @override
+  String get docsSectionReference => 'ตารางอ้างอิง';
+
+  @override
+  String get docsReferenceBody =>
+      'ทุก id ที่ค้นหาได้: ไอเทม อาวุธ ชิป เอฟเฟกต์ เมช';
+
+  @override
+  String get docsBrowseAll => 'ดูทุกหน้า';
+
+  @override
+  String docsPagesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count หน้า',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get thirdPartyTitle => 'รันไทม์ของบุคคลที่สาม';
@@ -926,14 +1409,14 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get thirdPartyMigotoHowto =>
-      'วางไฟล์เก็บถาวรม็อด shader ของ 3DMigoto ที่นี่ ตัวเรียกใช้งานจะติดตั้งและตั้งค่าเป้าหมายตัวโหลดเพื่อให้ NAMS hook ได้';
+      'ไฟล์บีบอัดม็อดเชเดอร์ 3DMigoto ติดตั้งผ่านโซนวางไฟล์ด้านบน ตัวเรียกใช้งานจะตั้งค่าเป้าหมายโหลดเดอร์ให้ NAMS เกี่ยวเกี่ยวมัน';
 
   @override
   String get thirdPartyGameModsHeader => 'ม็อดเกม';
 
   @override
   String get thirdPartyGameModsHowto =>
-      'วางไฟล์ม็อด (.dll) ที่สร้างมาสำหรับเกมต้นฉบับที่นี่ เช่น ตัวจับเวลา speedrun เครื่องมือโกง และเครื่องมืออื่นที่คล้ายกัน ตัวเรียกใช้งานจะตั้งค่าให้ทำงานภายใต้ NAMS แต่ไม่สามารถตรวจสอบได้ว่าม็อดทำอะไรบ้าง ม็อดใดก็ตามอาจทำให้เกมแครชได้ ควรเพิ่มเฉพาะไฟล์ที่คุณไว้ใจ และปิดม็อดด้านล่างหากเกมเริ่มทำงานผิดปกติ';
+      'DLL ม็อดที่สร้างสำหรับเกมต้นฉบับ เช่น ตัวจับเวลาสปีดรัน เทรนเนอร์ ติดตั้งผ่านโซนวางไฟล์ด้านบน ตัวเรียกใช้งานจะตั้งค่าให้ทำงานใต้ NAMS แต่ตรวจไม่ได้ว่าม็อดทำอะไรจริง ทุกตัวอาจทำให้เกมคราช เพิ่มเฉพาะไฟล์ที่ไว้ใจ และปิดตัวที่มีปัญหาด้านล่าง';
 
   @override
   String get thirdPartyGameModsNone => 'ยังไม่ได้ติดตั้งม็อดเกม';
@@ -1010,7 +1493,8 @@ class AppLocalizationsTh extends AppLocalizations {
   String get thirdPartyInstallCard => 'ติดตั้ง';
 
   @override
-  String get thirdPartyDropHere => 'วางพรีเซ็ต ReShade / ม็อด 3DMigoto ที่นี่';
+  String get thirdPartyDropHere =>
+      'วางพรีเซต ReShade, ม็อด 3DMigoto หรือ DLL ม็อดเกมที่นี่';
 
   @override
   String get thirdPartyImported => 'นำเข้าไปยัง NAMS แล้ว';
@@ -1034,7 +1518,7 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get thirdPartyLodModPrompt =>
-      'นี่คือ LodMod โดย NAMS มี LodMod ในตัวอยู่แล้ว ต้องการนำเข้าการตั้งค่าไปยังแท็บ LodMod หรือไม่?';
+      'นี่คือ LodMod โดย NAMS มี LodMod Ext ในตัวอยู่แล้ว ต้องการนำเข้าการตั้งค่าไปยังแท็บ LodMod Ext หรือไม่?';
 
   @override
   String get thirdPartyStatusActive => 'ทำงานอยู่';
@@ -1268,10 +1752,10 @@ class AppLocalizationsTh extends AppLocalizations {
   String get tooltipFaq => 'ยังต้องใช้ม็อดอื่นอีกหรือไม่?';
 
   @override
-  String get chipLodModOn => 'เปิด LOD MOD';
+  String get chipLodModOn => 'เปิด LOD MOD EXT';
 
   @override
-  String get chipLodModOff => 'ปิด LOD MOD';
+  String get chipLodModOff => 'ปิด LOD MOD EXT';
 
   @override
   String get chipReShade => 'ReShade';
@@ -1330,7 +1814,11 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get lodModDescription =>
-      'แพตช์คุณภาพภาพที่รวมอยู่ใน NAMS โดยได้รับแรงบันดาลใจจาก Automata-LodMod ของ emoose ช่วยลดอาการ LOD โผล่ เพิ่มความคมของเงาและ Ambient Occlusion บังคับให้วัตถุทุกชนิดรวมถึงพืชสร้างเงา ปิดการ culling แบบกำหนดเองเพื่อไม่ให้วัตถุโผล่เข้าออก และลบ vignette';
+      'แพตช์คุณภาพภาพที่รวมอยู่ใน NAMS โดยได้รับแรงบันดาลใจจาก Automata-LodMod ของ emoose และขยายต่อไปไกลกว่ามาก จึงเป็นที่มาของคำว่า Ext ช่วยลดอาการ LOD โผล่ เพิ่มความคมของเงาและ Ambient Occlusion บังคับให้วัตถุทุกชนิดรวมถึงพืชสร้างเงา ปิดการ culling แบบกำหนดเองเพื่อไม่ให้วัตถุโผล่เข้าออก และลบ vignette นอกจากนี้ยังเพิ่ม shadow cascade พร้อมการเบลอแยกต่อ cascade, การเขียน bloom ขึ้นใหม่, global illumination, การปลดล็อก FPS พร้อมการป้องกันในคัตซีน, FXAA, การปรับสเกลการเรนเดอร์ และกริดแผนที่ความละเอียดสูง';
+
+  @override
+  String get comparisonResolutionNote =>
+      'ภาพเปรียบเทียบทั้งหมดในแท็บนี้ถ่ายที่ความละเอียด 2560x1440';
 
   @override
   String get namsDescription =>
@@ -1457,6 +1945,9 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get installedToTextures => 'ติดตั้งไปยัง: nams/inject/textures/';
+
+  @override
+  String get texturesPackNameTitle => 'ตั้งชื่อแพ็ก';
 
   @override
   String get installingTextures => 'กำลังติดตั้งเท็กซ์เจอร์...';
@@ -2294,7 +2785,8 @@ class AppLocalizationsTh extends AppLocalizations {
   String get tipHdCutscenes => 'ระบบตรวจพบและตั้งค่าม็อดคัตซีน HD อัตโนมัติ';
 
   @override
-  String get tipLodModPreviews => 'การตั้งค่า LOD Mod มีภาพตัวอย่างก่อน/หลัง';
+  String get tipLodModPreviews =>
+      'การตั้งค่า LOD Mod Ext มีภาพตัวอย่างก่อน/หลัง';
 
   @override
   String get tipFaqButton =>
@@ -2317,7 +2809,7 @@ class AppLocalizationsTh extends AppLocalizations {
   String get sectionTextureInjection => 'การฉีดเท็กซ์เจอร์';
 
   @override
-  String get sectionLodMod => 'LOD MOD';
+  String get sectionLodMod => 'LOD MOD EXT';
 
   @override
   String get sectionLevelOfDetail => 'ระดับรายละเอียด';
@@ -2353,7 +2845,7 @@ class AppLocalizationsTh extends AppLocalizations {
       'โหลดเท็กซ์เจอร์ทั้งหมดเข้า RAM โดยไม่คำนึงถึงขนาด ช่วยกำจัดอาการกระตุกจากเท็กซ์เจอร์โผล่ทั้งหมด แต่ต้องใช้ RAM 32GB ขึ้นไปและทำให้เริ่มเกมช้าลงมาก';
 
   @override
-  String get labelEnableLodMod => 'เปิดใช้งาน LodMod';
+  String get labelEnableLodMod => 'เปิดใช้งาน LodMod Ext';
 
   @override
   String get tooltipEnableLodMod =>
@@ -2364,7 +2856,19 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get tooltipLodMultiplier =>
-      'ควบคุมระยะวาด LOD (Level of Detail) 0 = ปิด LOD (คุณภาพดีที่สุด ไม่มีอาการโผล่), 1 = วานิลลา, 10+ ช่วยลด AO bleed โดยไม่ปิด LOD ทั้งหมด ค่าต่ำลงให้ภาพดีขึ้นแต่อาจใช้ประสิทธิภาพมากขึ้น';
+      'ควบคุมว่าโมเดลจะสลับไปใช้ระดับรายละเอียดต่ำเมื่อใด 0 = ปิด LOD (คุณภาพดีที่สุด ไม่มีอาการโผล่), 0.75 = ระดับรายละเอียดต่ำทำงานใกล้กล้องขึ้น ใช้ GPU น้อยลง ระยะที่โมเดลหายไปยังคงเท่าวานิลลา, 1 = วานิลลา, 10 = รายละเอียดสูงในระยะไกล ช่วยลด AO bleed';
+
+  @override
+  String get lodMultiplierOptionQuality => '0 - คุณภาพดีที่สุด';
+
+  @override
+  String get lodMultiplierOptionPerformance => '0.75 - ประสิทธิภาพ';
+
+  @override
+  String get lodMultiplierOptionVanilla => '1 - วานิลลา';
+
+  @override
+  String get lodMultiplierOptionFar => '10 - รายละเอียดระยะไกล';
 
   @override
   String get labelDisableManualCulling => 'ปิด Manual Culling';
@@ -2478,14 +2982,14 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get tooltipGiEnabled =>
-      'Global Illumination แบบ FAR ให้ FPS เพิ่มขึ้นมาก แลกกับความแม่นยำของแสงบางส่วน';
+      'สิ่งที่ FAR เรียกว่า Global Illumination: ทุกเฟรมมีการคำนวณต่อพิกเซลที่ไล่ดู reflection cubemap ที่โหลดไว้ทั้งหมดเพื่อหาอันที่ใกล้ที่สุด เมื่อเปิด จะเหลือเฉพาะ cubemap ที่ใกล้กล้องในการไล่ดู ที่เหลือถูกข้าม แบบของ FAR ตัดรายการตามลำดับการโหลด cubemap รอบตัวคุณจึงอาจหายไปและพื้นผิวใกล้ๆ จะทึบและมืด แบบนี้เก็บอันที่ใกล้คุณที่สุด สิ่งที่เห็นใกล้ๆ ยังคงแสงและเงาสะท้อน และการคำนวณยังประหยัดขึ้น มีเพียงเงาสะท้อนไกลๆ ที่ใช้ cubemap หยาบกว่า มีผลทันที';
 
   @override
-  String get labelGiWorkgroupSize => 'ขนาด Workgroup ของ GI';
+  String get labelGiWorkgroupSize => 'reflection cubemap ที่เก็บไว้';
 
   @override
   String get tooltipGiWorkgroupSize =>
-      'จำนวน light volume ที่ประมวลผลต่อการ dispatch ของ GI 128 = คุณภาพวานิลลา, 64/32/16 = เร็วขึ้นตามลำดับแต่หยาบขึ้น ค่าต่ำลงแลกความแม่นยำของแสงกับ FPS';
+      'จำนวน reflection cubemap ที่ใกล้กล้องที่สุดซึ่งยังอยู่ในการไล่ดูต่อพิกเซล 128 = ทั้งหมดที่วานิลลาเก็บ, 64/32/16 = ประหยัดขึ้นตามลำดับ เงาสะท้อนไกลๆ หยาบขึ้น';
 
   @override
   String get labelGiMinLightExtent => 'ขนาดแสงขั้นต่ำของ GI';
@@ -2498,49 +3002,319 @@ class AppLocalizationsTh extends AppLocalizations {
   String get cardExperimental => 'ทดลอง';
 
   @override
+  String get cardBloom => 'Bloom';
+
+  @override
+  String configParseErrorTitle(String file) {
+    return 'ไม่สามารถอ่าน $file ได้';
+  }
+
+  @override
+  String get configParseErrorBody =>
+      'ไฟล์นี้ไม่ใช่ TOML ที่ถูกต้อง ตัวเรียกใช้จะแสดงค่าเริ่มต้นและจะไม่เขียนลงไฟล์นี้จนกว่าจะแยกวิเคราะห์ได้อีกครั้ง แก้ไขในโปรแกรมแก้ไขข้อความแล้วบันทึก ตัวเรียกใช้จะอ่านใหม่ให้เอง';
+
+  @override
+  String get subheadingHighGrids => 'กริดแผนที่ความละเอียดสูง';
+
+  @override
+  String get highGridsWipTitle => 'อยู่ระหว่างการพัฒนา';
+
+  @override
+  String get highGridsWipBody =>
+      'ฟีเจอร์นี้ยังไม่เสร็จสมบูรณ์ กฎการ cull สำหรับจำนวนวงที่สูงขึ้นยังต้องเขียนเพิ่ม กริดที่อยู่ไกลจึงอาจแสดงส่วนของแผนที่ที่ควรอยู่ที่อื่น';
+
+  @override
+  String get highGridsWipContribute =>
+      'ยินดีรับการมีส่วนร่วม: รายการกฎด้านล่างคือส่วนที่ต้องเติมให้ครบ สามารถเลือก mesh และ grid id ได้โดยตรงในเกมด้วย YP Devkit (Map Manager -> Mesh Picker) แล้วเขียนลงในกฎได้ทันที';
+
+  @override
+  String get subheadingFrameRate => 'อัตราเฟรม';
+
+  @override
+  String get subheadingRendering => 'การเรนเดอร์';
+
+  @override
+  String get bloomReferenceVanilla => 'ต้นฉบับ';
+
+  @override
+  String get bloom2017Button => 'ตั้งเป็นบลูมแบบ 2017';
+
+  @override
+  String get bloom2017Tooltip =>
+      'ตั้งค่าความสูงอ้างอิงของบลูมเป็น 900 ซึ่งเป็นขนาดบลูมของเวอร์ชันปี 2017 บลูมจะคงขนาดนั้นไว้ในทุกความละเอียด แทนที่จะปรับตามความละเอียดและกะพริบเมื่อความละเอียดสูง ไม่แตะความกว้างการเบลอ มีผลทันที';
+
+  @override
+  String get labelBloomReferenceHeight => 'ความสูงอ้างอิงของ Bloom';
+
+  @override
+  String get tooltipBloomReferenceHeight =>
+      'แก้อาการ Bloom กะพริบที่ความละเอียดสูง 0 = ต้นฉบับ 2021 (พีระมิด Bloom ปรับตามความละเอียด ทำให้ขอบสว่างกะพริบ) 900 = ขนาด Bloom แบบปี 2017 ที่ทุกความละเอียด ช่วง 360-4320';
+
+  @override
+  String get labelBloomKernelReferenceHeight => 'ความกว้างการเบลอของ Bloom';
+
+  @override
+  String get tooltipBloomKernelReferenceHeight =>
+      'ความสูงอ้างอิงที่ใช้ปรับความกว้างการเบลอ 0 = ต้นฉบับ (การเบลอจะเล็กลงเมื่อเทียบกับหน้าจอที่ความละเอียดสูง) ค่าอื่นจะตรึงความกว้างการเบลอไว้ที่ความสูงนั้นในทุกความละเอียด คงขนาด render target ไว้เต็มขนาด จึงใช้แทนความสูงอ้างอิงของ Bloom ได้ ช่วง 360-4320';
+
+  @override
+  String get labelBloomExtraBlur => 'การเบลอ Bloom เพิ่มเติม';
+
+  @override
+  String get tooltipBloomExtraBlur =>
+      'รอบการเบลอเพิ่มเติมที่ทำให้แสงเรืองกว้างและสว่างขึ้น ทีละ 0.1 0 = ต้นฉบับ';
+
+  @override
+  String get bloomDropLevelsOff => 'ปิด';
+
+  @override
+  String get bloomDropLevelsWidest => 'ชั้นที่กว้างที่สุด';
+
+  @override
+  String get bloomDropLevelsTwoWidest => 'สองชั้นที่กว้างที่สุด';
+
+  @override
+  String get labelBloomDropCoarseLevels => 'ลบชั้น Bloom ที่กว้าง';
+
+  @override
+  String get tooltipBloomDropCoarseLevels =>
+      'ลบชั้น Bloom ที่สั่นไหวและกะพริบ โดยยังคงแสงเรืองเล็ก ๆ รอบแหล่งกำเนิดแสงไว้ 0 = ต้นฉบับ, 1 = ลบชั้นที่กว้างที่สุด, 2 = ลบสองชั้นที่กว้างที่สุด อิงจาก Bloom Fix ของ Void';
+
+  @override
+  String get labelHighGridsEnabled => 'เปิดใช้งานกริดแผนที่ความละเอียดสูง';
+
+  @override
+  String get tooltipHighGridsEnabled =>
+      'โหลดแผนที่รอบตัวคุณด้วยความละเอียดสูงมากขึ้น ต้นฉบับโหลดเพียง 7 กริดและแสดงส่วนที่เหลือเป็นภูมิประเทศความละเอียดต่ำ ใช้หน่วยความจำ เวลาโหลด และเฟรมเรตเพิ่มขึ้น เพราะกริดที่เพิ่มมาก็ต้องถูกเรนเดอร์ด้วย อยู่ระหว่างการพัฒนา: กฎการ cull ยังไม่ครบ เมื่อเปิดตัวเลือกนี้จะเปิด \"ปิด Manual Culling\" ให้ด้วย และเมื่อปิดก็จะปิดตามกลับไป';
+
+  @override
+  String get labelHighGridsRings => 'วงกริด';
+
+  @override
+  String get tooltipHighGridsRings =>
+      'จำนวนวงหกเหลี่ยมของกริดความละเอียดสูงที่โหลดไว้รอบตัวคุณ 1 = ต้นฉบับ (7 กริด), 2 = 19, 3 = 37, 4 = 61 แต่ละกริดใช้ heap ราว 100 MB ค่าที่สูงขึ้นจึงต้องใช้หน่วยความจำมากขึ้นและโหลดนานขึ้น อีกทั้งยังลดเฟรมเรตด้วย เพราะเรขาคณิตทั้งหมดนั้นต้องถูกวาด 4 คือค่าที่ผ่านการทดสอบ';
+
+  @override
+  String get labelHighGridsFarLoadInterval => 'ช่วงเวลาโหลดกริดไกล';
+
+  @override
+  String get tooltipHighGridsFarLoadInterval =>
+      'จำนวนเฟรมที่รอระหว่างการสร้างกริดสองอันที่อยู่นอกวงแรก กริดในวงแรกจะถูกสร้างหนึ่งอันต่อเฟรมเสมอ ค่าต่ำโหลดเร็วกว่าแต่อาจกระตุก ค่าสูงลื่นกว่าแต่เติมช้ากว่า มีผลทันที';
+
+  @override
+  String get labelHighGridsRoomRings => 'กำหนดวงเฉพาะห้อง';
+
+  @override
+  String get tooltipHighGridsRoomRings =>
+      'ใช้จำนวนวงน้อยลงในห้องที่ระบุ พื้นที่ปิดอย่างเมืองจมน้ำจะแสดงส่วนของแผนที่จากที่อื่นเมื่อโหลดรอบตัวมากเกินไป ไม่สามารถเกินจำนวนวงหลักได้';
+
+  @override
+  String get labelHighGridsBlockedInRoom => 'กริดที่บล็อกในห้อง';
+
+  @override
+  String get tooltipHighGridsBlockedInRoom =>
+      'กริดที่จะไม่ถูกโหลดขณะคุณอยู่ในห้องนั้น ใช้เมื่อมีกริดที่มองเห็นได้จากตำแหน่งที่ไม่ควรมองเห็น รหัสกริดคือเลขฐานสิบหก 4 หลักท้ายของหมายเลขกริด จึงตรงกันในทุกช่วงเนื้อเรื่อง';
+
+  @override
+  String get labelHighGridsBlockedFromGrid => 'กริดที่บล็อกจากกริด';
+
+  @override
+  String get tooltipHighGridsBlockedFromGrid =>
+      'กริดที่จะไม่ถูกโหลดขณะคุณยืนอยู่บนกริดที่ระบุ ใช้เมื่อการบล็อกทั้งห้องกว้างเกินไป';
+
+  @override
+  String get labelContentEffectAreas => 'พื้นที่เอฟเฟกต์';
+
+  @override
+  String get tooltipContentEffectAreas =>
+      'เอฟเฟกต์ที่ม็อดวางไว้ในห้อง การเปลี่ยนแปลงจะเห็นเมื่อเข้าห้องใหม่';
+
+  @override
+  String get labelSkipStartupLogos => 'ข้ามโลโก้เริ่มเกม';
+
+  @override
+  String get tooltipSkipStartupLogos =>
+      'ข้ามโลโก้ Platinum Games / Square Enix ระหว่างโหลดเกม การโหลดไม่ถูกกระทบ';
+
+  @override
+  String get labelShadowCascades => 'เงาแบบลำดับชั้น';
+
+  @override
+  String get tooltipShadowCascades =>
+      '4 = ดั้งเดิม, 8 เพิ่มอีกสี่ชั้นไกล (ทดลอง) ที่ 8 แอตลาสถูกแบ่ง 4x4 แต่ละชั้นได้ความละเอียดหนึ่งในสี่ ควรเพิ่มความละเอียดเงาชดเชย';
+
+  @override
+  String get labelShadowCascadeRange => 'ระยะชั้นเงา';
+
+  @override
+  String get tooltipShadowCascadeRange =>
+      'สี่ชั้นพิเศษยื่นเกินระยะเงาปกติได้ไกลเพียงใด';
+
+  @override
+  String get labelShadowBlurScale => 'ความเบลอเงาต่อชั้น';
+
+  @override
+  String get tooltipShadowBlurScale =>
+      'ตัวคูณกับความเบลอของเกม จากใกลไปไกล 1.0 = เดิม, 0.5 = ครึ่งเดียว มีผลทันที';
+
+  @override
+  String get labelDisableHdr => 'ปิด HDR';
+
+  @override
+  String get tooltipDisableHdr =>
+      'เล่นแบบ SDR แม้จอรองรับ HDR เหมือน HideHDRSupport ของ Special K เปิดหาก HDR ดูซีด มีผลทันที แต่การสร้าง swapchain ใหม่อาจใช้เวลาสักครู่และเฟรมเรตอาจตกจนกว่าจะเสร็จ หากไม่มีผล ให้รีสตาร์ทเกม';
+
+  @override
+  String get labelRenderScale => 'สเกลการเรนเดอร์';
+
+  @override
+  String get tooltipRenderScale =>
+      'ความละเอียดภายใน (ทดลอง) 2.0 เรนเดอร์สองเท่าของความละเอียดจอแล้วย่อกลับ ลดขอบหยักและภาพสั่นได้มาก 0.5 เรนเดอร์ครึ่งหนึ่งของความละเอียดจอแล้วขยายขึ้น ภาพนุ่มลง GPU ทำงานแค่หนึ่งในสี่ เหมาะกับการ์ดจอที่อ่อน โหลด GPU เป็นกำลังสองของค่าตัวคูณ ใช้ได้ทุกโหมดการแสดงผล มีผลทันที แต่การสร้าง swapchain ใหม่อาจใช้เวลาสักครู่และเฟรมเรตอาจตกจนกว่าจะเสร็จ หากไม่มีผล ให้รีสตาร์ทเกม';
+
+  @override
+  String get labelFxaa => 'FXAA';
+
+  @override
+  String get tooltipFxaa => 'ลบขอบหยักแบบประหยัด ใช้โดยปิด AA ในเกม มีผลทันที';
+
+  @override
+  String get labelMsaaPrepassFix => 'แก้จุดดำ MSAA';
+
+  @override
+  String get tooltipMsaaPrepassFix =>
+      'แก้จุดดำบนใบไม้ หญ้า และเส้นผมเมื่อเปิดแอนตี้เอเลียสของเกม (MSAA) ไม่มีค่าใช้จ่ายด้านประสิทธิภาพ มีผลทันที';
+
+  @override
+  String get labelMsaaShadowMaskFix => 'แก้ขอบสว่าง MSAA';
+
+  @override
+  String get tooltipMsaaShadowMaskFix =>
+      'ลบขอบสว่างรอบตัวละครและวัตถุที่อยู่ในเงาเมื่อเปิดแอนตี้เอเลียสของเกม (MSAA) ไม่มีค่าใช้จ่ายด้านประสิทธิภาพ มีผลทันที';
+
+  @override
+  String get labelConstantBufferDedup =>
+      'ข้ามพารามิเตอร์เชเดอร์ที่ไม่เปลี่ยนแปลง';
+
+  @override
+  String get tooltipConstantBufferDedup =>
+      'เพิ่มประสิทธิภาพ ทุกการวาดจะอ่านบล็อกพารามิเตอร์ขนาดเล็ก เช่น การแปลงตำแหน่ง ค่าวัสดุ และค่าแสง เกมต้นฉบับส่งทั้งหมดไปยังการ์ดจอใหม่ทุกเฟรม หลายพันครั้ง แม้เนื้อหาจะไม่เปลี่ยนเลย เกมต้นฉบับมีการเปรียบเทียบที่จะข้ามบล็อกที่ไม่เปลี่ยนแปลงอยู่แล้ว แต่ไม่เคยทำงานจริง ประมาณครึ่งหนึ่งของการอัปโหลดจึงไม่จำเป็น มีผลทันที';
+
+  @override
+  String get labelAoFadeFix => 'แก้ AO ทะลุกำแพง';
+
+  @override
+  String get tooltipAoFadeFix =>
+      'ป้องกันไม่ให้ Ambient Occlusion (AO) ทะลุกำแพงและกระโดดเมื่อโมเดลสลับ LOD ระหว่างการเฟด LOD เกมจะวาดทั้งสองเวอร์ชันแบบทึบลงในความลึกของ AO ทำให้เกิด AO บนสิ่งที่แทบมองไม่เห็น ตัวแก้นี้ข้ามการวาดเพิ่มนั้น การตั้งตัวคูณ LOD เป็น 0 ก็ซ่อนบั๊กได้เพราะไม่มีการสลับ LOD เลย ตัวแก้นี้แก้ที่ต้นเหตุและคง LOD ไว้ ไม่มีค่าใช้จ่าย มีผลทันที';
+
+  @override
+  String get labelHighGridsHiddenMeshes => 'เมชที่ซ่อน';
+
+  @override
+  String get tooltipHighGridsHiddenMeshes =>
+      'เมชตัวแทนความละเอียดต่ำที่จะซ่อนเมื่อโหลดครบจำนวนวง หาชื่อได้ด้วย Mesh Picker ใน YP Devkit Grid 0x0 ใช้กับทุกกริด';
+
+  @override
+  String get labelTextureHotReload => 'โหลดซ้ำอัตโนมัติ';
+
+  @override
+  String get tooltipTextureHotReload =>
+      'เฝ้าโฟลเดอร์เท็กเจอร์และใช้ .dds ที่แก้ขณะเกมทำงาน ขนาดเท่าเดิมมีผลทันที';
+
+  @override
+  String get gridRuleMesh => 'เมช';
+
+  @override
+  String get gridRuleFromRings => 'ตั้งแต่วง';
+
+  @override
+  String shadowBlurCascade(int n) {
+    return 'ชั้น $n';
+  }
+
+  @override
+  String get gridRuleRoom => 'ห้อง';
+
+  @override
+  String get gridRuleRings => 'วง';
+
+  @override
+  String get gridRuleGrid => 'กริด';
+
+  @override
+  String get gridRuleFromGrid => 'ยืนอยู่บน';
+
+  @override
+  String get gridRuleAdd => 'เพิ่มกฎ';
+
+  @override
+  String get gridRuleEmpty => 'ไม่มีกฎ - ทุกกริดโหลดตามปกติ';
+
+  @override
+  String highGridsCellCount(int rings, int cells) {
+    String _temp0 = intl.Intl.pluralLogic(
+      rings,
+      locale: localeName,
+      other: '$rings วง - $cells กริด',
+      one: '1 วง - 7 กริด (ต้นฉบับ)',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get lodModResetButton => 'รีเซ็ตเป็นค่าเริ่มต้น';
 
   @override
-  String get lodModResetConfirmTitle => 'รีเซ็ตการตั้งค่า LodMod หรือไม่?';
+  String get lodModResetConfirmTitle => 'รีเซ็ตการตั้งค่า LodMod Ext หรือไม่?';
 
   @override
   String get lodModResetConfirmBody =>
-      'การดำเนินการนี้จะรีเซ็ตทุกช่องของ LodMod ในแท็บนี้กลับเป็นค่าเริ่มต้น ค่าปัจจุบันจะถูกเขียนทับ ต้องการดำเนินการต่อหรือไม่?';
+      'การดำเนินการนี้จะรีเซ็ตทุกช่องของ LodMod Ext ในแท็บนี้กลับเป็นค่าเริ่มต้น ค่าปัจจุบันจะถูกเขียนทับ ต้องการดำเนินการต่อหรือไม่?';
 
   @override
   String get lodModResetConfirmAction => 'รีเซ็ต';
 
   @override
-  String get lodModResetToast => 'รีเซ็ตการตั้งค่า LodMod เป็นค่าเริ่มต้นแล้ว';
-
-  @override
-  String get experimentalWarningTitle =>
-      'อยู่ในขั้นทดลองและจะทำให้บางอย่างเสีย';
+  String get lodModResetToast =>
+      'รีเซ็ตการตั้งค่า LodMod Ext เป็นค่าเริ่มต้นแล้ว';
 
   @override
   String get experimentalWarningBody =>
-      'การตั้งค่าเหล่านี้ข้ามข้อจำกัดของเกมที่เอนจินต้องพึ่งพา ไม่ได้รับการรองรับและทราบว่าอาจทำให้เกิดปัญหา เปิดใช้เฉพาะเมื่อคุณเข้าใจสิ่งที่กำลังทำ NAMS และตัวเรียกใช้งานจะไม่ดีบักปัญหาที่เกิดจากตัวเลือกเหล่านี้';
+      'ตัวเลือกเหล่านี้อยู่ในขั้นทดลอง ควรคิดให้ดีก่อนใช้ในการเล่นรอบแรก เพื่อไม่ให้กระทบประสบการณ์ของคุณ';
 
   @override
   String get labelFpsUncapInMenus => 'ปลดล็อก FPS ในเมนู / หน้าจอโหลด';
 
   @override
   String get tooltipFpsUncapInMenus =>
-      'ปลดล็อกขีดจำกัด 60 FPS ระหว่างเมนูและหน้าจอโหลด ทำให้การโหลดรู้สึกเร็วขึ้นและแอนิเมชันเมนูลื่นขึ้น ปลอดภัย: เกมเพลย์ไม่ได้รับผลกระทบ\n\nสามารถเปิด/ปิดระหว่างเล่นได้หากเปิดไว้ตั้งแต่ตอนเริ่มเกม หากปิดไว้ตอนเริ่มเกม การเปิดภายหลังต้องรีสตาร์ต';
+      'ปลดล็อกขีดจำกัด 60 FPS ระหว่างเมนูและหน้าจอโหลด ทำให้การโหลดรู้สึกเร็วขึ้นและแอนิเมชันเมนูลื่นขึ้น ปลอดภัย: เกมเพลย์ไม่ได้รับผลกระทบ มีผลทันที';
 
   @override
   String get labelFpsUncapInGameplay => 'ปลดล็อก FPS ระหว่างเกมเพลย์';
 
   @override
   String get tooltipFpsUncapInGameplay =>
-      'ปลดล็อกขีดจำกัด 60 FPS ระหว่างเกมเพลย์ คำเตือน: ฟิสิกส์ แอนิเมชัน และจังหวะคัตซีนของ NieR:Automata ผูกกับขีดจำกัด 60 FPS การปลดล็อกอาจทำให้ฟิสิกส์ผิดปกติ (ความสูงการกระโดด, i-frame การหลบ), ความเร็วแอนิเมชันเปลี่ยน, เสียงคัตซีนไม่ตรง และเกิด softlock ในลำดับเหตุการณ์แบบสคริปต์ ใช้เฉพาะเมื่อคุณเข้าใจข้อแลกเปลี่ยนอย่างชัดเจน\n\nสามารถเปิด/ปิดระหว่างเล่นได้หากเปิดไว้ตั้งแต่ตอนเริ่มเกม หากปิดไว้ตอนเริ่มเกม การเปิดภายหลังต้องรีสตาร์ต';
+      'ปลดล็อกขีดจำกัด 60 FPS ระหว่างเกมเพลย์ คำเตือน: ฟิสิกส์ แอนิเมชัน และจังหวะคัตซีนของ NieR:Automata ผูกกับขีดจำกัด 60 FPS การปลดล็อกอาจทำให้ฟิสิกส์ผิดปกติ (ความสูงการกระโดด, i-frame การหลบ), ความเร็วแอนิเมชันเปลี่ยน, เสียงคัตซีนไม่ตรง และเกิด softlock ในลำดับเหตุการณ์แบบสคริปต์ ใช้เฉพาะเมื่อคุณเข้าใจข้อแลกเปลี่ยนอย่างชัดเจน มีผลทันที';
 
   @override
   String get labelFpsLimit => 'จำกัด FPS';
 
   @override
+  String get labelFpsCapInHacking => 'จำกัดเดิมขณะแฮ็ก';
+
+  @override
+  String get tooltipFpsCapInHacking =>
+      'กลับไปใช้ขีดจำกัด 60 FPS เดิมระหว่างมินิเกมแฮ็ก แม้เปิดปลดล็อกในเกมเพลย์ จังหวะของมินิเกมอิง 60 FPS มีผลทันที';
+
+  @override
+  String get labelFpsCapInEvents => 'จำกัดเดิมในอีเวนต์';
+
+  @override
+  String get tooltipFpsCapInEvents =>
+      'กลับไปใช้ขีดจำกัด 60 FPS เดิมระหว่างคัตซีน อีเวนต์ ภาพยนตร์ หรือคำบรรยาย สคริปต์อีเวนต์อิง 60 FPS ไม่งั้นอาจค้าง มีผลทันที';
+
+  @override
   String get tooltipFpsLimit =>
-      'ขีดจำกัด FPS ที่ใช้เมื่อเปิดการปลดล็อก 0 = ไม่จำกัด มิฉะนั้น 60-1000 (NAMS จะปรับค่าที่อยู่นอกช่วง) ค่าต่ำกว่า 60 จะถูกปรับขึ้น เพราะ spin-wait loop ภายในเกมไม่รองรับ frametime ที่ยาวกว่าเป้าหมายวานิลลา 60 FPS เคล็ดลับ: จำกัดที่ครึ่งหนึ่งของรีเฟรชเรตจอจะให้การเคลื่อนไหวลื่นกว่าวานิลลา 60 เช่น 72 บน 144Hz, 82 บน 165Hz, 120 บน 240Hz';
+      'ขีดจำกัด FPS ที่ใช้เมื่อเปิดการปลดล็อก 0 = ไม่จำกัด มิฉะนั้น 1-1000 (NAMS จะปรับค่าที่อยู่นอกช่วง) 30 ให้ frametime เดียวกับโหมด 30 FPS ของเกมเอง เมื่อเปิดการปลดล็อก การรอเป็นแบบ busy-wait ยิ่งตั้งค่าต่ำ ซีพียูหนึ่งคอร์ก็ยิ่งหมุนรอนานขึ้นในแต่ละเฟรม เคล็ดลับ: จำกัดที่ครึ่งหนึ่งของรีเฟรชเรตจอจะให้การเคลื่อนไหวลื่นกว่าวานิลลา 60 เช่น 72 บน 144Hz, 82 บน 165Hz, 120 บน 240Hz';
 
   @override
   String get tutorialValidateModel =>
@@ -2836,6 +3610,12 @@ class AppLocalizationsTh extends AppLocalizations {
   String get comparison8192 => '8192';
 
   @override
+  String get comparisonCubemaps16 => '16 cubemaps';
+
+  @override
+  String get comparisonCubemaps128 => '128 cubemaps';
+
+  @override
   String get comparisonDefault => 'ค่าเริ่มต้น';
 
   @override
@@ -2849,6 +3629,27 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get comparisonOff => 'ปิด';
+
+  @override
+  String get comparisonOn => 'เปิด';
+
+  @override
+  String get comparisonBloom2021 => '2021';
+
+  @override
+  String get comparisonBloom2017 => '2017';
+
+  @override
+  String get comparisonHighGrids7 => '7 กริด (ต้นฉบับ)';
+
+  @override
+  String get comparisonHighGrids61 => '61 กริด (4 วง)';
+
+  @override
+  String get comparisonCascades4 => '4 cascade (ต้นฉบับ)';
+
+  @override
+  String get comparisonCascades8 => '8 cascade';
 
   @override
   String get comparison30 => '3.0';
@@ -2968,11 +3769,11 @@ class AppLocalizationsTh extends AppLocalizations {
   String get tooltipSound => 'เสียงตอบสนองของ UI เวิร์กสเปซ';
 
   @override
-  String get labelImpeller => 'ตัวเรนเดอร์ Impeller';
+  String get labelImpeller => 'ตัวเรนเดอร์ Impeller (ทดลอง)';
 
   @override
   String get tooltipImpeller =>
-      'เรนเดอร์โอเวอร์เลย์ด้วยตัวเรนเดอร์ Impeller ของ Flutter แทน Skia เปิดใช้งานโดยค่าเริ่มต้น ปิดหากโอเวอร์เลย์แสดงผลผิดเพี้ยนหรือไม่ปรากฏบน GPU ของคุณ มีผลเมื่อเริ่มเกมครั้งถัดไป';
+      'เรนเดอร์โอเวอร์เลย์ด้วยตัวเรนเดอร์ Impeller ของ Flutter แทน Skia ปิดไว้โดยค่าเริ่มต้น เพราะผู้ใช้หลายคนพบการแครช ลองเปิดดู และหากเกมทำงานได้เสถียรก็เปิดไว้เพื่อให้โอเวอร์เลย์เปิดเร็วขึ้นเมื่อกด F1 เมื่อเปิดใช้งาน ภาพในโอเวอร์เลย์จะไม่แสดง ยกเว้นการ์ดแผนที่โลก มีผลเมื่อเริ่มเกมครั้งถัดไป';
 
   @override
   String get labelDamageMultiplier => 'ตัวคูณความเสียหาย';
@@ -3101,6 +3902,13 @@ class AppLocalizationsTh extends AppLocalizations {
   @override
   String get tooltipThirdPersonCharFollow =>
       'คงการติดตามกล้องอัตโนมัติของเกมระหว่างเคลื่อนไหว เหมือนใช้คอนโทรลเลอร์';
+
+  @override
+  String get labelThirdPersonSmoothing => 'ความนุ่มนวลของกล้อง';
+
+  @override
+  String get tooltipThirdPersonSmoothing =>
+      'ระดับที่กล้องค่อยๆ ตามเมาส์ 0 = ตามทันที 1 = ความนุ่มนวลของเกมเอง';
 
   @override
   String get labelThirdPersonSensX => 'ความไวแนวนอน';
@@ -4694,4 +5502,531 @@ class AppLocalizationsTh extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get weaponConvertTitle => 'ตัวแปลงอาวุธ';
+
+  @override
+  String get weaponConvertDesc =>
+      'ลากม็อดอาวุธที่ดาวน์โหลดมาวาง โดยปกติมันจะเขียนทับอาวุธต้นฉบับ แต่ตัวเปิดเกมจะย้ายไปช่องว่างแทน จึงไม่มีอะไรถูกแทนที่';
+
+  @override
+  String get weaponConvertDropTitle => 'ลากม็อดอาวุธมาวาง';
+
+  @override
+  String get weaponConvertDropHint =>
+      'ลาก .dat หรือ .dtt มาที่นี่ หรือคลิกเพื่อเลือก ทั้งสองไฟล์ต้องอยู่โฟลเดอร์เดียวกัน';
+
+  @override
+  String get weaponConvertDropInvalid =>
+      'นี่ไม่ใช่ไฟล์อาวุธ ต้องเป็นแบบ wp0003.dat';
+
+  @override
+  String get weaponConvertNeedsBothFiles =>
+      'ไฟล์ .dat และ .dtt ต้องอยู่ในโฟลเดอร์เดียวกัน';
+
+  @override
+  String get weaponConvertDetected =>
+      'อ่านประเภทอาวุธจากชื่อไฟล์แล้ว ช่องใหม่จะคงประเภทเดิมไว้ เพราะท่าทางมาพร้อมกัน';
+
+  @override
+  String get weaponConvertNextSlot => 'ช่องอื่น';
+
+  @override
+  String get weaponConvertRun => 'ย้ายไปช่องว่าง';
+
+  @override
+  String weaponConvertDone(String stem) {
+    return 'เขียนเป็น $stem แล้ว';
+  }
+
+  @override
+  String weaponConvertNextStep(String objId) {
+    return 'โมเดลพร้อมแล้ว หากต้องการให้เป็นอาวุธของตัวเอง ให้สร้างอาวุธที่มี obj_id $objId ด้วยตัวสร้างด้านบน';
+  }
+
+  @override
+  String get weaponPreviewFailed =>
+      'ไม่สามารถแสดงโมเดลนี้ที่นี่ได้ แต่การแปลงยังทำงานได้ตามปกติ';
+
+  @override
+  String get weaponBuilderTitle => 'ตัวสร้างอาวุธ';
+
+  @override
+  String get weaponBuilderDesc =>
+      'กรอกชื่อและค่าความเสียหาย ตัวเปิดเกมจะเลือกช่องอาวุธที่ว่างและเขียนไฟล์ให้';
+
+  @override
+  String get weaponBuilderDropTitle => 'ลากโมเดลอาวุธของคุณมาวาง';
+
+  @override
+  String get weaponBuilderDropHint => 'ไฟล์ .dat / .dtt คู่ของอาวุธคุณ';
+
+  @override
+  String get weaponBuilderNeedsModel => 'ลากโมเดลอาวุธของคุณเข้ามาก่อน';
+
+  @override
+  String get weaponBuilderModelReady =>
+      'จะกลายเป็นอาวุธของตัวเอง จึงไม่เขียนทับอะไร';
+
+  @override
+  String get weaponBuilderName => 'ชื่ออาวุธ';
+
+  @override
+  String get weaponBuilderNameHint => 'แสดงในกระเป๋า เช่น ดาบแห่งคุณธรรม';
+
+  @override
+  String get weaponBuilderDescription => 'คำอธิบาย';
+
+  @override
+  String get weaponBuilderDescriptionHint => 'แสดงตอนผู้เล่นดูอาวุธ';
+
+  @override
+  String get weaponBuilderType => 'ประเภทอาวุธ';
+
+  @override
+  String get weaponTypeSmallSword => 'ดาบสั้น';
+
+  @override
+  String get weaponTypeLargeSword => 'ดาบใหญ่';
+
+  @override
+  String get weaponTypeSpear => 'หอก';
+
+  @override
+  String get weaponTypeCombatBracer => 'อาวุธประชิด';
+
+  @override
+  String get weaponBuilderLevels => 'ระดับการอัปเกรด';
+
+  @override
+  String get weaponBuilderAddLevel => 'เพิ่มระดับ';
+
+  @override
+  String weaponBuilderLevelNumber(int n) {
+    return 'ระดับ $n';
+  }
+
+  @override
+  String get weaponBuilderDamage => 'ความเสียหาย';
+
+  @override
+  String get weaponBuilderItemId => 'หมายเลขในกระเป๋า';
+
+  @override
+  String get weaponBuilderObjId => 'หมายเลขอาวุธ';
+
+  @override
+  String get weaponBuilderObjIdHint =>
+      'ตัวเลขทั้งสองมาจากชื่อโฟลเดอร์ม็อด ชื่อต่างกันจะได้หมายเลขอาวุธต่างกัน ม็อดที่คุณปล่อยจึงไม่ชนกับของคนอื่น หากต้องการหมายเลขอื่นให้เปลี่ยนชื่อโฟลเดอร์';
+
+  @override
+  String get weaponBuilderNeedsGameDir =>
+      'เลือกโฟลเดอร์ NieR:Automata ของคุณก่อน';
+
+  @override
+  String get weaponBuilderNeedsName => 'ตั้งชื่อให้อาวุธก่อน';
+
+  @override
+  String get weaponBuilderNoFreeSlot =>
+      'ไม่มีช่องโมเดลว่างสำหรับอาวุธประเภทนี้แล้ว';
+
+  @override
+  String get weaponBuilderCreate => 'สร้างอาวุธ';
+
+  @override
+  String get weaponBuilderEffects => 'เอฟเฟกต์พิเศษ';
+
+  @override
+  String get weaponBuilderAddEffect => 'เพิ่มเอฟเฟกต์';
+
+  @override
+  String get weaponBuilderEffectsHint =>
+      'ไม่บังคับ เอฟเฟกต์จะเปลี่ยนการเล่นขณะสวมอาวุธนี้ - ความเสียหาย ความเร็ว การหลบ ภูมิคุ้มกัน';
+
+  @override
+  String get weaponBuilderTrailNormal => 'รอยโจมตี';
+
+  @override
+  String get weaponBuilderTrailBerserk => 'รอยโจมตี (Berserk)';
+
+  @override
+  String get weaponBuilderTrailHint =>
+      'เอฟเฟกต์ใดก็ได้ตั้งแต่ 0 ถึง 665 ช่วง 590-641 คือรอยของอาวุธ ค่าอื่นให้เอฟเฟกต์อื่นในเกม ส่วน 435 และ 436 ทำให้เกมค้างจึงถูกข้าม';
+
+  @override
+  String get weaponBuilderEffectWhen => 'เฉพาะ';
+
+  @override
+  String get weaponBuilderEffectWhenAny => 'ทุกคน';
+
+  @override
+  String get weaponBuilderEffectOn => 'เปิดใช้งาน';
+
+  @override
+  String get weaponBuilderIcon => 'ไอคอนในคลังไอเทม';
+
+  @override
+  String get weaponBuilderIconHint => 'แสดงในคลังไอเทมและในร้านค้า';
+
+  @override
+  String get weaponBuilderStoryIcon => 'ภาพประกอบเรื่องราว';
+
+  @override
+  String get weaponBuilderStoryIconHint => 'แสดงข้างข้อความเรื่องราวของอาวุธ';
+
+  @override
+  String get weaponBuilderDetails => 'ข้อความในเมนู';
+
+  @override
+  String get weaponBuilderHelpShort => 'คำอธิบายสั้น';
+
+  @override
+  String get weaponBuilderHelpShortHint =>
+      'หนึ่งบรรทัด สำหรับพื้นที่เมนูที่จำกัด';
+
+  @override
+  String get weaponBuilderStory => 'เรื่องราวของอาวุธ';
+
+  @override
+  String get weaponBuilderStoryHint => 'ข้อความเรื่องราวที่แสดงในหน้าอาวุธ';
+
+  @override
+  String weaponBuilderSkillName(int n) {
+    return 'ชื่อสกิล $n';
+  }
+
+  @override
+  String weaponBuilderSkillDesc(int n) {
+    return 'ผลของสกิล $n';
+  }
+
+  @override
+  String get weaponBuilderSkillNameHint => 'เว้นว่างไว้หากอาวุธไม่มีสกิล';
+
+  @override
+  String get weaponBuilderSkillDescHint => 'สกิลนี้ทำอะไร';
+
+  @override
+  String get weaponBuilderTraitId => 'คุณลักษณะ';
+
+  @override
+  String get weaponBuilderTraitNone => 'ไม่มี';
+
+  @override
+  String get weaponBuilderUpgrades => 'ค่าอัปเกรด';
+
+  @override
+  String get weaponBuilderAddUpgrade => 'เพิ่มการอัปเกรด';
+
+  @override
+  String weaponBuilderUpgradeLevel(int n) {
+    return 'เป็นระดับ $n';
+  }
+
+  @override
+  String get weaponBuilderUpgradeCost => 'ค่าใช้จ่าย';
+
+  @override
+  String get weaponBuilderUpgradeHint =>
+      'หากไม่มีรายการอัปเกรด อาวุธจะอัปเกรดที่ช่างตีเหล็กไม่ได้';
+
+  @override
+  String get outfitBuilderTitle => 'ตัวสร้างชุด';
+
+  @override
+  String get outfitBuilderDesc =>
+      'ลากโมเดลตัวละครเข้ามา เลือกว่าเมชไหนแสดงในสถานะไหน แล้วตัวเปิดเกมจะเขียนไฟล์ชุดและไอเทมให้';
+
+  @override
+  String get outfitBuilderDropTitle => 'ลากโมเดลตัวละครมาวาง';
+
+  @override
+  String get outfitBuilderDropHint =>
+      'ลากไฟล์ .dat หรือ .dtt มาวางที่นี่ หรือคลิกเพื่อเลือก';
+
+  @override
+  String get outfitBuilderDropInvalid => 'นี่ไม่ใช่ไฟล์ .dat หรือ .dtt';
+
+  @override
+  String get outfitBuilderDropUnknownModel =>
+      'นี่ไม่ใช่โมเดลตัวละครที่รู้จัก ต้องเป็น pl0000, pl000d (2B), pl0200, pl020d (9S), pl0100 หรือ pl010d (A2)';
+
+  @override
+  String get outfitBuilderCharacterDetected =>
+      'อ่านตัวละครจากไฟล์โมเดลแล้ว ถ้าต้องการเปลี่ยน ให้ลากโมเดลอื่นเข้ามา';
+
+  @override
+  String get outfitBuilderNoModelInArchive => 'ไม่พบโมเดลในไฟล์นี้';
+
+  @override
+  String outfitBuilderMeshesInModel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count เมชในโมเดลนี้',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get outfitBuilderAcquisitionTitle => 'ผู้เล่นจะได้มาอย่างไร';
+
+  @override
+  String get outfitBuilderAutoGive => 'ใส่เข้ากระเป๋าเลย';
+
+  @override
+  String get outfitBuilderAutoGiveHint =>
+      'เพิ่มให้ตอนโหลดเซฟ จึงมีอยู่แล้วโดยไม่ต้องตามหา';
+
+  @override
+  String get outfitBuilderInShop => 'ขายในร้านค้า';
+
+  @override
+  String get outfitBuilderInShopHint =>
+      'เขียนรายการร้านค้าเพื่อให้ผู้เล่นซื้อได้';
+
+  @override
+  String get outfitBuilderShopName => 'ร้านค้า';
+
+  @override
+  String get shopStateRouteABeforeRuinsCollapse =>
+      'เส้นทาง A ก่อนเมืองร้างถล่ม';
+
+  @override
+  String get shopStateRouteAAfterRuinsCollapse => 'เส้นทาง A หลังเมืองร้างถล่ม';
+
+  @override
+  String get shopStateRouteBBeforeRuinsCollapse =>
+      'เส้นทาง B ก่อนเมืองร้างถล่ม';
+
+  @override
+  String get shopStateRouteBAfterRuinsCollapse => 'เส้นทาง B หลังเมืองร้างถล่ม';
+
+  @override
+  String get shopStateRouteC => 'เส้นทาง C/D หรือผ่านตอนจบ A และ B แล้ว';
+
+  @override
+  String get shopStateEndingCOrD => 'ผ่านตอนจบ C หรือ D แล้ว';
+
+  @override
+  String get shopStateEndingCAndD => 'ผ่านตอนจบทั้ง C และ D แล้ว';
+
+  @override
+  String get outfitBuilderShopStateAll => 'ทั้งหมด';
+
+  @override
+  String get outfitBuilderShopState => 'ช่วงเนื้อเรื่อง';
+
+  @override
+  String get outfitBuilderShopStateHint =>
+      'ร้านเริ่มขายตั้งแต่ช่วงไหนของเนื้อเรื่อง 0 คือตอนเริ่ม';
+
+  @override
+  String get outfitBuilderBuyPrice => 'ราคา';
+
+  @override
+  String get outfitMeshMore => 'ตัวเลือก';
+
+  @override
+  String get outfitMeshPreviewToggle => 'ซ่อนหรือแสดงเมชนี้เฉพาะในภาพตัวอย่าง';
+
+  @override
+  String get logWrapOn => 'ตัดขึ้นบรรทัดใหม่';
+
+  @override
+  String get logWrapOff => 'ตัดบรรทัดยาวทิ้ง';
+
+  @override
+  String get outfitMeshAlways => 'แสดงตลอด';
+
+  @override
+  String get outfitMeshCombatOnly => 'เฉพาะตอนต่อสู้';
+
+  @override
+  String get outfitMeshOutOfCombatOnly => 'เฉพาะตอนไม่ได้ต่อสู้';
+
+  @override
+  String get outfitMeshEyemaskOnly => 'เฉพาะตอนใส่ผ้าปิดตา';
+
+  @override
+  String get outfitMeshNoEyemaskOnly => 'เฉพาะตอนไม่ใส่ผ้าปิดตา';
+
+  @override
+  String get outfitMeshFeatherOnly => 'เฉพาะตอนยังไม่เสียหาย';
+
+  @override
+  String get outfitMeshBrokenOnly => 'เฉพาะตอนเสียหาย';
+
+  @override
+  String get outfitMeshNever => 'ไม่แสดงเลย';
+
+  @override
+  String get outfitMeshHideOnSelfDestruct => 'หายไปหลังทำลายตัวเอง';
+
+  @override
+  String get outfitMeshHairsprayTint => 'ถูกสเปรย์ผมย้อมสี';
+
+  @override
+  String get outfitMeshReplacedByWig => 'ถูกแทนที่ด้วยวิก';
+
+  @override
+  String get outfitBuilderName => 'ชื่อชุด';
+
+  @override
+  String get outfitBuilderNameHint => 'แสดงในตู้เสื้อผ้า เช่น ชุดดำ';
+
+  @override
+  String get outfitBuilderDescription => 'คำอธิบายไอเทม';
+
+  @override
+  String get outfitBuilderDescriptionHint => 'แสดงตอนผู้เล่นดูไอเทม';
+
+  @override
+  String get outfitBuilderModId => 'โฟลเดอร์ม็อด';
+
+  @override
+  String get outfitBuilderOutfitId => 'ไอดีชุด';
+
+  @override
+  String get outfitBuilderItemId => 'ไอดีไอเทม';
+
+  @override
+  String get outfitBuilderIdHint =>
+      'ไอดีทั้งสองถูกเลือกให้อัตโนมัติ เปลี่ยนเฉพาะเมื่อคุณต้องการเลขที่เจาะจง';
+
+  @override
+  String get outfitBuilderIdTaken => 'ไอดีชุดนี้ถูกใช้กับตัวละครนี้ไปแล้ว';
+
+  @override
+  String get outfitBuilderCopyModel => 'คัดลอกโมเดลเข้าไปในม็อด';
+
+  @override
+  String get outfitBuilderCopyModelHint =>
+      'วางไฟล์ .dat และ .dtt ไว้ใน data/pl/ เพื่อให้ม็อดทำงานได้ด้วยตัวเอง';
+
+  @override
+  String get outfitBuilderNeedsGameDir =>
+      'เลือกโฟลเดอร์ NieR:Automata ของคุณก่อน';
+
+  @override
+  String get outfitBuilderNeedsName => 'ตั้งชื่อให้ชุดก่อน';
+
+  @override
+  String get outfitBuilderNeedsModel => 'ลากโมเดลตัวละครเข้ามาก่อน';
+
+  @override
+  String get outfitBuilderCreate => 'สร้างชุด';
+
+  @override
+  String outfitBuilderCreated(String path) {
+    return 'สร้างแล้ว: $path';
+  }
+
+  @override
+  String get outfitBuilderOpenFolder => 'เปิดโฟลเดอร์';
+
+  @override
+  String get outfitBuilderPreview => 'จะถูกเขียนเป็น';
+
+  @override
+  String get outfitStateBase => 'พื้นฐาน';
+
+  @override
+  String get outfitStateBaseHint =>
+      'เมชที่แสดงในสถานะปกติ เมื่อคุณติ๊กอะไรก็ตาม ทุกอย่างจะถูกซ่อนก่อน แล้วแสดงเฉพาะที่คุณเลือก';
+
+  @override
+  String get outfitStateCombat => 'ระหว่างต่อสู้';
+
+  @override
+  String get outfitStateCombatHint =>
+      'แสดงตอนต่อสู้ เพิ่มจากชุดพื้นฐาน ต้นฉบับใส่หน้าตอนต่อสู้ไว้ตรงนี้';
+
+  @override
+  String get outfitStateNonCombat => 'นอกการต่อสู้';
+
+  @override
+  String get outfitStateNonCombatHint =>
+      'แสดงตอนไม่ได้ต่อสู้ ต้นฉบับใส่หน้าปกติไว้ตรงนี้';
+
+  @override
+  String get outfitStateEyemask => 'ใส่ผ้าปิดตา';
+
+  @override
+  String get outfitStateEyemaskHint =>
+      'แสดงตอนใส่ผ้าปิดตา ต้นฉบับใส่เมช Eyemask ไว้ตรงนี้';
+
+  @override
+  String get outfitStateNonEyemask => 'ถอดผ้าปิดตา';
+
+  @override
+  String get outfitStateNonEyemaskHint =>
+      'แสดงตอนถอดผ้าปิดตา เช่น ตอนใส่แว่นพราง ต้นฉบับใส่ขนตาไว้ตรงนี้';
+
+  @override
+  String get outfitStateSelfDestructShow => 'ทำลายตัวเองแล้วแสดง';
+
+  @override
+  String get outfitStateSelfDestructShowHint => 'แสดงหลังตัวละครทำลายตัวเอง';
+
+  @override
+  String get outfitStateSelfDestructHide => 'ทำลายตัวเองแล้วซ่อน';
+
+  @override
+  String get outfitStateSelfDestructHideHint =>
+      'ซ่อนหลังตัวละครทำลายตัวเอง ต้นฉบับซ่อนกระโปรงไว้ตรงนี้';
+
+  @override
+  String get outfitStateBroken => 'ซ่อนขนนก';
+
+  @override
+  String get outfitStateBrokenHint =>
+      'แสดงตอนที่ขนนกไม่ถูกวาด นี่เป็นคนละสถานะกับการทำลายตัวเอง';
+
+  @override
+  String get outfitStateNonBroken => 'แสดงขนนก';
+
+  @override
+  String get outfitStateNonBrokenHint =>
+      'แสดงตอนที่ขนนกถูกวาด ซึ่งเป็นกรณีปกติ';
+
+  @override
+  String get outfitStateWig => 'วิก';
+
+  @override
+  String get outfitStateWigHint =>
+      'เมชที่วิกวาดแทนตัว จะถูกซ่อนตอนใส่วิก ต้นฉบับใส่ Hair ไว้ตรงนี้';
+
+  @override
+  String get outfitStateHairspray => 'สีจากสเปรย์ผม';
+
+  @override
+  String get outfitStateHairsprayHint =>
+      'เมชที่สเปรย์ผมย้อมสี จะถูกเปลี่ยนสีเท่านั้น ไม่ได้ซ่อนหรือแสดง ปล่อยว่างเพื่อใช้ Hair';
+
+  @override
+  String get outfitStatePrologue => 'บทนำ';
+
+  @override
+  String get outfitStatePrologueHint =>
+      'แทนที่ชุดพื้นฐานในบทนำ ตอน 9S เสียหายหนัก';
+
+  @override
+  String get outfitStateHoly => 'เต็มไปด้วยรู';
+
+  @override
+  String get outfitStateHolyHint => 'แทนที่ชุดพื้นฐานตอน 9S เต็มไปด้วยรู';
+
+  @override
+  String get outfitStateNoRight => 'ไม่มีแขนขวา';
+
+  @override
+  String get outfitStateNoRightHint => 'แทนที่ชุดพื้นฐานหลัง 9S เสียแขนขวา';
+
+  @override
+  String get outfitStateTower => 'หอคอย';
+
+  @override
+  String get outfitStateTowerHint => 'แทนที่ชุดพื้นฐานในหอคอย';
 }

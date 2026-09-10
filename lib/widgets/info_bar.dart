@@ -49,39 +49,39 @@ class InfoBar extends ConsumerWidget {
       alignment: WrapAlignment.end,
       crossAxisAlignment: WrapCrossAlignment.center,
       children: [
+        _InfoBarButton(
+          label: l10n.infoBarLogs,
+          tooltip: l10n.tooltipOpenLogs,
+          onTap: () {
+            ref.read(logPanelOpenProvider.notifier).state = true;
+            ref.read(logStateControllerProvider.notifier).loadLogs();
+          },
+        ),
+        if (PlatformGate.isWindows)
           _InfoBarButton(
-            label: l10n.infoBarLogs,
-            tooltip: l10n.tooltipOpenLogs,
-            onTap: () {
-              ref.read(logPanelOpenProvider.notifier).state = true;
-              ref.read(logStateControllerProvider.notifier).loadLogs();
+            label: l10n.infoBarShortcut,
+            tooltip: l10n.tooltipCreateShortcut,
+            onTap: () async {
+              final success = await ShortcutService.createDesktopShortcut(
+                gameDirectory: gameDir,
+              );
+              final notifier = ref.read(
+                notificationStateControllerProvider.notifier,
+              );
+              notifier.addNotification(
+                NotificationItem(
+                  id: 'shortcut_${DateTime.now().millisecondsSinceEpoch}',
+                  message: (l10n) => success
+                      ? l10n.notifyShortcutCreated
+                      : l10n.notifyShortcutFailed,
+                  icon: success ? Icons.check_circle : Icons.error_outline,
+                  color: success ? AppColors.success : AppColors.error,
+                  type: NotificationType.shortcut,
+                ),
+              );
             },
           ),
-          if (PlatformGate.isWindows)
-            _InfoBarButton(
-              label: l10n.infoBarShortcut,
-              tooltip: l10n.tooltipCreateShortcut,
-              onTap: () async {
-                final success = await ShortcutService.createDesktopShortcut(
-                  gameDirectory: gameDir,
-                );
-                final notifier = ref.read(
-                  notificationStateControllerProvider.notifier,
-                );
-                notifier.addNotification(
-                  NotificationItem(
-                    id: 'shortcut_${DateTime.now().millisecondsSinceEpoch}',
-                    message: (l10n) => success
-                        ? l10n.notifyShortcutCreated
-                        : l10n.notifyShortcutFailed,
-                    icon: success ? Icons.check_circle : Icons.error_outline,
-                    color: success ? AppColors.success : AppColors.error,
-                    type: NotificationType.shortcut,
-                  ),
-                );
-              },
-            ),
-        ],
+      ],
     );
 
     return Container(
@@ -295,15 +295,24 @@ class _DetectionChipState extends ConsumerState<DetectionChip> {
         _apply(_DetectionResult(detected: enabled, kind: 'lodmod'));
       case 'reshade':
         final status = await ReShadeDetection.detectReShade(widget.gameDir);
-        _apply(_DetectionResult(
-          detected: status == ReShadeStatus.detected,
-          kind: 'reshade',
-        ));
+        _apply(
+          _DetectionResult(
+            detected: status == ReShadeStatus.detected,
+            kind: 'reshade',
+          ),
+        );
       case 'textures':
-        final injectDirPath =
-            path.join(widget.gameDir, 'nams', 'inject', 'textures');
-        final textureTomlPath =
-            path.join(widget.gameDir, 'nams', 'texture_injection.toml');
+        final injectDirPath = path.join(
+          widget.gameDir,
+          'nams',
+          'inject',
+          'textures',
+        );
+        final textureTomlPath = path.join(
+          widget.gameDir,
+          'nams',
+          'texture_injection.toml',
+        );
         final skRes = Directory(path.join(widget.gameDir, 'SK_Res'));
         final count = await IsolateService.run(
           _countActiveTexturesSync,
@@ -313,46 +322,51 @@ class _DetectionChipState extends ConsumerState<DetectionChip> {
           ),
         );
         final hasSkRes = await skRes.exists();
-        _apply(_DetectionResult(
-          detected: count > 0 || hasSkRes,
-          kind: 'textures',
-          count: count,
-          flag: hasSkRes,
-        ));
+        _apply(
+          _DetectionResult(
+            detected: count > 0 || hasSkRes,
+            kind: 'textures',
+            count: count,
+            flag: hasSkRes,
+          ),
+        );
       case 'mods':
         final modsDirPath = path.join(widget.gameDir, 'nams', 'mods');
         final count = await IsolateService.run(
           _countEntriesSync,
           _CountParams(dirPath: modsDirPath, dirsOnly: true),
         );
-        _apply(_DetectionResult(
-          detected: count > 0,
-          kind: 'mods',
-          count: count,
-        ));
+        _apply(
+          _DetectionResult(detected: count > 0, kind: 'mods', count: count),
+        );
       case 'cutscene':
         final result = await CutsceneDetectionService.scan(widget.gameDir);
         final has = result.filesScanned > 0 && result.hasHdCutscenes;
-        _apply(_DetectionResult(
-          detected: has,
-          kind: 'cutscene',
-          count: result.largestWidth,
-          count2: result.largestHeight,
-          flag: result.needsH264,
-        ));
+        _apply(
+          _DetectionResult(
+            detected: has,
+            kind: 'cutscene',
+            count: result.largestWidth,
+            count2: result.largestHeight,
+            flag: result.needsH264,
+          ),
+        );
       case 'dlc':
         final has = await GameDetection.hasDlc(widget.gameDir);
         _apply(_DetectionResult(detected: has, kind: 'dlc'));
       case 'exe':
         final variant = await GameDetection.detectExeVariant(widget.gameDir);
-        _apply(_DetectionResult(
-          detected: variant != ExeVariant.missing &&
-              variant != ExeVariant.unknown,
-          warning: variant == ExeVariant.wolfLimitBreak ||
-              variant == ExeVariant.legacyWindows7,
-          kind: 'exe',
-          variant: variant,
-        ));
+        _apply(
+          _DetectionResult(
+            detected:
+                variant != ExeVariant.missing && variant != ExeVariant.unknown,
+            warning:
+                variant == ExeVariant.wolfLimitBreak ||
+                variant == ExeVariant.legacyWindows7,
+            kind: 'exe',
+            variant: variant,
+          ),
+        );
     }
   }
 
@@ -445,9 +459,7 @@ class _DetectionChipState extends ConsumerState<DetectionChip> {
         : (result.detected ? AppColors.success : AppColors.textMuted);
     final icon = result.warning
         ? Icons.warning_amber_rounded
-        : (result.detected
-            ? Icons.check_circle
-            : Icons.remove_circle_outline);
+        : (result.detected ? Icons.check_circle : Icons.remove_circle_outline);
     final typeIcon = _typeIcon(widget.type);
 
     if (widget.iconOnly) {
@@ -467,13 +479,7 @@ class _DetectionChipState extends ConsumerState<DetectionChip> {
           ),
           child: Stack(
             children: [
-              Center(
-                child: Icon(
-                  typeIcon,
-                  size: 18,
-                  color: color,
-                ),
-              ),
+              Center(child: Icon(typeIcon, size: 18, color: color)),
               Positioned(
                 right: 2,
                 bottom: 2,
@@ -484,11 +490,7 @@ class _DetectionChipState extends ConsumerState<DetectionChip> {
                     color: AppColors.backgroundCard,
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
-                    icon,
-                    size: 10,
-                    color: color,
-                  ),
+                  child: Icon(icon, size: 10, color: color),
                 ),
               ),
             ],
@@ -500,11 +502,7 @@ class _DetectionChipState extends ConsumerState<DetectionChip> {
     final row = Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(
-          icon,
-          size: AppSizes.iconSM(context),
-          color: color,
-        ),
+        Icon(icon, size: AppSizes.iconSM(context), color: color),
         SizedBox(width: AppSizes.spacingSM(context)),
         Text(
           label,
@@ -716,4 +714,3 @@ int _countActiveTexturesSync(_ActiveTextureCountParams params) {
   }
   return count;
 }
-

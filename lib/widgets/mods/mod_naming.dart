@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:yp_launcher/widgets/app_dialog.dart';
 import 'package:flutter/services.dart';
 import 'package:yp_launcher/l10n/app_localizations.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
@@ -25,7 +26,7 @@ Future<String?> showModNamingDialog(
   return showDialog<String>(
     context: context,
     builder: (ctx) {
-      return AlertDialog(
+      return AppDialog(
         backgroundColor: AppColors.backgroundCard,
         title: Text(
           title ?? l10n.modInstallNeedsName,
@@ -56,9 +57,7 @@ Future<String?> showModNamingDialog(
                 autofocus: true,
                 maxLength: 64,
                 inputFormatters: [
-                  FilteringTextInputFormatter.allow(
-                    RegExp(r'[a-zA-Z0-9 _-]'),
-                  ),
+                  FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9 _-]')),
                 ],
                 style: TextStyle(
                   color: AppColors.textPrimary,
@@ -76,9 +75,8 @@ Future<String?> showModNamingDialog(
                     borderSide: BorderSide.none,
                   ),
                 ),
-                onSubmitted: (v) => Navigator.of(ctx).pop(
-                  v.trim().isEmpty ? null : v.trim(),
-                ),
+                onSubmitted: (v) =>
+                    Navigator.of(ctx).pop(v.trim().isEmpty ? null : v.trim()),
               ),
             ],
           ),

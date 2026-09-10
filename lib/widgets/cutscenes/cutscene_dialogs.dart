@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:yp_launcher/widgets/app_dialog.dart';
 import 'package:yp_launcher/l10n/app_localizations.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
@@ -129,7 +130,7 @@ Future<String?> showCutsceneNamingDialog(
   final controller = TextEditingController(text: truncated);
   return showDialog<String>(
     context: context,
-    builder: (ctx) => AlertDialog(
+    builder: (ctx) => AppDialog(
       backgroundColor: AppColors.backgroundCard,
       title: Text(
         AppLocalizations.of(ctx)!.cutsceneNamingTitle,
@@ -213,7 +214,7 @@ Future<bool> showDeleteCutsceneConfirmDialog(
 ) async {
   final result = await showDialog<bool>(
     context: context,
-    builder: (ctx) => AlertDialog(
+    builder: (ctx) => AppDialog(
       backgroundColor: AppColors.backgroundCard,
       title: Text(
         AppLocalizations.of(ctx)!.removeCutsceneModTitle,

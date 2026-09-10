@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:yp_launcher/widgets/app_dialog.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:yp_launcher/constants/app_strings.dart';
@@ -268,7 +269,7 @@ class _DirectorySelectorState extends ConsumerState<DirectorySelector> {
       context: context,
       builder: (ctx) {
         final dl10n = AppLocalizations.of(ctx)!;
-        return AlertDialog(
+        return AppDialog(
           backgroundColor: AppColors.backgroundCard,
           title: Text(
             dl10n.nierFound,
@@ -380,7 +381,7 @@ class _DirectorySelectorState extends ConsumerState<DirectorySelector> {
       context: context,
       builder: (ctx) {
         final dl10n = AppLocalizations.of(ctx)!;
-        return AlertDialog(
+        return AppDialog(
           backgroundColor: AppColors.backgroundCard,
           title: Text(
             dl10n.notFoundTitle,
@@ -425,7 +426,7 @@ class _DirectorySelectorState extends ConsumerState<DirectorySelector> {
       context: context,
       builder: (ctx) {
         final dl10n = AppLocalizations.of(ctx)!;
-        return AlertDialog(
+        return AppDialog(
           backgroundColor: AppColors.backgroundCard,
           title: Text(
             dl10n.nierFound,
@@ -741,8 +742,10 @@ class _DirectorySelectorState extends ConsumerState<DirectorySelector> {
             return;
           }
 
-          final rejection =
-              PlatformAdapter.current.rejectGameSelection(filePath, l10n);
+          final rejection = PlatformAdapter.current.rejectGameSelection(
+            filePath,
+            l10n,
+          );
           if (rejection != null) {
             controller.setError(rejection);
             return;

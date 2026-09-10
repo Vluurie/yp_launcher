@@ -20,8 +20,7 @@ abstract class GraphicsRuntime {
   Future<ThirdPartyUpdateInfo?> wouldUpdate(
     String gameDir,
     ThirdPartyClassification c,
-  ) async =>
-      null;
+  ) async => null;
 
   Future<void> repair(String gameDir);
 

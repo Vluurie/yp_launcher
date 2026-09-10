@@ -65,8 +65,9 @@ class CacheService {
 
   static Future<bool> _deleteNamsSettings(String gameDir) async {
     try {
-      final path = await PlatformAdapter.current
-          .resolveNamsSettingsPath(gameDir.isEmpty ? null : gameDir);
+      final path = await PlatformAdapter.current.resolveNamsSettingsPath(
+        gameDir.isEmpty ? null : gameDir,
+      );
       if (path == null) return false;
       final file = File(path);
       if (!await file.exists()) return false;

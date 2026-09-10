@@ -1,21 +1,10 @@
-import 'dart:io';
-
-import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_io.dart';
 import 'package:yp_launcher/models/installed_mod.dart';
+import 'package:yp_launcher/services/rust_bridge.dart';
 import 'package:yp_launcher/services/three_d_inspector_config_service.dart';
 import 'package:yp_launcher/src/rust/api/inspector.dart';
-import 'package:yp_launcher/src/rust/frb_generated.dart';
 
 class ThreeDInspectorService {
-  static Future<void>? _initialization;
-
-  static Future<void> initialize() {
-    return _initialization ??= RustLib.init(externalLibrary: _bundledLibrary())
-        .catchError((error) {
-          _initialization = null;
-          throw error;
-        });
-  }
+  static Future<void> initialize() => RustBridge.initialize();
 
   static Future<ArchiveProbe> probe(DataArchivePair pair) async {
     await initialize();
@@ -122,19 +111,4 @@ class ThreeDInspectorService {
     return target;
   }
 
-  static ExternalLibrary? _bundledLibrary() {
-    final executableDir = File(Platform.resolvedExecutable).parent;
-    late final String path;
-    if (Platform.isWindows) {
-      path = '${executableDir.path}/yp_3d_inspector.dll';
-    } else if (Platform.isLinux) {
-      path = '${executableDir.path}/lib/libyp_3d_inspector.so';
-    } else if (Platform.isMacOS) {
-      path =
-          '${executableDir.parent.path}/Frameworks/libyp_3d_inspector.dylib';
-    } else {
-      return null;
-    }
-    return File(path).existsSync() ? ExternalLibrary.open(path) : null;
-  }
 }

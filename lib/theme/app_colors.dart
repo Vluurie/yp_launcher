@@ -6,6 +6,8 @@ class AppColors {
 
   static AppTheme active = AppTheme.dark;
 
+  static bool get isLight => active.brightness == Brightness.light;
+
   static Color get backgroundPrimary => active.backgroundPrimary;
   static Color get backgroundSecondary => active.backgroundSecondary;
   static Color get backgroundCard => active.backgroundCard;

@@ -43,7 +43,10 @@ class ScanParams {
   });
 }
 
-Map<String, dynamic> _scanModEntry(Directory entry, {String? bundledWithModId}) {
+Map<String, dynamic> _scanModEntry(
+  Directory entry, {
+  String? bundledWithModId,
+}) {
   final modName = path.basename(entry.path);
   final movieDir = Directory(path.join(entry.path, 'movie'));
   final usmFiles = <String>[];
@@ -354,7 +357,11 @@ void _scanWithProgressEntry(_ScanProgressParams params) {
     _quickParseUsm(file);
     scanned++;
     if (scanned % 5 == 0 || scanned == total) {
-      params.sendPort.send({'type': 'progress', 'scanned': scanned, 'total': total});
+      params.sendPort.send({
+        'type': 'progress',
+        'scanned': scanned,
+        'total': total,
+      });
     }
   }
 
@@ -410,7 +417,6 @@ Future<ScanResult> scanCutscenes(
 }
 
 ScanResult _parseScanResult(Map<String, dynamic> result) {
-
   final rawMods = result['mods'] as List<Map<String, dynamic>>;
   final mods = rawMods
       .map(
@@ -439,7 +445,11 @@ class _UsmQuickInfo {
   final int width;
   final int height;
   final int codec;
-  _UsmQuickInfo({required this.width, required this.height, required this.codec});
+  _UsmQuickInfo({
+    required this.width,
+    required this.height,
+    required this.codec,
+  });
 }
 
 _UsmQuickInfo? _quickParseUsm(File file) {
@@ -453,10 +463,18 @@ _UsmQuickInfo? _quickParseUsm(File file) {
       final pos = raf.positionSync();
       final stmIdBytes = raf.readSync(4);
       if (stmIdBytes.length < 4) break;
-      final stmId = (stmIdBytes[0] << 24) | (stmIdBytes[1] << 16) | (stmIdBytes[2] << 8) | stmIdBytes[3];
+      final stmId =
+          (stmIdBytes[0] << 24) |
+          (stmIdBytes[1] << 16) |
+          (stmIdBytes[2] << 8) |
+          stmIdBytes[3];
       final blockSizeBytes = raf.readSync(4);
       if (blockSizeBytes.length < 4) break;
-      final blockSize = (blockSizeBytes[0] << 24) | (blockSizeBytes[1] << 16) | (blockSizeBytes[2] << 8) | blockSizeBytes[3];
+      final blockSize =
+          (blockSizeBytes[0] << 24) |
+          (blockSizeBytes[1] << 16) |
+          (blockSizeBytes[2] << 8) |
+          blockSizeBytes[3];
 
       final hdr = raf.readSync(0x18);
       if (hdr.length < 0x18) break;
@@ -471,12 +489,14 @@ _UsmQuickInfo? _quickParseUsm(File file) {
         final base = raf.positionSync();
         final magic = raf.readSync(4);
         if (magic.length < 4) return null;
-        final m = (magic[0] << 24) | (magic[1] << 16) | (magic[2] << 8) | magic[3];
+        final m =
+            (magic[0] << 24) | (magic[1] << 16) | (magic[2] << 8) | magic[3];
         if (m != 0x40555446) return null;
         final tsBuf = raf.readSync(4);
         if (tsBuf.length < 4) return null;
         // ignore: unused_local_variable
-        final tableSize = (tsBuf[0] << 24) | (tsBuf[1] << 16) | (tsBuf[2] << 8) | tsBuf[3];
+        final tableSize =
+            (tsBuf[0] << 24) | (tsBuf[1] << 16) | (tsBuf[2] << 8) | tsBuf[3];
 
         raf.readSync(2);
         final roBytes = raf.readSync(2);
@@ -484,10 +504,18 @@ _UsmQuickInfo? _quickParseUsm(File file) {
         final rowsOff = (roBytes[0] << 8) | roBytes[1];
         final soBytes = raf.readSync(4);
         if (soBytes.length < 4) return null;
-        final stringsOff = (soBytes[0] << 24) | (soBytes[1] << 16) | (soBytes[2] << 8) | soBytes[3];
+        final stringsOff =
+            (soBytes[0] << 24) |
+            (soBytes[1] << 16) |
+            (soBytes[2] << 8) |
+            soBytes[3];
         final doBytes = raf.readSync(4);
         if (doBytes.length < 4) return null;
-        final dataOff = (doBytes[0] << 24) | (doBytes[1] << 16) | (doBytes[2] << 8) | doBytes[3];
+        final dataOff =
+            (doBytes[0] << 24) |
+            (doBytes[1] << 16) |
+            (doBytes[2] << 8) |
+            doBytes[3];
         raf.readSync(4);
         final ncBytes = raf.readSync(2);
         if (ncBytes.length < 2) return null;
@@ -495,7 +523,11 @@ _UsmQuickInfo? _quickParseUsm(File file) {
         raf.readSync(2);
         final nrBytes = raf.readSync(4);
         if (nrBytes.length < 4) return null;
-        final numRows = (nrBytes[0] << 24) | (nrBytes[1] << 16) | (nrBytes[2] << 8) | nrBytes[3];
+        final numRows =
+            (nrBytes[0] << 24) |
+            (nrBytes[1] << 16) |
+            (nrBytes[2] << 8) |
+            nrBytes[3];
 
         if (numRows == 0) return null;
 
@@ -509,10 +541,17 @@ _UsmQuickInfo? _quickParseUsm(File file) {
           var cv = 0;
           if ((tb[0] & 0x20) != 0) {
             final ft = tb[0] & 0x0F;
-            if (ft <= 1) { raf.readSync(1); }
-            else if (ft <= 3) { raf.readSync(2); }
-            else if (ft == 4 || ft == 5 || ft == 8 || ft == 0xa) { final b = raf.readSync(4); if (b.length >= 4) cv = (b[0] << 24) | (b[1] << 16) | (b[2] << 8) | b[3]; }
-            else if (ft <= 9) { raf.readSync(8); }
+            if (ft <= 1) {
+              raf.readSync(1);
+            } else if (ft <= 3) {
+              raf.readSync(2);
+            } else if (ft == 4 || ft == 5 || ft == 8 || ft == 0xa) {
+              final b = raf.readSync(4);
+              if (b.length >= 4)
+                cv = (b[0] << 24) | (b[1] << 16) | (b[2] << 8) | b[3];
+            } else if (ft <= 9) {
+              raf.readSync(8);
+            }
           }
           descs.add((tb[0], nameOff, cv));
         }
@@ -539,19 +578,45 @@ _UsmQuickInfo? _quickParseUsm(File file) {
             val = d.$3;
           } else {
             final ft = d.$1 & 0x0F;
-            if (ft <= 1) { final b = raf.readSync(1); val = b.isNotEmpty ? b[0] : 0; }
-            else if (ft <= 3) { final b = raf.readSync(2); val = b.length >= 2 ? (b[0] << 8) | b[1] : 0; }
-            else if (ft == 4 || ft == 5 || ft == 8 || ft == 0xa) { final b = raf.readSync(4); val = b.length >= 4 ? (b[0] << 24) | (b[1] << 16) | (b[2] << 8) | b[3] : 0; }
-            else if (ft <= 9) { raf.readSync(8); val = 0; }
-            else if (ft == 0xb) { raf.readSync(8); val = 0; }
-            else { val = 0; }
+            if (ft <= 1) {
+              final b = raf.readSync(1);
+              val = b.isNotEmpty ? b[0] : 0;
+            } else if (ft <= 3) {
+              final b = raf.readSync(2);
+              val = b.length >= 2 ? (b[0] << 8) | b[1] : 0;
+            } else if (ft == 4 || ft == 5 || ft == 8 || ft == 0xa) {
+              final b = raf.readSync(4);
+              val = b.length >= 4
+                  ? (b[0] << 24) | (b[1] << 16) | (b[2] << 8) | b[3]
+                  : 0;
+            } else if (ft <= 9) {
+              raf.readSync(8);
+              val = 0;
+            } else if (ft == 0xb) {
+              raf.readSync(8);
+              val = 0;
+            } else {
+              val = 0;
+            }
           }
           fields[names[i]] = val;
         }
 
-        final w = [fields['width'] ?? 0, fields['disp_width'] ?? 0, fields['mat_width'] ?? 0].reduce((a, b) => a > b ? a : b);
-        final h = [fields['height'] ?? 0, fields['disp_height'] ?? 0, fields['mat_height'] ?? 0].reduce((a, b) => a > b ? a : b);
-        return _UsmQuickInfo(width: w, height: h, codec: fields['mpeg_codec'] ?? 0);
+        final w = [
+          fields['width'] ?? 0,
+          fields['disp_width'] ?? 0,
+          fields['mat_width'] ?? 0,
+        ].reduce((a, b) => a > b ? a : b);
+        final h = [
+          fields['height'] ?? 0,
+          fields['disp_height'] ?? 0,
+          fields['mat_height'] ?? 0,
+        ].reduce((a, b) => a > b ? a : b);
+        return _UsmQuickInfo(
+          width: w,
+          height: h,
+          codec: fields['mpeg_codec'] ?? 0,
+        );
       }
 
       raf.setPositionSync(end);

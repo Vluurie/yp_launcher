@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:yp_launcher/widgets/app_dialog.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yp_launcher/l10n/app_localizations.dart';
@@ -21,7 +22,8 @@ class ModProfileSelector extends ConsumerWidget {
     final state = ref.watch(modProfilesStateControllerProvider);
     final appState = ref.watch(appStateControllerProvider);
     final gameDir = appState.selectedDirectory;
-    final gameRunning = appState.playButtonState == PlayButtonState.running ||
+    final gameRunning =
+        appState.playButtonState == PlayButtonState.running ||
         appState.playButtonState == PlayButtonState.loading;
 
     final profiles = [...state.profiles]
@@ -31,7 +33,14 @@ class ModProfileSelector extends ConsumerWidget {
     final canAct = !state.isLoading && gameDir.isNotEmpty && !gameRunning;
 
     return _profileRow(
-      context, ref, l10n, profiles, state, gameDir, canAct, canDelete,
+      context,
+      ref,
+      l10n,
+      profiles,
+      state,
+      gameDir,
+      canAct,
+      canDelete,
       gameRunning,
     );
   }
@@ -102,8 +111,8 @@ class ModProfileSelector extends ConsumerWidget {
           tooltip: gameRunning
               ? l10n.modProfileLockedRunning
               : (canDelete
-                  ? l10n.modProfileDeleteButton
-                  : l10n.modProfileErrorDeleteLast),
+                    ? l10n.modProfileDeleteButton
+                    : l10n.modProfileErrorDeleteLast),
           color: AppColors.error,
           enabled: canAct && canDelete,
           onTap: () => _showDeleteDialog(context, ref, state, gameDir),
@@ -164,8 +173,9 @@ class ModProfileSelector extends ConsumerWidget {
               _toast(
                 ref,
                 ok
-                    ? AppLocalizations.of(context)!
-                        .modProfileSwitchedToast(next)
+                    ? AppLocalizations.of(
+                        context,
+                      )!.modProfileSwitchedToast(next)
                     : _localizedError(
                         context,
                         ref.read(modProfilesStateControllerProvider).error,
@@ -246,16 +256,17 @@ class ModProfileSelector extends ConsumerWidget {
   ) async {
     final l10n = AppLocalizations.of(context)!;
     final activeName = state.activeName;
-    final candidates = state.profiles
-        .where((p) => p.name != activeName)
-        .map((p) => p.name)
-        .toList()
-      ..sort();
+    final candidates =
+        state.profiles
+            .where((p) => p.name != activeName)
+            .map((p) => p.name)
+            .toList()
+          ..sort();
     if (candidates.isEmpty) return;
 
     final picked = await showDialog<String>(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => AppDialog(
         backgroundColor: AppColors.backgroundCard,
         title: Text(
           l10n.modProfileDeleteDialogTitle,
@@ -302,9 +313,7 @@ class ModProfileSelector extends ConsumerWidget {
                           Expanded(
                             child: Text(
                               name,
-                              style: TextStyle(
-                                fontSize: AppSizes.fontSM(ctx),
-                              ),
+                              style: TextStyle(fontSize: AppSizes.fontSM(ctx)),
                             ),
                           ),
                         ],
@@ -333,7 +342,7 @@ class ModProfileSelector extends ConsumerWidget {
 
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => AppDialog(
         backgroundColor: AppColors.backgroundCard,
         title: Text(
           l10n.modProfileDeleteDialogTitle,
@@ -428,7 +437,7 @@ class ModProfileSelector extends ConsumerWidget {
               Navigator.of(ctx).pop(ModProfilesService.sanitizeName(raw));
             }
 
-            return AlertDialog(
+            return AppDialog(
               backgroundColor: AppColors.backgroundCard,
               title: Text(
                 title,
@@ -507,7 +516,9 @@ class ModProfileSelector extends ConsumerWidget {
   }
 
   void _toast(WidgetRef ref, String message, Color color) {
-    ref.read(notificationStateControllerProvider.notifier).addNotification(
+    ref
+        .read(notificationStateControllerProvider.notifier)
+        .addNotification(
           NotificationItem(
             id: 'profile_${DateTime.now().millisecondsSinceEpoch}',
             message: (l10n) => message,

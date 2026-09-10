@@ -10,9 +10,9 @@ const _driveC = 'drive_c';
 
 /// Environment passed to every wine invocation.
 Map<String, String> createWineEnv() => {
-      ...Platform.environment,
-      'WINEDEBUG': Platform.environment['WINEDEBUG'] ?? '-all',
-    };
+  ...Platform.environment,
+  'WINEDEBUG': Platform.environment['WINEDEBUG'] ?? '-all',
+};
 
 /// The prefix root containing [targetPath], or null when it is not inside one.
 /// The `drive_c` component is the pivot.
@@ -65,9 +65,9 @@ String resolveWineUserName(String usersPath) {
     'crossover',
   ];
 
-  final existing = _listDirNames(usersPath)
-      .where((name) => name.toLowerCase() != 'public')
-      .toList();
+  final existing = _listDirNames(
+    usersPath,
+  ).where((name) => name.toLowerCase() != 'public').toList();
 
   for (final candidate in preferred) {
     for (final name in existing) {

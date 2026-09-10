@@ -3,14 +3,14 @@ import 'package:path/path.dart' as path;
 import 'package:yp_launcher/services/isolate_service.dart';
 import 'package:yp_launcher/services/toml_service.dart';
 
-
 class DisabledModsService {
   DisabledModsService._();
 
   static String _filePath(String gameDir) =>
       path.join(gameDir, 'nams', 'disabled_mods.toml');
 
-  static const _defaultFile = '''# Mods listed here are completely ignored at boot.
+  static const _defaultFile =
+      '''# Mods listed here are completely ignored at boot.
 # NAMS does not mount, scan, or load anything inside a disabled path.
 # Restart the game after editing.
 #
@@ -36,11 +36,14 @@ disabled = []
     String gameDir,
     String relPath,
     bool disabled,
-  ) =>
-      IsolateService.run(
-        _setSync,
-        _SetParams(gameDir: gameDir, relPath: normalize(relPath), disabled: disabled),
-      );
+  ) => IsolateService.run(
+    _setSync,
+    _SetParams(
+      gameDir: gameDir,
+      relPath: normalize(relPath),
+      disabled: disabled,
+    ),
+  );
 
   static bool matches(List<String> entries, String relPath) {
     final rel = normalize(relPath);

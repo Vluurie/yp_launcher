@@ -5,11 +5,7 @@ class VerifyCheck {
   final String status;
   final String? detail;
 
-  const VerifyCheck({
-    required this.name,
-    required this.status,
-    this.detail,
-  });
+  const VerifyCheck({required this.name, required this.status, this.detail});
 
   bool get ok => status == 'ok';
 
@@ -34,9 +30,9 @@ class VerifyResult {
       ok: json['ok'] as bool? ?? false,
       checks: rawChecks is List
           ? rawChecks
-              .whereType<Map>()
-              .map((m) => VerifyCheck.fromJson(Map<String, dynamic>.from(m)))
-              .toList()
+                .whereType<Map>()
+                .map((m) => VerifyCheck.fromJson(Map<String, dynamic>.from(m)))
+                .toList()
           : const [],
     );
   }

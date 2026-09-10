@@ -78,8 +78,7 @@ CutsceneDetection _scanSync(String gameDir) {
       if (modEntry is! Directory) continue;
       final modId = path.basename(modEntry.path);
       if (modId.startsWith('.') || modId.startsWith('_')) continue;
-      final bundledCutscenes =
-          Directory(path.join(modEntry.path, 'cutscenes'));
+      final bundledCutscenes = Directory(path.join(modEntry.path, 'cutscenes'));
       if (!bundledCutscenes.existsSync()) continue;
       for (final csEntry in bundledCutscenes.listSync()) {
         if (csEntry is! Directory) continue;

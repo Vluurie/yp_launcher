@@ -97,7 +97,8 @@ class CutsceneInfoCard extends StatelessWidget {
                     fontSize: AppSizes.fontXS(context),
                     color: AppColors.textMuted,
                     height: 1.6,
-                    fontFamily: 'monospace',
+                    fontFamily: AppSizes.monoFamily,
+                    fontFamilyFallback: AppSizes.monoFallback,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -120,10 +121,7 @@ class CutsceneInfoCard extends StatelessWidget {
 class CutsceneHeader extends StatelessWidget {
   final bool installing;
 
-  const CutsceneHeader({
-    super.key,
-    required this.installing,
-  });
+  const CutsceneHeader({super.key, required this.installing});
 
   @override
   Widget build(BuildContext context) {
@@ -150,8 +148,9 @@ class CutsceneHeader extends StatelessWidget {
           ),
           Consumer(
             builder: (ctx, ref, _) {
-              final gameDir =
-                  ref.watch(appStateControllerProvider).selectedDirectory;
+              final gameDir = ref
+                  .watch(appStateControllerProvider)
+                  .selectedDirectory;
               return HeaderInfoIcon(
                 tooltip: l10n.tooltipCutscenesLocation,
                 revealPath: p.join(gameDir, 'nams', 'cutscenes'),
@@ -162,11 +161,12 @@ class CutsceneHeader extends StatelessWidget {
           const Spacer(),
           Consumer(
             builder: (ctx, ref, _) {
-              final cutscene = (ref
-                          .watch(configStateControllerProvider)
-                          .namsValues['cutscene']
-                      as Map<String, dynamic>?) ??
-                  const {};
+              final rawCutscene = ref
+                  .watch(configStateControllerProvider)
+                  .namsValues['cutscene'];
+              final cutscene = rawCutscene is Map<String, dynamic>
+                  ? rawCutscene
+                  : const <String, dynamic>{};
               final hd = cutscene['hd_cutscenes'] == true;
               final h264 = cutscene['enable_h264'] == true;
               return Row(
@@ -216,8 +216,9 @@ class _StatusChip extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           color: color.withValues(alpha: 0.12),
-          borderRadius:
-              BorderRadius.circular(AppSizes.borderRadius(context) / 2),
+          borderRadius: BorderRadius.circular(
+            AppSizes.borderRadius(context) / 2,
+          ),
           border: Border.all(color: color.withValues(alpha: 0.4)),
         ),
         child: Row(
@@ -248,10 +249,7 @@ class _StatusChip extends StatelessWidget {
 class CutsceneMigrationBanner extends StatelessWidget {
   final List<String> directOverrides;
 
-  const CutsceneMigrationBanner({
-    super.key,
-    required this.directOverrides,
-  });
+  const CutsceneMigrationBanner({super.key, required this.directOverrides});
 
   @override
   Widget build(BuildContext context) {
