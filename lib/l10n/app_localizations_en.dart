@@ -761,6 +761,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cardPerformance => 'PERFORMANCE';
 
   @override
+  String get performanceCardNote =>
+      'The first two only help when the CPU is the bottleneck. If your CPU is slower than your GPU, both together can bring up to 20% more performance; on a GPU-bound system they change nothing. The third one is about hitches while the map loads, not about frame rate.';
+
+  @override
   String get cardLevelOfDetail => 'LEVEL OF DETAIL';
 
   @override
@@ -3100,13 +3104,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'How many hex rings of high-res grids are kept loaded around you. 1 = vanilla (7 grids), 2 = 19, 3 = 37, 4 = 61. Each grid costs roughly 100 MB of heap, so higher values need much more memory and load longer. They also cost frame rate, since all of that geometry is drawn. 4 is the tested value.';
 
   @override
-  String get labelHighGridsFarLoadInterval => 'Far Grid Load Interval';
-
-  @override
-  String get tooltipHighGridsFarLoadInterval =>
-      'Frames to wait between creating two grids beyond the first ring. Grids in the first ring are always created one per frame. Lower loads faster but can stutter; higher is smoother but slower to fill in. Takes effect live.';
-
-  @override
   String get labelHighGridsRoomRings => 'Per-Room Ring Overrides';
 
   @override
@@ -3198,11 +3195,45 @@ class AppLocalizationsEn extends AppLocalizations {
       'Removes the bright rim around shadowed characters and objects when the in-game anti-aliasing (MSAA) is on. No cost. Applies live.';
 
   @override
+  String get subheadingMsaaPerformance =>
+      'MSAA Performance Fixup (experimental)';
+
+  @override
+  String get labelMsaaPerPixel => 'Shade materials per pixel';
+
+  @override
+  String get tooltipMsaaPerPixel =>
+      'With the in-game anti-aliasing (MSAA) on, the game shades every material once per sample, so 8x MSAA shades every model eight times. With this on, materials shade once per pixel and MSAA only smooths the edges. Needs the MSAA bright rim fix. Applies live.';
+
+  @override
+  String get labelMsaaPerPixelTerrain => 'Also the terrain materials';
+
+  @override
+  String get tooltipMsaaPerPixelTerrain =>
+      'The biggest part of the gain. Wet ground can flicker bright for a moment, stronger than normal. If that does not bother you, this is the largest MSAA performance gain. Applies live.';
+
+  @override
   String get labelConstantBufferDedup => 'Skip unchanged shader parameters';
 
   @override
   String get tooltipConstantBufferDedup =>
       'Increases performance. Every draw reads a small block of parameters — transforms, material settings, light values. Vanilla re-sends all of them to the graphics card every frame, several thousand uploads, even when nothing in them changed. Vanilla already contains the comparison that would skip an unchanged block, but it never reaches it. About half the uploads turn out to be redundant. Applies live.';
+
+  @override
+  String get labelConstantBufferUploadOnBind =>
+      'Upload shader parameters only when drawn';
+
+  @override
+  String get tooltipConstantBufferUploadOnBind =>
+      'Increases performance. Vanilla sends every shader parameter block to the graphics card each frame, including the ones nothing on screen uses — roughly four out of five. With this on, a block is only sent when a draw actually binds it. Applies live.';
+
+  @override
+  String get labelDecreaseStutterDuringGridLoading =>
+      'Less stutter while the map loads';
+
+  @override
+  String get tooltipDecreaseStutterDuringGridLoading =>
+      'Smoother map loading. When a new part of the map loads around you, vanilla builds everything for it in one go, which shows as a hitch every time. With this on, that work is spread over several frames and prepared in the background, so most of those hitches disappear. Work in progress, more improvements will follow in future updates. You will still notice small hitches here and there while the map loads, for example when effects or new objects appear. Do not expect a higher frame rate, faster loading, or stutter-free loading with 4K texture packs. Applies live.';
 
   @override
   String get labelAoFadeFix => 'AO through walls fix';

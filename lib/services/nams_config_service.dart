@@ -118,6 +118,16 @@ msaa_prepass_fix = true
 # Takes effect live.
 msaa_shadow_mask_fix = true
 
+# Increases performance with the in-game anti-aliasing (MSAA) on (EXPERIMENTAL). The game shades
+# every material once per sample, so 8x MSAA shades every model eight times. With this on the
+# materials shade once per pixel and MSAA only smooths the edges. Needs msaa_shadow_mask_fix.
+# Takes effect live.
+msaa_per_pixel = false
+
+# Extends msaa_per_pixel to the terrain materials, the biggest part of the gain (EXPERIMENTAL).
+# Wet ground can flicker bright for a moment, stronger than vanilla. Takes effect live.
+msaa_per_pixel_terrain = false
+
 # Stops ambient occlusion (AO) from showing through walls and jumping when a model switches LOD.
 # During a LOD cross-fade the game draws both LOD versions solid into the AO depth, so AO appears
 # for geometry you can barely see. This skips that extra draw. lod_multiplier = 0 also hides the
@@ -125,10 +135,27 @@ msaa_shadow_mask_fix = true
 # No cost. Takes effect live.
 ao_fade_fix = true
 
+# The next two only help when the CPU is the bottleneck. If your CPU is slower than your GPU,
+# both together can bring up to 20% more performance; on a GPU-bound system they change nothing.
+
 # Increases performance. Fixes vanilla re-sending shader parameters to the graphics card every
 # frame even when they did not change. Vanilla has the check but never reaches it. Takes effect
 # live.
 constant_buffer_dedup = false
+
+# Increases performance. Fixes vanilla sending every shader parameter block to the graphics card
+# each frame, including the ones nothing on screen uses. A block is only sent once a draw binds
+# it. Takes effect live.
+constant_buffer_upload_on_bind = false
+
+# Less stutter while the map loads. When a new part of the map loads around you, the game builds
+# everything for it in one go, which shows as a hitch every time. With this on, that work is
+# spread over several frames and prepared in the background, so most of those hitches
+# disappear. Work in progress, more improvements will follow. You will still notice small hitches
+# here and there while the map loads, for example when effects or new objects appear. Do not
+# expect a higher frame rate, faster loading, or stutter-free loading with 4K texture packs.
+# Takes effect live.
+decrease_stutter_during_grid_loading = false
 
 # Internal render scale (EXPERIMENTAL). 1.0 = native. 2.0 renders the game at twice the
 # display resolution and scales back down, 0.5 at half of it and scales up. Range 0.5..=4.0,
@@ -170,10 +197,6 @@ blocked_in_room = []
 
 # Grids that never load while you stand on a specific grid.
 blocked_from_grid = []
-
-# New grids are created one per frame, nearest to you first. Grids beyond the first ring are
-# far away, so they only get created every N frames. 1 = every frame. Takes effect live.
-far_grid_load_interval = 3
 
 # Meshes hidden once enough rings are loaded. A grid draws low-detail stand-ins for map
 # parts it expects to be missing; with more rings those parts are really there and the

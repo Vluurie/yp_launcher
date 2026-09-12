@@ -682,12 +682,39 @@ class _LodmodViewState extends ConsumerState<LodmodView> {
                 Column(
                   children: [
                     _card(context, l10n.cardPerformance, [
+                      Padding(
+                        padding: EdgeInsets.only(
+                          bottom: AppSizes.paddingSM(context),
+                        ),
+                        child: Text(
+                          l10n.performanceCardNote,
+                          style: TextStyle(
+                            fontSize: AppSizes.fontXS(context),
+                            color: AppColors.textMuted,
+                            height: 1.35,
+                          ),
+                        ),
+                      ),
                       _bool(
                         config,
                         notifier,
                         gameDir,
                         l10n,
                         LodModFields.constantBufferDedup,
+                      ),
+                      _bool(
+                        config,
+                        notifier,
+                        gameDir,
+                        l10n,
+                        LodModFields.constantBufferUploadOnBind,
+                      ),
+                      _bool(
+                        config,
+                        notifier,
+                        gameDir,
+                        l10n,
+                        LodModFields.decreaseStutterDuringGridLoading,
                       ),
                     ]),
                     _card(context, l10n.cardLevelOfDetail, [
@@ -767,6 +794,13 @@ class _LodmodViewState extends ConsumerState<LodmodView> {
                         gameDir,
                         l10n,
                         LodModFields.msaaShadowMaskFix,
+                      ),
+                      ConfigComparison(
+                        beforeImage: 'assets/images/config/msaa8_vanilla.jpg',
+                        afterImage:
+                            'assets/images/config/msaa8_shadow_mask_fix.jpg',
+                        beforeLabel: l10n.comparisonOff,
+                        afterLabel: l10n.comparisonOn,
                       ),
                       _bool(
                         config,
@@ -966,6 +1000,31 @@ class _LodmodViewState extends ConsumerState<LodmodView> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      _subheading(context, l10n.subheadingMsaaPerformance),
+                      _sectionBool(
+                        config,
+                        notifier,
+                        gameDir,
+                        l10n,
+                        LodModFields.msaaPerPixel,
+                      ),
+                      ConfigComparison(
+                        beforeImage:
+                            'assets/images/config/msaa8_both_fixes.jpg',
+                        afterImage: 'assets/images/config/msaa8_per_pixel.jpg',
+                        beforeLabel: l10n.comparisonOff,
+                        afterLabel: l10n.comparisonOn,
+                      ),
+                      if (LodModFields.msaaPerPixel.valueIn(
+                        config.lodmodValues,
+                      ))
+                        _sectionBool(
+                          config,
+                          notifier,
+                          gameDir,
+                          l10n,
+                          LodModFields.msaaPerPixelTerrain,
+                        ),
                       _subheading(context, l10n.subheadingHighGrids),
                       _highGridsWipNote(context, l10n),
                       _sectionBool(
@@ -986,13 +1045,6 @@ class _LodmodViewState extends ConsumerState<LodmodView> {
                               'assets/images/config/YP_High_grids_61.jpg',
                           beforeLabel: l10n.comparisonHighGrids7,
                           afterLabel: l10n.comparisonHighGrids61,
-                        ),
-                        _int(
-                          config,
-                          notifier,
-                          gameDir,
-                          l10n,
-                          LodModFields.highGridsFarLoadInterval,
                         ),
                         _gridRules(
                           config,

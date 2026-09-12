@@ -11,6 +11,7 @@ import 'package:yp_launcher/providers/app_state.dart';
 import 'package:yp_launcher/providers/config_state.dart';
 import 'package:yp_launcher/widgets/info_bar.dart'
     show showLaunchWarningsProvider;
+import 'package:yp_launcher/services/gpu_preference_service.dart';
 import 'package:yp_launcher/services/process_service.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
@@ -218,11 +219,9 @@ class _PreferDedicatedGpuToggleState extends State<PreferDedicatedGpuToggle> {
   }
 
   Future<void> _load() async {
-    final prefs = await SharedPreferences.getInstance();
+    final enabled = await GpuPreferenceService.preferDedicatedGpu();
     if (!mounted) return;
-    setState(() {
-      _enabled = prefs.getBool(AppStrings.prefKeyPreferDedicatedGpu) ?? true;
-    });
+    setState(() => _enabled = enabled);
   }
 
   Future<void> _set(bool value) async {

@@ -1404,6 +1404,12 @@ abstract class AppLocalizations {
   /// **'PERFORMANCE'**
   String get cardPerformance;
 
+  /// No description provided for @performanceCardNote.
+  ///
+  /// In en, this message translates to:
+  /// **'The first two only help when the CPU is the bottleneck. If your CPU is slower than your GPU, both together can bring up to 20% more performance; on a GPU-bound system they change nothing. The third one is about hitches while the map loads, not about frame rate.'**
+  String get performanceCardNote;
+
   /// No description provided for @cardLevelOfDetail.
   ///
   /// In en, this message translates to:
@@ -5412,18 +5418,6 @@ abstract class AppLocalizations {
   /// **'How many hex rings of high-res grids are kept loaded around you. 1 = vanilla (7 grids), 2 = 19, 3 = 37, 4 = 61. Each grid costs roughly 100 MB of heap, so higher values need much more memory and load longer. They also cost frame rate, since all of that geometry is drawn. 4 is the tested value.'**
   String get tooltipHighGridsRings;
 
-  /// No description provided for @labelHighGridsFarLoadInterval.
-  ///
-  /// In en, this message translates to:
-  /// **'Far Grid Load Interval'**
-  String get labelHighGridsFarLoadInterval;
-
-  /// No description provided for @tooltipHighGridsFarLoadInterval.
-  ///
-  /// In en, this message translates to:
-  /// **'Frames to wait between creating two grids beyond the first ring. Grids in the first ring are always created one per frame. Lower loads faster but can stutter; higher is smoother but slower to fill in. Takes effect live.'**
-  String get tooltipHighGridsFarLoadInterval;
-
   /// No description provided for @labelHighGridsRoomRings.
   ///
   /// In en, this message translates to:
@@ -5580,6 +5574,36 @@ abstract class AppLocalizations {
   /// **'Removes the bright rim around shadowed characters and objects when the in-game anti-aliasing (MSAA) is on. No cost. Applies live.'**
   String get tooltipMsaaShadowMaskFix;
 
+  /// No description provided for @subheadingMsaaPerformance.
+  ///
+  /// In en, this message translates to:
+  /// **'MSAA Performance Fixup (experimental)'**
+  String get subheadingMsaaPerformance;
+
+  /// No description provided for @labelMsaaPerPixel.
+  ///
+  /// In en, this message translates to:
+  /// **'Shade materials per pixel'**
+  String get labelMsaaPerPixel;
+
+  /// No description provided for @tooltipMsaaPerPixel.
+  ///
+  /// In en, this message translates to:
+  /// **'With the in-game anti-aliasing (MSAA) on, the game shades every material once per sample, so 8x MSAA shades every model eight times. With this on, materials shade once per pixel and MSAA only smooths the edges. Needs the MSAA bright rim fix. Applies live.'**
+  String get tooltipMsaaPerPixel;
+
+  /// No description provided for @labelMsaaPerPixelTerrain.
+  ///
+  /// In en, this message translates to:
+  /// **'Also the terrain materials'**
+  String get labelMsaaPerPixelTerrain;
+
+  /// No description provided for @tooltipMsaaPerPixelTerrain.
+  ///
+  /// In en, this message translates to:
+  /// **'The biggest part of the gain. Wet ground can flicker bright for a moment, stronger than normal. If that does not bother you, this is the largest MSAA performance gain. Applies live.'**
+  String get tooltipMsaaPerPixelTerrain;
+
   /// No description provided for @labelConstantBufferDedup.
   ///
   /// In en, this message translates to:
@@ -5591,6 +5615,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Increases performance. Every draw reads a small block of parameters — transforms, material settings, light values. Vanilla re-sends all of them to the graphics card every frame, several thousand uploads, even when nothing in them changed. Vanilla already contains the comparison that would skip an unchanged block, but it never reaches it. About half the uploads turn out to be redundant. Applies live.'**
   String get tooltipConstantBufferDedup;
+
+  /// No description provided for @labelConstantBufferUploadOnBind.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload shader parameters only when drawn'**
+  String get labelConstantBufferUploadOnBind;
+
+  /// No description provided for @tooltipConstantBufferUploadOnBind.
+  ///
+  /// In en, this message translates to:
+  /// **'Increases performance. Vanilla sends every shader parameter block to the graphics card each frame, including the ones nothing on screen uses — roughly four out of five. With this on, a block is only sent when a draw actually binds it. Applies live.'**
+  String get tooltipConstantBufferUploadOnBind;
+
+  /// No description provided for @labelDecreaseStutterDuringGridLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Less stutter while the map loads'**
+  String get labelDecreaseStutterDuringGridLoading;
+
+  /// No description provided for @tooltipDecreaseStutterDuringGridLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Smoother map loading. When a new part of the map loads around you, vanilla builds everything for it in one go, which shows as a hitch every time. With this on, that work is spread over several frames and prepared in the background, so most of those hitches disappear. Work in progress, more improvements will follow in future updates. You will still notice small hitches here and there while the map loads, for example when effects or new objects appear. Do not expect a higher frame rate, faster loading, or stutter-free loading with 4K texture packs. Applies live.'**
+  String get tooltipDecreaseStutterDuringGridLoading;
 
   /// No description provided for @labelAoFadeFix.
   ///

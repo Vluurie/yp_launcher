@@ -885,16 +885,6 @@ class LodModFields {
     restartRequired: true,
   );
 
-  static final highGridsFarLoadInterval = ConfigField<int>(
-    key: 'far_grid_load_interval',
-    defaultValue: 3,
-    section: 'high_grids',
-    label: (l) => l.labelHighGridsFarLoadInterval,
-    tooltip: (l) => l.tooltipHighGridsFarLoadInterval,
-    min: 1,
-    max: 60,
-  );
-
   static final highGridsRoomRings = ConfigField<List<dynamic>>(
     key: 'room_rings',
     defaultValue: const [],
@@ -1112,11 +1102,39 @@ class LodModFields {
     tooltip: (l) => l.tooltipMsaaShadowMaskFix,
   );
 
+  static final msaaPerPixel = ConfigField<bool>(
+    key: 'msaa_per_pixel',
+    defaultValue: false,
+    label: (l) => l.labelMsaaPerPixel,
+    tooltip: (l) => l.tooltipMsaaPerPixel,
+  );
+
+  static final msaaPerPixelTerrain = ConfigField<bool>(
+    key: 'msaa_per_pixel_terrain',
+    defaultValue: false,
+    label: (l) => l.labelMsaaPerPixelTerrain,
+    tooltip: (l) => l.tooltipMsaaPerPixelTerrain,
+  );
+
   static final constantBufferDedup = ConfigField<bool>(
     key: 'constant_buffer_dedup',
     defaultValue: false,
     label: (l) => l.labelConstantBufferDedup,
     tooltip: (l) => l.tooltipConstantBufferDedup,
+  );
+
+  static final constantBufferUploadOnBind = ConfigField<bool>(
+    key: 'constant_buffer_upload_on_bind',
+    defaultValue: false,
+    label: (l) => l.labelConstantBufferUploadOnBind,
+    tooltip: (l) => l.tooltipConstantBufferUploadOnBind,
+  );
+
+  static final decreaseStutterDuringGridLoading = ConfigField<bool>(
+    key: 'decrease_stutter_during_grid_loading',
+    defaultValue: false,
+    label: (l) => l.labelDecreaseStutterDuringGridLoading,
+    tooltip: (l) => l.tooltipDecreaseStutterDuringGridLoading,
   );
 
   static final aoFadeFix = ConfigField<bool>(

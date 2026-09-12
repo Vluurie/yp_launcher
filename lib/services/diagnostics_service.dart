@@ -1,12 +1,12 @@
 import 'dart:io';
 import 'package:path/path.dart' as p;
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yp_launcher/constants/app_strings.dart';
 import 'package:yp_launcher/models/config_fields.dart';
 import 'package:yp_launcher/models/installed_mod.dart';
 import 'package:yp_launcher/services/cutscene_detection_service.dart';
 import 'package:yp_launcher/services/detection/game_detection.dart';
 import 'package:yp_launcher/services/disabled_mods_service.dart';
+import 'package:yp_launcher/services/gpu_preference_service.dart';
 import 'package:yp_launcher/services/isolate_service.dart';
 import 'package:yp_launcher/services/launcher_setup_service.dart';
 import 'package:yp_launcher/services/log_service.dart';
@@ -228,7 +228,11 @@ class DiagnosticsService {
     );
     final gameRunning =
         await _quiet(() => PlatformAdapter.current.isGameRunning()) ?? false;
-    final preferDedicatedGpu = await _collectGpuPref();
+    final preferDedicatedGpu = await GpuPreferenceService.preferDedicatedGpu();
+    final gpu = GpuProbe.detect();
+    final gpuEnv = preferDedicatedGpu
+        ? GpuPreferenceService.linuxGpuEnv(gpu)
+        : const <String, String>{};
 
     return DiagnosticsReport(
       generatedAt: DateTime.now(),
@@ -240,6 +244,13 @@ class DiagnosticsService {
         'Dart version': Platform.version,
         'Game running': gameRunning ? 'yes' : 'no',
         'Prefer dedicated GPU': preferDedicatedGpu ? 'yes' : 'no',
+        if (Platform.isLinux) ...{
+          'NVIDIA driver': gpu.nvidiaDriverLoaded ? 'yes' : 'no',
+          'DRM render nodes': '${gpu.renderNodes}',
+          'Dedicated GPU env': gpuEnv.isEmpty
+              ? 'none'
+              : gpuEnv.entries.map((e) => '${e.key}=${e.value}').join(' '),
+        },
       },
       launcherInfo: {
         'Launcher version': AppStrings.appVersion,
@@ -351,15 +362,6 @@ class DiagnosticsService {
       return issues.length > 25 ? issues.sublist(issues.length - 25) : issues;
     } catch (_) {
       return const [];
-    }
-  }
-
-  static Future<bool> _collectGpuPref() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      return prefs.getBool(AppStrings.prefKeyPreferDedicatedGpu) ?? false;
-    } catch (_) {
-      return false;
     }
   }
 

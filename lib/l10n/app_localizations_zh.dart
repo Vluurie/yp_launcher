@@ -729,6 +729,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get cardPerformance => '性能';
 
   @override
+  String get performanceCardNote =>
+      '前两项仅在 CPU 成为瓶颈时有效。如果你的 CPU 比 GPU 慢，两者一起开启最多可带来 20% 的性能提升；在 GPU 受限的系统上没有任何变化。第三项针对的是地图加载时的卡顿，而不是帧率。';
+
+  @override
   String get cardLevelOfDetail => '细节层次';
 
   @override
@@ -2978,13 +2982,6 @@ class AppLocalizationsZh extends AppLocalizations {
       '在你周围保持加载的高分辨率网格六边形环数。1 = 原版（7 个网格），2 = 19，3 = 37，4 = 61。每个网格约占用 100 MB 堆内存，因此更高的值需要更多内存且加载更久。同时也会降低帧率，因为所有这些几何体都要被绘制。4 是经过测试的值。';
 
   @override
-  String get labelHighGridsFarLoadInterval => '远处网格加载间隔';
-
-  @override
-  String get tooltipHighGridsFarLoadInterval =>
-      '创建第一环以外的两个网格之间等待的帧数。第一环内的网格始终每帧创建一个。数值越低加载越快但可能卡顿；越高越流畅但填充更慢。即时生效。';
-
-  @override
   String get labelHighGridsRoomRings => '按区域覆盖环数';
 
   @override
@@ -3073,11 +3070,42 @@ class AppLocalizationsZh extends AppLocalizations {
       '去除开启游戏内抗锯齿（MSAA）时阴影中角色和物体周围的亮边。无性能开销。实时生效。';
 
   @override
+  String get subheadingMsaaPerformance => 'MSAA 性能修正（实验性）';
+
+  @override
+  String get labelMsaaPerPixel => '按像素着色材质';
+
+  @override
+  String get tooltipMsaaPerPixel =>
+      '开启游戏内抗锯齿（MSAA）时，游戏对每个材质按每个采样点着色一次，8x MSAA 下每个模型要着色八次。开启后材质每像素只着色一次，MSAA 只负责平滑边缘。需要 MSAA 亮边修复。实时生效。';
+
+  @override
+  String get labelMsaaPerPixelTerrain => '同时包括地形材质';
+
+  @override
+  String get tooltipMsaaPerPixelTerrain =>
+      '收益的最大部分。潮湿地面可能短暂闪亮，比正常更明显。如果不介意，这是 MSAA 最大的性能收益。实时生效。';
+
+  @override
   String get labelConstantBufferDedup => '跳过未更改的着色器参数';
 
   @override
   String get tooltipConstantBufferDedup =>
       '提升性能。每次绘制都会读取一小块参数——变换、材质设置、光照值。原版每帧都会把它们全部重新上传到显卡，多达数千次，即使内容毫无变化。原版本身就带有能跳过未更改数据块的比较逻辑，却从未真正执行到。约有一半的上传是多余的。实时生效。';
+
+  @override
+  String get labelConstantBufferUploadOnBind => '仅在绘制时上传着色器参数';
+
+  @override
+  String get tooltipConstantBufferUploadOnBind =>
+      '提升性能。原版每帧都会把所有着色器参数块发送到显卡，包括画面上根本用不到的那些——大约五分之四。开启后，只有当绘制真正绑定某个块时才会发送它。实时生效。';
+
+  @override
+  String get labelDecreaseStutterDuringGridLoading => '减少地图加载时的卡顿';
+
+  @override
+  String get tooltipDecreaseStutterDuringGridLoading =>
+      '让地图加载更流畅。当你周围有新的地图区域加载时，原版会一次性构建它的全部内容，每次都会出现一次卡顿。开启后，这些工作会分摊到多个帧并在后台提前准备，大部分卡顿因此消失。开发中，后续更新会继续改进。地图加载时你仍会偶尔感到轻微卡顿，例如特效或新对象出现的时候。不要指望更高的帧率、更快的加载，或在使用 4K 纹理包时完全无卡顿的加载。实时生效。';
 
   @override
   String get labelAoFadeFix => 'AO 穿墙修复';

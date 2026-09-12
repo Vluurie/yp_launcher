@@ -773,6 +773,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get cardPerformance => 'LEISTUNG';
 
   @override
+  String get performanceCardNote =>
+      'Die ersten beiden helfen nur, wenn die CPU der Flaschenhals ist. Ist deine CPU langsamer als deine GPU, können beide zusammen bis zu 20 % mehr Leistung bringen; auf einem GPU-limitierten System ändern sie nichts. Die dritte Option betrifft Ruckler beim Nachladen der Karte, nicht die Bildrate.';
+
+  @override
   String get cardLevelOfDetail => 'DETAILSTUFE';
 
   @override
@@ -3149,13 +3153,6 @@ class AppLocalizationsDe extends AppLocalizations {
       'Wie viele Hex-Ringe hochauflösender Grids um dich herum geladen bleiben. 1 = Vanilla (7 Grids), 2 = 19, 3 = 37, 4 = 61. Jedes Grid kostet rund 100 MB Heap, höhere Werte brauchen also deutlich mehr Speicher und laden länger. Sie kosten auch Framerate, da die gesamte Geometrie gezeichnet wird. 4 ist der getestete Wert.';
 
   @override
-  String get labelHighGridsFarLoadInterval => 'Ladeintervall ferner Grids';
-
-  @override
-  String get tooltipHighGridsFarLoadInterval =>
-      'Frames Wartezeit zwischen dem Erstellen zweier Grids jenseits des ersten Rings. Grids im ersten Ring werden immer eines pro Frame erstellt. Niedriger lädt schneller, kann aber ruckeln; höher ist flüssiger, füllt sich aber langsamer. Wirkt sofort.';
-
-  @override
   String get labelHighGridsRoomRings => 'Ring-Überschreibungen pro Raum';
 
   @override
@@ -3247,12 +3244,46 @@ class AppLocalizationsDe extends AppLocalizations {
       'Entfernt den hellen Saum um Figuren und Objekte im Schatten, wenn das Anti-Aliasing des Spiels (MSAA) an ist. Kostet nichts. Greift sofort.';
 
   @override
+  String get subheadingMsaaPerformance =>
+      'MSAA-Performance-Fixup (experimentell)';
+
+  @override
+  String get labelMsaaPerPixel => 'Materialien pro Pixel berechnen';
+
+  @override
+  String get tooltipMsaaPerPixel =>
+      'Mit dem Anti-Aliasing des Spiels (MSAA) berechnet das Spiel jedes Material einmal pro Sample, bei 8x MSAA also jedes Modell achtmal. Hiermit wird einmal pro Pixel gerechnet und MSAA glättet nur noch die Kanten. Braucht den MSAA-Heller-Saum-Fix. Greift sofort.';
+
+  @override
+  String get labelMsaaPerPixelTerrain => 'Auch die Bodenmaterialien';
+
+  @override
+  String get tooltipMsaaPerPixelTerrain =>
+      'Der größte Teil des Gewinns. Nasser Boden kann kurz hell flackern, stärker als normal. Wenn das nicht stört, ist das der größte MSAA-Performance-Gewinn. Greift sofort.';
+
+  @override
   String get labelConstantBufferDedup =>
       'Unveränderte Shader-Parameter überspringen';
 
   @override
   String get tooltipConstantBufferDedup =>
       'Erhöht die Leistung. Jeder Zeichenaufruf liest einen kleinen Parameterblock — Transformationen, Materialeinstellungen, Lichtwerte. Vanilla schickt sie alle in jedem Frame erneut an die Grafikkarte, mehrere Tausend Uploads, auch wenn sich nichts daran geändert hat. Vanilla enthält den Vergleich, der einen unveränderten Block überspringen würde, erreicht ihn aber nie. Etwa die Hälfte der Uploads ist überflüssig. Greift sofort.';
+
+  @override
+  String get labelConstantBufferUploadOnBind =>
+      'Shader-Parameter nur beim Zeichnen hochladen';
+
+  @override
+  String get tooltipConstantBufferUploadOnBind =>
+      'Erhöht die Leistung. Vanilla schickt jeden Frame jeden Shader-Parameterblock an die Grafikkarte, auch die, die nichts auf dem Bildschirm benutzt — etwa vier von fünf. Damit wird ein Block erst gesendet, wenn ein Draw ihn tatsächlich bindet. Greift sofort.';
+
+  @override
+  String get labelDecreaseStutterDuringGridLoading =>
+      'Weniger Ruckler beim Nachladen der Karte';
+
+  @override
+  String get tooltipDecreaseStutterDuringGridLoading =>
+      'Flüssigeres Nachladen der Karte. Wenn um dich herum ein neuer Teil der Karte lädt, baut Vanilla alles dafür in einem Rutsch auf, was jedes Mal als Ruckler auffällt. Damit wird diese Arbeit auf mehrere Frames verteilt und im Hintergrund vorbereitet, sodass die meisten dieser Ruckler verschwinden. In Arbeit, weitere Verbesserungen folgen in künftigen Updates. Kleine Ruckler beim Nachladen bleiben hier und da, zum Beispiel wenn Effekte oder neue Objekte auftauchen. Erwarte keine höhere Bildrate, kein schnelleres Laden und kein ruckelfreies Laden mit 4K-Texturpaketen. Greift sofort.';
 
   @override
   String get labelAoFadeFix => 'AO-durch-Wände-Fix';

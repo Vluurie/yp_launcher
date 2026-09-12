@@ -417,7 +417,6 @@ class ConfigStateController extends _$ConfigStateController {
     LodModFields.fpsLimit,
     LodModFields.highGridsEnabled,
     LodModFields.highGridsRings,
-    LodModFields.highGridsFarLoadInterval,
     LodModFields.highGridsRoomRings,
     LodModFields.highGridsBlockedInRoom,
     LodModFields.highGridsBlockedFromGrid,
