@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:yp_launcher/widgets/app_dialog.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:yp_launcher/l10n/app_localizations.dart';
@@ -88,7 +89,7 @@ class WindowsTitleBar extends ConsumerWidget {
     if (busyCount > 0) {
       showDialog(
         context: context,
-        builder: (ctx) => AlertDialog(
+        builder: (ctx) => AppDialog(
           backgroundColor: AppColors.backgroundCard,
           title: Text(
             l10n.busyCloseTitle,
@@ -141,7 +142,7 @@ class WindowsTitleBar extends ConsumerWidget {
 
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => AppDialog(
         backgroundColor: AppColors.backgroundCard,
         title: Text(
           l10n.unsavedChangesTitle,

@@ -22,6 +22,7 @@ class LodModDetection {
     'ShadowModelForceAll': LodModFields.shadowModelForceAll.key,
     'DisableManualCulling': LodModFields.disableManualCulling.key,
     'DisableVignette': LodModFields.disableVignette.key,
+    'DisableHDR': LodModFields.disableHdr.key,
   };
 
   static Future<Map<String, dynamic>?> detectLegacyLodMod(

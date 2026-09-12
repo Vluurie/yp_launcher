@@ -90,67 +90,85 @@ class _MigrationStepState extends State<MigrationStep> {
     final rows = <_MigrationRow>[];
 
     if (widget.existingNamsMods > 0) {
-      rows.add(_MigrationRow(
-        icon: Icons.extension_outlined,
-        label: l.onboardingMigrationLabelExistingMods(widget.existingNamsMods),
-        action: l.onboardingMigrationActionExistingMods,
-        ok: true,
-      ));
+      rows.add(
+        _MigrationRow(
+          icon: Icons.extension_outlined,
+          label: l.onboardingMigrationLabelExistingMods(
+            widget.existingNamsMods,
+          ),
+          action: l.onboardingMigrationActionExistingMods,
+          ok: true,
+        ),
+      );
     }
     if (widget.reshadeStatus == ReShadeStatus.detected) {
-      rows.add(_MigrationRow(
-        icon: Icons.auto_fix_high,
-        label: l.detectionReShade,
-        action: l.onboardingMigrationActionReshadeKept,
-        ok: true,
-      ));
+      rows.add(
+        _MigrationRow(
+          icon: Icons.auto_fix_high,
+          label: l.detectionReShade,
+          action: l.onboardingMigrationActionReshadeKept,
+          ok: true,
+        ),
+      );
     } else if (widget.reshadeStatus == ReShadeStatus.incompatibleAddon) {
-      rows.add(_MigrationRow(
-        icon: Icons.auto_fix_high,
-        label: l.detectionReShade,
-        action: l.onboardingMigrationActionReshadeIncompatible,
-        ok: false,
-      ));
+      rows.add(
+        _MigrationRow(
+          icon: Icons.auto_fix_high,
+          label: l.detectionReShade,
+          action: l.onboardingMigrationActionReshadeIncompatible,
+          ok: false,
+        ),
+      );
     }
     if (widget.textureResults.isNotEmpty) {
-      rows.add(_MigrationRow(
-        icon: Icons.image,
-        label: l.detectionHDTextures,
-        action: l.onboardingMigrationActionTextures,
-        ok: true,
-      ));
+      rows.add(
+        _MigrationRow(
+          icon: Icons.image,
+          label: l.detectionHDTextures,
+          action: l.onboardingMigrationActionTextures,
+          ok: true,
+        ),
+      );
     }
     if (widget.hasLodMod) {
-      rows.add(_MigrationRow(
-        icon: Icons.visibility,
-        label: l.detectionLodMod,
-        action: l.onboardingMigrationActionLodMod,
-        ok: true,
-      ));
+      rows.add(
+        _MigrationRow(
+          icon: Icons.visibility,
+          label: l.detectionLodMod,
+          action: l.onboardingMigrationActionLodMod,
+          ok: true,
+        ),
+      );
     }
     if (widget.hasSkRes) {
-      rows.add(_MigrationRow(
-        icon: Icons.texture,
-        label: l.detectionSkRes,
-        action: l.onboardingMigrationActionSkRes,
-        ok: true,
-      ));
+      rows.add(
+        _MigrationRow(
+          icon: Icons.texture,
+          label: l.detectionSkRes,
+          action: l.onboardingMigrationActionSkRes,
+          ok: true,
+        ),
+      );
     }
     if (widget.hasNaiom) {
-      rows.add(_MigrationRow(
-        icon: Icons.mouse,
-        label: l.detectionNaiom,
-        action: l.onboardingMigrationActionNaiom,
-        ok: true,
-      ));
+      rows.add(
+        _MigrationRow(
+          icon: Icons.mouse,
+          label: l.detectionNaiom,
+          action: l.onboardingMigrationActionNaiom,
+          ok: true,
+        ),
+      );
     }
     if (widget.hasCutsceneMods) {
-      rows.add(_MigrationRow(
-        icon: Icons.movie,
-        label: l.detectionCutscenes,
-        action: l.onboardingMigrationActionCutscenes,
-        ok: true,
-      ));
+      rows.add(
+        _MigrationRow(
+          icon: Icons.movie,
+          label: l.detectionCutscenes,
+          action: l.onboardingMigrationActionCutscenes,
+          ok: true,
+        ),
+      );
     }
 
     return OnboardingStepCard(
@@ -202,8 +220,9 @@ class _MigrationStepState extends State<MigrationStep> {
                             ? Icons.check_circle_outline
                             : Icons.warning_amber_rounded,
                         size: 18,
-                        color:
-                            rows[i].ok ? AppColors.success : AppColors.warning,
+                        color: rows[i].ok
+                            ? AppColors.success
+                            : AppColors.warning,
                       ),
                       const SizedBox(width: 10),
                       Expanded(
@@ -240,9 +259,11 @@ class _MigrationStepState extends State<MigrationStep> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            OnboardingBackButton(onTap: () {
-              setState(() => _hadModsBefore = null);
-            }),
+            OnboardingBackButton(
+              onTap: () {
+                setState(() => _hadModsBefore = null);
+              },
+            ),
             const SizedBox(width: 12),
             SizedBox(
               width: 160,

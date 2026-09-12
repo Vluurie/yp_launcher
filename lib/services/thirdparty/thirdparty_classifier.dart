@@ -75,7 +75,10 @@ class ThirdPartyClassifier {
     final shaders = hasReShadeShaders(root);
     final presets = findPresets(root);
 
-    final hasDxgiIni = hasFileMatching(root, (rel) => baseName(rel) == 'dxgi.ini');
+    final hasDxgiIni = hasFileMatching(
+      root,
+      (rel) => baseName(rel) == 'dxgi.ini',
+    );
     if (hasDxgiIni && reshadeDll == null && presets.isEmpty && !shaders) {
       return ThirdPartyClassification(
         kind: ThirdPartyKind.brokenLegacy,

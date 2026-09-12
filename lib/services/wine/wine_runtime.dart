@@ -34,7 +34,9 @@ WineRuntime? detectWineRuntime({String? gameExePath}) {
   final gamePath = gameExePath == null ? null : p.normalize(gameExePath);
 
   final envProton = Platform.environment[protonPathEnv];
-  if (envProton != null && envProton.isNotEmpty && File(envProton).existsSync()) {
+  if (envProton != null &&
+      envProton.isNotEmpty &&
+      File(envProton).existsSync()) {
     return WineRuntime(
       binary: envProton,
       source: WineSource.proton,
@@ -51,7 +53,8 @@ WineRuntime? detectWineRuntime({String? gameExePath}) {
 
     final steam = inferSteamContext(gamePath);
     if (steam != null) {
-      final proton = findProtonPath(steam.steamRoot, steam.libraryRoot) ??
+      final proton =
+          findProtonPath(steam.steamRoot, steam.libraryRoot) ??
           findAnyProtonPath();
       if (proton != null) {
         return WineRuntime(
@@ -100,14 +103,14 @@ bool isWineRuntimeAvailable() =>
     (Platform.isLinux && hasAnyProtonInstall());
 
 WineRuntime _crossOver(String wine, CrossOverBottle bottle) => WineRuntime(
-      binary: wine,
-      source: WineSource.crossOver,
-      label: 'CrossOver Wine (${bottle.name})',
-      bottle: bottle,
-      prefix: bottle.gamePath == null
-          ? bottle.path
-          : inferWinePrefixFromPath(bottle.gamePath!) ?? bottle.path,
-    );
+  binary: wine,
+  source: WineSource.crossOver,
+  label: 'CrossOver Wine (${bottle.name})',
+  bottle: bottle,
+  prefix: bottle.gamePath == null
+      ? bottle.path
+      : inferWinePrefixFromPath(bottle.gamePath!) ?? bottle.path,
+);
 
 String _plainWinePrefix(String? gamePath) {
   final fromGame = gamePath == null ? null : inferWinePrefixFromPath(gamePath);

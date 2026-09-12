@@ -141,9 +141,7 @@ class _HoverHeaderState extends State<_HoverHeader> {
             borderRadius: radius,
             border: Border(
               left: BorderSide(
-                color: _hovered
-                    ? AppColors.accentPrimary
-                    : Colors.transparent,
+                color: _hovered ? AppColors.accentPrimary : Colors.transparent,
                 width: 2,
               ),
             ),

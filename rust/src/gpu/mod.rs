@@ -369,9 +369,22 @@ fn renderer() -> Option<&'static GpuRenderer> {
         .as_ref()
 }
 
+#[cfg(target_os = "windows")]
+fn build_event_loop() -> EventLoop<()> {
+    use winit::platform::windows::EventLoopBuilderExtWindows;
+    winit::event_loop::EventLoopBuilder::new()
+        .with_any_thread(true)
+        .build()
+}
+
+#[cfg(not(target_os = "windows"))]
+fn build_event_loop() -> EventLoop<()> {
+    EventLoop::new()
+}
+
 fn create_context() -> Result<GpuContext, String> {
     match std::panic::catch_unwind(|| {
-        let event_loop = EventLoop::new();
+        let event_loop = build_event_loop();
         let window = WindowBuilder::new()
             .with_visible(false)
             .build(&event_loop)

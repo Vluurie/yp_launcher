@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:yp_launcher/widgets/app_dialog.dart';
 import 'package:yp_launcher/l10n/app_localizations.dart';
 import 'package:yp_launcher/models/installed_mod.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
@@ -55,12 +56,8 @@ class _Row {
   final DataCategory? headerCategory;
   final bool isHeader;
   final int variantIndex;
-  const _Row.header(this.headerCategory)
-      : isHeader = true,
-        variantIndex = -1;
-  const _Row.item(this.variantIndex)
-      : isHeader = false,
-        headerCategory = null;
+  const _Row.header(this.headerCategory) : isHeader = true, variantIndex = -1;
+  const _Row.item(this.variantIndex) : isHeader = false, headerCategory = null;
 }
 
 class _ModVariantDialog extends StatefulWidget {
@@ -106,7 +103,7 @@ class _ModVariantDialogState extends State<_ModVariantDialog> {
     return {
       for (final entry in _groups.entries)
         if (!mutuallyExclusiveVariantCategories.contains(entry.key))
-          ...entry.value
+          ...entry.value,
     };
   }
 
@@ -143,11 +140,13 @@ class _ModVariantDialogState extends State<_ModVariantDialog> {
     setState(() {
       _selected
         ..removeWhere(
-            (j) => mutuallyExclusiveVariantCategories.contains(
-                widget.variants[j].category))
+          (j) => mutuallyExclusiveVariantCategories.contains(
+            widget.variants[j].category,
+          ),
+        )
         ..addAll({
           for (var i = 0; i < widget.variants.length; i++)
-            if (!_isExclusive(i)) i
+            if (!_isExclusive(i)) i,
         });
     });
   }
@@ -162,7 +161,7 @@ class _ModVariantDialogState extends State<_ModVariantDialog> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final rows = _buildRows();
-    return AlertDialog(
+    return AppDialog(
       backgroundColor: AppColors.backgroundCard,
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -234,8 +233,9 @@ class _ModVariantDialogState extends State<_ModVariantDialog> {
         TextButton(
           onPressed: _selected.isEmpty
               ? null
-              : () => Navigator.of(context)
-                  .pop([for (final i in _selected) widget.variants[i]]),
+              : () => Navigator.of(
+                  context,
+                ).pop([for (final i in _selected) widget.variants[i]]),
           child: Text(
             l10n.modVariantInstallSelected(_selected.length),
             style: TextStyle(
@@ -302,9 +302,11 @@ class _ModVariantDialogState extends State<_ModVariantDialog> {
             Icon(
               radioStyle
                   ? (selected
-                      ? Icons.radio_button_checked
-                      : Icons.radio_button_unchecked)
-                  : (selected ? Icons.check_box : Icons.check_box_outline_blank),
+                        ? Icons.radio_button_checked
+                        : Icons.radio_button_unchecked)
+                  : (selected
+                        ? Icons.check_box
+                        : Icons.check_box_outline_blank),
               size: 20,
               color: selected ? AppColors.accentPrimary : AppColors.textMuted,
             ),
@@ -322,8 +324,7 @@ class _ModVariantDialogState extends State<_ModVariantDialog> {
             if (v.textureOnly) ...[
               const SizedBox(width: 8),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
                   color: AppColors.surfaceLight,
                   borderRadius: BorderRadius.circular(4),

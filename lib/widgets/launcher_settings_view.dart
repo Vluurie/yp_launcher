@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:yp_launcher/widgets/app_dialog.dart';
 import 'package:flutter/services.dart' show Clipboard, ClipboardData;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as p;
@@ -101,8 +102,9 @@ class _LauncherSettingsViewState extends ConsumerState<LauncherSettingsView> {
     final l10n = AppLocalizations.of(context)!;
     final gameDir = ref.read(appStateControllerProvider).selectedDirectory;
     if (gameDir.isEmpty) {
-      setState(() => _verifyOutcome =
-          const VerifyOutcome(status: VerifyStatus.error));
+      setState(
+        () => _verifyOutcome = const VerifyOutcome(status: VerifyStatus.error),
+      );
       return;
     }
     setState(() {
@@ -150,23 +152,34 @@ class _LauncherSettingsViewState extends ConsumerState<LauncherSettingsView> {
                           children: [
                             if (legacyExe)
                               SizedBox(
-                                  width: constraints.maxWidth,
-                                  child: _legacyExeCard(context, l10n)),
+                                width: constraints.maxWidth,
+                                child: _legacyExeCard(context, l10n),
+                              ),
                             if (_missingFiles.isNotEmpty)
                               SizedBox(
-                                  width: constraints.maxWidth,
-                                  child: _missingFilesCard(context, l10n)),
-                            SizedBox(width: w, child: _verifyCard(context, l10n)),
+                                width: constraints.maxWidth,
+                                child: _missingFilesCard(context, l10n),
+                              ),
                             SizedBox(
-                                width: w, child: _diagnosticsCard(context, l10n)),
+                              width: w,
+                              child: _verifyCard(context, l10n),
+                            ),
                             SizedBox(
-                                width: w,
-                                child: _copyCommandCard(context, l10n)),
+                              width: w,
+                              child: _diagnosticsCard(context, l10n),
+                            ),
                             SizedBox(
-                                width: w, child: _foldersCard(context, l10n)),
+                              width: w,
+                              child: _copyCommandCard(context, l10n),
+                            ),
                             SizedBox(
-                                width: w,
-                                child: _clearCacheCard(context, l10n)),
+                              width: w,
+                              child: _foldersCard(context, l10n),
+                            ),
+                            SizedBox(
+                              width: w,
+                              child: _clearCacheCard(context, l10n),
+                            ),
                           ],
                         );
                       },
@@ -339,8 +352,11 @@ class _LauncherSettingsViewState extends ConsumerState<LauncherSettingsView> {
 
   Widget _missingFilesCard(BuildContext context, AppLocalizations l10n) {
     return _card(context, l10n.troubleMissingFilesTitle, [
-      _statusLine(context, false,
-          l10n.troubleMissingFilesSummary(_missingFiles.join(', '))),
+      _statusLine(
+        context,
+        false,
+        l10n.troubleMissingFilesSummary(_missingFiles.join(', ')),
+      ),
       SizedBox(height: AppSizes.spacingSM(context)),
       Text(
         l10n.troubleMissingFilesDesc,
@@ -382,7 +398,7 @@ class _LauncherSettingsViewState extends ConsumerState<LauncherSettingsView> {
     final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => AppDialog(
         backgroundColor: AppColors.backgroundCard,
         title: Text(
           l10n.troubleClearCacheTitle,
@@ -401,8 +417,10 @@ class _LauncherSettingsViewState extends ConsumerState<LauncherSettingsView> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text(l10n.diagnosticsClose,
-                style: TextStyle(color: AppColors.textMuted)),
+            child: Text(
+              l10n.diagnosticsClose,
+              style: TextStyle(color: AppColors.textMuted),
+            ),
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
@@ -608,7 +626,8 @@ class _LauncherSettingsViewState extends ConsumerState<LauncherSettingsView> {
         style: TextStyle(
           fontSize: AppSizes.fontSM(context),
           color: AppColors.textPrimary,
-          fontFamily: 'monospace',
+          fontFamily: AppSizes.monoFamily,
+          fontFamilyFallback: AppSizes.monoFallback,
         ),
         decoration: InputDecoration(
           isDense: true,
@@ -616,7 +635,8 @@ class _LauncherSettingsViewState extends ConsumerState<LauncherSettingsView> {
           hintStyle: TextStyle(
             fontSize: AppSizes.fontSM(context),
             color: AppColors.textMuted.withValues(alpha: 0.6),
-            fontFamily: 'monospace',
+            fontFamily: AppSizes.monoFamily,
+            fontFamilyFallback: AppSizes.monoFallback,
           ),
           filled: true,
           fillColor: AppColors.backgroundPrimary,
@@ -640,15 +660,20 @@ class _LauncherSettingsViewState extends ConsumerState<LauncherSettingsView> {
         style: TextStyle(
           fontSize: AppSizes.fontXS(context),
           color: AppColors.textMuted.withValues(alpha: 0.8),
-          fontFamily: 'monospace',
+          fontFamily: AppSizes.monoFamily,
+          fontFamilyFallback: AppSizes.monoFallback,
           height: 1.4,
         ),
       ),
     ]);
   }
 
-  Widget _card(BuildContext context, String title, List<Widget> children,
-      {Color? accent}) {
+  Widget _card(
+    BuildContext context,
+    String title,
+    List<Widget> children, {
+    Color? accent,
+  }) {
     final titleColor = accent ?? AppColors.accentPrimary;
     return Container(
       width: double.infinity,

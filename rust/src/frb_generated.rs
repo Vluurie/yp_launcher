@@ -37,7 +37,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.11.1";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 1479736252;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 126338535;
 
 // Section: executor
 
@@ -74,6 +74,49 @@ fn wire__crate__api__inspector__close_model_impl(
                 })?;
                 Ok(output_ok)
             })())
+        },
+    )
+}
+fn wire__crate__api__texture__create_item_thumbnail_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "create_item_thumbnail",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_source_image_path = <String>::sse_decode(&mut deserializer);
+            let api_output_dir = <String>::sse_decode(&mut deserializer);
+            let api_texture_name = <String>::sse_decode(&mut deserializer);
+            let api_width = <u32>::sse_decode(&mut deserializer);
+            let api_height = <u32>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| {
+                transform_result_sse::<_, crate::api::texture::MiscTexError>((move || {
+                    let output_ok = crate::api::texture::create_item_thumbnail(
+                        api_source_image_path,
+                        api_output_dir,
+                        api_texture_name,
+                        api_width,
+                        api_height,
+                    )?;
+                    Ok(output_ok)
+                })())
+            }
         },
     )
 }
@@ -181,6 +224,81 @@ fn wire__crate__api__inspector__probe_archive_pair_impl(
                         crate::api::inspector::probe_archive_pair(api_dat_path, api_dtt_path)?;
                     Ok(output_ok)
                 })())
+            }
+        },
+    )
+}
+fn wire__crate__api__texture__read_misctex_preview_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "read_misctex_preview",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_dtt_path = <String>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| {
+                transform_result_sse::<_, crate::api::texture::MiscTexError>((move || {
+                    let output_ok = crate::api::texture::read_misctex_preview(api_dtt_path)?;
+                    Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
+fn wire__crate__api__weapon__rename_weapon_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "rename_weapon",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_dat_path = <String>::sse_decode(&mut deserializer);
+            let api_dtt_path = <String>::sse_decode(&mut deserializer);
+            let api_to_stem = <String>::sse_decode(&mut deserializer);
+            let api_out_dir = <String>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| {
+                transform_result_sse::<_, crate::api::weapon::WeaponRenameError>((move || {
+                    let output_ok = crate::api::weapon::rename_weapon(
+                        api_dat_path,
+                        api_dtt_path,
+                        api_to_stem,
+                        api_out_dir,
+                    )?;
+                    Ok(output_ok)
+                })(
+                ))
             }
         },
     )
@@ -396,6 +514,38 @@ impl SseDecode for Vec<u8> {
     }
 }
 
+impl SseDecode for crate::api::texture::MiscTexError {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_code = <u32>::sse_decode(deserializer);
+        let mut var_detail = <String>::sse_decode(deserializer);
+        return crate::api::texture::MiscTexError {
+            code: var_code,
+            detail: var_detail,
+        };
+    }
+}
+
+impl SseDecode for crate::api::texture::MiscTexResult {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_datPath = <String>::sse_decode(deserializer);
+        let mut var_dttPath = <String>::sse_decode(deserializer);
+        let mut var_width = <u32>::sse_decode(deserializer);
+        let mut var_height = <u32>::sse_decode(deserializer);
+        let mut var_datBytes = <u64>::sse_decode(deserializer);
+        let mut var_dttBytes = <u64>::sse_decode(deserializer);
+        return crate::api::texture::MiscTexResult {
+            dat_path: var_datPath,
+            dtt_path: var_dttPath,
+            width: var_width,
+            height: var_height,
+            dat_bytes: var_datBytes,
+            dtt_bytes: var_dttBytes,
+        };
+    }
+}
+
 impl SseDecode for crate::api::inspector::ModelCandidate {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -475,6 +625,20 @@ impl SseDecode for crate::api::inspector::RenderFrame {
     }
 }
 
+impl SseDecode for crate::api::texture::TexturePreview {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_width = <u32>::sse_decode(deserializer);
+        let mut var_height = <u32>::sse_decode(deserializer);
+        let mut var_png = <Vec<u8>>::sse_decode(deserializer);
+        return crate::api::texture::TexturePreview {
+            width: var_width,
+            height: var_height,
+            png: var_png,
+        };
+    }
+}
+
 impl SseDecode for u32 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -501,6 +665,36 @@ impl SseDecode for () {
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {}
 }
 
+impl SseDecode for crate::api::weapon::WeaponRenameError {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_code = <u32>::sse_decode(deserializer);
+        let mut var_detail = <String>::sse_decode(deserializer);
+        return crate::api::weapon::WeaponRenameError {
+            code: var_code,
+            detail: var_detail,
+        };
+    }
+}
+
+impl SseDecode for crate::api::weapon::WeaponRenameResult {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_datPath = <String>::sse_decode(deserializer);
+        let mut var_dttPath = <String>::sse_decode(deserializer);
+        let mut var_fromStem = <String>::sse_decode(deserializer);
+        let mut var_toStem = <String>::sse_decode(deserializer);
+        let mut var_renamedEntries = <Vec<String>>::sse_decode(deserializer);
+        return crate::api::weapon::WeaponRenameResult {
+            dat_path: var_datPath,
+            dtt_path: var_dttPath,
+            from_stem: var_fromStem,
+            to_stem: var_toStem,
+            renamed_entries: var_renamedEntries,
+        };
+    }
+}
+
 impl SseDecode for i32 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -517,16 +711,23 @@ fn pde_ffi_dispatcher_primary_impl(
 ) {
     // Codec=Pde (Serialization + dispatch), see doc to use other codecs
     match func_id {
-        2 => wire__crate__api__inspector__init_app_impl(port, ptr, rust_vec_len, data_len),
-        3 => wire__crate__api__inspector__open_model_impl(port, ptr, rust_vec_len, data_len),
-        4 => {
+        2 => {
+            wire__crate__api__texture__create_item_thumbnail_impl(port, ptr, rust_vec_len, data_len)
+        }
+        3 => wire__crate__api__inspector__init_app_impl(port, ptr, rust_vec_len, data_len),
+        4 => wire__crate__api__inspector__open_model_impl(port, ptr, rust_vec_len, data_len),
+        5 => {
             wire__crate__api__inspector__probe_archive_pair_impl(port, ptr, rust_vec_len, data_len)
         }
-        5 => wire__crate__api__inspector__render_model_impl(port, ptr, rust_vec_len, data_len),
         6 => {
+            wire__crate__api__texture__read_misctex_preview_impl(port, ptr, rust_vec_len, data_len)
+        }
+        7 => wire__crate__api__weapon__rename_weapon_impl(port, ptr, rust_vec_len, data_len),
+        8 => wire__crate__api__inspector__render_model_impl(port, ptr, rust_vec_len, data_len),
+        9 => {
             wire__crate__api__inspector__set_mesh_visibility_impl(port, ptr, rust_vec_len, data_len)
         }
-        7 => wire__crate__api__inspector__set_model_lod_impl(port, ptr, rust_vec_len, data_len),
+        10 => wire__crate__api__inspector__set_model_lod_impl(port, ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }
@@ -564,6 +765,52 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::inspector::ArchiveProbe>
     for crate::api::inspector::ArchiveProbe
 {
     fn into_into_dart(self) -> crate::api::inspector::ArchiveProbe {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::texture::MiscTexError {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.code.into_into_dart().into_dart(),
+            self.detail.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::texture::MiscTexError
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::texture::MiscTexError>
+    for crate::api::texture::MiscTexError
+{
+    fn into_into_dart(self) -> crate::api::texture::MiscTexError {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::texture::MiscTexResult {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.dat_path.into_into_dart().into_dart(),
+            self.dtt_path.into_into_dart().into_dart(),
+            self.width.into_into_dart().into_dart(),
+            self.height.into_into_dart().into_dart(),
+            self.dat_bytes.into_into_dart().into_dart(),
+            self.dtt_bytes.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::texture::MiscTexResult
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::texture::MiscTexResult>
+    for crate::api::texture::MiscTexResult
+{
+    fn into_into_dart(self) -> crate::api::texture::MiscTexResult {
         self
     }
 }
@@ -661,6 +908,73 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::inspector::RenderFrame>
         self
     }
 }
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::texture::TexturePreview {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.width.into_into_dart().into_dart(),
+            self.height.into_into_dart().into_dart(),
+            self.png.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::texture::TexturePreview
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::texture::TexturePreview>
+    for crate::api::texture::TexturePreview
+{
+    fn into_into_dart(self) -> crate::api::texture::TexturePreview {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::weapon::WeaponRenameError {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.code.into_into_dart().into_dart(),
+            self.detail.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::weapon::WeaponRenameError
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::weapon::WeaponRenameError>
+    for crate::api::weapon::WeaponRenameError
+{
+    fn into_into_dart(self) -> crate::api::weapon::WeaponRenameError {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::weapon::WeaponRenameResult {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.dat_path.into_into_dart().into_dart(),
+            self.dtt_path.into_into_dart().into_dart(),
+            self.from_stem.into_into_dart().into_dart(),
+            self.to_stem.into_into_dart().into_dart(),
+            self.renamed_entries.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::weapon::WeaponRenameResult
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::weapon::WeaponRenameResult>
+    for crate::api::weapon::WeaponRenameResult
+{
+    fn into_into_dart(self) -> crate::api::weapon::WeaponRenameResult {
+        self
+    }
+}
 
 impl SseEncode for String {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -731,6 +1045,26 @@ impl SseEncode for Vec<u8> {
     }
 }
 
+impl SseEncode for crate::api::texture::MiscTexError {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <u32>::sse_encode(self.code, serializer);
+        <String>::sse_encode(self.detail, serializer);
+    }
+}
+
+impl SseEncode for crate::api::texture::MiscTexResult {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <String>::sse_encode(self.dat_path, serializer);
+        <String>::sse_encode(self.dtt_path, serializer);
+        <u32>::sse_encode(self.width, serializer);
+        <u32>::sse_encode(self.height, serializer);
+        <u64>::sse_encode(self.dat_bytes, serializer);
+        <u64>::sse_encode(self.dtt_bytes, serializer);
+    }
+}
+
 impl SseEncode for crate::api::inspector::ModelCandidate {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -783,6 +1117,15 @@ impl SseEncode for crate::api::inspector::RenderFrame {
     }
 }
 
+impl SseEncode for crate::api::texture::TexturePreview {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <u32>::sse_encode(self.width, serializer);
+        <u32>::sse_encode(self.height, serializer);
+        <Vec<u8>>::sse_encode(self.png, serializer);
+    }
+}
+
 impl SseEncode for u32 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -807,6 +1150,25 @@ impl SseEncode for u8 {
 impl SseEncode for () {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {}
+}
+
+impl SseEncode for crate::api::weapon::WeaponRenameError {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <u32>::sse_encode(self.code, serializer);
+        <String>::sse_encode(self.detail, serializer);
+    }
+}
+
+impl SseEncode for crate::api::weapon::WeaponRenameResult {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <String>::sse_encode(self.dat_path, serializer);
+        <String>::sse_encode(self.dtt_path, serializer);
+        <String>::sse_encode(self.from_stem, serializer);
+        <String>::sse_encode(self.to_stem, serializer);
+        <Vec<String>>::sse_encode(self.renamed_entries, serializer);
+    }
 }
 
 impl SseEncode for i32 {

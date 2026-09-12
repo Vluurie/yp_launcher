@@ -19,10 +19,7 @@ class BundledLinkChip extends StatefulWidget {
   /// Strips a trailing `(modId@profile)` suffix off bundled-pack names so
   /// the visible label stays compact. The full name remains in the tooltip.
   static String shortenLabel(String raw) {
-    final trimmed = raw.replaceAll(
-      RegExp(r'\s*\([^()@]+@[^()]+\)\s*$'),
-      '',
-    );
+    final trimmed = raw.replaceAll(RegExp(r'\s*\([^()@]+@[^()]+\)\s*$'), '');
     return trimmed.isEmpty ? raw : trimmed;
   }
 

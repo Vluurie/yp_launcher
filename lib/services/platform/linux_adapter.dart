@@ -45,7 +45,7 @@ class LinuxAdapter extends WineAdapterBase {
 
   @override
   List<String> get systemSevenZipCandidates => const [
-        '/usr/bin/7zz',
-        '/usr/local/bin/7zz',
-      ];
+    '/usr/bin/7zz',
+    '/usr/local/bin/7zz',
+  ];
 }

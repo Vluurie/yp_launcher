@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
@@ -32,6 +34,9 @@ class AppDropdown<T> extends StatefulWidget {
 }
 
 class _AppDropdownState<T> extends State<AppDropdown<T>> {
+  static const _maxMenuWidth = 480.0;
+  static const _minMenuHeight = 96.0;
+
   bool _hovered = false;
   bool _open = false;
   final LayerLink _link = LayerLink();
@@ -40,7 +45,8 @@ class _AppDropdownState<T> extends State<AppDropdown<T>> {
 
   @override
   void dispose() {
-    _removeOverlay();
+    _entry?.remove();
+    _entry = null;
     super.dispose();
   }
 
@@ -58,6 +64,35 @@ class _AppDropdownState<T> extends State<AppDropdown<T>> {
     if (renderBox == null) return;
     final size = renderBox.size;
 
+    final overlayBox =
+        Overlay.of(context, rootOverlay: true).context.findRenderObject()
+            as RenderBox?;
+    if (overlayBox == null) return;
+    final origin = renderBox.localToGlobal(Offset.zero, ancestor: overlayBox);
+    final bounds = overlayBox.size;
+
+    const margin = 8.0;
+    const preferredHeight = 320.0;
+
+    final spaceBelow = bounds.height - origin.dy - size.height - margin;
+    final spaceAbove = origin.dy - margin;
+    final openUp = spaceBelow < spaceAbove && spaceBelow < preferredHeight;
+    final roomVertical = math.max(openUp ? spaceAbove : spaceBelow, 0.0);
+    final maxHeight = math.min(
+      math.max(roomVertical, _minMenuHeight),
+      preferredHeight,
+    );
+
+    final roomRight = bounds.width - origin.dx - margin;
+    final roomLeft = origin.dx + size.width - margin;
+    final alignRight = roomLeft > roomRight;
+    final roomHorizontal = math.max(alignRight ? roomLeft : roomRight, 0.0);
+    final maxWidth = math.max(
+      math.min(roomHorizontal, math.max(size.width, _maxMenuWidth)),
+      0.0,
+    );
+    final minWidth = math.min(size.width, maxWidth);
+
     _entry = OverlayEntry(
       builder: (context) {
         return Stack(
@@ -70,17 +105,21 @@ class _AppDropdownState<T> extends State<AppDropdown<T>> {
             ),
             CompositedTransformFollower(
               link: _link,
-              targetAnchor: Alignment.bottomLeft,
-              followerAnchor: Alignment.topLeft,
-              offset: const Offset(0, 2),
+              targetAnchor: openUp
+                  ? (alignRight ? Alignment.topRight : Alignment.topLeft)
+                  : (alignRight ? Alignment.bottomRight : Alignment.bottomLeft),
+              followerAnchor: openUp
+                  ? (alignRight ? Alignment.bottomRight : Alignment.bottomLeft)
+                  : (alignRight ? Alignment.topRight : Alignment.topLeft),
+              offset: Offset(0, openUp ? -2 : 2),
               showWhenUnlinked: false,
               child: Material(
                 color: Colors.transparent,
                 child: ConstrainedBox(
                   constraints: BoxConstraints(
-                    minWidth: size.width,
-                    maxWidth: 480,
-                    maxHeight: 320,
+                    minWidth: minWidth,
+                    maxWidth: maxWidth,
+                    maxHeight: maxHeight,
                   ),
                   child: widget.menuMatchesTriggerWidth
                       ? SizedBox(
@@ -134,35 +173,31 @@ class _AppDropdownState<T> extends State<AppDropdown<T>> {
     final borderColor = !enabled
         ? AppColors.borderLight
         : (_open || highlight)
-            ? AppColors.accentPrimary.withValues(alpha: 0.55)
-            : AppColors.borderMedium;
+        ? AppColors.accentPrimary.withValues(alpha: 0.55)
+        : AppColors.borderMedium;
 
     final fillColor = !enabled
         ? AppColors.inputBackground.withValues(alpha: 0.6)
         : _hovered || _open
-            ? AppColors.accentPrimary.withValues(alpha: 0.10)
-            : AppColors.inputBackground;
+        ? AppColors.accentPrimary.withValues(alpha: 0.10)
+        : AppColors.inputBackground;
 
     final iconColor = !enabled
         ? AppColors.textMuted
         : (highlight || _hovered || _open)
-            ? AppColors.accentPrimary
-            : AppColors.textSecondary;
+        ? AppColors.accentPrimary
+        : AppColors.textSecondary;
 
-    final textColor =
-        !enabled ? AppColors.textMuted : AppColors.textPrimary;
+    final textColor = !enabled ? AppColors.textMuted : AppColors.textPrimary;
 
     final selectedLabel = widget.items.contains(widget.value)
         ? widget.itemLabel(widget.value)
-        : (widget.items.isNotEmpty
-            ? widget.itemLabel(widget.items.first)
-            : '');
+        : (widget.items.isNotEmpty ? widget.itemLabel(widget.items.first) : '');
 
     return CompositedTransformTarget(
       link: _link,
       child: MouseRegion(
-        cursor:
-            enabled ? SystemMouseCursors.click : SystemMouseCursors.basic,
+        cursor: enabled ? SystemMouseCursors.click : SystemMouseCursors.basic,
         onEnter: (_) {
           if (!enabled || _hovered) return;
           setState(() => _hovered = true);
@@ -336,8 +371,8 @@ class _DesktopMenuItemState<T> extends State<_DesktopMenuItem<T>> {
     final bg = _hovered
         ? AppColors.accentPrimary.withValues(alpha: 0.18)
         : selected
-            ? AppColors.accentPrimary.withValues(alpha: 0.08)
-            : Colors.transparent;
+        ? AppColors.accentPrimary.withValues(alpha: 0.08)
+        : Colors.transparent;
     final fg = selected || _hovered
         ? AppColors.accentPrimary
         : AppColors.textPrimary;
@@ -366,19 +401,15 @@ class _DesktopMenuItemState<T> extends State<_DesktopMenuItem<T>> {
               ),
               const SizedBox(width: 6),
               Flexible(
-                child: Tooltip(
-                  message: widget.label,
-                  child: Text(
-                    widget.label,
-                    softWrap: false,
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                    style: TextStyle(
-                      fontSize: AppSizes.fontSM(context),
-                      color: fg,
-                      fontWeight:
-                          selected ? FontWeight.w700 : FontWeight.w500,
-                    ),
+                child: Text(
+                  widget.label,
+                  softWrap: false,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                  style: TextStyle(
+                    fontSize: AppSizes.fontSM(context),
+                    color: fg,
+                    fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
                   ),
                 ),
               ),

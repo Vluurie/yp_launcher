@@ -20,8 +20,10 @@ String normalizeSteamLibraryPath(String vdfPath, String prefix) {
   if (match == null) return unescaped;
 
   final drive = match.group(1)!.toLowerCase();
-  final segments =
-      unescaped.substring(3).split('\\').where((part) => part.isNotEmpty);
+  final segments = unescaped
+      .substring(3)
+      .split('\\')
+      .where((part) => part.isNotEmpty);
   final driveRoot = drive == 'c'
       ? p.join(prefix, 'drive_c')
       : p.join(prefix, 'dosdevices', '$drive:');
@@ -32,8 +34,16 @@ String normalizeSteamLibraryPath(String vdfPath, String prefix) {
 List<String> parseLibraryFoldersInPrefix(String prefix) {
   final libraries = <String>[];
   for (final programFiles in _programFilesVariants) {
-    final vdf = File(p.join(prefix, 'drive_c', programFiles, 'Steam',
-        'steamapps', 'libraryfolders.vdf'));
+    final vdf = File(
+      p.join(
+        prefix,
+        'drive_c',
+        programFiles,
+        'Steam',
+        'steamapps',
+        'libraryfolders.vdf',
+      ),
+    );
     if (!vdf.existsSync()) continue;
     try {
       for (final path in vdfPathEntries(vdf.readAsStringSync())) {
@@ -69,10 +79,12 @@ List<NierInstallation> findNierInPrefixes() {
     for (final dir in nierDirsInPrefix(bottle.path)) {
       final normalized = p.normalize(dir);
       if (!seen.add(normalized.toLowerCase())) continue;
-      installations.add(NierInstallation(
-        path: normalized,
-        hasData: Directory(p.join(normalized, 'data')).existsSync(),
-      ));
+      installations.add(
+        NierInstallation(
+          path: normalized,
+          hasData: Directory(p.join(normalized, 'data')).existsSync(),
+        ),
+      );
     }
   }
 

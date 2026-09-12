@@ -1095,7 +1095,7 @@ abstract class AppLocalizations {
   /// No description provided for @featureLodMod.
   ///
   /// In en, this message translates to:
-  /// **'LOD Mod - Built-in visual tweaks like shadows, details and pop-in. Off by default.'**
+  /// **'LOD Mod Ext - Built-in visual tweaks like shadows, details and pop-in. Off by default.'**
   String get featureLodMod;
 
   /// No description provided for @tooltipEditConfigs.
@@ -1143,7 +1143,7 @@ abstract class AppLocalizations {
   /// No description provided for @notifyLodModMigrated.
   ///
   /// In en, this message translates to:
-  /// **'Found your old LodMod.ini settings - imported into lodmod.toml and enabled LodMod.'**
+  /// **'Found your old LodMod.ini settings - imported into lodmod.toml and enabled LodMod Ext.'**
   String get notifyLodModMigrated;
 
   /// No description provided for @notifyReShadeDetected.
@@ -1317,7 +1317,7 @@ abstract class AppLocalizations {
   /// No description provided for @headerLodMod.
   ///
   /// In en, this message translates to:
-  /// **'LOD MOD'**
+  /// **'LOD MOD EXT'**
   String get headerLodMod;
 
   /// No description provided for @headerTextures.
@@ -1365,7 +1365,7 @@ abstract class AppLocalizations {
   /// No description provided for @tooltipEditsSettingsJson.
   ///
   /// In en, this message translates to:
-  /// **'Edits %APPDATA%\\NAMS\\settings.json'**
+  /// **'Edits nams\\_internal\\cache\\settings.json'**
   String get tooltipEditsSettingsJson;
 
   /// No description provided for @tooltipEditsNaiom.
@@ -1397,6 +1397,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'HEAP OVERRIDES'**
   String get cardHeapOverrides;
+
+  /// No description provided for @cardPerformance.
+  ///
+  /// In en, this message translates to:
+  /// **'PERFORMANCE'**
+  String get cardPerformance;
+
+  /// No description provided for @performanceCardNote.
+  ///
+  /// In en, this message translates to:
+  /// **'The first two only help when the CPU is the bottleneck. If your CPU is slower than your GPU, both together can bring up to 20% more performance; on a GPU-bound system they change nothing. The third one is about hitches while the map loads, not about frame rate.'**
+  String get performanceCardNote;
 
   /// No description provided for @cardLevelOfDetail.
   ///
@@ -1659,7 +1671,7 @@ abstract class AppLocalizations {
   /// No description provided for @tabLodMod.
   ///
   /// In en, this message translates to:
-  /// **'LOD Mod'**
+  /// **'LOD Mod Ext'**
   String get tabLodMod;
 
   /// No description provided for @tabNaiom.
@@ -1691,6 +1703,822 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Third Party'**
   String get tabThirdParty;
+
+  /// No description provided for @tabDocs.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Mods'**
+  String get tabDocs;
+
+  /// No description provided for @tabTools.
+  ///
+  /// In en, this message translates to:
+  /// **'Tools'**
+  String get tabTools;
+
+  /// No description provided for @toolsIconsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'ICONS'**
+  String get toolsIconsTitle;
+
+  /// No description provided for @toolsIconsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Every misctex icon your mods ship. Replace one to swap the image or change its size - the game reads it by name, so the name has to stay.'**
+  String get toolsIconsDesc;
+
+  /// No description provided for @toolsIconsHotReload.
+  ///
+  /// In en, this message translates to:
+  /// **'No restart needed: replace an icon while the game runs, then leave the inventory and open it again. The new image is already there.'**
+  String get toolsIconsHotReload;
+
+  /// No description provided for @toolsIconsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No icons yet. The item and weapon builders in Create Mods make one, or add one below.'**
+  String get toolsIconsEmpty;
+
+  /// No description provided for @toolsIconsAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add an icon from an image'**
+  String get toolsIconsAdd;
+
+  /// No description provided for @toolsIconsConvert.
+  ///
+  /// In en, this message translates to:
+  /// **'Convert an image'**
+  String get toolsIconsConvert;
+
+  /// No description provided for @toolsIconsAdjust.
+  ///
+  /// In en, this message translates to:
+  /// **'Adjust an icon'**
+  String get toolsIconsAdjust;
+
+  /// No description provided for @toolsIconsNotMisctex.
+  ///
+  /// In en, this message translates to:
+  /// **'That is not an icon file. Pick a misctex_*.dat.'**
+  String get toolsIconsNotMisctex;
+
+  /// No description provided for @toolsIconsPick.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick an existing icon'**
+  String get toolsIconsPick;
+
+  /// No description provided for @toolsIconsNewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New icon'**
+  String get toolsIconsNewTitle;
+
+  /// No description provided for @toolsIconsNewMod.
+  ///
+  /// In en, this message translates to:
+  /// **'Mod folder'**
+  String get toolsIconsNewMod;
+
+  /// No description provided for @toolsIconsNewNoMods.
+  ///
+  /// In en, this message translates to:
+  /// **'No mod folders yet. Create a mod first.'**
+  String get toolsIconsNewNoMods;
+
+  /// No description provided for @toolsIconsNewName.
+  ///
+  /// In en, this message translates to:
+  /// **'Texture name'**
+  String get toolsIconsNewName;
+
+  /// No description provided for @toolsIconsNewNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'item_thumb_8500'**
+  String get toolsIconsNewNameHint;
+
+  /// No description provided for @toolsIconsNewHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The game looks the icon up by this name.'**
+  String get toolsIconsNewHint;
+
+  /// No description provided for @toolsIconsNewCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get toolsIconsNewCreate;
+
+  /// No description provided for @toolsIconsNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New icon'**
+  String get toolsIconsNew;
+
+  /// No description provided for @toolsIconsReplace.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace'**
+  String get toolsIconsReplace;
+
+  /// No description provided for @toolsIconsDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get toolsIconsDelete;
+
+  /// No description provided for @toolsIconsDeleteConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete {name}? The .dat and .dtt files are removed. Any item pointing at it falls back to the placeholder.'**
+  String toolsIconsDeleteConfirm(String name);
+
+  /// No description provided for @toolsIconsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 icon} other{{count} icons}}'**
+  String toolsIconsCount(int count);
+
+  /// No description provided for @toolsNeedsGameDir.
+  ///
+  /// In en, this message translates to:
+  /// **'Select your game folder in the launcher first.'**
+  String get toolsNeedsGameDir;
+
+  /// No description provided for @docsSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search the docs'**
+  String get docsSearchHint;
+
+  /// No description provided for @docsNoResults.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing found.'**
+  String get docsNoResults;
+
+  /// No description provided for @docsResultCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 result} other{{count} results}}'**
+  String docsResultCount(int count);
+
+  /// No description provided for @docsCategoryNative.
+  ///
+  /// In en, this message translates to:
+  /// **'Modding Guide'**
+  String get docsCategoryNative;
+
+  /// No description provided for @docsCategoryScripting.
+  ///
+  /// In en, this message translates to:
+  /// **'Scripting'**
+  String get docsCategoryScripting;
+
+  /// No description provided for @docsCategoryResources.
+  ///
+  /// In en, this message translates to:
+  /// **'Reference Tables'**
+  String get docsCategoryResources;
+
+  /// No description provided for @docsCategoryAuthoring.
+  ///
+  /// In en, this message translates to:
+  /// **'Tool Authoring'**
+  String get docsCategoryAuthoring;
+
+  /// No description provided for @docsOnThisPage.
+  ///
+  /// In en, this message translates to:
+  /// **'On this page'**
+  String get docsOnThisPage;
+
+  /// No description provided for @docsHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Start here'**
+  String get docsHome;
+
+  /// No description provided for @docsHeroTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Make your own mod'**
+  String get docsHeroTitle;
+
+  /// No description provided for @docsHeroBody.
+  ///
+  /// In en, this message translates to:
+  /// **'New items, weapons, outfits, quests, whole scripted scenes. No coding needed to get started, and everything you need is already on this page.'**
+  String get docsHeroBody;
+
+  /// No description provided for @docsHeroCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Your first mod in 5 minutes'**
+  String get docsHeroCta;
+
+  /// No description provided for @docsHeroTime.
+  ///
+  /// In en, this message translates to:
+  /// **'5 min'**
+  String get docsHeroTime;
+
+  /// No description provided for @docsPathBeginner.
+  ///
+  /// In en, this message translates to:
+  /// **'Never modded before'**
+  String get docsPathBeginner;
+
+  /// No description provided for @docsPathBeginnerBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Start with a single new item, then learn how a mod folder is put together.'**
+  String get docsPathBeginnerBody;
+
+  /// No description provided for @docsPathContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Add things to the game'**
+  String get docsPathContent;
+
+  /// No description provided for @docsPathContentBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Items, weapons, outfits, accessories, quests, mail, music and more.'**
+  String get docsPathContentBody;
+
+  /// No description provided for @docsPathScripting.
+  ///
+  /// In en, this message translates to:
+  /// **'Script the world'**
+  String get docsPathScripting;
+
+  /// No description provided for @docsPathScriptingBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Make things happen at the right moment: spawns, triggers, cameras, cutscenes.'**
+  String get docsPathScriptingBody;
+
+  /// No description provided for @docsSectionGuides.
+  ///
+  /// In en, this message translates to:
+  /// **'Guides'**
+  String get docsSectionGuides;
+
+  /// No description provided for @docsEnglishOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'The documentation is only available in English.'**
+  String get docsEnglishOnly;
+
+  /// No description provided for @docsBackToLauncher.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to launcher'**
+  String get docsBackToLauncher;
+
+  /// No description provided for @docsEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit this page'**
+  String get docsEdit;
+
+  /// No description provided for @docsLinkCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open the browser. Link copied: {url}'**
+  String docsLinkCopied(String url);
+
+  /// No description provided for @docsReload.
+  ///
+  /// In en, this message translates to:
+  /// **'Reload from disk'**
+  String get docsReload;
+
+  /// No description provided for @docsSaveFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Save to file'**
+  String get docsSaveFile;
+
+  /// No description provided for @docsPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh preview'**
+  String get docsPreview;
+
+  /// No description provided for @thumbnailTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Icon'**
+  String get thumbnailTitle;
+
+  /// No description provided for @thumbnailDrop.
+  ///
+  /// In en, this message translates to:
+  /// **'Drop an image here'**
+  String get thumbnailDrop;
+
+  /// No description provided for @thumbnailDropHint.
+  ///
+  /// In en, this message translates to:
+  /// **'PNG, JPEG, WebP, BMP or TGA. It gets converted for you.'**
+  String get thumbnailDropHint;
+
+  /// No description provided for @thumbnailSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Size'**
+  String get thumbnailSize;
+
+  /// No description provided for @thumbnailSizeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Drag the corner to resize. DXT5, multiples of 4.'**
+  String get thumbnailSizeHint;
+
+  /// No description provided for @thumbnailSizeFixed.
+  ///
+  /// In en, this message translates to:
+  /// **'Fixed for this image type. Another size overflows its box in game.'**
+  String get thumbnailSizeFixed;
+
+  /// No description provided for @thumbnailScaled.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview shown at {percent}% - the icon is written at full size.'**
+  String thumbnailScaled(int percent);
+
+  /// No description provided for @thumbnailCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Create the icon'**
+  String get thumbnailCreate;
+
+  /// No description provided for @thumbnailUse.
+  ///
+  /// In en, this message translates to:
+  /// **'Use this image'**
+  String get thumbnailUse;
+
+  /// No description provided for @thumbnailPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready - written when you create the item.'**
+  String get thumbnailPending;
+
+  /// No description provided for @thumbnailHotReload.
+  ///
+  /// In en, this message translates to:
+  /// **'Reopen the inventory in-game to see a replaced icon. No restart.'**
+  String get thumbnailHotReload;
+
+  /// No description provided for @thumbnailOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Set an icon'**
+  String get thumbnailOpen;
+
+  /// No description provided for @thumbnailChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Change icon'**
+  String get thumbnailChange;
+
+  /// No description provided for @thumbnailReplace.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace'**
+  String get thumbnailReplace;
+
+  /// No description provided for @thumbnailRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get thumbnailRemove;
+
+  /// No description provided for @thumbnailDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Icon written next to your item.'**
+  String get thumbnailDone;
+
+  /// No description provided for @thumbnailWorking.
+  ///
+  /// In en, this message translates to:
+  /// **'Converting...'**
+  String get thumbnailWorking;
+
+  /// No description provided for @thumbnailNoItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Create the item first, then give it an icon.'**
+  String get thumbnailNoItem;
+
+  /// No description provided for @errTextureUnreadable.
+  ///
+  /// In en, this message translates to:
+  /// **'This icon could not be read. It may be damaged or in an unexpected format.'**
+  String get errTextureUnreadable;
+
+  /// No description provided for @errImageUnreadable.
+  ///
+  /// In en, this message translates to:
+  /// **'That file could not be read as an image. Use a PNG, JPEG, WebP, BMP or TGA.'**
+  String get errImageUnreadable;
+
+  /// No description provided for @errImageSizeOutOfRange.
+  ///
+  /// In en, this message translates to:
+  /// **'The size has to be between 4 and 4096 pixels.'**
+  String get errImageSizeOutOfRange;
+
+  /// No description provided for @errImageSizeNotMultipleOfFour.
+  ///
+  /// In en, this message translates to:
+  /// **'Width and height have to be multiples of 4.'**
+  String get errImageSizeNotMultipleOfFour;
+
+  /// No description provided for @errArchiveEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing to pack.'**
+  String get errArchiveEmpty;
+
+  /// No description provided for @errArchiveExtensionTooLong.
+  ///
+  /// In en, this message translates to:
+  /// **'The file extension of {name} is longer than three characters.'**
+  String errArchiveExtensionTooLong(String name);
+
+  /// No description provided for @errWeaponNothingToConvert.
+  ///
+  /// In en, this message translates to:
+  /// **'That mod has no model or textures to convert. It needs a .dat with a wta and a .dtt with a wmb.'**
+  String get errWeaponNothingToConvert;
+
+  /// No description provided for @errWeaponClassMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'A weapon can only replace one of the same class. A spear cannot become a sword - the animations stay with the weapon it replaces.'**
+  String get errWeaponClassMismatch;
+
+  /// No description provided for @errFileReadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not read the file: {detail}'**
+  String errFileReadFailed(String detail);
+
+  /// No description provided for @errFileWriteFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not write the file: {detail}'**
+  String errFileWriteFailed(String detail);
+
+  /// No description provided for @errDirectoryCreateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not create the folder: {detail}'**
+  String errDirectoryCreateFailed(String detail);
+
+  /// No description provided for @errUnknownCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong (code {code}). {detail}'**
+  String errUnknownCode(int code, String detail);
+
+  /// No description provided for @itemBuilderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Make one right now'**
+  String get itemBuilderTitle;
+
+  /// No description provided for @itemBuilderBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Fill this in and the launcher writes the file for you. You can look at what it produced below, and change it by hand later.'**
+  String get itemBuilderBody;
+
+  /// No description provided for @itemBuilderName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name in the menu'**
+  String get itemBuilderName;
+
+  /// No description provided for @itemBuilderNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Rusty Bolt'**
+  String get itemBuilderNameHint;
+
+  /// No description provided for @itemBuilderDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get itemBuilderDescription;
+
+  /// No description provided for @itemBuilderDescriptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'A bolt. It has seen better days.'**
+  String get itemBuilderDescriptionHint;
+
+  /// No description provided for @itemBuilderModId.
+  ///
+  /// In en, this message translates to:
+  /// **'Mod folder'**
+  String get itemBuilderModId;
+
+  /// No description provided for @itemBuilderCarry.
+  ///
+  /// In en, this message translates to:
+  /// **'How many the player can carry'**
+  String get itemBuilderCarry;
+
+  /// No description provided for @itemBuilderSellable.
+  ///
+  /// In en, this message translates to:
+  /// **'Can be sold'**
+  String get itemBuilderSellable;
+
+  /// No description provided for @itemBuilderSellPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Sale price'**
+  String get itemBuilderSellPrice;
+
+  /// No description provided for @itemBuilderAutoGive.
+  ///
+  /// In en, this message translates to:
+  /// **'Give it to the player automatically'**
+  String get itemBuilderAutoGive;
+
+  /// No description provided for @itemBuilderAutoGiveHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Otherwise you need a shop or a quest reward to hand it out.'**
+  String get itemBuilderAutoGiveHint;
+
+  /// No description provided for @itemBuilderIdLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Item id'**
+  String get itemBuilderIdLabel;
+
+  /// No description provided for @itemBuilderIdHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Picked for you. Every item needs one nobody else uses.'**
+  String get itemBuilderIdHint;
+
+  /// No description provided for @itemBuilderPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'This is the file that gets written'**
+  String get itemBuilderPreview;
+
+  /// No description provided for @itemBuilderCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Create the item'**
+  String get itemBuilderCreate;
+
+  /// No description provided for @itemBuilderCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Written to {path}'**
+  String itemBuilderCreated(String path);
+
+  /// No description provided for @itemBuilderNeedsName.
+  ///
+  /// In en, this message translates to:
+  /// **'Give it a name first.'**
+  String get itemBuilderNeedsName;
+
+  /// No description provided for @itemBuilderNeedsGameDir.
+  ///
+  /// In en, this message translates to:
+  /// **'Select your game folder in the launcher first.'**
+  String get itemBuilderNeedsGameDir;
+
+  /// No description provided for @itemBuilderExists.
+  ///
+  /// In en, this message translates to:
+  /// **'That id is already taken. Pick another one.'**
+  String get itemBuilderExists;
+
+  /// No description provided for @itemBuilderOpenFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Show the file'**
+  String get itemBuilderOpenFolder;
+
+  /// No description provided for @firstModTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Build it while you read'**
+  String get firstModTitle;
+
+  /// No description provided for @firstModBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Each step writes the real file into your game folder. At the end you have a working mod.'**
+  String get firstModBody;
+
+  /// No description provided for @firstModStep1.
+  ///
+  /// In en, this message translates to:
+  /// **'Create the mod folder'**
+  String get firstModStep1;
+
+  /// No description provided for @firstModStep1Detail.
+  ///
+  /// In en, this message translates to:
+  /// **'nams\\mods\\my_first_mod\\entities\\'**
+  String get firstModStep1Detail;
+
+  /// No description provided for @firstModEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Open editor'**
+  String get firstModEdit;
+
+  /// No description provided for @firstModExplainManifest.
+  ///
+  /// In en, this message translates to:
+  /// **'This is your mod\'s nameplate. NAMS reads it first to know the mod exists. Change display_name and author to whatever you like - the id has to stay lowercase with no spaces, because it is how other mods refer to yours.'**
+  String get firstModExplainManifest;
+
+  /// No description provided for @firstModExplainItem.
+  ///
+  /// In en, this message translates to:
+  /// **'The filename decides what this is: item_9999.toml means an item with id 9999. Rename the file and you change the id. Inside, [text.name] is what the menu shows, [text.help] is the description. Try changing the name before you write it.'**
+  String get firstModExplainItem;
+
+  /// No description provided for @tomlEditorValid.
+  ///
+  /// In en, this message translates to:
+  /// **'Valid TOML. NAMS will read these:'**
+  String get tomlEditorValid;
+
+  /// No description provided for @tomlEditorInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'This is not valid TOML yet - NAMS would skip the file.'**
+  String get tomlEditorInvalid;
+
+  /// No description provided for @tomlEditorReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to the example'**
+  String get tomlEditorReset;
+
+  /// No description provided for @tomlEditorWrite.
+  ///
+  /// In en, this message translates to:
+  /// **'Write the file'**
+  String get tomlEditorWrite;
+
+  /// No description provided for @firstModStep2.
+  ///
+  /// In en, this message translates to:
+  /// **'Write mod.toml'**
+  String get firstModStep2;
+
+  /// No description provided for @firstModStep2Detail.
+  ///
+  /// In en, this message translates to:
+  /// **'The nameplate NAMS reads first.'**
+  String get firstModStep2Detail;
+
+  /// No description provided for @firstModStep3.
+  ///
+  /// In en, this message translates to:
+  /// **'Add the Test Pebble'**
+  String get firstModStep3;
+
+  /// No description provided for @firstModStep3Detail.
+  ///
+  /// In en, this message translates to:
+  /// **'entities\\item_9999.toml'**
+  String get firstModStep3Detail;
+
+  /// No description provided for @firstModStep4.
+  ///
+  /// In en, this message translates to:
+  /// **'Check that NAMS finds it'**
+  String get firstModStep4;
+
+  /// No description provided for @firstModStep4Detail.
+  ///
+  /// In en, this message translates to:
+  /// **'Runs NAMS verify against your install.'**
+  String get firstModStep4Detail;
+
+  /// No description provided for @firstModDo.
+  ///
+  /// In en, this message translates to:
+  /// **'Do it'**
+  String get firstModDo;
+
+  /// No description provided for @firstModDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get firstModDone;
+
+  /// No description provided for @firstModRedo.
+  ///
+  /// In en, this message translates to:
+  /// **'Write again'**
+  String get firstModRedo;
+
+  /// No description provided for @firstModVerify.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify'**
+  String get firstModVerify;
+
+  /// No description provided for @firstModOpenFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Open folder'**
+  String get firstModOpenFolder;
+
+  /// No description provided for @firstModReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove this mod again'**
+  String get firstModReset;
+
+  /// No description provided for @firstModNoGameDir.
+  ///
+  /// In en, this message translates to:
+  /// **'Select your game folder in the launcher first.'**
+  String get firstModNoGameDir;
+
+  /// No description provided for @firstModFinished.
+  ///
+  /// In en, this message translates to:
+  /// **'Your mod is in place. Restart the game and the Test Pebble is in your inventory.'**
+  String get firstModFinished;
+
+  /// No description provided for @firstModFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not write the files: {error}'**
+  String firstModFailed(String error);
+
+  /// No description provided for @docsCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get docsCopy;
+
+  /// No description provided for @docsCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied'**
+  String get docsCopied;
+
+  /// No description provided for @docsNativeBlurb.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe what you want in a text file and NAMS loads it. This is where most mods start.'**
+  String get docsNativeBlurb;
+
+  /// No description provided for @docsScriptingBlurb.
+  ///
+  /// In en, this message translates to:
+  /// **'For when things need to happen on cue: spawns, triggers, cameras, whole scripted scenes.'**
+  String get docsScriptingBlurb;
+
+  /// No description provided for @docsSectionReference.
+  ///
+  /// In en, this message translates to:
+  /// **'Reference tables'**
+  String get docsSectionReference;
+
+  /// No description provided for @docsReferenceBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Every id you can look up: items, weapons, chips, effects, meshes.'**
+  String get docsReferenceBody;
+
+  /// No description provided for @docsBrowseAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse all pages'**
+  String get docsBrowseAll;
+
+  /// No description provided for @docsPagesCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 page} other{{count} pages}}'**
+  String docsPagesCount(int count);
 
   /// No description provided for @thirdPartyTitle.
   ///
@@ -1725,7 +2553,7 @@ abstract class AppLocalizations {
   /// No description provided for @thirdPartyMigotoHowto.
   ///
   /// In en, this message translates to:
-  /// **'Drop a 3DMigoto shader-mod archive here. The launcher installs it and sets the loader target so NAMS hooks it.'**
+  /// **'3DMigoto shader-mod archives are installed through the drop zone at the top. The launcher sets the loader target so NAMS hooks it.'**
   String get thirdPartyMigotoHowto;
 
   /// No description provided for @thirdPartyGameModsHeader.
@@ -1737,7 +2565,7 @@ abstract class AppLocalizations {
   /// No description provided for @thirdPartyGameModsHowto.
   ///
   /// In en, this message translates to:
-  /// **'Drop mod files (.dll) here that were made for the original game — speedrun timers, trainers and similar tools. The launcher sets them up to run under NAMS, but it cannot check what a mod actually does: any of them can crash the game. Only add files you trust, and turn one off below if the game starts misbehaving.'**
+  /// **'Mod DLLs made for the original game — speedrun timers, trainers and similar tools — are installed through the drop zone at the top. The launcher sets them up to run under NAMS, but it cannot check what a mod actually does: any of them can crash the game. Only add files you trust, and turn one off below if the game starts misbehaving.'**
   String get thirdPartyGameModsHowto;
 
   /// No description provided for @thirdPartyGameModsNone.
@@ -1851,7 +2679,7 @@ abstract class AppLocalizations {
   /// No description provided for @thirdPartyDropHere.
   ///
   /// In en, this message translates to:
-  /// **'Drop a ReShade preset / 3DMigoto mod here'**
+  /// **'Drop ReShade presets, 3DMigoto mods or game-mod DLLs here'**
   String get thirdPartyDropHere;
 
   /// No description provided for @thirdPartyImported.
@@ -1893,7 +2721,7 @@ abstract class AppLocalizations {
   /// No description provided for @thirdPartyLodModPrompt.
   ///
   /// In en, this message translates to:
-  /// **'This is a LodMod. NAMS has LodMod built in — import its settings into the LodMod tab?'**
+  /// **'This is a LodMod. NAMS has LodMod Ext built in — import its settings into the LodMod Ext tab?'**
   String get thirdPartyLodModPrompt;
 
   /// No description provided for @thirdPartyStatusActive.
@@ -2295,13 +3123,13 @@ abstract class AppLocalizations {
   /// No description provided for @chipLodModOn.
   ///
   /// In en, this message translates to:
-  /// **'LOD MOD ON'**
+  /// **'LOD MOD EXT ON'**
   String get chipLodModOn;
 
   /// No description provided for @chipLodModOff.
   ///
   /// In en, this message translates to:
-  /// **'LOD MOD OFF'**
+  /// **'LOD MOD EXT OFF'**
   String get chipLodModOff;
 
   /// No description provided for @chipReShade.
@@ -2385,8 +3213,14 @@ abstract class AppLocalizations {
   /// No description provided for @lodModDescription.
   ///
   /// In en, this message translates to:
-  /// **'Visual quality patches built into NAMS, inspired by Automata-LodMod by emoose. Removes LOD pop-in, sharpens shadows and ambient occlusion, forces shadow casting on all objects including foliage, disables manual culling so objects don\'t pop in/out, and removes the vignette.'**
+  /// **'Visual quality patches built into NAMS, inspired by Automata-LodMod by emoose and extended well past it - hence the Ext. Removes LOD pop-in, sharpens shadows and ambient occlusion, forces shadow casting on all objects including foliage, disables manual culling so objects don\'t pop in/out, and removes the vignette. On top of that it adds shadow cascades and per-cascade blur, a bloom rewrite, global illumination, FPS uncap with event safeguards, FXAA, render scaling and high-res map grids.'**
   String get lodModDescription;
+
+  /// No description provided for @comparisonResolutionNote.
+  ///
+  /// In en, this message translates to:
+  /// **'All comparison images on this tab were captured at 2560x1440.'**
+  String get comparisonResolutionNote;
 
   /// No description provided for @namsDescription.
   ///
@@ -2597,6 +3431,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Installed to: nams/inject/textures/'**
   String get installedToTextures;
+
+  /// No description provided for @texturesPackNameTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Name this pack'**
+  String get texturesPackNameTitle;
 
   /// No description provided for @installingTextures.
   ///
@@ -4035,7 +4875,7 @@ abstract class AppLocalizations {
   /// No description provided for @tipLodModPreviews.
   ///
   /// In en, this message translates to:
-  /// **'LOD Mod settings come with before/after preview images'**
+  /// **'LOD Mod Ext settings come with before/after preview images'**
   String get tipLodModPreviews;
 
   /// No description provided for @tipFaqButton.
@@ -4077,7 +4917,7 @@ abstract class AppLocalizations {
   /// No description provided for @sectionLodMod.
   ///
   /// In en, this message translates to:
-  /// **'LOD MOD'**
+  /// **'LOD MOD EXT'**
   String get sectionLodMod;
 
   /// No description provided for @sectionLevelOfDetail.
@@ -4143,13 +4983,13 @@ abstract class AppLocalizations {
   /// No description provided for @labelEnableLodMod.
   ///
   /// In en, this message translates to:
-  /// **'Enable LodMod'**
+  /// **'Enable LodMod Ext'**
   String get labelEnableLodMod;
 
   /// No description provided for @tooltipEnableLodMod.
   ///
   /// In en, this message translates to:
-  /// **'Master toggle for all LodMod visual patches/rewrites.'**
+  /// **'Master toggle for all LodMod Ext visual patches/rewrites.'**
   String get tooltipEnableLodMod;
 
   /// No description provided for @labelLodMultiplier.
@@ -4161,8 +5001,32 @@ abstract class AppLocalizations {
   /// No description provided for @tooltipLodMultiplier.
   ///
   /// In en, this message translates to:
-  /// **'Controls LOD (Level of Detail) draw distances. 0 = LODs disabled (best quality, no pop-in). 1 = vanilla. 10+ helps reduce AO bleed without fully disabling LODs. Lower values = better visuals but may cost performance.'**
+  /// **'Controls when models switch to their lower detail levels. 0 = LODs disabled (best quality, no pop-in). 0.75 = the lower detail levels take over closer to the camera, which costs less GPU; the distance at which models vanish stays vanilla. 1 = vanilla. 10 = high detail far away, helps reduce AO bleed.'**
   String get tooltipLodMultiplier;
+
+  /// No description provided for @lodMultiplierOptionQuality.
+  ///
+  /// In en, this message translates to:
+  /// **'0 - Best quality'**
+  String get lodMultiplierOptionQuality;
+
+  /// No description provided for @lodMultiplierOptionPerformance.
+  ///
+  /// In en, this message translates to:
+  /// **'0.75 - Performance'**
+  String get lodMultiplierOptionPerformance;
+
+  /// No description provided for @lodMultiplierOptionVanilla.
+  ///
+  /// In en, this message translates to:
+  /// **'1 - Vanilla'**
+  String get lodMultiplierOptionVanilla;
+
+  /// No description provided for @lodMultiplierOptionFar.
+  ///
+  /// In en, this message translates to:
+  /// **'10 - Detail far away'**
+  String get lodMultiplierOptionFar;
 
   /// No description provided for @labelDisableManualCulling.
   ///
@@ -4359,19 +5223,19 @@ abstract class AppLocalizations {
   /// No description provided for @tooltipGiEnabled.
   ///
   /// In en, this message translates to:
-  /// **'FAR-style global illumination. Big FPS gain at the cost of some lighting accuracy.'**
+  /// **'What FAR calls global illumination: every frame a per-pixel pass walks all loaded reflection cubemaps to pick the nearest ones. With this on, only the cubemaps nearest to the camera stay in that walk, the rest are skipped. FAR\'s version cuts the list in load order, so cubemaps around you can be dropped and nearby surfaces go dull and dark. This one keeps the ones closest to you, so what you see up close keeps its light and reflections while the pass still gets cheaper. Only far reflections get a coarser cubemap. Takes effect live.'**
   String get tooltipGiEnabled;
 
   /// No description provided for @labelGiWorkgroupSize.
   ///
   /// In en, this message translates to:
-  /// **'GI Workgroup Size'**
+  /// **'Reflection cubemaps kept'**
   String get labelGiWorkgroupSize;
 
   /// No description provided for @tooltipGiWorkgroupSize.
   ///
   /// In en, this message translates to:
-  /// **'Number of light volumes processed per GI dispatch. 128 = vanilla quality, 64/32/16 = progressively faster but coarser. Lower values trade lighting fidelity for FPS.'**
+  /// **'How many reflection cubemaps nearest to the camera stay in the per-pixel walk. 128 = everything vanilla keeps, 64/32/16 = progressively cheaper, far reflections get coarser.'**
   String get tooltipGiWorkgroupSize;
 
   /// No description provided for @labelGiMinLightExtent.
@@ -4392,6 +5256,486 @@ abstract class AppLocalizations {
   /// **'EXPERIMENTAL'**
   String get cardExperimental;
 
+  /// No description provided for @cardBloom.
+  ///
+  /// In en, this message translates to:
+  /// **'BLOOM'**
+  String get cardBloom;
+
+  /// No description provided for @configParseErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{file} could not be read'**
+  String configParseErrorTitle(String file);
+
+  /// No description provided for @configParseErrorBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The file is not valid TOML. The launcher is showing default values and will not write to this file until it parses again. Fix it in a text editor and save - the launcher picks it up on its own.'**
+  String get configParseErrorBody;
+
+  /// No description provided for @subheadingHighGrids.
+  ///
+  /// In en, this message translates to:
+  /// **'HIGH-RES MAP GRIDS'**
+  String get subheadingHighGrids;
+
+  /// No description provided for @highGridsWipTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Work in progress'**
+  String get highGridsWipTitle;
+
+  /// No description provided for @highGridsWipBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This feature is not finished. The culling rules for the higher ring counts still have to be written, so far grids can show map parts that belong somewhere else.'**
+  String get highGridsWipBody;
+
+  /// No description provided for @highGridsWipContribute.
+  ///
+  /// In en, this message translates to:
+  /// **'Contributions welcome: the rule lists below are the part that needs filling in. Meshes and grid ids can be picked directly in-game with the YP Devkit (Map Manager -> Mesh Picker) and written straight into a rule.'**
+  String get highGridsWipContribute;
+
+  /// No description provided for @subheadingFrameRate.
+  ///
+  /// In en, this message translates to:
+  /// **'FRAME RATE'**
+  String get subheadingFrameRate;
+
+  /// No description provided for @subheadingRendering.
+  ///
+  /// In en, this message translates to:
+  /// **'RENDERING'**
+  String get subheadingRendering;
+
+  /// No description provided for @bloomReferenceVanilla.
+  ///
+  /// In en, this message translates to:
+  /// **'Vanilla'**
+  String get bloomReferenceVanilla;
+
+  /// No description provided for @bloom2017Button.
+  ///
+  /// In en, this message translates to:
+  /// **'Set 2017 bloom'**
+  String get bloom2017Button;
+
+  /// No description provided for @bloom2017Tooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Sets Bloom Reference Height to 900, the 2017 release\'s bloom footprint. Bloom then keeps that footprint at any resolution instead of scaling with it and shimmering at high res. Leaves Bloom Blur Width alone. Applies live.'**
+  String get bloom2017Tooltip;
+
+  /// No description provided for @labelBloomReferenceHeight.
+  ///
+  /// In en, this message translates to:
+  /// **'Bloom Reference Height'**
+  String get labelBloomReferenceHeight;
+
+  /// No description provided for @tooltipBloomReferenceHeight.
+  ///
+  /// In en, this message translates to:
+  /// **'Fixes bloom shimmering at high resolutions. 0 = vanilla 2021 (the bloom pyramid scales with your resolution, which makes bright edges shimmer). 900 = the 2017 bloom footprint at any resolution. Range 360-4320.'**
+  String get tooltipBloomReferenceHeight;
+
+  /// No description provided for @labelBloomKernelReferenceHeight.
+  ///
+  /// In en, this message translates to:
+  /// **'Bloom Blur Width'**
+  String get labelBloomKernelReferenceHeight;
+
+  /// No description provided for @tooltipBloomKernelReferenceHeight.
+  ///
+  /// In en, this message translates to:
+  /// **'Reference height the blur width is scaled against. 0 = vanilla (the blur shrinks relative to the screen at high resolutions). Any other value keeps the blur width fixed to that height at any resolution. Keeps render targets at full size, so it can be used instead of Bloom Reference Height. Range 360-4320.'**
+  String get tooltipBloomKernelReferenceHeight;
+
+  /// No description provided for @labelBloomExtraBlur.
+  ///
+  /// In en, this message translates to:
+  /// **'Extra Bloom Blur'**
+  String get labelBloomExtraBlur;
+
+  /// No description provided for @tooltipBloomExtraBlur.
+  ///
+  /// In en, this message translates to:
+  /// **'Extra blur rounds that widen and brighten the glow, in 0.1 steps. 0 = vanilla.'**
+  String get tooltipBloomExtraBlur;
+
+  /// No description provided for @bloomDropLevelsOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get bloomDropLevelsOff;
+
+  /// No description provided for @bloomDropLevelsWidest.
+  ///
+  /// In en, this message translates to:
+  /// **'Widest layer'**
+  String get bloomDropLevelsWidest;
+
+  /// No description provided for @bloomDropLevelsTwoWidest.
+  ///
+  /// In en, this message translates to:
+  /// **'Two widest layers'**
+  String get bloomDropLevelsTwoWidest;
+
+  /// No description provided for @labelBloomDropCoarseLevels.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove Wide Bloom Layers'**
+  String get labelBloomDropCoarseLevels;
+
+  /// No description provided for @tooltipBloomDropCoarseLevels.
+  ///
+  /// In en, this message translates to:
+  /// **'Removes the shimmery, flickering bloom layers while keeping the small glow around light sources. 0 = vanilla, 1 = removes the widest layer, 2 = removes the two widest layers. Based on Void\'s Bloom Fix.'**
+  String get tooltipBloomDropCoarseLevels;
+
+  /// No description provided for @labelHighGridsEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable High-Res Map Grids'**
+  String get labelHighGridsEnabled;
+
+  /// No description provided for @tooltipHighGridsEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Keeps more of the map loaded in high resolution around you. Vanilla only keeps 7 grids loaded and renders everything else as low-res terrain. Costs memory, loading time and frame rate, since the extra grids are also rendered. Work in progress: the culling rules are incomplete. Turning this on also turns on Disable Manual Culling, and turning it off turns that back off.'**
+  String get tooltipHighGridsEnabled;
+
+  /// No description provided for @labelHighGridsRings.
+  ///
+  /// In en, this message translates to:
+  /// **'Grid Rings'**
+  String get labelHighGridsRings;
+
+  /// No description provided for @tooltipHighGridsRings.
+  ///
+  /// In en, this message translates to:
+  /// **'How many hex rings of high-res grids are kept loaded around you. 1 = vanilla (7 grids), 2 = 19, 3 = 37, 4 = 61. Each grid costs roughly 100 MB of heap, so higher values need much more memory and load longer. They also cost frame rate, since all of that geometry is drawn. 4 is the tested value.'**
+  String get tooltipHighGridsRings;
+
+  /// No description provided for @labelHighGridsRoomRings.
+  ///
+  /// In en, this message translates to:
+  /// **'Per-Room Ring Overrides'**
+  String get labelHighGridsRoomRings;
+
+  /// No description provided for @tooltipHighGridsRoomRings.
+  ///
+  /// In en, this message translates to:
+  /// **'Use fewer rings in specific rooms. Closed areas like the Flooded City show map parts from elsewhere when too much is loaded around you. Cannot exceed the global ring count.'**
+  String get tooltipHighGridsRoomRings;
+
+  /// No description provided for @labelHighGridsBlockedInRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Grids Blocked In Room'**
+  String get labelHighGridsBlockedInRoom;
+
+  /// No description provided for @tooltipHighGridsBlockedInRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Grids that never load while you are in a room. Use when a specific grid is visible from somewhere it was never meant to be seen from. The grid id is the low 4 hex digits of a grid number, so it matches in every story phase.'**
+  String get tooltipHighGridsBlockedInRoom;
+
+  /// No description provided for @labelHighGridsBlockedFromGrid.
+  ///
+  /// In en, this message translates to:
+  /// **'Grids Blocked From Grid'**
+  String get labelHighGridsBlockedFromGrid;
+
+  /// No description provided for @tooltipHighGridsBlockedFromGrid.
+  ///
+  /// In en, this message translates to:
+  /// **'Grids that never load while you stand on one specific grid. Use when blocking the grid for the whole room would be too broad.'**
+  String get tooltipHighGridsBlockedFromGrid;
+
+  /// No description provided for @labelContentEffectAreas.
+  ///
+  /// In en, this message translates to:
+  /// **'Effect areas'**
+  String get labelContentEffectAreas;
+
+  /// No description provided for @tooltipContentEffectAreas.
+  ///
+  /// In en, this message translates to:
+  /// **'Effects a mod places in a room. Changes show after re-entering the room.'**
+  String get tooltipContentEffectAreas;
+
+  /// No description provided for @labelSkipStartupLogos.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip startup logos'**
+  String get labelSkipStartupLogos;
+
+  /// No description provided for @tooltipSkipStartupLogos.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip the Platinum Games / Square Enix logo movies while the game loads. Loading itself is untouched, and the game already lets you skip them with a button press.'**
+  String get tooltipSkipStartupLogos;
+
+  /// No description provided for @labelShadowCascades.
+  ///
+  /// In en, this message translates to:
+  /// **'Shadow cascades'**
+  String get labelShadowCascades;
+
+  /// No description provided for @tooltipShadowCascades.
+  ///
+  /// In en, this message translates to:
+  /// **'4 = vanilla, 8 adds four far cascades (experimental). With 8 the shadow atlas is tiled 4x4, so each cascade gets a quarter of the shadow resolution - raise it to compensate.'**
+  String get tooltipShadowCascades;
+
+  /// No description provided for @labelShadowCascadeRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Cascade range'**
+  String get labelShadowCascadeRange;
+
+  /// No description provided for @tooltipShadowCascadeRange.
+  ///
+  /// In en, this message translates to:
+  /// **'How far past the vanilla shadow distance the four extra cascades reach.'**
+  String get tooltipShadowCascadeRange;
+
+  /// No description provided for @labelShadowBlurScale.
+  ///
+  /// In en, this message translates to:
+  /// **'Shadow blur per cascade'**
+  String get labelShadowBlurScale;
+
+  /// No description provided for @tooltipShadowBlurScale.
+  ///
+  /// In en, this message translates to:
+  /// **'Multiplier on the game\'s own blur, near to far. 1.0 = unchanged, 0.5 = half the blur for crisper contact shadows. Applies live.'**
+  String get tooltipShadowBlurScale;
+
+  /// No description provided for @labelDisableHdr.
+  ///
+  /// In en, this message translates to:
+  /// **'Disable HDR'**
+  String get labelDisableHdr;
+
+  /// No description provided for @tooltipDisableHdr.
+  ///
+  /// In en, this message translates to:
+  /// **'Play in SDR even on an HDR display, the same thing Special K\'s HideHDRSupport does. Turn this on if HDR looks washed out to you. Applies live, but the swap chain rebuild can take a moment and the frame rate may drop until it is done; if it does not apply, restart the game.'**
+  String get tooltipDisableHdr;
+
+  /// No description provided for @labelRenderScale.
+  ///
+  /// In en, this message translates to:
+  /// **'Render scale'**
+  String get labelRenderScale;
+
+  /// No description provided for @tooltipRenderScale.
+  ///
+  /// In en, this message translates to:
+  /// **'Internal resolution (experimental). 2.0 renders the game at twice the display resolution and scales it back down, removing most aliasing and shimmer. 0.5 renders at half the display resolution and scales it up: softer picture, a quarter of the GPU work, for weak GPUs. GPU load follows the square of the factor. Works in every display mode. Applies live, but the swap chain rebuild can take a moment and the frame rate may drop until it is done; if it does not apply, restart the game.'**
+  String get tooltipRenderScale;
+
+  /// No description provided for @labelFxaa.
+  ///
+  /// In en, this message translates to:
+  /// **'FXAA'**
+  String get labelFxaa;
+
+  /// No description provided for @tooltipFxaa.
+  ///
+  /// In en, this message translates to:
+  /// **'Cheap edge smoothing. Use with the in-game anti-aliasing set to Off. Applies live.'**
+  String get tooltipFxaa;
+
+  /// No description provided for @labelMsaaPrepassFix.
+  ///
+  /// In en, this message translates to:
+  /// **'MSAA black dot fix'**
+  String get labelMsaaPrepassFix;
+
+  /// No description provided for @tooltipMsaaPrepassFix.
+  ///
+  /// In en, this message translates to:
+  /// **'Fixes the black dots on leaves, grass and hair when the in-game anti-aliasing (MSAA) is on. No cost. Applies live.'**
+  String get tooltipMsaaPrepassFix;
+
+  /// No description provided for @labelMsaaShadowMaskFix.
+  ///
+  /// In en, this message translates to:
+  /// **'MSAA bright rim fix'**
+  String get labelMsaaShadowMaskFix;
+
+  /// No description provided for @tooltipMsaaShadowMaskFix.
+  ///
+  /// In en, this message translates to:
+  /// **'Removes the bright rim around shadowed characters and objects when the in-game anti-aliasing (MSAA) is on. No cost. Applies live.'**
+  String get tooltipMsaaShadowMaskFix;
+
+  /// No description provided for @subheadingMsaaPerformance.
+  ///
+  /// In en, this message translates to:
+  /// **'MSAA Performance Fixup (experimental)'**
+  String get subheadingMsaaPerformance;
+
+  /// No description provided for @labelMsaaPerPixel.
+  ///
+  /// In en, this message translates to:
+  /// **'Shade materials per pixel'**
+  String get labelMsaaPerPixel;
+
+  /// No description provided for @tooltipMsaaPerPixel.
+  ///
+  /// In en, this message translates to:
+  /// **'With the in-game anti-aliasing (MSAA) on, the game shades every material once per sample, so 8x MSAA shades every model eight times. With this on, materials shade once per pixel and MSAA only smooths the edges. Needs the MSAA bright rim fix. Applies live.'**
+  String get tooltipMsaaPerPixel;
+
+  /// No description provided for @labelMsaaPerPixelTerrain.
+  ///
+  /// In en, this message translates to:
+  /// **'Also the terrain materials'**
+  String get labelMsaaPerPixelTerrain;
+
+  /// No description provided for @tooltipMsaaPerPixelTerrain.
+  ///
+  /// In en, this message translates to:
+  /// **'The biggest part of the gain. Wet ground can flicker bright for a moment, stronger than normal. If that does not bother you, this is the largest MSAA performance gain. Applies live.'**
+  String get tooltipMsaaPerPixelTerrain;
+
+  /// No description provided for @labelConstantBufferDedup.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip unchanged shader parameters'**
+  String get labelConstantBufferDedup;
+
+  /// No description provided for @tooltipConstantBufferDedup.
+  ///
+  /// In en, this message translates to:
+  /// **'Increases performance. Every draw reads a small block of parameters — transforms, material settings, light values. Vanilla re-sends all of them to the graphics card every frame, several thousand uploads, even when nothing in them changed. Vanilla already contains the comparison that would skip an unchanged block, but it never reaches it. About half the uploads turn out to be redundant. Applies live.'**
+  String get tooltipConstantBufferDedup;
+
+  /// No description provided for @labelConstantBufferUploadOnBind.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload shader parameters only when drawn'**
+  String get labelConstantBufferUploadOnBind;
+
+  /// No description provided for @tooltipConstantBufferUploadOnBind.
+  ///
+  /// In en, this message translates to:
+  /// **'Increases performance. Vanilla sends every shader parameter block to the graphics card each frame, including the ones nothing on screen uses — roughly four out of five. With this on, a block is only sent when a draw actually binds it. Applies live.'**
+  String get tooltipConstantBufferUploadOnBind;
+
+  /// No description provided for @labelDecreaseStutterDuringGridLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Less stutter while the map loads'**
+  String get labelDecreaseStutterDuringGridLoading;
+
+  /// No description provided for @tooltipDecreaseStutterDuringGridLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Smoother map loading. When a new part of the map loads around you, vanilla builds everything for it in one go, which shows as a hitch every time. With this on, that work is spread over several frames and prepared in the background, so most of those hitches disappear. Work in progress, more improvements will follow in future updates. You will still notice small hitches here and there while the map loads, for example when effects or new objects appear. Do not expect a higher frame rate, faster loading, or stutter-free loading with 4K texture packs. Applies live.'**
+  String get tooltipDecreaseStutterDuringGridLoading;
+
+  /// No description provided for @labelAoFadeFix.
+  ///
+  /// In en, this message translates to:
+  /// **'AO through walls fix'**
+  String get labelAoFadeFix;
+
+  /// No description provided for @tooltipAoFadeFix.
+  ///
+  /// In en, this message translates to:
+  /// **'Stops ambient occlusion (AO) from showing through walls and jumping when a model switches LOD. During a LOD cross-fade the game draws both LOD versions solid into the AO depth, so AO appears for geometry you can barely see. This skips that extra draw. LOD multiplier 0 also hides the bug because there are no LOD switches at all; this fix removes the cause and keeps LODs on. No cost. Applies live.'**
+  String get tooltipAoFadeFix;
+
+  /// No description provided for @labelHighGridsHiddenMeshes.
+  ///
+  /// In en, this message translates to:
+  /// **'Hidden meshes'**
+  String get labelHighGridsHiddenMeshes;
+
+  /// No description provided for @tooltipHighGridsHiddenMeshes.
+  ///
+  /// In en, this message translates to:
+  /// **'Low-detail stand-in meshes to hide once enough rings are loaded. Find the names with the mesh picker in the YP Devkit. Grid 0x0 applies to every grid.'**
+  String get tooltipHighGridsHiddenMeshes;
+
+  /// No description provided for @labelTextureHotReload.
+  ///
+  /// In en, this message translates to:
+  /// **'Hot reload'**
+  String get labelTextureHotReload;
+
+  /// No description provided for @tooltipTextureHotReload.
+  ///
+  /// In en, this message translates to:
+  /// **'Watch the texture folders and apply changed .dds files while the game runs. Same-size changes update instantly.'**
+  String get tooltipTextureHotReload;
+
+  /// No description provided for @gridRuleMesh.
+  ///
+  /// In en, this message translates to:
+  /// **'Mesh'**
+  String get gridRuleMesh;
+
+  /// No description provided for @gridRuleFromRings.
+  ///
+  /// In en, this message translates to:
+  /// **'From rings'**
+  String get gridRuleFromRings;
+
+  /// No description provided for @shadowBlurCascade.
+  ///
+  /// In en, this message translates to:
+  /// **'Cascade {n}'**
+  String shadowBlurCascade(int n);
+
+  /// No description provided for @gridRuleRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Room'**
+  String get gridRuleRoom;
+
+  /// No description provided for @gridRuleRings.
+  ///
+  /// In en, this message translates to:
+  /// **'Rings'**
+  String get gridRuleRings;
+
+  /// No description provided for @gridRuleGrid.
+  ///
+  /// In en, this message translates to:
+  /// **'Grid'**
+  String get gridRuleGrid;
+
+  /// No description provided for @gridRuleFromGrid.
+  ///
+  /// In en, this message translates to:
+  /// **'Standing on'**
+  String get gridRuleFromGrid;
+
+  /// No description provided for @gridRuleAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add rule'**
+  String get gridRuleAdd;
+
+  /// No description provided for @gridRuleEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No rules - every grid loads normally.'**
+  String get gridRuleEmpty;
+
+  /// No description provided for @highGridsCellCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{rings, plural, =1{1 ring - 7 grids (vanilla)} other{{rings} rings - {cells} grids}}'**
+  String highGridsCellCount(int rings, int cells);
+
   /// No description provided for @lodModResetButton.
   ///
   /// In en, this message translates to:
@@ -4401,13 +5745,13 @@ abstract class AppLocalizations {
   /// No description provided for @lodModResetConfirmTitle.
   ///
   /// In en, this message translates to:
-  /// **'Reset LodMod settings?'**
+  /// **'Reset LodMod Ext settings?'**
   String get lodModResetConfirmTitle;
 
   /// No description provided for @lodModResetConfirmBody.
   ///
   /// In en, this message translates to:
-  /// **'This will reset every LodMod field on this tab to its default value. Your current values will be overwritten. Continue?'**
+  /// **'This will reset every LodMod Ext field on this tab to its default value. Your current values will be overwritten. Continue?'**
   String get lodModResetConfirmBody;
 
   /// No description provided for @lodModResetConfirmAction.
@@ -4419,19 +5763,13 @@ abstract class AppLocalizations {
   /// No description provided for @lodModResetToast.
   ///
   /// In en, this message translates to:
-  /// **'LodMod settings reset to defaults'**
+  /// **'LodMod Ext settings reset to defaults'**
   String get lodModResetToast;
-
-  /// No description provided for @experimentalWarningTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Experimental - will break things'**
-  String get experimentalWarningTitle;
 
   /// No description provided for @experimentalWarningBody.
   ///
   /// In en, this message translates to:
-  /// **'These settings bypass game limits the engine relies on. They are NOT supported and are known to cause issues. Only enable if you understand what you\'re doing. NAMS and the launcher will not be debugged around problems caused by these.'**
+  /// **'These are experimental. Think twice before using them on a first playthrough, so they do not affect your experience.'**
   String get experimentalWarningBody;
 
   /// No description provided for @labelFpsUncapInMenus.
@@ -4443,7 +5781,7 @@ abstract class AppLocalizations {
   /// No description provided for @tooltipFpsUncapInMenus.
   ///
   /// In en, this message translates to:
-  /// **'Removes the 60 FPS lock during menus and loading screens. Loading feels faster and menu animations get smoother. Safe: gameplay is unaffected.\n\nLive-toggleable if it was enabled at game launch. If it was disabled at launch, toggling it on later requires a restart.'**
+  /// **'Removes the 60 FPS lock during menus and loading screens. Loading feels faster and menu animations get smoother. Safe: gameplay is unaffected. Applies live.'**
   String get tooltipFpsUncapInMenus;
 
   /// No description provided for @labelFpsUncapInGameplay.
@@ -4455,7 +5793,7 @@ abstract class AppLocalizations {
   /// No description provided for @tooltipFpsUncapInGameplay.
   ///
   /// In en, this message translates to:
-  /// **'Removes the 60 FPS lock during gameplay. WARNING: NieR:Automata\'s physics, animations, and cutscene timing are tied to the 60 FPS lock. Uncapping causes broken physics (jumping height, dodge i-frames), animation speed changes, audio desync in cutscenes, and softlocks in scripted sequences. Use only if you know exactly what trade-offs you\'re accepting.\n\nLive-toggleable if it was enabled at game launch. If it was disabled at launch, toggling it on later requires a restart.'**
+  /// **'Removes the 60 FPS lock during gameplay. WARNING: NieR:Automata\'s physics, animations, and cutscene timing are tied to the 60 FPS lock. Uncapping causes broken physics (jumping height, dodge i-frames), animation speed changes, audio desync in cutscenes, and softlocks in scripted sequences. Use only if you know exactly what trade-offs you\'re accepting. Applies live.'**
   String get tooltipFpsUncapInGameplay;
 
   /// No description provided for @labelFpsLimit.
@@ -4464,10 +5802,34 @@ abstract class AppLocalizations {
   /// **'FPS Limit'**
   String get labelFpsLimit;
 
+  /// No description provided for @labelFpsCapInHacking.
+  ///
+  /// In en, this message translates to:
+  /// **'Vanilla cap in hacking'**
+  String get labelFpsCapInHacking;
+
+  /// No description provided for @tooltipFpsCapInHacking.
+  ///
+  /// In en, this message translates to:
+  /// **'Drop back to the vanilla 60 FPS cap while the hacking minigame runs, even with the gameplay uncap on. The minigame\'s timing assumes 60 FPS. Applies live.'**
+  String get tooltipFpsCapInHacking;
+
+  /// No description provided for @labelFpsCapInEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'Vanilla cap in events'**
+  String get labelFpsCapInEvents;
+
+  /// No description provided for @tooltipFpsCapInEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'Drop back to the vanilla 60 FPS cap while a cutscene, event, movie or caption is running. Event scripts assume 60 FPS and can soft-lock otherwise. Applies live.'**
+  String get tooltipFpsCapInEvents;
+
   /// No description provided for @tooltipFpsLimit.
   ///
   /// In en, this message translates to:
-  /// **'FPS cap applied when uncap is active. 0 = unlimited. Otherwise 60-1000 (NAMS clamps values out of range). Values below 60 are clamped because the game\'s internal spin-wait loop ignores frametimes longer than the vanilla 60fps target. Tip: capping at half your monitor\'s refresh rate gives smoother motion than vanilla 60 (e.g. 72 on 144Hz, 82 on 165Hz, 120 on 240Hz).'**
+  /// **'FPS cap applied when uncap is active. 0 = unlimited. Otherwise 1-1000 (NAMS clamps values out of range). 30 sets the same frame time the game\'s own 30 fps mode uses. While uncap is on the wait is a busy-wait, so the lower the cap, the longer a CPU core spins each frame. Tip: capping at half your monitor\'s refresh rate gives smoother motion than vanilla 60 (e.g. 72 on 144Hz, 82 on 165Hz, 120 on 240Hz).'**
   String get tooltipFpsLimit;
 
   /// No description provided for @tutorialValidateModel.
@@ -4986,6 +6348,18 @@ abstract class AppLocalizations {
   /// **'8192'**
   String get comparison8192;
 
+  /// No description provided for @comparisonCubemaps16.
+  ///
+  /// In en, this message translates to:
+  /// **'16 cubemaps'**
+  String get comparisonCubemaps16;
+
+  /// No description provided for @comparisonCubemaps128.
+  ///
+  /// In en, this message translates to:
+  /// **'128 cubemaps'**
+  String get comparisonCubemaps128;
+
   /// No description provided for @comparisonDefault.
   ///
   /// In en, this message translates to:
@@ -5015,6 +6389,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'OFF'**
   String get comparisonOff;
+
+  /// No description provided for @comparisonOn.
+  ///
+  /// In en, this message translates to:
+  /// **'ON'**
+  String get comparisonOn;
+
+  /// No description provided for @comparisonBloom2021.
+  ///
+  /// In en, this message translates to:
+  /// **'2021'**
+  String get comparisonBloom2021;
+
+  /// No description provided for @comparisonBloom2017.
+  ///
+  /// In en, this message translates to:
+  /// **'2017'**
+  String get comparisonBloom2017;
+
+  /// No description provided for @comparisonHighGrids7.
+  ///
+  /// In en, this message translates to:
+  /// **'7 grids (vanilla)'**
+  String get comparisonHighGrids7;
+
+  /// No description provided for @comparisonHighGrids61.
+  ///
+  /// In en, this message translates to:
+  /// **'61 grids (4 rings)'**
+  String get comparisonHighGrids61;
+
+  /// No description provided for @comparisonCascades4.
+  ///
+  /// In en, this message translates to:
+  /// **'4 cascades (vanilla)'**
+  String get comparisonCascades4;
+
+  /// No description provided for @comparisonCascades8.
+  ///
+  /// In en, this message translates to:
+  /// **'8 cascades'**
+  String get comparisonCascades8;
 
   /// No description provided for @comparison30.
   ///
@@ -5235,13 +6651,13 @@ abstract class AppLocalizations {
   /// No description provided for @labelImpeller.
   ///
   /// In en, this message translates to:
-  /// **'Impeller Renderer'**
+  /// **'Impeller Renderer (experimental)'**
   String get labelImpeller;
 
   /// No description provided for @tooltipImpeller.
   ///
   /// In en, this message translates to:
-  /// **'Render the overlay with Flutter\'s Impeller renderer instead of Skia. On by default. Turn off if the overlay shows visual glitches or fails to appear on your GPU. Takes effect on the next game start.'**
+  /// **'Render the overlay with Flutter\'s Impeller renderer instead of Skia. Off by default: several users hit crashes with it. Try it, and if the game is stable you can keep it for a faster overlay when you press F1. With it on, images in the overlay do not render, apart from the world map card. Takes effect on the next game start.'**
   String get tooltipImpeller;
 
   /// No description provided for @labelDamageMultiplier.
@@ -5483,6 +6899,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Keep the game\'s automatic camera-follow while moving, like on a controller.'**
   String get tooltipThirdPersonCharFollow;
+
+  /// No description provided for @labelThirdPersonSmoothing.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera Smoothing'**
+  String get labelThirdPersonSmoothing;
+
+  /// No description provided for @tooltipThirdPersonSmoothing.
+  ///
+  /// In en, this message translates to:
+  /// **'How much the camera eases toward the mouse. 0 = it follows the mouse at once, 1 = the game\'s own smoothing.'**
+  String get tooltipThirdPersonSmoothing;
 
   /// No description provided for @labelThirdPersonSensX.
   ///
@@ -8116,6 +9544,942 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count, plural, =1{1 file} other{{count} files}}'**
   String modCountFiles(int count);
+
+  /// No description provided for @weaponConvertTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Weapon converter'**
+  String get weaponConvertTitle;
+
+  /// No description provided for @weaponConvertDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Drop a downloaded weapon mod in. It normally overwrites a vanilla weapon; the launcher moves it to a free slot instead, so nothing is replaced.'**
+  String get weaponConvertDesc;
+
+  /// No description provided for @weaponConvertDropTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Drop a weapon mod'**
+  String get weaponConvertDropTitle;
+
+  /// No description provided for @weaponConvertDropHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Drop the .dat or .dtt here, or click to pick one. Both files must sit in the same folder.'**
+  String get weaponConvertDropHint;
+
+  /// No description provided for @weaponConvertDropInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'That is not a weapon file. Expected something like wp0003.dat.'**
+  String get weaponConvertDropInvalid;
+
+  /// No description provided for @weaponConvertNeedsBothFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Both the .dat and the .dtt must be in the same folder.'**
+  String get weaponConvertNeedsBothFiles;
+
+  /// No description provided for @weaponConvertDetected.
+  ///
+  /// In en, this message translates to:
+  /// **'Weapon class read from the file name. The new slot keeps that class - animations come with it.'**
+  String get weaponConvertDetected;
+
+  /// No description provided for @weaponConvertNextSlot.
+  ///
+  /// In en, this message translates to:
+  /// **'Another slot'**
+  String get weaponConvertNextSlot;
+
+  /// No description provided for @weaponConvertRun.
+  ///
+  /// In en, this message translates to:
+  /// **'Move to a free slot'**
+  String get weaponConvertRun;
+
+  /// No description provided for @weaponConvertDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Written as {stem}'**
+  String weaponConvertDone(String stem);
+
+  /// No description provided for @weaponConvertNextStep.
+  ///
+  /// In en, this message translates to:
+  /// **'The model is in place. To make it a weapon of its own, create one with obj_id {objId} using the builder above.'**
+  String weaponConvertNextStep(String objId);
+
+  /// No description provided for @weaponPreviewFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'This model cannot be shown here. That does not stop the conversion.'**
+  String get weaponPreviewFailed;
+
+  /// No description provided for @weaponBuilderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Weapon builder'**
+  String get weaponBuilderTitle;
+
+  /// No description provided for @weaponBuilderDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Fill in a name and some damage numbers; the launcher picks a free weapon slot and writes the file.'**
+  String get weaponBuilderDesc;
+
+  /// No description provided for @weaponBuilderDropTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Drop your weapon model'**
+  String get weaponBuilderDropTitle;
+
+  /// No description provided for @weaponBuilderDropHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The .dat / .dtt pair of your weapon.'**
+  String get weaponBuilderDropHint;
+
+  /// No description provided for @weaponBuilderNeedsModel.
+  ///
+  /// In en, this message translates to:
+  /// **'Drop your weapon model in first.'**
+  String get weaponBuilderNeedsModel;
+
+  /// No description provided for @weaponBuilderModelReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Becomes a weapon of its own, so it overwrites nothing.'**
+  String get weaponBuilderModelReady;
+
+  /// No description provided for @weaponBuilderName.
+  ///
+  /// In en, this message translates to:
+  /// **'Weapon name'**
+  String get weaponBuilderName;
+
+  /// No description provided for @weaponBuilderNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Shown in the inventory, e.g. Virtuous Blade'**
+  String get weaponBuilderNameHint;
+
+  /// No description provided for @weaponBuilderDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get weaponBuilderDescription;
+
+  /// No description provided for @weaponBuilderDescriptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Shown when the player looks at the weapon'**
+  String get weaponBuilderDescriptionHint;
+
+  /// No description provided for @weaponBuilderType.
+  ///
+  /// In en, this message translates to:
+  /// **'Weapon type'**
+  String get weaponBuilderType;
+
+  /// No description provided for @weaponTypeSmallSword.
+  ///
+  /// In en, this message translates to:
+  /// **'Small sword'**
+  String get weaponTypeSmallSword;
+
+  /// No description provided for @weaponTypeLargeSword.
+  ///
+  /// In en, this message translates to:
+  /// **'Large sword'**
+  String get weaponTypeLargeSword;
+
+  /// No description provided for @weaponTypeSpear.
+  ///
+  /// In en, this message translates to:
+  /// **'Spear'**
+  String get weaponTypeSpear;
+
+  /// No description provided for @weaponTypeCombatBracer.
+  ///
+  /// In en, this message translates to:
+  /// **'Combat bracers'**
+  String get weaponTypeCombatBracer;
+
+  /// No description provided for @weaponBuilderLevels.
+  ///
+  /// In en, this message translates to:
+  /// **'UPGRADE LEVELS'**
+  String get weaponBuilderLevels;
+
+  /// No description provided for @weaponBuilderAddLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Add level'**
+  String get weaponBuilderAddLevel;
+
+  /// No description provided for @weaponBuilderLevelNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Level {n}'**
+  String weaponBuilderLevelNumber(int n);
+
+  /// No description provided for @weaponBuilderDamage.
+  ///
+  /// In en, this message translates to:
+  /// **'Damage'**
+  String get weaponBuilderDamage;
+
+  /// No description provided for @weaponBuilderItemId.
+  ///
+  /// In en, this message translates to:
+  /// **'Inventory number'**
+  String get weaponBuilderItemId;
+
+  /// No description provided for @weaponBuilderObjId.
+  ///
+  /// In en, this message translates to:
+  /// **'Weapon number'**
+  String get weaponBuilderObjId;
+
+  /// No description provided for @weaponBuilderObjIdHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Both numbers are derived from the mod folder name, so a different name gives a different weapon number. That keeps your released mod from colliding with someone else\'s. Rename the folder if you want other numbers.'**
+  String get weaponBuilderObjIdHint;
+
+  /// No description provided for @weaponBuilderNeedsGameDir.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick your NieR:Automata folder first.'**
+  String get weaponBuilderNeedsGameDir;
+
+  /// No description provided for @weaponBuilderNeedsName.
+  ///
+  /// In en, this message translates to:
+  /// **'Give the weapon a name.'**
+  String get weaponBuilderNeedsName;
+
+  /// No description provided for @weaponBuilderNoFreeSlot.
+  ///
+  /// In en, this message translates to:
+  /// **'No free model slot left for this weapon type.'**
+  String get weaponBuilderNoFreeSlot;
+
+  /// No description provided for @weaponBuilderCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Create weapon'**
+  String get weaponBuilderCreate;
+
+  /// No description provided for @weaponBuilderEffects.
+  ///
+  /// In en, this message translates to:
+  /// **'SPECIAL EFFECTS'**
+  String get weaponBuilderEffects;
+
+  /// No description provided for @weaponBuilderAddEffect.
+  ///
+  /// In en, this message translates to:
+  /// **'Add effect'**
+  String get weaponBuilderAddEffect;
+
+  /// No description provided for @weaponBuilderEffectsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional. Effects change how the game plays while the weapon is equipped - damage, speed, dash, immunities.'**
+  String get weaponBuilderEffectsHint;
+
+  /// No description provided for @weaponBuilderTrailNormal.
+  ///
+  /// In en, this message translates to:
+  /// **'Attack trail'**
+  String get weaponBuilderTrailNormal;
+
+  /// No description provided for @weaponBuilderTrailBerserk.
+  ///
+  /// In en, this message translates to:
+  /// **'Attack trail (Berserk)'**
+  String get weaponBuilderTrailBerserk;
+
+  /// No description provided for @weaponBuilderTrailHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Any effect from 0 to 665. 590-641 are the weapon trails; other values give you anything else in the game. 435 and 436 crash and are skipped.'**
+  String get weaponBuilderTrailHint;
+
+  /// No description provided for @weaponBuilderEffectWhen.
+  ///
+  /// In en, this message translates to:
+  /// **'Only for'**
+  String get weaponBuilderEffectWhen;
+
+  /// No description provided for @weaponBuilderEffectWhenAny.
+  ///
+  /// In en, this message translates to:
+  /// **'Everyone'**
+  String get weaponBuilderEffectWhenAny;
+
+  /// No description provided for @weaponBuilderEffectOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get weaponBuilderEffectOn;
+
+  /// No description provided for @weaponBuilderIcon.
+  ///
+  /// In en, this message translates to:
+  /// **'Inventory icon'**
+  String get weaponBuilderIcon;
+
+  /// No description provided for @weaponBuilderIconHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Shown in the inventory and in shops.'**
+  String get weaponBuilderIconHint;
+
+  /// No description provided for @weaponBuilderStoryIcon.
+  ///
+  /// In en, this message translates to:
+  /// **'Story image'**
+  String get weaponBuilderStoryIcon;
+
+  /// No description provided for @weaponBuilderStoryIconHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Shown next to the weapon story text.'**
+  String get weaponBuilderStoryIconHint;
+
+  /// No description provided for @weaponBuilderDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'MENU TEXTS'**
+  String get weaponBuilderDetails;
+
+  /// No description provided for @weaponBuilderHelpShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Short description'**
+  String get weaponBuilderHelpShort;
+
+  /// No description provided for @weaponBuilderHelpShortHint.
+  ///
+  /// In en, this message translates to:
+  /// **'One line, shown in tight menu spots'**
+  String get weaponBuilderHelpShortHint;
+
+  /// No description provided for @weaponBuilderStory.
+  ///
+  /// In en, this message translates to:
+  /// **'Weapon story'**
+  String get weaponBuilderStory;
+
+  /// No description provided for @weaponBuilderStoryHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The story text shown on the weapon page'**
+  String get weaponBuilderStoryHint;
+
+  /// No description provided for @weaponBuilderSkillName.
+  ///
+  /// In en, this message translates to:
+  /// **'Skill {n} name'**
+  String weaponBuilderSkillName(int n);
+
+  /// No description provided for @weaponBuilderSkillDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Skill {n} effect'**
+  String weaponBuilderSkillDesc(int n);
+
+  /// No description provided for @weaponBuilderSkillNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave empty if the weapon has no skill'**
+  String get weaponBuilderSkillNameHint;
+
+  /// No description provided for @weaponBuilderSkillDescHint.
+  ///
+  /// In en, this message translates to:
+  /// **'What the skill does'**
+  String get weaponBuilderSkillDescHint;
+
+  /// No description provided for @weaponBuilderTraitId.
+  ///
+  /// In en, this message translates to:
+  /// **'Trait'**
+  String get weaponBuilderTraitId;
+
+  /// No description provided for @weaponBuilderTraitNone.
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get weaponBuilderTraitNone;
+
+  /// No description provided for @weaponBuilderUpgrades.
+  ///
+  /// In en, this message translates to:
+  /// **'UPGRADE COST'**
+  String get weaponBuilderUpgrades;
+
+  /// No description provided for @weaponBuilderAddUpgrade.
+  ///
+  /// In en, this message translates to:
+  /// **'Add upgrade'**
+  String get weaponBuilderAddUpgrade;
+
+  /// No description provided for @weaponBuilderUpgradeLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'To level {n}'**
+  String weaponBuilderUpgradeLevel(int n);
+
+  /// No description provided for @weaponBuilderUpgradeCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Cost'**
+  String get weaponBuilderUpgradeCost;
+
+  /// No description provided for @weaponBuilderUpgradeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Without upgrade entries the weapon cannot be upgraded at the blacksmith.'**
+  String get weaponBuilderUpgradeHint;
+
+  /// No description provided for @outfitBuilderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Outfit builder'**
+  String get outfitBuilderTitle;
+
+  /// No description provided for @outfitBuilderDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Drop a player model in, pick which meshes show in which state, and the launcher writes the outfit and its item for you.'**
+  String get outfitBuilderDesc;
+
+  /// No description provided for @outfitBuilderDropTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Drop a player model'**
+  String get outfitBuilderDropTitle;
+
+  /// No description provided for @outfitBuilderDropHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Drop a .dat or .dtt player model here, or click to pick one.'**
+  String get outfitBuilderDropHint;
+
+  /// No description provided for @outfitBuilderDropInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'That is not a .dat or .dtt file.'**
+  String get outfitBuilderDropInvalid;
+
+  /// No description provided for @outfitBuilderDropUnknownModel.
+  ///
+  /// In en, this message translates to:
+  /// **'That model is not a known player model. Expected one of pl0000, pl000d (2B), pl0200, pl020d (9S), pl0100, pl010d (A2).'**
+  String get outfitBuilderDropUnknownModel;
+
+  /// No description provided for @outfitBuilderCharacterDetected.
+  ///
+  /// In en, this message translates to:
+  /// **'Character read from the model file. Drop a different model to change it.'**
+  String get outfitBuilderCharacterDetected;
+
+  /// No description provided for @outfitBuilderNoModelInArchive.
+  ///
+  /// In en, this message translates to:
+  /// **'No model was found in that archive.'**
+  String get outfitBuilderNoModelInArchive;
+
+  /// No description provided for @outfitBuilderMeshesInModel.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 mesh in this model} other{{count} meshes in this model}}'**
+  String outfitBuilderMeshesInModel(int count);
+
+  /// No description provided for @outfitBuilderAcquisitionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'HOW THE PLAYER GETS IT'**
+  String get outfitBuilderAcquisitionTitle;
+
+  /// No description provided for @outfitBuilderAutoGive.
+  ///
+  /// In en, this message translates to:
+  /// **'Put it straight in the inventory'**
+  String get outfitBuilderAutoGive;
+
+  /// No description provided for @outfitBuilderAutoGiveHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Added when a save is loaded, so it is there without having to find it.'**
+  String get outfitBuilderAutoGiveHint;
+
+  /// No description provided for @outfitBuilderInShop.
+  ///
+  /// In en, this message translates to:
+  /// **'Sell it in a shop'**
+  String get outfitBuilderInShop;
+
+  /// No description provided for @outfitBuilderInShopHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Writes a shop entry so the player can buy it.'**
+  String get outfitBuilderInShopHint;
+
+  /// No description provided for @outfitBuilderShopName.
+  ///
+  /// In en, this message translates to:
+  /// **'Shop'**
+  String get outfitBuilderShopName;
+
+  /// No description provided for @shopStateRouteABeforeRuinsCollapse.
+  ///
+  /// In en, this message translates to:
+  /// **'Route A, before the Ruined City collapses'**
+  String get shopStateRouteABeforeRuinsCollapse;
+
+  /// No description provided for @shopStateRouteAAfterRuinsCollapse.
+  ///
+  /// In en, this message translates to:
+  /// **'Route A, after the Ruined City collapses'**
+  String get shopStateRouteAAfterRuinsCollapse;
+
+  /// No description provided for @shopStateRouteBBeforeRuinsCollapse.
+  ///
+  /// In en, this message translates to:
+  /// **'Route B, before the Ruined City collapses'**
+  String get shopStateRouteBBeforeRuinsCollapse;
+
+  /// No description provided for @shopStateRouteBAfterRuinsCollapse.
+  ///
+  /// In en, this message translates to:
+  /// **'Route B, after the Ruined City collapses'**
+  String get shopStateRouteBAfterRuinsCollapse;
+
+  /// No description provided for @shopStateRouteC.
+  ///
+  /// In en, this message translates to:
+  /// **'Route C/D, or endings A and B reached'**
+  String get shopStateRouteC;
+
+  /// No description provided for @shopStateEndingCOrD.
+  ///
+  /// In en, this message translates to:
+  /// **'Ending C or D reached'**
+  String get shopStateEndingCOrD;
+
+  /// No description provided for @shopStateEndingCAndD.
+  ///
+  /// In en, this message translates to:
+  /// **'Endings C and D both reached'**
+  String get shopStateEndingCAndD;
+
+  /// No description provided for @outfitBuilderShopStateAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get outfitBuilderShopStateAll;
+
+  /// No description provided for @outfitBuilderShopState.
+  ///
+  /// In en, this message translates to:
+  /// **'Story state'**
+  String get outfitBuilderShopState;
+
+  /// No description provided for @outfitBuilderShopStateHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Which point in the story the shop offers it from. 0 is the start.'**
+  String get outfitBuilderShopStateHint;
+
+  /// No description provided for @outfitBuilderBuyPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Price'**
+  String get outfitBuilderBuyPrice;
+
+  /// No description provided for @outfitMeshMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Options'**
+  String get outfitMeshMore;
+
+  /// No description provided for @outfitMeshPreviewToggle.
+  ///
+  /// In en, this message translates to:
+  /// **'Show or hide this mesh in the preview only'**
+  String get outfitMeshPreviewToggle;
+
+  /// No description provided for @logWrapOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrap long lines'**
+  String get logWrapOn;
+
+  /// No description provided for @logWrapOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Cut long lines off'**
+  String get logWrapOff;
+
+  /// No description provided for @outfitMeshAlways.
+  ///
+  /// In en, this message translates to:
+  /// **'Always visible'**
+  String get outfitMeshAlways;
+
+  /// No description provided for @outfitMeshCombatOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Only in combat'**
+  String get outfitMeshCombatOnly;
+
+  /// No description provided for @outfitMeshOutOfCombatOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Only out of combat'**
+  String get outfitMeshOutOfCombatOnly;
+
+  /// No description provided for @outfitMeshEyemaskOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Only with blindfold'**
+  String get outfitMeshEyemaskOnly;
+
+  /// No description provided for @outfitMeshNoEyemaskOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Only without blindfold'**
+  String get outfitMeshNoEyemaskOnly;
+
+  /// No description provided for @outfitMeshFeatherOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Only while undamaged'**
+  String get outfitMeshFeatherOnly;
+
+  /// No description provided for @outfitMeshBrokenOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Only while damaged'**
+  String get outfitMeshBrokenOnly;
+
+  /// No description provided for @outfitMeshNever.
+  ///
+  /// In en, this message translates to:
+  /// **'Never show'**
+  String get outfitMeshNever;
+
+  /// No description provided for @outfitMeshHideOnSelfDestruct.
+  ///
+  /// In en, this message translates to:
+  /// **'Gone after self-destruct'**
+  String get outfitMeshHideOnSelfDestruct;
+
+  /// No description provided for @outfitMeshHairsprayTint.
+  ///
+  /// In en, this message translates to:
+  /// **'Coloured by hairspray'**
+  String get outfitMeshHairsprayTint;
+
+  /// No description provided for @outfitMeshReplacedByWig.
+  ///
+  /// In en, this message translates to:
+  /// **'Replaced by the wig'**
+  String get outfitMeshReplacedByWig;
+
+  /// No description provided for @outfitBuilderName.
+  ///
+  /// In en, this message translates to:
+  /// **'Outfit name'**
+  String get outfitBuilderName;
+
+  /// No description provided for @outfitBuilderNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Shown in the wardrobe, e.g. Black Dress'**
+  String get outfitBuilderNameHint;
+
+  /// No description provided for @outfitBuilderDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Item description'**
+  String get outfitBuilderDescription;
+
+  /// No description provided for @outfitBuilderDescriptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Shown when the player looks at the item'**
+  String get outfitBuilderDescriptionHint;
+
+  /// No description provided for @outfitBuilderModId.
+  ///
+  /// In en, this message translates to:
+  /// **'Mod folder'**
+  String get outfitBuilderModId;
+
+  /// No description provided for @outfitBuilderOutfitId.
+  ///
+  /// In en, this message translates to:
+  /// **'Outfit id'**
+  String get outfitBuilderOutfitId;
+
+  /// No description provided for @outfitBuilderItemId.
+  ///
+  /// In en, this message translates to:
+  /// **'Item id'**
+  String get outfitBuilderItemId;
+
+  /// No description provided for @outfitBuilderIdHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Both ids are picked for you and only need changing if you want a specific number.'**
+  String get outfitBuilderIdHint;
+
+  /// No description provided for @outfitBuilderIdTaken.
+  ///
+  /// In en, this message translates to:
+  /// **'That outfit id is already used for this character.'**
+  String get outfitBuilderIdTaken;
+
+  /// No description provided for @outfitBuilderCopyModel.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy the model into the mod'**
+  String get outfitBuilderCopyModel;
+
+  /// No description provided for @outfitBuilderCopyModelHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Puts the .dat and .dtt in data/pl/ so the mod is complete on its own.'**
+  String get outfitBuilderCopyModelHint;
+
+  /// No description provided for @outfitBuilderNeedsGameDir.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick your NieR:Automata folder first.'**
+  String get outfitBuilderNeedsGameDir;
+
+  /// No description provided for @outfitBuilderNeedsName.
+  ///
+  /// In en, this message translates to:
+  /// **'Give the outfit a name.'**
+  String get outfitBuilderNeedsName;
+
+  /// No description provided for @outfitBuilderNeedsModel.
+  ///
+  /// In en, this message translates to:
+  /// **'Drop a player model in first.'**
+  String get outfitBuilderNeedsModel;
+
+  /// No description provided for @outfitBuilderCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Create outfit'**
+  String get outfitBuilderCreate;
+
+  /// No description provided for @outfitBuilderCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Created {path}'**
+  String outfitBuilderCreated(String path);
+
+  /// No description provided for @outfitBuilderOpenFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Open folder'**
+  String get outfitBuilderOpenFolder;
+
+  /// No description provided for @outfitBuilderPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Will be written as'**
+  String get outfitBuilderPreview;
+
+  /// No description provided for @outfitStateBase.
+  ///
+  /// In en, this message translates to:
+  /// **'Base'**
+  String get outfitStateBase;
+
+  /// No description provided for @outfitStateBaseHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Meshes visible in the normal state. Once you tick anything anywhere, everything starts hidden and only what you pick is shown.'**
+  String get outfitStateBaseHint;
+
+  /// No description provided for @outfitStateCombat.
+  ///
+  /// In en, this message translates to:
+  /// **'In combat'**
+  String get outfitStateCombat;
+
+  /// No description provided for @outfitStateCombatHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Shown while fighting, on top of the base set. Vanilla puts the combat face here.'**
+  String get outfitStateCombatHint;
+
+  /// No description provided for @outfitStateNonCombat.
+  ///
+  /// In en, this message translates to:
+  /// **'Out of combat'**
+  String get outfitStateNonCombat;
+
+  /// No description provided for @outfitStateNonCombatHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Shown while not fighting. Vanilla puts the neutral face here.'**
+  String get outfitStateNonCombatHint;
+
+  /// No description provided for @outfitStateEyemask.
+  ///
+  /// In en, this message translates to:
+  /// **'Blindfold on'**
+  String get outfitStateEyemask;
+
+  /// No description provided for @outfitStateEyemaskHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Shown while the blindfold is worn. Vanilla lists the Eyemask mesh here.'**
+  String get outfitStateEyemaskHint;
+
+  /// No description provided for @outfitStateNonEyemask.
+  ///
+  /// In en, this message translates to:
+  /// **'Blindfold off'**
+  String get outfitStateNonEyemask;
+
+  /// No description provided for @outfitStateNonEyemaskHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Shown when the blindfold is off, for example with the goggles equipped. Vanilla lists the eyelashes here.'**
+  String get outfitStateNonEyemaskHint;
+
+  /// No description provided for @outfitStateSelfDestructShow.
+  ///
+  /// In en, this message translates to:
+  /// **'Self-destruct shows'**
+  String get outfitStateSelfDestructShow;
+
+  /// No description provided for @outfitStateSelfDestructShowHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Shown after the character self-destructs.'**
+  String get outfitStateSelfDestructShowHint;
+
+  /// No description provided for @outfitStateSelfDestructHide.
+  ///
+  /// In en, this message translates to:
+  /// **'Self-destruct hides'**
+  String get outfitStateSelfDestructHide;
+
+  /// No description provided for @outfitStateSelfDestructHideHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Hidden after the character self-destructs. Vanilla hides the skirt here.'**
+  String get outfitStateSelfDestructHideHint;
+
+  /// No description provided for @outfitStateBroken.
+  ///
+  /// In en, this message translates to:
+  /// **'Feather hidden'**
+  String get outfitStateBroken;
+
+  /// No description provided for @outfitStateBrokenHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Shown while the feather is not drawn. This is a separate state from self-destruct.'**
+  String get outfitStateBrokenHint;
+
+  /// No description provided for @outfitStateNonBroken.
+  ///
+  /// In en, this message translates to:
+  /// **'Feather shown'**
+  String get outfitStateNonBroken;
+
+  /// No description provided for @outfitStateNonBrokenHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Shown while the feather is drawn, the normal case.'**
+  String get outfitStateNonBrokenHint;
+
+  /// No description provided for @outfitStateWig.
+  ///
+  /// In en, this message translates to:
+  /// **'Wig'**
+  String get outfitStateWig;
+
+  /// No description provided for @outfitStateWigHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Meshes the wig renders instead of the body. They get hidden while the wig is on. Vanilla lists Hair here.'**
+  String get outfitStateWigHint;
+
+  /// No description provided for @outfitStateHairspray.
+  ///
+  /// In en, this message translates to:
+  /// **'Hairspray tint'**
+  String get outfitStateHairspray;
+
+  /// No description provided for @outfitStateHairsprayHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Meshes a hairspray colours. These are tinted, not shown or hidden. Leave empty to use Hair.'**
+  String get outfitStateHairsprayHint;
+
+  /// No description provided for @outfitStatePrologue.
+  ///
+  /// In en, this message translates to:
+  /// **'Prologue'**
+  String get outfitStatePrologue;
+
+  /// No description provided for @outfitStatePrologueHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Replaces the base set during the prologue, when 9S is heavily damaged.'**
+  String get outfitStatePrologueHint;
+
+  /// No description provided for @outfitStateHoly.
+  ///
+  /// In en, this message translates to:
+  /// **'Holes'**
+  String get outfitStateHoly;
+
+  /// No description provided for @outfitStateHolyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Replaces the base set while 9S is full of holes.'**
+  String get outfitStateHolyHint;
+
+  /// No description provided for @outfitStateNoRight.
+  ///
+  /// In en, this message translates to:
+  /// **'No right arm'**
+  String get outfitStateNoRight;
+
+  /// No description provided for @outfitStateNoRightHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Replaces the base set after 9S loses his right arm.'**
+  String get outfitStateNoRightHint;
+
+  /// No description provided for @outfitStateTower.
+  ///
+  /// In en, this message translates to:
+  /// **'Tower'**
+  String get outfitStateTower;
+
+  /// No description provided for @outfitStateTowerHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Replaces the base set in the tower.'**
+  String get outfitStateTowerHint;
 }
 
 class _AppLocalizationsDelegate

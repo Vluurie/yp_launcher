@@ -42,11 +42,8 @@ class CrossOverBottle {
     this.gamePath,
   });
 
-  CrossOverBottle withGamePath(String? value) => CrossOverBottle(
-        name: name,
-        path: path,
-        gamePath: value ?? gamePath,
-      );
+  CrossOverBottle withGamePath(String? value) =>
+      CrossOverBottle(name: name, path: path, gamePath: value ?? gamePath);
 
   @override
   String toString() => 'CrossOverBottle($name at $path)';
@@ -89,14 +86,32 @@ List<String> crossOverBottleRoots() {
 
   final candidates = Platform.isMacOS
       ? [
-          p.join(home, 'Library', 'Application Support', 'CrossOver', 'Bottles'),
-          p.join(home, 'Library', 'Application Support', 'CrossOver Preview',
-              'Bottles'),
+          p.join(
+            home,
+            'Library',
+            'Application Support',
+            'CrossOver',
+            'Bottles',
+          ),
+          p.join(
+            home,
+            'Library',
+            'Application Support',
+            'CrossOver Preview',
+            'Bottles',
+          ),
         ]
       : [
           p.join(home, '.cxoffice'),
-          p.join(home, '.var', 'app', 'com.codeweavers.CrossOver', 'data',
-              'crossover', 'bottles'),
+          p.join(
+            home,
+            '.var',
+            'app',
+            'com.codeweavers.CrossOver',
+            'data',
+            'crossover',
+            'bottles',
+          ),
         ];
 
   return candidates.where((root) => Directory(root).existsSync()).toList();
@@ -110,10 +125,9 @@ List<CrossOverBottle> listCrossOverBottles() {
       for (final entity in Directory(root).listSync(followLinks: false)) {
         if (entity is! Directory) continue;
         if (!Directory(p.join(entity.path, 'drive_c')).existsSync()) continue;
-        bottles.add(CrossOverBottle(
-          name: p.basename(entity.path),
-          path: entity.path,
-        ));
+        bottles.add(
+          CrossOverBottle(name: p.basename(entity.path), path: entity.path),
+        );
       }
     } catch (_) {}
   }
@@ -150,10 +164,18 @@ CrossOverBottle? resolveCrossOverBottle(
 }
 
 List<String> nierCandidatesInBottle(String bottlePath) => [
-      for (final programFiles in const ['Program Files (x86)', 'Program Files'])
-        p.join(bottlePath, 'drive_c', programFiles, 'Steam', 'steamapps',
-            'common', 'NieRAutomata', AppStrings.gameExeName),
-    ];
+  for (final programFiles in const ['Program Files (x86)', 'Program Files'])
+    p.join(
+      bottlePath,
+      'drive_c',
+      programFiles,
+      'Steam',
+      'steamapps',
+      'common',
+      'NieRAutomata',
+      AppStrings.gameExeName,
+    ),
+];
 
 CrossOverBottle? _bottleByName(String name) {
   final target = name.toLowerCase();
@@ -171,8 +193,11 @@ CrossOverBottle? _bottleContainingGame(String gamePath) {
   }
 
   final withGame = bottles
-      .where((bottle) => nierCandidatesInBottle(bottle.path)
-          .any((candidate) => File(candidate).existsSync()))
+      .where(
+        (bottle) => nierCandidatesInBottle(
+          bottle.path,
+        ).any((candidate) => File(candidate).existsSync()),
+      )
       .toList();
   return withGame.length == 1
       ? _withResolvedGamePath(withGame.first, gamePath)

@@ -111,8 +111,10 @@ class _ToastItemState extends State<_ToastItem>
               margin: const EdgeInsets.only(bottom: 6),
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               constraints: BoxConstraints(
-                maxWidth: (MediaQuery.of(context).size.width - 80)
-                    .clamp(280.0, 720.0),
+                maxWidth: (MediaQuery.of(context).size.width - 80).clamp(
+                  280.0,
+                  720.0,
+                ),
               ),
               decoration: BoxDecoration(
                 color: AppColors.backgroundCard.withValues(alpha: 0.95),

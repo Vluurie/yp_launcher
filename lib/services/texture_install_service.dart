@@ -6,10 +6,8 @@ import 'package:path/path.dart' as path;
 const archiveExts = ['.zip', '.tar', '.gz', '.bz2', '.7z', '.rar'];
 const textureExts = ['.dds'];
 
-bool isArchive(String p) =>
-    archiveExts.any((e) => p.toLowerCase().endsWith(e));
-bool isTexture(String p) =>
-    textureExts.any((e) => p.toLowerCase().endsWith(e));
+bool isArchive(String p) => archiveExts.any((e) => p.toLowerCase().endsWith(e));
+bool isTexture(String p) => textureExts.any((e) => p.toLowerCase().endsWith(e));
 
 class TextureInstallProgressParams {
   final List<String> paths;
@@ -235,10 +233,18 @@ void installTexturesWithProgress(TextureInstallProgressParams params) {
 }
 
 const _textureWrapperSegments = {
-  'sk_res', 'far_res', 'inject', 'textures', 'nierautomata.exe',
+  'sk_res',
+  'far_res',
+  'inject',
+  'textures',
+  'nierautomata.exe',
 };
 
-void collectTextureFiles(String sourcePath, String folderName, List<(File, String)> result) {
+void collectTextureFiles(
+  String sourcePath,
+  String folderName,
+  List<(File, String)> result,
+) {
   final sourceDir = Directory(sourcePath);
   if (!sourceDir.existsSync()) return;
   for (final file in sourceDir.listSync(recursive: true)) {
@@ -246,7 +252,9 @@ void collectTextureFiles(String sourcePath, String folderName, List<(File, Strin
     final relativePath = path.relative(file.path, from: sourcePath);
     final segments = path.split(relativePath)
       ..removeWhere((s) => _textureWrapperSegments.contains(s.toLowerCase()));
-    final cleanRel = segments.isEmpty ? path.basename(file.path) : path.joinAll(segments);
+    final cleanRel = segments.isEmpty
+        ? path.basename(file.path)
+        : path.joinAll(segments);
     final combined = path.join(folderName, cleanRel);
     result.add((file, combined));
   }

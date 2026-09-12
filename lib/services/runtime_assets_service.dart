@@ -58,11 +58,13 @@ class RuntimeAssetsService {
       final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
       return manifest
           .listAssets()
-          .where((key) =>
-              key.startsWith(_assetPrefix) &&
-              // Finder metadata ends up in the manifest but is never actually
-              // bundled, so loading it throws.
-              !p.basename(key).startsWith('.'))
+          .where(
+            (key) =>
+                key.startsWith(_assetPrefix) &&
+                // Finder metadata ends up in the manifest but is never actually
+                // bundled, so loading it throws.
+                !p.basename(key).startsWith('.'),
+          )
           .toList()
         ..sort();
     } catch (_) {

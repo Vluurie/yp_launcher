@@ -142,9 +142,7 @@ class _ModsStepState extends ConsumerState<ModsStep> {
             padding: const EdgeInsets.symmetric(vertical: 24),
             child: Column(
               children: [
-                CircularProgressIndicator(
-                  color: AppColors.accentPrimary,
-                ),
+                CircularProgressIndicator(color: AppColors.accentPrimary),
                 const SizedBox(height: 10),
                 Text(
                   _busyMessage.isEmpty
@@ -159,10 +157,7 @@ class _ModsStepState extends ConsumerState<ModsStep> {
             ),
           )
         else
-          ModDropZone(
-            onDrop: _installAll,
-            onBrowse: _pickAndInstall,
-          ),
+          ModDropZone(onDrop: _installAll, onBrowse: _pickAndInstall),
         if (_error != null) ...[
           const SizedBox(height: 10),
           Container(
@@ -174,8 +169,7 @@ class _ModsStepState extends ConsumerState<ModsStep> {
             ),
             child: Row(
               children: [
-                Icon(Icons.error_outline,
-                    size: 16, color: AppColors.error),
+                Icon(Icons.error_outline, size: 16, color: AppColors.error),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -197,14 +191,14 @@ class _ModsStepState extends ConsumerState<ModsStep> {
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
             decoration: BoxDecoration(
               color: AppColors.warning.withValues(alpha: 0.10),
-              border:
-                  Border.all(color: AppColors.warning.withValues(alpha: 0.5)),
+              border: Border.all(
+                color: AppColors.warning.withValues(alpha: 0.5),
+              ),
               borderRadius: BorderRadius.circular(6),
             ),
             child: Row(
               children: [
-                Icon(Icons.warning_amber,
-                    size: 16, color: AppColors.warning),
+                Icon(Icons.warning_amber, size: 16, color: AppColors.warning),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -230,7 +224,9 @@ class _ModsStepState extends ConsumerState<ModsStep> {
               for (final name in _installedNames)
                 Container(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 10, vertical: 5),
+                    horizontal: 10,
+                    vertical: 5,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.success.withValues(alpha: 0.10),
                     border: Border.all(
@@ -347,10 +343,11 @@ class _ModsStepState extends ConsumerState<ModsStep> {
         if (!mounted) return;
         setState(() {
           _busyMessage = currentFile == null || currentFile.isEmpty
-              ? l.onboardingModInstallExtractingPercent(
-                  (percent * 100).round())
+              ? l.onboardingModInstallExtractingPercent((percent * 100).round())
               : l.onboardingModInstallExtractingFile(
-                  (percent * 100).round(), currentFile);
+                  (percent * 100).round(),
+                  currentFile,
+                );
         });
       },
     );
@@ -399,10 +396,11 @@ class _ModsStepState extends ConsumerState<ModsStep> {
         if (!mounted) return;
         setState(() {
           _busyMessage = currentFile == null || currentFile.isEmpty
-              ? l.onboardingModInstallExtractingPercent(
-                  (percent * 100).round())
+              ? l.onboardingModInstallExtractingPercent((percent * 100).round())
               : l.onboardingModInstallExtractingFile(
-                  (percent * 100).round(), currentFile);
+                  (percent * 100).round(),
+                  currentFile,
+                );
         });
       },
     );
@@ -444,7 +442,10 @@ class _ModsStepState extends ConsumerState<ModsStep> {
     DetectedDrop detect,
     AppLocalizations l,
   ) async {
-    final chosen = await showModVariantDialog(context, variants: detect.variants);
+    final chosen = await showModVariantDialog(
+      context,
+      variants: detect.variants,
+    );
     if (chosen == null || chosen.isEmpty || !mounted) return;
 
     final base = await showModNamingDialog(
@@ -487,9 +488,11 @@ class _ModsStepState extends ConsumerState<ModsStep> {
           }
         });
       } else {
-        setState(() => _error = l.onboardingModInstallFailed(
-              result.errorMessage ?? 'unknown error',
-            ));
+        setState(
+          () => _error = l.onboardingModInstallFailed(
+            result.errorMessage ?? 'unknown error',
+          ),
+        );
       }
     }
 
@@ -545,9 +548,7 @@ class _ModsStepState extends ConsumerState<ModsStep> {
                         ),
                         TextSpan(
                           text: body,
-                          style: TextStyle(
-                            color: AppColors.textSecondary,
-                          ),
+                          style: TextStyle(color: AppColors.textSecondary),
                         ),
                       ],
                     ),
@@ -652,11 +653,7 @@ class _MultiOutfitLinkState extends State<_MultiOutfitLink> {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
-                Icons.open_in_new,
-                size: 11,
-                color: color,
-              ),
+              Icon(Icons.open_in_new, size: 11, color: color),
               const SizedBox(width: 3),
               Text(
                 widget.label,
@@ -664,8 +661,9 @@ class _MultiOutfitLinkState extends State<_MultiOutfitLink> {
                   fontSize: AppSizes.fontXS(context),
                   color: color,
                   fontWeight: FontWeight.w600,
-                  decoration:
-                      _hovered ? TextDecoration.underline : TextDecoration.none,
+                  decoration: _hovered
+                      ? TextDecoration.underline
+                      : TextDecoration.none,
                   decorationColor: color,
                 ),
               ),

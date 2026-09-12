@@ -7,8 +7,7 @@ class ShaderFixNames {
 
   static const fileName = 'nams.shaderfix_names.json';
 
-  static File _file(String migotoDir) =>
-      File(path.join(migotoDir, fileName));
+  static File _file(String migotoDir) => File(path.join(migotoDir, fileName));
 
   static Map<String, String> read(String migotoDir) {
     final f = _file(migotoDir);
@@ -46,9 +45,9 @@ class ShaderFixNames {
 
   static void _write(String migotoDir, Map<String, String> map) {
     try {
-      _file(migotoDir).writeAsStringSync(
-        const JsonEncoder.withIndent('  ').convert(map),
-      );
+      _file(
+        migotoDir,
+      ).writeAsStringSync(const JsonEncoder.withIndent('  ').convert(map));
     } catch (_) {}
   }
 }

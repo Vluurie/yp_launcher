@@ -149,11 +149,7 @@ class _ConfigFieldCursorFileState extends State<ConfigFieldCursorFile> {
               padding: const EdgeInsets.only(top: 4),
               child: Row(
                 children: [
-                  Icon(
-                    Icons.error_outline,
-                    size: 13,
-                    color: AppColors.error,
-                  ),
+                  Icon(Icons.error_outline, size: 13, color: AppColors.error),
                   const SizedBox(width: 4),
                   Expanded(
                     child: Text(

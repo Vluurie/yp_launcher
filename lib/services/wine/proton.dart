@@ -31,15 +31,20 @@ bool isProtonRuntimePath(String runtimePath) =>
 /// Splits a Steam-installed game path into its library and Steam roots.
 SteamContext? inferSteamContext(String gamePath) {
   final normalized = p.normalize(gamePath);
-  final index = normalized.toLowerCase().indexOf(_libraryMarker);
+  final searchable = normalized.replaceAll(r'\', '/').toLowerCase();
+  final index = searchable.indexOf(_libraryMarker);
   if (index == -1) return null;
 
   final libraryRoot = normalized.substring(0, index);
   return SteamContext(
-    steamRoot: _steamRootForLibrary(libraryRoot) ?? libraryRoot,
+    steamRoot: _steamRootFor(libraryRoot),
     libraryRoot: libraryRoot,
-    compatDataPath:
-        p.join(libraryRoot, 'steamapps', 'compatdata', nierSteamAppId),
+    compatDataPath: p.join(
+      libraryRoot,
+      'steamapps',
+      'compatdata',
+      nierSteamAppId,
+    ),
   );
 }
 
@@ -50,8 +55,14 @@ String getProtonCompatDataPath(String? gamePath) {
   final context = gamePath == null ? null : inferSteamContext(gamePath);
   if (context != null) return context.compatDataPath;
 
-  return p.join(_home, '.steam', 'steam', 'steamapps', 'compatdata',
-      nierSteamAppId);
+  return p.join(
+    _home,
+    '.steam',
+    'steam',
+    'steamapps',
+    'compatdata',
+    nierSteamAppId,
+  );
 }
 
 String getProtonSteamRoot(String? gamePath) {
@@ -81,8 +92,15 @@ List<String> steamRootCandidates() =>
       p.join(_home, '.steam', 'steam'),
       p.join(_home, '.local', 'share', 'Steam'),
       p.join(_home, 'snap', 'steam', 'common', '.local', 'share', 'Steam'),
-      p.join(_home, '.var', 'app', 'com.valvesoftware.Steam', '.local', 'share',
-          'Steam'),
+      p.join(
+        _home,
+        '.var',
+        'app',
+        'com.valvesoftware.Steam',
+        '.local',
+        'share',
+        'Steam',
+      ),
     ].where((root) => Directory(root).existsSync()).toList();
 
 /// Newest Proton build across every known Steam root. Used as a fallback when
@@ -108,7 +126,8 @@ String? steamHomeForClient(String steamClientInstallPath) {
   return null;
 }
 
-bool _hasSteamClient(String home) => home.isNotEmpty &&
+bool _hasSteamClient(String home) =>
+    home.isNotEmpty &&
     File(p.join(home, '.steam', 'sdk64', 'steamclient.so')).existsSync();
 
 List<String> _steamHomeCandidatesFor(String steamRoot) {
@@ -125,12 +144,13 @@ List<String> _steamHomeCandidatesFor(String steamRoot) {
 
 String get _home => Platform.environment['HOME'] ?? '';
 
-String? _steamRootForLibrary(String libraryRoot) {
+String _steamRootFor(String libraryRoot) {
+  final roots = steamRootCandidates();
   final target = p.normalize(libraryRoot);
-  for (final candidate in steamRootCandidates()) {
-    if (p.normalize(candidate) == target) return candidate;
+  for (final root in roots) {
+    if (p.normalize(root) == target) return root;
   }
-  return null;
+  return roots.isEmpty ? libraryRoot : roots.first;
 }
 
 List<String> _protonCandidates(String parentDir) {
@@ -138,17 +158,20 @@ List<String> _protonCandidates(String parentDir) {
   if (!parent.existsSync()) return const [];
 
   try {
-    final builds = parent
-        .listSync(followLinks: false)
-        .whereType<Directory>()
-        .where((dir) => p.basename(dir.path).toLowerCase().contains('proton'))
-        .map((dir) => (path: p.join(dir.path, 'proton'), dir: dir))
-        .where((build) => File(build.path).existsSync())
-        .toList()
-      ..sort((a, b) => b.dir
-          .statSync()
-          .modified
-          .compareTo(a.dir.statSync().modified));
+    final builds =
+        parent
+            .listSync(followLinks: false)
+            .whereType<Directory>()
+            .where(
+              (dir) => p.basename(dir.path).toLowerCase().contains('proton'),
+            )
+            .map((dir) => (path: p.join(dir.path, 'proton'), dir: dir))
+            .where((build) => File(build.path).existsSync())
+            .toList()
+          ..sort(
+            (a, b) =>
+                b.dir.statSync().modified.compareTo(a.dir.statSync().modified),
+          );
 
     return builds.map((build) => build.path).toList();
   } catch (_) {

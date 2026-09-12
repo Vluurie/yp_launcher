@@ -578,7 +578,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get featureLodMod =>
-      'LOD Mod – integrierte Grafikoptimierungen für Schatten, Details und Pop-ins. Standardmäßig deaktiviert.';
+      'LOD Mod Ext – integrierte Grafikoptimierungen für Schatten, Details und Pop-ins. Standardmäßig deaktiviert.';
 
   @override
   String get tooltipEditConfigs =>
@@ -606,7 +606,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get notifyLodModMigrated =>
-      'Deine alten LodMod.ini-Einstellungen wurden gefunden, in lodmod.toml importiert und LodMod wurde aktiviert.';
+      'Deine alten LodMod.ini-Einstellungen wurden gefunden, in lodmod.toml importiert und LodMod Ext wurde aktiviert.';
 
   @override
   String get notifyReShadeDetected =>
@@ -724,7 +724,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get headerNams => 'NAMS';
 
   @override
-  String get headerLodMod => 'LOD MOD';
+  String get headerLodMod => 'LOD MOD EXT';
 
   @override
   String get headerTextures => 'TEXTUREN';
@@ -750,7 +750,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get tooltipEditsSettingsJson =>
-      'Bearbeitet %APPDATA%\\NAMS\\settings.json';
+      'Bearbeitet nams\\_internal\\cache\\settings.json';
 
   @override
   String get tooltipEditsNaiom =>
@@ -768,6 +768,13 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get cardHeapOverrides => 'HEAP-ÜBERSCHREIBUNGEN';
+
+  @override
+  String get cardPerformance => 'LEISTUNG';
+
+  @override
+  String get performanceCardNote =>
+      'Die ersten beiden helfen nur, wenn die CPU der Flaschenhals ist. Ist deine CPU langsamer als deine GPU, können beide zusammen bis zu 20 % mehr Leistung bringen; auf einem GPU-limitierten System ändern sie nichts. Die dritte Option betrifft Ruckler beim Nachladen der Karte, nicht die Bildrate.';
 
   @override
   String get cardLevelOfDetail => 'DETAILSTUFE';
@@ -900,7 +907,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get tabNams => 'NAMS';
 
   @override
-  String get tabLodMod => 'LOD Mod';
+  String get tabLodMod => 'LOD Mod Ext';
 
   @override
   String get tabNaiom => 'NAIOM';
@@ -916,6 +923,498 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get tabThirdParty => 'Drittanbieter';
+
+  @override
+  String get tabDocs => 'Mods erstellen';
+
+  @override
+  String get tabTools => 'Werkzeuge';
+
+  @override
+  String get toolsIconsTitle => 'SYMBOLE';
+
+  @override
+  String get toolsIconsDesc =>
+      'Alle misctex-Symbole, die deine Mods mitbringen. Ersetze eines, um das Bild oder die Größe zu ändern - das Spiel liest es über den Namen, der muss also bleiben.';
+
+  @override
+  String get toolsIconsHotReload =>
+      'Kein Neustart nötig: Ersetze ein Symbol im laufenden Spiel, verlasse das Inventar und öffne es wieder. Das neue Bild ist schon da.';
+
+  @override
+  String get toolsIconsEmpty =>
+      'Noch keine Symbole. Die Gegenstands- und Waffen-Baukästen unter \"Mods erstellen\" legen eines an, oder füge unten eines hinzu.';
+
+  @override
+  String get toolsIconsAdd => 'Symbol aus einem Bild hinzufügen';
+
+  @override
+  String get toolsIconsConvert => 'Bild umwandeln';
+
+  @override
+  String get toolsIconsAdjust => 'Symbol anpassen';
+
+  @override
+  String get toolsIconsNotMisctex =>
+      'Das ist keine Symboldatei. Wähle eine misctex_*.dat.';
+
+  @override
+  String get toolsIconsPick => 'Vorhandenes Symbol wählen';
+
+  @override
+  String get toolsIconsNewTitle => 'Neues Symbol';
+
+  @override
+  String get toolsIconsNewMod => 'Mod-Ordner';
+
+  @override
+  String get toolsIconsNewNoMods =>
+      'Noch keine Mod-Ordner. Erstelle zuerst einen Mod.';
+
+  @override
+  String get toolsIconsNewName => 'Texturname';
+
+  @override
+  String get toolsIconsNewNameHint => 'item_thumb_8500';
+
+  @override
+  String get toolsIconsNewHint =>
+      'Das Spiel findet das Symbol über diesen Namen.';
+
+  @override
+  String get toolsIconsNewCreate => 'Weiter';
+
+  @override
+  String get toolsIconsNew => 'Neues Symbol';
+
+  @override
+  String get toolsIconsReplace => 'Ersetzen';
+
+  @override
+  String get toolsIconsDelete => 'Löschen';
+
+  @override
+  String toolsIconsDeleteConfirm(String name) {
+    return '$name löschen? Die .dat- und .dtt-Datei werden entfernt. Gegenstände, die darauf zeigen, bekommen wieder das Platzhalterbild.';
+  }
+
+  @override
+  String toolsIconsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Symbole',
+      one: '1 Symbol',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get toolsNeedsGameDir =>
+      'Wähle zuerst deinen Spielordner im Launcher.';
+
+  @override
+  String get docsSearchHint => 'Dokumentation durchsuchen';
+
+  @override
+  String get docsNoResults => 'Nichts gefunden.';
+
+  @override
+  String docsResultCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Treffer',
+      one: '1 Treffer',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get docsCategoryNative => 'Modding-Anleitung';
+
+  @override
+  String get docsCategoryScripting => 'Scripting';
+
+  @override
+  String get docsCategoryResources => 'Referenztabellen';
+
+  @override
+  String get docsCategoryAuthoring => 'Tool-Entwicklung';
+
+  @override
+  String get docsOnThisPage => 'Auf dieser Seite';
+
+  @override
+  String get docsHome => 'Hier starten';
+
+  @override
+  String get docsHeroTitle => 'Bau deinen eigenen Mod';
+
+  @override
+  String get docsHeroBody =>
+      'Neue Items, Waffen, Outfits, Quests, ganze inszenierte Szenen. Für den Anfang brauchst du nicht programmieren zu können, und alles Nötige steht auf dieser Seite.';
+
+  @override
+  String get docsHeroCta => 'Dein erster Mod in 5 Minuten';
+
+  @override
+  String get docsHeroTime => '5 Min.';
+
+  @override
+  String get docsPathBeginner => 'Noch nie gemoddet';
+
+  @override
+  String get docsPathBeginnerBody =>
+      'Fang mit einem einzelnen neuen Item an und lerne dann, wie ein Mod-Ordner aufgebaut ist.';
+
+  @override
+  String get docsPathContent => 'Inhalte hinzufügen';
+
+  @override
+  String get docsPathContentBody =>
+      'Items, Waffen, Outfits, Accessoires, Quests, Mails, Musik und mehr.';
+
+  @override
+  String get docsPathScripting => 'Die Welt scripten';
+
+  @override
+  String get docsPathScriptingBody =>
+      'Lass Dinge im richtigen Moment passieren: Spawns, Trigger, Kameras, Cutscenes.';
+
+  @override
+  String get docsSectionGuides => 'Anleitungen';
+
+  @override
+  String get docsEnglishOnly =>
+      'Die Dokumentation ist derzeit nur auf Englisch verfügbar.';
+
+  @override
+  String get docsBackToLauncher => 'Zurück zum Launcher';
+
+  @override
+  String get docsEdit => 'Diese Seite bearbeiten';
+
+  @override
+  String docsLinkCopied(String url) {
+    return 'Browser konnte nicht geöffnet werden. Link kopiert: $url';
+  }
+
+  @override
+  String get docsReload => 'Von Platte neu laden';
+
+  @override
+  String get docsSaveFile => 'In Datei speichern';
+
+  @override
+  String get docsPreview => 'Vorschau aktualisieren';
+
+  @override
+  String get thumbnailTitle => 'Symbol';
+
+  @override
+  String get thumbnailDrop => 'Bild hierher ziehen';
+
+  @override
+  String get thumbnailDropHint =>
+      'PNG, JPEG, WebP, BMP oder TGA. Die Umwandlung übernimmt der Launcher.';
+
+  @override
+  String get thumbnailSize => 'Größe';
+
+  @override
+  String get thumbnailSizeHint =>
+      'Zum Ändern an der Ecke ziehen. DXT5, Vielfache von 4.';
+
+  @override
+  String get thumbnailSizeFixed =>
+      'Für diese Bildart fest. Eine andere Größe läuft im Spiel über den Rahmen hinaus.';
+
+  @override
+  String thumbnailScaled(int percent) {
+    return 'Vorschau auf $percent % verkleinert - gespeichert wird in voller Größe.';
+  }
+
+  @override
+  String get thumbnailCreate => 'Symbol erstellen';
+
+  @override
+  String get thumbnailUse => 'Dieses Bild verwenden';
+
+  @override
+  String get thumbnailPending =>
+      'Bereit - wird beim Erstellen des Gegenstands geschrieben.';
+
+  @override
+  String get thumbnailHotReload =>
+      'Inventar im Spiel neu öffnen, dann ist das ersetzte Symbol da. Kein Neustart.';
+
+  @override
+  String get thumbnailOpen => 'Symbol festlegen';
+
+  @override
+  String get thumbnailChange => 'Symbol ändern';
+
+  @override
+  String get thumbnailReplace => 'Ersetzen';
+
+  @override
+  String get thumbnailRemove => 'Entfernen';
+
+  @override
+  String get thumbnailDone => 'Symbol neben deinem Gegenstand gespeichert.';
+
+  @override
+  String get thumbnailWorking => 'Wird umgewandelt...';
+
+  @override
+  String get thumbnailNoItem =>
+      'Erstelle zuerst den Gegenstand, dann gib ihm ein Symbol.';
+
+  @override
+  String get errTextureUnreadable =>
+      'Dieses Symbol konnte nicht gelesen werden. Es ist möglicherweise beschädigt oder liegt in einem unerwarteten Format vor.';
+
+  @override
+  String get errImageUnreadable =>
+      'Diese Datei konnte nicht als Bild gelesen werden. Nimm PNG, JPEG, WebP, BMP oder TGA.';
+
+  @override
+  String get errImageSizeOutOfRange =>
+      'Die Größe muss zwischen 4 und 4096 Pixeln liegen.';
+
+  @override
+  String get errImageSizeNotMultipleOfFour =>
+      'Breite und Höhe müssen Vielfache von 4 sein.';
+
+  @override
+  String get errArchiveEmpty => 'Nichts zu packen.';
+
+  @override
+  String errArchiveExtensionTooLong(String name) {
+    return 'Die Dateiendung von $name ist länger als drei Zeichen.';
+  }
+
+  @override
+  String get errWeaponNothingToConvert =>
+      'Dieser Mod enthält kein Modell und keine Texturen zum Konvertieren. Er braucht eine .dat mit einer wta und eine .dtt mit einer wmb.';
+
+  @override
+  String get errWeaponClassMismatch =>
+      'Eine Waffe kann nur eine Waffe derselben Art ersetzen. Ein Speer kann kein Schwert werden - die Animationen bleiben bei der ersetzten Waffe.';
+
+  @override
+  String errFileReadFailed(String detail) {
+    return 'Die Datei konnte nicht gelesen werden: $detail';
+  }
+
+  @override
+  String errFileWriteFailed(String detail) {
+    return 'Die Datei konnte nicht geschrieben werden: $detail';
+  }
+
+  @override
+  String errDirectoryCreateFailed(String detail) {
+    return 'Der Ordner konnte nicht erstellt werden: $detail';
+  }
+
+  @override
+  String errUnknownCode(int code, String detail) {
+    return 'Etwas ist schiefgelaufen (Code $code). $detail';
+  }
+
+  @override
+  String get itemBuilderTitle => 'Mach jetzt einen';
+
+  @override
+  String get itemBuilderBody =>
+      'Füll das aus, und der Launcher schreibt die Datei für dich. Darunter siehst du, was dabei herauskommt, und kannst es später von Hand ändern.';
+
+  @override
+  String get itemBuilderName => 'Name im Menü';
+
+  @override
+  String get itemBuilderNameHint => 'Rostige Schraube';
+
+  @override
+  String get itemBuilderDescription => 'Beschreibung';
+
+  @override
+  String get itemBuilderDescriptionHint =>
+      'Eine Schraube. Sie hat bessere Tage gesehen.';
+
+  @override
+  String get itemBuilderModId => 'Mod-Ordner';
+
+  @override
+  String get itemBuilderCarry => 'Wie viele der Spieler tragen kann';
+
+  @override
+  String get itemBuilderSellable => 'Kann verkauft werden';
+
+  @override
+  String get itemBuilderSellPrice => 'Verkaufspreis';
+
+  @override
+  String get itemBuilderAutoGive => 'Dem Spieler automatisch geben';
+
+  @override
+  String get itemBuilderAutoGiveHint =>
+      'Sonst brauchst du einen Laden oder eine Quest-Belohnung, um ihn auszuhändigen.';
+
+  @override
+  String get itemBuilderIdLabel => 'Gegenstands-ID';
+
+  @override
+  String get itemBuilderIdHint =>
+      'Für dich ausgewählt. Jeder Gegenstand braucht eine, die sonst niemand benutzt.';
+
+  @override
+  String get itemBuilderPreview => 'Das ist die Datei, die geschrieben wird';
+
+  @override
+  String get itemBuilderCreate => 'Gegenstand erstellen';
+
+  @override
+  String itemBuilderCreated(String path) {
+    return 'Geschrieben nach $path';
+  }
+
+  @override
+  String get itemBuilderNeedsName => 'Gib ihm zuerst einen Namen.';
+
+  @override
+  String get itemBuilderNeedsGameDir =>
+      'Wähle zuerst deinen Spielordner im Launcher.';
+
+  @override
+  String get itemBuilderExists =>
+      'Diese ID ist schon vergeben. Nimm eine andere.';
+
+  @override
+  String get itemBuilderOpenFolder => 'Datei anzeigen';
+
+  @override
+  String get firstModTitle => 'Bau ihn beim Lesen';
+
+  @override
+  String get firstModBody =>
+      'Jeder Schritt schreibt die echte Datei in deinen Spielordner. Am Ende hast du einen funktionierenden Mod.';
+
+  @override
+  String get firstModStep1 => 'Mod-Ordner anlegen';
+
+  @override
+  String get firstModStep1Detail => 'nams\\mods\\my_first_mod\\entities\\';
+
+  @override
+  String get firstModEdit => 'Editor öffnen';
+
+  @override
+  String get firstModExplainManifest =>
+      'Das ist das Namensschild deines Mods. NAMS liest es zuerst, um zu wissen, dass der Mod existiert. display_name und author kannst du frei ändern - die id muss kleingeschrieben und ohne Leerzeichen bleiben, denn darüber verweisen andere Mods auf deinen.';
+
+  @override
+  String get firstModExplainItem =>
+      'Der Dateiname bestimmt, was das hier ist: item_9999.toml heißt Item mit der ID 9999. Benennst du die Datei um, änderst du die ID. Innen ist [text.name] das, was im Menü steht, [text.help] die Beschreibung. Ändere den Namen ruhig, bevor du schreibst.';
+
+  @override
+  String get tomlEditorValid => 'Gültiges TOML. NAMS liest daraus:';
+
+  @override
+  String get tomlEditorInvalid =>
+      'Das ist noch kein gültiges TOML - NAMS würde die Datei überspringen.';
+
+  @override
+  String get tomlEditorReset => 'Zurück zum Beispiel';
+
+  @override
+  String get tomlEditorWrite => 'Datei schreiben';
+
+  @override
+  String get firstModStep2 => 'mod.toml schreiben';
+
+  @override
+  String get firstModStep2Detail => 'Das Namensschild, das NAMS zuerst liest.';
+
+  @override
+  String get firstModStep3 => 'Test Pebble hinzufügen';
+
+  @override
+  String get firstModStep3Detail => 'entities\\item_9999.toml';
+
+  @override
+  String get firstModStep4 => 'Prüfen, ob NAMS ihn findet';
+
+  @override
+  String get firstModStep4Detail =>
+      'Führt NAMS verify für deine Installation aus.';
+
+  @override
+  String get firstModDo => 'Ausführen';
+
+  @override
+  String get firstModDone => 'Erledigt';
+
+  @override
+  String get firstModRedo => 'Neu schreiben';
+
+  @override
+  String get firstModVerify => 'Prüfen';
+
+  @override
+  String get firstModOpenFolder => 'Ordner öffnen';
+
+  @override
+  String get firstModReset => 'Diesen Mod wieder entfernen';
+
+  @override
+  String get firstModNoGameDir =>
+      'Wähle zuerst deinen Spielordner im Launcher.';
+
+  @override
+  String get firstModFinished =>
+      'Dein Mod liegt bereit. Starte das Spiel neu, dann ist der Test Pebble in deinem Inventar.';
+
+  @override
+  String firstModFailed(String error) {
+    return 'Die Dateien konnten nicht geschrieben werden: $error';
+  }
+
+  @override
+  String get docsCopy => 'Kopieren';
+
+  @override
+  String get docsCopied => 'Kopiert';
+
+  @override
+  String get docsNativeBlurb =>
+      'Beschreibe in einer Textdatei, was du willst, und NAMS lädt es. Hier fangen die meisten Mods an.';
+
+  @override
+  String get docsScriptingBlurb =>
+      'Für alles, was auf Stichwort passieren soll: Spawns, Trigger, Kameras, ganze inszenierte Szenen.';
+
+  @override
+  String get docsSectionReference => 'Referenztabellen';
+
+  @override
+  String get docsReferenceBody =>
+      'Alle IDs zum Nachschlagen: Items, Waffen, Chips, Effekte, Meshes.';
+
+  @override
+  String get docsBrowseAll => 'Alle Seiten durchsuchen';
+
+  @override
+  String docsPagesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Seiten',
+      one: '1 Seite',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get thirdPartyTitle => 'Drittanbieter-Runtimes';
@@ -936,14 +1435,14 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get thirdPartyMigotoHowto =>
-      'Zieh ein 3DMigoto-Shader-Mod-Archiv hierher. Der Launcher installiert es und setzt das Loader-Target, damit NAMS es einhakt.';
+      '3DMigoto-Shader-Mod-Archive werden über die Ablagezone oben installiert. Der Launcher setzt das Loader-Ziel, damit NAMS sie einhängt.';
 
   @override
   String get thirdPartyGameModsHeader => 'SPIEL-MODS';
 
   @override
   String get thirdPartyGameModsHowto =>
-      'Zieh Mod-Dateien (.dll) hierher, die für das Originalspiel gemacht wurden – Speedrun-Timer, Trainer und ähnliche Tools. Der Launcher richtet sie für NAMS ein, kann aber nicht prüfen, was ein Mod tatsächlich tut: jeder davon kann das Spiel zum Absturz bringen. Füge nur Dateien hinzu, denen du vertraust, und schalte einen Mod unten ab, wenn sich das Spiel merkwürdig verhält.';
+      'Mod-DLLs für das Originalspiel — Speedrun-Timer, Trainer und ähnliche Werkzeuge — werden über die Ablagezone oben installiert. Der Launcher richtet sie für NAMS ein, kann aber nicht prüfen, was ein Mod tatsächlich tut: Jeder davon kann das Spiel zum Absturz bringen. Füge nur Dateien hinzu, denen du vertraust, und schalte unten einen ab, wenn sich das Spiel seltsam verhält.';
 
   @override
   String get thirdPartyGameModsNone => 'Keine Spiel-Mods installiert';
@@ -1023,7 +1522,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get thirdPartyDropHere =>
-      'ReShade-Preset / 3DMigoto-Mod hierher ziehen';
+      'ReShade-Presets, 3DMigoto-Mods oder Game-Mod-DLLs hier ablegen';
 
   @override
   String get thirdPartyImported => 'In NAMS importiert';
@@ -1049,7 +1548,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get thirdPartyLodModPrompt =>
-      'Das ist ein LodMod. NAMS hat LodMod eingebaut — die Einstellungen in den LodMod-Tab importieren?';
+      'Das ist ein LodMod. NAMS hat LodMod Ext eingebaut — die Einstellungen in den LodMod-Ext-Tab importieren?';
 
   @override
   String get thirdPartyStatusActive => 'Aktiv';
@@ -1285,10 +1784,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get tooltipFaq => 'Brauche ich weiterhin andere Mods?';
 
   @override
-  String get chipLodModOn => 'LOD MOD AN';
+  String get chipLodModOn => 'LOD MOD EXT AN';
 
   @override
-  String get chipLodModOff => 'LOD MOD AUS';
+  String get chipLodModOff => 'LOD MOD EXT AUS';
 
   @override
   String get chipReShade => 'ReShade';
@@ -1349,7 +1848,11 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get lodModDescription =>
-      'In NAMS integrierte Patches für bessere Grafikqualität, inspiriert von Automata-LodMod von emoose. Entfernt LOD-Pop-ins, schärft Schatten und Umgebungsverdeckung, erzwingt Schattenwurf für alle Objekte einschließlich Vegetation, deaktiviert manuelles Culling, damit Objekte nicht plötzlich ein- oder ausgeblendet werden, und entfernt die Vignette.';
+      'In NAMS integrierte Patches für bessere Grafikqualität, inspiriert von Automata-LodMod von emoose und weit darüber hinaus erweitert - daher das Ext. Entfernt LOD-Pop-ins, schärft Schatten und Umgebungsverdeckung, erzwingt Schattenwurf für alle Objekte einschließlich Vegetation, deaktiviert manuelles Culling, damit Objekte nicht plötzlich ein- oder ausgeblendet werden, und entfernt die Vignette. Zusätzlich kommen Schattenkaskaden mit Blur pro Kaskade, ein neu geschriebenes Bloom, Global Illumination, FPS-Uncap mit Event-Absicherung, FXAA, Render-Skalierung und hochauflösende Karten-Grids dazu.';
+
+  @override
+  String get comparisonResolutionNote =>
+      'Alle Vergleichsbilder in diesem Reiter wurden in 2560x1440 aufgenommen.';
 
   @override
   String get namsDescription =>
@@ -1477,6 +1980,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get installedToTextures => 'Installiert unter: nams/inject/textures/';
+
+  @override
+  String get texturesPackNameTitle => 'Pack benennen';
 
   @override
   String get installingTextures => 'Texturen werden installiert ...';
@@ -2336,7 +2842,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get tipLodModPreviews =>
-      'LOD-Mod-Einstellungen enthalten Vorher-/Nachher-Vorschaubilder';
+      'LOD-Mod-Ext-Einstellungen enthalten Vorher-/Nachher-Vorschaubilder';
 
   @override
   String get tipFaqButton =>
@@ -2361,7 +2867,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get sectionTextureInjection => 'TEXTURINJEKTION';
 
   @override
-  String get sectionLodMod => 'LOD MOD';
+  String get sectionLodMod => 'LOD MOD EXT';
 
   @override
   String get sectionLevelOfDetail => 'DETAILSTUFE';
@@ -2397,7 +2903,7 @@ class AppLocalizationsDe extends AppLocalizations {
       'Lädt unabhängig von ihrer Größe ALLE Texturen in den Arbeitsspeicher vor. Beseitigt sämtliche Ruckler durch plötzlich eingeblendete Texturen, benötigt aber mindestens 32 GB RAM und verlangsamt den Start deutlich.';
 
   @override
-  String get labelEnableLodMod => 'LodMod aktivieren';
+  String get labelEnableLodMod => 'LodMod Ext aktivieren';
 
   @override
   String get tooltipEnableLodMod =>
@@ -2408,7 +2914,19 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get tooltipLodMultiplier =>
-      'Steuert die Darstellungsentfernungen der LOD-Stufen (Detailstufen). 0 = LODs deaktiviert (beste Qualität, keine Pop-ins). 1 = ursprünglicher Wert. 10+ hilft, AO-Ausbluten zu reduzieren, ohne LODs vollständig zu deaktivieren. Niedrigere Werte verbessern die Darstellung, können aber Leistung kosten.';
+      'Steuert, wann Modelle auf ihre gröberen Detailstufen wechseln. 0 = LODs deaktiviert (beste Qualität, keine Pop-ins). 0.75 = die gröberen Stufen greifen näher an der Kamera, das kostet weniger GPU; die Entfernung, ab der Modelle verschwinden, bleibt wie im Original. 1 = ursprünglicher Wert. 10 = hohe Details in der Ferne, hilft gegen AO-Ausbluten.';
+
+  @override
+  String get lodMultiplierOptionQuality => '0 - Beste Qualität';
+
+  @override
+  String get lodMultiplierOptionPerformance => '0.75 - Leistung';
+
+  @override
+  String get lodMultiplierOptionVanilla => '1 - Original';
+
+  @override
+  String get lodMultiplierOptionFar => '10 - Details in der Ferne';
 
   @override
   String get labelDisableManualCulling => 'Manuelles Culling deaktivieren';
@@ -2522,14 +3040,14 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get tooltipGiEnabled =>
-      'Globale Beleuchtung im FAR-Stil. Deutlicher FPS-Gewinn auf Kosten eines Teils der Beleuchtungsgenauigkeit.';
+      'Was FAR globale Beleuchtung nennt: jeden Frame geht ein Durchlauf pro Pixel über alle geladenen Reflexions-Cubemaps und sucht die nächsten. Mit dieser Option bleiben nur die Cubemaps nahe der Kamera im Durchlauf, der Rest wird übersprungen. FARs Variante kürzt die Liste in Ladereihenfolge, dabei fallen auch Cubemaps um dich herum weg und nahe Flächen werden stumpf und dunkel. Diese Variante behält die dir nächsten, was du aus der Nähe siehst, behält Licht und Spiegelungen, und der Durchlauf wird trotzdem günstiger. Nur ferne Spiegelungen bekommen eine gröbere Cubemap. Greift sofort.';
 
   @override
-  String get labelGiWorkgroupSize => 'GI-Arbeitsgruppengröße';
+  String get labelGiWorkgroupSize => 'Behaltene Reflexions-Cubemaps';
 
   @override
   String get tooltipGiWorkgroupSize =>
-      'Anzahl der Lichtvolumen, die pro GI-Aufruf verarbeitet werden. 128 = ursprüngliche Qualität, 64/32/16 = zunehmend schneller, aber gröber. Niedrigere Werte tauschen Beleuchtungsgenauigkeit gegen FPS.';
+      'Wie viele Reflexions-Cubemaps nahe der Kamera im Durchlauf pro Pixel bleiben. 128 = alles, was das Original behält, 64/32/16 = zunehmend günstiger, ferne Spiegelungen werden gröber.';
 
   @override
   String get labelGiMinLightExtent => 'Minimale GI-Lichtausdehnung';
@@ -2542,50 +3060,348 @@ class AppLocalizationsDe extends AppLocalizations {
   String get cardExperimental => 'EXPERIMENTELL';
 
   @override
+  String get cardBloom => 'BLOOM';
+
+  @override
+  String configParseErrorTitle(String file) {
+    return '$file konnte nicht gelesen werden';
+  }
+
+  @override
+  String get configParseErrorBody =>
+      'Die Datei ist kein gültiges TOML. Der Launcher zeigt Standardwerte an und schreibt nicht in diese Datei, solange sie sich nicht parsen lässt. Korrigiere sie in einem Texteditor und speichere - der Launcher übernimmt es von selbst.';
+
+  @override
+  String get subheadingHighGrids => 'HOCHAUFLÖSENDE KARTEN-GRIDS';
+
+  @override
+  String get highGridsWipTitle => 'In Arbeit';
+
+  @override
+  String get highGridsWipBody =>
+      'Dieses Feature ist noch nicht fertig. Die Culling-Regeln für die höheren Ring-Anzahlen müssen erst noch geschrieben werden, deshalb können weit entfernte Grids Kartenteile zeigen, die woanders hingehören.';
+
+  @override
+  String get highGridsWipContribute =>
+      'Beiträge willkommen: die Regellisten unten sind der Teil, der gefüllt werden muss. Meshes und Grid-IDs lassen sich direkt im Spiel mit dem YP Devkit (Map Manager -> Mesh Picker) auswählen und direkt in eine Regel schreiben.';
+
+  @override
+  String get subheadingFrameRate => 'BILDRATE';
+
+  @override
+  String get subheadingRendering => 'RENDERING';
+
+  @override
+  String get bloomReferenceVanilla => 'Vanilla';
+
+  @override
+  String get bloom2017Button => '2017er Bloom setzen';
+
+  @override
+  String get bloom2017Tooltip =>
+      'Setzt die Bloom-Referenzhöhe auf 900, den Bloom-Umfang der 2017er Version. Bloom behält diesen Umfang dann bei jeder Auflösung, statt mitzuskalieren und bei hoher Auflösung zu flimmern. Die Unschärfebreite bleibt unangetastet. Wird live angewendet.';
+
+  @override
+  String get labelBloomReferenceHeight => 'Bloom-Referenzhöhe';
+
+  @override
+  String get tooltipBloomReferenceHeight =>
+      'Behebt das Bloom-Flimmern bei hohen Auflösungen. 0 = Vanilla 2021 (die Bloom-Pyramide skaliert mit der Auflösung, wodurch helle Kanten flimmern). 900 = der Bloom-Umfang von 2017 bei jeder Auflösung. Bereich 360-4320.';
+
+  @override
+  String get labelBloomKernelReferenceHeight => 'Bloom-Unschärfebreite';
+
+  @override
+  String get tooltipBloomKernelReferenceHeight =>
+      'Referenzhöhe, gegen die die Unschärfebreite skaliert wird. 0 = Vanilla (die Unschärfe schrumpft bei hohen Auflösungen relativ zum Bild). Jeder andere Wert hält die Unschärfebreite bei jeder Auflösung auf dieser Höhe fest. Behält die Render-Targets in voller Größe, kann also anstelle der Bloom-Referenzhöhe verwendet werden. Bereich 360-4320.';
+
+  @override
+  String get labelBloomExtraBlur => 'Zusätzliche Bloom-Unschärfe';
+
+  @override
+  String get tooltipBloomExtraBlur =>
+      'Zusätzliche Unschärfedurchgänge, die das Leuchten verbreitern und aufhellen, in 0,1-Schritten. 0 = Vanilla.';
+
+  @override
+  String get bloomDropLevelsOff => 'Aus';
+
+  @override
+  String get bloomDropLevelsWidest => 'Breiteste Ebene';
+
+  @override
+  String get bloomDropLevelsTwoWidest => 'Zwei breiteste Ebenen';
+
+  @override
+  String get labelBloomDropCoarseLevels => 'Breite Bloom-Ebenen entfernen';
+
+  @override
+  String get tooltipBloomDropCoarseLevels =>
+      'Entfernt die flimmernden, flackernden Bloom-Ebenen, während das kleine Leuchten um Lichtquellen erhalten bleibt. 0 = Vanilla, 1 = entfernt die breiteste Ebene, 2 = entfernt die zwei breitesten Ebenen. Basiert auf Voids Bloom Fix.';
+
+  @override
+  String get labelHighGridsEnabled => 'Hochauflösende Karten-Grids aktivieren';
+
+  @override
+  String get tooltipHighGridsEnabled =>
+      'Hält mehr von der Karte in hoher Auflösung um dich herum geladen. Vanilla lädt nur 7 Grids und stellt alles andere als niedrig aufgelöstes Gelände dar. Kostet Speicher, Ladezeit und Framerate, da die zusätzlichen Grids auch gerendert werden. In Arbeit: die Culling-Regeln sind unvollständig. Wird das eingeschaltet, wird auch \"Manuelles Culling deaktivieren\" eingeschaltet, und beim Ausschalten wieder aus.';
+
+  @override
+  String get labelHighGridsRings => 'Grid-Ringe';
+
+  @override
+  String get tooltipHighGridsRings =>
+      'Wie viele Hex-Ringe hochauflösender Grids um dich herum geladen bleiben. 1 = Vanilla (7 Grids), 2 = 19, 3 = 37, 4 = 61. Jedes Grid kostet rund 100 MB Heap, höhere Werte brauchen also deutlich mehr Speicher und laden länger. Sie kosten auch Framerate, da die gesamte Geometrie gezeichnet wird. 4 ist der getestete Wert.';
+
+  @override
+  String get labelHighGridsRoomRings => 'Ring-Überschreibungen pro Raum';
+
+  @override
+  String get tooltipHighGridsRoomRings =>
+      'Weniger Ringe in bestimmten Räumen verwenden. Geschlossene Bereiche wie die überflutete Stadt zeigen Kartenteile von woanders, wenn zu viel um dich herum geladen ist. Kann die globale Ringanzahl nicht überschreiten.';
+
+  @override
+  String get labelHighGridsBlockedInRoom => 'In Raum blockierte Grids';
+
+  @override
+  String get tooltipHighGridsBlockedInRoom =>
+      'Grids, die nie geladen werden, während du dich in einem Raum befindest. Nützlich, wenn ein bestimmtes Grid von einer Stelle aus sichtbar ist, von der es nie gesehen werden sollte. Die Grid-ID sind die letzten 4 Hex-Ziffern einer Grid-Nummer und passen damit in jeder Story-Phase.';
+
+  @override
+  String get labelHighGridsBlockedFromGrid => 'Von Grid aus blockierte Grids';
+
+  @override
+  String get tooltipHighGridsBlockedFromGrid =>
+      'Grids, die nie geladen werden, während du auf einem bestimmten Grid stehst. Nützlich, wenn eine Sperre für den ganzen Raum zu weitreichend wäre.';
+
+  @override
+  String get labelContentEffectAreas => 'Effektbereiche';
+
+  @override
+  String get tooltipContentEffectAreas =>
+      'Effekte, die ein Mod in einem Raum platziert. Änderungen zeigen sich nach erneutem Betreten des Raums.';
+
+  @override
+  String get labelSkipStartupLogos => 'Startlogos überspringen';
+
+  @override
+  String get tooltipSkipStartupLogos =>
+      'Überspringt die Platinum-Games- und Square-Enix-Logos beim Laden. Das Laden selbst bleibt unberührt; per Tastendruck ließen sie sich ohnehin überspringen.';
+
+  @override
+  String get labelShadowCascades => 'Schattenkaskaden';
+
+  @override
+  String get tooltipShadowCascades =>
+      '4 = Original, 8 ergänzt vier ferne Kaskaden (experimentell). Bei 8 wird der Schattenatlas 4x4 gekachelt, jede Kaskade bekommt ein Viertel der Schattenauflösung - zum Ausgleich erhöhen.';
+
+  @override
+  String get labelShadowCascadeRange => 'Kaskadenreichweite';
+
+  @override
+  String get tooltipShadowCascadeRange =>
+      'Wie weit die vier zusätzlichen Kaskaden über die normale Schattendistanz hinausreichen.';
+
+  @override
+  String get labelShadowBlurScale => 'Schattenunschärfe pro Kaskade';
+
+  @override
+  String get tooltipShadowBlurScale =>
+      'Faktor auf die spieleigene Unschärfe, von nah nach fern. 1.0 = unverändert, 0.5 = halbe Unschärfe für schärfere Kontaktschatten. Greift sofort.';
+
+  @override
+  String get labelDisableHdr => 'HDR deaktivieren';
+
+  @override
+  String get tooltipDisableHdr =>
+      'In SDR spielen, auch auf einem HDR-Display - dasselbe wie Special Ks HideHDRSupport. Einschalten, wenn HDR ausgewaschen wirkt. Greift live, der Neuaufbau der Swapchain kann aber einen Moment dauern und die Bildrate so lange einbrechen lassen; wenn es nicht greift, Spiel neu starten.';
+
+  @override
+  String get labelRenderScale => 'Renderskalierung';
+
+  @override
+  String get tooltipRenderScale =>
+      'Interne Auflösung (experimentell). 2.0 rendert das Spiel in doppelter Auflösung und skaliert zurück, was Kantenflimmern weitgehend entfernt. 0.5 rendert in halber Auflösung und skaliert hoch: weicheres Bild, ein Viertel der GPU-Arbeit, für schwache Grafikkarten. GPU-Last folgt dem Faktor im Quadrat. Geht in jedem Anzeigemodus. Greift live, der Neuaufbau der Swapchain kann aber einen Moment dauern und die Bildrate so lange einbrechen lassen; wenn es nicht greift, Spiel neu starten.';
+
+  @override
+  String get labelFxaa => 'FXAA';
+
+  @override
+  String get tooltipFxaa =>
+      'Günstige Kantenglättung. Mit dem Spiel-Anti-Aliasing auf Aus verwenden. Greift sofort.';
+
+  @override
+  String get labelMsaaPrepassFix => 'MSAA-Schwarze-Punkte-Fix';
+
+  @override
+  String get tooltipMsaaPrepassFix =>
+      'Behebt die schwarzen Punkte auf Blättern, Gras und Haaren, wenn das Anti-Aliasing des Spiels (MSAA) an ist. Kostet nichts. Greift sofort.';
+
+  @override
+  String get labelMsaaShadowMaskFix => 'MSAA-Heller-Saum-Fix';
+
+  @override
+  String get tooltipMsaaShadowMaskFix =>
+      'Entfernt den hellen Saum um Figuren und Objekte im Schatten, wenn das Anti-Aliasing des Spiels (MSAA) an ist. Kostet nichts. Greift sofort.';
+
+  @override
+  String get subheadingMsaaPerformance =>
+      'MSAA-Performance-Fixup (experimentell)';
+
+  @override
+  String get labelMsaaPerPixel => 'Materialien pro Pixel berechnen';
+
+  @override
+  String get tooltipMsaaPerPixel =>
+      'Mit dem Anti-Aliasing des Spiels (MSAA) berechnet das Spiel jedes Material einmal pro Sample, bei 8x MSAA also jedes Modell achtmal. Hiermit wird einmal pro Pixel gerechnet und MSAA glättet nur noch die Kanten. Braucht den MSAA-Heller-Saum-Fix. Greift sofort.';
+
+  @override
+  String get labelMsaaPerPixelTerrain => 'Auch die Bodenmaterialien';
+
+  @override
+  String get tooltipMsaaPerPixelTerrain =>
+      'Der größte Teil des Gewinns. Nasser Boden kann kurz hell flackern, stärker als normal. Wenn das nicht stört, ist das der größte MSAA-Performance-Gewinn. Greift sofort.';
+
+  @override
+  String get labelConstantBufferDedup =>
+      'Unveränderte Shader-Parameter überspringen';
+
+  @override
+  String get tooltipConstantBufferDedup =>
+      'Erhöht die Leistung. Jeder Zeichenaufruf liest einen kleinen Parameterblock — Transformationen, Materialeinstellungen, Lichtwerte. Vanilla schickt sie alle in jedem Frame erneut an die Grafikkarte, mehrere Tausend Uploads, auch wenn sich nichts daran geändert hat. Vanilla enthält den Vergleich, der einen unveränderten Block überspringen würde, erreicht ihn aber nie. Etwa die Hälfte der Uploads ist überflüssig. Greift sofort.';
+
+  @override
+  String get labelConstantBufferUploadOnBind =>
+      'Shader-Parameter nur beim Zeichnen hochladen';
+
+  @override
+  String get tooltipConstantBufferUploadOnBind =>
+      'Erhöht die Leistung. Vanilla schickt jeden Frame jeden Shader-Parameterblock an die Grafikkarte, auch die, die nichts auf dem Bildschirm benutzt — etwa vier von fünf. Damit wird ein Block erst gesendet, wenn ein Draw ihn tatsächlich bindet. Greift sofort.';
+
+  @override
+  String get labelDecreaseStutterDuringGridLoading =>
+      'Weniger Ruckler beim Nachladen der Karte';
+
+  @override
+  String get tooltipDecreaseStutterDuringGridLoading =>
+      'Flüssigeres Nachladen der Karte. Wenn um dich herum ein neuer Teil der Karte lädt, baut Vanilla alles dafür in einem Rutsch auf, was jedes Mal als Ruckler auffällt. Damit wird diese Arbeit auf mehrere Frames verteilt und im Hintergrund vorbereitet, sodass die meisten dieser Ruckler verschwinden. In Arbeit, weitere Verbesserungen folgen in künftigen Updates. Kleine Ruckler beim Nachladen bleiben hier und da, zum Beispiel wenn Effekte oder neue Objekte auftauchen. Erwarte keine höhere Bildrate, kein schnelleres Laden und kein ruckelfreies Laden mit 4K-Texturpaketen. Greift sofort.';
+
+  @override
+  String get labelAoFadeFix => 'AO-durch-Wände-Fix';
+
+  @override
+  String get tooltipAoFadeFix =>
+      'Verhindert, dass die Umgebungsverdunkelung (AO) durch Wände scheint und bei LOD-Wechseln springt. Während einer LOD-Überblendung zeichnet das Spiel beide LOD-Versionen solide in die AO-Tiefe, also erscheint AO für kaum sichtbare Geometrie. Dieser Fix lässt diesen Extra-Draw weg. LOD-Multiplikator 0 versteckt den Fehler ebenfalls, weil es dann gar keine LOD-Wechsel gibt; dieser Fix behebt die Ursache und lässt LODs an. Kostet nichts. Greift sofort.';
+
+  @override
+  String get labelHighGridsHiddenMeshes => 'Versteckte Meshes';
+
+  @override
+  String get tooltipHighGridsHiddenMeshes =>
+      'Low-Detail-Platzhalter, die ab genug geladenen Ringen ausgeblendet werden. Namen findet man mit dem Mesh Picker im YP Devkit. Grid 0x0 gilt für jedes Grid.';
+
+  @override
+  String get labelTextureHotReload => 'Hot Reload';
+
+  @override
+  String get tooltipTextureHotReload =>
+      'Texturordner überwachen und geänderte .dds im laufenden Spiel übernehmen. Gleich große Änderungen greifen sofort.';
+
+  @override
+  String get gridRuleMesh => 'Mesh';
+
+  @override
+  String get gridRuleFromRings => 'Ab Ringen';
+
+  @override
+  String shadowBlurCascade(int n) {
+    return 'Kaskade $n';
+  }
+
+  @override
+  String get gridRuleRoom => 'Raum';
+
+  @override
+  String get gridRuleRings => 'Ringe';
+
+  @override
+  String get gridRuleGrid => 'Grid';
+
+  @override
+  String get gridRuleFromGrid => 'Stehend auf';
+
+  @override
+  String get gridRuleAdd => 'Regel hinzufügen';
+
+  @override
+  String get gridRuleEmpty => 'Keine Regeln - alle Grids laden normal.';
+
+  @override
+  String highGridsCellCount(int rings, int cells) {
+    String _temp0 = intl.Intl.pluralLogic(
+      rings,
+      locale: localeName,
+      other: '$rings Ringe - $cells Grids',
+      one: '1 Ring - 7 Grids (Vanilla)',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get lodModResetButton => 'Auf Standardwerte zurücksetzen';
 
   @override
-  String get lodModResetConfirmTitle => 'LodMod-Einstellungen zurücksetzen?';
+  String get lodModResetConfirmTitle =>
+      'LodMod-Ext-Einstellungen zurücksetzen?';
 
   @override
   String get lodModResetConfirmBody =>
-      'Dadurch wird jedes LodMod-Feld in diesem Reiter auf seinen Standardwert zurückgesetzt. Deine aktuellen Werte werden überschrieben. Fortfahren?';
+      'Dadurch wird jedes LodMod-Ext-Feld in diesem Reiter auf seinen Standardwert zurückgesetzt. Deine aktuellen Werte werden überschrieben. Fortfahren?';
 
   @override
   String get lodModResetConfirmAction => 'Zurücksetzen';
 
   @override
   String get lodModResetToast =>
-      'LodMod-Einstellungen auf Standardwerte zurückgesetzt';
-
-  @override
-  String get experimentalWarningTitle =>
-      'Experimentell – kann Fehler verursachen';
+      'LodMod-Ext-Einstellungen auf Standardwerte zurückgesetzt';
 
   @override
   String get experimentalWarningBody =>
-      'Diese Einstellungen umgehen Spielgrenzen, auf die sich die Engine verlässt. Sie werden NICHT unterstützt und verursachen bekanntermaßen Probleme. Aktiviere sie nur, wenn du genau weißt, was du tust. Fehler, die dadurch entstehen, werden weder in NAMS noch im Launcher untersucht.';
+      'Diese sind experimentell. Überlege es dir zweimal, bevor du sie in einem ersten Durchgang benutzt, damit sie dein Spielerlebnis nicht beeinflussen.';
 
   @override
   String get labelFpsUncapInMenus => 'FPS in Menüs / beim Laden freigeben';
 
   @override
   String get tooltipFpsUncapInMenus =>
-      'Entfernt die 60-FPS-Begrenzung in Menüs und Ladebildschirmen. Das Laden wirkt schneller und Menüanimationen werden flüssiger. Sicher: Das Gameplay bleibt unbeeinflusst.\n\nKann live umgeschaltet werden, wenn die Option beim Spielstart aktiviert war. War sie beim Start deaktiviert, erfordert das spätere Aktivieren einen Neustart.';
+      'Entfernt die 60-FPS-Begrenzung in Menüs und Ladebildschirmen. Das Laden wirkt schneller und Menüanimationen werden flüssiger. Sicher: Das Gameplay bleibt unbeeinflusst. Greift sofort.';
 
   @override
   String get labelFpsUncapInGameplay => 'FPS im Gameplay freigeben';
 
   @override
   String get tooltipFpsUncapInGameplay =>
-      'Entfernt die 60-FPS-Begrenzung während des Gameplays. WARNUNG: Physik, Animationen und das Timing von Cutscenes in NieR:Automata sind an die 60-FPS-Begrenzung gekoppelt. Das Aufheben verursacht fehlerhafte Physik (Sprunghöhe, Unverwundbarkeitsfenster beim Ausweichen), veränderte Animationsgeschwindigkeiten, asynchronen Ton in Cutscenes und Softlocks in geskripteten Abläufen. Verwende dies nur, wenn du die Kompromisse genau verstehst.\n\nKann live umgeschaltet werden, wenn die Option beim Spielstart aktiviert war. War sie beim Start deaktiviert, erfordert das spätere Aktivieren einen Neustart.';
+      'Entfernt die 60-FPS-Begrenzung während des Gameplays. WARNUNG: Physik, Animationen und das Timing von Cutscenes in NieR:Automata sind an die 60-FPS-Begrenzung gekoppelt. Das Aufheben verursacht fehlerhafte Physik (Sprunghöhe, Unverwundbarkeitsfenster beim Ausweichen), veränderte Animationsgeschwindigkeiten, asynchronen Ton in Cutscenes und Softlocks in geskripteten Abläufen. Verwende dies nur, wenn du die Kompromisse genau verstehst. Greift sofort.';
 
   @override
   String get labelFpsLimit => 'FPS-Begrenzung';
 
   @override
+  String get labelFpsCapInHacking => 'Original-Cap beim Hacken';
+
+  @override
+  String get tooltipFpsCapInHacking =>
+      'Fällt während des Hacking-Minispiels auf die originalen 60 FPS zurück, auch wenn das Gameplay-Uncap an ist. Das Timing des Minispiels geht von 60 FPS aus. Greift sofort.';
+
+  @override
+  String get labelFpsCapInEvents => 'Original-Cap in Events';
+
+  @override
+  String get tooltipFpsCapInEvents =>
+      'Fällt während Zwischensequenzen, Events, Filmen oder Untertiteln auf die originalen 60 FPS zurück. Event-Skripte gehen von 60 FPS aus und können sonst hängen bleiben. Greift sofort.';
+
+  @override
   String get tooltipFpsLimit =>
-      'FPS-Grenze, die bei freigegebener Bildrate gilt. 0 = unbegrenzt. Ansonsten 60–1000 (NAMS begrenzt Werte außerhalb dieses Bereichs). Werte unter 60 werden angehoben, weil die interne Spin-Wait-Schleife des Spiels Framezeiten ignoriert, die länger als das ursprüngliche 60-FPS-Ziel sind. Tipp: Eine Begrenzung auf die Hälfte der Bildwiederholrate deines Monitors liefert flüssigere Bewegungen als die ursprünglichen 60 FPS (z. B. 72 bei 144 Hz, 82 bei 165 Hz oder 120 bei 240 Hz).';
+      'FPS-Grenze, die bei freigegebener Bildrate gilt. 0 = unbegrenzt. Ansonsten 1–1000 (NAMS begrenzt Werte außerhalb dieses Bereichs). 30 setzt dieselbe Framezeit, die der eigene 30-FPS-Modus des Spiels verwendet. Bei freigegebener Bildrate wird aktiv gewartet, je niedriger die Grenze also ist, desto länger dreht ein CPU-Kern pro Frame leer. Tipp: Eine Begrenzung auf die Hälfte der Bildwiederholrate deines Monitors liefert flüssigere Bewegungen als die ursprünglichen 60 FPS (z. B. 72 bei 144 Hz, 82 bei 165 Hz oder 120 bei 240 Hz).';
 
   @override
   String get tutorialValidateModel =>
@@ -2887,6 +3703,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get comparison8192 => '8192';
 
   @override
+  String get comparisonCubemaps16 => '16 cubemaps';
+
+  @override
+  String get comparisonCubemaps128 => '128 cubemaps';
+
+  @override
   String get comparisonDefault => 'STANDARD';
 
   @override
@@ -2900,6 +3722,27 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get comparisonOff => 'AUS';
+
+  @override
+  String get comparisonOn => 'AN';
+
+  @override
+  String get comparisonBloom2021 => '2021';
+
+  @override
+  String get comparisonBloom2017 => '2017';
+
+  @override
+  String get comparisonHighGrids7 => '7 Grids (Vanilla)';
+
+  @override
+  String get comparisonHighGrids61 => '61 Grids (4 Ringe)';
+
+  @override
+  String get comparisonCascades4 => '4 Kaskaden (Vanilla)';
+
+  @override
+  String get comparisonCascades8 => '8 Kaskaden';
 
   @override
   String get comparison30 => '3.0';
@@ -3027,11 +3870,11 @@ class AppLocalizationsDe extends AppLocalizations {
       'Ton bei Interaktionen mit der Benutzeroberfläche des Arbeitsbereichs.';
 
   @override
-  String get labelImpeller => 'Impeller-Renderer';
+  String get labelImpeller => 'Impeller-Renderer (experimentell)';
 
   @override
   String get tooltipImpeller =>
-      'Rendert das Overlay mit Flutters Impeller-Renderer statt mit Skia. Standardmäßig aktiviert. Ausschalten, wenn das Overlay Grafikfehler zeigt oder auf deiner GPU nicht erscheint. Wird beim nächsten Spielstart wirksam.';
+      'Rendert das Overlay mit Flutters Impeller-Renderer statt mit Skia. Standardmäßig aus: mehrere Nutzer hatten damit Abstürze. Probiere es aus, und wenn das Spiel stabil bleibt, kannst du es für ein schnelleres Overlay beim Druck auf F1 anlassen. Mit Impeller werden Bilder im Overlay nicht dargestellt, abgesehen von der Weltkarten-Karte. Wird beim nächsten Spielstart wirksam.';
 
   @override
   String get labelDamageMultiplier => 'Schadensmultiplikator';
@@ -3165,6 +4008,13 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get tooltipThirdPersonCharFollow =>
       'Behält die automatische Kameraführung des Spiels beim Bewegen bei, wie mit einem Controller.';
+
+  @override
+  String get labelThirdPersonSmoothing => 'Kamera-Glättung';
+
+  @override
+  String get tooltipThirdPersonSmoothing =>
+      'Wie stark die Kamera der Maus nachzieht. 0 = folgt sofort, 1 = die Glättung des Spiels.';
 
   @override
   String get labelThirdPersonSensX => 'Horizontale Empfindlichkeit';
@@ -4784,4 +5634,546 @@ class AppLocalizationsDe extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get weaponConvertTitle => 'Waffen-Konverter';
+
+  @override
+  String get weaponConvertDesc =>
+      'Zieh eine heruntergeladene Waffen-Mod rein. Normalerweise überschreibt sie eine Vanilla-Waffe; der Launcher legt sie stattdessen auf einen freien Platz, sodass nichts ersetzt wird.';
+
+  @override
+  String get weaponConvertDropTitle => 'Waffen-Mod ablegen';
+
+  @override
+  String get weaponConvertDropHint =>
+      'Zieh die .dat oder .dtt hierher oder klick zum Auswählen. Beide Dateien müssen im selben Ordner liegen.';
+
+  @override
+  String get weaponConvertDropInvalid =>
+      'Das ist keine Waffendatei. Erwartet wird etwas wie wp0003.dat.';
+
+  @override
+  String get weaponConvertNeedsBothFiles =>
+      'Die .dat und die .dtt müssen im selben Ordner liegen.';
+
+  @override
+  String get weaponConvertDetected =>
+      'Waffenart aus dem Dateinamen gelesen. Der neue Platz behält diese Art - die Animationen gehören dazu.';
+
+  @override
+  String get weaponConvertNextSlot => 'Anderer Platz';
+
+  @override
+  String get weaponConvertRun => 'Auf freien Platz legen';
+
+  @override
+  String weaponConvertDone(String stem) {
+    return 'Geschrieben als $stem';
+  }
+
+  @override
+  String weaponConvertNextStep(String objId) {
+    return 'Das Modell liegt bereit. Damit daraus eine eigene Waffe wird, erstell oben eine mit obj_id $objId.';
+  }
+
+  @override
+  String get weaponPreviewFailed =>
+      'Dieses Modell lässt sich hier nicht anzeigen. Die Konvertierung geht trotzdem.';
+
+  @override
+  String get weaponBuilderTitle => 'Waffen-Builder';
+
+  @override
+  String get weaponBuilderDesc =>
+      'Name und ein paar Schadenswerte eintragen - der Launcher sucht einen freien Waffenplatz und schreibt die Datei.';
+
+  @override
+  String get weaponBuilderDropTitle => 'Waffenmodell ablegen';
+
+  @override
+  String get weaponBuilderDropHint => 'Das .dat/.dtt-Paar deiner Waffe.';
+
+  @override
+  String get weaponBuilderNeedsModel => 'Zieh zuerst dein Waffenmodell rein.';
+
+  @override
+  String get weaponBuilderModelReady =>
+      'Wird zu einer eigenen Waffe und überschreibt nichts.';
+
+  @override
+  String get weaponBuilderName => 'Waffenname';
+
+  @override
+  String get weaponBuilderNameHint =>
+      'Wird im Inventar angezeigt, z.B. Klinge der Tugend';
+
+  @override
+  String get weaponBuilderDescription => 'Beschreibung';
+
+  @override
+  String get weaponBuilderDescriptionHint =>
+      'Wird angezeigt, wenn der Spieler die Waffe ansieht';
+
+  @override
+  String get weaponBuilderType => 'Waffenart';
+
+  @override
+  String get weaponTypeSmallSword => 'Kleines Schwert';
+
+  @override
+  String get weaponTypeLargeSword => 'Großes Schwert';
+
+  @override
+  String get weaponTypeSpear => 'Speer';
+
+  @override
+  String get weaponTypeCombatBracer => 'Armschienen';
+
+  @override
+  String get weaponBuilderLevels => 'AUFWERTUNGSSTUFEN';
+
+  @override
+  String get weaponBuilderAddLevel => 'Stufe hinzufügen';
+
+  @override
+  String weaponBuilderLevelNumber(int n) {
+    return 'Stufe $n';
+  }
+
+  @override
+  String get weaponBuilderDamage => 'Schaden';
+
+  @override
+  String get weaponBuilderItemId => 'Inventar-Nummer';
+
+  @override
+  String get weaponBuilderObjId => 'Waffen-Nummer';
+
+  @override
+  String get weaponBuilderObjIdHint =>
+      'Beide Nummern werden aus dem Mod-Ordnernamen abgeleitet - ein anderer Name ergibt eine andere Waffennummer. So kollidiert dein veröffentlichter Mod nicht mit dem eines anderen. Für andere Nummern den Ordner umbenennen.';
+
+  @override
+  String get weaponBuilderNeedsGameDir =>
+      'Wähl zuerst deinen NieR:Automata-Ordner.';
+
+  @override
+  String get weaponBuilderNeedsName => 'Gib der Waffe einen Namen.';
+
+  @override
+  String get weaponBuilderNoFreeSlot =>
+      'Für diese Waffenart ist kein Modellplatz mehr frei.';
+
+  @override
+  String get weaponBuilderCreate => 'Waffe erstellen';
+
+  @override
+  String get weaponBuilderEffects => 'SPEZIALEFFEKTE';
+
+  @override
+  String get weaponBuilderAddEffect => 'Effekt hinzufügen';
+
+  @override
+  String get weaponBuilderEffectsHint =>
+      'Optional. Effekte ändern das Spielgeschehen, solange die Waffe ausgerüstet ist - Schaden, Tempo, Ausweichen, Immunitäten.';
+
+  @override
+  String get weaponBuilderTrailNormal => 'Angriffsspur';
+
+  @override
+  String get weaponBuilderTrailBerserk => 'Angriffsspur (Berserk)';
+
+  @override
+  String get weaponBuilderTrailHint =>
+      'Jeder Effekt von 0 bis 665. 590-641 sind die Waffenspuren, andere Werte geben dir alles andere aus dem Spiel. 435 und 436 stürzen ab und werden übersprungen.';
+
+  @override
+  String get weaponBuilderEffectWhen => 'Nur für';
+
+  @override
+  String get weaponBuilderEffectWhenAny => 'Alle';
+
+  @override
+  String get weaponBuilderEffectOn => 'Aktiv';
+
+  @override
+  String get weaponBuilderIcon => 'Inventarsymbol';
+
+  @override
+  String get weaponBuilderIconHint =>
+      'Wird im Inventar und in Läden angezeigt.';
+
+  @override
+  String get weaponBuilderStoryIcon => 'Geschichtsbild';
+
+  @override
+  String get weaponBuilderStoryIconHint =>
+      'Wird neben dem Geschichtstext der Waffe angezeigt.';
+
+  @override
+  String get weaponBuilderDetails => 'MENÜTEXTE';
+
+  @override
+  String get weaponBuilderHelpShort => 'Kurzbeschreibung';
+
+  @override
+  String get weaponBuilderHelpShortHint => 'Eine Zeile, für enge Menüstellen';
+
+  @override
+  String get weaponBuilderStory => 'Waffengeschichte';
+
+  @override
+  String get weaponBuilderStoryHint => 'Der Geschichtstext auf der Waffenseite';
+
+  @override
+  String weaponBuilderSkillName(int n) {
+    return 'Fähigkeit $n Name';
+  }
+
+  @override
+  String weaponBuilderSkillDesc(int n) {
+    return 'Fähigkeit $n Wirkung';
+  }
+
+  @override
+  String get weaponBuilderSkillNameHint =>
+      'Leer lassen, wenn die Waffe keine Fähigkeit hat';
+
+  @override
+  String get weaponBuilderSkillDescHint => 'Was die Fähigkeit bewirkt';
+
+  @override
+  String get weaponBuilderTraitId => 'Eigenschaft';
+
+  @override
+  String get weaponBuilderTraitNone => 'Keine';
+
+  @override
+  String get weaponBuilderUpgrades => 'AUFWERTUNGSKOSTEN';
+
+  @override
+  String get weaponBuilderAddUpgrade => 'Aufwertung hinzufügen';
+
+  @override
+  String weaponBuilderUpgradeLevel(int n) {
+    return 'Auf Stufe $n';
+  }
+
+  @override
+  String get weaponBuilderUpgradeCost => 'Kosten';
+
+  @override
+  String get weaponBuilderUpgradeHint =>
+      'Ohne Aufwertungseinträge lässt sich die Waffe beim Schmied nicht aufwerten.';
+
+  @override
+  String get outfitBuilderTitle => 'Outfit-Builder';
+
+  @override
+  String get outfitBuilderDesc =>
+      'Spielermodell reinziehen, festlegen welche Meshes in welchem Zustand sichtbar sind - der Launcher schreibt Outfit und Item.';
+
+  @override
+  String get outfitBuilderDropTitle => 'Spielermodell ablegen';
+
+  @override
+  String get outfitBuilderDropHint =>
+      'Zieh eine .dat- oder .dtt-Datei hierher oder klick zum Auswählen.';
+
+  @override
+  String get outfitBuilderDropInvalid => 'Das ist keine .dat- oder .dtt-Datei.';
+
+  @override
+  String get outfitBuilderDropUnknownModel =>
+      'Das ist kein bekanntes Spielermodell. Erwartet wird pl0000, pl000d (2B), pl0200, pl020d (9S), pl0100 oder pl010d (A2).';
+
+  @override
+  String get outfitBuilderCharacterDetected =>
+      'Charakter aus der Modelldatei gelesen. Für einen anderen einfach ein anderes Modell reinziehen.';
+
+  @override
+  String get outfitBuilderNoModelInArchive =>
+      'In diesem Archiv wurde kein Modell gefunden.';
+
+  @override
+  String outfitBuilderMeshesInModel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Meshes in diesem Modell',
+      one: '1 Mesh in diesem Modell',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get outfitBuilderAcquisitionTitle => 'WIE DER SPIELER ES BEKOMMT';
+
+  @override
+  String get outfitBuilderAutoGive => 'Direkt ins Inventar legen';
+
+  @override
+  String get outfitBuilderAutoGiveHint =>
+      'Wird beim Laden eines Spielstands hinzugefügt, ist also ohne Suchen da.';
+
+  @override
+  String get outfitBuilderInShop => 'Im Shop verkaufen';
+
+  @override
+  String get outfitBuilderInShopHint =>
+      'Schreibt einen Shop-Eintrag, damit der Spieler es kaufen kann.';
+
+  @override
+  String get outfitBuilderShopName => 'Shop';
+
+  @override
+  String get shopStateRouteABeforeRuinsCollapse =>
+      'Route A, vor dem Einsturz der Ruinenstadt';
+
+  @override
+  String get shopStateRouteAAfterRuinsCollapse =>
+      'Route A, nach dem Einsturz der Ruinenstadt';
+
+  @override
+  String get shopStateRouteBBeforeRuinsCollapse =>
+      'Route B, vor dem Einsturz der Ruinenstadt';
+
+  @override
+  String get shopStateRouteBAfterRuinsCollapse =>
+      'Route B, nach dem Einsturz der Ruinenstadt';
+
+  @override
+  String get shopStateRouteC => 'Route C/D, oder Ende A und B erreicht';
+
+  @override
+  String get shopStateEndingCOrD => 'Ende C oder D erreicht';
+
+  @override
+  String get shopStateEndingCAndD => 'Ende C und D beide erreicht';
+
+  @override
+  String get outfitBuilderShopStateAll => 'Alle';
+
+  @override
+  String get outfitBuilderShopState => 'Story-Zustand';
+
+  @override
+  String get outfitBuilderShopStateHint =>
+      'Ab welchem Punkt der Story der Shop es anbietet. 0 ist der Anfang.';
+
+  @override
+  String get outfitBuilderBuyPrice => 'Preis';
+
+  @override
+  String get outfitMeshMore => 'Optionen';
+
+  @override
+  String get outfitMeshPreviewToggle =>
+      'Blendet dieses Mesh nur in der Vorschau ein oder aus';
+
+  @override
+  String get logWrapOn => 'Lange Zeilen umbrechen';
+
+  @override
+  String get logWrapOff => 'Lange Zeilen abschneiden';
+
+  @override
+  String get outfitMeshAlways => 'Immer sichtbar';
+
+  @override
+  String get outfitMeshCombatOnly => 'Nur im Kampf';
+
+  @override
+  String get outfitMeshOutOfCombatOnly => 'Nur außerhalb des Kampfes';
+
+  @override
+  String get outfitMeshEyemaskOnly => 'Nur mit Augenbinde';
+
+  @override
+  String get outfitMeshNoEyemaskOnly => 'Nur ohne Augenbinde';
+
+  @override
+  String get outfitMeshFeatherOnly => 'Nur unbeschädigt';
+
+  @override
+  String get outfitMeshBrokenOnly => 'Nur beschädigt';
+
+  @override
+  String get outfitMeshNever => 'Nie zeigen';
+
+  @override
+  String get outfitMeshHideOnSelfDestruct => 'Weg nach Selbstzerstörung';
+
+  @override
+  String get outfitMeshHairsprayTint => 'Wird vom Haarspray gefärbt';
+
+  @override
+  String get outfitMeshReplacedByWig => 'Wird von der Perücke ersetzt';
+
+  @override
+  String get outfitBuilderName => 'Outfit-Name';
+
+  @override
+  String get outfitBuilderNameHint =>
+      'Wird im Kleiderschrank angezeigt, z.B. Schwarzes Kleid';
+
+  @override
+  String get outfitBuilderDescription => 'Item-Beschreibung';
+
+  @override
+  String get outfitBuilderDescriptionHint =>
+      'Wird angezeigt, wenn der Spieler das Item ansieht';
+
+  @override
+  String get outfitBuilderModId => 'Mod-Ordner';
+
+  @override
+  String get outfitBuilderOutfitId => 'Outfit-ID';
+
+  @override
+  String get outfitBuilderItemId => 'Item-ID';
+
+  @override
+  String get outfitBuilderIdHint =>
+      'Beide IDs werden automatisch vergeben und müssen nur geändert werden, wenn du eine bestimmte Nummer willst.';
+
+  @override
+  String get outfitBuilderIdTaken =>
+      'Diese Outfit-ID ist für diesen Charakter schon vergeben.';
+
+  @override
+  String get outfitBuilderCopyModel => 'Modell in den Mod kopieren';
+
+  @override
+  String get outfitBuilderCopyModelHint =>
+      'Legt .dat und .dtt in data/pl/ ab, damit der Mod für sich allein funktioniert.';
+
+  @override
+  String get outfitBuilderNeedsGameDir =>
+      'Wähl zuerst deinen NieR:Automata-Ordner.';
+
+  @override
+  String get outfitBuilderNeedsName => 'Gib dem Outfit einen Namen.';
+
+  @override
+  String get outfitBuilderNeedsModel => 'Zieh zuerst ein Spielermodell rein.';
+
+  @override
+  String get outfitBuilderCreate => 'Outfit erstellen';
+
+  @override
+  String outfitBuilderCreated(String path) {
+    return 'Erstellt: $path';
+  }
+
+  @override
+  String get outfitBuilderOpenFolder => 'Ordner öffnen';
+
+  @override
+  String get outfitBuilderPreview => 'Wird geschrieben als';
+
+  @override
+  String get outfitStateBase => 'Basis';
+
+  @override
+  String get outfitStateBaseHint =>
+      'Meshes, die im Normalzustand sichtbar sind. Sobald du irgendwo etwas anhakst, ist erstmal alles versteckt und nur das Gewählte wird gezeigt.';
+
+  @override
+  String get outfitStateCombat => 'Im Kampf';
+
+  @override
+  String get outfitStateCombatHint =>
+      'Sichtbar im Kampf, zusätzlich zur Basis. Vanilla legt hier das Kampfgesicht rein.';
+
+  @override
+  String get outfitStateNonCombat => 'Außerhalb des Kampfes';
+
+  @override
+  String get outfitStateNonCombatHint =>
+      'Sichtbar außerhalb des Kampfes. Vanilla legt hier das normale Gesicht rein.';
+
+  @override
+  String get outfitStateEyemask => 'Augenbinde auf';
+
+  @override
+  String get outfitStateEyemaskHint =>
+      'Sichtbar, solange die Augenbinde getragen wird. Vanilla listet hier das Eyemask-Mesh.';
+
+  @override
+  String get outfitStateNonEyemask => 'Augenbinde ab';
+
+  @override
+  String get outfitStateNonEyemaskHint =>
+      'Sichtbar, wenn die Augenbinde ab ist, z.B. mit der Tarnbrille. Vanilla listet hier die Wimpern.';
+
+  @override
+  String get outfitStateSelfDestructShow => 'Selbstzerstörung zeigt';
+
+  @override
+  String get outfitStateSelfDestructShowHint =>
+      'Sichtbar nach der Selbstzerstörung.';
+
+  @override
+  String get outfitStateSelfDestructHide => 'Selbstzerstörung versteckt';
+
+  @override
+  String get outfitStateSelfDestructHideHint =>
+      'Versteckt nach der Selbstzerstörung. Vanilla versteckt hier den Rock.';
+
+  @override
+  String get outfitStateBroken => 'Feder versteckt';
+
+  @override
+  String get outfitStateBrokenHint =>
+      'Sichtbar, solange die Feder nicht gezeichnet wird. Das ist ein eigener Zustand, nicht die Selbstzerstörung.';
+
+  @override
+  String get outfitStateNonBroken => 'Feder sichtbar';
+
+  @override
+  String get outfitStateNonBrokenHint =>
+      'Sichtbar, solange die Feder gezeichnet wird - der Normalfall.';
+
+  @override
+  String get outfitStateWig => 'Perücke';
+
+  @override
+  String get outfitStateWigHint =>
+      'Meshes, die die Perücke statt des Körpers zeichnet. Sie werden versteckt, solange die Perücke an ist. Vanilla listet hier Hair.';
+
+  @override
+  String get outfitStateHairspray => 'Haarspray-Färbung';
+
+  @override
+  String get outfitStateHairsprayHint =>
+      'Meshes, die ein Haarspray einfärbt. Die werden getönt, nicht ein- oder ausgeblendet. Leer lassen für Hair.';
+
+  @override
+  String get outfitStatePrologue => 'Prolog';
+
+  @override
+  String get outfitStatePrologueHint =>
+      'Ersetzt die Basis im Prolog, wenn 9S schwer beschädigt ist.';
+
+  @override
+  String get outfitStateHoly => 'Löcher';
+
+  @override
+  String get outfitStateHolyHint =>
+      'Ersetzt die Basis, während 9S voller Löcher ist.';
+
+  @override
+  String get outfitStateNoRight => 'Ohne rechten Arm';
+
+  @override
+  String get outfitStateNoRightHint =>
+      'Ersetzt die Basis, nachdem 9S seinen rechten Arm verloren hat.';
+
+  @override
+  String get outfitStateTower => 'Turm';
+
+  @override
+  String get outfitStateTowerHint => 'Ersetzt die Basis im Turm.';
 }

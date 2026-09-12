@@ -11,11 +11,7 @@ class ModsData {
   final bool isLoading;
   final String? error;
 
-  const ModsData({
-    this.mods = const [],
-    this.isLoading = false,
-    this.error,
-  });
+  const ModsData({this.mods = const [], this.isLoading = false, this.error});
 
   ModsData copyWith({
     List<InstalledMod>? mods,

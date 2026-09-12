@@ -10,7 +10,8 @@ class NamsSettingsService {
 
   static Future<Map<String, dynamic>> loadSettings(String? gameDir) async {
     final settingsPath = await resolveSettingsPath(gameDir);
-    if (settingsPath == null) return Map<String, dynamic>.from(_defaultSettings);
+    if (settingsPath == null)
+      return Map<String, dynamic>.from(_defaultSettings);
 
     final file = File(settingsPath);
     if (!await file.exists()) {
@@ -38,7 +39,9 @@ class NamsSettingsService {
     if (!await file.parent.exists()) {
       await file.parent.create(recursive: true);
     }
-    await file.writeAsString(const JsonEncoder.withIndent('  ').convert(settings));
+    await file.writeAsString(
+      const JsonEncoder.withIndent('  ').convert(settings),
+    );
     return true;
   }
 
@@ -61,9 +64,9 @@ class NamsSettingsService {
     try {
       final settings = await loadSettings(gameDir);
       final value = settings[impellerKey];
-      return value is bool ? value : true;
+      return value is bool ? value : false;
     } catch (_) {
-      return true;
+      return false;
     }
   }
 
@@ -79,7 +82,7 @@ class NamsSettingsService {
 
   static const Map<String, dynamic> _defaultSettings = {
     'firstPlaythrough': true,
-    'impeller': true,
+    'impeller': false,
     'keybinds': {
       'main': {'yorha_protocol': 'F1'},
       'yorha_protocol': {

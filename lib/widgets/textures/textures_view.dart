@@ -16,6 +16,7 @@ import 'package:yp_launcher/theme/app_colors.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
 import 'package:yp_launcher/widgets/busy_guard.dart';
 import 'package:yp_launcher/widgets/busy_overlay.dart';
+import 'package:yp_launcher/widgets/config_error_banner.dart';
 import 'package:yp_launcher/widgets/config_field_bool.dart';
 import 'package:yp_launcher/services/archive_service.dart';
 import 'package:yp_launcher/widgets/config_field_dropdown.dart';
@@ -31,7 +32,6 @@ import 'package:yp_launcher/widgets/textures/texture_header.dart';
 import 'package:yp_launcher/widgets/textures/texture_drop_zone.dart';
 import 'package:yp_launcher/widgets/textures/texture_inject_card.dart';
 
-
 class TexturesView extends ConsumerStatefulWidget {
   const TexturesView({super.key});
 
@@ -41,6 +41,23 @@ class TexturesView extends ConsumerStatefulWidget {
 
 class _TexturesViewState extends ConsumerState<TexturesView> {
   final _scrollController = ScrollController();
+
+  Future<void> _setTextureValue(String key, dynamic value) async {
+    final notifier = ref.read(configStateControllerProvider.notifier);
+    notifier.updateTextureInjectionSilent(key, value);
+    await notifier.saveConfigs(_gameDir);
+  }
+
+  Future<String?> _promptPackName(String initial) async {
+    final result = await showTextureNamingDialog(
+      context: context,
+      defaultName: initial,
+    );
+    final trimmed = result?.trim().replaceAll(RegExp(r'[<>:"/\\|?*]'), '_');
+    if (trimmed == null || trimmed.isEmpty) return null;
+    return trimmed;
+  }
+
   String _loadedForDir = '';
   bool _installing = false;
   String _installPhase = '';
@@ -107,8 +124,7 @@ class _TexturesViewState extends ConsumerState<TexturesView> {
   /// clobbering any unsaved user edits to other texture-injection fields.
   Future<void> _refreshDisabledPacksFromDisk() async {
     try {
-      final tomlPath =
-          path.join(_gameDir, 'nams', 'texture_injection.toml');
+      final tomlPath = path.join(_gameDir, 'nams', 'texture_injection.toml');
       final raw = await TomlService.readTomlFile(tomlPath);
       if (raw.isEmpty) return;
       final parsed = TomlService.parse(raw);
@@ -117,13 +133,16 @@ class _TexturesViewState extends ConsumerState<TexturesView> {
           .read(configStateControllerProvider.notifier)
           .updateTextureInjectionSilent(
             TextureInjectionFields.disabledPacks.key,
-            disabled is List ? List<String>.from(disabled.whereType<String>()) : const <String>[],
+            disabled is List
+                ? List<String>.from(disabled.whereType<String>())
+                : const <String>[],
           );
     } catch (_) {}
   }
 
   Future<void> _loadTextures() async {
-    final isFirstLoad = _installedTextures.isEmpty &&
+    final isFirstLoad =
+        _installedTextures.isEmpty &&
         _skResTextures.isEmpty &&
         _waxTextures.isEmpty;
     if (isFirstLoad) {
@@ -132,10 +151,9 @@ class _TexturesViewState extends ConsumerState<TexturesView> {
 
     final config = ref.read(configStateControllerProvider);
     final disabledPacks = List<String>.from(
-      (config.textureInjectionValues[TextureInjectionFields.disabledPacks.key]
-              as List?)
-              ?.whereType<String>() ??
-          const <String>[],
+      TextureInjectionFields.disabledPacks
+          .valueIn(config.textureInjectionValues)
+          .whereType<String>(),
     );
 
     final result = await IsolateService.run(
@@ -182,13 +200,14 @@ class _TexturesViewState extends ConsumerState<TexturesView> {
     if (folders.isNotEmpty) {
       final config = ref.read(configStateControllerProvider);
       final currentOrder = List<String>.from(
-        (config.textureInjectionValues[TextureInjectionFields.loadOrder.key]
-                as List?) ??
-            [],
+        TextureInjectionFields.loadOrder
+            .valueIn(config.textureInjectionValues)
+            .whereType<String>(),
       );
       final deduped = currentOrder.toSet().toList();
       final missing = folders.where((f) => !deduped.contains(f)).toList();
-      final needsUpdate = missing.isNotEmpty || deduped.length != currentOrder.length;
+      final needsUpdate =
+          missing.isNotEmpty || deduped.length != currentOrder.length;
       if (needsUpdate) {
         final updated = List<String>.from(deduped)..addAll(missing);
         final notifier = ref.read(configStateControllerProvider.notifier);
@@ -218,7 +237,10 @@ class _TexturesViewState extends ConsumerState<TexturesView> {
     if (!mounted) return;
     if (!hasDds) {
       _notify(l10n.textureDropNoDds, Icons.error_outline, AppColors.error);
-      setState(() { _installing = false; _installPhase = ''; });
+      setState(() {
+        _installing = false;
+        _installPhase = '';
+      });
       ref.read(texturesBusyProvider.notifier).state = false;
       return;
     }
@@ -249,13 +271,19 @@ class _TexturesViewState extends ConsumerState<TexturesView> {
             _installPhase = currentFile == null || currentFile.isEmpty
                 ? l10n.extractingArchivePercent((percent * 100).round())
                 : l10n.extractingArchivePercentFile(
-                    (percent * 100).round(), currentFile);
+                    (percent * 100).round(),
+                    currentFile,
+                  );
             _progressPercent = percent;
           });
         },
       );
       if (extracted == null) {
-        _notify(l10n.failedToExtractArchive, Icons.error_outline, AppColors.error);
+        _notify(
+          l10n.failedToExtractArchive,
+          Icons.error_outline,
+          AppColors.error,
+        );
         continue;
       }
       tempExtractDirs.add(extracted);
@@ -264,24 +292,32 @@ class _TexturesViewState extends ConsumerState<TexturesView> {
       if (!mounted) return;
 
       if (packs.length <= 1) {
+        final fallback = path.basenameWithoutExtension(archivePath);
+        var name = packs.isNotEmpty ? packs.first.label : fallback;
+        if (name == path.basename(extracted)) {
+          name = await _promptPackName(fallback) ?? fallback;
+        }
+        if (!mounted) return;
         effectivePaths.add(extracted);
-        archiveNames[extracted] = packs.isNotEmpty
-            ? packs.first.label
-            : path.basenameWithoutExtension(archivePath);
+        archiveNames[extracted] = name;
       } else {
         final chosen = await showModVariantDialog(
           context,
           variants: [
             for (final p in packs)
               ModVariant(
-                  subPath: p.path,
-                  label: p.label,
-                  kind: ModKind.texture,
-                  textureOnly: true),
+                subPath: p.path,
+                label: p.label,
+                kind: ModKind.texture,
+                textureOnly: true,
+              ),
           ],
         );
         if (chosen == null || chosen.isEmpty) {
-          setState(() { _installing = false; _installPhase = ''; });
+          setState(() {
+            _installing = false;
+            _installPhase = '';
+          });
           ref.read(texturesBusyProvider.notifier).state = false;
           return;
         }
@@ -296,7 +332,10 @@ class _TexturesViewState extends ConsumerState<TexturesView> {
     }
 
     if (effectivePaths.isEmpty) {
-      setState(() { _installing = false; _installPhase = ''; });
+      setState(() {
+        _installing = false;
+        _installPhase = '';
+      });
       ref.read(texturesBusyProvider.notifier).state = false;
       return;
     }
@@ -408,7 +447,9 @@ class _TexturesViewState extends ConsumerState<TexturesView> {
   Future<bool> _dropContainsDds(List<String> paths) async {
     for (final p in paths) {
       if (isArchive(p)) {
-        final found = await ArchiveService.archiveContainsExtension(p, ['.dds']);
+        final found = await ArchiveService.archiveContainsExtension(p, [
+          '.dds',
+        ]);
         if (found == true) return true;
       } else if (FileSystemEntity.isFileSync(p)) {
         if (p.toLowerCase().endsWith('.dds')) return true;
@@ -499,7 +540,8 @@ class _TexturesViewState extends ConsumerState<TexturesView> {
   }
 
   String _buildProgressText(AppLocalizations l10n) {
-    if (_installPhase == l10n.texturesProgressCopying && _progressTotalBytes > 0) {
+    if (_installPhase == l10n.texturesProgressCopying &&
+        _progressTotalBytes > 0) {
       return l10n.texturesInstallProgress(
         _progressFiles,
         _progressTotalFiles,
@@ -531,223 +573,279 @@ class _TexturesViewState extends ConsumerState<TexturesView> {
                 notifier: notifier,
                 gameDir: gameDir,
               ),
-          Expanded(
-            child: config.isLoading
-                ? Center(
-                    child: CircularProgressIndicator(
-                      color: AppColors.accentPrimary,
-                    ),
-                  )
-                : Scrollbar(
-                    controller: _scrollController,
-                    thumbVisibility: true,
-                    child: SingleChildScrollView(
-                      controller: _scrollController,
-                      padding: EdgeInsets.all(AppSizes.contentPadding(context)),
-                      child: LayoutBuilder(
-                        builder: (context, constraints) {
-                      final stack = constraints.maxWidth < 760;
-                      final leftCol = Column(
-                              children: [
-                                _card(
-                                  context,
-                                  AppLocalizations.of(context)!.cardInstallTextures,
-                                  [
-                                    TextureDropZone(
-                                      installing: _installing,
-                                      installPhase: _installPhase,
-                                      progressPercent: _progressPercent,
-                                      buildProgressText: _buildProgressText,
-                                      onDrop: (paths) {
-                                        if (ref.read(activeTabProvider) != 3) return;
-                                        _handleDrop(paths);
-                                      },
-                                      onBrowse: _handleBrowse,
-                                      onBrowseFolder: _handleBrowseFolder,
-                                    ),
-                                  ],
-                                ),
-                                _card(
-                                  context,
-                                  AppLocalizations.of(context)!.cardTextureConfig,
-                                  [
-                                    ConfigFieldDropdown(
-                                      label: TextureInjectionFields
-                                          .vramBudgetMb
-                                          .label(AppLocalizations.of(context)!),
-                                      value:
-                                          (tex[TextureInjectionFields
-                                                  .vramBudgetMb
-                                                  .key]
-                                              as int?) ??
+              Expanded(
+                child: config.isLoading
+                    ? Center(
+                        child: CircularProgressIndicator(
+                          color: AppColors.accentPrimary,
+                        ),
+                      )
+                    : Scrollbar(
+                        controller: _scrollController,
+                        thumbVisibility: true,
+                        child: SingleChildScrollView(
+                          controller: _scrollController,
+                          padding: EdgeInsets.all(
+                            AppSizes.contentPadding(context),
+                          ),
+                          child: LayoutBuilder(
+                            builder: (context, constraints) {
+                              final stack = constraints.maxWidth < 760;
+                              final errorBanner = config.textureInjectionError;
+                              final leftCol = Column(
+                                children: [
+                                  _card(
+                                    context,
+                                    AppLocalizations.of(
+                                      context,
+                                    )!.cardInstallTextures,
+                                    [
+                                      TextureDropZone(
+                                        installing: _installing,
+                                        installPhase: _installPhase,
+                                        progressPercent: _progressPercent,
+                                        buildProgressText: _buildProgressText,
+                                        onDrop: (paths) {
+                                          if (ref.read(activeTabProvider) != 3)
+                                            return;
+                                          _handleDrop(paths);
+                                        },
+                                        onBrowse: _handleBrowse,
+                                        onBrowseFolder: _handleBrowseFolder,
+                                      ),
+                                    ],
+                                  ),
+                                  _card(
+                                    context,
+                                    AppLocalizations.of(
+                                      context,
+                                    )!.cardTextureConfig,
+                                    [
+                                      ConfigFieldDropdown(
+                                        label: TextureInjectionFields
+                                            .vramBudgetMb
+                                            .label(
+                                              AppLocalizations.of(context)!,
+                                            ),
+                                        value: TextureInjectionFields
+                                            .vramBudgetMb
+                                            .valueIn(tex),
+                                        options: const [
+                                          0,
+                                          1024,
+                                          2048,
+                                          4096,
+                                          6144,
+                                          8192,
+                                          12288,
+                                          16384,
+                                        ],
+                                        labels: {
+                                          0: AppLocalizations.of(
+                                            context,
+                                          )!.textureAutoRecommended,
+                                        },
+                                        onChanged: (v) => _setTextureValue(
                                           TextureInjectionFields
                                               .vramBudgetMb
-                                              .defaultValue,
-                                      options: const [
-                                        0,
-                                        1024,
-                                        2048,
-                                        4096,
-                                        6144,
-                                        8192,
-                                        12288,
-                                        16384,
-                                      ],
-                                      labels: {
-                                        0: AppLocalizations.of(
-                                          context,
-                                        )!.textureAutoRecommended,
-                                      },
-                                      onChanged: (v) =>
-                                          notifier.updateTextureInjection(
+                                              .key,
+                                          v,
+                                        ),
+                                        tooltip:
                                             TextureInjectionFields
                                                 .vramBudgetMb
-                                                .key,
-                                            v,
-                                          ),
-                                      tooltip:
+                                                .tooltip!(
+                                              AppLocalizations.of(context)!,
+                                            ),
+                                      ),
+                                      ConfigFieldBool(
+                                        label: TextureInjectionFields
+                                            .streamingEnabled
+                                            .label(
+                                              AppLocalizations.of(context)!,
+                                            ),
+                                        value:
+                                            tex[TextureInjectionFields
+                                                .streamingEnabled
+                                                .key] !=
+                                            false,
+                                        onChanged: (v) => _setTextureValue(
                                           TextureInjectionFields
-                                              .vramBudgetMb
-                                              .tooltip!(
-                                            AppLocalizations.of(context)!,
-                                          ),
-                                    ),
-                                    ConfigFieldBool(
-                                      label: TextureInjectionFields
-                                          .streamingEnabled
-                                          .label(AppLocalizations.of(context)!),
-                                      value:
-                                          tex[TextureInjectionFields
                                               .streamingEnabled
-                                              .key] !=
-                                          false,
-                                      onChanged: (v) =>
-                                          notifier.updateTextureInjection(
+                                              .key,
+                                          v,
+                                        ),
+                                        tooltip:
                                             TextureInjectionFields
                                                 .streamingEnabled
-                                                .key,
-                                            v,
-                                          ),
-                                      tooltip:
+                                                .tooltip!(
+                                              AppLocalizations.of(context)!,
+                                            ),
+                                      ),
+                                      ConfigFieldBool(
+                                        label: TextureInjectionFields
+                                            .loadOnlyRelevant
+                                            .label(
+                                              AppLocalizations.of(context)!,
+                                            ),
+                                        value:
+                                            tex[TextureInjectionFields
+                                                .loadOnlyRelevant
+                                                .key] ==
+                                            true,
+                                        onChanged: (v) => _setTextureValue(
                                           TextureInjectionFields
-                                              .streamingEnabled
-                                              .tooltip!(
-                                            AppLocalizations.of(context)!,
-                                          ),
-                                    ),
-                                    ConfigFieldBool(
-                                      label: TextureInjectionFields
-                                          .loadOnlyRelevant
-                                          .label(AppLocalizations.of(context)!),
-                                      value:
-                                          tex[TextureInjectionFields
                                               .loadOnlyRelevant
-                                              .key] ==
-                                          true,
-                                      onChanged: (v) =>
-                                          notifier.updateTextureInjection(
+                                              .key,
+                                          v,
+                                        ),
+                                        tooltip:
                                             TextureInjectionFields
                                                 .loadOnlyRelevant
-                                                .key,
-                                            v,
-                                          ),
-                                      tooltip:
-                                          TextureInjectionFields
-                                              .loadOnlyRelevant
-                                              .tooltip!(
-                                            AppLocalizations.of(context)!,
-                                          ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            );
-                      final rightCol = Column(
-                              children: [
-                                if (!_loadingTextures) ...[
-                                  if (_installedTextures.isEmpty &&
-                                      _skResTextures.isEmpty &&
-                                      _waxTextures.isEmpty)
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                        vertical: AppSizes.paddingXL(context) * 2,
+                                                .tooltip!(
+                                              AppLocalizations.of(context)!,
+                                            ),
                                       ),
-                                      child: Center(
-                                        child: Text(
-                                          AppLocalizations.of(context)!.noTexturesInstalled,
-                                          style: TextStyle(
-                                            fontSize: AppSizes.fontMD(context),
-                                            color: AppColors.textMuted.withValues(alpha: 0.5),
-                                            fontStyle: FontStyle.italic,
+                                      ConfigFieldBool(
+                                        label: TextureInjectionFields.hotReload
+                                            .label(
+                                              AppLocalizations.of(context)!,
+                                            ),
+                                        value:
+                                            tex[TextureInjectionFields
+                                                .hotReload
+                                                .key] !=
+                                            false,
+                                        onChanged: (v) => _setTextureValue(
+                                          TextureInjectionFields.hotReload.key,
+                                          v,
+                                        ),
+                                        tooltip: TextureInjectionFields
+                                            .hotReload
+                                            .tooltip!(
+                                          AppLocalizations.of(context)!,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              );
+                              final rightCol = Column(
+                                children: [
+                                  if (!_loadingTextures) ...[
+                                    if (_installedTextures.isEmpty &&
+                                        _skResTextures.isEmpty &&
+                                        _waxTextures.isEmpty)
+                                      Padding(
+                                        padding: EdgeInsets.symmetric(
+                                          vertical:
+                                              AppSizes.paddingXL(context) * 2,
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            AppLocalizations.of(
+                                              context,
+                                            )!.noTexturesInstalled,
+                                            style: TextStyle(
+                                              fontSize: AppSizes.fontMD(
+                                                context,
+                                              ),
+                                              color: AppColors.textMuted
+                                                  .withValues(alpha: 0.5),
+                                              fontStyle: FontStyle.italic,
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  if (_installedTextures.isNotEmpty)
-                                    TextureInjectCard(
-                                      tex: tex,
-                                      notifier: notifier,
-                                      gameDir: _gameDir,
-                                      installedTextures: _installedTextures,
-                                      detectedFolders: _detectedFolders,
-                                      conflicts: _conflicts,
-                                      bundledOriginByPack: _bundledOriginByPack(),
-                                      onDelete: _deleteTexture,
-                                    ),
-                                  if (_outfitPacks.isNotEmpty)
-                                    _buildOutfitLinkedCard(),
-                                  if (_skResTextures.isNotEmpty)
-                                    _buildExternalSourceCard(
-                                      title: 'SK_Res/ (${_skResTextures.length})',
-                                      priority: AppLocalizations.of(context)!.priorityMedium,
-                                      entries: _skResTextures,
-                                      folderOf: (name) => path.join(
-                                        _gameDir,
-                                        'SK_Res',
-                                        'inject',
-                                        'textures',
-                                        'NieRAutomata.exe',
-                                        name,
+                                    if (_installedTextures.isNotEmpty)
+                                      TextureInjectCard(
+                                        tex: tex,
+                                        notifier: notifier,
+                                        gameDir: _gameDir,
+                                        installedTextures: _installedTextures,
+                                        detectedFolders: _detectedFolders,
+                                        conflicts: _conflicts,
+                                        bundledOriginByPack:
+                                            _bundledOriginByPack(),
+                                        onDelete: _deleteTexture,
                                       ),
-                                    ),
-                                  if (_waxTextures.isNotEmpty)
-                                    _buildExternalSourceCard(
-                                      title: 'wax/mods/ (${_waxTextures.length})',
-                                      priority: AppLocalizations.of(context)!.priorityHighest,
-                                      entries: _waxTextures,
-                                      folderOf: (name) => path.join(
-                                        _gameDir,
-                                        'wax',
-                                        'mods',
-                                        name,
+                                    if (_outfitPacks.isNotEmpty)
+                                      _buildOutfitLinkedCard(),
+                                    if (_skResTextures.isNotEmpty)
+                                      _buildExternalSourceCard(
+                                        title:
+                                            'SK_Res/ (${_skResTextures.length})',
+                                        priority: AppLocalizations.of(
+                                          context,
+                                        )!.priorityMedium,
+                                        entries: _skResTextures,
+                                        folderOf: (name) => path.join(
+                                          _gameDir,
+                                          'SK_Res',
+                                          'inject',
+                                          'textures',
+                                          'NieRAutomata.exe',
+                                          name,
+                                        ),
                                       ),
-                                    ),
+                                    if (_waxTextures.isNotEmpty)
+                                      _buildExternalSourceCard(
+                                        title:
+                                            'wax/mods/ (${_waxTextures.length})',
+                                        priority: AppLocalizations.of(
+                                          context,
+                                        )!.priorityHighest,
+                                        entries: _waxTextures,
+                                        folderOf: (name) => path.join(
+                                          _gameDir,
+                                          'wax',
+                                          'mods',
+                                          name,
+                                        ),
+                                      ),
+                                  ],
                                 ],
-                              ],
-                            );
-                      if (stack) {
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            leftCol,
-                            SizedBox(height: AppSizes.spacingLG(context)),
-                            rightCol,
-                          ],
-                        );
-                      }
-                      return Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(child: leftCol),
-                          SizedBox(width: AppSizes.spacingLG(context)),
-                          Expanded(child: rightCol),
-                        ],
-                      );
-                        },
+                              );
+                              final body = stack
+                                  ? Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      children: [
+                                        leftCol,
+                                        SizedBox(
+                                          height: AppSizes.spacingLG(context),
+                                        ),
+                                        rightCol,
+                                      ],
+                                    )
+                                  : Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Expanded(child: leftCol),
+                                        SizedBox(
+                                          width: AppSizes.spacingLG(context),
+                                        ),
+                                        Expanded(child: rightCol),
+                                      ],
+                                    );
+                              if (errorBanner == null) return body;
+                              return Column(
+                                crossAxisAlignment:
+                                    CrossAxisAlignment.stretch,
+                                children: [
+                                  ConfigErrorBanner(
+                                    fileName: 'texture_injection.toml',
+                                    error: errorBanner,
+                                  ),
+                                  body,
+                                ],
+                              );
+                            },
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-          ),
+              ),
             ],
           ),
         ),
@@ -806,7 +904,10 @@ class _TexturesViewState extends ConsumerState<TexturesView> {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.textMuted.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(4),
@@ -828,21 +929,31 @@ class _TexturesViewState extends ConsumerState<TexturesView> {
             padding: EdgeInsets.all(AppSizes.cardPaddingH(context)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: entries.map((name) => Padding(
-                padding: EdgeInsets.only(bottom: AppSizes.paddingXS(context)),
-                child: Row(
-                  children: [
-                    Icon(Icons.image, size: 14, color: AppColors.textMuted),
-                    SizedBox(width: AppSizes.spacingMD(context)),
-                    Expanded(
-                      child: ClickableName(
-                        name: name,
-                        folderPath: folderOf(name),
+              children: entries
+                  .map(
+                    (name) => Padding(
+                      padding: EdgeInsets.only(
+                        bottom: AppSizes.paddingXS(context),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.image,
+                            size: 14,
+                            color: AppColors.textMuted,
+                          ),
+                          SizedBox(width: AppSizes.spacingMD(context)),
+                          Expanded(
+                            child: ClickableName(
+                              name: name,
+                              folderPath: folderOf(name),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
-              )).toList(),
+                  )
+                  .toList(),
             ),
           ),
         ],
@@ -911,32 +1022,38 @@ class _TexturesViewState extends ConsumerState<TexturesView> {
                   ),
                 ),
                 SizedBox(height: AppSizes.spacingMD(context)),
-                ..._outfitPacks.map((p) => Padding(
-                      padding:
-                          EdgeInsets.only(bottom: AppSizes.paddingXS(context)),
-                      child: Row(
-                        children: [
-                          Icon(Icons.link,
-                              size: 14, color: AppColors.accentPrimary),
-                          SizedBox(width: AppSizes.spacingMD(context)),
-                          Expanded(
-                            child: ClickableName(
-                              name: p.character != null
-                                  ? '${p.name} (${p.character})'
-                                  : p.name,
-                              folderPath: p.path,
-                            ),
+                ..._outfitPacks.map(
+                  (p) => Padding(
+                    padding: EdgeInsets.only(
+                      bottom: AppSizes.paddingXS(context),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.link,
+                          size: 14,
+                          color: AppColors.accentPrimary,
+                        ),
+                        SizedBox(width: AppSizes.spacingMD(context)),
+                        Expanded(
+                          child: ClickableName(
+                            name: p.character != null
+                                ? '${p.name} (${p.character})'
+                                : p.name,
+                            folderPath: p.path,
                           ),
-                          Text(
-                            l10n.textureOutfitLinkedEntry(p.ddsCount),
-                            style: TextStyle(
-                              fontSize: AppSizes.fontXS(context),
-                              color: AppColors.textMuted,
-                            ),
+                        ),
+                        Text(
+                          l10n.textureOutfitLinkedEntry(p.ddsCount),
+                          style: TextStyle(
+                            fontSize: AppSizes.fontXS(context),
+                            color: AppColors.textMuted,
                           ),
-                        ],
-                      ),
-                    )),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
           ),

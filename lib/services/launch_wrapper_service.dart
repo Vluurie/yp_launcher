@@ -64,8 +64,9 @@ class LaunchWrapperService {
     final tokens = tokenize(trimmed);
     if (tokens.isEmpty) return base;
 
-    final withoutTrailingSeparator =
-        tokens.last == '--' ? tokens.sublist(0, tokens.length - 1) : tokens;
+    final withoutTrailingSeparator = tokens.last == '--'
+        ? tokens.sublist(0, tokens.length - 1)
+        : tokens;
     if (withoutTrailingSeparator.isEmpty) return base;
 
     final wrapperCmd = withoutTrailingSeparator.first;

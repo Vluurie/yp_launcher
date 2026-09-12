@@ -29,7 +29,7 @@ flutter clean
 flutter pub get
 cargo build --manifest-path rust/Cargo.toml --release
 flutter build linux --release
-cp rust/target/release/libyp_3d_inspector.so "$BUNDLE/lib/"
+cp rust/target/release/libyp_formats.so "$BUNDLE/lib/"
 
 rm -rf "$APPDIR" "$APPIMAGE"
 mkdir -p "$APPDIR/usr/bin"

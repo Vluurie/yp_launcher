@@ -38,7 +38,9 @@ class _TextureDropZoneState extends State<TextureDropZone> {
     final l10n = AppLocalizations.of(context)!;
     if (widget.installing) {
       return ProgressInstallCard(
-        phase: widget.installPhase.isNotEmpty ? widget.installPhase : l10n.installingTextures,
+        phase: widget.installPhase.isNotEmpty
+            ? widget.installPhase
+            : l10n.installingTextures,
         progress: widget.progressPercent,
         progressText: widget.buildProgressText(l10n),
       );
@@ -161,21 +163,23 @@ class _TextureFolderButtonState extends State<_TextureFolderButton> {
             Icon(
               Icons.folder_open,
               size: 14,
-              color: _hovered
-                  ? AppColors.accentPrimary
-                  : AppColors.textMuted,
+              color: _hovered ? AppColors.accentPrimary : AppColors.textMuted,
             ),
             const SizedBox(width: 6),
-            Text(
-              l10n.dropZoneBrowseFolder,
-              style: TextStyle(
-                fontSize: AppSizes.fontSM(context),
-                color: _hovered
-                    ? AppColors.accentPrimary
-                    : AppColors.textMuted,
-                decoration:
-                    _hovered ? TextDecoration.underline : TextDecoration.none,
-                decorationColor: AppColors.accentPrimary,
+            Flexible(
+              child: Text(
+                l10n.dropZoneBrowseFolder,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: AppSizes.fontSM(context),
+                  color: _hovered
+                      ? AppColors.accentPrimary
+                      : AppColors.textMuted,
+                  decoration: _hovered
+                      ? TextDecoration.underline
+                      : TextDecoration.none,
+                  decorationColor: AppColors.accentPrimary,
+                ),
               ),
             ),
           ],

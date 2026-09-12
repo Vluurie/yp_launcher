@@ -34,8 +34,12 @@ bool _withProcesses(String processName, {required bool terminate}) {
 
       final exeName = _wsalloc(MAX_PATH);
       try {
-        final length =
-            GetModuleBaseName(handle, null, PWSTR(exeName), MAX_PATH).value;
+        final length = GetModuleBaseName(
+          handle,
+          null,
+          PWSTR(exeName),
+          MAX_PATH,
+        ).value;
         if (length <= 0) continue;
 
         final current = exeName.toDartString().toLowerCase();

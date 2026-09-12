@@ -31,30 +31,21 @@ class ModProfilesService {
     return IsolateService.run(_loadProfilesSync, gameDir);
   }
 
-  static Future<ModProfileState> createProfile(
-    String gameDir,
-    String name,
-  ) {
+  static Future<ModProfileState> createProfile(String gameDir, String name) {
     return IsolateService.run(
       _createProfileSync,
       _CreateParams(gameDir: gameDir, name: name),
     );
   }
 
-  static Future<ModProfileState> switchProfile(
-    String gameDir,
-    String to,
-  ) {
+  static Future<ModProfileState> switchProfile(String gameDir, String to) {
     return IsolateService.run(
       _switchProfileSync,
       _SwitchParams(gameDir: gameDir, to: to),
     );
   }
 
-  static Future<ModProfileState> deleteProfile(
-    String gameDir,
-    String name,
-  ) {
+  static Future<ModProfileState> deleteProfile(String gameDir, String name) {
     return IsolateService.run(
       _deleteProfileSync,
       _CreateParams(gameDir: gameDir, name: name),
@@ -157,12 +148,16 @@ void _backupOrphan(String gameDir, String from) {
   }
   for (final entry in orphanSidecars) {
     var n = 1;
-    var dest =
-        path.join(backupRoot.path, '${entry.key.backupPrefix}_${from}_$n.toml');
+    var dest = path.join(
+      backupRoot.path,
+      '${entry.key.backupPrefix}_${from}_$n.toml',
+    );
     while (File(dest).existsSync()) {
       n++;
       dest = path.join(
-          backupRoot.path, '${entry.key.backupPrefix}_${from}_$n.toml');
+        backupRoot.path,
+        '${entry.key.backupPrefix}_${from}_$n.toml',
+      );
     }
     entry.value.renameSync(dest);
   }
@@ -264,8 +259,9 @@ ModProfileState _loadProfilesSync(String gameDir) {
     return _migrateFirstRun(gameDir);
   }
 
-  var active =
-      (parsed['active'] is String) ? parsed['active'] as String : 'default';
+  var active = (parsed['active'] is String)
+      ? parsed['active'] as String
+      : 'default';
   final rawProfiles = parsed['profile'];
   final profiles = <ModProfile>[];
   if (rawProfiles is List) {
@@ -304,8 +300,9 @@ ModProfileState _loadProfilesSync(String gameDir) {
     if (entity is! Directory) continue;
     final folder = path.basename(entity.path);
     if (!folder.startsWith(ModProfilesService._profilePrefix)) continue;
-    final inferredName =
-        folder.substring(ModProfilesService._profilePrefix.length);
+    final inferredName = folder.substring(
+      ModProfilesService._profilePrefix.length,
+    );
     if (inferredName.isEmpty || knownNames.contains(inferredName)) continue;
     if (!ModProfilesService.isValidName(inferredName)) continue;
     DateTime created;
@@ -338,12 +335,15 @@ ModProfileState _loadProfilesSync(String gameDir) {
   }
 
   // Always recompute disabled_packs from scratch; this self-heals stale state.
-  _writeDisabledPacks(gameDir, _computeDisabledPacks(gameDir, filtered, active));
+  _writeDisabledPacks(
+    gameDir,
+    _computeDisabledPacks(gameDir, filtered, active),
+  );
 
   // Persist (re)written profiles.toml if the on-disk content drifted.
-  final stateChanged = filtered.length != profiles.length ||
-      !filtered.every(
-          (p) => profiles.any((q) => q.name == p.name)) ||
+  final stateChanged =
+      filtered.length != profiles.length ||
+      !filtered.every((p) => profiles.any((q) => q.name == p.name)) ||
       renameMap.isNotEmpty;
   if (stateChanged) {
     _writeProfilesToml(gameDir, active, filtered);
@@ -363,23 +363,27 @@ ModProfileState _migrateFirstRun(String gameDir) {
   final profiles = <ModProfile>[];
   DateTime defaultCreated;
   try {
-    defaultCreated =
-        Directory(_modsActiveDir(gameDir)).statSync().modified.toUtc();
+    defaultCreated = Directory(
+      _modsActiveDir(gameDir),
+    ).statSync().modified.toUtc();
   } catch (_) {
     defaultCreated = DateTime.now().toUtc();
   }
-  profiles.add(ModProfile(
-    name: ModProfilesService.defaultProfileName,
-    createdAt: defaultCreated,
-  ));
+  profiles.add(
+    ModProfile(
+      name: ModProfilesService.defaultProfileName,
+      createdAt: defaultCreated,
+    ),
+  );
 
   // Adopt pre-existing inactive folders.
   for (final entity in namsDir.listSync()) {
     if (entity is! Directory) continue;
     final folder = path.basename(entity.path);
     if (!folder.startsWith(ModProfilesService._profilePrefix)) continue;
-    final inferredName =
-        folder.substring(ModProfilesService._profilePrefix.length);
+    final inferredName = folder.substring(
+      ModProfilesService._profilePrefix.length,
+    );
     if (!ModProfilesService.isValidName(inferredName)) continue;
     if (inferredName == ModProfilesService.defaultProfileName) continue;
     DateTime created;
@@ -406,11 +410,7 @@ ModProfileState _migrateFirstRun(String gameDir) {
     ),
   );
 
-  _writeProfilesToml(
-    gameDir,
-    ModProfilesService.defaultProfileName,
-    profiles,
-  );
+  _writeProfilesToml(gameDir, ModProfilesService.defaultProfileName, profiles);
 
   return ModProfileState(
     activeName: ModProfilesService.defaultProfileName,
@@ -441,10 +441,10 @@ ModProfileState _createProfileSync(_CreateParams p) {
   );
 
   void undoStepA() => _restoreSidecars(
-        movedFrom,
-        (s) => s.inactivePath(p.gameDir, from),
-        (s) => s.activePath(p.gameDir),
-      );
+    movedFrom,
+    (s) => s.inactivePath(p.gameDir, from),
+    (s) => s.activePath(p.gameDir),
+  );
 
   // Step B: park current mods/ as mods_profile_<from>/.
   final activeMods = Directory(_modsActiveDir(p.gameDir));
@@ -501,15 +501,16 @@ ModProfileState _switchProfileSync(_SwitchParams p) {
   );
 
   void undoStepA() => _restoreSidecars(
-        movedFrom,
-        (s) => s.inactivePath(p.gameDir, from),
-        (s) => s.activePath(p.gameDir),
-      );
+    movedFrom,
+    (s) => s.inactivePath(p.gameDir, from),
+    (s) => s.activePath(p.gameDir),
+  );
 
   // Step B: mods/ -> mods_profile_<from>/.
   try {
-    Directory(_modsActiveDir(p.gameDir))
-        .renameSync(_modsInactiveDir(p.gameDir, from));
+    Directory(
+      _modsActiveDir(p.gameDir),
+    ).renameSync(_modsInactiveDir(p.gameDir, from));
   } catch (e) {
     undoStepA();
     throw ProfileSwitchException('step_b_failed:$e');
@@ -517,20 +518,24 @@ ModProfileState _switchProfileSync(_SwitchParams p) {
 
   // Step C: mods_profile_<to>/ -> mods/.
   try {
-    Directory(_modsInactiveDir(p.gameDir, to))
-        .renameSync(_modsActiveDir(p.gameDir));
+    Directory(
+      _modsInactiveDir(p.gameDir, to),
+    ).renameSync(_modsActiveDir(p.gameDir));
   } catch (e) {
-    Directory(_modsInactiveDir(p.gameDir, from))
-        .renameSync(_modsActiveDir(p.gameDir));
+    Directory(
+      _modsInactiveDir(p.gameDir, from),
+    ).renameSync(_modsActiveDir(p.gameDir));
     undoStepA();
     throw ProfileSwitchException('step_c_failed:$e');
   }
 
   void undoStepsBC() {
-    Directory(_modsActiveDir(p.gameDir))
-        .renameSync(_modsInactiveDir(p.gameDir, to));
-    Directory(_modsInactiveDir(p.gameDir, from))
-        .renameSync(_modsActiveDir(p.gameDir));
+    Directory(
+      _modsActiveDir(p.gameDir),
+    ).renameSync(_modsInactiveDir(p.gameDir, to));
+    Directory(
+      _modsInactiveDir(p.gameDir, from),
+    ).renameSync(_modsActiveDir(p.gameDir));
     undoStepA();
   }
 
@@ -547,8 +552,7 @@ ModProfileState _switchProfileSync(_SwitchParams p) {
   }
 
   // Step E: rewrite disabled_packs.
-  final newDisabledPacks =
-      _computeDisabledPacks(p.gameDir, state.profiles, to);
+  final newDisabledPacks = _computeDisabledPacks(p.gameDir, state.profiles, to);
   try {
     _writeDisabledPacks(p.gameDir, newDisabledPacks);
   } catch (e) {
@@ -600,7 +604,9 @@ ModProfileState _deleteProfileSync(_CreateParams p) {
   }
 
   // Cascade-delete bundled texture packs owned by the profile.
-  final injectRoot = Directory(path.join(p.gameDir, 'nams', 'inject', 'textures'));
+  final injectRoot = Directory(
+    path.join(p.gameDir, 'nams', 'inject', 'textures'),
+  );
   for (final pack in ownedPacks) {
     try {
       final packDir = Directory(path.join(injectRoot.path, pack));
@@ -609,21 +615,19 @@ ModProfileState _deleteProfileSync(_CreateParams p) {
   }
 
   // Update load_order: drop deleted pack names. Update disabled_packs: drop them too.
-  final renameMap = <String, String?>{for (final pack in ownedPacks) pack: null};
+  final renameMap = <String, String?>{
+    for (final pack in ownedPacks) pack: null,
+  };
   _rewriteLoadOrder(p.gameDir, renameMap);
 
-  final newProfiles =
-      state.profiles.where((pr) => pr.name != p.name).toList();
+  final newProfiles = state.profiles.where((pr) => pr.name != p.name).toList();
   _writeDisabledPacks(
     p.gameDir,
     _computeDisabledPacks(p.gameDir, newProfiles, state.activeName),
   );
   _writeProfilesToml(p.gameDir, state.activeName, newProfiles);
 
-  return ModProfileState(
-    activeName: state.activeName,
-    profiles: newProfiles,
-  );
+  return ModProfileState(activeName: state.activeName, profiles: newProfiles);
 }
 
 ModProfileState _renameProfileSync(_RenameParams p) {
@@ -646,14 +650,19 @@ ModProfileState _renameProfileSync(_RenameParams p) {
   final isActive = state.activeName == p.oldName;
 
   // Plan pack renames for every mod owned by the renamed profile.
-  final renameMap =
-      _planProfilePrefixRenames(p.gameDir, p.oldName, sanitized, isActive);
+  final renameMap = _planProfilePrefixRenames(
+    p.gameDir,
+    p.oldName,
+    sanitized,
+    isActive,
+  );
 
   if (!isActive) {
     // Rename mods_profile_<old>/ -> mods_profile_<new>/
     try {
-      Directory(_modsInactiveDir(p.gameDir, p.oldName))
-          .renameSync(_modsInactiveDir(p.gameDir, sanitized));
+      Directory(
+        _modsInactiveDir(p.gameDir, p.oldName),
+      ).renameSync(_modsInactiveDir(p.gameDir, sanitized));
     } catch (e) {
       throw ProfileSwitchException('mods_rename_failed:$e');
     }
@@ -664,8 +673,9 @@ ModProfileState _renameProfileSync(_RenameParams p) {
         (s) => s.inactivePath(p.gameDir, sanitized),
       );
     } catch (e) {
-      Directory(_modsInactiveDir(p.gameDir, sanitized))
-          .renameSync(_modsInactiveDir(p.gameDir, p.oldName));
+      Directory(
+        _modsInactiveDir(p.gameDir, sanitized),
+      ).renameSync(_modsInactiveDir(p.gameDir, p.oldName));
       throw ProfileSwitchException('disabled_rename_failed:$e');
     }
   }
@@ -827,9 +837,7 @@ Map<String, String?> _planProfilePrefixRenames(
 ) {
   final result = <String, String?>{};
   final modsRoot = Directory(
-    isActive
-        ? _modsActiveDir(gameDir)
-        : _modsInactiveDir(gameDir, oldProfile),
+    isActive ? _modsActiveDir(gameDir) : _modsInactiveDir(gameDir, oldProfile),
   );
   if (!modsRoot.existsSync()) return result;
 
@@ -897,7 +905,8 @@ List<String> _computeDisabledPacks(
 
 void _writeDisabledPacks(String gameDir, List<String> packs) {
   final file = File(_textureInjectionTomlPath(gameDir));
-  if (!file.existsSync()) return; // honored: written by NamsConfigService on first run
+  if (!file.existsSync())
+    return; // honored: written by NamsConfigService on first run
   final raw = file.readAsStringSync();
   final lines = raw.split('\n');
   final newValue = '[${packs.map((p) => '"${_escapeToml(p)}"').join(', ')}]';

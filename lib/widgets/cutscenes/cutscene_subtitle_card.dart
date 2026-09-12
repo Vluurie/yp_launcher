@@ -15,21 +15,23 @@ class CutsceneSubtitleCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final gameDir = ref.watch(appStateControllerProvider).selectedDirectory;
-    final cutscene = (ref.watch(configStateControllerProvider).namsValues[
-            'cutscene'] as Map<String, dynamic>?) ??
-        const {};
+    final rawCutscene = ref
+        .watch(configStateControllerProvider)
+        .namsValues['cutscene'];
+    final cutscene = rawCutscene is Map<String, dynamic>
+        ? rawCutscene
+        : const <String, dynamic>{};
 
-    bool valueOf(ConfigField<bool> field) =>
-        cutscene[field.key] as bool? ?? field.defaultValue;
+    bool valueOf(ConfigField<bool> field) {
+      final raw = cutscene[field.key];
+      return raw is bool ? raw : field.defaultValue;
+    }
 
     void set(ConfigField<bool> field, bool v) {
       if (gameDir.isEmpty) return;
-      ref.read(configStateControllerProvider.notifier).updateNamsNow(
-            gameDir,
-            field.key,
-            v,
-            section: field.section,
-          );
+      ref
+          .read(configStateControllerProvider.notifier)
+          .updateNamsNow(gameDir, field.key, v, section: field.section);
     }
 
     final hideOverlay = valueOf(NamsFields.hideSubtitleOverlay);
@@ -93,8 +95,9 @@ class CutsceneSubtitleCard extends ConsumerWidget {
                   ),
                   ConfigFieldBool(
                     label: NamsFields.hideSubtitleInEvents.label(l10n),
-                    tooltip:
-                        NamsFields.hideSubtitleInEvents.tooltip?.call(l10n),
+                    tooltip: NamsFields.hideSubtitleInEvents.tooltip?.call(
+                      l10n,
+                    ),
                     value: valueOf(NamsFields.hideSubtitleInEvents),
                     onChanged: (v) => set(NamsFields.hideSubtitleInEvents, v),
                   ),

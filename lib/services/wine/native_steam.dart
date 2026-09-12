@@ -28,15 +28,16 @@ List<NierInstallation> findNierInNativeSteam() {
   final seen = <String>{};
   final installations = <NierInstallation>[];
   for (final library in nativeSteamLibraries()) {
-    final dir =
-        p.join(library, 'steamapps', 'common', 'NieRAutomata');
+    final dir = p.join(library, 'steamapps', 'common', 'NieRAutomata');
     if (!File(p.join(dir, AppStrings.gameExeName)).existsSync()) continue;
     final normalized = p.normalize(dir);
     if (!seen.add(normalized.toLowerCase())) continue;
-    installations.add(NierInstallation(
-      path: normalized,
-      hasData: Directory(p.join(normalized, 'data')).existsSync(),
-    ));
+    installations.add(
+      NierInstallation(
+        path: normalized,
+        hasData: Directory(p.join(normalized, 'data')).existsSync(),
+      ),
+    );
   }
   return installations;
 }

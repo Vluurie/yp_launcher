@@ -47,7 +47,6 @@ dependencies:
   window_manager: ^0.5.1
 
   # Fonts
-  google_fonts: ^8.1.0
 
   # Drag and drop support
   desktop_drop: ^0.7.1
@@ -63,6 +62,7 @@ dependencies:
   intl: any
   toml: ^0.18.0
   flutter_markdown_plus: ^1.0.7
+  flutter_highlight: ^0.7.0
   flutter_rust_bridge: 2.11.1
 
 dev_dependencies:
@@ -96,4 +96,25 @@ flutter:
     - assets/images/config/
     - assets/bins/
     - assets/bins/plugins/
+    # DOCS-WIP: docs is work in progress for later
+    # - assets/docs/native/
+    # - assets/docs/native/authoring/
+    # - assets/docs/native/resources/
+    # - assets/docs/scripting/
+    # - assets/docs/images/
+    - assets/fonts/OFL.txt
+
+  fonts:
+    - family: Rajdhani
+      fonts:
+        - asset: assets/fonts/Rajdhani-Light.ttf
+          weight: 300
+        - asset: assets/fonts/Rajdhani-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Rajdhani-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Rajdhani-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Rajdhani-Bold.ttf
+          weight: 700
 

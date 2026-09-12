@@ -25,11 +25,7 @@ class FileOps {
         sha256.convert(fb.readAsBytesSync()).toString();
   }
 
-  static void mergeDirectory(
-    String src,
-    String dest, {
-    bool overwrite = true,
-  }) {
+  static void mergeDirectory(String src, String dest, {bool overwrite = true}) {
     final srcDir = Directory(src);
     if (!srcDir.existsSync()) return;
     Directory(dest).createSync(recursive: true);

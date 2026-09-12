@@ -50,7 +50,9 @@ class _CutsceneDropZoneState extends State<CutsceneDropZone> {
             SizedBox(
               width: 200,
               child: LinearProgressIndicator(
-                value: widget.progressPercent > 0 ? widget.progressPercent : null,
+                value: widget.progressPercent > 0
+                    ? widget.progressPercent
+                    : null,
                 backgroundColor: AppColors.surfaceLight,
                 color: AppColors.accentPrimary,
                 minHeight: 6,
@@ -187,21 +189,23 @@ class _CutsceneFolderButtonState extends State<_CutsceneFolderButton> {
             Icon(
               Icons.folder_open,
               size: 14,
-              color: _hovered
-                  ? AppColors.accentPrimary
-                  : AppColors.textMuted,
+              color: _hovered ? AppColors.accentPrimary : AppColors.textMuted,
             ),
             const SizedBox(width: 6),
-            Text(
-              l10n.dropZoneBrowseFolder,
-              style: TextStyle(
-                fontSize: AppSizes.fontSM(context),
-                color: _hovered
-                    ? AppColors.accentPrimary
-                    : AppColors.textMuted,
-                decoration:
-                    _hovered ? TextDecoration.underline : TextDecoration.none,
-                decorationColor: AppColors.accentPrimary,
+            Flexible(
+              child: Text(
+                l10n.dropZoneBrowseFolder,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: AppSizes.fontSM(context),
+                  color: _hovered
+                      ? AppColors.accentPrimary
+                      : AppColors.textMuted,
+                  decoration: _hovered
+                      ? TextDecoration.underline
+                      : TextDecoration.none,
+                  decorationColor: AppColors.accentPrimary,
+                ),
               ),
             ),
           ],

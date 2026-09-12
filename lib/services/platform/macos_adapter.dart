@@ -9,7 +9,7 @@ class MacOSAdapter extends WineAdapterBase {
 
   @override
   List<String> get systemSevenZipCandidates => const [
-        '/opt/homebrew/bin/7zz',
-        '/usr/local/bin/7zz',
-      ];
+    '/opt/homebrew/bin/7zz',
+    '/usr/local/bin/7zz',
+  ];
 }

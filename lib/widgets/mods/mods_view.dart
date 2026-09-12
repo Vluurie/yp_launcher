@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:yp_launcher/widgets/app_dialog.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as p;
 import 'package:yp_launcher/l10n/app_localizations.dart';
@@ -113,10 +114,9 @@ class _ModsViewState extends ConsumerState<ModsView> {
     if (!dir.existsSync()) return;
 
     try {
-      _watchSub = dir.watch(recursive: true).listen(
-        (_) => _scheduleWatcherReload(),
-        onError: (_) {},
-      );
+      _watchSub = dir
+          .watch(recursive: true)
+          .listen((_) => _scheduleWatcherReload(), onError: (_) {});
       _watchedDir = modsDir;
     } catch (_) {}
   }
@@ -169,7 +169,9 @@ class _ModsViewState extends ConsumerState<ModsView> {
     if (!mounted) return;
     setState(() => _busy = false);
     if (staged == null) {
-      ref.read(notificationStateControllerProvider.notifier).addNotification(
+      ref
+          .read(notificationStateControllerProvider.notifier)
+          .addNotification(
             NotificationItem(
               id: 'mod_drop_reject_${DateTime.now().millisecondsSinceEpoch}',
               message: (l10n) => l10n.modDropNotAMod,
@@ -222,13 +224,15 @@ class _ModsViewState extends ConsumerState<ModsView> {
       final message = classification.misroutedTab == 'cutscenes'
           ? l10n.modDropMisroutedCutscenes
           : l10n.modDropNotAMod;
-      notif.addNotification(NotificationItem(
-        id: 'mod_drop_reject_${DateTime.now().millisecondsSinceEpoch}',
-        message: (l10n) => message,
-        icon: Icons.error_outline,
-        color: AppColors.error,
-        type: NotificationType.general,
-      ));
+      notif.addNotification(
+        NotificationItem(
+          id: 'mod_drop_reject_${DateTime.now().millisecondsSinceEpoch}',
+          message: (l10n) => message,
+          icon: Icons.error_outline,
+          color: AppColors.error,
+          type: NotificationType.general,
+        ),
+      );
       return;
     }
 
@@ -246,7 +250,9 @@ class _ModsViewState extends ConsumerState<ModsView> {
             _busyMessage = currentFile == null || currentFile.isEmpty
                 ? l10n.extractingArchivePercent((percent * 100).round())
                 : l10n.extractingArchivePercentFile(
-                    (percent * 100).round(), currentFile);
+                    (percent * 100).round(),
+                    currentFile,
+                  );
           });
         },
       ),
@@ -261,16 +267,19 @@ class _ModsViewState extends ConsumerState<ModsView> {
 
     if (detect.kind == ModKind.unknown) {
       final isTextureOnly = detect.errorReason == 'texture_only';
-      notif.addNotification(NotificationItem(
-        id: 'mod_install_fail_${DateTime.now().millisecondsSinceEpoch}',
-        message: (l10n) => isTextureOnly
-            ? l10n.modInstallReasonTextureOnly
-            : l10n.modInstallFailed(
-                _localizeReason(l10n, detect.errorReason ?? 'unknown_drop')),
-        icon: isTextureOnly ? Icons.warning_amber : Icons.error_outline,
-        color: isTextureOnly ? AppColors.warning : AppColors.error,
-        type: NotificationType.general,
-      ));
+      notif.addNotification(
+        NotificationItem(
+          id: 'mod_install_fail_${DateTime.now().millisecondsSinceEpoch}',
+          message: (l10n) => isTextureOnly
+              ? l10n.modInstallReasonTextureOnly
+              : l10n.modInstallFailed(
+                  _localizeReason(l10n, detect.errorReason ?? 'unknown_drop'),
+                ),
+          icon: isTextureOnly ? Icons.warning_amber : Icons.error_outline,
+          color: isTextureOnly ? AppColors.warning : AppColors.error,
+          type: NotificationType.general,
+        ),
+      );
       return;
     }
 
@@ -315,7 +324,9 @@ class _ModsViewState extends ConsumerState<ModsView> {
         _busyMessage = currentFile == null || currentFile.isEmpty
             ? l10n.extractingArchivePercent((percent * 100).round())
             : l10n.extractingArchivePercentFile(
-                (percent * 100).round(), currentFile);
+                (percent * 100).round(),
+                currentFile,
+              );
       });
     }
 
@@ -332,7 +343,8 @@ class _ModsViewState extends ConsumerState<ModsView> {
         ),
       );
 
-      while (!result.success && result.errorMessage?.startsWith('exists:') == true) {
+      while (!result.success &&
+          result.errorMessage?.startsWith('exists:') == true) {
         if (!mounted) return;
         setState(() => _busy = false);
         requestedName = await showModNamingDialog(
@@ -363,42 +375,53 @@ class _ModsViewState extends ConsumerState<ModsView> {
     if (!mounted) return;
     if (result.success) {
       setState(() => _selectedId = result.installedId);
-      notif.addNotification(NotificationItem(
-        id: 'mod_installed_${DateTime.now().millisecondsSinceEpoch}',
-        message: (l10n) => l10n.modInstalled(result.installedId ?? ''),
-        icon: Icons.check_circle,
-        color: AppColors.success,
-        type: NotificationType.general,
-      ));
-      if (result.sideInstalledTexturePacks.isNotEmpty) {
-        notif.addNotification(NotificationItem(
-          id: 'mod_side_textures_${DateTime.now().millisecondsSinceEpoch}',
-          message: (l10n) => l10n.modSideInstalledTextures(
-            result.sideInstalledTexturePacks.join(', '),
-          ),
-          icon: Icons.texture,
-          color: AppColors.accentPrimary,
+      notif.addNotification(
+        NotificationItem(
+          id: 'mod_installed_${DateTime.now().millisecondsSinceEpoch}',
+          message: (l10n) => l10n.modInstalled(result.installedId ?? ''),
+          icon: Icons.check_circle,
+          color: AppColors.success,
           type: NotificationType.general,
-        ));
+        ),
+      );
+      if (result.sideInstalledTexturePacks.isNotEmpty) {
+        notif.addNotification(
+          NotificationItem(
+            id: 'mod_side_textures_${DateTime.now().millisecondsSinceEpoch}',
+            message: (l10n) => l10n.modSideInstalledTextures(
+              result.sideInstalledTexturePacks.join(', '),
+            ),
+            icon: Icons.texture,
+            color: AppColors.accentPrimary,
+            type: NotificationType.general,
+          ),
+        );
       }
       if (result.unpairedWarnings.isNotEmpty) {
-        notif.addNotification(NotificationItem(
-          id: 'mod_unpaired_${DateTime.now().millisecondsSinceEpoch}',
-          message: (l10n) =>
-              l10n.modLooseUnpairedWarning(result.unpairedWarnings.join(', ')),
-          icon: Icons.warning_amber,
-          color: AppColors.warning,
-          type: NotificationType.general,
-        ));
+        notif.addNotification(
+          NotificationItem(
+            id: 'mod_unpaired_${DateTime.now().millisecondsSinceEpoch}',
+            message: (l10n) => l10n.modLooseUnpairedWarning(
+              result.unpairedWarnings.join(', '),
+            ),
+            icon: Icons.warning_amber,
+            color: AppColors.warning,
+            type: NotificationType.general,
+          ),
+        );
       }
     } else {
-      notif.addNotification(NotificationItem(
-        id: 'mod_install_fail_${DateTime.now().millisecondsSinceEpoch}',
-        message: (l10n) => l10n.modInstallFailed(_localizeReason(l10n, result.errorMessage ?? 'unknown')),
-        icon: Icons.error_outline,
-        color: AppColors.error,
-        type: NotificationType.general,
-      ));
+      notif.addNotification(
+        NotificationItem(
+          id: 'mod_install_fail_${DateTime.now().millisecondsSinceEpoch}',
+          message: (l10n) => l10n.modInstallFailed(
+            _localizeReason(l10n, result.errorMessage ?? 'unknown'),
+          ),
+          icon: Icons.error_outline,
+          color: AppColors.error,
+          type: NotificationType.general,
+        ),
+      );
     }
   }
 
@@ -470,7 +493,9 @@ class _ModsViewState extends ConsumerState<ModsView> {
         _busyMessage = currentFile == null || currentFile.isEmpty
             ? l10n.extractingArchivePercent((percent * 100).round())
             : l10n.extractingArchivePercentFile(
-                (percent * 100).round(), currentFile);
+                (percent * 100).round(),
+                currentFile,
+              );
       });
     }
 
@@ -479,15 +504,17 @@ class _ModsViewState extends ConsumerState<ModsView> {
       _busyMessage = l10n.modInstallBusy;
     });
 
-    final results = await withBusyGuard(
-      ref,
-      () => notifier.installVariants(
-        _gameDir,
-        sourcePath,
-        requests,
-        onExtractProgress: onExtract,
-      ),
-    ) as List<InstallResult>;
+    final results =
+        await withBusyGuard(
+              ref,
+              () => notifier.installVariants(
+                _gameDir,
+                sourcePath,
+                requests,
+                onExtractProgress: onExtract,
+              ),
+            )
+            as List<InstallResult>;
 
     if (!mounted) return;
 
@@ -500,8 +527,10 @@ class _ModsViewState extends ConsumerState<ModsView> {
         installed++;
         lastId = r.installedId;
       } else {
-        failures.add('${chosen[i].label}: '
-            '${_localizeReason(l10n, r.errorMessage ?? 'unknown')}');
+        failures.add(
+          '${chosen[i].label}: '
+          '${_localizeReason(l10n, r.errorMessage ?? 'unknown')}',
+        );
       }
     }
 
@@ -511,36 +540,48 @@ class _ModsViewState extends ConsumerState<ModsView> {
     });
 
     if (installed > 0) {
-      notif.addNotification(NotificationItem(
-        id: 'mod_variants_${DateTime.now().millisecondsSinceEpoch}',
-        message: (l10n) => l10n.modVariantInstalledToast(installed),
-        icon: Icons.check_circle,
-        color: AppColors.success,
-        type: NotificationType.general,
-      ));
+      notif.addNotification(
+        NotificationItem(
+          id: 'mod_variants_${DateTime.now().millisecondsSinceEpoch}',
+          message: (l10n) => l10n.modVariantInstalledToast(installed),
+          icon: Icons.check_circle,
+          color: AppColors.success,
+          type: NotificationType.general,
+        ),
+      );
     }
     for (final f in failures) {
-      notif.addNotification(NotificationItem(
-        id: 'mod_variant_fail_${DateTime.now().millisecondsSinceEpoch}_$f',
-        message: (l10n) => l10n.modInstallFailed(f),
-        icon: Icons.error_outline,
-        color: AppColors.error,
-        type: NotificationType.general,
-      ));
+      notif.addNotification(
+        NotificationItem(
+          id: 'mod_variant_fail_${DateTime.now().millisecondsSinceEpoch}_$f',
+          message: (l10n) => l10n.modInstallFailed(f),
+          icon: Icons.error_outline,
+          color: AppColors.error,
+          type: NotificationType.general,
+        ),
+      );
     }
   }
 
   String _localizeReason(AppLocalizations l10n, String code) {
     switch (code) {
-      case 'unknown_drop': return l10n.modInstallReasonUnknownDrop;
-      case 'invalid_mixed': return l10n.modInstallReasonInvalidMixed;
-      case 'native_empty': return l10n.modInstallReasonNativeEmpty;
-      case 'data_empty': return l10n.modInstallReasonDataEmpty;
-      case 'texture_only': return l10n.modInstallReasonTextureOnly;
-      case 'unsupported_nasa': return l10n.modInstallReasonUnsupportedNasa;
-      case 'archive_extract_failed': return l10n.modInstallReasonArchiveExtractFailed;
+      case 'unknown_drop':
+        return l10n.modInstallReasonUnknownDrop;
+      case 'invalid_mixed':
+        return l10n.modInstallReasonInvalidMixed;
+      case 'native_empty':
+        return l10n.modInstallReasonNativeEmpty;
+      case 'data_empty':
+        return l10n.modInstallReasonDataEmpty;
+      case 'texture_only':
+        return l10n.modInstallReasonTextureOnly;
+      case 'unsupported_nasa':
+        return l10n.modInstallReasonUnsupportedNasa;
+      case 'archive_extract_failed':
+        return l10n.modInstallReasonArchiveExtractFailed;
       default:
-        if (code.startsWith('move_failed')) return l10n.modInstallReasonMoveFailed;
+        if (code.startsWith('move_failed'))
+          return l10n.modInstallReasonMoveFailed;
         return code;
     }
   }
@@ -552,11 +593,14 @@ class _ModsViewState extends ConsumerState<ModsView> {
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setLocal) => AlertDialog(
+        builder: (ctx, setLocal) => AppDialog(
           backgroundColor: AppColors.backgroundCard,
           title: Text(
             l10n.modUninstallConfirmTitle,
-            style: TextStyle(color: AppColors.error, fontSize: AppSizes.fontLG(ctx)),
+            style: TextStyle(
+              color: AppColors.error,
+              fontSize: AppSizes.fontLG(ctx),
+            ),
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -564,7 +608,10 @@ class _ModsViewState extends ConsumerState<ModsView> {
             children: [
               Text(
                 l10n.modUninstallConfirmBody(mod.id),
-                style: TextStyle(color: AppColors.textSecondary, fontSize: AppSizes.fontSM(ctx)),
+                style: TextStyle(
+                  color: AppColors.textSecondary,
+                  fontSize: AppSizes.fontSM(ctx),
+                ),
               ),
               if (hasBundled) ...[
                 SizedBox(height: AppSizes.spacingMD(ctx)),
@@ -582,7 +629,9 @@ class _ModsViewState extends ConsumerState<ModsView> {
                       SizedBox(width: AppSizes.spacingSM(ctx)),
                       Expanded(
                         child: Padding(
-                          padding: EdgeInsets.only(top: AppSizes.paddingSM(ctx)),
+                          padding: EdgeInsets.only(
+                            top: AppSizes.paddingSM(ctx),
+                          ),
                           child: Text(
                             l10n.modUninstallAlsoTexturesLabel(
                               mod.bundledTexturePacks.join(', '),
@@ -603,13 +652,23 @@ class _ModsViewState extends ConsumerState<ModsView> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(ctx).pop(false),
-              child: Text(AppLocalizations.of(ctx)!.actionCancel, style: TextStyle(color: AppColors.textMuted, fontSize: AppSizes.fontSM(ctx))),
+              child: Text(
+                AppLocalizations.of(ctx)!.actionCancel,
+                style: TextStyle(
+                  color: AppColors.textMuted,
+                  fontSize: AppSizes.fontSM(ctx),
+                ),
+              ),
             ),
             TextButton(
               onPressed: () => Navigator.of(ctx).pop(true),
               child: Text(
                 l10n.modUninstall,
-                style: TextStyle(color: AppColors.error, fontSize: AppSizes.fontSM(ctx), fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  color: AppColors.error,
+                  fontSize: AppSizes.fontSM(ctx),
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ],
@@ -638,19 +697,20 @@ class _ModsViewState extends ConsumerState<ModsView> {
     }
     if (!mounted) return;
     if (_selectedId == mod.id) setState(() => _selectedId = null);
-    ref.read(notificationStateControllerProvider.notifier).addNotification(NotificationItem(
-          id: 'mod_uninstalled_${DateTime.now().millisecondsSinceEpoch}',
-          message: (l10n) => l10n.modUninstalled(mod.id),
-          icon: Icons.delete_outline,
-          color: AppColors.textMuted,
-          type: NotificationType.general,
-        ));
+    ref
+        .read(notificationStateControllerProvider.notifier)
+        .addNotification(
+          NotificationItem(
+            id: 'mod_uninstalled_${DateTime.now().millisecondsSinceEpoch}',
+            message: (l10n) => l10n.modUninstalled(mod.id),
+            icon: Icons.delete_outline,
+            color: AppColors.textMuted,
+            type: NotificationType.general,
+          ),
+        );
   }
 
-  List<InstalledMod> _applyFilter(
-    List<InstalledMod> mods,
-    ModNamesData names,
-  ) {
+  List<InstalledMod> _applyFilter(List<InstalledMod> mods, ModNamesData names) {
     String shownName(InstalledMod m) =>
         names.customNameOf(m.id) ?? m.displayName;
 
@@ -727,8 +787,9 @@ class _ModsViewState extends ConsumerState<ModsView> {
                             const estimatedRowHeight = 52.0;
                             final wouldOverflow =
                                 data.mods.length * estimatedRowHeight >
-                                    constraints.maxHeight - 48;
-                            final showSearch = wouldOverflow ||
+                                constraints.maxHeight - 48;
+                            final showSearch =
+                                wouldOverflow ||
                                 (_filter.isNotEmpty && data.mods.isNotEmpty);
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -740,7 +801,11 @@ class _ModsViewState extends ConsumerState<ModsView> {
                                 Expanded(
                                   child: KeyedSubtree(
                                     key: _listKey,
-                                    child: _list(filtered, data.isLoading, l10n),
+                                    child: _list(
+                                      filtered,
+                                      data.isLoading,
+                                      l10n,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -776,7 +841,8 @@ class _ModsViewState extends ConsumerState<ModsView> {
                                       AppSizes.borderRadius(context),
                                     ),
                                     border: Border.all(
-                                        color: AppColors.borderLight),
+                                      color: AppColors.borderLight,
+                                    ),
                                   ),
                                   child: ModDetailPanel(
                                     mod: selected,
@@ -888,13 +954,15 @@ class _ModsViewState extends ConsumerState<ModsView> {
     if (!mounted) return;
     if (archives.isEmpty) {
       setState(() => _busy = false);
-      notif.addNotification(NotificationItem(
-        id: 'bulk_none_${DateTime.now().millisecondsSinceEpoch}',
-        message: (l10n) => l10n.modBulkInstallNone,
-        icon: Icons.info_outline,
-        color: AppColors.warning,
-        type: NotificationType.general,
-      ));
+      notif.addNotification(
+        NotificationItem(
+          id: 'bulk_none_${DateTime.now().millisecondsSinceEpoch}',
+          message: (l10n) => l10n.modBulkInstallNone,
+          icon: Icons.info_outline,
+          color: AppColors.warning,
+          type: NotificationType.general,
+        ),
+      );
       return;
     }
 
@@ -906,7 +974,11 @@ class _ModsViewState extends ConsumerState<ModsView> {
         final archive = archives[i];
         final baseName = p.basenameWithoutExtension(archive);
         setState(() {
-          _busyMessage = l10n.modBulkInstallBusy(i + 1, archives.length, baseName);
+          _busyMessage = l10n.modBulkInstallBusy(
+            i + 1,
+            archives.length,
+            baseName,
+          );
         });
 
         final result = await withBusyGuard(
@@ -927,21 +999,27 @@ class _ModsViewState extends ConsumerState<ModsView> {
     await ref.read(modsStateControllerProvider.notifier).loadMods(_gameDir);
     if (!mounted) return;
 
-    notif.addNotification(NotificationItem(
-      id: 'bulk_done_${DateTime.now().millisecondsSinceEpoch}',
-      message: (l10n) => l10n.modBulkInstallDone(installed, archives.length),
-      icon: Icons.check_circle,
-      color: installed == archives.length ? AppColors.success : AppColors.warning,
-      type: NotificationType.general,
-    ));
-    for (final f in failures) {
-      notif.addNotification(NotificationItem(
-        id: 'bulk_fail_${DateTime.now().millisecondsSinceEpoch}_$f',
-        message: (l10n) => l10n.modInstallFailed(f),
-        icon: Icons.error_outline,
-        color: AppColors.error,
+    notif.addNotification(
+      NotificationItem(
+        id: 'bulk_done_${DateTime.now().millisecondsSinceEpoch}',
+        message: (l10n) => l10n.modBulkInstallDone(installed, archives.length),
+        icon: Icons.check_circle,
+        color: installed == archives.length
+            ? AppColors.success
+            : AppColors.warning,
         type: NotificationType.general,
-      ));
+      ),
+    );
+    for (final f in failures) {
+      notif.addNotification(
+        NotificationItem(
+          id: 'bulk_fail_${DateTime.now().millisecondsSinceEpoch}_$f',
+          message: (l10n) => l10n.modInstallFailed(f),
+          icon: Icons.error_outline,
+          color: AppColors.error,
+          type: NotificationType.general,
+        ),
+      );
     }
   }
 
@@ -969,13 +1047,15 @@ class _ModsViewState extends ConsumerState<ModsView> {
     if (!mounted) return;
     if (count == 0) {
       setState(() => _busy = false);
-      notif.addNotification(NotificationItem(
-        id: 'loose_none_${DateTime.now().millisecondsSinceEpoch}',
-        message: (l10n) => l10n.modLooseInstallNone,
-        icon: Icons.info_outline,
-        color: AppColors.warning,
-        type: NotificationType.general,
-      ));
+      notif.addNotification(
+        NotificationItem(
+          id: 'loose_none_${DateTime.now().millisecondsSinceEpoch}',
+          message: (l10n) => l10n.modLooseInstallNone,
+          icon: Icons.info_outline,
+          color: AppColors.warning,
+          type: NotificationType.general,
+        ),
+      );
       return;
     }
 
@@ -989,8 +1069,9 @@ class _ModsViewState extends ConsumerState<ModsView> {
           folder,
           (done) {
             if (mounted) {
-              setState(() =>
-                  _busyMessage = l10n.modLooseInstallProgress(done, count));
+              setState(
+                () => _busyMessage = l10n.modLooseInstallProgress(done, count),
+              );
             }
           },
           () {
@@ -1009,33 +1090,41 @@ class _ModsViewState extends ConsumerState<ModsView> {
     if (!mounted) return;
 
     if (result.success) {
-      notif.addNotification(NotificationItem(
-        id: 'loose_done_${DateTime.now().millisecondsSinceEpoch}',
-        message: (l10n) =>
-            l10n.modLooseInstallDone(count, result.installedId ?? ''),
-        icon: Icons.check_circle,
-        color: AppColors.success,
-        type: NotificationType.general,
-      ));
-      if (result.unpairedWarnings.isNotEmpty) {
-        notif.addNotification(NotificationItem(
-          id: 'loose_unpaired_${DateTime.now().millisecondsSinceEpoch}',
+      notif.addNotification(
+        NotificationItem(
+          id: 'loose_done_${DateTime.now().millisecondsSinceEpoch}',
           message: (l10n) =>
-              l10n.modLooseUnpairedWarning(result.unpairedWarnings.join(', ')),
-          icon: Icons.warning_amber,
-          color: AppColors.warning,
+              l10n.modLooseInstallDone(count, result.installedId ?? ''),
+          icon: Icons.check_circle,
+          color: AppColors.success,
           type: NotificationType.general,
-        ));
+        ),
+      );
+      if (result.unpairedWarnings.isNotEmpty) {
+        notif.addNotification(
+          NotificationItem(
+            id: 'loose_unpaired_${DateTime.now().millisecondsSinceEpoch}',
+            message: (l10n) => l10n.modLooseUnpairedWarning(
+              result.unpairedWarnings.join(', '),
+            ),
+            icon: Icons.warning_amber,
+            color: AppColors.warning,
+            type: NotificationType.general,
+          ),
+        );
       }
     } else {
-      notif.addNotification(NotificationItem(
-        id: 'loose_fail_${DateTime.now().millisecondsSinceEpoch}',
-        message: (l10n) =>
-            l10n.modInstallFailed(_localizeReason(l10n, result.errorMessage ?? 'unknown')),
-        icon: Icons.error_outline,
-        color: AppColors.error,
-        type: NotificationType.general,
-      ));
+      notif.addNotification(
+        NotificationItem(
+          id: 'loose_fail_${DateTime.now().millisecondsSinceEpoch}',
+          message: (l10n) => l10n.modInstallFailed(
+            _localizeReason(l10n, result.errorMessage ?? 'unknown'),
+          ),
+          icon: Icons.error_outline,
+          color: AppColors.error,
+          type: NotificationType.general,
+        ),
+      );
     }
   }
 
@@ -1093,15 +1182,20 @@ class _ModsViewState extends ConsumerState<ModsView> {
             variantSubPath: v.subPath,
           ),
       ];
-      final results =
-          await ModsService.installVariants(_gameDir, archive, requests);
+      final results = await ModsService.installVariants(
+        _gameDir,
+        archive,
+        requests,
+      );
       final ok = results.where((r) => r.success).length;
       if (ok == 0) {
         return InstallResult.fail(
           results.firstOrNull?.errorMessage ?? 'unknown',
         );
       }
-      return InstallResult.ok(results.firstWhere((r) => r.success).installedId!);
+      return InstallResult.ok(
+        results.firstWhere((r) => r.success).installedId!,
+      );
     }
 
     var name = requestedName;
@@ -1148,8 +1242,11 @@ class _ModsViewState extends ConsumerState<ModsView> {
               value: TutorialKind.ecosystem,
               child: Row(
                 children: [
-                  Icon(Icons.hub_outlined,
-                      size: 16, color: AppColors.accentPrimary),
+                  Icon(
+                    Icons.hub_outlined,
+                    size: 16,
+                    color: AppColors.accentPrimary,
+                  ),
                   const SizedBox(width: 8),
                   Text(
                     l10n.modsTutorialMenuEcosystem,
@@ -1165,8 +1262,11 @@ class _ModsViewState extends ConsumerState<ModsView> {
               value: TutorialKind.installMod,
               child: Row(
                 children: [
-                  Icon(Icons.download_outlined,
-                      size: 16, color: AppColors.accentPrimary),
+                  Icon(
+                    Icons.download_outlined,
+                    size: 16,
+                    color: AppColors.accentPrimary,
+                  ),
                   const SizedBox(width: 8),
                   Text(
                     l10n.modsTutorialMenuInstall,
@@ -1182,8 +1282,11 @@ class _ModsViewState extends ConsumerState<ModsView> {
               value: TutorialKind.profiles,
               child: Row(
                 children: [
-                  Icon(Icons.layers_outlined,
-                      size: 16, color: AppColors.accentPrimary),
+                  Icon(
+                    Icons.layers_outlined,
+                    size: 16,
+                    color: AppColors.accentPrimary,
+                  ),
                   const SizedBox(width: 8),
                   Text(
                     l10n.modsTutorialMenuProfiles,
@@ -1199,8 +1302,11 @@ class _ModsViewState extends ConsumerState<ModsView> {
               value: TutorialKind.supporting,
               child: Row(
                 children: [
-                  Icon(Icons.favorite_outline,
-                      size: 16, color: AppColors.accentPrimary),
+                  Icon(
+                    Icons.favorite_outline,
+                    size: 16,
+                    color: AppColors.accentPrimary,
+                  ),
                   const SizedBox(width: 8),
                   Text(
                     l10n.modsTutorialMenuSupporting,
@@ -1238,7 +1344,10 @@ class _ModsViewState extends ConsumerState<ModsView> {
     return TextField(
       controller: _searchController,
       onChanged: (v) => setState(() => _filter = v),
-      style: TextStyle(color: AppColors.textPrimary, fontSize: AppSizes.fontMD(context)),
+      style: TextStyle(
+        color: AppColors.textPrimary,
+        fontSize: AppSizes.fontMD(context),
+      ),
       decoration: InputDecoration(
         isDense: true,
         contentPadding: EdgeInsets.symmetric(
@@ -1246,10 +1355,17 @@ class _ModsViewState extends ConsumerState<ModsView> {
           vertical: AppSizes.cardPaddingV(context),
         ),
         hintText: l10n.modSearchPlaceholder,
-        hintStyle: TextStyle(color: AppColors.textMuted, fontSize: AppSizes.fontMD(context)),
+        hintStyle: TextStyle(
+          color: AppColors.textMuted,
+          fontSize: AppSizes.fontMD(context),
+        ),
         filled: true,
         fillColor: AppColors.inputBackground,
-        prefixIcon: Icon(Icons.search, size: AppSizes.iconSM(context), color: AppColors.textMuted),
+        prefixIcon: Icon(
+          Icons.search,
+          size: AppSizes.iconSM(context),
+          color: AppColors.textMuted,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppSizes.borderRadius(context)),
           borderSide: BorderSide.none,
@@ -1258,17 +1374,16 @@ class _ModsViewState extends ConsumerState<ModsView> {
     );
   }
 
-  Widget _list(
-    List<InstalledMod> mods,
-    bool loading,
-    AppLocalizations l10n,
-  ) {
+  Widget _list(List<InstalledMod> mods, bool loading, AppLocalizations l10n) {
     if (loading && mods.isEmpty) {
       return Center(
         child: SizedBox(
           width: AppSizes.iconLG(context),
           height: AppSizes.iconLG(context),
-          child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.accentPrimary),
+          child: CircularProgressIndicator(
+            strokeWidth: 2,
+            color: AppColors.accentPrimary,
+          ),
         ),
       );
     }
@@ -1290,7 +1405,10 @@ class _ModsViewState extends ConsumerState<ModsView> {
               SizedBox(height: AppSizes.spacingMD(context)),
               Text(
                 l10n.modListEmptyHint,
-                style: TextStyle(color: AppColors.textMuted, fontSize: AppSizes.fontSM(context)),
+                style: TextStyle(
+                  color: AppColors.textMuted,
+                  fontSize: AppSizes.fontSM(context),
+                ),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -1325,17 +1443,19 @@ class _ModsViewState extends ConsumerState<ModsView> {
     final children = <Widget>[];
     for (final entry in grouped.entries) {
       final collapsed = _collapsedGroups.contains(entry.key);
-      children.add(ModGroupHeader(
-        key: ValueKey('group_${entry.key.name}'),
-        kind: entry.key,
-        count: entry.value.length,
-        collapsed: collapsed,
-        onTap: () => setState(() {
-          if (!_collapsedGroups.remove(entry.key)) {
-            _collapsedGroups.add(entry.key);
-          }
-        }),
-      ));
+      children.add(
+        ModGroupHeader(
+          key: ValueKey('group_${entry.key.name}'),
+          kind: entry.key,
+          count: entry.value.length,
+          collapsed: collapsed,
+          onTap: () => setState(() {
+            if (!_collapsedGroups.remove(entry.key)) {
+              _collapsedGroups.add(entry.key);
+            }
+          }),
+        ),
+      );
       if (collapsed) continue;
       for (final m in entry.value) {
         children.add(_row(m, group: entry.key));
@@ -1426,8 +1546,8 @@ String? _stageDroppedLooseFilesSync(List<String> files) {
   if (files.isEmpty) return null;
   final root = Directory.systemTemp.createTempSync('yp_loose_drop_');
   final sub = Directory(
-      p.join(root.path, p.basenameWithoutExtension(files.first)))
-    ..createSync();
+    p.join(root.path, p.basenameWithoutExtension(files.first)),
+  )..createSync();
   var copied = 0;
   for (final f in files) {
     try {
@@ -1447,14 +1567,10 @@ String? _stageDroppedLooseFilesSync(List<String> files) {
 String? _stageLooseFilesSync(String root, void Function(String) report) {
   final dir = Directory(root);
   if (!dir.existsSync()) return null;
-  final loose = dir
-      .listSync(followLinks: false)
-      .whereType<File>()
-      .where((f) {
-        final ext = p.extension(f.path).toLowerCase();
-        return ext == '.dat' || ext == '.dtt';
-      })
-      .toList();
+  final loose = dir.listSync(followLinks: false).whereType<File>().where((f) {
+    final ext = p.extension(f.path).toLowerCase();
+    return ext == '.dat' || ext == '.dtt';
+  }).toList();
   if (loose.isEmpty) return null;
   final staged = Directory.systemTemp.createTempSync('yp_loose_stage_');
   var done = 0;
@@ -1471,11 +1587,40 @@ String? _stageLooseFilesSync(String root, void Function(String) report) {
 /// Subdirs accepted INSIDE a `data/` overlay. Includes everything NAMS
 /// recognises.
 const _modDataSubdirs = <String>{
-  'pl', 'wp', 'em', 'ba', 'bg', 'bh', 'et', 'it', 'um',
-  'wd1', 'wd2', 'wd3', 'wd4', 'wd5', 'wda',
-  'core', 'ph1', 'ph2', 'ph3', 'phf', 'quest', 'st1', 'st2', 'st5',
-  'novel', 'subtitle', 'txtmess', 'ui',
-  'effect', 'enlighten', 'font', 'misctex', 'movie', 'sound',
+  'pl',
+  'wp',
+  'em',
+  'ba',
+  'bg',
+  'bh',
+  'et',
+  'it',
+  'um',
+  'wd1',
+  'wd2',
+  'wd3',
+  'wd4',
+  'wd5',
+  'wda',
+  'core',
+  'ph1',
+  'ph2',
+  'ph3',
+  'phf',
+  'quest',
+  'st1',
+  'st2',
+  'st5',
+  'novel',
+  'subtitle',
+  'txtmess',
+  'ui',
+  'effect',
+  'enlighten',
+  'font',
+  'misctex',
+  'movie',
+  'sound',
 };
 
 /// Subdirs accepted at the ROOT of a drop (bare-outfit / weapon / effect /
@@ -1483,10 +1628,33 @@ const _modDataSubdirs = <String>{
 /// `font/`, `ui/` that are ambiguous and belong on other tabs (e.g. a loose
 /// `movie/` at the root is a Cutscenes tab drop, not a NAMS mod).
 const _modRootDataSubdirs = <String>{
-  'pl', 'wp', 'em', 'ba', 'bg', 'bh', 'et', 'it', 'um',
-  'wd1', 'wd2', 'wd3', 'wd4', 'wd5', 'wda',
-  'core', 'ph1', 'ph2', 'ph3', 'phf', 'quest', 'st1', 'st2', 'st5',
-  'effect', 'enlighten', 'misctex',
+  'pl',
+  'wp',
+  'em',
+  'ba',
+  'bg',
+  'bh',
+  'et',
+  'it',
+  'um',
+  'wd1',
+  'wd2',
+  'wd3',
+  'wd4',
+  'wd5',
+  'wda',
+  'core',
+  'ph1',
+  'ph2',
+  'ph3',
+  'phf',
+  'quest',
+  'st1',
+  'st2',
+  'st5',
+  'effect',
+  'enlighten',
+  'misctex',
 };
 
 bool _isLoosePlFile(String fileName) {
@@ -1684,6 +1852,7 @@ List<String> _collectShallowPaths(Directory root, int maxDepth) {
       }
     }
   }
+
   walk(root, '', 1);
   return out;
 }

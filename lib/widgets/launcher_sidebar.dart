@@ -7,10 +7,16 @@ import 'package:yp_launcher/theme/app_theme.dart';
 import 'package:yp_launcher/theme/nier_curves.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
 
+const docsTabIndex = 10;
+
 class SidebarKeys {
   SidebarKeys._();
-  static final GlobalKey texturesTab = GlobalKey(debugLabel: 'sidebar-textures');
-  static final GlobalKey cutscenesTab = GlobalKey(debugLabel: 'sidebar-cutscenes');
+  static final GlobalKey texturesTab = GlobalKey(
+    debugLabel: 'sidebar-textures',
+  );
+  static final GlobalKey cutscenesTab = GlobalKey(
+    debugLabel: 'sidebar-cutscenes',
+  );
 }
 
 class SidebarTabItem {
@@ -113,8 +119,9 @@ class _LauncherSidebarState extends State<LauncherSidebar> {
         children: [
           Expanded(
             child: SingleChildScrollView(
-              padding:
-                  EdgeInsets.symmetric(vertical: AppSizes.paddingMD(context)),
+              padding: EdgeInsets.symmetric(
+                vertical: AppSizes.paddingMD(context),
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -139,8 +146,8 @@ class _LauncherSidebarState extends State<LauncherSidebar> {
                           key: item.index == 3
                               ? SidebarKeys.texturesTab
                               : item.index == 7
-                                  ? SidebarKeys.cutscenesTab
-                                  : null,
+                              ? SidebarKeys.cutscenesTab
+                              : null,
                           child: _SidebarTab(
                             item: item,
                             active: item.index == widget.activeIndex,
@@ -184,9 +191,7 @@ class _VersionFooter extends StatelessWidget {
           ),
           decoration: BoxDecoration(
             color: AppColors.accentPrimary.withValues(alpha: 0.10),
-            borderRadius: BorderRadius.circular(
-              AppSizes.borderRadius(context),
-            ),
+            borderRadius: BorderRadius.circular(AppSizes.borderRadius(context)),
             border: Border.all(
               color: AppColors.accentPrimary.withValues(alpha: 0.3),
             ),
@@ -314,10 +319,7 @@ class _SectionDivider extends StatelessWidget {
 class _CollapsedToggleIcon extends StatefulWidget {
   final bool collapsed;
   final VoidCallback onToggle;
-  const _CollapsedToggleIcon({
-    required this.collapsed,
-    required this.onToggle,
-  });
+  const _CollapsedToggleIcon({required this.collapsed, required this.onToggle});
 
   @override
   State<_CollapsedToggleIcon> createState() => _CollapsedToggleIconState();
@@ -421,7 +423,11 @@ class _SidebarTabState extends State<_SidebarTab>
           : MainAxisAlignment.center,
       children: [
         SizedBox(width: widget.showLabel ? AppSizes.cardPaddingH(context) : 0),
-        Icon(widget.item.icon, size: AppSizes.iconMD(context), color: iconColor),
+        Icon(
+          widget.item.icon,
+          size: AppSizes.iconMD(context),
+          color: iconColor,
+        ),
         if (widget.showLabel) ...[
           SizedBox(width: AppSizes.spacingMD(context)),
           Expanded(
@@ -445,26 +451,24 @@ class _SidebarTabState extends State<_SidebarTab>
     final iconColor = widget.active
         ? AppColors.accentPrimary
         : _hovered
-            ? AppColors.textPrimary
-            : AppColors.textMuted;
+        ? AppColors.textPrimary
+        : AppColors.textMuted;
     final textColor = widget.active
         ? AppColors.accentPrimary
         : _hovered
-            ? AppColors.textPrimary
-            : AppColors.textSecondary;
+        ? AppColors.textPrimary
+        : AppColors.textSecondary;
     return AnimatedContainer(
       duration: const Duration(milliseconds: 100),
       decoration: BoxDecoration(
         color: widget.active
             ? AppColors.accentPrimary.withValues(alpha: 0.10)
             : _hovered
-                ? AppColors.surfaceLight
-                : Colors.transparent,
+            ? AppColors.surfaceLight
+            : Colors.transparent,
         border: Border(
           left: BorderSide(
-            color: widget.active
-                ? AppColors.accentPrimary
-                : Colors.transparent,
+            color: widget.active ? AppColors.accentPrimary : Colors.transparent,
             width: 3,
           ),
         ),
@@ -541,11 +545,7 @@ List<SidebarSection> buildLauncherSections(AppLocalizations l10n) {
           label: l10n.tabMods,
           icon: Icons.extension_outlined,
         ),
-        SidebarTabItem(
-          index: 3,
-          label: l10n.tabTextures,
-          icon: Icons.texture,
-        ),
+        SidebarTabItem(index: 3, label: l10n.tabTextures, icon: Icons.texture),
         SidebarTabItem(
           index: 7,
           label: l10n.tabCutscenes,
@@ -556,6 +556,17 @@ List<SidebarSection> buildLauncherSections(AppLocalizations l10n) {
           label: l10n.tabThirdParty,
           icon: Icons.auto_fix_high,
         ),
+        // DOCS-WIP: docs is work in progress for later
+        // SidebarTabItem(
+        //   index: 10,
+        //   label: l10n.tabDocs,
+        //   icon: Icons.menu_book_outlined,
+        // ),
+        // SidebarTabItem(
+        //   index: 11,
+        //   label: l10n.tabTools,
+        //   icon: Icons.handyman_outlined,
+        // ),
       ],
     ),
     SidebarSection(
@@ -563,11 +574,7 @@ List<SidebarSection> buildLauncherSections(AppLocalizations l10n) {
       collapsible: true,
       defaultCollapsed: true,
       items: [
-        SidebarTabItem(
-          index: 1,
-          label: l10n.tabNams,
-          icon: Icons.tune,
-        ),
+        SidebarTabItem(index: 1, label: l10n.tabNams, icon: Icons.tune),
         SidebarTabItem(
           index: 4,
           label: l10n.tabYorhaProtocol,

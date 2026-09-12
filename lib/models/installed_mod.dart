@@ -20,11 +20,7 @@ enum DataCategory {
   other,
 }
 
-enum ModConflictKind {
-  overlappingDataFile,
-  outfitIdCollision,
-  vanillaOutfitId,
-}
+enum ModConflictKind { overlappingDataFile, outfitIdCollision, vanillaOutfitId }
 
 class ManifestInfo {
   final String? id;
@@ -57,7 +53,6 @@ class NativeSummary {
     this.totalEntityFiles = 0,
   });
 }
-
 
 class DataDirEntry {
   final String dirName;
@@ -287,16 +282,16 @@ class InstallResult {
     String id, {
     this.sideInstalledTexturePacks = const [],
     this.unpairedWarnings = const [],
-  })  : success = true,
-        installedId = id,
-        errorMessage = null;
+  }) : success = true,
+       installedId = id,
+       errorMessage = null;
 
   const InstallResult.fail(String message)
-      : success = false,
-        installedId = null,
-        errorMessage = message,
-        sideInstalledTexturePacks = const [],
-        unpairedWarnings = const [];
+    : success = false,
+      installedId = null,
+      errorMessage = message,
+      sideInstalledTexturePacks = const [],
+      unpairedWarnings = const [];
 }
 
 const Map<String, DataCategory> dataDirCategoryTable = {
@@ -388,7 +383,10 @@ const Map<String, String> playerModelLookup = {
 };
 
 const Set<String> conditionalOutfitSlots = {
-  'pl0000', 'pl000d',
-  'pl0100', 'pl010d',
-  'pl0200', 'pl020d',
+  'pl0000',
+  'pl000d',
+  'pl0100',
+  'pl010d',
+  'pl0200',
+  'pl020d',
 };

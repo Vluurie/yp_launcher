@@ -52,11 +52,7 @@ class DefaultEntry {
   /// item, which is the only choice for a mod that ships a single outfit.
   final int? outfitId;
 
-  const DefaultEntry({
-    required this.path,
-    required this.kind,
-    this.outfitId,
-  });
+  const DefaultEntry({required this.path, required this.kind, this.outfitId});
 }
 
 class DefaultModsService {
@@ -80,11 +76,15 @@ class DefaultModsService {
 
   static String get _defaultFile {
     final buffer = StringBuffer()
-      ..writeln('# Mods listed here are active from the moment the game starts,')
+      ..writeln(
+        '# Mods listed here are active from the moment the game starts,',
+      )
       ..writeln('# exactly as if their files were placed in NieRAutomata/data.')
       ..writeln('# Restart the game after editing.')
       ..writeln('#')
-      ..writeln('# Paths are relative to the nams/ folder. Prefix matching is used.')
+      ..writeln(
+        '# Paths are relative to the nams/ folder. Prefix matching is used.',
+      )
       ..writeln();
     for (final kind in DefaultKind.values) {
       buffer.writeln('${kind.key} = []');
@@ -113,16 +113,15 @@ class DefaultModsService {
     String relPath,
     DefaultKind? kind, {
     int? outfitId,
-  }) =>
-      IsolateService.run(
-        _setSync,
-        _SetParams(
-          gameDir: gameDir,
-          relPath: normalize(relPath),
-          kind: kind,
-          outfitId: outfitId,
-        ),
-      );
+  }) => IsolateService.run(
+    _setSync,
+    _SetParams(
+      gameDir: gameDir,
+      relPath: normalize(relPath),
+      kind: kind,
+      outfitId: outfitId,
+    ),
+  );
 
   /// The entry covering `relPath`, if any.
   static DefaultEntry? entryFor(List<DefaultEntry> entries, String relPath) {
@@ -248,9 +247,11 @@ void _setSync(_SetParams p) {
     for (final k in DefaultKind.values)
       k.key: entries
           .where((e) => e.kind == k)
-          .map((e) => e.outfitId == null
-              ? e.path
-              : {'path': e.path, 'outfit_id': e.outfitId})
+          .map(
+            (e) => e.outfitId == null
+                ? e.path
+                : {'path': e.path, 'outfit_id': e.outfitId},
+          )
           .toList(),
   };
   file.writeAsStringSync(TomlService.updateToml(raw, lists));

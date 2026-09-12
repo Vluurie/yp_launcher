@@ -20,9 +20,7 @@ import 'package:yp_launcher/providers/locale_state.dart';
 class LaunchOutcome {
   final bool started;
   final LaunchFailure? failure;
-  const LaunchOutcome.started()
-      : started = true,
-        failure = null;
+  const LaunchOutcome.started() : started = true, failure = null;
   const LaunchOutcome.failed(this.failure) : started = false;
 }
 
@@ -34,8 +32,9 @@ class ProcessService {
       code = prefs.getString(AppStrings.prefKeyLocale);
     } catch (_) {}
     code ??= PlatformDispatcher.instance.locale.languageCode;
-    final supported =
-        kSupportedLocales.any((locale) => locale.languageCode == code);
+    final supported = kSupportedLocales.any(
+      (locale) => locale.languageCode == code,
+    );
     return supported ? code : 'en';
   }
 
@@ -49,42 +48,53 @@ class ProcessService {
 
       final missing = await LauncherSetupService.findMissingFiles();
       if (missing.isNotEmpty) {
-        return LaunchOutcome.failed(LaunchFailure(
-          headline: l10n.errorFilesQuarantined(missing.join(', ')),
-          rawOutput:
-              'Missing required files in launcher directory:\n${missing.join('\n')}\n\n'
-              'These files were quarantined or removed by antivirus software.',
-        ));
+        return LaunchOutcome.failed(
+          LaunchFailure(
+            headline: l10n.errorFilesQuarantined(missing.join(', ')),
+            rawOutput:
+                'Missing required files in launcher directory:\n${missing.join('\n')}\n\n'
+                'These files were quarantined or removed by antivirus software.',
+          ),
+        );
       }
 
       if (!await LauncherSetupService.isLauncherDirWritable()) {
-        return LaunchOutcome.failed(LaunchFailure(
-          headline: l10n.errorDirNotWritable,
-          rawOutput: l10n.errorDirNotWritableBody(
-            LauncherSetupService.launcherDirectory,
+        return LaunchOutcome.failed(
+          LaunchFailure(
+            headline: l10n.errorDirNotWritable,
+            rawOutput: l10n.errorDirNotWritableBody(
+              LauncherSetupService.launcherDirectory,
+            ),
           ),
-        ));
+        );
       }
 
       final launcherPaths = await LauncherSetupService.getLauncherPaths();
 
       final nierExePath = path.join(installDirectory, AppStrings.gameExeName);
       if (!await File(nierExePath).exists()) {
-        return LaunchOutcome.failed(LaunchFailure(
-          headline: l10n.errorExeNotFound(installDirectory),
-          rawOutput:
-              'NieRAutomata.exe was not found at:\n$nierExePath\n\n'
-              'The game install path saved in the launcher may be wrong, '
-              'or the drive letter changed.',
-        ));
+        return LaunchOutcome.failed(
+          LaunchFailure(
+            headline: l10n.errorExeNotFound(installDirectory),
+            rawOutput:
+                'NieRAutomata.exe was not found at:\n$nierExePath\n\n'
+                'The game install path saved in the launcher may be wrong, '
+                'or the drive letter changed.',
+          ),
+        );
       }
 
       final namsDir = path.join(installDirectory, 'nams');
       if (!await LauncherSetupService.isDirWritable(namsDir)) {
-        return LaunchOutcome.failed(LaunchFailure(
-          headline: l10n.errorGameDirNotWritable,
-          rawOutput: l10n.errorGameDirNotWritableBody(installDirectory, namsDir),
-        ));
+        return LaunchOutcome.failed(
+          LaunchFailure(
+            headline: l10n.errorGameDirNotWritable,
+            rawOutput: l10n.errorGameDirNotWritableBody(
+              installDirectory,
+              namsDir,
+            ),
+          ),
+        );
       }
 
       await ModsService.syncDlcSlots(installDirectory);
@@ -94,13 +104,12 @@ class ProcessService {
       );
       await LogService.clearLog(AppStrings.namsLogName);
 
-      LaunchCommand command;
+      final ({LaunchCommand command, bool preferGpu}) launch;
       try {
-        command = await PlatformAdapter.current.buildLaunchCommand(
+        launch = await _resolveLaunchCommand(
           namsExe: launcherPaths['namsExe']!,
-          gameDir: installDirectory,
-          gameExe: nierExePath,
           launcherDir: launcherPaths['launcherDir']!,
+          installDirectory: installDirectory,
           l10n: l10n,
         );
       } on LaunchUnavailable catch (e) {
@@ -108,31 +117,18 @@ class ProcessService {
           LaunchFailure(headline: e.headline, rawOutput: e.detail),
         );
       }
+      final command = launch.command;
 
-      if (Platform.isLinux) {
-        final wrapper = await LaunchWrapperService.read();
-        command = LaunchWrapperService.wrap(command, wrapper);
-      }
-
-      var preferGpu = true;
-      try {
-        final prefs = await SharedPreferences.getInstance();
-        preferGpu =
-            prefs.getBool(AppStrings.prefKeyPreferDedicatedGpu) ?? true;
-      } catch (_) {}
       GpuPreferenceService.apply(
         launcherPaths['namsExe']!,
-        enabled: preferGpu,
+        enabled: launch.preferGpu,
       );
 
       final process = await Process.start(
         command.command,
         command.args,
         workingDirectory: command.cwd,
-        environment: GpuPreferenceService.mergedLaunchEnv(
-          command.env,
-          enabled: preferGpu,
-        ),
+        environment: command.env,
         mode: ProcessStartMode.normal,
       );
 
@@ -158,24 +154,29 @@ class ProcessService {
       final combined = '${stdoutBuf.toString()}${stderrBuf.toString()}';
       final logPath = await _writeCapturedLog(combined, exitCode: exitCode);
 
-      final parsed = LaunchFailureParser.parse(combined, capturedLogPath: logPath);
+      final parsed = LaunchFailureParser.parse(
+        combined,
+        capturedLogPath: logPath,
+      );
       if (parsed != null) {
         return LaunchOutcome.failed(parsed);
       }
 
-      return LaunchOutcome.failed(LaunchFailure(
-        code: exitCode,
-        headline: 'NAMS exited with code $exitCode',
-        rawOutput: combined.isEmpty
-            ? '(NAMS produced no output)'
-            : combined,
-        capturedLogPath: logPath,
-      ));
+      return LaunchOutcome.failed(
+        LaunchFailure(
+          code: exitCode,
+          headline: 'NAMS exited with code $exitCode',
+          rawOutput: combined.isEmpty ? '(NAMS produced no output)' : combined,
+          capturedLogPath: logPath,
+        ),
+      );
     } catch (e) {
-      return LaunchOutcome.failed(LaunchFailure(
-        headline: 'Internal launcher error',
-        rawOutput: e.toString(),
-      ));
+      return LaunchOutcome.failed(
+        LaunchFailure(
+          headline: 'Internal launcher error',
+          rawOutput: e.toString(),
+        ),
+      );
     }
   }
 
@@ -205,43 +206,56 @@ class ProcessService {
     }
   }
 
+  static Future<({LaunchCommand command, bool preferGpu})>
+  _resolveLaunchCommand({
+    required String namsExe,
+    required String launcherDir,
+    required String installDirectory,
+    required AppLocalizations l10n,
+  }) async {
+    final built = await PlatformAdapter.current.buildLaunchCommand(
+      namsExe: namsExe,
+      gameDir: installDirectory,
+      gameExe: path.join(installDirectory, AppStrings.gameExeName),
+      launcherDir: launcherDir,
+      l10n: l10n,
+    );
+    final preferGpu = await GpuPreferenceService.preferDedicatedGpu();
+    var command = LaunchCommand(
+      command: built.command,
+      args: built.args,
+      cwd: built.cwd,
+      env: GpuPreferenceService.mergedLaunchEnv(built.env, enabled: preferGpu),
+      label: built.label,
+    );
+    if (Platform.isLinux) {
+      command = LaunchWrapperService.wrap(
+        command,
+        await LaunchWrapperService.read(),
+      );
+    }
+    return (command: command, preferGpu: preferGpu);
+  }
+
   static Future<String?> buildLaunchCommandPreview({
     required String installDirectory,
     required AppLocalizations l10n,
   }) async {
     try {
       final paths = await LauncherSetupService.getLauncherPaths();
-      var command = await PlatformAdapter.current.buildLaunchCommand(
+      final launch = await _resolveLaunchCommand(
         namsExe: paths['namsExe']!,
-        gameDir: installDirectory,
-        gameExe: path.join(installDirectory, AppStrings.gameExeName),
         launcherDir: paths['launcherDir']!,
+        installDirectory: installDirectory,
         l10n: l10n,
       );
-
-      if (Platform.isLinux) {
-        command =
-            LaunchWrapperService.wrap(command, await LaunchWrapperService.read());
-      }
-
-      final line = [command.command, ...command.args].map(_shellQuote).join(' ');
-      if (Platform.isWindows) {
-        return 'cd /d ${_shellQuote(command.cwd)}\r\n$line';
-      }
-      return 'cd ${_shellQuote(command.cwd)} && $line';
+      return formatLaunchCommandScript(
+        launch.command,
+        windows: Platform.isWindows,
+      );
     } catch (_) {
       return null;
     }
-  }
-
-  static String _shellQuote(String value) {
-    if (value.isEmpty) return '""';
-    final needsQuoting = value.contains(' ') ||
-        value.contains('\t') ||
-        value.contains('"');
-    if (!needsQuoting) return value;
-    final escaped = value.replaceAll('"', r'\"');
-    return '"$escaped"';
   }
 
   static Future<bool> terminateNierAutomata() =>

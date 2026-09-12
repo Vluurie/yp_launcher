@@ -22,7 +22,7 @@ flutter pub get
 (cd macos && LANG=en_US.UTF-8 pod install)
 cargo build --manifest-path rust/Cargo.toml --release
 flutter build macos --release
-cp rust/target/release/libyp_3d_inspector.dylib "$APP/Contents/Frameworks/"
+cp rust/target/release/libyp_formats.dylib "$APP/Contents/Frameworks/"
 
 codesign --force --deep --sign - \
   --entitlements macos/Runner/Release.entitlements "$APP"

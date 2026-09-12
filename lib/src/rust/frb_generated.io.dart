@@ -4,6 +4,8 @@
 // ignore_for_file: unused_import, unused_element, unnecessary_import, duplicate_ignore, invalid_use_of_internal_member, annotate_overrides, non_constant_identifier_names, curly_braces_in_flow_control_structures, prefer_const_literals_to_create_immutables, unused_field
 
 import 'api/inspector.dart';
+import 'api/texture.dart';
+import 'api/weapon.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi' as ffi;
@@ -43,6 +45,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   Uint8List dco_decode_list_prim_u_8_strict(dynamic raw);
 
   @protected
+  MiscTexError dco_decode_misc_tex_error(dynamic raw);
+
+  @protected
+  MiscTexResult dco_decode_misc_tex_result(dynamic raw);
+
+  @protected
   ModelCandidate dco_decode_model_candidate(dynamic raw);
 
   @protected
@@ -58,6 +66,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   RenderFrame dco_decode_render_frame(dynamic raw);
 
   @protected
+  TexturePreview dco_decode_texture_preview(dynamic raw);
+
+  @protected
   int dco_decode_u_32(dynamic raw);
 
   @protected
@@ -68,6 +79,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void dco_decode_unit(dynamic raw);
+
+  @protected
+  WeaponRenameError dco_decode_weapon_rename_error(dynamic raw);
+
+  @protected
+  WeaponRenameResult dco_decode_weapon_rename_result(dynamic raw);
 
   @protected
   String sse_decode_String(SseDeserializer deserializer);
@@ -96,6 +113,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer);
 
   @protected
+  MiscTexError sse_decode_misc_tex_error(SseDeserializer deserializer);
+
+  @protected
+  MiscTexResult sse_decode_misc_tex_result(SseDeserializer deserializer);
+
+  @protected
   ModelCandidate sse_decode_model_candidate(SseDeserializer deserializer);
 
   @protected
@@ -111,6 +134,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   RenderFrame sse_decode_render_frame(SseDeserializer deserializer);
 
   @protected
+  TexturePreview sse_decode_texture_preview(SseDeserializer deserializer);
+
+  @protected
   int sse_decode_u_32(SseDeserializer deserializer);
 
   @protected
@@ -121,6 +147,16 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_decode_unit(SseDeserializer deserializer);
+
+  @protected
+  WeaponRenameError sse_decode_weapon_rename_error(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  WeaponRenameResult sse_decode_weapon_rename_result(
+    SseDeserializer deserializer,
+  );
 
   @protected
   int sse_decode_i_32(SseDeserializer deserializer);
@@ -159,6 +195,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_misc_tex_error(MiscTexError self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_misc_tex_result(MiscTexResult self, SseSerializer serializer);
+
+  @protected
   void sse_encode_model_candidate(
     ModelCandidate self,
     SseSerializer serializer,
@@ -177,6 +219,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_render_frame(RenderFrame self, SseSerializer serializer);
 
   @protected
+  void sse_encode_texture_preview(
+    TexturePreview self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_u_32(int self, SseSerializer serializer);
 
   @protected
@@ -187,6 +235,18 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_unit(void self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_weapon_rename_error(
+    WeaponRenameError self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_weapon_rename_result(
+    WeaponRenameResult self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_i_32(int self, SseSerializer serializer);

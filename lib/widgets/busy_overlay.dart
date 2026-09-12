@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:yp_launcher/widgets/app_dialog.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
 
@@ -21,8 +22,9 @@ class BusyOverlay extends StatelessWidget {
             ),
             decoration: BoxDecoration(
               color: AppColors.backgroundCard,
-              borderRadius:
-                  BorderRadius.circular(AppSizes.borderRadius(context)),
+              borderRadius: BorderRadius.circular(
+                AppSizes.borderRadius(context),
+              ),
               border: Border.all(color: AppColors.borderLight),
             ),
             child: Row(
@@ -63,7 +65,7 @@ Future<bool> showDeleteConfirm(
 }) async {
   final result = await showDialog<bool>(
     context: context,
-    builder: (ctx) => AlertDialog(
+    builder: (ctx) => AppDialog(
       backgroundColor: AppColors.backgroundCard,
       title: Text(
         title,

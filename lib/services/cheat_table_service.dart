@@ -8,11 +8,7 @@ class CheatTableResult {
   final String? outputPath;
   final String? error;
 
-  const CheatTableResult({
-    this.replacements = 0,
-    this.outputPath,
-    this.error,
-  });
+  const CheatTableResult({this.replacements = 0, this.outputPath, this.error});
 
   bool get success => error == null && replacements > 0;
 }
@@ -52,9 +48,9 @@ CheatTableResult _convertSync(String inputPath) {
   final outputPath = p.join(dir, '$stem-NAMS$ext');
 
   try {
-    File(outputPath).writeAsBytesSync(
-      encoding.encode(content.replaceAll(pattern, newName)),
-    );
+    File(
+      outputPath,
+    ).writeAsBytesSync(encoding.encode(content.replaceAll(pattern, newName)));
   } catch (_) {
     return const CheatTableResult(error: 'write_failed');
   }

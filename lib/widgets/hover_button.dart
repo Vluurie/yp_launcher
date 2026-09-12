@@ -87,14 +87,13 @@ class _HoverIconButtonState extends State<HoverIconButton> {
     final fillColor = !enabled
         ? Colors.transparent
         : _hovered
-            ? accent.withValues(alpha: 0.15)
-            : Colors.transparent;
+        ? accent.withValues(alpha: 0.15)
+        : Colors.transparent;
     final borderColor = !enabled ? AppColors.textMuted : accent;
     return Tooltip(
       message: widget.tooltip,
       child: MouseRegion(
-        cursor:
-            enabled ? SystemMouseCursors.click : SystemMouseCursors.basic,
+        cursor: enabled ? SystemMouseCursors.click : SystemMouseCursors.basic,
         onEnter: (_) {
           if (!enabled) return;
           setState(() => _hovered = true);
@@ -110,9 +109,7 @@ class _HoverIconButtonState extends State<HoverIconButton> {
             padding: widget.padding,
             decoration: BoxDecoration(
               color: fillColor,
-              border: widget.bordered
-                  ? Border.all(color: borderColor)
-                  : null,
+              border: widget.bordered ? Border.all(color: borderColor) : null,
               borderRadius: BorderRadius.circular(widget.radius),
             ),
             child: widget.icon,

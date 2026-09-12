@@ -99,10 +99,12 @@ class ThirdPartyStateController extends _$ThirdPartyStateController {
     final dir = Directory(gameDir);
     if (!dir.existsSync()) return;
     try {
-      _watchSub = dir.watch(recursive: false).listen(
-        (event) => _onGameRootChanged(gameDir, event),
-        onError: (_) {},
-      );
+      _watchSub = dir
+          .watch(recursive: false)
+          .listen(
+            (event) => _onGameRootChanged(gameDir, event),
+            onError: (_) {},
+          );
       _watchedDir = gameDir;
     } catch (_) {}
   }
@@ -150,9 +152,7 @@ class ThirdPartyStateController extends _$ThirdPartyStateController {
     return _installerFor(c)?.wouldUpdate(gameDir, c);
   }
 
-  Future<ThirdPartyInstallResult?> install(
-    ThirdPartyClassification c,
-  ) async {
+  Future<ThirdPartyInstallResult?> install(ThirdPartyClassification c) async {
     final gameDir = _gameDir;
     if (gameDir == null) return null;
     return _withBusy(() async {

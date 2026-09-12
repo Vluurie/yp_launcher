@@ -35,12 +35,13 @@ class TextureInjectCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final disabledPacks = <String>{
-      ...((tex[TextureInjectionFields.disabledPacks.key] as List?) ??
-          const [])
+      ...TextureInjectionFields.disabledPacks
+          .valueIn(tex)
           .whereType<String>(),
     };
     final loadOrder = List<String>.from(
-      ((tex[TextureInjectionFields.loadOrder.key] as List?) ?? const [])
+      TextureInjectionFields.loadOrder
+          .valueIn(tex)
           .whereType<String>()
           .where((p) => !disabledPacks.contains(p)),
     );
@@ -160,14 +161,15 @@ class TextureInjectCard extends StatelessWidget {
                       itemCount: loadOrder.length,
                       proxyDecorator: (child, index, animation) =>
                           Material(color: Colors.transparent, child: child),
-                      onReorderItem: (oldIndex, newIndex) {
+                      onReorderItem: (oldIndex, newIndex) async {
                         final updated = List<String>.from(loadOrder);
                         final item = updated.removeAt(oldIndex);
                         updated.insert(newIndex, item);
-                        notifier.updateTextureInjection(
+                        notifier.updateTextureInjectionSilent(
                           TextureInjectionFields.loadOrder.key,
                           updated,
                         );
+                        await notifier.saveConfigs(gameDir);
                       },
                       itemBuilder: (context, index) {
                         final folder = loadOrder[index];
@@ -210,53 +212,50 @@ class TextureInjectCard extends StatelessWidget {
                     ...installedTextures
                         .where((n) => !disabledPacks.contains(n))
                         .map(
-                      (name) => Padding(
-                        padding: EdgeInsets.only(
-                          bottom: AppSizes.paddingXS(context),
+                          (name) => Padding(
+                            padding: EdgeInsets.only(
+                              bottom: AppSizes.paddingXS(context),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.image,
+                                  size: 14,
+                                  color: AppColors.textMuted,
+                                ),
+                                SizedBox(width: AppSizes.spacingMD(context)),
+                                Expanded(
+                                  child: ClickableName(
+                                    name: name,
+                                    folderPath: path.join(_textureDir, name),
+                                  ),
+                                ),
+                                InkWell(
+                                  onTap: () => onDelete(name),
+                                  borderRadius: BorderRadius.circular(
+                                    AppSizes.borderRadius(context),
+                                  ),
+                                  hoverColor: AppColors.error.withValues(
+                                    alpha: 0.15,
+                                  ),
+                                  splashColor: AppColors.error.withValues(
+                                    alpha: 0.2,
+                                  ),
+                                  child: Padding(
+                                    padding: EdgeInsets.all(
+                                      AppSizes.paddingSM(context),
+                                    ),
+                                    child: Icon(
+                                      Icons.close,
+                                      size: AppSizes.iconSM(context),
+                                      color: AppColors.error,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.image,
-                              size: 14,
-                              color: AppColors.textMuted,
-                            ),
-                            SizedBox(width: AppSizes.spacingMD(context)),
-                            Expanded(
-                              child: ClickableName(
-                                name: name,
-                                folderPath: path.join(
-                                  _textureDir,
-                                  name,
-                                ),
-                              ),
-                            ),
-                            InkWell(
-                              onTap: () => onDelete(name),
-                              borderRadius: BorderRadius.circular(
-                                AppSizes.borderRadius(context),
-                              ),
-                              hoverColor: AppColors.error.withValues(
-                                alpha: 0.15,
-                              ),
-                              splashColor: AppColors.error.withValues(
-                                alpha: 0.2,
-                              ),
-                              child: Padding(
-                                padding: EdgeInsets.all(
-                                  AppSizes.paddingSM(context),
-                                ),
-                                child: Icon(
-                                  Icons.close,
-                                  size: AppSizes.iconSM(context),
-                                  color: AppColors.error,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
                 ],
               ],
             ),

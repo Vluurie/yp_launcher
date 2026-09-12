@@ -139,9 +139,7 @@ class _LaunchFailureDialogState extends State<_LaunchFailureDialog> {
               border: Border.all(color: accent.withValues(alpha: 0.55)),
             ),
             child: Icon(
-              failure.panic
-                  ? Icons.bug_report_outlined
-                  : Icons.error_outline,
+              failure.panic ? Icons.bug_report_outlined : Icons.error_outline,
               size: 20,
               color: accent,
             ),
@@ -169,7 +167,8 @@ class _LaunchFailureDialogState extends State<_LaunchFailureDialog> {
                     fontSize: AppSizes.fontXS(context),
                     color: AppColors.textMuted,
                     letterSpacing: 0.3,
-                    fontFamily: 'monospace',
+                    fontFamily: AppSizes.monoFamily,
+                    fontFamilyFallback: AppSizes.monoFallback,
                   ),
                 ),
               ],
@@ -183,9 +182,9 @@ class _LaunchFailureDialogState extends State<_LaunchFailureDialog> {
   String _subtitle() {
     final parts = <String>[];
     if (failure.code != null) {
-      parts.add(failure.panic
-          ? 'PANIC[${failure.code}]'
-          : 'ERROR[${failure.code}]');
+      parts.add(
+        failure.panic ? 'PANIC[${failure.code}]' : 'ERROR[${failure.code}]',
+      );
     }
     if (failure.phase != null) parts.add(failure.phase!);
     return parts.join('  ·  ');
@@ -222,7 +221,8 @@ class _LaunchFailureDialogState extends State<_LaunchFailureDialog> {
             style: TextStyle(
               fontSize: AppSizes.fontXS(context),
               color: AppColors.textPrimary,
-              fontFamily: 'monospace',
+              fontFamily: AppSizes.monoFamily,
+              fontFamilyFallback: AppSizes.monoFallback,
             ),
           ),
         ),
@@ -319,7 +319,8 @@ class _LaunchFailureDialogState extends State<_LaunchFailureDialog> {
                   _command!,
                   style: TextStyle(
                     fontSize: AppSizes.fontXS(context),
-                    fontFamily: 'monospace',
+                    fontFamily: AppSizes.monoFamily,
+                    fontFamilyFallback: AppSizes.monoFallback,
                     color: AppColors.textSecondary,
                     height: 1.35,
                   ),
@@ -330,9 +331,7 @@ class _LaunchFailureDialogState extends State<_LaunchFailureDialog> {
                 alignment: Alignment.centerLeft,
                 child: TextButton.icon(
                   onPressed: () async {
-                    await Clipboard.setData(
-                      ClipboardData(text: _command!),
-                    );
+                    await Clipboard.setData(ClipboardData(text: _command!));
                   },
                   icon: const Icon(Icons.copy, size: 14),
                   label: Text(
@@ -372,7 +371,8 @@ class _LaunchFailureDialogState extends State<_LaunchFailureDialog> {
             failure.rawOutput,
             style: TextStyle(
               fontSize: AppSizes.fontXS(context),
-              fontFamily: 'monospace',
+              fontFamily: AppSizes.monoFamily,
+              fontFamilyFallback: AppSizes.monoFallback,
               color: AppColors.textSecondary,
               height: 1.35,
             ),
@@ -406,9 +406,7 @@ class _LaunchFailureDialogState extends State<_LaunchFailureDialog> {
             ),
             decoration: BoxDecoration(
               color: accent.withValues(alpha: 0.10),
-              border: Border(
-                bottom: BorderSide(color: AppColors.borderLight),
-              ),
+              border: Border(bottom: BorderSide(color: AppColors.borderLight)),
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(6),
                 topRight: Radius.circular(6),
@@ -465,7 +463,8 @@ class _LaunchFailureDialogState extends State<_LaunchFailureDialog> {
               style: TextStyle(
                 fontSize: AppSizes.fontXS(context),
                 color: AppColors.textSecondary,
-                fontFamily: 'monospace',
+                fontFamily: AppSizes.monoFamily,
+                fontFamilyFallback: AppSizes.monoFallback,
                 height: 1.35,
               ),
             ),
@@ -501,8 +500,7 @@ class _LaunchFailureDialogState extends State<_LaunchFailureDialog> {
                 final logPath = failure.capturedLogPath!;
                 final uri = Uri.file(File(logPath).parent.path);
                 if (await canLaunchUrl(uri)) {
-                  await launchUrl(uri,
-                      mode: LaunchMode.externalApplication);
+                  await launchUrl(uri, mode: LaunchMode.externalApplication);
                 }
               },
             ),

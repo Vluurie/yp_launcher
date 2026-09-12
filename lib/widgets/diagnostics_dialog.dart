@@ -26,13 +26,19 @@ Future<void> showDiagnosticsDialog(BuildContext context, WidgetRef ref) async {
     final launchPreview = gameDir.isEmpty
         ? null
         : await ProcessService.buildLaunchCommandPreview(
-            installDirectory: gameDir, l10n: l10n);
-    report = await DiagnosticsService.collect(gameDir,
-        launchCommandPreview: launchPreview);
+            installDirectory: gameDir,
+            l10n: l10n,
+          );
+    report = await DiagnosticsService.collect(
+      gameDir,
+      launchCommandPreview: launchPreview,
+    );
   } catch (e) {
     if (!context.mounted) return;
     messenger.pop();
-    ref.read(notificationStateControllerProvider.notifier).addNotification(
+    ref
+        .read(notificationStateControllerProvider.notifier)
+        .addNotification(
           NotificationItem(
             id: 'diag_fail_${DateTime.now().millisecondsSinceEpoch}',
             message: (l10n) => '$e',
@@ -187,10 +193,7 @@ class _DiagnosticsDialogState extends ConsumerState<_DiagnosticsDialog> {
                 ),
               ),
             ),
-            Container(
-              height: 1,
-              color: AppColors.borderLight,
-            ),
+            Container(height: 1, color: AppColors.borderLight),
             Padding(
               padding: EdgeInsets.symmetric(
                 horizontal: AppSizes.paddingLG(context),
@@ -206,13 +209,15 @@ class _DiagnosticsDialogState extends ConsumerState<_DiagnosticsDialog> {
                       await Clipboard.setData(ClipboardData(text: summary));
                       ref
                           .read(notificationStateControllerProvider.notifier)
-                          .addNotification(NotificationItem(
-                            id: 'diag_copied_${DateTime.now().millisecondsSinceEpoch}',
-                            message: (l10n) => l10n.diagnosticsCopied,
-                            icon: Icons.check_circle,
-                            color: AppColors.success,
-                            type: NotificationType.general,
-                          ));
+                          .addNotification(
+                            NotificationItem(
+                              id: 'diag_copied_${DateTime.now().millisecondsSinceEpoch}',
+                              message: (l10n) => l10n.diagnosticsCopied,
+                              icon: Icons.check_circle,
+                              color: AppColors.success,
+                              type: NotificationType.general,
+                            ),
+                          );
                     },
                   ),
                   SizedBox(width: AppSizes.spacingMD(context)),
@@ -231,14 +236,20 @@ class _DiagnosticsDialogState extends ConsumerState<_DiagnosticsDialog> {
                                   await DiagnosticsService.writeFullReport(r);
                               if (!mounted) return;
                               ref
-                                  .read(notificationStateControllerProvider.notifier)
-                                  .addNotification(NotificationItem(
-                                    id: 'diag_saved_${DateTime.now().millisecondsSinceEpoch}',
-                                    message: (l10n) => l10n.diagnosticsSavedAt(outPath),
-                                    icon: Icons.save,
-                                    color: AppColors.success,
-                                    type: NotificationType.general,
-                                  ));
+                                  .read(
+                                    notificationStateControllerProvider
+                                        .notifier,
+                                  )
+                                  .addNotification(
+                                    NotificationItem(
+                                      id: 'diag_saved_${DateTime.now().millisecondsSinceEpoch}',
+                                      message: (l10n) =>
+                                          l10n.diagnosticsSavedAt(outPath),
+                                      icon: Icons.save,
+                                      color: AppColors.success,
+                                      type: NotificationType.general,
+                                    ),
+                                  );
                             } finally {
                               if (mounted) setState(() => _saving = false);
                             }
@@ -277,9 +288,7 @@ class _DiagnosticsDialogState extends ConsumerState<_DiagnosticsDialog> {
       ),
       decoration: BoxDecoration(
         color: AppColors.surfaceMedium,
-        border: Border(
-          bottom: BorderSide(color: AppColors.borderLight),
-        ),
+        border: Border(bottom: BorderSide(color: AppColors.borderLight)),
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(AppSizes.borderRadius(context)),
           topRight: Radius.circular(AppSizes.borderRadius(context)),
@@ -349,8 +358,7 @@ class _DiagnosticsDialogState extends ConsumerState<_DiagnosticsDialog> {
             spacing: gap,
             runSpacing: gap,
             children: [
-              for (final card in cards)
-                SizedBox(width: cardWidth, child: card),
+              for (final card in cards) SizedBox(width: cardWidth, child: card),
             ],
           );
         },
@@ -377,8 +385,11 @@ class _DiagnosticsDialogState extends ConsumerState<_DiagnosticsDialog> {
         icon: Icons.computer_outlined,
         title: l10n.logSectionSystem,
         children: [
-          _kvRow(context, l10n.logDetailOs,
-              '${r.systemInfo['OS'] ?? '?'} ${r.systemInfo['OS version'] ?? ''}'),
+          _kvRow(
+            context,
+            l10n.logDetailOs,
+            '${r.systemInfo['OS'] ?? '?'} ${r.systemInfo['OS version'] ?? ''}',
+          ),
           _kvRow(context, l10n.logDetailLocale, r.systemInfo['Locale'] ?? '?'),
           if (r.preferDedicatedGpu)
             Padding(
@@ -393,8 +404,11 @@ class _DiagnosticsDialogState extends ConsumerState<_DiagnosticsDialog> {
         title: l10n.diagnosticsSectionGameIdentity,
         accent: gi.exeVariantSupported ? null : AppColors.warning,
         children: [
-          _kvRow(context, l10n.diagnosticsExeVariant(gi.exeVariant),
-              gi.exeVariantSupported ? '' : l10n.diagnosticsExeUnsupported),
+          _kvRow(
+            context,
+            l10n.diagnosticsExeVariant(gi.exeVariant),
+            gi.exeVariantSupported ? '' : l10n.diagnosticsExeUnsupported,
+          ),
           Wrap(
             spacing: 6,
             runSpacing: 6,
@@ -417,11 +431,16 @@ class _DiagnosticsDialogState extends ConsumerState<_DiagnosticsDialog> {
             runSpacing: 6,
             children: [
               _flagChip(
-                  context, l10n.diagnosticsNamsPresent, r.namsHealth.namsExePresent),
+                context,
+                l10n.diagnosticsNamsPresent,
+                r.namsHealth.namsExePresent,
+              ),
               if (r.namsHealth.missingFiles.isNotEmpty)
                 _chip(
                   context,
-                  l10n.diagnosticsMissingFiles(r.namsHealth.missingFiles.length),
+                  l10n.diagnosticsMissingFiles(
+                    r.namsHealth.missingFiles.length,
+                  ),
                   AppColors.error,
                 ),
             ],
@@ -441,17 +460,21 @@ class _DiagnosticsDialogState extends ConsumerState<_DiagnosticsDialog> {
               spacing: 6,
               runSpacing: 6,
               children: modKinds.entries
-                  .map((e) => _chip(
-                        context,
-                        '${e.key.name}: ${e.value}',
-                        AppColors.accentPrimary,
-                      ))
+                  .map(
+                    (e) => _chip(
+                      context,
+                      '${e.key.name}: ${e.value}',
+                      AppColors.accentPrimary,
+                    ),
+                  )
                   .toList(),
             ),
           if (r.disabledModsEntries.isNotEmpty) ...[
             SizedBox(height: AppSizes.spacingSM(context)),
-            _mutedLine(context,
-                '${r.disabledModsEntries.length} disabled prefix(es) in disabled_mods.toml'),
+            _mutedLine(
+              context,
+              '${r.disabledModsEntries.length} disabled prefix(es) in disabled_mods.toml',
+            ),
           ],
         ],
       ),
@@ -469,13 +492,22 @@ class _DiagnosticsDialogState extends ConsumerState<_DiagnosticsDialog> {
                 _flagChip(context, l10n.diagnosticsEnabled, rs.enabled),
                 if (rsInfo?.version != null)
                   _chip(context, rsInfo!.version!, AppColors.accentPrimary),
-                _chip(context, 'presets: ${rs.presetCount}',
-                    AppColors.accentPrimary),
-                _chip(context, 'shaders: ${rsInfo?.shaderCount ?? 0}',
-                    AppColors.accentPrimary),
+                _chip(
+                  context,
+                  'presets: ${rs.presetCount}',
+                  AppColors.accentPrimary,
+                ),
+                _chip(
+                  context,
+                  'shaders: ${rsInfo?.shaderCount ?? 0}',
+                  AppColors.accentPrimary,
+                ),
                 if (rs.shadersMissing || (rsInfo?.d3dCompilerMissing ?? false))
-                  _chip(context, l10n.diagnosticsShadersMissing,
-                      AppColors.warning),
+                  _chip(
+                    context,
+                    l10n.diagnosticsShadersMissing,
+                    AppColors.warning,
+                  ),
               ],
             ),
           ],
@@ -505,8 +537,9 @@ class _DiagnosticsDialogState extends ConsumerState<_DiagnosticsDialog> {
         context,
         icon: Icons.texture,
         title: l10n.diagnosticsSectionTexturePacks,
-        trailing:
-            r.texturePacksAvailable ? _countBadge(r.texturePacks.length) : null,
+        trailing: r.texturePacksAvailable
+            ? _countBadge(r.texturePacks.length)
+            : null,
         children: [
           if (!r.texturePacksAvailable)
             _mutedLine(context, l10n.diagnosticsTexturePacksUnavailable)
@@ -515,16 +548,28 @@ class _DiagnosticsDialogState extends ConsumerState<_DiagnosticsDialog> {
               spacing: 6,
               runSpacing: 6,
               children: [
-                _chip(context, 'NAMS list: ${r.texturePacks.length}',
-                    AppColors.accentPrimary),
-                _chip(context, 'nams/inject: ${r.namsTextures.length}',
-                    AppColors.textMuted),
+                _chip(
+                  context,
+                  'NAMS list: ${r.texturePacks.length}',
+                  AppColors.accentPrimary,
+                ),
+                _chip(
+                  context,
+                  'nams/inject: ${r.namsTextures.length}',
+                  AppColors.textMuted,
+                ),
                 if (r.skResTextures.isNotEmpty)
-                  _chip(context, 'SK_Res: ${r.skResTextures.length}',
-                      AppColors.warning),
+                  _chip(
+                    context,
+                    'SK_Res: ${r.skResTextures.length}',
+                    AppColors.warning,
+                  ),
                 if (r.waxTextures.isNotEmpty)
-                  _chip(context, 'WAX: ${r.waxTextures.length}',
-                      AppColors.warning),
+                  _chip(
+                    context,
+                    'WAX: ${r.waxTextures.length}',
+                    AppColors.warning,
+                  ),
               ],
             ),
         ],
@@ -591,9 +636,10 @@ class _DiagnosticsDialogState extends ConsumerState<_DiagnosticsDialog> {
           title: l10n.diagnosticsSectionDataOverlay,
           accent: AppColors.warning,
           children: [
-            for (final e in (r.dataDirContents.entries.toList()
-                  ..sort((a, b) => b.value.compareTo(a.value)))
-                .take(8))
+            for (final e
+                in (r.dataDirContents.entries.toList()
+                      ..sort((a, b) => b.value.compareTo(a.value)))
+                    .take(8))
               _kvRow(context, '${e.key}/', l10n.diagnosticsFileCount(e.value)),
             if (r.dataDirContents.length > 8)
               _mutedLine(
@@ -673,9 +719,7 @@ class _DiagnosticsDialogState extends ConsumerState<_DiagnosticsDialog> {
             ),
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.08),
-              border: Border(
-                bottom: BorderSide(color: AppColors.borderLight),
-              ),
+              border: Border(bottom: BorderSide(color: AppColors.borderLight)),
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(6),
                 topRight: Radius.circular(6),
@@ -731,7 +775,8 @@ class _DiagnosticsDialogState extends ConsumerState<_DiagnosticsDialog> {
           fontSize: 10,
           fontWeight: FontWeight.bold,
           color: AppColors.accentPrimary,
-          fontFamily: 'monospace',
+          fontFamily: AppSizes.monoFamily,
+          fontFamilyFallback: AppSizes.monoFallback,
         ),
       ),
     );
@@ -809,7 +854,8 @@ class _DiagnosticsDialogState extends ConsumerState<_DiagnosticsDialog> {
               style: TextStyle(
                 fontSize: AppSizes.fontXS(context),
                 color: AppColors.textSecondary,
-                fontFamily: 'monospace',
+                fontFamily: AppSizes.monoFamily,
+                fontFamilyFallback: AppSizes.monoFallback,
                 height: 1.35,
               ),
             ),
@@ -838,8 +884,7 @@ class _DiagnosticsDialogState extends ConsumerState<_DiagnosticsDialog> {
     bool busy = false,
   }) {
     final foreground = primary ? AppColors.buttonText : AppColors.accentPrimary;
-    final background =
-        primary ? AppColors.accentPrimary : Colors.transparent;
+    final background = primary ? AppColors.accentPrimary : Colors.transparent;
     final border = primary
         ? AppColors.accentPrimary
         : AppColors.accentPrimary.withValues(alpha: 0.5);

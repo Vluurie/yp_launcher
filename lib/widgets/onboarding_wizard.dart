@@ -82,8 +82,9 @@ class _OnboardingWizardState extends ConsumerState<OnboardingWizard> {
     } catch (_) {}
 
     try {
-      final iniValues =
-          await LodModDetection.detectLegacyLodMod(_selectedPath!);
+      final iniValues = await LodModDetection.detectLegacyLodMod(
+        _selectedPath!,
+      );
       _hasLodMod = iniValues != null;
     } catch (_) {}
 
@@ -98,11 +99,14 @@ class _OnboardingWizardState extends ConsumerState<OnboardingWizard> {
     } catch (_) {}
 
     try {
-      final cutscenesDir =
-          Directory(path.join(_selectedPath!, 'nams', 'cutscenes'));
+      final cutscenesDir = Directory(
+        path.join(_selectedPath!, 'nams', 'cutscenes'),
+      );
       if (await cutscenesDir.exists()) {
-        final entries =
-            await cutscenesDir.list().where((e) => e is Directory).toList();
+        final entries = await cutscenesDir
+            .list()
+            .where((e) => e is Directory)
+            .toList();
         _hasCutsceneMods = entries.isNotEmpty;
       }
     } catch (_) {}
@@ -255,11 +259,7 @@ class _OnboardingWizardState extends ConsumerState<OnboardingWizard> {
           onBack: _back,
         );
       case 4:
-        return ModsStep(
-          gameDir: _selectedPath,
-          onNext: _next,
-          onBack: _back,
-        );
+        return ModsStep(gameDir: _selectedPath, onNext: _next, onBack: _back);
       case 5:
         return ReadyStep(
           selectedPath: _selectedPath,
@@ -326,11 +326,7 @@ class _OnboardingWizardState extends ConsumerState<OnboardingWizard> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
-                    Icons.error_outline,
-                    color: AppColors.error,
-                    size: 56,
-                  ),
+                  Icon(Icons.error_outline, color: AppColors.error, size: 56),
                   const SizedBox(height: 20),
                   Text(
                     l10n.platformUnsupportedTitle,

@@ -123,10 +123,18 @@ class _CutscenesViewState extends ConsumerState<CutscenesView> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        CircularProgressIndicator(color: AppColors.accentPrimary),
+                        CircularProgressIndicator(
+                          color: AppColors.accentPrimary,
+                        ),
                         if (_progressText.isNotEmpty) ...[
                           SizedBox(height: AppSizes.spacingLG(context)),
-                          Text(_progressText, style: TextStyle(fontSize: AppSizes.fontSM(context), color: AppColors.textMuted)),
+                          Text(
+                            _progressText,
+                            style: TextStyle(
+                              fontSize: AppSizes.fontSM(context),
+                              color: AppColors.textMuted,
+                            ),
+                          ),
                         ],
                       ],
                     ),
@@ -140,7 +148,9 @@ class _CutscenesViewState extends ConsumerState<CutscenesView> {
                       child: Column(
                         children: [
                           if (_directOverrides.isNotEmpty) ...[
-                            CutsceneMigrationBanner(directOverrides: _directOverrides),
+                            CutsceneMigrationBanner(
+                              directOverrides: _directOverrides,
+                            ),
                             const SizedBox(height: 16),
                           ],
                           LayoutBuilder(
@@ -178,7 +188,9 @@ class _CutscenesViewState extends ConsumerState<CutscenesView> {
                                       CrossAxisAlignment.stretch,
                                   children: [
                                     leftCol,
-                                    SizedBox(height: AppSizes.spacingLG(context)),
+                                    SizedBox(
+                                      height: AppSizes.spacingLG(context),
+                                    ),
                                     rightCol,
                                   ],
                                 );

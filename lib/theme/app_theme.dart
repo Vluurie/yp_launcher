@@ -114,6 +114,5 @@ class AppTheme {
     logText: Color(0xFF4E4B42),
   );
 
-  static AppTheme byId(AppThemeId id) =>
-      id == AppThemeId.nier ? nier : dark;
+  static AppTheme byId(AppThemeId id) => id == AppThemeId.nier ? nier : dark;
 }

@@ -54,10 +54,12 @@ class ArchiveService {
     try {
       final sevenZip = _get7zPath();
       if (!File(sevenZip).existsSync()) return null;
-      final result = await Process.run(
-        sevenZip,
-        ['l', '-slt', '-ba', archivePath],
-      );
+      final result = await Process.run(sevenZip, [
+        'l',
+        '-slt',
+        '-ba',
+        archivePath,
+      ]);
       if (result.exitCode != 0) return null;
       final entries = <String>[];
       for (final line in (result.stdout as String).split('\n')) {
@@ -141,12 +143,18 @@ class ArchiveService {
 
       tempDir = await Directory.systemTemp.createTemp('archive_');
 
-      final process = await Process.start(
-        sevenZip,
-        ['x', archivePath, '-o${tempDir.path}', '-y', '-bsp1', '-bse1'],
-      );
+      final process = await Process.start(sevenZip, [
+        'x',
+        archivePath,
+        '-o${tempDir.path}',
+        '-y',
+        '-bsp1',
+        '-bse1',
+      ]);
       final stderrBuffer = StringBuffer();
-      final progressRegex = RegExp(r'(\d{1,3})%(?:\s+\d+)?(?:\s+[+\-=UT]\s+(.+))?');
+      final progressRegex = RegExp(
+        r'(\d{1,3})%(?:\s+\d+)?(?:\s+[+\-=UT]\s+(.+))?',
+      );
       process.stdout.transform(const SystemEncoding().decoder).listen((chunk) {
         if (onProgress == null) return;
         for (final line in chunk.split(RegExp(r'[\r\n]+'))) {
@@ -157,20 +165,26 @@ class ArchiveService {
           onProgress(pct / 100.0, m.group(2)?.trim());
         }
       });
-      process.stderr.transform(const SystemEncoding().decoder).listen(stderrBuffer.write);
+      process.stderr
+          .transform(const SystemEncoding().decoder)
+          .listen(stderrBuffer.write);
 
       final exitCode = await process.exitCode;
       if (exitCode != 0) {
         _lastExtractError =
             '7z exit $exitCode: ${stderrBuffer.toString().trim()}';
-        try { await tempDir.delete(recursive: true); } catch (_) {}
+        try {
+          await tempDir.delete(recursive: true);
+        } catch (_) {}
         return null;
       }
 
       final hasFiles = await tempDir.list().any((_) => true);
       if (!hasFiles) {
         _lastExtractError = '7z produced no files';
-        try { await tempDir.delete(recursive: true); } catch (_) {}
+        try {
+          await tempDir.delete(recursive: true);
+        } catch (_) {}
         return null;
       }
 
@@ -178,7 +192,9 @@ class ArchiveService {
       return tempDir.path;
     } catch (e) {
       _lastExtractError = '$e';
-      try { await tempDir?.delete(recursive: true); } catch (_) {}
+      try {
+        await tempDir?.delete(recursive: true);
+      } catch (_) {}
       return null;
     }
   }

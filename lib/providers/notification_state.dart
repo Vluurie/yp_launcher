@@ -94,10 +94,7 @@ class NotificationStateController extends _$NotificationStateController {
       final iniValues = await NaiomDetection.detectLegacyNaiom(gameDir);
       if (iniValues != null) {
         await NamsConfigService.ensureConfigs(gameDir);
-        final result = await NaiomDetection.migrateNaiomIni(
-          gameDir,
-          iniValues,
-        );
+        final result = await NaiomDetection.migrateNaiomIni(gameDir, iniValues);
         if (result.migrated) {
           items.add(
             NotificationItem(
@@ -179,8 +176,8 @@ class NotificationStateController extends _$NotificationStateController {
     final platformName = Platform.isLinux
         ? 'Linux'
         : Platform.isMacOS
-            ? 'macOS'
-            : Platform.operatingSystem;
+        ? 'macOS'
+        : Platform.operatingSystem;
     state = [
       ...state,
       NotificationItem(

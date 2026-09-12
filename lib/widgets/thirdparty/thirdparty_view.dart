@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:yp_launcher/widgets/app_dialog.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as p;
 import 'package:url_launcher/url_launcher.dart';
@@ -52,8 +53,7 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
     super.dispose();
   }
 
-  String get _gameDir =>
-      ref.read(appStateControllerProvider).selectedDirectory;
+  String get _gameDir => ref.read(appStateControllerProvider).selectedDirectory;
 
   Future<void> _handleDrop(List<String> paths) async {
     if (ref.read(activeTabProvider) != _thirdPartyTabIndex) return;
@@ -89,8 +89,7 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
 
     String sourceRoot = path;
     Directory? extracted;
-    if (ArchiveService.isArchive(path) ||
-        path.toLowerCase().endsWith('.exe')) {
+    if (ArchiveService.isArchive(path) || path.toLowerCase().endsWith('.exe')) {
       final out = await ArchiveService.extract(path);
       if (out == null) {
         _notify(
@@ -124,31 +123,49 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
             if (!mounted) return;
             final replace = await _confirmReplace(update);
             if (replace != true) {
-              _notify((l10n) => l10n.thirdPartyUpdateSkipped, Icons.info_outline,
-                  AppColors.textMuted);
+              _notify(
+                (l10n) => l10n.thirdPartyUpdateSkipped,
+                Icons.info_outline,
+                AppColors.textMuted,
+              );
               break;
             }
           }
           final result = await notifier.install(c);
           if (result?.ok == true) {
-            _notify((l10n) => l10n.thirdPartyInstalled, Icons.check_circle,
-                AppColors.success);
+            _notify(
+              (l10n) => l10n.thirdPartyInstalled,
+              Icons.check_circle,
+              AppColors.success,
+            );
           } else {
-            _notify((l10n) => l10n.thirdPartyInstallFailed, Icons.error_outline,
-                AppColors.error);
+            _notify(
+              (l10n) => l10n.thirdPartyInstallFailed,
+              Icons.error_outline,
+              AppColors.error,
+            );
           }
           break;
         case ThirdPartyKind.incompatibleModloader:
-          _notify((l10n) => l10n.thirdPartyWaxRejected, Icons.block,
-              AppColors.error);
+          _notify(
+            (l10n) => l10n.thirdPartyWaxRejected,
+            Icons.block,
+            AppColors.error,
+          );
           break;
         case ThirdPartyKind.gameData:
-          _notify((l10n) => l10n.thirdPartyRedirectMods, Icons.info_outline,
-              AppColors.accentPrimary);
+          _notify(
+            (l10n) => l10n.thirdPartyRedirectMods,
+            Icons.info_outline,
+            AppColors.accentPrimary,
+          );
           break;
         case ThirdPartyKind.textures:
-          _notify((l10n) => l10n.thirdPartyRedirectTextures, Icons.info_outline,
-              AppColors.accentPrimary);
+          _notify(
+            (l10n) => l10n.thirdPartyRedirectTextures,
+            Icons.info_outline,
+            AppColors.accentPrimary,
+          );
           break;
         case ThirdPartyKind.lodmod:
         case ThirdPartyKind.specialK:
@@ -156,8 +173,11 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
         case ThirdPartyKind.brokenLegacy:
         case ThirdPartyKind.multiBundle:
         case ThirdPartyKind.unknown:
-          _notify((l10n) => l10n.thirdPartyUnsupported, Icons.warning_amber,
-              AppColors.warning);
+          _notify(
+            (l10n) => l10n.thirdPartyUnsupported,
+            Icons.warning_amber,
+            AppColors.warning,
+          );
           break;
       }
     } finally {
@@ -182,32 +202,32 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
     ThirdPartyUpdateInfo update,
   ) {
     Widget row(String label, String value, Color color) => Padding(
-          padding: EdgeInsets.symmetric(vertical: AppSizes.spacingSM(ctx) / 2),
-          child: Row(
-            children: [
-              SizedBox(
-                width: 96,
-                child: Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: AppSizes.fontXS(ctx),
-                    color: AppColors.textMuted,
-                  ),
-                ),
+      padding: EdgeInsets.symmetric(vertical: AppSizes.spacingSM(ctx) / 2),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 96,
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: AppSizes.fontXS(ctx),
+                color: AppColors.textMuted,
               ),
-              Expanded(
-                child: Text(
-                  value,
-                  style: TextStyle(
-                    fontSize: AppSizes.fontSM(ctx),
-                    color: color,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
-        );
+          Expanded(
+            child: Text(
+              value,
+              style: TextStyle(
+                fontSize: AppSizes.fontSM(ctx),
+                color: color,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
     return Container(
       padding: EdgeInsets.all(AppSizes.paddingSM(ctx)),
       decoration: BoxDecoration(
@@ -218,10 +238,16 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          row(l10n.thirdPartyUpdateInstalledLabel,
-              update.installedLabel ?? '—', AppColors.textSecondary),
-          row(l10n.thirdPartyUpdateIncomingLabel,
-              update.incomingLabel ?? '—', AppColors.accentPrimary),
+          row(
+            l10n.thirdPartyUpdateInstalledLabel,
+            update.installedLabel ?? '—',
+            AppColors.textSecondary,
+          ),
+          row(
+            l10n.thirdPartyUpdateIncomingLabel,
+            update.incomingLabel ?? '—',
+            AppColors.accentPrimary,
+          ),
         ],
       ),
     );
@@ -232,7 +258,7 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
     final name = _runtimeName(update.runtime);
     return showDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => AppDialog(
         backgroundColor: AppColors.backgroundCard,
         title: Text(
           l10n.thirdPartyUpdateTitle(name),
@@ -287,7 +313,9 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
     IconData icon,
     Color color,
   ) {
-    ref.read(notificationStateControllerProvider.notifier).addNotification(
+    ref
+        .read(notificationStateControllerProvider.notifier)
+        .addNotification(
           NotificationItem(
             id: 'thirdparty_${DateTime.now().millisecondsSinceEpoch}',
             message: message,
@@ -299,11 +327,7 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
   }
 
   Future<void> _revealShaders() async {
-    final dir = p.join(
-      ThirdPartyPaths.reshade(),
-      'reshade-shaders',
-      'Shaders',
-    );
+    final dir = p.join(ThirdPartyPaths.reshade(), 'reshade-shaders', 'Shaders');
     if (Directory(dir).existsSync()) {
       await launchUrl(Uri.file(dir));
     }
@@ -327,37 +351,37 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
               children: [
                 _infoBanner(l10n.thirdPartyBanner),
                 LayoutBuilder(
-              builder: (context, constraints) {
-                final stack = constraints.maxWidth < 760;
-                final leftCol = Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _dropCard(l10n),
-                    _reshadeCard(l10n, data.reshade),
-                  ],
-                );
-                final rightCol = Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _migotoCard(l10n, data.migoto),
-                    _gameModsCard(l10n, data.gameMods),
-                  ],
-                );
-                if (stack) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [leftCol, rightCol],
-                  );
-                }
-                return Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(child: leftCol),
-                    SizedBox(width: AppSizes.spacingLG(context)),
-                    Expanded(child: rightCol),
-                  ],
-                );
-              },
+                  builder: (context, constraints) {
+                    final stack = constraints.maxWidth < 760;
+                    final leftCol = Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        _dropCard(l10n),
+                        _reshadeCard(l10n, data.reshade),
+                      ],
+                    );
+                    final rightCol = Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        _migotoCard(l10n, data.migoto),
+                        _gameModsCard(l10n, data.gameMods),
+                      ],
+                    );
+                    if (stack) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [leftCol, rightCol],
+                      );
+                    }
+                    return Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(child: leftCol),
+                        SizedBox(width: AppSizes.spacingLG(context)),
+                        Expanded(child: rightCol),
+                      ],
+                    );
+                  },
                 ),
               ],
             ),
@@ -488,17 +512,12 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
         ),
         _section(
           l10n.thirdPartyShaderRepos,
-          [
-            ...info.shaderRepos,
-          ],
+          [...info.shaderRepos],
           countSuffix: l10n.thirdPartyShaderCount(info.shaderCount),
           emptyLabel: l10n.thirdPartyNoneShaders,
         ),
         if (info.addons.isNotEmpty)
-          _section(
-            l10n.thirdPartyAddons,
-            info.addons,
-          ),
+          _section(l10n.thirdPartyAddons, info.addons),
         _reshadeConfig(l10n, info.config),
         if (status.shadersMissing) _shadersMissing(l10n),
         if (info.d3dCompilerMissing) _d3dCompilerMissing(l10n),
@@ -562,11 +581,7 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
           emptyLabel: l10n.thirdPartyShaderFixCount(0),
         ),
         _migotoConfig(l10n, info.config),
-        _section(
-          l10n.thirdPartyFiles,
-          info.files,
-          emptyLabel: '',
-        ),
+        _section(l10n.thirdPartyFiles, info.files, emptyLabel: ''),
       ],
       trailing: _statusChip(l10n, status.enabled),
       actions: _iconActions(l10n, migotoDir, ThirdPartyRuntime.migoto),
@@ -588,8 +603,7 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
           MigotoHunting.on.index: l10n.thirdPartyMigotoHuntingOn,
           MigotoHunting.noMarking.index: l10n.thirdPartyMigotoHuntingNoMarking,
         },
-        onChanged: (v) =>
-            apply(c.copyWith(hunting: MigotoHunting.values[v])),
+        onChanged: (v) => apply(c.copyWith(hunting: MigotoHunting.values[v])),
       ),
       if (c.hunting != MigotoHunting.off)
         ConfigFieldDropdown(
@@ -681,8 +695,9 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
                       .read(thirdPartyStateControllerProvider.notifier)
                       .setGameModDisabled(mod.fileName, !v),
                   activeThumbColor: AppColors.accentPrimary,
-                  activeTrackColor:
-                      AppColors.accentPrimary.withValues(alpha: 0.4),
+                  activeTrackColor: AppColors.accentPrimary.withValues(
+                    alpha: 0.4,
+                  ),
                   inactiveThumbColor: AppColors.textMuted,
                   inactiveTrackColor: AppColors.borderLight,
                 ),
@@ -698,8 +713,7 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
               style: TextStyle(
                 fontSize: AppSizes.fontXS(context),
                 color: color,
-                decoration:
-                    mod.disabled ? TextDecoration.lineThrough : null,
+                decoration: mod.disabled ? TextDecoration.lineThrough : null,
               ),
             ),
           ),
@@ -951,7 +965,11 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
         borderRadius: BorderRadius.circular(AppSizes.borderRadius(context)),
         border: Border.all(color: AppColors.borderLight),
         boxShadow: [
-          BoxShadow(color: AppColors.shadow, blurRadius: 4, offset: const Offset(0, 2)),
+          BoxShadow(
+            color: AppColors.shadow,
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
         ],
       ),
       child: Column(
@@ -1062,8 +1080,8 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
           status.installed
               ? Icons.check_circle_outline
               : foundInGame
-                  ? Icons.info_outline
-                  : Icons.radio_button_unchecked,
+              ? Icons.info_outline
+              : Icons.radio_button_unchecked,
           size: AppSizes.iconSM(context),
           color: color,
         ),
@@ -1071,10 +1089,7 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
         Expanded(
           child: Text(
             label,
-            style: TextStyle(
-              fontSize: AppSizes.fontSM(context),
-              color: color,
-            ),
+            style: TextStyle(fontSize: AppSizes.fontSM(context), color: color),
           ),
         ),
       ],
@@ -1082,16 +1097,16 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
   }
 
   Widget _shadersMissing(AppLocalizations l10n) => _warningBox(
-        l10n.thirdPartyShadersMissing,
-        l10n.thirdPartyOpenFolder,
-        _revealShaders,
-      );
+    l10n.thirdPartyShadersMissing,
+    l10n.thirdPartyOpenFolder,
+    _revealShaders,
+  );
 
   Widget _d3dCompilerMissing(AppLocalizations l10n) => _warningBox(
-        l10n.thirdPartyD3dCompilerMissing,
-        l10n.thirdPartyOpenFolder,
-        () => _openDir(ThirdPartyPaths.reshade()),
-      );
+    l10n.thirdPartyD3dCompilerMissing,
+    l10n.thirdPartyOpenFolder,
+    () => _openDir(ThirdPartyPaths.reshade()),
+  );
 
   Widget _warningBox(String text, String actionLabel, VoidCallback onAction) {
     return Container(
@@ -1104,8 +1119,11 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
       ),
       child: Row(
         children: [
-          Icon(Icons.warning_amber_rounded,
-              size: AppSizes.iconSM(context), color: AppColors.warning),
+          Icon(
+            Icons.warning_amber_rounded,
+            size: AppSizes.iconSM(context),
+            color: AppColors.warning,
+          ),
           SizedBox(width: AppSizes.spacingSM(context)),
           Expanded(
             child: Text(
@@ -1117,13 +1135,9 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
               ),
             ),
           ),
-          TextButton(
-            onPressed: onAction,
-            child: Text(actionLabel),
-          ),
+          TextButton(onPressed: onAction, child: Text(actionLabel)),
         ],
       ),
     );
   }
-
 }

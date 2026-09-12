@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:path/path.dart' as path;
@@ -23,6 +24,9 @@ class ConfigData {
   final String textureInjectionRawContent;
   final bool isLoading;
   final bool hasUnsavedChanges;
+  final String? namsError;
+  final String? lodmodError;
+  final String? textureInjectionError;
 
   const ConfigData({
     this.namsValues = const {},
@@ -33,6 +37,9 @@ class ConfigData {
     this.textureInjectionRawContent = '',
     this.isLoading = false,
     this.hasUnsavedChanges = false,
+    this.namsError,
+    this.lodmodError,
+    this.textureInjectionError,
   });
 
   ConfigData copyWith({
@@ -56,15 +63,69 @@ class ConfigData {
           textureInjectionRawContent ?? this.textureInjectionRawContent,
       isLoading: isLoading ?? this.isLoading,
       hasUnsavedChanges: hasUnsavedChanges ?? this.hasUnsavedChanges,
+      namsError: namsError,
+      lodmodError: lodmodError,
+      textureInjectionError: textureInjectionError,
     );
   }
 }
 
 @Riverpod(keepAlive: true)
 class ConfigStateController extends _$ConfigStateController {
+  static const _configFileNames = {
+    'nams.toml',
+    'lodmod.toml',
+    'texture_injection.toml',
+  };
+
+  StreamSubscription<FileSystemEvent>? _watchSub;
+  String? _watchedDir;
+  Timer? _reloadDebounce;
+  DateTime _lastSelfWrite = DateTime.fromMillisecondsSinceEpoch(0);
+
   @override
   ConfigData build() {
+    ref.onDispose(() {
+      _lodmodAutosaveTimer?.cancel();
+      _lodmodAutosaveTimer = null;
+      _reloadDebounce?.cancel();
+      _reloadDebounce = null;
+      _watchSub?.cancel();
+      _watchSub = null;
+    });
     return const ConfigData();
+  }
+
+  void _watchConfigDir(String gameDir) {
+    final dirPath = path.join(gameDir, 'nams');
+    if (_watchedDir == dirPath && _watchSub != null) return;
+    _watchSub?.cancel();
+    _watchSub = null;
+    _watchedDir = null;
+
+    final dir = Directory(dirPath);
+    if (!dir.existsSync()) return;
+
+    try {
+      _watchSub = dir.watch().listen((event) {
+        if (_configFileNames.contains(path.basename(event.path))) {
+          _scheduleExternalReload(gameDir);
+        }
+      }, onError: (_) {});
+      _watchedDir = dirPath;
+    } catch (_) {}
+  }
+
+  void _scheduleExternalReload(String gameDir) {
+    _reloadDebounce?.cancel();
+    _reloadDebounce = Timer(const Duration(milliseconds: 400), () {
+      if (state.hasUnsavedChanges) return;
+      if (DateTime.now().difference(_lastSelfWrite) <
+          const Duration(seconds: 2)) {
+        return;
+      }
+      unawaited(loadConfigs(gameDir).catchError((_) {}));
+    });
   }
 
   Future<void> loadConfigs(String gameDir) async {
@@ -80,22 +141,34 @@ class ConfigStateController extends _$ConfigStateController {
     var lodmodRaw = await TomlService.readTomlFile(lodmodPath);
     final textureRaw = await TomlService.readTomlFile(texturePath);
 
-    final migrated = _migrateLodmod(lodmodRaw);
-    if (migrated != lodmodRaw) {
-      lodmodRaw = migrated;
-      await TomlService.writeTomlFile(lodmodPath, lodmodRaw);
+    if (TomlService.parseStrict(lodmodRaw).ok) {
+      final migrated = _migrateLodmod(lodmodRaw);
+      if (migrated != lodmodRaw) {
+        lodmodRaw = migrated;
+        _lastSelfWrite = DateTime.now();
+        await TomlService.writeTomlFile(lodmodPath, lodmodRaw);
+      }
     }
 
+    final nams = TomlService.parseStrict(namsRaw);
+    final lodmod = TomlService.parseStrict(lodmodRaw);
+    final texture = TomlService.parseStrict(textureRaw);
+
     state = ConfigData(
-      namsValues: TomlService.parse(namsRaw),
-      lodmodValues: TomlService.parse(lodmodRaw),
-      textureInjectionValues: TomlService.parse(textureRaw),
+      namsValues: nams.values,
+      lodmodValues: lodmod.values,
+      textureInjectionValues: texture.values,
       namsRawContent: namsRaw,
       lodmodRawContent: lodmodRaw,
       textureInjectionRawContent: textureRaw,
+      namsError: nams.error,
+      lodmodError: lodmod.error,
+      textureInjectionError: texture.error,
     );
 
-    autoDetectCutscenes(gameDir);
+    _watchConfigDir(gameDir);
+
+    unawaited(autoDetectCutscenes(gameDir).catchError((_) {}));
   }
 
   Future<void> autoDetectCutscenes(String gameDir) async {
@@ -105,9 +178,13 @@ class ConfigStateController extends _$ConfigStateController {
 
     final namsPath = path.join(gameDir, 'nams', 'nams.toml');
     final raw = await TomlService.readTomlFile(namsPath);
-    final parsed = TomlService.parse(raw);
-    final cutscene =
-        (parsed['cutscene'] as Map<String, dynamic>?) ?? <String, dynamic>{};
+    final strict = TomlService.parseStrict(raw);
+    if (!strict.ok) return;
+    final parsed = strict.values;
+    final rawCutscene = parsed['cutscene'];
+    final cutscene = rawCutscene is Map<String, dynamic>
+        ? rawCutscene
+        : <String, dynamic>{};
 
     final desiredHd = result.hasHdCutscenes;
     final desiredH264 = result.needsH264;
@@ -125,17 +202,16 @@ class ConfigStateController extends _$ConfigStateController {
     final mergedAll = Map<String, dynamic>.from(parsed)
       ..['cutscene'] = mergedCutscene;
     final newRaw = TomlService.updateToml(raw, mergedAll);
+    _lastSelfWrite = DateTime.now();
     await TomlService.writeTomlFile(namsPath, newRaw);
 
+    final memRaw = state.namsValues['cutscene'];
     final memCutscene = Map<String, dynamic>.from(
-      (state.namsValues['cutscene'] as Map<String, dynamic>?) ?? const {},
+      memRaw is Map<String, dynamic> ? memRaw : const {},
     )..addAll(updates);
     final memNams = Map<String, dynamic>.from(state.namsValues)
       ..['cutscene'] = memCutscene;
-    state = state.copyWith(
-      namsValues: memNams,
-      namsRawContent: newRaw,
-    );
+    state = state.copyWith(namsValues: memNams, namsRawContent: newRaw);
   }
 
   Future<void> updateNamsNow(
@@ -146,24 +222,27 @@ class ConfigStateController extends _$ConfigStateController {
   }) async {
     final namsPath = path.join(gameDir, 'nams', 'nams.toml');
     final raw = await TomlService.readTomlFile(namsPath);
-    final parsed = TomlService.parse(raw);
+    final parsed = TomlService.parseStrict(raw);
+    if (!parsed.ok) return;
 
-    final merged = Map<String, dynamic>.from(parsed);
+    final merged = Map<String, dynamic>.from(parsed.values);
     if (section == null) {
       merged[key] = value;
     } else {
       var parent = merged;
       for (final part in section.split('.')) {
-        final child = Map<String, dynamic>.from(
-          (parent[part] as Map<String, dynamic>?) ?? const {},
-        );
-        parent[part] = child;
-        parent = child;
+        final child = parent[part];
+        final next = child is Map<String, dynamic>
+            ? Map<String, dynamic>.from(child)
+            : <String, dynamic>{};
+        parent[part] = next;
+        parent = next;
       }
       parent[key] = value;
     }
 
     final newRaw = TomlService.updateToml(raw, merged);
+    _lastSelfWrite = DateTime.now();
     await TomlService.writeTomlFile(namsPath, newRaw);
     state = state.copyWith(namsValues: merged, namsRawContent: newRaw);
   }
@@ -186,24 +265,108 @@ class ConfigStateController extends _$ConfigStateController {
     state = state.copyWith(namsValues: updated, hasUnsavedChanges: true);
   }
 
-  void updateLodmod(String key, dynamic value) {
-    final updated = Map<String, dynamic>.from(state.lodmodValues);
-    updated[key] = value;
+  void updateLodmod(String key, dynamic value, {String? section}) {
+    final updated = _withLodmodValue(
+      state.lodmodValues,
+      key,
+      value,
+      section: section,
+    );
     state = state.copyWith(lodmodValues: updated, hasUnsavedChanges: true);
+  }
+
+  static Map<String, dynamic> _withLodmodValue(
+    Map<String, dynamic> values,
+    String key,
+    dynamic value, {
+    String? section,
+  }) {
+    final updated = Map<String, dynamic>.from(values);
+    if (section == null) {
+      updated[key] = value;
+      return updated;
+    }
+    var parent = updated;
+    for (final part in section.split('.')) {
+      final child = Map<String, dynamic>.from(
+        (parent[part] as Map<String, dynamic>?) ?? {},
+      );
+      parent[part] = child;
+      parent = child;
+    }
+    parent[key] = value;
+    return updated;
+  }
+
+  static bool _lodmodHasField(
+    Map<String, dynamic> parsed,
+    ConfigField<dynamic> field,
+  ) {
+    if (field.section == null) return parsed.containsKey(field.key);
+    Map<String, dynamic>? current = parsed;
+    for (final part in field.section!.split('.')) {
+      final next = current?[part];
+      if (next is! Map<String, dynamic>) return false;
+      current = next;
+    }
+    return current!.containsKey(field.key);
   }
 
   String _migrateLodmod(String raw) {
     final parsed = TomlService.parse(raw);
-    final missing = _lodmodFields.where((f) => !parsed.containsKey(f.key));
+    final missing = _lodmodFields
+        .where((f) => !_lodmodHasField(parsed, f))
+        .toList();
     if (missing.isEmpty) return raw;
 
-    final buf = StringBuffer(raw);
-    if (!raw.endsWith('\n')) buf.write('\n');
-    for (final field in missing) {
-      buf.writeln();
-      buf.writeln('${field.key} = ${_formatTomlDefault(field.defaultValue)}');
+    var content = raw;
+    final topLevel = missing.where((f) => f.section == null).toList();
+    if (topLevel.isNotEmpty) {
+      final firstSection = content.indexOf(RegExp(r'^\[', multiLine: true));
+      final block = StringBuffer();
+      for (final field in topLevel) {
+        block.writeln();
+        block.writeln(
+          '${field.key} = ${_formatTomlDefault(field.defaultValue)}',
+        );
+      }
+      if (firstSection == -1) {
+        if (!content.endsWith('\n')) content += '\n';
+        content += block.toString();
+      } else {
+        content =
+            '${content.substring(0, firstSection)}'
+            '${block.toString()}\n'
+            '${content.substring(firstSection)}';
+      }
     }
-    return buf.toString();
+
+    final bySection = <String, List<ConfigField<dynamic>>>{};
+    for (final field in missing.where((f) => f.section != null)) {
+      (bySection[field.section!] ??= []).add(field);
+    }
+    for (final entry in bySection.entries) {
+      final header = RegExp(
+        '^\\[${RegExp.escape(entry.key)}\\][^\n]*\n',
+        multiLine: true,
+      ).firstMatch(content);
+      final block = StringBuffer();
+      for (final field in entry.value) {
+        block.writeln(
+          '${field.key} = ${_formatTomlDefault(field.defaultValue)}',
+        );
+      }
+      if (header == null) {
+        if (!content.endsWith('\n')) content += '\n';
+        content += '\n[${entry.key}]\n${block.toString()}';
+      } else {
+        content =
+            '${content.substring(0, header.end)}'
+            '${block.toString()}'
+            '${content.substring(header.end)}';
+      }
+    }
+    return content;
   }
 
   static String _formatTomlDefault(dynamic value) {
@@ -212,6 +375,16 @@ class ConfigStateController extends _$ConfigStateController {
     if (value is double) {
       final s = value.toString();
       return s.contains('.') ? s : '$s.0';
+    }
+    if (value is List) {
+      if (value.isEmpty) return '[]';
+      return '[${value.map(_formatTomlDefault).join(', ')}]';
+    }
+    if (value is Map) {
+      final pairs = value.entries
+          .map((e) => '${e.key} = ${_formatTomlDefault(e.value)}')
+          .join(', ');
+      return '{ $pairs }';
     }
     return '"$value"';
   }
@@ -223,6 +396,10 @@ class ConfigStateController extends _$ConfigStateController {
     LodModFields.aoMultiplierWidth,
     LodModFields.aoMultiplierHeight,
     LodModFields.disableVignette,
+    LodModFields.bloomReferenceHeight,
+    LodModFields.bloomKernelReferenceHeight,
+    LodModFields.bloomExtraBlur,
+    LodModFields.bloomDropCoarseLevels,
     LodModFields.shadowResolution,
     LodModFields.shadowDistanceMultiplier,
     LodModFields.shadowDistanceMinimum,
@@ -235,18 +412,42 @@ class ConfigStateController extends _$ConfigStateController {
     LodModFields.shadowModelForceAll,
     LodModFields.giEnabled,
     LodModFields.giWorkgroupSize,
-    LodModFields.giMinLightExtent,
     LodModFields.fpsUncapInMenus,
     LodModFields.fpsUncapInGameplay,
     LodModFields.fpsLimit,
+    LodModFields.highGridsEnabled,
+    LodModFields.highGridsRings,
+    LodModFields.highGridsRoomRings,
+    LodModFields.highGridsBlockedInRoom,
+    LodModFields.highGridsBlockedFromGrid,
   ];
 
   Timer? _lodmodAutosaveTimer;
   static const _lodmodAutosaveDelay = Duration(milliseconds: 100);
 
-  void updateLodmodLive(String gameDir, String key, dynamic value) {
-    final updated = Map<String, dynamic>.from(state.lodmodValues);
-    updated[key] = value;
+  void updateLodmodLive(
+    String gameDir,
+    String key,
+    dynamic value, {
+    String? section,
+  }) {
+    var updated = _withLodmodValue(
+      state.lodmodValues,
+      key,
+      value,
+      section: section,
+    );
+
+    if (section == LodModFields.highGridsEnabled.section &&
+        key == LodModFields.highGridsEnabled.key &&
+        value is bool) {
+      updated = _withLodmodValue(
+        updated,
+        LodModFields.disableManualCulling.key,
+        value,
+      );
+    }
+
     state = state.copyWith(lodmodValues: updated);
 
     _lodmodAutosaveTimer?.cancel();
@@ -255,22 +456,40 @@ class ConfigStateController extends _$ConfigStateController {
     });
   }
 
+  Future<void> applyLodmodBloom2017Preset(String gameDir) async {
+    _lodmodAutosaveTimer?.cancel();
+    var values = state.lodmodValues;
+    for (final entry in LodModFields.bloom2017Preset.entries) {
+      values = _withLodmodValue(values, entry.key, entry.value);
+    }
+    state = state.copyWith(lodmodValues: values);
+    await _flushLodmod(gameDir);
+  }
+
   Future<void> resetLodmodToDefaults(String gameDir) async {
     _lodmodAutosaveTimer?.cancel();
-    final defaults = <String, dynamic>{
-      for (final f in _lodmodFields) f.key: f.defaultValue,
-    };
+    var defaults = <String, dynamic>{};
+    for (final f in _lodmodFields) {
+      defaults = _withLodmodValue(
+        defaults,
+        f.key,
+        f.defaultValue,
+        section: f.section,
+      );
+    }
     state = state.copyWith(lodmodValues: defaults);
     await _flushLodmod(gameDir);
   }
 
   Future<void> _flushLodmod(String gameDir) async {
+    if (state.lodmodError != null) return;
     final lodmodPath = path.join(gameDir, 'nams', 'lodmod.toml');
     final newRaw = TomlService.updateToml(
       state.lodmodRawContent,
       state.lodmodValues,
     );
     if (newRaw == state.lodmodRawContent) return;
+    _lastSelfWrite = DateTime.now();
     await TomlService.writeTomlFile(lodmodPath, newRaw);
     state = state.copyWith(lodmodRawContent: newRaw);
   }
@@ -290,6 +509,19 @@ class ConfigStateController extends _$ConfigStateController {
     state = state.copyWith(textureInjectionValues: updated);
   }
 
+  Future<String> _writeConfig(
+    String filePath,
+    String raw,
+    Map<String, dynamic> values,
+    String? parseError,
+  ) async {
+    if (parseError != null) return raw;
+    final updated = TomlService.updateToml(raw, values);
+    _lastSelfWrite = DateTime.now();
+    await TomlService.writeTomlFile(filePath, updated);
+    return updated;
+  }
+
   Future<void> saveConfigs(String gameDir) async {
     final namsPath = path.join(gameDir, 'nams', 'nams.toml');
     final lodmodPath = path.join(gameDir, 'nams', 'lodmod.toml');
@@ -299,22 +531,24 @@ class ConfigStateController extends _$ConfigStateController {
     final defaultOutfitsWas =
         TomlService.parse(state.namsRawContent)[defaultOutfitsKey] == true;
 
-    final updatedNams = TomlService.updateToml(
+    final updatedNams = await _writeConfig(
+      namsPath,
       state.namsRawContent,
       state.namsValues,
+      state.namsError,
     );
-    final updatedLodmod = TomlService.updateToml(
+    final updatedLodmod = await _writeConfig(
+      lodmodPath,
       state.lodmodRawContent,
       state.lodmodValues,
+      state.lodmodError,
     );
-    final updatedTexture = TomlService.updateToml(
+    final updatedTexture = await _writeConfig(
+      texturePath,
       state.textureInjectionRawContent,
       state.textureInjectionValues,
+      state.textureInjectionError,
     );
-
-    await TomlService.writeTomlFile(namsPath, updatedNams);
-    await TomlService.writeTomlFile(lodmodPath, updatedLodmod);
-    await TomlService.writeTomlFile(texturePath, updatedTexture);
 
     state = state.copyWith(
       namsRawContent: updatedNams,
@@ -324,9 +558,7 @@ class ConfigStateController extends _$ConfigStateController {
     );
 
     if ((state.namsValues[defaultOutfitsKey] == true) != defaultOutfitsWas) {
-      await ref
-          .read(defaultModsStateControllerProvider.notifier)
-          .load(gameDir);
+      await ref.read(defaultModsStateControllerProvider.notifier).load(gameDir);
       ref.read(detectionRefreshProvider.notifier).state++;
     }
   }

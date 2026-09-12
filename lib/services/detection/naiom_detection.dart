@@ -174,8 +174,9 @@ class NaiomDetection {
           mouseUpdates[NamsFields.aimCrosshair.key] = mode == 'crosshair';
           continue;
         case 'miscenablecustomcursors':
-          mouseUpdates[NamsFields.miscDisableDefaultCursor.key] =
-              !_boolOf(value);
+          mouseUpdates[NamsFields.miscDisableDefaultCursor.key] = !_boolOf(
+            value,
+          );
           continue;
         case 'miscopendebugmenu':
           if (_isUnbound(value)) continue;

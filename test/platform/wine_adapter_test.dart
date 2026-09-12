@@ -87,14 +87,16 @@ void main() {
       );
     }, skip: skipOnWindows);
 
-    test('resolveNamsSettingsPath lands in the compat prefix', () async {
-      final path = await LinuxAdapter().resolveNamsSettingsPath(
-        '/home/u/.local/share/Steam/steamapps/common/NieRAutomata',
-      );
+    test('resolveNamsSettingsPath lands in the game dir cache', () async {
+      const gameDir =
+          '/home/u/.local/share/Steam/steamapps/common/NieRAutomata';
+      final path = await LinuxAdapter().resolveNamsSettingsPath(gameDir);
 
-      expect(path, contains(p.join('steamapps', 'compatdata', '524220', 'pfx')));
-      expect(path, endsWith(p.join('NAMS', 'settings.json')));
-    }, skip: skipOnWindows);
+      expect(
+        path,
+        p.join(gameDir, 'nams', '_internal', 'cache', 'settings.json'),
+      );
+    });
   });
 
   group('rejectGameSelection', () {
@@ -112,8 +114,10 @@ void main() {
     });
 
     test('rejects an exe outside any prefix', () {
-      final reason =
-          adapter.rejectGameSelection('/Users/d/Games/NieRAutomata.exe', _l10n);
+      final reason = adapter.rejectGameSelection(
+        '/Users/d/Games/NieRAutomata.exe',
+        _l10n,
+      );
 
       expect(reason, isNotNull);
       expect(reason, contains('NieRAutomata.exe'));
@@ -127,23 +131,29 @@ void main() {
     setUp(() => tree = FakeBottleTree.create());
     tearDown(() => tree.dispose());
 
-    test('lands in the bottle Roaming dir', () async {
+    test('lands in the game dir cache', () async {
       final bottle = tree.addBottle('Steam');
       final gameDir = p.join(bottle, 'drive_c', 'game');
 
       expect(
         await adapter.resolveNamsSettingsPath(gameDir),
-        p.join(bottle, 'drive_c', 'users', 'crossover', 'AppData', 'Roaming',
-            'NAMS', 'settings.json'),
+        p.join(gameDir, 'nams', '_internal', 'cache', 'settings.json'),
       );
-    }, skip: skipOnWindows);
+    });
 
     test('is null before a game dir is known', () async {
       expect(await adapter.resolveNamsSettingsPath(null), isNull);
     });
 
-    test('is null for a game dir outside any prefix', () async {
-      expect(await adapter.resolveNamsSettingsPath('/Users/d/Games'), isNull);
+    test('is null for an empty game dir', () async {
+      expect(await adapter.resolveNamsSettingsPath(''), isNull);
+    });
+
+    test('does not depend on the game dir being inside a prefix', () async {
+      expect(
+        await adapter.resolveNamsSettingsPath('/Users/d/Games'),
+        p.join('/Users/d/Games', 'nams', '_internal', 'cache', 'settings.json'),
+      );
     });
   });
 
@@ -176,7 +186,12 @@ void main() {
       );
 
       expect(cmd.command, wine);
-      expect(cmd.args.sublist(0, 4), ['--bottle', 'Steam', '--workdir', '/run/bins']);
+      expect(cmd.args.sublist(0, 4), [
+        '--bottle',
+        'Steam',
+        '--workdir',
+        '/run/bins',
+      ]);
       expect(cmd.args[4], '/run/bins/NAMS.exe');
       expect(cmd.args.sublist(5), [
         'run',
@@ -208,34 +223,39 @@ void main() {
       );
     }, skip: skipOnWindows);
 
-    test('buildNamsCommand routes verify args through the same runtime',
-        () async {
-      final bottle = tree.addBottle('Steam');
-      final exe = tree.addNier('Steam');
-      final gameDir = p.dirname(exe);
-      Directory(p.join(bottle, 'dosdevices', 'z:')).createSync(recursive: true);
-      final wine = tree.addWineScript();
+    test(
+      'buildNamsCommand routes verify args through the same runtime',
+      () async {
+        final bottle = tree.addBottle('Steam');
+        final exe = tree.addNier('Steam');
+        final gameDir = p.dirname(exe);
+        Directory(
+          p.join(bottle, 'dosdevices', 'z:'),
+        ).createSync(recursive: true);
+        final wine = tree.addWineScript();
 
-      final cmd = await tree.run(
-        () => adapter.buildNamsCommand(
-          namsArgs: namsVerifyArgs,
-          namsExe: '/run/bins/NAMS.exe',
-          gameDir: gameDir,
-          gameExe: exe,
-          launcherDir: '/run/bins',
-          l10n: _l10n,
-        ),
-        wineCommand: wine,
-      );
+        final cmd = await tree.run(
+          () => adapter.buildNamsCommand(
+            namsArgs: namsVerifyArgs,
+            namsExe: '/run/bins/NAMS.exe',
+            gameDir: gameDir,
+            gameExe: exe,
+            launcherDir: '/run/bins',
+            l10n: _l10n,
+          ),
+          wineCommand: wine,
+        );
 
-      expect(cmd.command, wine);
-      expect(cmd.args[4], '/run/bins/NAMS.exe');
-      expect(cmd.args.sublist(5), [
-        'verify',
-        '--nier-path',
-        r'C:\Program Files (x86)\Steam\steamapps\common\NieRAutomata',
-        '--json',
-      ]);
-    }, skip: skipOnWindows);
+        expect(cmd.command, wine);
+        expect(cmd.args[4], '/run/bins/NAMS.exe');
+        expect(cmd.args.sublist(5), [
+          'verify',
+          '--nier-path',
+          r'C:\Program Files (x86)\Steam\steamapps\common\NieRAutomata',
+          '--json',
+        ]);
+      },
+      skip: skipOnWindows,
+    );
   });
 }

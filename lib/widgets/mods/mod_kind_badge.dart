@@ -14,10 +14,26 @@ class ModKindBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final (label, color, tooltip) = switch (kind) {
-      ModKind.native => (l10n.modKindNative, AppColors.accentPrimary, l10n.modKindNativeTooltip),
-      ModKind.data => (l10n.modKindData, AppColors.textMuted, l10n.modKindDataTooltip),
-      ModKind.texture => (l10n.modKindTexture, AppColors.accentPrimary, l10n.modKindTextureTooltip),
-      ModKind.unknown => (l10n.modKindUnknown, AppColors.error, l10n.modKindUnknownTooltip),
+      ModKind.native => (
+        l10n.modKindNative,
+        AppColors.accentPrimary,
+        l10n.modKindNativeTooltip,
+      ),
+      ModKind.data => (
+        l10n.modKindData,
+        AppColors.textMuted,
+        l10n.modKindDataTooltip,
+      ),
+      ModKind.texture => (
+        l10n.modKindTexture,
+        AppColors.accentPrimary,
+        l10n.modKindTextureTooltip,
+      ),
+      ModKind.unknown => (
+        l10n.modKindUnknown,
+        AppColors.error,
+        l10n.modKindUnknownTooltip,
+      ),
     };
     return Tooltip(
       message: tooltip,
@@ -78,9 +94,6 @@ class ModCompatChip extends StatelessWidget {
       ),
     );
     if (tooltip == null) return chip;
-    return Tooltip(
-      message: tooltip!,
-      child: chip,
-    );
+    return Tooltip(message: tooltip!, child: chip);
   }
 }

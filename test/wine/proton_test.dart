@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:path/path.dart' as p;
 import 'package:yp_launcher/services/wine/proton.dart';
 
 import 'fake_steam_tree.dart';
@@ -8,6 +9,62 @@ void main() {
 
   setUp(() => tree = FakeSteamTree.create());
   tearDown(() => tree.dispose());
+
+  group('inferSteamContext', () {
+    test('game in the main library maps onto that steam root', () {
+      final root = tree.addSteamRoot();
+      final gameDir = tree.addNier();
+
+      tree.runNative(() {
+        final ctx = inferSteamContext(p.join(gameDir, 'NieRAutomata.exe'))!;
+        expect(ctx.steamRoot, root);
+        expect(ctx.libraryRoot, root);
+        expect(
+          ctx.compatDataPath,
+          p.join(root, 'steamapps', 'compatdata', nierSteamAppId),
+        );
+      });
+    });
+
+    test(
+        'game in a second library keeps compatdata there but points the '
+        'client install at the real steam root', () {
+      final root = tree.addSteamRoot();
+      final library = p.join(tree.home, 'ssd', 'SteamLibrary');
+      final gameDir = tree.addNier(library: library);
+
+      tree.runNative(() {
+        final ctx = inferSteamContext(p.join(gameDir, 'NieRAutomata.exe'))!;
+        expect(ctx.steamRoot, root);
+        expect(ctx.libraryRoot, library);
+        expect(
+          ctx.compatDataPath,
+          p.join(library, 'steamapps', 'compatdata', nierSteamAppId),
+        );
+      });
+    });
+
+    test('falls back to the library root when no steam root exists', () {
+      final library = p.join(tree.home, 'ssd', 'SteamLibrary');
+      final gameDir = tree.addNier(library: library);
+
+      overrideSteamRoots = const [];
+      try {
+        final ctx = inferSteamContext(p.join(gameDir, 'NieRAutomata.exe'))!;
+        expect(ctx.steamRoot, library);
+        expect(ctx.libraryRoot, library);
+      } finally {
+        overrideSteamRoots = null;
+      }
+    });
+
+    test('is null for a game outside any steam library', () {
+      expect(
+        inferSteamContext(p.join(tree.home, 'Games', 'NieRAutomata.exe')),
+        isNull,
+      );
+    });
+  });
 
   group('findProtonPath', () {
     test('finds a build under compatibilitytools.d', () {

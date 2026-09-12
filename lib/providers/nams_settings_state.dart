@@ -49,7 +49,7 @@ class NamsSettingsData {
 
   bool get impeller {
     final value = settings[NamsSettingsService.impellerKey];
-    return value is bool ? value : true;
+    return value is bool ? value : false;
   }
 
   bool get gameKeybindsGlobal => settings['gameKeybindsGlobal'] == true;
@@ -90,12 +90,8 @@ class NamsSettingsStateController extends _$NamsSettingsStateController {
     state = state.copyWith(isLoading: true);
     final gameDir = _gameDir;
     final settings = await NamsSettingsService.loadSettings(gameDir);
-    final settingsPath =
-        await NamsSettingsService.resolveSettingsPath(gameDir);
-    state = NamsSettingsData(
-      settings: settings,
-      settingsPath: settingsPath,
-    );
+    final settingsPath = await NamsSettingsService.resolveSettingsPath(gameDir);
+    state = NamsSettingsData(settings: settings, settingsPath: settingsPath);
     _watchSettingsFile(settingsPath);
   }
 
@@ -111,14 +107,11 @@ class NamsSettingsStateController extends _$NamsSettingsStateController {
     if (!dir.existsSync()) return;
 
     try {
-      _watchSub = dir.watch().listen(
-        (event) {
-          if (p.equals(event.path, settingsPath)) {
-            _scheduleExternalReload();
-          }
-        },
-        onError: (_) {},
-      );
+      _watchSub = dir.watch().listen((event) {
+        if (p.equals(event.path, settingsPath)) {
+          _scheduleExternalReload();
+        }
+      }, onError: (_) {});
       _watchedPath = dirPath;
     } catch (_) {}
   }
@@ -198,7 +191,10 @@ class NamsSettingsStateController extends _$NamsSettingsStateController {
 
   Future<bool> saveSettings() async {
     _lastSelfWrite = DateTime.now();
-    final saved = await NamsSettingsService.saveSettings(state.settings, _gameDir);
+    final saved = await NamsSettingsService.saveSettings(
+      state.settings,
+      _gameDir,
+    );
     if (saved) state = state.copyWith(hasUnsavedChanges: false);
     return saved;
   }

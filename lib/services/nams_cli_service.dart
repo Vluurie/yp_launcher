@@ -57,11 +57,13 @@ class NamsCliService {
       final launcherDir = paths['launcherDir'];
       if (namsExe == null || !File(namsExe).existsSync()) return null;
 
-      final result = await Process.run(
-        namsExe,
-        ['textures', 'list', '--nier-path', gameDir, '--json'],
-        workingDirectory: launcherDir,
-      );
+      final result = await Process.run(namsExe, [
+        'textures',
+        'list',
+        '--nier-path',
+        gameDir,
+        '--json',
+      ], workingDirectory: launcherDir);
       if (result.exitCode != 0) return null;
       final decoded = jsonDecode(result.stdout as String);
       if (decoded is! Map || decoded['packs'] is! List) return null;
@@ -82,7 +84,9 @@ class NamsCliService {
       final paths = await LauncherSetupService.getLauncherPaths();
       final namsExe = paths['namsExe'];
       final launcherDir = paths['launcherDir'];
-      if (namsExe == null || launcherDir == null || !File(namsExe).existsSync()) {
+      if (namsExe == null ||
+          launcherDir == null ||
+          !File(namsExe).existsSync()) {
         return const VerifyOutcome(status: VerifyStatus.error);
       }
 

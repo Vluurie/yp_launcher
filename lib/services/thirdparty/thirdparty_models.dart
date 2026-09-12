@@ -75,10 +75,7 @@ class GameModsInfo {
   final List<GameModEntry> mods;
   final bool hasConfig;
 
-  const GameModsInfo({
-    this.mods = const [],
-    this.hasConfig = false,
-  });
+  const GameModsInfo({this.mods = const [], this.hasConfig = false});
 
   int get enabledCount => mods.where((m) => !m.disabled).length;
 }
