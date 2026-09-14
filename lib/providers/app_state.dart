@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yp_launcher/constants/app_strings.dart';
 import 'package:yp_launcher/providers/notification_state.dart';
 import 'package:yp_launcher/services/nams_config_service.dart';
+import 'package:yp_launcher/services/process_service.dart';
 
 part 'app_state.g.dart';
 
@@ -72,7 +75,24 @@ class AppStateController extends _$AppStateController {
   @override
   AppState build() {
     _loadSavedDirectory();
+    unawaited(Future(syncGameRunning));
     return const AppState();
+  }
+
+  Future<void> syncGameRunning() async {
+    final running = await ProcessService.isNierAutomataRunningAsync();
+    final current = state.playButtonState;
+    if (running && current == PlayButtonState.idle) {
+      state = state.copyWith(
+        playButtonState: PlayButtonState.running,
+        status: LaunchStatus.running,
+      );
+    } else if (!running && current == PlayButtonState.running) {
+      state = state.copyWith(
+        playButtonState: PlayButtonState.idle,
+        status: LaunchStatus.stopped,
+      );
+    }
   }
 
   Future<void> _loadSavedDirectory() async {

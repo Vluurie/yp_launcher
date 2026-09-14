@@ -1,5 +1,11 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:path/path.dart' as p;
+import 'package:yp_launcher/services/toml_service.dart';
 import 'package:yp_launcher/widgets/app_dialog.dart';
+import 'package:yp_launcher/widgets/config_field_slider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yp_launcher/l10n/app_localizations.dart';
 import 'package:yp_launcher/models/installed_mod.dart';
@@ -81,6 +87,17 @@ class ModDetailPanel extends ConsumerWidget {
                   SizedBox(height: AppSizes.paddingMD(context)),
                   _nativeSection(context, m.native!, l10n),
                 ],
+                if (m.native != null)
+                  _CameraSettingsSection(
+                    key: ValueKey(m.rootPath),
+                    modRoot: m.rootPath,
+                    section: (title, child) => Padding(
+                      padding: EdgeInsets.only(
+                        top: AppSizes.paddingMD(context),
+                      ),
+                      child: _section(context, title, child),
+                    ),
+                  ),
                 if (m.data != null) ...[
                   SizedBox(height: AppSizes.paddingMD(context)),
                   _dataSection(context, ref, m, m.data!, l10n),
@@ -878,6 +895,179 @@ class ModDetailPanel extends ConsumerWidget {
 
   void _openFolder(String dirPath) {
     revealInFileManager(dirPath);
+  }
+}
+
+class _CameraField {
+  final String key;
+  final double min;
+  final double max;
+  final double step;
+  final int decimals;
+  final String Function(AppLocalizations) label;
+  final String Function(AppLocalizations) hint;
+
+  const _CameraField(
+    this.key,
+    this.min,
+    this.max,
+    this.step,
+    this.decimals,
+    this.label,
+    this.hint,
+  );
+}
+
+/// Sliders for a mod's `player_camera_settings` entity; every change is written back to its file.
+class _CameraSettingsSection extends StatefulWidget {
+  final String modRoot;
+  final Widget Function(String title, Widget child) section;
+
+  const _CameraSettingsSection({
+    super.key,
+    required this.modRoot,
+    required this.section,
+  });
+
+  @override
+  State<_CameraSettingsSection> createState() => _CameraSettingsSectionState();
+}
+
+class _CameraSettingsSectionState extends State<_CameraSettingsSection> {
+  static const _table = 'player_camera_settings';
+  static const _saveDelay = Duration(milliseconds: 100);
+  static final _fields = [
+    _CameraField(
+      'side_offset',
+      -3,
+      3,
+      0.05,
+      2,
+      (l) => l.modCameraSideOffset,
+      (l) => l.modCameraSideOffsetHint,
+    ),
+    _CameraField(
+      'height_offset',
+      -2,
+      2,
+      0.05,
+      2,
+      (l) => l.modCameraHeightOffset,
+      (l) => l.modCameraHeightOffsetHint,
+    ),
+    _CameraField(
+      'distance_offset',
+      -5,
+      10,
+      0.05,
+      2,
+      (l) => l.modCameraDistanceOffset,
+      (l) => l.modCameraDistanceOffsetHint,
+    ),
+    _CameraField(
+      'fov_offset',
+      -25,
+      60,
+      1,
+      0,
+      (l) => l.modCameraFovOffset,
+      (l) => l.modCameraFovOffsetHint,
+    ),
+  ];
+
+  String? _filePath;
+  String _raw = '';
+  final _values = <String, double>{};
+  Timer? _saveTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  @override
+  void dispose() {
+    if (_saveTimer?.isActive ?? false) {
+      _saveTimer!.cancel();
+      _save();
+    }
+    super.dispose();
+  }
+
+  Future<void> _load() async {
+    final root = Directory(widget.modRoot);
+    if (!await root.exists()) return;
+    await for (final entity in root.list(recursive: true, followLinks: false)) {
+      if (entity is! File || !entity.path.toLowerCase().endsWith('.toml')) {
+        continue;
+      }
+      if (!p.split(entity.path).contains('entities')) continue;
+      final raw = await TomlService.readTomlFile(entity.path);
+      final table = TomlService.parse(raw)[_table];
+      if (table is! Map<String, dynamic>) continue;
+      if (!mounted) return;
+      setState(() {
+        _filePath = entity.path;
+        _raw = raw;
+        for (final field in _fields) {
+          final value = table[field.key];
+          _values[field.key] = value is num ? value.toDouble() : 0.0;
+        }
+      });
+      return;
+    }
+  }
+
+  void _onChanged(_CameraField field, double value) {
+    setState(() {
+      _values[field.key] = double.parse(value.toStringAsFixed(field.decimals));
+    });
+    _saveTimer?.cancel();
+    _saveTimer = Timer(_saveDelay, _save);
+  }
+
+  Future<void> _save() async {
+    final path = _filePath;
+    if (path == null) return;
+    final updated = TomlService.updateToml(_raw, {
+      _table: Map<String, dynamic>.from(_values),
+    });
+    if (updated == _raw) return;
+    _raw = updated;
+    await TomlService.writeTomlFile(path, updated);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_filePath == null) return const SizedBox.shrink();
+    final l10n = AppLocalizations.of(context)!;
+    return widget.section(
+      l10n.modCameraSettings,
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            l10n.modCameraSettingsHint,
+            style: TextStyle(
+              fontSize: AppSizes.fontXS(context),
+              color: AppColors.textMuted,
+            ),
+          ),
+          for (final field in _fields)
+            ConfigFieldSlider(
+              label: field.label(l10n),
+              tooltip: field.hint(l10n),
+              min: field.min,
+              max: field.max,
+              step: field.step,
+              decimals: field.decimals,
+              value: _values[field.key] ?? 0.0,
+              onChanged: (value) => _onChanged(field, value),
+            ),
+        ],
+      ),
+    );
   }
 }
 

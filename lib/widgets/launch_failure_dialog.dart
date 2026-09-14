@@ -42,7 +42,7 @@ class _LaunchFailureDialogState extends State<_LaunchFailureDialog> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (_commandRequested) return;
+    if (_commandRequested || !failure.reportedByNams) return;
     final dir = widget.installDirectory;
     if (dir == null || dir.isEmpty) return;
 
@@ -208,7 +208,8 @@ class _LaunchFailureDialogState extends State<_LaunchFailureDialog> {
           ),
         ),
       ),
-      if (failure.headline.isNotEmpty &&
+      if (failure.reportedByNams &&
+          failure.headline.isNotEmpty &&
           failure.headline != failure.friendlyTitle(l10n)) ...[
         SizedBox(height: AppSizes.spacingMD(context)),
         _card(

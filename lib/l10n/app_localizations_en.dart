@@ -242,28 +242,12 @@ class AppLocalizationsEn extends AppLocalizations {
       'NAMS hit an unrecoverable error before the game could start. This is almost always a bug — please share the report below with the maintainer.';
 
   @override
-  String get failExplanationUnknown =>
-      'The game did not start within 60 seconds and no error was reported.';
-
-  @override
   String get failHintPanicShare =>
       'Copy the full report below and send it to the maintainer.';
 
   @override
   String get failHintPanicReboot =>
       'Try once more after rebooting — sometimes a stale handle clears itself.';
-
-  @override
-  String get failHintUnknownSpawned =>
-      'NAMS seems to have spawned but the game window never appeared.';
-
-  @override
-  String get failHintUnknownTaskManager =>
-      'Check Task Manager — is NieRAutomata.exe running but invisible? Kill it and retry.';
-
-  @override
-  String get failHintUnknownOtherLauncher =>
-      'Make sure no other launcher / DRM tool is holding the exe (FAR, Special K, etc).';
 
   @override
   String get failTitleNamsFailure => 'NAMS reported a failure';
@@ -2887,6 +2871,27 @@ class AppLocalizationsEn extends AppLocalizations {
       'Prevents models/geometry from randomly disappearing at certain distances or camera angles. Fixes things like the mall interior vanishing after crossing the bridge, buildings outside camp disappearing, etc. Rare ugly LOD models that would show up are filtered out.';
 
   @override
+  String get labelDisableCameraCulling => 'Disable Camera Culling';
+
+  @override
+  String get tooltipDisableCameraCulling =>
+      'Stops grass, bushes and small objects from disappearing and reappearing while you move the camera. The map hides some of them whenever the camera is in certain spots, because from there they were thought to be out of sight. With a longer view distance, for example with High-Res Map Grids or a larger Object Spawn Range, they are no longer out of sight, so you see them pop in and out. Can cost frame rate in areas with a lot of grass. Takes effect live.';
+
+  @override
+  String get labelLayoutSpawnRange => 'Object Spawn Range';
+
+  @override
+  String get tooltipLayoutSpawnRange =>
+      'How far away from you grass, bushes, rubble and other small map objects appear. 100 m = vanilla. Lower values save frame rate, but these objects then appear closer to you. Higher values fill in the landscape further out, but cost frame rate in areas with a lot of grass. Applies to objects that have not appeared yet; objects that are already there stay until that part of the map unloads.';
+
+  @override
+  String get labelLayoutSpawnEverything => 'Spawn All Map Objects';
+
+  @override
+  String get tooltipLayoutSpawnEverything =>
+      'Places every patch of grass, bush and small map object as soon as its part of the map is loaded, no matter how far away you are. Ignores Object Spawn Range. The objects still appear one after another, so a freshly loaded area fills in gradually. Costs frame rate in areas with a lot of grass.';
+
+  @override
   String get labelAoWidth => 'AO Width';
 
   @override
@@ -3094,7 +3099,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tooltipHighGridsEnabled =>
-      'Keeps more of the map loaded in high resolution around you. Vanilla only keeps 7 grids loaded and renders everything else as low-res terrain. Costs memory, loading time and frame rate, since the extra grids are also rendered. Work in progress: the culling rules are incomplete. Turning this on also turns on Disable Manual Culling, and turning it off turns that back off.';
+      'Keeps more of the map loaded in high resolution around you. Vanilla only keeps 7 grids loaded and renders everything else as low-res terrain. Costs memory, loading time and frame rate, since the extra grids are also rendered. Work in progress: the culling rules are incomplete. Turning this on also turns on Disable Manual Culling, and turning it off turns that back off. It also turns on Disable Camera Culling if it is not on yet.';
 
   @override
   String get labelHighGridsRings => 'Grid Rings';
@@ -5049,6 +5054,41 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get modDataPlayerModels => 'Player models';
+
+  @override
+  String get modCameraSettings => 'Camera';
+
+  @override
+  String get modCameraSettingsHint =>
+      'Changes are saved to the mod and apply in game while it runs.';
+
+  @override
+  String get modCameraSideOffset => 'Side offset';
+
+  @override
+  String get modCameraSideOffsetHint =>
+      'Meters. Positive moves the camera right, negative left.';
+
+  @override
+  String get modCameraHeightOffset => 'Height offset';
+
+  @override
+  String get modCameraHeightOffsetHint =>
+      'Meters. Positive moves the camera up, negative down.';
+
+  @override
+  String get modCameraDistanceOffset => 'Distance offset';
+
+  @override
+  String get modCameraDistanceOffsetHint =>
+      'Meters. Positive moves the camera away from the player, negative closer.';
+
+  @override
+  String get modCameraFovOffset => 'Field of view offset';
+
+  @override
+  String get modCameraFovOffsetHint =>
+      'Degrees. Positive widens the view, negative zooms in.';
 
   @override
   String get threeDInspectorOpen => 'Open 3D inspector';

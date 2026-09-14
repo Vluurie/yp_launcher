@@ -20,6 +20,23 @@ enabled = false
 # 0 = best quality (no LOD pop-in), 1 = vanilla, higher = further LOD distance
 lod_multiplier = 0.0
 
+# How far from you objects placed on the map (grass, bushes, rubble, small props) appear, in
+# meters. 100 = vanilla. Lower values save frame rate, these objects then appear closer to you.
+# Higher values fill the view further out and cost frame rate in areas with a lot of grass. Takes
+# effect live for objects that are not placed yet; objects already placed stay until their part of
+# the map unloads.
+layout_spawn_range = 100.0
+
+# Places all of these objects as soon as their part of the map is loaded, however far away you
+# are. Ignores layout_spawn_range. Takes effect live for objects that are not placed yet.
+layout_spawn_everything = false
+
+# Stops grass, bushes and props from vanishing and reappearing when the camera moves. The map
+# marks areas in which some objects are hidden while the camera is inside them, because from there
+# they were meant to be out of sight. With a longer view distance they are not, and you see them
+# pop. With this on they stay visible, which costs some frame rate. Takes effect live.
+disable_camera_culling = false
+
 # AO sharpness (0.1-2.0). Set to 2.0 for crisp ambient occlusion
 ao_multiplier_width = 1.0
 ao_multiplier_height = 1.0
@@ -178,6 +195,7 @@ render_scale = 1.0
 # written straight into a rule.
 [high_grids]
 # The launcher turns disable_manual_culling on together with this, and back off with it.
+# It also turns disable_camera_culling on if it is not on yet.
 enabled = false
 # Hex rings of grids around you: 1 = vanilla (7 grids), 2 = 19, 3 = 37, 4 = 61.
 # Every ring costs memory, loading time and frame rate - more geometry stays loaded

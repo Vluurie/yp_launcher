@@ -243,28 +243,12 @@ class AppLocalizationsTh extends AppLocalizations {
       'NAMS พบข้อผิดพลาดที่ไม่สามารถกู้คืนได้ก่อนเกมเริ่มทำงาน โดยทั่วไปมักเป็นบั๊ก โปรดส่งรายงานด้านล่างให้ผู้ดูแล';
 
   @override
-  String get failExplanationUnknown =>
-      'เกมไม่เริ่มภายใน 60 วินาทีและไม่มีการรายงานข้อผิดพลาด';
-
-  @override
   String get failHintPanicShare =>
       'คัดลอกรายงานฉบับเต็มด้านล่างแล้วส่งให้ผู้ดูแล';
 
   @override
   String get failHintPanicReboot =>
       'ลองอีกครั้งหลังรีบูต บางครั้งแฮนเดิลเก่าจะถูกล้างออก';
-
-  @override
-  String get failHintUnknownSpawned =>
-      'ดูเหมือน NAMS จะเริ่มกระบวนการแล้ว แต่หน้าต่างเกมไม่ปรากฏ';
-
-  @override
-  String get failHintUnknownTaskManager =>
-      'ตรวจสอบ Task Manager ว่า NieRAutomata.exe กำลังทำงานแต่ไม่แสดงหน้าต่างหรือไม่ หากใช่ ให้ปิดกระบวนการแล้วลองใหม่';
-
-  @override
-  String get failHintUnknownOtherLauncher =>
-      'ตรวจสอบว่าไม่มีตัวเรียกใช้งานหรือเครื่องมือ DRM อื่นกำลังจับไฟล์ exe อยู่ (FAR, Special K เป็นต้น)';
 
   @override
   String get failTitleNamsFailure => 'NAMS รายงานความล้มเหลว';
@@ -2882,6 +2866,27 @@ class AppLocalizationsTh extends AppLocalizations {
       'ป้องกันโมเดล/เรขาคณิตหายแบบสุ่มที่ระยะหรือมุมกล้องบางแบบ แก้ปัญหาเช่น ภายในห้างหายหลังข้ามสะพาน อาคารนอกค่ายหาย เป็นต้น โมเดล LOD ที่ดูแย่และพบไม่บ่อยจะถูกกรองออก';
 
   @override
+  String get labelDisableCameraCulling => 'ปิด Camera Culling';
+
+  @override
+  String get tooltipDisableCameraCulling =>
+      'ป้องกันไม่ให้หญ้า พุ่มไม้ และวัตถุขนาดเล็กหายไปแล้วโผล่กลับมาขณะที่คุณขยับกล้อง แผนที่จะซ่อนวัตถุบางส่วนเมื่อกล้องอยู่ในบางตำแหน่ง เพราะถือว่าจากตรงนั้นมองไม่เห็น เมื่อระยะการมองไกลขึ้น เช่น เปิดกริดแผนที่ความละเอียดสูงหรือเพิ่มระยะการเกิดวัตถุ วัตถุเหล่านั้นจะมองเห็นได้ คุณจึงเห็นมันโผล่ขึ้นและหายไป อาจลดเฟรมเรตในพื้นที่ที่มีหญ้ามาก มีผลทันที';
+
+  @override
+  String get labelLayoutSpawnRange => 'ระยะการเกิดวัตถุ';
+
+  @override
+  String get tooltipLayoutSpawnRange =>
+      'ระยะห่างจากตัวคุณที่หญ้า พุ่มไม้ เศษซาก และวัตถุขนาดเล็กอื่น ๆ บนแผนที่จะปรากฏ 100 ม. = วานิลลา ค่าที่ต่ำลงช่วยประหยัดเฟรมเรต แต่วัตถุเหล่านี้จะปรากฏเมื่ออยู่ใกล้คุณมากขึ้น ค่าที่สูงขึ้นจะเติมภูมิประเทศให้เต็มในระยะที่ไกลขึ้น แต่จะลดเฟรมเรตในพื้นที่ที่มีหญ้ามาก มีผลกับวัตถุที่ยังไม่ปรากฏเท่านั้น วัตถุที่ปรากฏแล้วจะยังคงอยู่จนกว่าส่วนนั้นของแผนที่จะถูกยกเลิกการโหลด';
+
+  @override
+  String get labelLayoutSpawnEverything => 'วางวัตถุบนแผนที่ทั้งหมด';
+
+  @override
+  String get tooltipLayoutSpawnEverything =>
+      'วางหญ้า พุ่มไม้ และวัตถุขนาดเล็กบนแผนที่ทุกชิ้นทันทีที่ส่วนนั้นของแผนที่โหลดเสร็จ ไม่ว่าคุณจะอยู่ไกลแค่ไหน ไม่สนใจระยะการเกิดวัตถุ วัตถุยังคงปรากฏทีละชิ้น พื้นที่ที่เพิ่งโหลดจึงค่อย ๆ เต็ม ลดเฟรมเรตในพื้นที่ที่มีหญ้ามาก';
+
+  @override
   String get labelAoWidth => 'ความกว้าง AO';
 
   @override
@@ -3089,7 +3094,7 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get tooltipHighGridsEnabled =>
-      'โหลดแผนที่รอบตัวคุณด้วยความละเอียดสูงมากขึ้น ต้นฉบับโหลดเพียง 7 กริดและแสดงส่วนที่เหลือเป็นภูมิประเทศความละเอียดต่ำ ใช้หน่วยความจำ เวลาโหลด และเฟรมเรตเพิ่มขึ้น เพราะกริดที่เพิ่มมาก็ต้องถูกเรนเดอร์ด้วย อยู่ระหว่างการพัฒนา: กฎการ cull ยังไม่ครบ เมื่อเปิดตัวเลือกนี้จะเปิด \"ปิด Manual Culling\" ให้ด้วย และเมื่อปิดก็จะปิดตามกลับไป';
+      'โหลดแผนที่รอบตัวคุณด้วยความละเอียดสูงมากขึ้น ต้นฉบับโหลดเพียง 7 กริดและแสดงส่วนที่เหลือเป็นภูมิประเทศความละเอียดต่ำ ใช้หน่วยความจำ เวลาโหลด และเฟรมเรตเพิ่มขึ้น เพราะกริดที่เพิ่มมาก็ต้องถูกเรนเดอร์ด้วย อยู่ระหว่างการพัฒนา: กฎการ cull ยังไม่ครบ เมื่อเปิดตัวเลือกนี้จะเปิด \"ปิด Manual Culling\" ให้ด้วย และเมื่อปิดก็จะปิดตามกลับไป นอกจากนี้ยังจะเปิด \"ปิด Camera Culling\" ให้ด้วยหากยังไม่ได้เปิด';
 
   @override
   String get labelHighGridsRings => 'วงกริด';
@@ -5028,6 +5033,41 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get modDataPlayerModels => 'โมเดลผู้เล่น';
+
+  @override
+  String get modCameraSettings => 'กล้อง';
+
+  @override
+  String get modCameraSettingsHint =>
+      'การเปลี่ยนแปลงจะถูกบันทึกลงในม็อดและมีผลในเกมทันทีขณะที่เกมทำงาน';
+
+  @override
+  String get modCameraSideOffset => 'ระยะเลื่อนด้านข้าง';
+
+  @override
+  String get modCameraSideOffsetHint =>
+      'หน่วยเมตร ค่าบวกเลื่อนกล้องไปทางขวา ค่าลบไปทางซ้าย';
+
+  @override
+  String get modCameraHeightOffset => 'ระยะเลื่อนความสูง';
+
+  @override
+  String get modCameraHeightOffsetHint =>
+      'หน่วยเมตร ค่าบวกเลื่อนกล้องขึ้น ค่าลบเลื่อนลง';
+
+  @override
+  String get modCameraDistanceOffset => 'ระยะเลื่อนระยะห่าง';
+
+  @override
+  String get modCameraDistanceOffsetHint =>
+      'หน่วยเมตร ค่าบวกเลื่อนกล้องออกห่างจากผู้เล่น ค่าลบเข้าใกล้';
+
+  @override
+  String get modCameraFovOffset => 'ระยะเลื่อนมุมมองภาพ';
+
+  @override
+  String get modCameraFovOffsetHint =>
+      'หน่วยองศา ค่าบวกขยายมุมมอง ค่าลบซูมเข้า';
 
   @override
   String get threeDInspectorOpen => 'เปิดตัวตรวจสอบ 3 มิติ';

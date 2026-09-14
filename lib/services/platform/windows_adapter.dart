@@ -61,20 +61,8 @@ class WindowsAdapter extends PlatformAdapter {
   );
 
   @override
-  Future<bool> isGameRunning() async {
-    try {
-      final result = await Process.run('tasklist', [
-        '/FI',
-        'IMAGENAME eq ${AppStrings.namsExeName}',
-        '/NH',
-      ]);
-      return result.stdout.toString().toLowerCase().contains(
-        AppStrings.namsExeName.toLowerCase(),
-      );
-    } catch (_) {
-      return isWin32ProcessRunning(AppStrings.namsExeName);
-    }
-  }
+  Future<bool> isGameRunning() async =>
+      isWin32ProcessRunning(AppStrings.namsExeName);
 
   @override
   Future<bool> terminateGame() async =>

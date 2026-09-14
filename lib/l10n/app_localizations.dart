@@ -516,12 +516,6 @@ abstract class AppLocalizations {
   /// **'NAMS hit an unrecoverable error before the game could start. This is almost always a bug — please share the report below with the maintainer.'**
   String get failExplanationPanic;
 
-  /// No description provided for @failExplanationUnknown.
-  ///
-  /// In en, this message translates to:
-  /// **'The game did not start within 60 seconds and no error was reported.'**
-  String get failExplanationUnknown;
-
   /// No description provided for @failHintPanicShare.
   ///
   /// In en, this message translates to:
@@ -533,24 +527,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Try once more after rebooting — sometimes a stale handle clears itself.'**
   String get failHintPanicReboot;
-
-  /// No description provided for @failHintUnknownSpawned.
-  ///
-  /// In en, this message translates to:
-  /// **'NAMS seems to have spawned but the game window never appeared.'**
-  String get failHintUnknownSpawned;
-
-  /// No description provided for @failHintUnknownTaskManager.
-  ///
-  /// In en, this message translates to:
-  /// **'Check Task Manager — is NieRAutomata.exe running but invisible? Kill it and retry.'**
-  String get failHintUnknownTaskManager;
-
-  /// No description provided for @failHintUnknownOtherLauncher.
-  ///
-  /// In en, this message translates to:
-  /// **'Make sure no other launcher / DRM tool is holding the exe (FAR, Special K, etc).'**
-  String get failHintUnknownOtherLauncher;
 
   /// No description provided for @failTitleNamsFailure.
   ///
@@ -5040,6 +5016,42 @@ abstract class AppLocalizations {
   /// **'Prevents models/geometry from randomly disappearing at certain distances or camera angles. Fixes things like the mall interior vanishing after crossing the bridge, buildings outside camp disappearing, etc. Rare ugly LOD models that would show up are filtered out.'**
   String get tooltipDisableManualCulling;
 
+  /// No description provided for @labelDisableCameraCulling.
+  ///
+  /// In en, this message translates to:
+  /// **'Disable Camera Culling'**
+  String get labelDisableCameraCulling;
+
+  /// No description provided for @tooltipDisableCameraCulling.
+  ///
+  /// In en, this message translates to:
+  /// **'Stops grass, bushes and small objects from disappearing and reappearing while you move the camera. The map hides some of them whenever the camera is in certain spots, because from there they were thought to be out of sight. With a longer view distance, for example with High-Res Map Grids or a larger Object Spawn Range, they are no longer out of sight, so you see them pop in and out. Can cost frame rate in areas with a lot of grass. Takes effect live.'**
+  String get tooltipDisableCameraCulling;
+
+  /// No description provided for @labelLayoutSpawnRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Object Spawn Range'**
+  String get labelLayoutSpawnRange;
+
+  /// No description provided for @tooltipLayoutSpawnRange.
+  ///
+  /// In en, this message translates to:
+  /// **'How far away from you grass, bushes, rubble and other small map objects appear. 100 m = vanilla. Lower values save frame rate, but these objects then appear closer to you. Higher values fill in the landscape further out, but cost frame rate in areas with a lot of grass. Applies to objects that have not appeared yet; objects that are already there stay until that part of the map unloads.'**
+  String get tooltipLayoutSpawnRange;
+
+  /// No description provided for @labelLayoutSpawnEverything.
+  ///
+  /// In en, this message translates to:
+  /// **'Spawn All Map Objects'**
+  String get labelLayoutSpawnEverything;
+
+  /// No description provided for @tooltipLayoutSpawnEverything.
+  ///
+  /// In en, this message translates to:
+  /// **'Places every patch of grass, bush and small map object as soon as its part of the map is loaded, no matter how far away you are. Ignores Object Spawn Range. The objects still appear one after another, so a freshly loaded area fills in gradually. Costs frame rate in areas with a lot of grass.'**
+  String get tooltipLayoutSpawnEverything;
+
   /// No description provided for @labelAoWidth.
   ///
   /// In en, this message translates to:
@@ -5403,7 +5415,7 @@ abstract class AppLocalizations {
   /// No description provided for @tooltipHighGridsEnabled.
   ///
   /// In en, this message translates to:
-  /// **'Keeps more of the map loaded in high resolution around you. Vanilla only keeps 7 grids loaded and renders everything else as low-res terrain. Costs memory, loading time and frame rate, since the extra grids are also rendered. Work in progress: the culling rules are incomplete. Turning this on also turns on Disable Manual Culling, and turning it off turns that back off.'**
+  /// **'Keeps more of the map loaded in high resolution around you. Vanilla only keeps 7 grids loaded and renders everything else as low-res terrain. Costs memory, loading time and frame rate, since the extra grids are also rendered. Work in progress: the culling rules are incomplete. Turning this on also turns on Disable Manual Culling, and turning it off turns that back off. It also turns on Disable Camera Culling if it is not on yet.'**
   String get tooltipHighGridsEnabled;
 
   /// No description provided for @labelHighGridsRings.
@@ -8686,6 +8698,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Player models'**
   String get modDataPlayerModels;
+
+  /// No description provided for @modCameraSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera'**
+  String get modCameraSettings;
+
+  /// No description provided for @modCameraSettingsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Changes are saved to the mod and apply in game while it runs.'**
+  String get modCameraSettingsHint;
+
+  /// No description provided for @modCameraSideOffset.
+  ///
+  /// In en, this message translates to:
+  /// **'Side offset'**
+  String get modCameraSideOffset;
+
+  /// No description provided for @modCameraSideOffsetHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Meters. Positive moves the camera right, negative left.'**
+  String get modCameraSideOffsetHint;
+
+  /// No description provided for @modCameraHeightOffset.
+  ///
+  /// In en, this message translates to:
+  /// **'Height offset'**
+  String get modCameraHeightOffset;
+
+  /// No description provided for @modCameraHeightOffsetHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Meters. Positive moves the camera up, negative down.'**
+  String get modCameraHeightOffsetHint;
+
+  /// No description provided for @modCameraDistanceOffset.
+  ///
+  /// In en, this message translates to:
+  /// **'Distance offset'**
+  String get modCameraDistanceOffset;
+
+  /// No description provided for @modCameraDistanceOffsetHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Meters. Positive moves the camera away from the player, negative closer.'**
+  String get modCameraDistanceOffsetHint;
+
+  /// No description provided for @modCameraFovOffset.
+  ///
+  /// In en, this message translates to:
+  /// **'Field of view offset'**
+  String get modCameraFovOffset;
+
+  /// No description provided for @modCameraFovOffsetHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Degrees. Positive widens the view, negative zooms in.'**
+  String get modCameraFovOffsetHint;
 
   /// No description provided for @threeDInspectorOpen.
   ///

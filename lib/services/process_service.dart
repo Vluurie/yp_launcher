@@ -52,8 +52,8 @@ class ProcessService {
           LaunchFailure(
             headline: l10n.errorFilesQuarantined(missing.join(', ')),
             rawOutput:
-                'Missing required files in launcher directory:\n${missing.join('\n')}\n\n'
-                'These files were quarantined or removed by antivirus software.',
+                'Missing required files in ${LauncherSetupService.launcherDirectory}:\n'
+                '${missing.join('\n')}',
           ),
         );
       }

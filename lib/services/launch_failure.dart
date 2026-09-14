@@ -23,6 +23,8 @@ class LaunchFailure {
     this.capturedLogPath,
   });
 
+  bool get reportedByNams => code != null;
+
   String friendlyTitle(AppLocalizations l) {
     if (panic) return l.failTitlePanic;
     final c = code;
@@ -33,7 +35,7 @@ class LaunchFailure {
   String friendlyExplanation(AppLocalizations l) {
     if (panic) return l.failExplanationPanic;
     final c = code;
-    if (c == null) return l.failExplanationUnknown;
+    if (c == null) return headline;
     return _categoryFor(c).explanation(l);
   }
 
@@ -42,13 +44,7 @@ class LaunchFailure {
       return [l.failHintPanicShare, l.failHintPanicReboot];
     }
     final c = code;
-    if (c == null) {
-      return [
-        l.failHintUnknownSpawned,
-        l.failHintUnknownTaskManager,
-        l.failHintUnknownOtherLauncher,
-      ];
-    }
+    if (c == null) return const [];
     final cat = _categoryFor(c);
     return [
       if (fix != null && fix!.isNotEmpty) fix!,

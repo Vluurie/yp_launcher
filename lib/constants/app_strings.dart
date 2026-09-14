@@ -47,7 +47,7 @@ class AppStrings {
   static const String shortcutDescription =
       'Launch NieR:Automata with YoRHa Protocol';
 
-  static const String appVersion = 'v2.3.1';
+  static const String appVersion = 'v2.3.2';
 
   static const String tabModloaderId = 'modloader';
   static const String tabYorhaId = 'yorha';
