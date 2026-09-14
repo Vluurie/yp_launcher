@@ -235,24 +235,10 @@ class AppLocalizationsZh extends AppLocalizations {
       'NAMS 在游戏启动前遇到了无法恢复的错误。这几乎总是一个程序缺陷 — 请将下面的报告分享给维护者。';
 
   @override
-  String get failExplanationUnknown => '游戏在 60 秒内未能启动，且没有报告任何错误。';
-
-  @override
   String get failHintPanicShare => '复制下面的完整报告并发送给维护者。';
 
   @override
   String get failHintPanicReboot => '重启电脑后再试一次 — 有时残留的句柄会自行清除。';
-
-  @override
-  String get failHintUnknownSpawned => 'NAMS 似乎已启动，但游戏窗口从未出现。';
-
-  @override
-  String get failHintUnknownTaskManager =>
-      '请检查任务管理器 — NieRAutomata.exe 是否正在运行但不可见？结束该进程后重试。';
-
-  @override
-  String get failHintUnknownOtherLauncher =>
-      '请确认没有其他启动器或 DRM 工具占用该程序（如 FAR、Special K 等）。';
 
   @override
   String get failTitleNamsFailure => 'NAMS 报告了一个故障';
@@ -2766,6 +2752,27 @@ class AppLocalizationsZh extends AppLocalizations {
       '防止模型/几何体在特定距离或镜头角度下随机消失。可修复过桥后商场内部消失、营地外建筑消失等问题。偶尔会出现的难看 LOD 模型将被过滤。';
 
   @override
+  String get labelDisableCameraCulling => '禁用镜头剔除';
+
+  @override
+  String get tooltipDisableCameraCulling =>
+      '防止草、灌木和小型物体在你移动镜头时消失又重新出现。当镜头处于某些位置时，地图会隐藏其中一部分，因为从那里本应看不到它们。视距更远时（例如开启高分辨率地图网格或调大物体生成范围），它们其实能被看到，于是你会看到它们忽隐忽现。在草很多的区域可能会降低帧率。实时生效。';
+
+  @override
+  String get labelLayoutSpawnRange => '物体生成范围';
+
+  @override
+  String get tooltipLayoutSpawnRange =>
+      '草、灌木、碎石和其他小型地图物体会在离你多远的范围内出现。100 米 = 原版。数值越低越省帧率，但这些物体会在离你更近时才出现。数值越高，越远处的景物也会被填满，但在草很多的区域会降低帧率。只影响尚未出现的物体；已经出现的物体会一直保留，直到这部分地图被卸载。';
+
+  @override
+  String get labelLayoutSpawnEverything => '生成全部地图物体';
+
+  @override
+  String get tooltipLayoutSpawnEverything =>
+      '只要所在的地图区域已加载，就立即放置每一片草、每一丛灌木和每个小型地图物体，无论你离得多远。忽略物体生成范围。物体仍会一个接一个出现，因此刚加载的区域会逐渐被填满。在草很多的区域会降低帧率。';
+
+  @override
   String get labelAoWidth => 'AO 宽度';
 
   @override
@@ -2972,7 +2979,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get tooltipHighGridsEnabled =>
-      '在你周围保持更多地图以高分辨率加载。原版只加载 7 个网格，其余部分都渲染为低分辨率地形。会占用内存、增加加载时间，并降低帧率，因为额外的网格同样需要渲染。开发中：剔除规则尚不完整。 开启此项时也会同时开启“禁用手动剔除”，关闭时则一并关闭。';
+      '在你周围保持更多地图以高分辨率加载。原版只加载 7 个网格，其余部分都渲染为低分辨率地形。会占用内存、增加加载时间，并降低帧率，因为额外的网格同样需要渲染。开发中：剔除规则尚不完整。 开启此项时也会同时开启“禁用手动剔除”，关闭时则一并关闭。如果“禁用镜头剔除”尚未开启，也会将其开启。';
 
   @override
   String get labelHighGridsRings => '网格环数';
@@ -4826,6 +4833,36 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get modDataPlayerModels => '玩家模型';
+
+  @override
+  String get modCameraSettings => '相机';
+
+  @override
+  String get modCameraSettingsHint => '更改会保存到模组中，并在游戏运行时立即生效。';
+
+  @override
+  String get modCameraSideOffset => '横向偏移';
+
+  @override
+  String get modCameraSideOffsetHint => '单位：米。正值使相机向右移动，负值向左。';
+
+  @override
+  String get modCameraHeightOffset => '高度偏移';
+
+  @override
+  String get modCameraHeightOffsetHint => '单位：米。正值使相机向上移动，负值向下。';
+
+  @override
+  String get modCameraDistanceOffset => '距离偏移';
+
+  @override
+  String get modCameraDistanceOffsetHint => '单位：米。正值使相机远离玩家，负值靠近。';
+
+  @override
+  String get modCameraFovOffset => '视野偏移';
+
+  @override
+  String get modCameraFovOffsetHint => '单位：度。正值扩大视野，负值拉近。';
 
   @override
   String get threeDInspectorOpen => '打开 3D 检查器';

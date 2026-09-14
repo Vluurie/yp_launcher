@@ -245,28 +245,12 @@ class AppLocalizationsDe extends AppLocalizations {
       'NAMS ist auf einen nicht behebbaren Fehler gestoßen, bevor das Spiel starten konnte. Das ist fast immer ein Bug – bitte teile den Bericht unten mit dem Maintainer.';
 
   @override
-  String get failExplanationUnknown =>
-      'Das Spiel wurde innerhalb von 60 Sekunden nicht gestartet und es wurde kein Fehler gemeldet.';
-
-  @override
   String get failHintPanicShare =>
       'Kopiere den vollständigen Bericht unten und sende ihn an den Maintainer.';
 
   @override
   String get failHintPanicReboot =>
       'Versuche es nach einem Neustart erneut – manchmal löst sich ein hängengebliebener Handle von selbst.';
-
-  @override
-  String get failHintUnknownSpawned =>
-      'NAMS scheint gestartet zu sein, aber das Spielfenster ist nie erschienen.';
-
-  @override
-  String get failHintUnknownTaskManager =>
-      'Prüfe den Task-Manager – läuft NieRAutomata.exe, ist aber unsichtbar? Beende den Prozess und versuche es erneut.';
-
-  @override
-  String get failHintUnknownOtherLauncher =>
-      'Stelle sicher, dass kein anderer Launcher bzw. kein DRM-Tool die EXE blockiert (FAR, Special K usw.).';
 
   @override
   String get failTitleNamsFailure => 'NAMS hat einen Fehler gemeldet';
@@ -2936,6 +2920,27 @@ class AppLocalizationsDe extends AppLocalizations {
       'Verhindert, dass Modelle oder Geometrie bei bestimmten Entfernungen oder Kamerawinkeln zufällig verschwinden. Behebt beispielsweise das Verschwinden des Einkaufszentrums nach dem Überqueren der Brücke oder von Gebäuden außerhalb des Lagers. Seltene, unschöne LOD-Modelle, die dadurch sichtbar würden, werden herausgefiltert.';
 
   @override
+  String get labelDisableCameraCulling => 'Kamera-Culling deaktivieren';
+
+  @override
+  String get tooltipDisableCameraCulling =>
+      'Verhindert, dass Gras, Büsche und kleine Objekte verschwinden und wieder auftauchen, während du die Kamera bewegst. Die Karte blendet einige davon aus, sobald die Kamera an bestimmten Stellen steht, weil sie von dort aus eigentlich nicht zu sehen sein sollten. Mit größerer Sichtweite, zum Beispiel mit hochauflösenden Karten-Grids oder einer größeren Objekt-Reichweite, sind sie aber zu sehen, und du siehst sie auf- und abtauchen. Kann in Gegenden mit viel Gras Framerate kosten. Wirkt sofort.';
+
+  @override
+  String get labelLayoutSpawnRange => 'Objekt-Reichweite';
+
+  @override
+  String get tooltipLayoutSpawnRange =>
+      'Wie weit von dir entfernt Gras, Büsche, Schutt und andere kleine Kartenobjekte erscheinen. 100 m = Vanilla. Niedrigere Werte sparen Framerate, die Objekte erscheinen dann aber näher bei dir. Höhere Werte füllen die Landschaft weiter hinaus, kosten aber in Gegenden mit viel Gras Framerate. Gilt für Objekte, die noch nicht erschienen sind; Objekte, die schon da sind, bleiben, bis dieser Teil der Karte entladen wird.';
+
+  @override
+  String get labelLayoutSpawnEverything => 'Alle Kartenobjekte platzieren';
+
+  @override
+  String get tooltipLayoutSpawnEverything =>
+      'Platziert jedes Gras, jeden Busch und jedes kleine Kartenobjekt, sobald sein Teil der Karte geladen ist, egal wie weit du entfernt bist. Ignoriert die Objekt-Reichweite. Die Objekte erscheinen trotzdem nacheinander, ein frisch geladener Bereich füllt sich also nach und nach. Kostet in Gegenden mit viel Gras Framerate.';
+
+  @override
   String get labelAoWidth => 'AO-Breite';
 
   @override
@@ -3143,7 +3148,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get tooltipHighGridsEnabled =>
-      'Hält mehr von der Karte in hoher Auflösung um dich herum geladen. Vanilla lädt nur 7 Grids und stellt alles andere als niedrig aufgelöstes Gelände dar. Kostet Speicher, Ladezeit und Framerate, da die zusätzlichen Grids auch gerendert werden. In Arbeit: die Culling-Regeln sind unvollständig. Wird das eingeschaltet, wird auch \"Manuelles Culling deaktivieren\" eingeschaltet, und beim Ausschalten wieder aus.';
+      'Hält mehr von der Karte in hoher Auflösung um dich herum geladen. Vanilla lädt nur 7 Grids und stellt alles andere als niedrig aufgelöstes Gelände dar. Kostet Speicher, Ladezeit und Framerate, da die zusätzlichen Grids auch gerendert werden. In Arbeit: die Culling-Regeln sind unvollständig. Wird das eingeschaltet, wird auch \"Manuelles Culling deaktivieren\" eingeschaltet, und beim Ausschalten wieder aus. Außerdem wird \"Kamera-Culling deaktivieren\" eingeschaltet, falls es noch aus ist.';
 
   @override
   String get labelHighGridsRings => 'Grid-Ringe';
@@ -5123,6 +5128,41 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get modDataPlayerModels => 'Spielermodelle';
+
+  @override
+  String get modCameraSettings => 'Kamera';
+
+  @override
+  String get modCameraSettingsHint =>
+      'Änderungen werden im Mod gespeichert und wirken sofort im laufenden Spiel.';
+
+  @override
+  String get modCameraSideOffset => 'Seitlicher Versatz';
+
+  @override
+  String get modCameraSideOffsetHint =>
+      'Meter. Positiv verschiebt die Kamera nach rechts, negativ nach links.';
+
+  @override
+  String get modCameraHeightOffset => 'Höhenversatz';
+
+  @override
+  String get modCameraHeightOffsetHint =>
+      'Meter. Positiv verschiebt die Kamera nach oben, negativ nach unten.';
+
+  @override
+  String get modCameraDistanceOffset => 'Abstandsversatz';
+
+  @override
+  String get modCameraDistanceOffsetHint =>
+      'Meter. Positiv weiter weg vom Spieler, negativ näher heran.';
+
+  @override
+  String get modCameraFovOffset => 'Sichtfeld-Versatz';
+
+  @override
+  String get modCameraFovOffsetHint =>
+      'Grad. Positiv erweitert das Sichtfeld, negativ zoomt heran.';
 
   @override
   String get threeDInspectorOpen => '3D-Inspektor öffnen';

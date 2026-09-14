@@ -366,7 +366,6 @@ class _LodmodViewState extends ConsumerState<LodmodView> {
       onChanged: (v) => notifier.updateLodmodLive(gameDir, field.key, v / 100),
     );
   }
-
   Widget _shadowResDropdown(
     ConfigData config,
     ConfigStateController notifier,
@@ -725,6 +724,31 @@ class _LodmodViewState extends ConsumerState<LodmodView> {
                         gameDir,
                         l10n,
                         LodModFields.disableManualCulling,
+                      ),
+                      _bool(
+                        config,
+                        notifier,
+                        gameDir,
+                        l10n,
+                        LodModFields.disableCameraCulling,
+                      ),
+                      if (!LodModFields.layoutSpawnEverything.valueIn(
+                        config.lodmodValues,
+                      ))
+                        _slider(
+                          config,
+                          notifier,
+                          gameDir,
+                          l10n,
+                          LodModFields.layoutSpawnRange,
+                          decimals: 0,
+                        ),
+                      _bool(
+                        config,
+                        notifier,
+                        gameDir,
+                        l10n,
+                        LodModFields.layoutSpawnEverything,
                       ),
                     ]),
                     _card(context, l10n.cardAmbientOcclusion, [

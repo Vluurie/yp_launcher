@@ -6,6 +6,7 @@ import 'package:yp_launcher/theme/app_colors.dart';
 import 'package:yp_launcher/theme/app_theme.dart';
 import 'package:yp_launcher/theme/nier_curves.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
+import 'package:yp_launcher/widgets/play_button.dart';
 
 const docsTabIndex = 10;
 
@@ -47,12 +48,14 @@ class LauncherSidebar extends StatefulWidget {
   final List<SidebarSection> sections;
   final int activeIndex;
   final ValueChanged<int> onSelect;
+  final bool showPlayButton;
 
   const LauncherSidebar({
     super.key,
     required this.sections,
     required this.activeIndex,
     required this.onSelect,
+    required this.showPlayButton,
   });
 
   @override
@@ -160,16 +163,20 @@ class _LauncherSidebarState extends State<LauncherSidebar> {
               ),
             ),
           ),
-          _VersionFooter(showLabel: showLabels),
+          _SidebarFooter(
+            showLabel: showLabels,
+            showPlayButton: widget.showPlayButton,
+          ),
         ],
       ),
     );
   }
 }
 
-class _VersionFooter extends StatelessWidget {
+class _SidebarFooter extends StatelessWidget {
   final bool showLabel;
-  const _VersionFooter({required this.showLabel});
+  final bool showPlayButton;
+  const _SidebarFooter({required this.showLabel, required this.showPlayButton});
 
   @override
   Widget build(BuildContext context) {
@@ -182,33 +189,53 @@ class _VersionFooter extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border(top: BorderSide(color: AppColors.borderLight)),
       ),
-      child: Tooltip(
-        message: showLabel ? '' : label,
-        child: Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: AppSizes.chipPaddingH(context),
-            vertical: AppSizes.chipPaddingV(context),
-          ),
-          decoration: BoxDecoration(
-            color: AppColors.accentPrimary.withValues(alpha: 0.10),
-            borderRadius: BorderRadius.circular(AppSizes.borderRadius(context)),
-            border: Border.all(
-              color: AppColors.accentPrimary.withValues(alpha: 0.3),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          AnimatedCrossFade(
+            duration: const Duration(milliseconds: 220),
+            sizeCurve: Curves.easeOutCubic,
+            crossFadeState: showPlayButton
+                ? CrossFadeState.showSecond
+                : CrossFadeState.showFirst,
+            firstChild: const SizedBox(width: double.infinity),
+            secondChild: Padding(
+              padding: EdgeInsets.only(bottom: AppSizes.spacingMD(context)),
+              child: PlayButton.compact(showLabel: showLabel),
             ),
           ),
-          alignment: Alignment.center,
-          child: Text(
-            label,
-            overflow: TextOverflow.ellipsis,
-            maxLines: 1,
-            style: TextStyle(
-              fontSize: AppSizes.fontXS(context),
-              fontWeight: FontWeight.bold,
-              color: AppColors.accentPrimary,
-              letterSpacing: 0.5,
+          Tooltip(
+            message: showLabel ? '' : label,
+            child: Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: AppSizes.chipPaddingH(context),
+                vertical: AppSizes.chipPaddingV(context),
+              ),
+              decoration: BoxDecoration(
+                color: AppColors.accentPrimary.withValues(alpha: 0.10),
+                borderRadius: BorderRadius.circular(
+                  AppSizes.borderRadius(context),
+                ),
+                border: Border.all(
+                  color: AppColors.accentPrimary.withValues(alpha: 0.3),
+                ),
+              ),
+              alignment: Alignment.center,
+              child: Text(
+                label,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+                style: TextStyle(
+                  fontSize: AppSizes.fontXS(context),
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.accentPrimary,
+                  letterSpacing: 0.5,
+                ),
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }

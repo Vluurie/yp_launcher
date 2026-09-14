@@ -1074,6 +1074,7 @@ const _fixedEntityKinds = {
   'maps': 'custom_map',
   'shops': 'shop',
   'rubypatches': 'ruby_patch',
+  'camera': 'player_camera_settings',
 };
 
 String? _bundleKindFromFileName(String fileName) {

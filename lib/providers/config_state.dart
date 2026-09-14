@@ -393,6 +393,9 @@ class ConfigStateController extends _$ConfigStateController {
     LodModFields.enabled,
     LodModFields.lodMultiplier,
     LodModFields.disableManualCulling,
+    LodModFields.disableCameraCulling,
+    LodModFields.layoutSpawnRange,
+    LodModFields.layoutSpawnEverything,
     LodModFields.aoMultiplierWidth,
     LodModFields.aoMultiplierHeight,
     LodModFields.disableVignette,
@@ -446,6 +449,13 @@ class ConfigStateController extends _$ConfigStateController {
         LodModFields.disableManualCulling.key,
         value,
       );
+      if (value) {
+        updated = _withLodmodValue(
+          updated,
+          LodModFields.disableCameraCulling.key,
+          true,
+        );
+      }
     }
 
     state = state.copyWith(lodmodValues: updated);

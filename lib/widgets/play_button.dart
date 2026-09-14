@@ -19,7 +19,13 @@ import 'package:yp_launcher/models/config_fields.dart';
 import 'package:yp_launcher/widgets/launch_failure_dialog.dart';
 
 class PlayButton extends ConsumerWidget {
-  const PlayButton({super.key});
+  final bool compact;
+  final bool showLabel;
+
+  const PlayButton({super.key}) : compact = false, showLabel = true;
+
+  const PlayButton.compact({super.key, required this.showLabel})
+    : compact = true;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -34,35 +40,104 @@ class PlayButton extends ConsumerWidget {
         ? AppColors.textMuted
         : _getButtonColor(appState);
 
-    final button = SizedBox(
-      width: AppSizes.playButtonWidth(context),
-      height: AppSizes.playButtonHeight(context),
-      child: TextButton(
-        onPressed: appState.canPlay && !isSearching && canLaunch
-            ? () => _handlePlayButton(context, ref, controller, appState, l10n)
-            : null,
-        style: TextButton.styleFrom(
-          foregroundColor: buttonColor,
-          backgroundColor: isRunning
-              ? AppColors.error.withValues(alpha: 0.12)
-              : AppColors.surfaceLight,
-          disabledBackgroundColor: AppColors.surfaceLight.withValues(
-            alpha: 0.5,
-          ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(6.0),
-            side: BorderSide(color: buttonColor, width: isRunning ? 2.0 : 1.5),
-          ),
-          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 20.0),
-        ),
-        child: _buildButtonContent(context, ref, appState, l10n),
+    final onPressed = appState.canPlay && !isSearching && canLaunch
+        ? () => _handlePlayButton(context, ref, controller, appState, l10n)
+        : null;
+    final style = TextButton.styleFrom(
+      foregroundColor: buttonColor,
+      backgroundColor: isRunning
+          ? AppColors.error.withValues(alpha: 0.12)
+          : AppColors.surfaceLight,
+      disabledBackgroundColor: AppColors.surfaceLight.withValues(alpha: 0.5),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(6.0),
+        side: BorderSide(color: buttonColor, width: isRunning ? 2.0 : 1.5),
       ),
+      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 20.0),
     );
+
+    final button = compact
+        ? SizedBox(
+            width: double.infinity,
+            height: AppSizes.sidebarRowHeight(context),
+            child: TextButton(
+              onPressed: onPressed,
+              style: style.copyWith(
+                padding: WidgetStatePropertyAll(
+                  EdgeInsets.symmetric(horizontal: AppSizes.spacingMD(context)),
+                ),
+              ),
+              child: _buildCompactContent(context, appState, buttonColor, l10n),
+            ),
+          )
+        : SizedBox(
+            width: AppSizes.playButtonWidth(context),
+            height: AppSizes.playButtonHeight(context),
+            child: TextButton(
+              onPressed: onPressed,
+              style: style,
+              child: _buildButtonContent(context, ref, appState, l10n),
+            ),
+          );
 
     if (!canLaunch) {
       return Tooltip(message: l10n.playDisabledTooltip, child: button);
     }
+    if (compact && !showLabel) {
+      return Tooltip(
+        message: isRunning ? l10n.stopButton : l10n.playButton,
+        child: button,
+      );
+    }
     return button;
+  }
+
+  Widget _buildCompactContent(
+    BuildContext context,
+    AppState appState,
+    Color color,
+    AppLocalizations l10n,
+  ) {
+    final size = AppSizes.iconLG(context);
+    if (appState.playButtonState == PlayButtonState.loading) {
+      return SizedBox(
+        width: size,
+        height: size,
+        child: AutomatoLoading(
+          color: AppColors.accentPrimary,
+          translateX: 0,
+          svgString: AutomatoSvgStrings.automatoSvgStrHead,
+        ),
+      );
+    }
+
+    final isRunning = appState.playButtonState == PlayButtonState.running;
+    final icon = Icon(
+      isRunning ? Icons.stop_rounded : Icons.play_arrow_rounded,
+      size: size,
+      color: color,
+    );
+    if (!showLabel) return icon;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        icon,
+        SizedBox(width: AppSizes.spacingMD(context)),
+        Flexible(
+          child: Text(
+            isRunning ? l10n.stopButton : l10n.playButton,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: AppSizes.fontSM(context),
+              fontWeight: FontWeight.bold,
+              color: color,
+              letterSpacing: 1.0,
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _buildButtonContent(

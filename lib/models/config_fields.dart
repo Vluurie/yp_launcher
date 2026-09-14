@@ -786,6 +786,30 @@ class LodModFields {
     allowedValues: const [0.0, 0.75, 1.0, 10.0],
   );
 
+  static final layoutSpawnRange = ConfigField<double>(
+    key: 'layout_spawn_range',
+    defaultValue: 100.0,
+    label: (l) => l.labelLayoutSpawnRange,
+    tooltip: (l) => l.tooltipLayoutSpawnRange,
+    min: 25.0,
+    max: 400.0,
+    step: 25.0,
+  );
+
+  static final layoutSpawnEverything = ConfigField<bool>(
+    key: 'layout_spawn_everything',
+    defaultValue: false,
+    label: (l) => l.labelLayoutSpawnEverything,
+    tooltip: (l) => l.tooltipLayoutSpawnEverything,
+  );
+
+  static final disableCameraCulling = ConfigField<bool>(
+    key: 'disable_camera_culling',
+    defaultValue: false,
+    label: (l) => l.labelDisableCameraCulling,
+    tooltip: (l) => l.tooltipDisableCameraCulling,
+  );
+
   static const bloom2017ReferenceHeight = 900;
 
   static const bloom2017Preset = <String, dynamic>{

@@ -59,6 +59,7 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
   bool _launchOptionsOpen = false;
   final Set<int> _visitedTabs = {0};
   Timer? _warmupTimer;
+  bool _windowFocused = true;
 
   /// Matches the hosts where main() initializes window_manager.
   static bool get _managesWindow =>
@@ -100,6 +101,17 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
       windowManager.removeListener(this);
     }
     super.dispose();
+  }
+
+  @override
+  void onWindowFocus() {
+    setState(() => _windowFocused = true);
+    ref.read(appStateControllerProvider.notifier).syncGameRunning();
+  }
+
+  @override
+  void onWindowBlur() {
+    setState(() => _windowFocused = false);
   }
 
   @override
@@ -296,6 +308,7 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
       sections: buildLauncherSections(l10n),
       activeIndex: _selectedTab,
       onSelect: _switchTab,
+      showPlayButton: _selectedTab != 0,
     );
   }
 
@@ -446,27 +459,33 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
 
   Widget _buildLauncherTab() {
     final l10n = AppLocalizations.of(context)!;
+    final idle =
+        ref.watch(appStateControllerProvider).playButtonState ==
+        PlayButtonState.idle;
     return Stack(
       children: [
-        AutomatoBackground(
-          ref: ref,
-          showBackgroundSVG: true,
-          showMenuLines: true,
-          backgroundColor: AppColors.backgroundPrimary,
-          gradientColor: AppColors.backgroundSecondary,
-          backgroundSvgConfig: const BackgroundSvgConfig(
-            animateInner: true,
-            animateOuter: true,
-            showDual: true,
-          ),
-          linesConfig: LinesConfig(
-            lineColor: AppColors.borderLight.withValues(alpha: 0.2),
-            strokeWidth: 1.0,
-            spacing: 10.0,
-            drawVerticalLines: true,
-            drawHorizontalLines: true,
-            enableFlicker: false,
-            flickerDuration: const Duration(milliseconds: 4000),
+        TickerMode(
+          enabled: _selectedTab == 0 && idle && _windowFocused,
+          child: AutomatoBackground(
+            ref: ref,
+            showBackgroundSVG: true,
+            showMenuLines: true,
+            backgroundColor: AppColors.backgroundPrimary,
+            gradientColor: AppColors.backgroundSecondary,
+            backgroundSvgConfig: const BackgroundSvgConfig(
+              animateInner: true,
+              animateOuter: true,
+              showDual: true,
+            ),
+            linesConfig: LinesConfig(
+              lineColor: AppColors.borderLight.withValues(alpha: 0.2),
+              strokeWidth: 1.0,
+              spacing: 10.0,
+              drawVerticalLines: true,
+              drawHorizontalLines: true,
+              enableFlicker: false,
+              flickerDuration: const Duration(milliseconds: 4000),
+            ),
           ),
         ),
         Positioned.fill(
