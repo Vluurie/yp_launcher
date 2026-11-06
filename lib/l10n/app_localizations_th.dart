@@ -241,6 +241,13 @@ class AppLocalizationsTh extends AppLocalizations {
       'แจ้งระบบให้เปิดเกมด้วยการ์ดจอแยกแทนการ์ดจอประหยัดพลังงาน มีผลเฉพาะคอมพิวเตอร์ที่มี GPU สองตัว เช่น โน้ตบุ๊กเกมมิ่ง';
 
   @override
+  String get launchOptionVanilla => 'เริ่มแบบวานิลลา (ไม่มีม็อด สำหรับดีบัก)';
+
+  @override
+  String get launchOptionVanillaTooltip =>
+      'เริ่ม NieR ผ่าน NAMS โดยไม่โหลดตัวโหลดม็อด: ไม่มีม็อด ปลั๊กอิน เท็กซ์เจอร์ หรือโอเวอร์เลย์ ใช้ตรวจว่าปัญหาเกิดในเกมที่ไม่ได้ดัดแปลงด้วยหรือไม่ จะปิดเองเมื่อเปิดลันเชอร์ใหม่';
+
+  @override
   String get failTitlePanic => 'NAMS ขัดข้อง';
 
   @override
@@ -885,6 +892,14 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get tabNams => 'NAMS';
+
+  @override
+  String cardChangedCount(int count) {
+    return 'เปลี่ยน $count รายการ';
+  }
+
+  @override
+  String get cardChangedTooltipHeader => 'ต่างจากค่าเริ่มต้น:';
 
   @override
   String get tabLodMod => 'LOD Mod Ext';
@@ -2249,7 +2264,7 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get onboardingModInstallAskBody =>
-      'มีไฟล์ .zip หรือโฟลเดอร์หรือไม่? เราจัดการให้ได้\n(เท็กซ์เจอร์และคัตซีนมีแท็บแยกของตัวเอง สามารถติดตั้งภายหลังได้)';
+      'มีไฟล์ .zip หรือโฟลเดอร์หรือไม่? เราจัดการให้ได้ รวมถึงแพ็กเท็กซ์เจอร์ด้วย\n(คัตซีนมีแท็บแยกของตัวเอง สามารถติดตั้งภายหลังได้)';
 
   @override
   String get onboardingModInstallYes => 'ใช่ ติดตั้งม็อดตอนนี้';
@@ -2287,31 +2302,54 @@ class AppLocalizationsTh extends AppLocalizations {
       'ดูเหมือนไม่ใช่ม็อด NAMS ที่ถูกต้อง โปรดตรวจสอบว่าเป็นไฟล์ .zip / .7z ที่มี mod.toml หรือโครงสร้างข้อมูลที่รองรับ';
 
   @override
-  String get onboardingOutfitHintHeader => 'วิธีสวมใส่';
-
-  @override
-  String get onboardingOutfitHintCompat => 'ซื้อหรือสวมใส่จากช่องเก็บของของคุณ';
-
-  @override
-  String get onboardingOutfitHintData =>
-      'กด F1 ในเกม → ไอคอนตู้เสื้อผ้า (มุมซ้ายบน)';
-
-  @override
-  String get onboardingOutfitHintMultiOutfit =>
-      'หรือใช้ Multi-Outfit NPC ที่ค่าย Resistance Camp';
-
-  @override
-  String get onboardingOutfitHintMultiOutfitLink =>
-      'ดาวน์โหลด Multi-Outfit NPC';
-
-  @override
-  String get onboardingOutfitHintMultiOutfitUrl =>
-      'https://www.nexusmods.com/nierautomata/mods/789';
+  String onboardingTexturePackChip(String name) {
+    return '$name (แพ็กเท็กซ์เจอร์)';
+  }
 
   @override
   String onboardingModInstallFailed(String reason) {
     return 'ติดตั้งไม่สำเร็จ: $reason';
   }
+
+  @override
+  String get outfitGuideTitle => 'วิธีสวมชุดใหม่ของคุณ';
+
+  @override
+  String outfitGuideIntro(String name) {
+    return 'ติดตั้ง \"$name\" แล้ว คุณสวมชุดนี้ได้สามวิธี:';
+  }
+
+  @override
+  String get outfitGuideWardrobeTitle => 'ตู้เสื้อผ้า YoRHa Protocol';
+
+  @override
+  String outfitGuideWardrobeBody(String key) {
+    return 'ในเกม กด $key เพื่อเปิด YoRHa Protocol คลิกไอคอนตู้เสื้อผ้าที่มุมซ้ายบน แล้วเลือกชุด';
+  }
+
+  @override
+  String get outfitGuideNpcTitle => 'Multi-Outfit NPC';
+
+  @override
+  String get outfitGuideNpcBody =>
+      'คุยกับ Multi-Outfit NPC ที่ค่าย Resistance Camp แล้วเลือกชุด';
+
+  @override
+  String get outfitGuideNpcLink => 'ดาวน์โหลด Multi-Outfit NPC';
+
+  @override
+  String get outfitGuideDefaultTitle => 'สวมตั้งแต่เริ่มเกม';
+
+  @override
+  String get outfitGuideDefaultBody =>
+      'ในตัวจัดการม็อด เลือกม็อดแล้วคลิกดาวข้างตัวละคร ชุดนี้จะถูกสวมทุกครั้งที่เริ่มเกม ต้องเปิด \"ชุดเริ่มต้น\" ในแท็บ NAMS';
+
+  @override
+  String get outfitGuideCompatNote =>
+      'ม็อดนี้ยังเพิ่มชุดเป็นไอเทมด้วย คุณจึงซื้อได้ในร้านค้าหรือสวมจากช่องเก็บของ';
+
+  @override
+  String get outfitGuideDone => 'เข้าใจแล้ว';
 
   @override
   String get onboardingModInstallNoGameDir =>
@@ -3791,11 +3829,11 @@ class AppLocalizationsTh extends AppLocalizations {
       'ลบเฉพาะพื้นหลังสีเข้มด้านหลังคำบรรยาย และคงตัวข้อความให้อ่านได้ ต้องเปิด “ซ่อนโอเวอร์เลย์คำบรรยาย” ก่อน';
 
   @override
-  String get labelHideSubtitleInEvents => 'ซ่อนในฉากอีเวนต์ด้วย (ทดลอง)';
+  String get labelHideSubtitleInEvents => 'ซ่อนในฉากอีเวนต์ด้วย';
 
   @override
   String get tooltipHideSubtitleInEvents =>
-      'อยู่ในขั้นทดลอง ใช้กับฉากอีเวนต์ในเอนจินด้วย ไม่ใช่แค่วิดีโอที่เรนเดอร์ไว้ล่วงหน้า อาจข้ามบางฉากหรือซ่อนข้อความที่ต้องการเก็บไว้ ปิดหากพบความผิดปกติ ต้องเปิด “ซ่อนโอเวอร์เลย์คำบรรยาย” ก่อน';
+      'ใช้กับฉากอีเวนต์ในเอนจินด้วย ไม่ใช่แค่วิดีโอที่เรนเดอร์ไว้ล่วงหน้า ต้องเปิด “ซ่อนโอเวอร์เลย์คำบรรยาย” ก่อน';
 
   @override
   String get labelOutfitSwapVisualEffects => 'เอฟเฟกต์ภาพตอนสลับชุด';
@@ -3805,11 +3843,11 @@ class AppLocalizationsTh extends AppLocalizations {
       'เล่นเอฟเฟกต์ภาพระหว่าง hot-swap ชุด: แอนิเมชัน blinder ตอน Pod ปรากฏ ม่าน และฟิลเตอร์ glitch ของหน้าจอแฮ็ก ปิดเพื่อสลับทันทีโดยไม่มีเอฟเฟกต์ โมเดลยังคงโหลดใหม่ มีผลทันที ไม่ต้องรีสตาร์ต';
 
   @override
-  String get labelExperimentalDefaultOutfits => 'ชุดเริ่มต้น (ทดลอง)';
+  String get labelExperimentalDefaultOutfits => 'ชุดเริ่มต้น';
 
   @override
   String get tooltipExperimentalDefaultOutfits =>
-      'ให้คุณกำหนดม็อดชุดที่ติดตั้งให้ทำงานตั้งแต่เกมเริ่ม ราวกับวางไฟล์ไว้ในโฟลเดอร์ data ของเกม เมื่อเปิด แผงรายละเอียดม็อดจะแสดงปุ่มดาวสำหรับโมเดลผู้เล่นแต่ละตัวเพื่อกำหนดเป็นค่าเริ่มต้นตอนบูต ปิดไว้เป็นค่าเริ่มต้นระหว่างที่ฟีเจอร์ยังปรับเสถียรภาพ ต้องรีสตาร์ตเกม';
+      'ให้คุณกำหนดม็อดชุดที่ติดตั้งให้ทำงานตั้งแต่เกมเริ่ม ราวกับวางไฟล์ไว้ในโฟลเดอร์ data ของเกม เมื่อเปิด แผงรายละเอียดม็อดจะแสดงปุ่มดาวสำหรับโมเดลผู้เล่นแต่ละตัวเพื่อกำหนดเป็นค่าเริ่มต้นตอนบูต ต้องรีสตาร์ตเกม';
 
   @override
   String get labelSolidLetterboxBars => 'แถบเลตเตอร์บ็อกซ์ทึบ';
@@ -4045,11 +4083,11 @@ class AppLocalizationsTh extends AppLocalizations {
       'เปิดเซิร์ฟเวอร์ MCP ของเอดิเตอร์ YoRHa Protocol ที่ http://127.0.0.1:47820/mcp เพื่อให้เอเจนต์ AI และไคลเอนต์ MCP อื่นอ่านและควบคุมเอดิเตอร์ได้ขณะเกมทำงาน ปิดไว้โดยค่าเริ่มต้น';
 
   @override
-  String get labelImpeller => 'ตัวเรนเดอร์ Impeller (ทดลอง)';
+  String get labelImpeller => 'ตัวเรนเดอร์ Impeller';
 
   @override
   String get tooltipImpeller =>
-      'เรนเดอร์โอเวอร์เลย์ด้วยตัวเรนเดอร์ Impeller ของ Flutter แทน Skia ปิดไว้โดยค่าเริ่มต้น เพราะผู้ใช้หลายคนพบการแครช ลองเปิดดู และหากเกมทำงานได้เสถียรก็เปิดไว้เพื่อให้โอเวอร์เลย์เปิดเร็วขึ้นเมื่อกด F1 เมื่อเปิดใช้งาน ภาพในโอเวอร์เลย์จะไม่แสดง ยกเว้นการ์ดแผนที่โลก มีผลเมื่อเริ่มเกมครั้งถัดไป';
+      'เรนเดอร์โอเวอร์เลย์ด้วยตัวเรนเดอร์ Impeller ของ Flutter ผ่าน Vulkan แทน Skia ปิดไว้โดยค่าเริ่มต้น หากระบบของคุณใช้ Vulkan ได้ การเปิดใช้อาจทำให้โอเวอร์เลย์เร็วขึ้น หากระบบของคุณใช้ได้เฉพาะ OpenGL แต่ใช้ Vulkan ไม่ได้ ให้ปิดไว้ มีผลเมื่อเริ่มเกมครั้งถัดไป';
 
   @override
   String get labelDamageMultiplier => 'ตัวคูณความเสียหาย';

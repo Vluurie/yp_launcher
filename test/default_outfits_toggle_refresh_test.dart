@@ -42,16 +42,35 @@ void main() {
         DefaultKind.outfitConfig,
       );
 
+  Future<void> loadDefaults() => container
+      .read(defaultModsStateControllerProvider.notifier)
+      .load(gameDir.path);
+
+  test('a fresh config has the feature on', () async {
+    await config().loadConfigs(gameDir.path);
+    await starOneMod();
+    await loadDefaults();
+
+    expect(
+      container
+          .read(configStateControllerProvider)
+          .namsValues[NamsFields.experimentalDefaultOutfits.key],
+      isTrue,
+    );
+    expect(defaults().defaultOutfitsEnabled, isTrue);
+    expect(defaults().entries.map((e) => e.path), ['mods/kimono/pl/pl000d']);
+  });
+
   test('turning the feature on refreshes the stars without a restart',
       () async {
     await config().loadConfigs(gameDir.path);
+    config().updateNams(NamsFields.experimentalDefaultOutfits.key, false);
+    await config().saveConfigs(gameDir.path);
     await starOneMod();
-    await container
-        .read(defaultModsStateControllerProvider.notifier)
-        .load(gameDir.path);
+    await loadDefaults();
 
     expect(defaults().defaultOutfitsEnabled, isFalse,
-        reason: 'feature starts off, so no stars are shown');
+        reason: 'feature is off, so no stars are shown');
     expect(defaults().entries, isEmpty);
 
     config().updateNams(NamsFields.experimentalDefaultOutfits.key, true);
@@ -66,8 +85,7 @@ void main() {
   test('turning the feature off clears the stars right away', () async {
     await config().loadConfigs(gameDir.path);
     await starOneMod();
-    config().updateNams(NamsFields.experimentalDefaultOutfits.key, true);
-    await config().saveConfigs(gameDir.path);
+    await loadDefaults();
     expect(defaults().entries, isNotEmpty);
 
     config().updateNams(NamsFields.experimentalDefaultOutfits.key, false);
@@ -98,8 +116,7 @@ void main() {
   test('saving an unrelated key leaves the starred entries alone', () async {
     await config().loadConfigs(gameDir.path);
     await starOneMod();
-    config().updateNams(NamsFields.experimentalDefaultOutfits.key, true);
-    await config().saveConfigs(gameDir.path);
+    await loadDefaults();
     final before = defaults().entries.map((e) => e.path).toList();
 
     config().updateNams(NamsFields.validateScripts.key, true);

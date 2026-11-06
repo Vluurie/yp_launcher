@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:yp_launcher/widgets/config_change_status.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
 import 'package:yp_launcher/widgets/config_apply_marker.dart';
 
-class ConfigFieldBool extends StatefulWidget {
+class ConfigFieldBool extends StatefulWidget implements ConfigChangeSource {
   final String label;
   final bool value;
+  final bool? defaultValue;
   final ValueChanged<bool> onChanged;
   final String? tooltip;
   final bool restartRequired;
@@ -19,7 +21,11 @@ class ConfigFieldBool extends StatefulWidget {
     this.tooltip,
     this.restartRequired = false,
     this.showApplyMarker = false,
+    this.defaultValue,
   });
+
+  @override
+  List<String> get changedLabels => changedLabelOf(label, value, defaultValue);
 
   @override
   State<ConfigFieldBool> createState() => _ConfigFieldBoolState();

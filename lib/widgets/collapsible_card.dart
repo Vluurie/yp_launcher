@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:yp_launcher/l10n/app_localizations.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
 import 'package:yp_launcher/theme/nier_curves.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
+import 'package:yp_launcher/widgets/config_change_status.dart';
 
 class CollapsibleCard extends StatefulWidget {
   final String title;
@@ -25,6 +27,7 @@ class _CollapsibleCardState extends State<CollapsibleCard> {
   @override
   Widget build(BuildContext context) {
     final radius = BorderRadius.circular(AppSizes.borderRadius(context));
+    final changed = collectChangedLabels(widget.children);
     return Container(
       margin: EdgeInsets.only(bottom: AppSizes.paddingLG(context)),
       decoration: BoxDecoration(
@@ -65,6 +68,10 @@ class _CollapsibleCardState extends State<CollapsibleCard> {
                       ),
                     ),
                   ),
+                  if (changed.isNotEmpty) ...[
+                    _ChangedBadge(labels: changed),
+                    SizedBox(width: AppSizes.spacingMD(context)),
+                  ],
                   AnimatedRotation(
                     turns: _collapsed ? -0.25 : 0,
                     duration: const Duration(milliseconds: 150),
@@ -148,6 +155,122 @@ class _HoverHeaderState extends State<_HoverHeader> {
           ),
           child: widget.child,
         ),
+      ),
+    );
+  }
+}
+
+class _ChangedBadge extends StatefulWidget {
+  final List<String> labels;
+
+  const _ChangedBadge({required this.labels});
+
+  @override
+  State<_ChangedBadge> createState() => _ChangedBadgeState();
+}
+
+class _ChangedBadgeState extends State<_ChangedBadge>
+    with SingleTickerProviderStateMixin {
+  static const _pulses = 3;
+
+  late final AnimationController _pulse = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 900),
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    _startPulse();
+  }
+
+  @override
+  void didUpdateWidget(_ChangedBadge oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.labels.length != widget.labels.length) _startPulse();
+  }
+
+  void _startPulse() {
+    _pulse
+      ..reset()
+      ..repeat(count: _pulses);
+  }
+
+  @override
+  void dispose() {
+    _pulse.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final color = AppColors.success;
+    return Tooltip(
+      message: [
+        l10n.cardChangedTooltipHeader,
+        for (final label in widget.labels) '• $label',
+      ].join('\n'),
+      decoration: BoxDecoration(
+        color: AppColors.tooltipBackground,
+        borderRadius: BorderRadius.circular(AppSizes.borderRadius(context)),
+      ),
+      textStyle: TextStyle(
+        fontSize: AppSizes.fontXS(context),
+        color: AppColors.textOnDark,
+        height: 1.4,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            width: 16,
+            height: 16,
+            child: AnimatedBuilder(
+              animation: _pulse,
+              builder: (context, _) {
+                final t = _pulse.isAnimating ? _pulse.value : 1.0;
+                return Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    if (_pulse.isAnimating)
+                      Container(
+                        width: 8 + 8 * t,
+                        height: 8 + 8 * t,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: color.withValues(alpha: 0.45 * (1 - t)),
+                        ),
+                      ),
+                    Container(
+                      width: 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: color,
+                        boxShadow: [
+                          BoxShadow(
+                            color: color.withValues(alpha: 0.6),
+                            blurRadius: 4,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+          SizedBox(width: AppSizes.spacingSM(context)),
+          Text(
+            l10n.cardChangedCount(widget.labels.length),
+            style: TextStyle(
+              fontSize: AppSizes.fontXS(context),
+              fontWeight: FontWeight.w600,
+              color: color,
+            ),
+          ),
+        ],
       ),
     );
   }

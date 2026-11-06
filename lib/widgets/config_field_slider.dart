@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:yp_launcher/widgets/config_change_status.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
 import 'package:yp_launcher/widgets/config_apply_marker.dart';
 
-class ConfigFieldSlider extends StatelessWidget {
+class ConfigFieldSlider extends StatelessWidget implements ConfigChangeSource {
   final String label;
   final double value;
+  final double? defaultValue;
   final double min;
   final double max;
   final double step;
@@ -29,7 +31,11 @@ class ConfigFieldSlider extends StatelessWidget {
     this.restartRequired = false,
     this.showApplyMarker = false,
     this.valueLabel,
+    this.defaultValue,
   });
+
+  @override
+  List<String> get changedLabels => changedLabelOf(label, value, defaultValue);
 
   @override
   Widget build(BuildContext context) {

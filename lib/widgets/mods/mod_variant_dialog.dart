@@ -205,6 +205,7 @@ class _ModVariantDialogState extends State<_ModVariantDialog> {
                 thumbVisibility: true,
                 child: ListView.builder(
                   controller: _scrollController,
+                  padding: const EdgeInsets.only(right: 14),
                   itemCount: rows.length,
                   itemBuilder: (_, i) {
                     final row = rows[i];

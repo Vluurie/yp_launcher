@@ -50,10 +50,11 @@ String _posixQuote(String value) => "'${value.replaceAll("'", r"'\''")}'";
 
 String _cmdQuote(String value) => '"$value"';
 
-List<String> namsRunArgs(String nierPath) => [
+List<String> namsRunArgs(String nierPath, {bool vanilla = false}) => [
   AppStrings.argRun,
   AppStrings.argNierPath,
   nierPath,
+  if (vanilla) AppStrings.argVanilla,
 ];
 
 List<String> namsVerifyArgs(String nierPath) => [

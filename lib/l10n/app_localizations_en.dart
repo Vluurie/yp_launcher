@@ -240,6 +240,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'Tells the system to run the game on the dedicated graphics card instead of the power-saving one. Only matters on PCs with two GPUs (e.g. gaming laptops).';
 
   @override
+  String get launchOptionVanilla => 'Start vanilla (no mods, for debugging)';
+
+  @override
+  String get launchOptionVanillaTooltip =>
+      'Starts NieR through NAMS without the modloader: no mods, plugins, textures or overlay. Use it to check whether a problem also happens in the unmodded game. Turns itself off when the launcher restarts.';
+
+  @override
   String get failTitlePanic => 'NAMS crashed';
 
   @override
@@ -881,6 +888,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tabNams => 'NAMS';
+
+  @override
+  String cardChangedCount(int count) {
+    return '$count changed';
+  }
+
+  @override
+  String get cardChangedTooltipHeader => 'Changed from default:';
 
   @override
   String get tabLodMod => 'LOD Mod Ext';
@@ -2255,7 +2270,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get onboardingModInstallAskBody =>
-      'Got a .zip or folder? We\'ll handle it.\n(Textures and cutscenes have their own tabs - install those later.)';
+      'Got a .zip or folder? We\'ll handle it, texture packs too.\n(Cutscenes have their own tab - install those later.)';
 
   @override
   String get onboardingModInstallYes => 'Yes, install a mod now';
@@ -2293,30 +2308,54 @@ class AppLocalizationsEn extends AppLocalizations {
       'That does not look like a valid NAMS mod. Make sure it is a .zip / .7z file with a mod.toml or a recognised data layout.';
 
   @override
-  String get onboardingOutfitHintHeader => 'To wear it';
-
-  @override
-  String get onboardingOutfitHintCompat => 'Buy or equip from your inventory.';
-
-  @override
-  String get onboardingOutfitHintData =>
-      'F1 in-game → wardrobe icon (top-left).';
-
-  @override
-  String get onboardingOutfitHintMultiOutfit =>
-      'Or use Multi-Outfit NPC at Resistance Camp.';
-
-  @override
-  String get onboardingOutfitHintMultiOutfitLink => 'Get Multi-Outfit NPC';
-
-  @override
-  String get onboardingOutfitHintMultiOutfitUrl =>
-      'https://www.nexusmods.com/nierautomata/mods/789';
+  String onboardingTexturePackChip(String name) {
+    return '$name (texture pack)';
+  }
 
   @override
   String onboardingModInstallFailed(String reason) {
     return 'Install failed: $reason';
   }
+
+  @override
+  String get outfitGuideTitle => 'How to wear your new outfit';
+
+  @override
+  String outfitGuideIntro(String name) {
+    return '\"$name\" is installed. You can put it on in three ways:';
+  }
+
+  @override
+  String get outfitGuideWardrobeTitle => 'YoRHa Protocol wardrobe';
+
+  @override
+  String outfitGuideWardrobeBody(String key) {
+    return 'In game, press $key to open YoRHa Protocol, click the wardrobe icon at the top left and pick the outfit.';
+  }
+
+  @override
+  String get outfitGuideNpcTitle => 'Multi-Outfit NPC';
+
+  @override
+  String get outfitGuideNpcBody =>
+      'Talk to the Multi-Outfit NPC at the Resistance Camp and choose the outfit.';
+
+  @override
+  String get outfitGuideNpcLink => 'Get Multi-Outfit NPC';
+
+  @override
+  String get outfitGuideDefaultTitle => 'Wear it from game start';
+
+  @override
+  String get outfitGuideDefaultBody =>
+      'In the Mod Manager, select the mod and click the star next to the character. The outfit is then worn every time the game starts. Needs Default Outfits turned on in the NAMS tab.';
+
+  @override
+  String get outfitGuideCompatNote =>
+      'This mod also adds the outfit as an item, so you can buy it in a shop or equip it from your inventory.';
+
+  @override
+  String get outfitGuideDone => 'Got it';
 
   @override
   String get onboardingModInstallNoGameDir =>
@@ -3803,12 +3842,11 @@ class AppLocalizationsEn extends AppLocalizations {
       'Remove only the dark backdrop behind the captions and keep the text itself readable. Requires Hide Subtitle Overlay.';
 
   @override
-  String get labelHideSubtitleInEvents =>
-      'Also Hide In Event Scenes (Experimental)';
+  String get labelHideSubtitleInEvents => 'Also Hide In Event Scenes';
 
   @override
   String get tooltipHideSubtitleInEvents =>
-      'EXPERIMENTAL. Also apply during in-engine event scenes, not just pre-rendered movies. May miss some scenes or hide text you wanted to keep - turn off if anything looks wrong. Requires Hide Subtitle Overlay.';
+      'Also apply during in-engine event scenes, not just pre-rendered movies. Requires Hide Subtitle Overlay.';
 
   @override
   String get labelOutfitSwapVisualEffects => 'Outfit Swap Visual Effects';
@@ -3818,12 +3856,11 @@ class AppLocalizationsEn extends AppLocalizations {
       'Play the visual effects during an outfit hot-swap: the pod spawn-in blinder animation, the curtain, and the hacking-screen glitch filter. Turn off for an instant, effect-free swap - the model still reloads. Takes effect immediately, no restart needed.';
 
   @override
-  String get labelExperimentalDefaultOutfits =>
-      'Default Outfits (experimental)';
+  String get labelExperimentalDefaultOutfits => 'Default Outfits';
 
   @override
   String get tooltipExperimentalDefaultOutfits =>
-      'Lets you mark installed outfit mods as active from the moment the game starts, as if their files were placed in the game\'s data folder. When on, the mod details panel shows a star button per player model to set it as the boot default. Off by default while the feature stabilizes. Requires a game restart.';
+      'Lets you mark installed outfit mods as active from the moment the game starts, as if their files were placed in the game\'s data folder. When on, the mod details panel shows a star button per player model to set it as the boot default. Requires a game restart.';
 
   @override
   String get labelSolidLetterboxBars => 'Solid Letterbox Bars';
@@ -4066,11 +4103,11 @@ class AppLocalizationsEn extends AppLocalizations {
       'Run the MCP server of the YoRHa Protocol editors at http://127.0.0.1:47820/mcp, so AI agents and other MCP clients can read and drive the editors while the game runs. Off by default.';
 
   @override
-  String get labelImpeller => 'Impeller Renderer (experimental)';
+  String get labelImpeller => 'Impeller Renderer';
 
   @override
   String get tooltipImpeller =>
-      'Render the overlay with Flutter\'s Impeller renderer instead of Skia. Off by default: several users hit crashes with it. Try it, and if the game is stable you can keep it for a faster overlay when you press F1. With it on, images in the overlay do not render, apart from the world map card. Takes effect on the next game start.';
+      'Render the overlay with Flutter\'s Impeller renderer on Vulkan instead of Skia. Off by default. If Vulkan works on your system, this can make the overlay faster. If your system only runs OpenGL and not Vulkan, leave it off. Takes effect on the next game start.';
 
   @override
   String get labelDamageMultiplier => 'Damage Multiplier';

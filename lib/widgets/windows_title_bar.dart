@@ -221,7 +221,7 @@ class _WindowButtonState extends State<_WindowButton> {
               widget.icon,
               size: AppSizes.iconMD(context),
               color: _isHovered && widget.isClose
-                  ? Colors.white
+                  ? AppColors.textOnDark
                   : AppColors.textPrimary,
             ),
           ),

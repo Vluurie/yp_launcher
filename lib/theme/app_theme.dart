@@ -29,6 +29,10 @@ class AppTheme {
   final Color logBackground;
   final Color logHeaderBackground;
   final Color logText;
+  final Color logDebug;
+  final Color tooltipBackground;
+  final Color textOnDark;
+  final Color scrim;
 
   const AppTheme({
     required this.id,
@@ -56,6 +60,10 @@ class AppTheme {
     required this.logBackground,
     required this.logHeaderBackground,
     required this.logText,
+    required this.logDebug,
+    required this.tooltipBackground,
+    required this.textOnDark,
+    required this.scrim,
   });
 
   static const AppTheme dark = AppTheme(
@@ -84,6 +92,10 @@ class AppTheme {
     logBackground: Color(0xFF222228),
     logHeaderBackground: Color(0xFF1E1E24),
     logText: Color(0xFFD4D0C8),
+    logDebug: Color(0xFF64B5F6),
+    tooltipBackground: Color(0xE6303030),
+    textOnDark: Color(0xFFFFFFFF),
+    scrim: Color(0xFF000000),
   );
 
   static const AppTheme nier = AppTheme(
@@ -112,6 +124,10 @@ class AppTheme {
     logBackground: Color(0xFFD0C9AE),
     logHeaderBackground: Color(0xFFB4AF9A),
     logText: Color(0xFF4E4B42),
+    logDebug: Color(0xFF3B6E99),
+    tooltipBackground: Color(0xE6303030),
+    textOnDark: Color(0xFFFFFFFF),
+    scrim: Color(0xFF000000),
   );
 
   static AppTheme byId(AppThemeId id) => id == AppThemeId.nier ? nier : dark;

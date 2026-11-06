@@ -232,6 +232,66 @@ void installTexturesWithProgress(TextureInstallProgressParams params) {
   params.sendPort.send({'type': 'done', 'count': filesDone});
 }
 
+String textureInjectDir(String gameDir) =>
+    path.join(gameDir, 'nams', 'inject', 'textures');
+
+class TextureCopyProgress {
+  final int copied;
+  final int total;
+  final int files;
+  final int totalFiles;
+
+  const TextureCopyProgress({
+    required this.copied,
+    required this.total,
+    required this.files,
+    required this.totalFiles,
+  });
+
+  double get percent => total > 0 ? copied / total : 0;
+}
+
+Future<int> installTexturesInBackground(
+  List<String> paths,
+  String textureDir, {
+  void Function(TextureCopyProgress progress)? onProgress,
+}) async {
+  final port = ReceivePort();
+  final isolate = await Isolate.spawn(
+    installTexturesWithProgress,
+    TextureInstallProgressParams(
+      paths: paths,
+      textureDir: textureDir,
+      sendPort: port.sendPort,
+    ),
+    onExit: port.sendPort,
+    onError: port.sendPort,
+  );
+  var count = 0;
+  try {
+    await for (final message in port) {
+      if (message is! Map<String, dynamic>) break;
+      if (message['type'] == 'progress') {
+        onProgress?.call(
+          TextureCopyProgress(
+            copied: message['copied'] as int,
+            total: message['total'] as int,
+            files: message['files'] as int,
+            totalFiles: message['totalFiles'] as int,
+          ),
+        );
+      } else if (message['type'] == 'done') {
+        count = message['count'] as int;
+        break;
+      }
+    }
+  } finally {
+    isolate.kill(priority: Isolate.immediate);
+    port.close();
+  }
+  return count;
+}
+
 const _textureWrapperSegments = {
   'sk_res',
   'far_res',

@@ -569,7 +569,7 @@ class _SpotlightPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()..color = Colors.black.withValues(alpha: 0.72);
+    final paint = Paint()..color = AppColors.scrim.withValues(alpha: 0.72);
     if (cutout == null) {
       canvas.drawRect(Offset.zero & size, paint);
       return;

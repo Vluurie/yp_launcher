@@ -82,21 +82,24 @@ class OnboardingChoiceButton extends StatelessWidget {
 }
 
 class OnboardingBackButton extends StatelessWidget {
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
   const OnboardingBackButton({super.key, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 48,
-      child: TextButton.icon(
-        onPressed: onTap,
-        icon: Icon(Icons.arrow_back, size: 18, color: AppColors.textMuted),
-        label: Text(
-          AppLocalizations.of(context)!.buttonBack,
-          style: TextStyle(
-            fontSize: AppSizes.fontMD(context),
-            color: AppColors.textMuted,
+    return Opacity(
+      opacity: onTap == null ? 0.4 : 1,
+      child: SizedBox(
+        height: 48,
+        child: TextButton.icon(
+          onPressed: onTap,
+          icon: Icon(Icons.arrow_back, size: 18, color: AppColors.textMuted),
+          label: Text(
+            AppLocalizations.of(context)!.buttonBack,
+            style: TextStyle(
+              fontSize: AppSizes.fontMD(context),
+              color: AppColors.textMuted,
+            ),
           ),
         ),
       ),

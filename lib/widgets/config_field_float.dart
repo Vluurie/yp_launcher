@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:yp_launcher/widgets/config_change_status.dart';
 import 'package:yp_launcher/l10n/app_localizations.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
 
-class ConfigFieldFloat extends StatefulWidget {
+class ConfigFieldFloat extends StatefulWidget implements ConfigChangeSource {
   final String label;
   final double value;
+  final double? defaultValue;
   final ValueChanged<double> onChanged;
   final String? tooltip;
 
@@ -15,7 +17,11 @@ class ConfigFieldFloat extends StatefulWidget {
     required this.value,
     required this.onChanged,
     this.tooltip,
+    this.defaultValue,
   });
+
+  @override
+  List<String> get changedLabels => changedLabelOf(label, value, defaultValue);
 
   @override
   State<ConfigFieldFloat> createState() => _ConfigFieldFloatState();

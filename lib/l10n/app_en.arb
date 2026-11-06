@@ -70,6 +70,8 @@
   "launchOptionMinimizeOnLaunch": "Minimize launcher while playing",
   "launchOptionPreferDedicatedGpu": "Prefer dedicated GPU",
   "launchOptionPreferDedicatedGpuTooltip": "Tells the system to run the game on the dedicated graphics card instead of the power-saving one. Only matters on PCs with two GPUs (e.g. gaming laptops).",
+  "launchOptionVanilla": "Start vanilla (no mods, for debugging)",
+  "launchOptionVanillaTooltip": "Starts NieR through NAMS without the modloader: no mods, plugins, textures or overlay. Use it to check whether a problem also happens in the unmodded game. Turns itself off when the launcher restarts.",
   "failTitlePanic": "NAMS crashed",
   "failTitleUnknown": "Game launch failed",
   "failExplanationPanic": "NAMS hit an unrecoverable error before the game could start. This is almost always a bug — please share the report below with the maintainer.",
@@ -357,6 +359,13 @@
   "tabLauncher": "Launcher",
   "tabYorhaProtocol": "YP Devkit",
   "tabNams": "NAMS",
+  "cardChangedCount": "{count} changed",
+  "@cardChangedCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "cardChangedTooltipHeader": "Changed from default:",
   "tabLodMod": "LOD Mod Ext",
   "tabNaiom": "NAIOM",
   "tabTextures": "Textures",
@@ -960,7 +969,7 @@
   "onboardingMigrationLabelExistingMods": "{count, plural, one{1 mod in nams/mods/} other{{count} mods in nams/mods/}}",
   "@onboardingMigrationLabelExistingMods": { "placeholders": { "count": { "type": "int" } } },
   "onboardingModInstallAskTitle": "Install a mod before launching?",
-  "onboardingModInstallAskBody": "Got a .zip or folder? We'll handle it.\n(Textures and cutscenes have their own tabs - install those later.)",
+  "onboardingModInstallAskBody": "Got a .zip or folder? We'll handle it, texture packs too.\n(Cutscenes have their own tab - install those later.)",
   "onboardingModInstallYes": "Yes, install a mod now",
   "onboardingModInstallSkip": "No, skip for now",
   "onboardingModInstallTitle": "Add your first mod",
@@ -988,12 +997,12 @@
     }
   },
   "onboardingModInstallNotAMod": "That does not look like a valid NAMS mod. Make sure it is a .zip / .7z file with a mod.toml or a recognised data layout.",
-  "onboardingOutfitHintHeader": "To wear it",
-  "onboardingOutfitHintCompat": "Buy or equip from your inventory.",
-  "onboardingOutfitHintData": "F1 in-game → wardrobe icon (top-left).",
-  "onboardingOutfitHintMultiOutfit": "Or use Multi-Outfit NPC at Resistance Camp.",
-  "onboardingOutfitHintMultiOutfitLink": "Get Multi-Outfit NPC",
-  "onboardingOutfitHintMultiOutfitUrl": "https://www.nexusmods.com/nierautomata/mods/789",
+  "onboardingTexturePackChip": "{name} (texture pack)",
+  "@onboardingTexturePackChip": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
   "onboardingModInstallFailed": "Install failed: {reason}",
   "@onboardingModInstallFailed": {
     "placeholders": {
@@ -1002,6 +1011,27 @@
       }
     }
   },
+  "outfitGuideTitle": "How to wear your new outfit",
+  "outfitGuideIntro": "\"{name}\" is installed. You can put it on in three ways:",
+  "@outfitGuideIntro": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "outfitGuideWardrobeTitle": "YoRHa Protocol wardrobe",
+  "outfitGuideWardrobeBody": "In game, press {key} to open YoRHa Protocol, click the wardrobe icon at the top left and pick the outfit.",
+  "@outfitGuideWardrobeBody": {
+    "placeholders": {
+      "key": {"type": "String"}
+    }
+  },
+  "outfitGuideNpcTitle": "Multi-Outfit NPC",
+  "outfitGuideNpcBody": "Talk to the Multi-Outfit NPC at the Resistance Camp and choose the outfit.",
+  "outfitGuideNpcLink": "Get Multi-Outfit NPC",
+  "outfitGuideDefaultTitle": "Wear it from game start",
+  "outfitGuideDefaultBody": "In the Mod Manager, select the mod and click the star next to the character. The outfit is then worn every time the game starts. Needs Default Outfits turned on in the NAMS tab.",
+  "outfitGuideCompatNote": "This mod also adds the outfit as an item, so you can buy it in a shop or equip it from your inventory.",
+  "outfitGuideDone": "Got it",
   "onboardingModInstallNoGameDir": "Game directory not selected yet. Go back and pick your install first.",
   "onboardingModInstallInstalledHeader": "Installed:",
   "onboardingModInstallSkipButton": "Skip",
@@ -1480,12 +1510,12 @@
   "tooltipHideSubtitleOverlay": "Hide the black bars and caption overlay shown during cutscenes. Only affects cutscenes - menus, item descriptions and normal dialogue stay untouched.",
   "labelKeepSubtitleText": "Keep Subtitle Text",
   "tooltipKeepSubtitleText": "Remove only the dark backdrop behind the captions and keep the text itself readable. Requires Hide Subtitle Overlay.",
-  "labelHideSubtitleInEvents": "Also Hide In Event Scenes (Experimental)",
-  "tooltipHideSubtitleInEvents": "EXPERIMENTAL. Also apply during in-engine event scenes, not just pre-rendered movies. May miss some scenes or hide text you wanted to keep - turn off if anything looks wrong. Requires Hide Subtitle Overlay.",
+  "labelHideSubtitleInEvents": "Also Hide In Event Scenes",
+  "tooltipHideSubtitleInEvents": "Also apply during in-engine event scenes, not just pre-rendered movies. Requires Hide Subtitle Overlay.",
   "labelOutfitSwapVisualEffects": "Outfit Swap Visual Effects",
   "tooltipOutfitSwapVisualEffects": "Play the visual effects during an outfit hot-swap: the pod spawn-in blinder animation, the curtain, and the hacking-screen glitch filter. Turn off for an instant, effect-free swap - the model still reloads. Takes effect immediately, no restart needed.",
-  "labelExperimentalDefaultOutfits": "Default Outfits (experimental)",
-  "tooltipExperimentalDefaultOutfits": "Lets you mark installed outfit mods as active from the moment the game starts, as if their files were placed in the game's data folder. When on, the mod details panel shows a star button per player model to set it as the boot default. Off by default while the feature stabilizes. Requires a game restart.",
+  "labelExperimentalDefaultOutfits": "Default Outfits",
+  "tooltipExperimentalDefaultOutfits": "Lets you mark installed outfit mods as active from the moment the game starts, as if their files were placed in the game's data folder. When on, the mod details panel shows a star button per player model to set it as the boot default. Requires a game restart.",
   "labelSolidLetterboxBars": "Solid Letterbox Bars",
   "tooltipSolidLetterboxBars": "Draw the cutscene letterbox as opaque black bars of equal height, instead of the vanilla translucent and uneven ones (76 top, 154 bottom). Works on its own, and takes precedence over Hide Subtitle Overlay when both are on.",
   "labelDisableSplashScreen": "Disable Splash Screen",
@@ -1558,8 +1588,8 @@
   "tooltipSound": "Workspace UI interaction sound.",
   "labelEditorMcp": "Editor MCP Server",
   "tooltipEditorMcp": "Run the MCP server of the YoRHa Protocol editors at http://127.0.0.1:47820/mcp, so AI agents and other MCP clients can read and drive the editors while the game runs. Off by default.",
-  "labelImpeller": "Impeller Renderer (experimental)",
-  "tooltipImpeller": "Render the overlay with Flutter's Impeller renderer instead of Skia. Off by default: several users hit crashes with it. Try it, and if the game is stable you can keep it for a faster overlay when you press F1. With it on, images in the overlay do not render, apart from the world map card. Takes effect on the next game start.",
+  "labelImpeller": "Impeller Renderer",
+  "tooltipImpeller": "Render the overlay with Flutter's Impeller renderer on Vulkan instead of Skia. Off by default. If Vulkan works on your system, this can make the overlay faster. If your system only runs OpenGL and not Vulkan, leave it off. Takes effect on the next game start.",
   "labelDamageMultiplier": "Damage Multiplier",
   "tooltipDamageMultiplier": "2.0 = double damage.",
   "labelSyncEnemyLevels": "Sync Enemy Levels",

@@ -33,6 +33,28 @@ class ModsService {
     return IsolateService.run(_detectTexturePacksParam, root);
   }
 
+  static bool isTextureOnlyListing(Iterable<String> entries) {
+    var hasDds = false;
+    for (final entry in entries) {
+      final segments = entry
+          .replaceAll('\\', '/')
+          .split('/')
+          .where((s) => s.isNotEmpty)
+          .map((s) => s.toLowerCase())
+          .toList();
+      if (segments.isEmpty) continue;
+      if (segments.contains('entities') || segments.contains('wax')) {
+        return false;
+      }
+      final name = segments.last;
+      if (name == 'mod.toml') return false;
+      final ext = path.posix.extension(name);
+      if (ext == '.dat' || ext == '.dtt' || ext == '.cpk') return false;
+      if (ext == '.dds') hasDds = true;
+    }
+    return hasDds;
+  }
+
   static Future<List<InstalledMod>> listInstalled(String gameDir) {
     return IsolateService.run(
       _listInstalledSync,
@@ -47,6 +69,15 @@ class ModsService {
     String workDir = sourcePath;
     String? tempDir;
     if (ArchiveService.isArchive(sourcePath)) {
+      final listing = await ArchiveService.listEntries(sourcePath);
+      if (listing != null && isTextureOnlyListing(listing)) {
+        return DetectedDrop(
+          unwrappedRoot: sourcePath,
+          kind: ModKind.unknown,
+          suggestedId: path.basenameWithoutExtension(sourcePath),
+          errorReason: 'texture_only',
+        );
+      }
       final extracted = await ArchiveService.extract(
         sourcePath,
         onProgress: onExtractProgress,

@@ -42,6 +42,7 @@ class ProcessService {
     required String installDirectory,
     required VoidCallback onProcessStopped,
     required AppLocalizations l10n,
+    bool vanilla = false,
   }) async {
     try {
       await LauncherSetupService.ensureReady();
@@ -110,6 +111,7 @@ class ProcessService {
           launcherDir: launcherPaths['launcherDir']!,
           installDirectory: installDirectory,
           l10n: l10n,
+          vanilla: vanilla,
         );
       } on LaunchUnavailable catch (e) {
         return LaunchOutcome.failed(
@@ -220,6 +222,7 @@ class ProcessService {
     required String launcherDir,
     required String installDirectory,
     required AppLocalizations l10n,
+    bool vanilla = false,
   }) async {
     final built = await PlatformAdapter.current.buildLaunchCommand(
       namsExe: namsExe,
@@ -227,6 +230,7 @@ class ProcessService {
       gameExe: path.join(installDirectory, AppStrings.gameExeName),
       launcherDir: launcherDir,
       l10n: l10n,
+      vanilla: vanilla,
     );
     final preferGpu = await GpuPreferenceService.preferDedicatedGpu();
     var command = LaunchCommand(

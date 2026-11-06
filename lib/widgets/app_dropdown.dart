@@ -320,7 +320,7 @@ class _MenuPanelState<T> extends State<_MenuPanel<T>> {
           borderRadius: BorderRadius.circular(4),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.55),
+              color: AppColors.scrim.withValues(alpha: 0.55),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),
