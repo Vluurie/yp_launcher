@@ -13,9 +13,9 @@ Directory _gameDirWith(String naiomIni) {
 }
 
 Future<Map<String, dynamic>> _mouse(Directory gameDir) async {
-  final raw = File(p.join(gameDir.path, 'nams', 'nams.toml'))
+  final raw = File(p.join(gameDir.path, 'nams', 'naiom.toml'))
       .readAsStringSync();
-  return (TomlService.parse(raw)['mouse'] as Map<String, dynamic>?) ?? {};
+  return TomlService.parse(raw);
 }
 
 const _fullIni = '''
@@ -104,7 +104,7 @@ void main() {
       expect(parsed.containsKey('configreload'), isTrue);
     });
 
-    test('imports values into nams.toml with correct mappings', () async {
+    test('imports values into naiom.toml with correct mappings', () async {
       final gameDir = _gameDirWith(_fullIni);
       addTearDown(() => gameDir.deleteSync(recursive: true));
 
@@ -185,7 +185,7 @@ void main() {
       final ini = await NaiomDetection.detectLegacyNaiom(gameDir.path);
       await NaiomDetection.migrateNaiomIni(gameDir.path, ini!);
 
-      final tomlPath = p.join(gameDir.path, 'nams', 'nams.toml');
+      final tomlPath = p.join(gameDir.path, 'nams', 'naiom.toml');
       var content = File(tomlPath).readAsStringSync();
       content = content.replaceFirst(
         'standard_jump = "SPACE"',

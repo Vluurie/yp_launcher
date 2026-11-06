@@ -51,7 +51,9 @@ class _NaiomViewState extends ConsumerState<NaiomView> {
   }
 
   Map<String, dynamic> get _mouse {
-    final raw = ref.watch(configStateControllerProvider).namsValues['mouse'];
+    final raw = ref
+        .watch(configStateControllerProvider)
+        .namsValues[ConfigStateController.naiomSection];
     return raw is Map<String, dynamic> ? raw : const {};
   }
 
@@ -232,6 +234,11 @@ class _NaiomViewState extends ConsumerState<NaiomView> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          if (config.naiomError != null)
+                            ConfigErrorBanner(
+                              fileName: 'naiom.toml',
+                              error: config.naiomError!,
+                            ),
                           if (config.namsError != null)
                             ConfigErrorBanner(
                               fileName: 'nams.toml',
@@ -679,7 +686,7 @@ class _NaiomViewState extends ConsumerState<NaiomView> {
           ),
           HeaderInfoIcon(
             tooltip: l10n.tooltipEditsNaiom,
-            revealPath: p.join(gameDir, 'nams', 'nams.toml'),
+            revealPath: p.join(gameDir, 'nams', 'naiom.toml'),
           ),
           SizedBox(width: AppSizes.spacingMD(context)),
           Container(

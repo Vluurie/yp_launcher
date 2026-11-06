@@ -34,6 +34,8 @@ class AppStrings {
   static const String migotoDirName = '3dmigoto';
   static const String gameModsDirName = 'game';
   static const String gameModsConfigName = 'game.toml';
+  static const String graphicModsDirName = 'graphic';
+  static const String graphicModsDisabledDirName = 'disabled';
 
   static const String reshadeMeUrl = 'https://reshade.me';
   static const String migotoUrl = 'https://github.com/bo3b/3Dmigoto';
@@ -47,7 +49,7 @@ class AppStrings {
   static const String shortcutDescription =
       'Launch NieR:Automata with YoRHa Protocol';
 
-  static const String appVersion = 'v2.3.2';
+  static const String appVersion = 'v3.0.0';
 
   static const String tabModloaderId = 'modloader';
   static const String tabYorhaId = 'yorha';

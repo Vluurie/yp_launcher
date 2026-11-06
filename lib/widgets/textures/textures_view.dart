@@ -486,13 +486,26 @@ class _TexturesViewState extends ConsumerState<TexturesView> {
       _deleteMessage = l10n.busyDeletingTexture;
     });
     try {
-      await withBusyGuard(
+      final deleted = await withBusyGuard(
         ref,
         () => IsolateService.run(
           deleteTextureIsolate,
           path.join(_textureDir, name),
         ),
       );
+      if (!deleted || !mounted) return;
+      final notifier = ref.read(configStateControllerProvider.notifier);
+      final config = ref.read(configStateControllerProvider);
+      final updated = List<String>.from(
+        TextureInjectionFields.loadOrder
+            .valueIn(config.textureInjectionValues)
+            .whereType<String>(),
+      )..remove(name);
+      notifier.updateTextureInjectionSilent(
+        TextureInjectionFields.loadOrder.key,
+        updated,
+      );
+      await notifier.saveConfigs(_gameDir);
       _notify(
         l10n.removedItem(name),
         Icons.delete_outline,
@@ -707,6 +720,28 @@ class _TexturesViewState extends ConsumerState<TexturesView> {
                                             ),
                                       ),
                                       ConfigFieldBool(
+                                        label: TextureInjectionFields
+                                            .pinPriorityTextures
+                                            .label(
+                                              AppLocalizations.of(context)!,
+                                            ),
+                                        value: TextureInjectionFields
+                                            .pinPriorityTextures
+                                            .valueIn(tex),
+                                        onChanged: (v) => _setTextureValue(
+                                          TextureInjectionFields
+                                              .pinPriorityTextures
+                                              .key,
+                                          v,
+                                        ),
+                                        tooltip:
+                                            TextureInjectionFields
+                                                .pinPriorityTextures
+                                                .tooltip!(
+                                              AppLocalizations.of(context)!,
+                                            ),
+                                      ),
+                                      ConfigFieldBool(
                                         label: TextureInjectionFields.hotReload
                                             .label(
                                               AppLocalizations.of(context)!,
@@ -720,11 +755,12 @@ class _TexturesViewState extends ConsumerState<TexturesView> {
                                           TextureInjectionFields.hotReload.key,
                                           v,
                                         ),
-                                        tooltip: TextureInjectionFields
-                                            .hotReload
-                                            .tooltip!(
-                                          AppLocalizations.of(context)!,
-                                        ),
+                                        tooltip:
+                                            TextureInjectionFields
+                                                .hotReload
+                                                .tooltip!(
+                                              AppLocalizations.of(context)!,
+                                            ),
                                       ),
                                     ],
                                   ),
@@ -831,8 +867,7 @@ class _TexturesViewState extends ConsumerState<TexturesView> {
                                     );
                               if (errorBanner == null) return body;
                               return Column(
-                                crossAxisAlignment:
-                                    CrossAxisAlignment.stretch,
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
                                   ConfigErrorBanner(
                                     fileName: 'texture_injection.toml',

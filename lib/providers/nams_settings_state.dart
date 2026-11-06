@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:path/path.dart' as p;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:yp_launcher/models/config_fields.dart';
 import 'package:yp_launcher/providers/app_state.dart';
 import 'package:yp_launcher/services/nams_settings_service.dart';
 
@@ -41,21 +42,19 @@ class NamsSettingsData {
   Map<String, dynamic> get keybinds =>
       (settings['keybinds'] as Map<String, dynamic>?) ?? {};
 
-  Map<String, dynamic> get mainKeybinds =>
-      (keybinds['main'] as Map<String, dynamic>?) ?? {};
-
-  Map<String, dynamic> get ypKeybinds =>
-      (keybinds['yorha_protocol'] as Map<String, dynamic>?) ?? {};
-
   bool get impeller {
     final value = settings[NamsSettingsService.impellerKey];
     return value is bool ? value : false;
   }
 
-  bool get gameKeybindsGlobal => settings['gameKeybindsGlobal'] == true;
-  bool get loadingSpeedupEnabled => settings['loadingSpeedupEnabled'] == true;
-  bool get shadersEnabled => settings['shadersEnabled'] == true;
-  bool get soundEnabled => settings['soundEnabled'] == true;
+  bool get gameKeybindsGlobal =>
+      YpWorkspaceFields.gameKeybindsGlobal.valueIn(settings);
+  bool get loadingSpeedupEnabled =>
+      YpWorkspaceFields.loadingSpeedupEnabled.valueIn(settings);
+  bool get shadersEnabled => YpWorkspaceFields.shadersEnabled.valueIn(settings);
+  bool get soundEnabled => YpWorkspaceFields.soundEnabled.valueIn(settings);
+  bool get editorMcpEnabled =>
+      YpWorkspaceFields.editorMcpEnabled.valueIn(settings);
 
   Map<String, dynamic> get randomizerConfig =>
       (settings['randomizerConfig'] as Map<String, dynamic>?) ?? {};

@@ -17,6 +17,8 @@ const _supported = {
   ThirdPartyKind.reshadeWholeInstall,
   ThirdPartyKind.reshadePreset,
   ThirdPartyKind.migoto,
+  ThirdPartyKind.gameMod,
+  ThirdPartyKind.graphicMod,
 };
 
 const _routedElsewhere = {

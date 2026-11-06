@@ -201,6 +201,14 @@ class AppLocalizationsDe extends AppLocalizations {
       'Prüfung nicht möglich: Steam muss laufen und das Spiel besitzen.';
 
   @override
+  String get verifyTimedOut =>
+      'Prüfung nicht möglich: NAMS hat innerhalb von 30 Sekunden nicht geantwortet.';
+
+  @override
+  String get verifyTimedOutLinux =>
+      'Prüfung nicht möglich: NAMS hat innerhalb von 30 Sekunden nicht geantwortet. Meist hängt Proton, oft weil das Spiel auf einem NTFS-Laufwerk liegt. Das Spiel auf ein Linux-formatiertes Laufwerk zu verschieben, behebt das in der Regel.';
+
+  @override
   String get verifyInstallError =>
       'Prüfung konnte nicht ausgeführt werden. Stelle sicher, dass ein Spielordner ausgewählt ist.';
 
@@ -598,7 +606,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get notifyNaiomMigrated =>
-      'Deine alten NAIOM-Einstellungen wurden gefunden und in nams.toml importiert. Sieh im NAIOM-Reiter nach. Du kannst die alten NAIOM-Dateien (dinput8.dll, NAIOM.ini) aus dem Spielordner entfernen.';
+      'Deine alten NAIOM-Einstellungen wurden gefunden und in naiom.toml importiert. Sieh im NAIOM-Reiter nach. Du kannst die alten NAIOM-Dateien (dinput8.dll, NAIOM.ini) aus dem Spielordner entfernen.';
 
   @override
   String notifyNaiomSkipped(String entries) {
@@ -738,7 +746,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get tooltipEditsNaiom =>
-      'Bearbeitet die [mouse]-Einstellungen in nams/nams.toml. Die meisten Einstellungen gelten nach dem Speichern; einige erfordern einen Neustart des Spiels.';
+      'Bearbeitet nams/naiom.toml. Die meisten Einstellungen gelten nach dem Speichern; einige erfordern einen Neustart des Spiels.';
 
   @override
   String get tooltipCutscenesLocation =>
@@ -749,9 +757,6 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get cardLoading => 'LADEN';
-
-  @override
-  String get cardHeapOverrides => 'HEAP-ÜBERSCHREIBUNGEN';
 
   @override
   String get cardPerformance => 'LEISTUNG';
@@ -1432,10 +1437,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get thirdPartyGameModsNone => 'Keine Spiel-Mods installiert';
 
   @override
-  String get thirdPartyWaxRejected =>
-      'WAX lässt sich nicht mit NAMS verwenden. Beide machen dasselbe, deshalb stürzt das Spiel ab, wenn sie zusammen laufen. Deine WAX-Outfits und -Items funktionieren stattdessen über den Mods-Tab.';
-
-  @override
   String thirdPartyGameModsCount(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -1456,6 +1457,89 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get thirdPartyGameModsRemoveOne => 'Diesen Mod löschen';
+
+  @override
+  String get thirdPartyGraphicModsHeader => 'GRAFIK-PROXYS';
+
+  @override
+  String get thirdPartyGraphicModsHowto =>
+      'Direct3D-Proxy-DLLs (d3d11.dll, dxgi.dll), die das Rendering des Spiels umhüllen. NAMS lädt sie aus thirdparty/graphic und leitet die Direct3D-Aufrufe des Spiels durch sie; eine Kopie im Spielordner wird nie geladen. ReShade und 3DMigoto haben eigene Karten. Installiert werden sie über die Ablagezone oben.';
+
+  @override
+  String get thirdPartyMoveToGraphic =>
+      'Zu den Grafik-Proxys verschieben (für einen Direct3D-Wrapper)';
+
+  @override
+  String get thirdPartyMoveToGame =>
+      'Zu den Spiel-Mods verschieben (für einen Mod, der den Speicher des Spiels liest)';
+
+  @override
+  String get thirdPartyGameModSettings =>
+      'Loader-Einstellungen für diese DLL (game.toml)';
+
+  @override
+  String get thirdPartyGameModFakeHandle => 'game.bin als Hauptmodul zeigen';
+
+  @override
+  String get thirdPartyGameModFakeHandleHint =>
+      'Beantwortet GetModuleHandle(NULL) mit game.bin, damit ein Mod, der den Speicher des Spiels an festen Offsets liest, das Spiel findet. Nur ausschalten für einen Mod, der absichtlich NAMS.exe hookt.';
+
+  @override
+  String get thirdPartyGameModFakeExePath =>
+      'NieRAutomata.exe als Haupt-Exe zeigen';
+
+  @override
+  String get thirdPartyGameModFakeExePathHint =>
+      'Beantwortet GetModuleFileName(NULL) mit der NieRAutomata.exe deiner Installation. Mods, die den Exe-Namen prüfen oder die Exe hashen, um die Spielversion zu erkennen, wie WAX, brauchen das.';
+
+  @override
+  String get thirdPartyGameModSizeOfImage => 'Spielversion, die der Mod sieht';
+
+  @override
+  String get thirdPartyGameModSizeOfImageHint =>
+      'Manche Mods erkennen die Spielversion an der Image-Größe des Hauptmoduls. Wähle den Build, für den der Mod gemacht ist. Ein Mod für die 2021er Version liest beim 2026er Update den falschen Speicher, außer der Mod unterstützt es.';
+
+  @override
+  String get thirdPartyGameModSize2021 => 'Steam 2021 (Standard)';
+
+  @override
+  String get thirdPartyGameModSize2026 => 'Steam 2026-11';
+
+  @override
+  String get thirdPartyGameModSizeReal => 'Echte Größe von game.bin';
+
+  @override
+  String thirdPartyGameModSizeCustom(int value) {
+    return 'Eigener Wert ($value)';
+  }
+
+  @override
+  String get thirdPartyGameModReportPatches =>
+      'Vom Mod geänderten Spielcode protokollieren';
+
+  @override
+  String get thirdPartyGameModReportPatchesHint =>
+      'Schreibt jede Stelle im Spielcode, die dieser Mod umgeschrieben hat, in nams.log. Zur Fehlersuche.';
+
+  @override
+  String get thirdPartyGameModWaitPatch =>
+      'Warten, bis der Mod das Spiel gepatcht hat';
+
+  @override
+  String get thirdPartyGameModWaitPatchHint =>
+      'Hält den Start an, bis der Mod meldet, dass er mit dem Umschreiben des Spielcodes fertig ist (er fragt dann nach dem Exe-Pfad), damit die Hooks von NAMS nach seinen Patches kommen. Braucht „NieRAutomata.exe als Haupt-Exe zeigen“, das sich mit einschaltet.';
+
+  @override
+  String get thirdPartyGameModPatchTimeout => 'Längste Wartezeit';
+
+  @override
+  String get thirdPartyGameModPatchTimeoutHint =>
+      'Meldet sich der Mod nie, startet das Spiel nach dieser Zeit trotzdem und NAMS schreibt eine Warnung in nams.log.';
+
+  @override
+  String thirdPartyGameModSeconds(String seconds) {
+    return '$seconds s';
+  }
 
   @override
   String get thirdPartyStatusInstalled => 'Installiert';
@@ -1827,10 +1911,6 @@ class AppLocalizationsDe extends AppLocalizations {
       'Die Texturinjektion ist deaktiviert';
 
   @override
-  String get heapOverridesDescription =>
-      'Zusätzlicher Speicher oberhalb der NAMS-Standardwerte. Übergeordnete Heaps wachsen automatisch. Erhöhe die Werte nur, wenn Mods mehr Speicher benötigen. Neustart erforderlich.';
-
-  @override
   String get lodModDescription =>
       'In NAMS integrierte Patches für bessere Grafikqualität, inspiriert von Automata-LodMod von emoose und weit darüber hinaus erweitert - daher das Ext. Entfernt LOD-Pop-ins, schärft Schatten und Umgebungsverdeckung, erzwingt Schattenwurf für alle Objekte einschließlich Vegetation, deaktiviert manuelles Culling, damit Objekte nicht plötzlich ein- oder ausgeblendet werden, und entfernt die Vignette. Zusätzlich kommen Schattenkaskaden mit Blur pro Kaskade, ein neu geschriebenes Bloom, Global Illumination, FPS-Uncap mit Event-Absicherung, FXAA, Render-Skalierung und hochauflösende Karten-Grids dazu.';
 
@@ -1840,7 +1920,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get namsDescription =>
-      'NAMS ist der Mod-Loader, der NieR:Automata hostet. Er startet das Spiel in einem eigenen Prozess, lädt deine Mods zur Laufzeit und wendet diese Engine-Einstellungen an. Diese Optionen steuern Validierung, Content-Features, das Laden von Plugins/ReShade/3DMigoto und die Größe der Speicher-Heaps.';
+      'NAMS ist der Mod-Loader, der NieR:Automata hostet. Er startet das Spiel in einem eigenen Prozess, lädt deine Mods zur Laufzeit und wendet diese Engine-Einstellungen an. Diese Optionen steuern Validierung, Content-Features und das Laden von Plugins/ReShade/3DMigoto.';
 
   @override
   String get yorhaProtocolDescription =>
@@ -2742,6 +2822,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get diagnosticsSectionRecentIssues => 'Letzte NAMS-Probleme';
 
   @override
+  String get diagnosticsSectionFindings => 'Befunde';
+
+  @override
+  String get diagnosticsNoFindings => 'Keine Probleme gefunden';
+
+  @override
   String diagnosticsExeVariant(String variant) {
     return 'exe: $variant';
   }
@@ -2987,7 +3073,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get tooltipDistancePss =>
-      'Aktiviert die PSS-Schattenverteilung für eine gleichmäßigere Schattenqualität. 0 = aus. Gute Werte: 0.5–0.9. Sieht in einigen Gebieten hervorragend aus, kann in anderen jedoch unscharf wirken. Sollte deutlich höher als andere Entfernungswerte gesetzt werden (etwa 1500 für große offene Gebiete).';
+      'Aktiviert die PSS-Schattenverteilung für eine gleichmäßigere Schattenqualität. 0 = aus. Sieht in einigen Gebieten hervorragend aus, kann in anderen jedoch unscharf wirken. Sollte deutlich höher als andere Entfernungswerte gesetzt werden (etwa 1500 für große offene Gebiete).';
 
   @override
   String get labelFilterStrengthBias => 'Filterstärke-Versatz';
@@ -3177,13 +3263,6 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get tooltipHighGridsBlockedFromGrid =>
       'Grids, die nie geladen werden, während du auf einem bestimmten Grid stehst. Nützlich, wenn eine Sperre für den ganzen Raum zu weitreichend wäre.';
-
-  @override
-  String get labelContentEffectAreas => 'Effektbereiche';
-
-  @override
-  String get tooltipContentEffectAreas =>
-      'Effekte, die ein Mod in einem Raum platziert. Änderungen zeigen sich nach erneutem Betreten des Raums.';
 
   @override
   String get labelSkipStartupLogos => 'Startlogos überspringen';
@@ -3447,75 +3526,286 @@ class AppLocalizationsDe extends AppLocalizations {
       'Überspringt das Laden aller Plugin-DLLs (z. B. des YoRHa-Protocol-Arbeitsbereichs). Alle Engine-Funktionen von NAMS funktionieren weiterhin.';
 
   @override
+  String get labelDisableMainOverlay => 'Mod-Overlay deaktivieren';
+
+  @override
+  String get tooltipDisableMainOverlay =>
+      'Startet das Mod-Overlay im Spiel nicht, in dem auch die YoRHa-Protocol-Oberfläche läuft. Plugins und alle NAMS-Funktionen laufen weiter; nur das Overlay und seine Fenster samt der YoRHa-Protocol-Oberfläche fallen weg, zusammen mit dem Speicher, den sie belegen. Plugins mit eigener Oberfläche zeigen diese weiterhin. Erfordert einen Neustart.';
+
+  @override
   String get labelDisableContentFeatures => 'Inhaltsfunktionen deaktivieren';
 
   @override
   String get tooltipDisableContentFeatures =>
-      'Hauptschalter für alle Funktionen der Inhaltsschicht. Ist er aktiviert, läuft NAMS als reine Engine-Schicht (Mauskorrekturen, Überprüfung, Heap-Anpassung, Absturzbehebungen), ohne Unterstützung für Gegenstands-, Waffen-, Outfit-, Quest- oder Accessoire-Mods. Nützlich für Benchmarks oder zur Abgrenzung von Engine- gegenüber Inhaltsproblemen.';
-
-  @override
-  String get labelContentItems => 'Gegenstände / Waffen / Läden';
-
-  @override
-  String get tooltipContentItems =>
-      'Benutzerdefinierte Gegenstände, Waffen, Outfits und Ladeneinträge. Deaktivieren, um ohne gegenstandsbezogene Mods zu spielen. Neustart erforderlich.';
-
-  @override
-  String get labelContentAccessories => 'Accessoires';
-
-  @override
-  String get tooltipContentAccessories =>
-      'Benutzerdefinierte Accessoires (Gesichtsmasken, Lunar Tear, Masamune-Maske usw.) sowie der Ablauf zum An- und Ablegen. Deaktivieren, um ohne Accessoire-Mods zu spielen. Neustart erforderlich.';
-
-  @override
-  String get labelContentAssembleMeshes => 'Spielermodelle';
-
-  @override
-  String get tooltipContentAssembleMeshes =>
-      'Benutzerdefinierte Spielermodelle (Mesh-Wechsel sowie Haar-, Outfit- und Maskenüberschreibungen). Deaktivieren, um die ursprünglichen Spielermodelle unverändert darzustellen. Neustart erforderlich.';
-
-  @override
-  String get labelContentQuestIntegration => 'Quests / Nachrichten / Sprache';
-
-  @override
-  String get tooltipContentQuestIntegration =>
-      'Benutzerdefinierte Quests, Nachrichten, Sprachzeilen und die Quest-UI-Integration, die sie aktiviert. Deaktivieren, um ohne Quest-Mods zu spielen. Neustart erforderlich.';
-
-  @override
-  String get labelContentEffectsApplier => 'Effektregeln';
-
-  @override
-  String get tooltipContentEffectsApplier =>
-      'Wendet in jedem Frame Waffen- und Outfit-Effektregeln auf Spielerwerte an (Schadensmultiplikatoren, Änderungen beim Ausweichen, Immunitäten usw.).';
-
-  @override
-  String get labelContentEquipTracker => 'Ausrüstungsüberwachung';
-
-  @override
-  String get tooltipContentEquipTracker =>
-      'Erkennt Änderungen beim Ausrüsten und Ablegen von Waffen. Steuert Effektregeln und SDK-Callbacks beim Ausrüsten.';
-
-  @override
-  String get labelContentMcd => 'Benutzerdefinierter Text';
-
-  @override
-  String get tooltipContentMcd =>
-      'Anpassung von Texten im Spiel (benutzerdefinierte Gegenstandsnamen, Beschreibungen und von Mods bereitgestellte Dialogtexte).';
-
-  @override
-  String get labelContentBuddyRubySelector =>
-      'Begleiter-Outfit-Auswahl (experimentell)';
-
-  @override
-  String get tooltipContentBuddyRubySelector =>
-      'Patcht das globale Gesprächsskript für Begleiter und fügt einen Eintrag „Outfit wechseln“ hinzu, der gemoddete Begleiter-Outfits auflistet. Deaktiviere dies, falls das gepatchte Gesprächsskript Instabilität verursacht oder andere Skript-Mods beeinträchtigt.';
+      'Hauptschalter für alle Inhaltsfunktionen. Ist er aktiviert, behandelt NAMS jeden Schalter unter Inhaltsfunktionen (die Tabelle [content] in nams.toml) als aus und läuft als reine Engine-Schicht (Mauskorrekturen, Überprüfung, Heap-Anpassung, Absturzbehebungen) ohne Mod-Inhalte. Nützlich für Benchmarks oder zur Abgrenzung von Engine- gegenüber Inhaltsproblemen. Neustart erforderlich.';
 
   @override
   String get cardContentFeatures => 'INHALTSFUNKTIONEN';
 
   @override
   String get contentFeaturesDescription =>
-      'Einzelschalter für Funktionen der Inhaltsschicht. Standardmäßig sind alle aktiviert. Nützlich, um ein Problem auf ein bestimmtes Subsystem einzugrenzen. Erfordert einen Neustart des Spiels.';
+      'Jede Inhaltsfunktion einzeln. Standardmäßig sind alle an. Ist eine aus, wird jeder Mod-Eintrag dieser Funktion übersprungen, ebenso jeder Mod-Eintrag, der sie braucht. „Inhaltsfunktionen deaktivieren“ schaltet alle auf einmal aus. Erfordert einen Neustart des Spiels.';
+
+  @override
+  String get contentGroupItems => 'Gegenstände & Ausrüstung';
+
+  @override
+  String get contentGroupStory => 'Story & Welt';
+
+  @override
+  String get contentGroupScripts => 'Skripte';
+
+  @override
+  String get contentGroupAudio => 'Audio';
+
+  @override
+  String get contentGroupVisuals => 'Grafik';
+
+  @override
+  String get labelContentCustomItems => 'Neue Gegenstände';
+
+  @override
+  String get tooltipContentCustomItems =>
+      'Neue Gegenstände (Verbrauchsgegenstände, Materialien, Schlüsselgegenstände) mit ihren Icons und Texten sowie Gegenstände, die Mods automatisch vergeben. Neustart erforderlich.';
+
+  @override
+  String get labelContentCustomWeapons => 'Neue Waffen';
+
+  @override
+  String get tooltipContentCustomWeapons =>
+      'Neue Waffen mit ihren Werten, Aufwertungen, Texten und Story-Bildern. Neustart erforderlich.';
+
+  @override
+  String get labelContentWeaponPatches => 'Waffenänderungen';
+
+  @override
+  String get tooltipContentWeaponPatches =>
+      'Änderungen von Mods an vorhandenen Waffen. Neustart erforderlich.';
+
+  @override
+  String get labelContentCustomOutfits => 'Neue Outfits';
+
+  @override
+  String get tooltipContentCustomOutfits =>
+      'Neue Outfits, WAX-Outfit-Mods und der Gegenstand „Default Outfit“, der ein gemoddetes Outfit wieder ablegt. Neustart erforderlich.';
+
+  @override
+  String get labelContentCustomHairsprays => 'Neue Haarsprays';
+
+  @override
+  String get tooltipContentCustomHairsprays =>
+      'Neue Haarsprays. Neustart erforderlich.';
+
+  @override
+  String get labelContentAccessories => 'Accessoires';
+
+  @override
+  String get tooltipContentAccessories =>
+      'Neue Accessoires und das Tragen mehrerer Accessoires gleichzeitig. Neustart erforderlich.';
+
+  @override
+  String get labelContentPlayerMeshSwaps => 'Spielermodell-Teile';
+
+  @override
+  String get tooltipContentPlayerMeshSwaps =>
+      'NAMS setzt 2B, 9S und A2 selbst zusammen, damit Outfit- und Accessoire-Mods Modellteile austauschen, ausblenden oder hinzufügen können. Aus = der Modellaufbau des Spiels. Neustart erforderlich.';
+
+  @override
+  String get labelContentMeshVisibility => 'Modellteile aus-/einblenden';
+
+  @override
+  String get tooltipContentMeshVisibility =>
+      'Mods, die einzelne Teile eines Modells aus- oder einblenden. Neustart erforderlich.';
+
+  @override
+  String get labelContentShopItems => 'Ladenartikel';
+
+  @override
+  String get tooltipContentShopItems =>
+      'Gegenstände, die Mods zu Läden hinzufügen. Neustart erforderlich.';
+
+  @override
+  String get labelContentItemShortcutMenu => 'Gegenstands-Schnellmenü';
+
+  @override
+  String get tooltipContentItemShortcutMenu =>
+      'Gemoddete Heilgegenstände, die du besitzt, erscheinen im Gegenstands-Schnellmenü. Neustart erforderlich.';
+
+  @override
+  String get labelContentEffectRules => 'Effektregeln';
+
+  @override
+  String get tooltipContentEffectRules =>
+      'Was gemoddete Waffen, Outfits, Accessoires und Gegenstände beim Spieler bewirken (Schaden, Ausweichen, Immunitäten, Taschenlampen-Ladung). Neustart erforderlich.';
+
+  @override
+  String get labelContentOutfitSelectorNpc => 'Outfit-Auswahl-NPC';
+
+  @override
+  String get tooltipContentOutfitSelectorNpc =>
+      'Der Outfit-Auswahl-NPC, der gemoddete Outfits anbietet. Neustart erforderlich.';
+
+  @override
+  String get labelContentBuddyOutfitMenu =>
+      'Begleiter-Outfitmenü (experimentell)';
+
+  @override
+  String get tooltipContentBuddyOutfitMenu =>
+      'EXPERIMENTELL. Eintrag „Outfit wechseln“ im Gespräch mit deinem Begleiter. Ausschalten, falls er sich mit anderen Skript-Mods beißt. Neustart erforderlich.';
+
+  @override
+  String get labelContentCustomQuests => 'Neue Quests';
+
+  @override
+  String get tooltipContentCustomQuests =>
+      'Neue Quests mit ihren Texten, Belohnungen und Bedingungen. Neustart erforderlich.';
+
+  @override
+  String get labelContentCustomMails => 'Neue Nachrichten';
+
+  @override
+  String get tooltipContentCustomMails =>
+      'Neue Nachrichten. Neustart erforderlich.';
+
+  @override
+  String get labelContentCustomVoiceLines => 'Neue Sprachzeilen';
+
+  @override
+  String get tooltipContentCustomVoiceLines =>
+      'Neue Sprachzeilen. Neustart erforderlich.';
+
+  @override
+  String get labelContentCustomMaps => 'Neue Karten und Story-Phasen';
+
+  @override
+  String get tooltipContentCustomMaps =>
+      'Neue Kartenräume und Story-Phasen mit ihren Einträgen in der Kapitelauswahl und den Namen der Speicherplätze. Neustart erforderlich.';
+
+  @override
+  String get labelContentMapLayouts => 'Regeln für Kartenobjekte';
+
+  @override
+  String get tooltipContentMapLayouts =>
+      'Mod-Regeln für Objekte, die auf der Karte platziert sind (entfernen, ab welcher Entfernung sie erscheinen). Neustart erforderlich.';
+
+  @override
+  String get labelContentNovels => 'Romane';
+
+  @override
+  String get tooltipContentNovels =>
+      'Neue Romane im Daten-Menü. Neustart erforderlich.';
+
+  @override
+  String get labelContentArchives => 'Archive';
+
+  @override
+  String get tooltipContentArchives =>
+      'Neue Archive im Daten-Menü. Neustart erforderlich.';
+
+  @override
+  String get labelContentCutsceneReplacements => 'Ersetzte Zwischensequenzen';
+
+  @override
+  String get tooltipContentCutsceneReplacements =>
+      'Zwischensequenz-Videos, die Mods ersetzen, und Ingame-Zwischensequenzen, die Mods verschieben. Neustart erforderlich.';
+
+  @override
+  String get labelContentCameraSettings => 'Kameraeinstellungen';
+
+  @override
+  String get tooltipContentCameraSettings =>
+      'Mod-Einstellungen für die Spielerkamera. Neustart erforderlich.';
+
+  @override
+  String get labelContentScriptOverlays => 'Skriptänderungen';
+
+  @override
+  String get tooltipContentScriptOverlays =>
+      'Ergänzungen und Änderungen von Mods an den Skripten des Spiels. Neustart erforderlich.';
+
+  @override
+  String get labelContentScriptGroups => 'Skriptgruppen';
+
+  @override
+  String get tooltipContentScriptGroups =>
+      'Mod-Regeln, die Gruppen von Spielskripten je Story-Phase ein- oder ausschalten. Neustart erforderlich.';
+
+  @override
+  String get labelContentRubyPatches => 'Ruby-Skript-Änderungen';
+
+  @override
+  String get tooltipContentRubyPatches =>
+      'Änderungen von Mods an den Ruby-Skripten des Spiels. Neustart erforderlich.';
+
+  @override
+  String get labelContentCustomMusic => 'Neue Musik';
+
+  @override
+  String get tooltipContentCustomMusic =>
+      'Neue Hintergrundmusik. Neustart erforderlich.';
+
+  @override
+  String get labelContentAmbientSounds => 'Umgebungsgeräusche';
+
+  @override
+  String get tooltipContentAmbientSounds =>
+      'Umgebungsgeräusche und Hintergrundstimmen, die Mods hinzufügen oder stummschalten. Neustart erforderlich.';
+
+  @override
+  String get labelContentCustomSounds => 'Neue Soundeffekte';
+
+  @override
+  String get tooltipContentCustomSounds =>
+      'Neue Soundeffekte. Neustart erforderlich.';
+
+  @override
+  String get labelContentEffectAreas => 'Effektbereiche';
+
+  @override
+  String get tooltipContentEffectAreas =>
+      'Effekte, die Mods in Räumen platzieren oder daraus entfernen. Neustart erforderlich.';
+
+  @override
+  String get labelContentEffectTypeMute => 'Effekttypen stummschalten';
+
+  @override
+  String get tooltipContentEffectTypeMute =>
+      'Mods, die ganze Effekttypen in einem Raum oder einer Story-Phase stummschalten. Neustart erforderlich.';
+
+  @override
+  String get labelContentGlobalEffects => 'Globale Effekte';
+
+  @override
+  String get tooltipContentGlobalEffects =>
+      'Effekte, die Mods in einem ganzen Raum oder einer ganzen Story-Phase laufen lassen. Neustart erforderlich.';
+
+  @override
+  String get labelContentLightingFilters => 'Licht- und Farbfilter';
+
+  @override
+  String get tooltipContentLightingFilters =>
+      'Farb- und Lichtfilter von Mods für Räume. Neustart erforderlich.';
+
+  @override
+  String get labelContentClothPhysics => 'Stoffphysik';
+
+  @override
+  String get tooltipContentClothPhysics =>
+      'Zusätzliche Stoffphysik-Teile an gemoddeten Modellen. Neustart erforderlich.';
+
+  @override
+  String get labelContentCustomTexts => 'Mod-Texte';
+
+  @override
+  String get tooltipContentCustomTexts =>
+      'Mod-Texte in Menüs (Gegenstandsnamen, Beschreibungen). Aus = die Texte des Spiels. Neustart erforderlich.';
+
+  @override
+  String get labelContentUiOverrides => 'Mod-UI-Layouts';
+
+  @override
+  String get tooltipContentUiOverrides =>
+      'Menü- und HUD-Layouts, die Mods ersetzen. Aus = die mitgelieferten Layouts. Neustart erforderlich.';
 
   @override
   String get labelDisableReShadeLoading => 'ReShade-Laden deaktivieren';
@@ -3530,6 +3820,14 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get tooltipDisable3dmigotoLoading =>
       'Lädt die 3DMigoto-Runtime aus thirdparty/3dmigoto/ nicht mehr. Ausschalten, um Shader-Mods nicht zu laden.';
+
+  @override
+  String get labelDisableGraphicModsLoading =>
+      'Laden von Grafik-Proxys deaktivieren';
+
+  @override
+  String get tooltipDisableGraphicModsLoading =>
+      'Lädt die Direct3D-Proxy-DLLs aus thirdparty/graphic/ nicht mehr: DLLs mit dem Namen einer System-DLL (d3d11.dll, dxgi.dll, ...), durch die die Grafikaufrufe des Spiels laufen. Aktiviere dies, um ohne sie zu spielen, ohne etwas löschen zu müssen. Wird beim nächsten Spielstart wirksam.';
 
   @override
   String get labelDisableGameModsLoading => 'Laden von Spiel-Mods deaktivieren';
@@ -3614,62 +3912,6 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get tooltipValidateModelDataSettings =>
       'Zeigt Fehler bei der Modellüberprüfung in einem Dialog an, statt unbemerkt fehlzuschlagen.';
-
-  @override
-  String get heapDefault => 'Standard';
-
-  @override
-  String get heapPlus16MB => '+16 MB';
-
-  @override
-  String get heapPlus32MB => '+32 MB';
-
-  @override
-  String get heapPlus64MB => '+64 MB';
-
-  @override
-  String get heapPlus128MB => '+128 MB';
-
-  @override
-  String get heapPlus256MB => '+256 MB';
-
-  @override
-  String heapCustomMB(String mb) {
-    return '+$mb MB';
-  }
-
-  @override
-  String get heapScriptEngine => 'Skript-Engine';
-
-  @override
-  String get heapScriptEngineDesc => 'Für komplexe Skript-Mods (mRuby / HAP).';
-
-  @override
-  String get heapPlayerModels => 'Spielermodelle';
-
-  @override
-  String get heapPlayerModelsDesc =>
-      'Für große Mods, die Spielermodelle ersetzen.';
-
-  @override
-  String get heapPlayerTextures => 'Spielertexturen';
-
-  @override
-  String get heapPlayerTexturesDesc => 'Für hochauflösende Spielertextur-Mods.';
-
-  @override
-  String get heapEnemyBgModels => 'Gegner-/Hintergrundmodelle';
-
-  @override
-  String get heapEnemyBgModelsDesc =>
-      'Für Mods an Gegner- oder Umgebungsmodellen.';
-
-  @override
-  String get heapEnemyBgTextures => 'Gegner-/Hintergrundtexturen';
-
-  @override
-  String get heapEnemyBgTexturesDesc =>
-      'Für hochauflösende Gegner- oder Umgebungstexturen.';
 
   @override
   String get tutorialLodModEnable =>
@@ -3873,6 +4115,13 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get tooltipSound =>
       'Ton bei Interaktionen mit der Benutzeroberfläche des Arbeitsbereichs.';
+
+  @override
+  String get labelEditorMcp => 'Editor-MCP-Server';
+
+  @override
+  String get tooltipEditorMcp =>
+      'Startet den MCP-Server der YoRHa-Protocol-Editoren unter http://127.0.0.1:47820/mcp, damit KI-Agenten und andere MCP-Clients die Editoren bei laufendem Spiel lesen und steuern können. Standardmäßig aus.';
 
   @override
   String get labelImpeller => 'Impeller-Renderer (experimentell)';
@@ -4464,6 +4713,13 @@ class AppLocalizationsDe extends AppLocalizations {
       'Lädt bei sehr großen Paketen (über 400 Dateien) nur Texturen, die einer kuratierten Prioritätenliste entsprechen. Das spart VRAM und Ladezeit. Kleine Pakete (Kleidung, Waffen) werden immer vollständig geladen. Aktiviere dies, wenn du ein riesiges Paket verwendest und Speicher sparen möchtest.';
 
   @override
+  String get labelPinPriorityTextures => 'Prioritätstexturen geladen halten';
+
+  @override
+  String get tooltipPinPriorityTextures =>
+      'Lädt die Texturen der eingebauten Prioritätenliste (GPUnity HD Pack) beim Start und hält sie die ganze Sitzung im VRAM, damit sie nie nachgeladen werden. Schalte dies bei Grafikkarten mit 4 GB VRAM oder weniger aus: Dann gilt für sie das VRAM-Budget wie für alle anderen Texturen, und sie werden entladen, wenn das Spiel den Speicher braucht. Wird beim nächsten Spielstart wirksam.';
+
+  @override
   String get tutorialDropTextures =>
       'Ziehe Textur-Mods hierher, um sie zu installieren. ZIP-Dateien werden automatisch entpackt.';
 
@@ -4867,13 +5123,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get cutsceneSubtitleCard => 'UNTERTITEL & SCHWARZE BALKEN';
 
   @override
-  String get cutsceneStatusHd => 'HD';
-
-  @override
-  String get cutsceneStatusHdTooltip =>
-      '[cutscene] hd_cutscenes in nams.toml – muss true sein, damit HD-Cutscene-Mods geladen werden.';
-
-  @override
   String get cutsceneStatusH264 => 'H264';
 
   @override
@@ -5163,6 +5412,20 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get modCameraFovOffsetHint =>
       'Grad. Positiv erweitert das Sichtfeld, negativ zoomt heran.';
+
+  @override
+  String get modCameraPitchUpLimit => 'Grenze nach oben';
+
+  @override
+  String get modCameraPitchUpLimitHint =>
+      'Grad über der Waagerechten, bis zu denen sich die Kamera nach oben drehen lässt. Das Spiel selbst erlaubt 72.';
+
+  @override
+  String get modCameraPitchDownLimit => 'Grenze nach unten';
+
+  @override
+  String get modCameraPitchDownLimitHint =>
+      'Grad unter der Waagerechten, bis zu denen sich die Kamera nach unten drehen lässt. Das Spiel selbst erlaubt 72.';
 
   @override
   String get threeDInspectorOpen => '3D-Inspektor öffnen';

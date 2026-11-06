@@ -200,6 +200,14 @@ class AppLocalizationsEn extends AppLocalizations {
       'Cannot verify: Steam must be running and own the game.';
 
   @override
+  String get verifyTimedOut =>
+      'Cannot verify: NAMS did not respond within 30 seconds.';
+
+  @override
+  String get verifyTimedOutLinux =>
+      'Cannot verify: NAMS did not respond within 30 seconds. Proton is most likely stuck, often because the game is on an NTFS drive. Moving the game to a Linux-formatted drive usually fixes it.';
+
+  @override
   String get verifyInstallError =>
       'Could not run the check. Make sure a game folder is selected.';
 
@@ -589,7 +597,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notifyNaiomMigrated =>
-      'Found your old NAIOM settings - imported into nams.toml. Check the NAIOM tab. You can remove the old NAIOM files (dinput8.dll, NAIOM.ini) from the game folder.';
+      'Found your old NAIOM settings - imported into naiom.toml. Check the NAIOM tab. You can remove the old NAIOM files (dinput8.dll, NAIOM.ini) from the game folder.';
 
   @override
   String notifyNaiomSkipped(String entries) {
@@ -726,7 +734,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tooltipEditsNaiom =>
-      'Edits the [mouse] settings in nams/nams.toml. Most settings apply after saving; a few need a game restart.';
+      'Edits nams/naiom.toml. Most settings apply after saving; a few need a game restart.';
 
   @override
   String get tooltipCutscenesLocation =>
@@ -737,9 +745,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cardLoading => 'LOADING';
-
-  @override
-  String get cardHeapOverrides => 'HEAP OVERRIDES';
 
   @override
   String get cardPerformance => 'PERFORMANCE';
@@ -1412,10 +1417,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get thirdPartyGameModsNone => 'No game mods installed';
 
   @override
-  String get thirdPartyWaxRejected =>
-      'WAX cannot be used with NAMS. Both do the same job, so running them together crashes the game. Your WAX outfits and items work in the Mods tab instead.';
-
-  @override
   String thirdPartyGameModsCount(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -1436,6 +1437,89 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get thirdPartyGameModsRemoveOne => 'Delete this mod';
+
+  @override
+  String get thirdPartyGraphicModsHeader => 'GRAPHIC PROXIES';
+
+  @override
+  String get thirdPartyGraphicModsHowto =>
+      'Direct3D proxy DLLs (d3d11.dll, dxgi.dll) that wrap the game\'s rendering. NAMS loads them from thirdparty/graphic and sends the game\'s Direct3D calls through them; a copy in the game folder is never loaded. ReShade and 3DMigoto have their own cards. Install them through the drop zone at the top.';
+
+  @override
+  String get thirdPartyMoveToGraphic =>
+      'Move to graphic proxies (for a Direct3D wrapper)';
+
+  @override
+  String get thirdPartyMoveToGame =>
+      'Move to game mods (for a mod that reads the game\'s memory)';
+
+  @override
+  String get thirdPartyGameModSettings =>
+      'Loader settings for this DLL (game.toml)';
+
+  @override
+  String get thirdPartyGameModFakeHandle => 'Show game.bin as the main module';
+
+  @override
+  String get thirdPartyGameModFakeHandleHint =>
+      'Answers GetModuleHandle(NULL) with game.bin, so a mod that reads the game\'s memory at fixed offsets finds the game. Only turn it off for a mod that hooks NAMS.exe on purpose.';
+
+  @override
+  String get thirdPartyGameModFakeExePath =>
+      'Show NieRAutomata.exe as the main exe';
+
+  @override
+  String get thirdPartyGameModFakeExePathHint =>
+      'Answers GetModuleFileName(NULL) with the NieRAutomata.exe of your install. Mods that check the exe name or hash the exe to detect the game version, like WAX, need this.';
+
+  @override
+  String get thirdPartyGameModSizeOfImage => 'Game version the mod sees';
+
+  @override
+  String get thirdPartyGameModSizeOfImageHint =>
+      'Some mods detect the game version from the image size of the main module. Pick the build the mod was made for. A mod made for the 2021 version reads the wrong memory on the 2026 update unless the mod supports it.';
+
+  @override
+  String get thirdPartyGameModSize2021 => 'Steam 2021 (default)';
+
+  @override
+  String get thirdPartyGameModSize2026 => 'Steam 2026-11';
+
+  @override
+  String get thirdPartyGameModSizeReal => 'Real size of game.bin';
+
+  @override
+  String thirdPartyGameModSizeCustom(int value) {
+    return 'Custom ($value)';
+  }
+
+  @override
+  String get thirdPartyGameModReportPatches =>
+      'Log the game code this mod changes';
+
+  @override
+  String get thirdPartyGameModReportPatchesHint =>
+      'Writes every place in the game code this mod rewrote to nams.log. For troubleshooting.';
+
+  @override
+  String get thirdPartyGameModWaitPatch =>
+      'Wait until the mod has patched the game';
+
+  @override
+  String get thirdPartyGameModWaitPatchHint =>
+      'Holds the start until the mod reports that it finished rewriting game code (it asks for the exe path once it is done), so NAMS\'s own hooks go in after its patches. Needs \"Show NieRAutomata.exe as the main exe\", which turns on with it.';
+
+  @override
+  String get thirdPartyGameModPatchTimeout => 'Longest wait';
+
+  @override
+  String get thirdPartyGameModPatchTimeoutHint =>
+      'If the mod never reports back, the game starts anyway after this time and NAMS writes a warning to nams.log.';
+
+  @override
+  String thirdPartyGameModSeconds(String seconds) {
+    return '$seconds s';
+  }
 
   @override
   String get thirdPartyStatusInstalled => 'Installed';
@@ -1800,10 +1884,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get warningTextureInjectionDisabled => 'Texture injection is disabled';
 
   @override
-  String get heapOverridesDescription =>
-      'Extra memory added on top of NAMS defaults. Parent heaps grow automatically. Only increase if mods need more memory. Restart required.';
-
-  @override
   String get lodModDescription =>
       'Visual quality patches built into NAMS, inspired by Automata-LodMod by emoose and extended well past it - hence the Ext. Removes LOD pop-in, sharpens shadows and ambient occlusion, forces shadow casting on all objects including foliage, disables manual culling so objects don\'t pop in/out, and removes the vignette. On top of that it adds shadow cascades and per-cascade blur, a bloom rewrite, global illumination, FPS uncap with event safeguards, FXAA, render scaling and high-res map grids.';
 
@@ -1813,7 +1893,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get namsDescription =>
-      'NAMS is the mod loader that hosts NieR:Automata. It launches the game inside its own process, loads your mods at runtime, and applies these engine settings. These options control validation, content features, plugin/ReShade/3DMigoto loading, and memory heap sizes.';
+      'NAMS is the mod loader that hosts NieR:Automata. It launches the game inside its own process, loads your mods at runtime, and applies these engine settings. These options control validation, content features, and plugin/ReShade/3DMigoto loading.';
 
   @override
   String get yorhaProtocolDescription =>
@@ -2694,6 +2774,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get diagnosticsSectionRecentIssues => 'Recent NAMS issues';
 
   @override
+  String get diagnosticsSectionFindings => 'Findings';
+
+  @override
+  String get diagnosticsNoFindings => 'No problems found';
+
+  @override
   String diagnosticsExeVariant(String variant) {
     return 'exe: $variant';
   }
@@ -2938,7 +3024,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tooltipDistancePss =>
-      'Enables PSS shadow distribution for more even shadow quality. 0 = off. Good values: 0.5 - 0.9. Looks great in some areas but may appear blurry in others. Should be set much larger than other distance values (~1500 for large open areas).';
+      'Enables PSS shadow distribution for more even shadow quality. 0 = off. Looks great in some areas but may appear blurry in others. Should be set much larger than other distance values (~1500 for large open areas).';
 
   @override
   String get labelFilterStrengthBias => 'Filter Strength Bias';
@@ -3128,13 +3214,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get tooltipHighGridsBlockedFromGrid =>
       'Grids that never load while you stand on one specific grid. Use when blocking the grid for the whole room would be too broad.';
-
-  @override
-  String get labelContentEffectAreas => 'Effect areas';
-
-  @override
-  String get tooltipContentEffectAreas =>
-      'Effects a mod places in a room. Changes show after re-entering the room.';
 
   @override
   String get labelSkipStartupLogos => 'Skip startup logos';
@@ -3395,75 +3474,284 @@ class AppLocalizationsEn extends AppLocalizations {
       'Skip loading all plugin DLLs (e.g. YoRHa Protocol workspace). All NAMS engine features still work.';
 
   @override
+  String get labelDisableMainOverlay => 'Disable Mod Overlay';
+
+  @override
+  String get tooltipDisableMainOverlay =>
+      'Don\'t start the in-game mod overlay, which also hosts the YoRHa Protocol UI. Plugins and all NAMS features still run; only the overlay and its panels, the YoRHa Protocol UI included, are gone, together with the memory they use. Plugins with their own UI still show it. Requires restart.';
+
+  @override
   String get labelDisableContentFeatures => 'Disable Content Features';
 
   @override
   String get tooltipDisableContentFeatures =>
-      'Master switch for all content-layer features. When on, NAMS runs as a pure engine layer (mouse fixes, validation, heap tuning, crash fixes) without any item / weapon / outfit / quest / accessory mod support. Useful for benchmarking or isolating engine vs content issues.';
-
-  @override
-  String get labelContentItems => 'Items / Weapons / Shops';
-
-  @override
-  String get tooltipContentItems =>
-      'Custom items, weapons, outfits and shop entries. Disable to play without any item-related mods. Requires restart.';
-
-  @override
-  String get labelContentAccessories => 'Accessories';
-
-  @override
-  String get tooltipContentAccessories =>
-      'Custom accessories (face masks, lunar tear, masamune mask, etc.) and the accessory equip / unequip flow. Disable to play without accessory mods. Requires restart.';
-
-  @override
-  String get labelContentAssembleMeshes => 'Player Meshes';
-
-  @override
-  String get tooltipContentAssembleMeshes =>
-      'Custom player meshes (mesh swaps, hair / outfit / mask overrides). Disable to render the vanilla player models unchanged. Requires restart.';
-
-  @override
-  String get labelContentQuestIntegration => 'Quests / Mails / Voice';
-
-  @override
-  String get tooltipContentQuestIntegration =>
-      'Custom quests, custom mails, custom voice lines, and the quest UI integration that activates them. Disable to play without quest mods. Requires restart.';
-
-  @override
-  String get labelContentEffectsApplier => 'Effect Rules';
-
-  @override
-  String get tooltipContentEffectsApplier =>
-      'Per-frame application of weapon / outfit effect rules to player stats (damage multipliers, dodge tweaks, immunities, etc.).';
-
-  @override
-  String get labelContentEquipTracker => 'Equip Tracker';
-
-  @override
-  String get tooltipContentEquipTracker =>
-      'Detection of weapon equip / unequip changes. Drives effect rules and equip-time SDK callbacks.';
-
-  @override
-  String get labelContentMcd => 'Custom Text';
-
-  @override
-  String get tooltipContentMcd =>
-      'In-game text customization (custom item names, descriptions, dialogue strings supplied by mods).';
-
-  @override
-  String get labelContentBuddyRubySelector =>
-      'Buddy Outfit Selector (experimental)';
-
-  @override
-  String get tooltipContentBuddyRubySelector =>
-      'Patches the global buddy conversation script to add a \"Change outfit\" entry that lists modded buddy outfits. Disable if the patched conversation script causes instability or interferes with other script mods.';
+      'Master switch for all content features. When on, NAMS treats every toggle under Content Features (the [content] table in nams.toml) as off and runs as a pure engine layer (mouse fixes, validation, heap tuning, crash fixes) without any mod content. Useful for benchmarking or isolating engine vs content issues. Requires restart.';
 
   @override
   String get cardContentFeatures => 'CONTENT FEATURES';
 
   @override
   String get contentFeaturesDescription =>
-      'Per-feature toggles for the content layer. All default to ON. Useful for narrowing a problem down to a specific subsystem. Requires a game restart.';
+      'Every content feature on its own. All on by default. Turning one off skips every mod entry of that feature, and every mod entry that needs it. Disable Content Features turns all of them off at once. Requires a game restart.';
+
+  @override
+  String get contentGroupItems => 'Items & equipment';
+
+  @override
+  String get contentGroupStory => 'Story & world';
+
+  @override
+  String get contentGroupScripts => 'Scripts';
+
+  @override
+  String get contentGroupAudio => 'Audio';
+
+  @override
+  String get contentGroupVisuals => 'Visuals';
+
+  @override
+  String get labelContentCustomItems => 'New items';
+
+  @override
+  String get tooltipContentCustomItems =>
+      'New items (consumables, materials, key items) with their icons and texts, and items mods hand out automatically. Requires restart.';
+
+  @override
+  String get labelContentCustomWeapons => 'New weapons';
+
+  @override
+  String get tooltipContentCustomWeapons =>
+      'New weapons with their stats, upgrades, texts and story images. Requires restart.';
+
+  @override
+  String get labelContentWeaponPatches => 'Weapon changes';
+
+  @override
+  String get tooltipContentWeaponPatches =>
+      'Mod changes to existing weapons. Requires restart.';
+
+  @override
+  String get labelContentCustomOutfits => 'New outfits';
+
+  @override
+  String get tooltipContentCustomOutfits =>
+      'New outfits, WAX outfit mods, and the \"Default Outfit\" item that takes a modded outfit off again. Requires restart.';
+
+  @override
+  String get labelContentCustomHairsprays => 'New hairsprays';
+
+  @override
+  String get tooltipContentCustomHairsprays =>
+      'New hairsprays. Requires restart.';
+
+  @override
+  String get labelContentAccessories => 'Accessories';
+
+  @override
+  String get tooltipContentAccessories =>
+      'New accessories, and wearing several accessories at once. Requires restart.';
+
+  @override
+  String get labelContentPlayerMeshSwaps => 'Player model parts';
+
+  @override
+  String get tooltipContentPlayerMeshSwaps =>
+      'NAMS puts 2B, 9S and A2 together itself, so outfit and accessory mods can swap, hide or add model parts. Off = the game\'s own model setup. Requires restart.';
+
+  @override
+  String get labelContentMeshVisibility => 'Hide / show model parts';
+
+  @override
+  String get tooltipContentMeshVisibility =>
+      'Mods that hide or show single parts of a model. Requires restart.';
+
+  @override
+  String get labelContentShopItems => 'Shop items';
+
+  @override
+  String get tooltipContentShopItems =>
+      'Items that mods add to shops. Requires restart.';
+
+  @override
+  String get labelContentItemShortcutMenu => 'Quick-item menu';
+
+  @override
+  String get tooltipContentItemShortcutMenu =>
+      'Modded healing items you own show up in the quick-item menu. Requires restart.';
+
+  @override
+  String get labelContentEffectRules => 'Effect rules';
+
+  @override
+  String get tooltipContentEffectRules =>
+      'What modded weapons, outfits, accessories and items do to the player (damage, dodging, immunities, flashlight charge). Requires restart.';
+
+  @override
+  String get labelContentOutfitSelectorNpc => 'Outfit selection NPC';
+
+  @override
+  String get tooltipContentOutfitSelectorNpc =>
+      'The outfit selection NPC that offers modded outfits. Requires restart.';
+
+  @override
+  String get labelContentBuddyOutfitMenu => 'Buddy outfit menu (experimental)';
+
+  @override
+  String get tooltipContentBuddyOutfitMenu =>
+      'EXPERIMENTAL. \"Change outfit\" entry when talking to your buddy. Turn off if it clashes with other script mods. Requires restart.';
+
+  @override
+  String get labelContentCustomQuests => 'New quests';
+
+  @override
+  String get tooltipContentCustomQuests =>
+      'New quests with their texts, rewards and conditions. Requires restart.';
+
+  @override
+  String get labelContentCustomMails => 'New mails';
+
+  @override
+  String get tooltipContentCustomMails => 'New mails. Requires restart.';
+
+  @override
+  String get labelContentCustomVoiceLines => 'New voice lines';
+
+  @override
+  String get tooltipContentCustomVoiceLines =>
+      'New voice lines. Requires restart.';
+
+  @override
+  String get labelContentCustomMaps => 'New maps and story phases';
+
+  @override
+  String get tooltipContentCustomMaps =>
+      'New map rooms and story phases, with their Chapter Select entries and save slot names. Requires restart.';
+
+  @override
+  String get labelContentMapLayouts => 'Map object rules';
+
+  @override
+  String get tooltipContentMapLayouts =>
+      'Mod rules for objects placed on the map (removing them, how far away they appear). Requires restart.';
+
+  @override
+  String get labelContentNovels => 'Novels';
+
+  @override
+  String get tooltipContentNovels =>
+      'New novels in the Data menu. Requires restart.';
+
+  @override
+  String get labelContentArchives => 'Archives';
+
+  @override
+  String get tooltipContentArchives =>
+      'New archives in the Data menu. Requires restart.';
+
+  @override
+  String get labelContentCutsceneReplacements => 'Cutscene replacements';
+
+  @override
+  String get tooltipContentCutsceneReplacements =>
+      'Cutscene videos that mods replace, and in-game cutscenes that mods move. Requires restart.';
+
+  @override
+  String get labelContentCameraSettings => 'Camera settings';
+
+  @override
+  String get tooltipContentCameraSettings =>
+      'Mod settings for the player camera. Requires restart.';
+
+  @override
+  String get labelContentScriptOverlays => 'Script changes';
+
+  @override
+  String get tooltipContentScriptOverlays =>
+      'Mod additions and changes to the game\'s scripts. Requires restart.';
+
+  @override
+  String get labelContentScriptGroups => 'Script groups';
+
+  @override
+  String get tooltipContentScriptGroups =>
+      'Mod rules that turn groups of game scripts on or off per story phase. Requires restart.';
+
+  @override
+  String get labelContentRubyPatches => 'Ruby script edits';
+
+  @override
+  String get tooltipContentRubyPatches =>
+      'Mod edits to the game\'s Ruby scripts. Requires restart.';
+
+  @override
+  String get labelContentCustomMusic => 'New music';
+
+  @override
+  String get tooltipContentCustomMusic =>
+      'New background music. Requires restart.';
+
+  @override
+  String get labelContentAmbientSounds => 'Ambient sounds';
+
+  @override
+  String get tooltipContentAmbientSounds =>
+      'Ambient sounds and crowd voices that mods add or mute. Requires restart.';
+
+  @override
+  String get labelContentCustomSounds => 'New sound effects';
+
+  @override
+  String get tooltipContentCustomSounds =>
+      'New sound effects. Requires restart.';
+
+  @override
+  String get labelContentEffectAreas => 'Effect areas';
+
+  @override
+  String get tooltipContentEffectAreas =>
+      'Effects that mods place in rooms or remove from them. Requires restart.';
+
+  @override
+  String get labelContentEffectTypeMute => 'Effect type mute';
+
+  @override
+  String get tooltipContentEffectTypeMute =>
+      'Mods that mute whole effect types in a room or story phase. Requires restart.';
+
+  @override
+  String get labelContentGlobalEffects => 'Global effects';
+
+  @override
+  String get tooltipContentGlobalEffects =>
+      'Effects that mods run across a whole room or story phase. Requires restart.';
+
+  @override
+  String get labelContentLightingFilters => 'Lighting filters';
+
+  @override
+  String get tooltipContentLightingFilters =>
+      'Mod color and lighting filters for rooms. Requires restart.';
+
+  @override
+  String get labelContentClothPhysics => 'Cloth physics';
+
+  @override
+  String get tooltipContentClothPhysics =>
+      'Extra cloth physics parts on modded models. Requires restart.';
+
+  @override
+  String get labelContentCustomTexts => 'Mod texts';
+
+  @override
+  String get tooltipContentCustomTexts =>
+      'Mod texts in menus (item names, descriptions). Off = the game\'s own texts. Requires restart.';
+
+  @override
+  String get labelContentUiOverrides => 'Mod UI layouts';
+
+  @override
+  String get tooltipContentUiOverrides =>
+      'Menu and HUD layouts that mods replace. Off = the shipped layouts. Requires restart.';
 
   @override
   String get labelDisableReShadeLoading => 'Disable ReShade Loading';
@@ -3478,6 +3766,13 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get tooltipDisable3dmigotoLoading =>
       'Skip loading the 3DMigoto runtime from thirdparty/3dmigoto/. Turn off to stop loading shader mods.';
+
+  @override
+  String get labelDisableGraphicModsLoading => 'Disable Graphics Proxy Loading';
+
+  @override
+  String get tooltipDisableGraphicModsLoading =>
+      'Skip loading the Direct3D proxy DLLs from thirdparty/graphic/: DLLs named like a system DLL (d3d11.dll, dxgi.dll, ...) that the game\'s graphics calls pass through. Turn this on to play without them without having to delete anything. Takes effect on the next game start.';
 
   @override
   String get labelDisableGameModsLoading => 'Disable Game Mod Loading';
@@ -3561,60 +3856,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get tooltipValidateModelDataSettings =>
       'Surfaces model validation errors as a dialog instead of silent failure.';
-
-  @override
-  String get heapDefault => 'Default';
-
-  @override
-  String get heapPlus16MB => '+16 MB';
-
-  @override
-  String get heapPlus32MB => '+32 MB';
-
-  @override
-  String get heapPlus64MB => '+64 MB';
-
-  @override
-  String get heapPlus128MB => '+128 MB';
-
-  @override
-  String get heapPlus256MB => '+256 MB';
-
-  @override
-  String heapCustomMB(String mb) {
-    return '+$mb MB';
-  }
-
-  @override
-  String get heapScriptEngine => 'Script Engine';
-
-  @override
-  String get heapScriptEngineDesc => 'For complex script mods (mRuby / HAP).';
-
-  @override
-  String get heapPlayerModels => 'Player Models';
-
-  @override
-  String get heapPlayerModelsDesc => 'For large player model replacement mods.';
-
-  @override
-  String get heapPlayerTextures => 'Player Textures';
-
-  @override
-  String get heapPlayerTexturesDesc => 'For high-res player texture mods.';
-
-  @override
-  String get heapEnemyBgModels => 'Enemy/BG Models';
-
-  @override
-  String get heapEnemyBgModelsDesc => 'For enemy or environment model mods.';
-
-  @override
-  String get heapEnemyBgTextures => 'Enemy/BG Textures';
-
-  @override
-  String get heapEnemyBgTexturesDesc =>
-      'For high-res enemy/environment textures.';
 
   @override
   String get tutorialLodModEnable =>
@@ -3816,6 +4057,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tooltipSound => 'Workspace UI interaction sound.';
+
+  @override
+  String get labelEditorMcp => 'Editor MCP Server';
+
+  @override
+  String get tooltipEditorMcp =>
+      'Run the MCP server of the YoRHa Protocol editors at http://127.0.0.1:47820/mcp, so AI agents and other MCP clients can read and drive the editors while the game runs. Off by default.';
 
   @override
   String get labelImpeller => 'Impeller Renderer (experimental)';
@@ -4397,6 +4645,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'For huge packs (400+ files), only load textures matching a curated priority list - saves VRAM and loading time. Small packs (clothing, weapons) are always loaded in full. Turn on if you use a massive pack and want to save memory.';
 
   @override
+  String get labelPinPriorityTextures => 'Keep Priority Textures Loaded';
+
+  @override
+  String get tooltipPinPriorityTextures =>
+      'Load the textures of the built-in priority list (GPUnity HD Pack) at startup and keep them in VRAM for the whole session, so they never pop in. Turn this off on GPUs with 4 GB VRAM or less: they then follow the VRAM budget like every other texture and get unloaded when the game needs the memory. Takes effect on the next game start.';
+
+  @override
   String get tutorialDropTextures =>
       'Drag texture mods here to install them. Zip files are extracted automatically.';
 
@@ -4797,13 +5052,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cutsceneSubtitleCard => 'SUBTITLES & BLACK BARS';
 
   @override
-  String get cutsceneStatusHd => 'HD';
-
-  @override
-  String get cutsceneStatusHdTooltip =>
-      '[cutscene] hd_cutscenes in nams.toml - must be true for HD cutscene mods to load.';
-
-  @override
   String get cutsceneStatusH264 => 'H264';
 
   @override
@@ -5089,6 +5337,20 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get modCameraFovOffsetHint =>
       'Degrees. Positive widens the view, negative zooms in.';
+
+  @override
+  String get modCameraPitchUpLimit => 'Look-up limit';
+
+  @override
+  String get modCameraPitchUpLimitHint =>
+      'Degrees above level the camera turns up to. The game\'s own limit is 72.';
+
+  @override
+  String get modCameraPitchDownLimit => 'Look-down limit';
+
+  @override
+  String get modCameraPitchDownLimitHint =>
+      'Degrees below level the camera turns down to. The game\'s own limit is 72.';
 
   @override
   String get threeDInspectorOpen => 'Open 3D inspector';

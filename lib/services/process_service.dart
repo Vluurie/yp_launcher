@@ -8,10 +8,10 @@ import 'package:yp_launcher/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yp_launcher/services/gpu_preference_service.dart';
 import 'package:yp_launcher/services/launch_failure.dart';
+import 'package:yp_launcher/services/launch_record_service.dart';
 import 'package:yp_launcher/services/launch_wrapper_service.dart';
 import 'package:yp_launcher/services/launcher_setup_service.dart';
 import 'package:yp_launcher/services/log_service.dart';
-import 'package:yp_launcher/services/mods_service.dart';
 import 'package:yp_launcher/services/nams_settings_service.dart';
 import 'package:yp_launcher/services/platform/platform_adapter.dart';
 import 'package:yp_launcher/services/wine/launch_command.dart';
@@ -97,7 +97,6 @@ class ProcessService {
         );
       }
 
-      await ModsService.syncDlcSlots(installDirectory);
       await NamsSettingsService.seedOverlayLanguage(
         installDirectory,
         await _effectiveLocaleCode(),
@@ -132,11 +131,16 @@ class ProcessService {
         mode: ProcessStartMode.normal,
       );
 
-      final stdoutBuf = StringBuffer();
-      final stderrBuf = StringBuffer();
+      final record = LaunchRecord(
+        startedAt: DateTime.now().toUtc(),
+        label: command.label,
+      );
+      await LaunchRecordService.write(record);
+
+      final output = _CapturedOutput();
       const decoder = Utf8Decoder(allowMalformed: true);
-      process.stdout.transform(decoder).listen(stdoutBuf.write);
-      process.stderr.transform(decoder).listen(stderrBuf.write);
+      process.stdout.transform(decoder).listen(output.addStdout);
+      process.stderr.transform(decoder).listen(output.addStderr);
 
       final exitFuture = process.exitCode;
       final graceFuture = Future<int?>.delayed(
@@ -147,11 +151,15 @@ class ProcessService {
       final exitCode = await Future.any([exitFuture, graceFuture]);
 
       if (exitCode == null) {
-        unawaited(_monitorProcess(process, onProcessStopped));
+        output.limitTo(LaunchRecordService.tailChars);
+        unawaited(_monitorProcess(process, record, output, onProcessStopped));
         return const LaunchOutcome.started();
       }
 
-      final combined = '${stdoutBuf.toString()}${stderrBuf.toString()}';
+      final combined = output.combined;
+      await LaunchRecordService.write(
+        record.finished(exitCode, LaunchRecordService.tailOf(combined)),
+      );
       final logPath = await _writeCapturedLog(combined, exitCode: exitCode);
 
       final parsed = LaunchFailureParser.parse(
@@ -264,14 +272,50 @@ class ProcessService {
   static Future<bool> isNierAutomataRunningAsync() =>
       PlatformAdapter.current.isGameRunning();
 
-  /// Waits on the handle we already hold rather than polling by name, which
-  /// cannot confuse NAMS with any other process.
   static Future<void> _monitorProcess(
     Process process,
+    LaunchRecord record,
+    _CapturedOutput output,
     VoidCallback onStopped,
   ) async {
-    await process.exitCode;
+    final code = await process.exitCode;
+    await LaunchRecordService.write(
+      record.finished(code, LaunchRecordService.tailOf(output.combined)),
+    );
     onStopped();
+  }
+}
+
+class _CapturedOutput {
+  final _stdout = StringBuffer();
+  final _stderr = StringBuffer();
+  int? _limit;
+
+  void addStdout(String chunk) => _add(_stdout, chunk);
+
+  void addStderr(String chunk) => _add(_stderr, chunk);
+
+  void limitTo(int chars) {
+    _limit = chars;
+    _trim(_stdout);
+    _trim(_stderr);
+  }
+
+  String get combined => '${_stdout.toString()}${_stderr.toString()}';
+
+  void _add(StringBuffer buf, String chunk) {
+    buf.write(chunk);
+    final limit = _limit;
+    if (limit != null && buf.length > limit * 2) _trim(buf);
+  }
+
+  void _trim(StringBuffer buf) {
+    final limit = _limit;
+    if (limit == null || buf.length <= limit) return;
+    final text = buf.toString();
+    buf
+      ..clear()
+      ..write(text.substring(text.length - limit));
   }
 }
 

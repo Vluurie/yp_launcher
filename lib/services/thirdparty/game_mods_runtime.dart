@@ -9,6 +9,8 @@ import 'package:yp_launcher/services/thirdparty/thirdparty_models.dart';
 import 'package:yp_launcher/services/thirdparty/thirdparty_paths.dart';
 import 'package:yp_launcher/services/toml_service.dart';
 
+const _defaultsKey = 'defaults';
+
 class GameModsRuntime extends GraphicsRuntime {
   const GameModsRuntime();
 
@@ -87,28 +89,21 @@ class GameModsRuntime extends GraphicsRuntime {
     if (!d.existsSync()) return const GameModsInfo();
 
     final configFile = File(path.join(dir, AppStrings.gameModsConfigName));
-    final disabled = <String>{};
-    if (configFile.existsSync()) {
-      try {
-        final parsed = TomlService.parse(configFile.readAsStringSync());
-        parsed.forEach((key, value) {
-          if (key == 'defaults') return;
-          if (value is Map && value['disabled'] == true) {
-            disabled.add(key.toLowerCase());
-          }
-        });
-      } catch (_) {}
-    }
+    final config = configFile.existsSync()
+        ? TomlService.parse(configFile.readAsStringSync())
+        : const <String, dynamic>{};
 
     final mods = <GameModEntry>[];
     for (final entity in d.listSync().whereType<File>()) {
       final name = path.basename(entity.path);
       if (!name.toLowerCase().endsWith('.dll')) continue;
+      final settings = settingsFor(config, name);
       mods.add(
         GameModEntry(
           fileName: name,
           sizeLabel: FileOps.sizeLabel(entity.path),
-          disabled: disabled.contains(name.toLowerCase()),
+          disabled: settings.disabled,
+          settings: settings,
         ),
       );
     }
@@ -119,72 +114,71 @@ class GameModsRuntime extends GraphicsRuntime {
     return GameModsInfo(mods: mods, hasConfig: configFile.existsSync());
   }
 
-  Future<void> setModDisabled(
+  static String? _sectionKey(Map<String, dynamic> config, String fileName) {
+    final wanted = fileName.toLowerCase();
+    for (final entry in config.entries) {
+      if (entry.key == _defaultsKey || entry.value is! Map) continue;
+      if (entry.key.toLowerCase() == wanted) return entry.key;
+    }
+    return null;
+  }
+
+  static GameModSettings settingsFor(
+    Map<String, dynamic> config,
+    String fileName,
+  ) {
+    final key = _sectionKey(config, fileName);
+    final table = config[key ?? _defaultsKey];
+    return table is Map
+        ? GameModSettings.fromToml(table)
+        : const GameModSettings();
+  }
+
+  static String? withSettings(
+    String raw,
+    String fileName,
+    GameModSettings settings,
+  ) {
+    final parsed = TomlService.parseStrict(raw);
+    if (!parsed.ok) return null;
+    final values = Map<String, dynamic>.from(parsed.values);
+    final key = _sectionKey(values, fileName) ?? fileName;
+    final existing = values[key];
+    values[key] = <String, dynamic>{
+      if (existing is Map<String, dynamic>) ...existing,
+      ...settings.toToml(),
+    };
+    return TomlService.serialize(values, commentsFrom: raw);
+  }
+
+  Future<bool> setModSettings(
+    String gameDir,
+    String fileName,
+    GameModSettings settings,
+  ) async {
+    final file = File(configPath(gameDir));
+    final raw = file.existsSync() ? file.readAsStringSync() : '';
+    final updated = withSettings(raw, fileName, settings);
+    if (updated == null) return false;
+    Directory(installDir(gameDir)).createSync(recursive: true);
+    file.writeAsStringSync(updated);
+    return true;
+  }
+
+  Future<bool> setModDisabled(
     String gameDir,
     String fileName,
     bool disabled,
   ) async {
     final file = File(configPath(gameDir));
-    if (!file.existsSync()) {
-      Directory(installDir(gameDir)).createSync(recursive: true);
-      file.writeAsStringSync('');
-    }
-    file.writeAsStringSync(
-      setDisabledIn(file.readAsStringSync(), fileName, disabled),
+    final config = file.existsSync()
+        ? TomlService.parse(file.readAsStringSync())
+        : const <String, dynamic>{};
+    return setModSettings(
+      gameDir,
+      fileName,
+      settingsFor(config, fileName).copyWith(disabled: disabled),
     );
-  }
-
-  static String setDisabledIn(String raw, String fileName, bool disabled) {
-    final lines = raw.replaceAll('\r', '').split('\n');
-    final wanted = fileName.toLowerCase();
-
-    var sectionStart = -1;
-    for (var i = 0; i < lines.length; i++) {
-      final name = _sectionNameOf(lines[i]);
-      if (name != null && name.toLowerCase() == wanted) {
-        sectionStart = i;
-        break;
-      }
-    }
-
-    if (sectionStart == -1) {
-      final buf = StringBuffer(raw);
-      if (raw.isNotEmpty && !raw.endsWith('\n')) buf.write('\n');
-      if (raw.trim().isNotEmpty) buf.write('\n');
-      buf.writeln('["$fileName"]');
-      buf.writeln('disabled = $disabled');
-      return buf.toString();
-    }
-
-    var sectionEnd = lines.length;
-    for (var i = sectionStart + 1; i < lines.length; i++) {
-      if (_sectionNameOf(lines[i]) != null) {
-        sectionEnd = i;
-        break;
-      }
-    }
-
-    for (var i = sectionStart + 1; i < sectionEnd; i++) {
-      if (RegExp(r'^\s*disabled\s*=').hasMatch(lines[i])) {
-        lines[i] = 'disabled = $disabled';
-        return lines.join('\n');
-      }
-    }
-
-    lines.insert(sectionStart + 1, 'disabled = $disabled');
-    return lines.join('\n');
-  }
-
-  static String? _sectionNameOf(String line) {
-    final t = line.trim();
-    if (!t.startsWith('[') || !t.endsWith(']')) return null;
-    var inner = t.substring(1, t.length - 1).trim();
-    if (inner.length >= 2 &&
-        ((inner.startsWith('"') && inner.endsWith('"')) ||
-            (inner.startsWith("'") && inner.endsWith("'")))) {
-      inner = inner.substring(1, inner.length - 1);
-    }
-    return inner;
   }
 
   Future<void> removeMod(String gameDir, String fileName) async {

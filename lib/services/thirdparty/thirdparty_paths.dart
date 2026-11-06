@@ -28,7 +28,21 @@ class ThirdPartyPaths {
   static String migoto() => path.join(root(), AppStrings.migotoDirName);
 
   static String gameMods() => path.join(root(), AppStrings.gameModsDirName);
+
+  static String graphicMods() =>
+      path.join(root(), AppStrings.graphicModsDirName);
+
+  static String graphicModsDisabled() =>
+      path.join(graphicMods(), AppStrings.graphicModsDisabledDirName);
 }
+
+const directXProxyNames = <String>{
+  'd3d9.dll',
+  'd3d10.dll',
+  'd3d11.dll',
+  'd3d12.dll',
+  'dxgi.dll',
+};
 
 String baseName(String rel) {
   final i = rel.lastIndexOf('/');
@@ -127,14 +141,13 @@ DllHit? findGraphicsDll(String root, GraphicsDll want) {
   return hit;
 }
 
-const _waxMarker = '_wax loaded_';
+const _specialKMarker = 'SpecialK';
 
-bool isIncompatibleModloader(String filePath) {
+bool isSpecialKDll(String filePath) {
   try {
     final f = File(filePath);
     if (!f.existsSync()) return false;
-    final bytes = f.readAsBytesSync();
-    return _containsAscii(bytes, _waxMarker);
+    return _containsAscii(f.readAsBytesSync(), _specialKMarker);
   } catch (_) {
     return false;
   }
@@ -158,16 +171,9 @@ bool _containsAscii(Uint8List haystack, String needle) {
   return false;
 }
 
-List<String> findIncompatibleModloaderDlls(String root) => FileOps.filesWhere(
-  root,
-  (rel, full) =>
-      baseName(rel).endsWith('.dll') && isIncompatibleModloader(full),
-).map((f) => f.path).toList();
-
 List<String> findGameModDlls(String root) {
   final out = FileOps.filesWhere(root, (rel, full) {
     if (!baseName(rel).endsWith('.dll')) return false;
-    if (isIncompatibleModloader(full)) return false;
     return GraphicsDllId.identifyFile(full) == GraphicsDll.none;
   }).map((f) => f.path).toList();
   out.sort(

@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:path/path.dart' as path;
 import 'package:toml/toml.dart';
 import 'package:yp_launcher/models/mod_profile.dart';
+import 'package:yp_launcher/services/disabled_mods_service.dart';
 import 'package:yp_launcher/services/isolate_service.dart';
+import 'package:yp_launcher/services/toml_service.dart';
 
 class ProfileSwitchException implements Exception {
   final String message;
@@ -125,6 +127,55 @@ String _textureInjectionTomlPath(String gameDir) =>
     path.join(gameDir, 'nams', ModProfilesService._textureInjectionTomlName);
 
 String _modsActiveDir(String gameDir) => path.join(gameDir, 'nams', 'mods');
+
+File _disabledModsFile(String gameDir) =>
+    File(path.join(gameDir, 'nams', ModProfilesService._disabledModsTomlName));
+
+List<String> _disabledEntries(String raw) {
+  final entries = TomlDocument.parse(raw).toMap()['disabled'];
+  return entries is List
+      ? entries.whereType<String>().map(DisabledModsService.normalize).toList()
+      : <String>[];
+}
+
+bool _isSharedTexturePath(String entry) =>
+    entry == 'inject' ||
+    entry == 'inject/textures' ||
+    entry.startsWith('inject/textures/');
+
+List<String> _sharedTextureDisables(String gameDir) {
+  final file = _disabledModsFile(gameDir);
+  if (!file.existsSync()) return <String>[];
+  return _disabledEntries(file.readAsStringSync())
+      .where(_isSharedTexturePath)
+      .toList();
+}
+
+void _writeSharedTextureDisables(String gameDir, List<String> textures) {
+  final file = _disabledModsFile(gameDir);
+  final raw = file.existsSync() ? file.readAsStringSync() : 'disabled = []\n';
+  final current = _disabledEntries(raw);
+  final updated = <String>{
+    ...current.where((entry) => !_isSharedTexturePath(entry)),
+    ...textures,
+  }.toList();
+  if (current.length == updated.length &&
+      current.asMap().entries.every(
+        (entry) => entry.value == updated[entry.key],
+      )) {
+    return;
+  }
+  file.writeAsStringSync(TomlService.updateToml(raw, {'disabled': updated}));
+}
+
+void _restoreDisabledMods(String gameDir, String? raw) {
+  final file = _disabledModsFile(gameDir);
+  if (raw != null) {
+    file.writeAsStringSync(raw);
+  } else if (file.existsSync()) {
+    file.deleteSync();
+  }
+}
 
 void _backupOrphan(String gameDir, String from) {
   final orphan = Directory(_modsInactiveDir(gameDir, from));
@@ -432,6 +483,7 @@ ModProfileState _createProfileSync(_CreateParams p) {
   }
 
   final from = state.activeName;
+  final textureDisables = _sharedTextureDisables(p.gameDir);
   _backupOrphan(p.gameDir, from);
 
   // Step A: park the active sidecars under from's name.
@@ -469,10 +521,19 @@ ModProfileState _createProfileSync(_CreateParams p) {
     ...state.profiles,
     ModProfile(name: sanitized, createdAt: DateTime.now().toUtc()),
   ];
-  _writeDisabledPacks(
-    p.gameDir,
-    _computeDisabledPacks(p.gameDir, newProfiles, sanitized),
-  );
+  try {
+    _writeSharedTextureDisables(p.gameDir, textureDisables);
+    _writeDisabledPacks(
+      p.gameDir,
+      _computeDisabledPacks(p.gameDir, newProfiles, sanitized),
+    );
+  } catch (e) {
+    _restoreDisabledMods(p.gameDir, null);
+    Directory(_modsActiveDir(p.gameDir)).deleteSync();
+    fromInactive.renameSync(activeMods.path);
+    undoStepA();
+    throw ProfileSwitchException('texture_state_failed:$e');
+  }
   _writeProfilesToml(p.gameDir, sanitized, newProfiles);
 
   return ModProfileState(activeName: sanitized, profiles: newProfiles);
@@ -492,6 +553,17 @@ ModProfileState _switchProfileSync(_SwitchParams p) {
   if (!Directory(_modsActiveDir(p.gameDir)).existsSync()) {
     throw ProfileSwitchException('active_missing');
   }
+  final textureDisables = _sharedTextureDisables(p.gameDir);
+  final targetDisabledFile = File(
+    path.join(
+      p.gameDir,
+      'nams',
+      '${ModProfilesService._disabledProfilePrefix}$to.toml',
+    ),
+  );
+  final targetDisabledRaw = targetDisabledFile.existsSync()
+      ? targetDisabledFile.readAsStringSync()
+      : null;
   _backupOrphan(p.gameDir, from);
 
   // Step A: park the active sidecars under from's name.
@@ -554,8 +626,10 @@ ModProfileState _switchProfileSync(_SwitchParams p) {
   // Step E: rewrite disabled_packs.
   final newDisabledPacks = _computeDisabledPacks(p.gameDir, state.profiles, to);
   try {
+    _writeSharedTextureDisables(p.gameDir, textureDisables);
     _writeDisabledPacks(p.gameDir, newDisabledPacks);
   } catch (e) {
+    _restoreDisabledMods(p.gameDir, targetDisabledRaw);
     _restoreSidecars(
       movedTo,
       (s) => s.activePath(p.gameDir),

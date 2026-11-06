@@ -167,23 +167,11 @@ class CutsceneHeader extends StatelessWidget {
               final cutscene = rawCutscene is Map<String, dynamic>
                   ? rawCutscene
                   : const <String, dynamic>{};
-              final hd = cutscene['hd_cutscenes'] == true;
               final h264 = cutscene['enable_h264'] == true;
-              return Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _StatusChip(
-                    label: l10n.cutsceneStatusHd,
-                    on: hd,
-                    tooltip: l10n.cutsceneStatusHdTooltip,
-                  ),
-                  SizedBox(width: AppSizes.spacingSM(context)),
-                  _StatusChip(
-                    label: l10n.cutsceneStatusH264,
-                    on: h264,
-                    tooltip: l10n.cutsceneStatusH264Tooltip,
-                  ),
-                ],
+              return _StatusChip(
+                label: l10n.cutsceneStatusH264,
+                on: h264,
+                tooltip: l10n.cutsceneStatusH264Tooltip,
               );
             },
           ),

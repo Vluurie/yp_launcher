@@ -1,4 +1,12 @@
-enum VerifyStatus { ok, failed, noRuntime, steamNotRunning, cannotParse, error }
+enum VerifyStatus {
+  ok,
+  failed,
+  noRuntime,
+  steamNotRunning,
+  timedOut,
+  cannotParse,
+  error,
+}
 
 class VerifyCheck {
   final String name;

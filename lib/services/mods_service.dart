@@ -4,7 +4,6 @@ import 'package:path/path.dart' as path;
 import 'package:yp_launcher/models/installed_mod.dart';
 import 'package:yp_launcher/models/loose_file_paths.dart';
 import 'package:yp_launcher/services/archive_service.dart';
-import 'package:yp_launcher/services/detection/game_detection.dart';
 import 'package:yp_launcher/services/isolate_service.dart';
 import 'package:yp_launcher/services/mod_manifest_service.dart';
 import 'package:yp_launcher/services/mod_profiles_service.dart';
@@ -117,14 +116,12 @@ class ModsService {
       workDir = staged;
     }
     try {
-      final hasDlc = await GameDetection.hasDlc(gameDir);
       final activeProfile = ModProfilesService.activeNameSync(gameDir);
       final params = _InstallParams(
         gameDir: gameDir,
         workDir: workDir,
         requestedName: requestedName,
         sourceFolderName: path.basenameWithoutExtension(sourcePath),
-        hasDlc: hasDlc,
         activeProfile: activeProfile,
         variantSubPath: variantSubPath,
         texturePackSubPaths: texturePackSubPaths,
@@ -162,13 +159,11 @@ class ModsService {
       workDir = extracted;
     }
     try {
-      final hasDlc = await GameDetection.hasDlc(gameDir);
       final activeProfile = ModProfilesService.activeNameSync(gameDir);
       final params = _InstallBatchParams(
         gameDir: gameDir,
         workDir: workDir,
         sourceFolderName: path.basenameWithoutExtension(sourcePath),
-        hasDlc: hasDlc,
         activeProfile: activeProfile,
         requests: requests,
       );
@@ -190,14 +185,6 @@ class ModsService {
     return IsolateService.run(
       _uninstallSync,
       _UninstallParams(gameDir, modId, deleteBundledTextures),
-    );
-  }
-
-  static Future<int> syncDlcSlots(String gameDir) async {
-    final hasDlc = await GameDetection.hasDlc(gameDir);
-    return IsolateService.run(
-      _syncDlcSlotsSync,
-      _SyncDlcParams(gameDir: gameDir, hasDlc: hasDlc),
     );
   }
 
@@ -315,7 +302,6 @@ class _InstallParams {
   final String workDir;
   final String? requestedName;
   final String sourceFolderName;
-  final bool hasDlc;
   final String activeProfile;
   final String? variantSubPath;
   final List<String>? texturePackSubPaths;
@@ -324,7 +310,6 @@ class _InstallParams {
     required this.workDir,
     required this.requestedName,
     required this.sourceFolderName,
-    required this.hasDlc,
     required this.activeProfile,
     this.variantSubPath,
     this.texturePackSubPaths,
@@ -335,14 +320,12 @@ class _InstallBatchParams {
   final String gameDir;
   final String workDir;
   final String sourceFolderName;
-  final bool hasDlc;
   final String activeProfile;
   final List<VariantInstallRequest> requests;
   const _InstallBatchParams({
     required this.gameDir,
     required this.workDir,
     required this.sourceFolderName,
-    required this.hasDlc,
     required this.activeProfile,
     required this.requests,
   });
@@ -359,186 +342,6 @@ class _UninstallParams {
   final String modId;
   final bool deleteBundledTextures;
   const _UninstallParams(this.gameDir, this.modId, this.deleteBundledTextures);
-}
-
-class _SyncDlcParams {
-  final String gameDir;
-  final bool hasDlc;
-  const _SyncDlcParams({required this.gameDir, required this.hasDlc});
-}
-
-int _syncDlcSlotsSync(_SyncDlcParams p) {
-  final modsDir = Directory(ModsService.modsDir(p.gameDir));
-  if (!modsDir.existsSync()) return 0;
-  var touched = 0;
-  for (final entity in modsDir.listSync()) {
-    if (entity is! Directory) continue;
-    final id = path.basename(entity.path);
-    if (id.startsWith('.') || id.startsWith('_')) continue;
-    if (_syncOneModDlcSlots(entity.path, hasDlc: p.hasDlc)) touched++;
-  }
-  return touched;
-}
-
-bool _syncOneModDlcSlots(String modRoot, {required bool hasDlc}) {
-  final sidecar = File(path.join(modRoot, _dlcRenamesSidecarName));
-  Map<String, String> renames = {};
-  if (sidecar.existsSync()) {
-    try {
-      final raw = jsonDecode(sidecar.readAsStringSync());
-      if (raw is Map) {
-        renames = raw.map((k, v) => MapEntry(k.toString(), v.toString()));
-      }
-    } catch (_) {}
-  }
-
-  if (hasDlc) {
-    final reverted = renames.isEmpty
-        ? false
-        : _revertRenamesToDlc(modRoot, renames, sidecar);
-    final inferred = _applyRenamesToDlc(modRoot, sidecar);
-    return reverted || inferred;
-  } else {
-    return _applyRenamesToVanilla(modRoot, renames, sidecar);
-  }
-}
-
-bool _revertRenamesToDlc(
-  String modRoot,
-  Map<String, String> renames,
-  File sidecar,
-) {
-  var changed = false;
-  final remaining = <String, String>{};
-  renames.forEach((vanillaRel, dlcName) {
-    final vanillaAbs = path.join(
-      modRoot,
-      vanillaRel.replaceAll('/', path.separator),
-    );
-    final dirName = path.dirname(vanillaAbs);
-    final dlcAbs = path.join(dirName, dlcName);
-    if (!File(vanillaAbs).existsSync()) {
-      changed = true;
-      return;
-    }
-    if (File(dlcAbs).existsSync()) {
-      remaining[vanillaRel] = dlcName;
-      return;
-    }
-    try {
-      File(vanillaAbs).renameSync(dlcAbs);
-      changed = true;
-    } catch (_) {
-      remaining[vanillaRel] = dlcName;
-    }
-  });
-  if (changed) {
-    if (remaining.isEmpty) {
-      try {
-        sidecar.deleteSync();
-      } catch (_) {}
-    } else {
-      try {
-        sidecar.writeAsStringSync(jsonEncode(remaining));
-      } catch (_) {}
-    }
-  }
-  return changed;
-}
-
-bool _applyRenamesToDlc(String modRoot, File sidecar) {
-  final vanillaToDlc = <String, String>{
-    for (final e in _dlcToVanillaSlot.entries) e.value: e.key,
-  };
-
-  final dir = Directory(modRoot);
-  if (!dir.existsSync()) return false;
-
-  final renames = <String, String>{};
-  if (sidecar.existsSync()) {
-    try {
-      final raw = jsonDecode(sidecar.readAsStringSync());
-      if (raw is Map) {
-        renames.addAll(raw.map((k, v) => MapEntry(k.toString(), v.toString())));
-      }
-    } catch (_) {}
-  }
-
-  var changed = false;
-  for (final entity in dir.listSync(recursive: true, followLinks: false)) {
-    if (entity is! File) continue;
-    final fileName = path.basename(entity.path);
-    String? newName;
-    for (final entry in vanillaToDlc.entries) {
-      if (fileName.startsWith(entry.key)) {
-        newName = entry.value + fileName.substring(entry.key.length);
-        break;
-      }
-    }
-    if (newName == null) continue;
-
-    final dirName = path.dirname(entity.path);
-    final target = path.join(dirName, newName);
-    if (File(target).existsSync()) continue;
-
-    try {
-      entity.renameSync(target);
-      final relDir = path.relative(dirName, from: modRoot);
-      final key = relDir == '.' ? newName : '$relDir/$newName';
-      renames[key.replaceAll('\\', '/')] = fileName;
-      changed = true;
-    } catch (_) {}
-  }
-
-  if (changed) {
-    try {
-      sidecar.writeAsStringSync(jsonEncode(renames));
-    } catch (_) {}
-  }
-  return changed;
-}
-
-bool _applyRenamesToVanilla(
-  String modRoot,
-  Map<String, String> existingRenames,
-  File sidecar,
-) {
-  var changed = false;
-  final renames = Map<String, String>.from(existingRenames);
-  final dir = Directory(modRoot);
-  if (!dir.existsSync()) return false;
-
-  for (final entity in dir.listSync(recursive: true, followLinks: false)) {
-    if (entity is! File) continue;
-    final fileName = path.basename(entity.path);
-    String? newName;
-    for (final entry in _dlcToVanillaSlot.entries) {
-      if (fileName.startsWith(entry.key)) {
-        newName = entry.value + fileName.substring(entry.key.length);
-        break;
-      }
-    }
-    if (newName == null) continue;
-
-    final dirName = path.dirname(entity.path);
-    final target = path.join(dirName, newName);
-    if (File(target).existsSync()) continue;
-
-    try {
-      entity.renameSync(target);
-      final relDir = path.relative(dirName, from: modRoot);
-      final key = relDir == '.' ? newName : '$relDir/$newName';
-      renames[key.replaceAll('\\', '/')] = fileName;
-      changed = true;
-    } catch (_) {}
-  }
-
-  if (changed) {
-    try {
-      sidecar.writeAsStringSync(jsonEncode(renames));
-    } catch (_) {}
-  }
-  return changed;
 }
 
 List<InstalledMod> _listInstalledSync(_ListInstalledParams p) {
@@ -1557,10 +1360,6 @@ InstallResult _installSync(_InstallParams p) {
 
   _normalizeInPlaceTextures(targetDir.path, localSubPaths);
 
-  if (!p.hasDlc) {
-    _renameDlcSlotsToVanilla(targetDir.path);
-  }
-
   return InstallResult.ok(targetId, unpairedWarnings: unpairedWarnings);
 }
 
@@ -1610,10 +1409,6 @@ List<InstallResult> _installBatchSync(_InstallBatchParams p) {
       req.texturePackSubPaths,
     );
     _normalizeInPlaceTextures(targetDir.path, localSubPaths);
-
-    if (!p.hasDlc) {
-      _renameDlcSlotsToVanilla(targetDir.path);
-    }
 
     usedIds.add(targetId);
     results.add(InstallResult.ok(targetId, unpairedWarnings: unpairedWarnings));
@@ -1741,53 +1536,6 @@ void _deleteDirQuiet(String dir) {
   }
 }
 
-const Map<String, String> _dlcToVanillaSlot = {
-  'pl000d': 'pl0000',
-  'pl010d': 'pl0100',
-  'pl020d': 'pl0200',
-  'plf00d': 'plf000',
-  'plf10d': 'plf100',
-  'plf20d': 'plf200',
-};
-const _dlcRenamesSidecarName = '.dlc_renames.json';
-
-/// Records relPath → originalFileName for every file we renamed away from a
-/// DLC slot. Lets `syncDlcSlots` revert when the user later installs the DLC.
-void _renameDlcSlotsToVanilla(String modRoot) {
-  final renames = <String, String>{};
-  try {
-    final dir = Directory(modRoot);
-    if (!dir.existsSync()) return;
-    for (final entity in dir.listSync(recursive: true, followLinks: false)) {
-      if (entity is! File) continue;
-      final fileName = path.basename(entity.path);
-      String? newName;
-      for (final entry in _dlcToVanillaSlot.entries) {
-        if (fileName.startsWith(entry.key)) {
-          newName = entry.value + fileName.substring(entry.key.length);
-          break;
-        }
-      }
-      if (newName == null) continue;
-      final dirName = path.dirname(entity.path);
-      final target = path.join(dirName, newName);
-      if (File(target).existsSync()) continue;
-      try {
-        entity.renameSync(target);
-        final relDir = path.relative(dirName, from: modRoot);
-        final key = relDir == '.' ? newName : '$relDir/$newName';
-        renames[key.replaceAll('\\', '/')] = fileName;
-      } catch (_) {}
-    }
-  } catch (_) {}
-  if (renames.isNotEmpty) {
-    try {
-      File(
-        path.join(modRoot, _dlcRenamesSidecarName),
-      ).writeAsStringSync(jsonEncode(renames));
-    } catch (_) {}
-  }
-}
 
 const _bundledTexturesSidecarName = '.bundled_textures.json';
 

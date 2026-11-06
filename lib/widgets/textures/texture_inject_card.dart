@@ -195,16 +195,7 @@ class TextureInjectCard extends StatelessWidget {
                           exists: exists,
                           conflictsWith: conflicts[folder],
                           bundledWithModId: bundledOriginByPack[folder],
-                          onRemove: () async {
-                            await onDelete(folder);
-                            final updated = List<String>.from(loadOrder)
-                              ..remove(folder);
-                            notifier.updateTextureInjectionSilent(
-                              TextureInjectionFields.loadOrder.key,
-                              updated,
-                            );
-                            await notifier.saveConfigs(gameDir);
-                          },
+                          onRemove: () => onDelete(folder),
                         );
                       },
                     )

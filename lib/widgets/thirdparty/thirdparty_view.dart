@@ -26,6 +26,8 @@ import 'package:yp_launcher/widgets/mods/mod_drop_zone.dart';
 
 const _thirdPartyTabIndex = 9;
 
+const _patchTimeouts = [5000, 10000, 20000, 30000, 60000];
+
 class ThirdPartyView extends ConsumerStatefulWidget {
   const ThirdPartyView({super.key});
 
@@ -36,6 +38,7 @@ class ThirdPartyView extends ConsumerStatefulWidget {
 class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
   final _scrollController = ScrollController();
   bool _loaded = false;
+  final _expandedGameMods = <String>{};
 
   @override
   void initState() {
@@ -118,6 +121,7 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
         case ThirdPartyKind.reshadePreset:
         case ThirdPartyKind.migoto:
         case ThirdPartyKind.gameMod:
+        case ThirdPartyKind.graphicMod:
           final update = await notifier.wouldUpdate(c);
           if (update != null) {
             if (!mounted) return;
@@ -145,13 +149,6 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
               AppColors.error,
             );
           }
-          break;
-        case ThirdPartyKind.incompatibleModloader:
-          _notify(
-            (l10n) => l10n.thirdPartyWaxRejected,
-            Icons.block,
-            AppColors.error,
-          );
           break;
         case ThirdPartyKind.gameData:
           _notify(
@@ -193,6 +190,8 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
         return '3DMigoto';
       case ThirdPartyRuntime.gameMods:
         return AppLocalizations.of(context)!.thirdPartyGameModsHeader;
+      case ThirdPartyRuntime.graphicMods:
+        return AppLocalizations.of(context)!.thirdPartyGraphicModsHeader;
     }
   }
 
@@ -365,6 +364,7 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
                       children: [
                         _migotoCard(l10n, data.migoto),
                         _gameModsCard(l10n, data.gameMods),
+                        _graphicModsCard(l10n, data.graphicMods),
                       ],
                     );
                     if (stack) {
@@ -676,7 +676,202 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
     );
   }
 
+  Widget _graphicModsCard(
+    AppLocalizations l10n,
+    ThirdPartyRuntimeStatus status,
+  ) {
+    final info = status.graphicModsInfo ?? const GameModsInfo();
+
+    if (info.mods.isEmpty) {
+      return _card(l10n.thirdPartyGraphicModsHeader, [
+        _statusRow(l10n, status, false),
+        SizedBox(height: AppSizes.spacingSM(context)),
+        _howto(l10n.thirdPartyGraphicModsHowto),
+      ]);
+    }
+
+    return _card(
+      l10n.thirdPartyGraphicModsHeader,
+      [
+        _howto(l10n.thirdPartyGraphicModsHowto),
+        Text(
+          l10n.thirdPartyGameModsCount(info.mods.length),
+          style: TextStyle(
+            fontSize: AppSizes.fontXS(context),
+            fontWeight: FontWeight.bold,
+            color: AppColors.textMuted,
+            letterSpacing: 0.5,
+          ),
+        ),
+        for (final mod in info.mods) _graphicModRow(l10n, mod),
+      ],
+      trailing: _statusChip(l10n, status.enabled),
+      actions: _iconActions(
+        l10n,
+        ThirdPartyPaths.graphicMods(),
+        ThirdPartyRuntime.graphicMods,
+      ),
+    );
+  }
+
   Widget _gameModRow(AppLocalizations l10n, GameModEntry mod) {
+    final notifier = ref.read(thirdPartyStateControllerProvider.notifier);
+    final expanded = _expandedGameMods.contains(mod.fileName);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _dllRow(
+          l10n,
+          mod,
+          onToggle: (on) => notifier.setGameModDisabled(mod.fileName, !on),
+          onRemove: () => notifier.removeGameMod(mod.fileName),
+          actions: [
+            _rowIcon(
+              tooltip: l10n.thirdPartyGameModSettings,
+              icon: expanded ? Icons.expand_less : Icons.tune,
+              onTap: () => setState(() {
+                if (!_expandedGameMods.remove(mod.fileName)) {
+                  _expandedGameMods.add(mod.fileName);
+                }
+              }),
+            ),
+            _rowIcon(
+              tooltip: l10n.thirdPartyMoveToGraphic,
+              icon: Icons.swap_horiz,
+              onTap: () =>
+                  notifier.moveDll(mod.fileName, ThirdPartyRuntime.gameMods),
+            ),
+          ],
+        ),
+        if (expanded) _gameModSettings(l10n, mod),
+      ],
+    );
+  }
+
+  Widget _graphicModRow(AppLocalizations l10n, GameModEntry mod) {
+    final notifier = ref.read(thirdPartyStateControllerProvider.notifier);
+    return _dllRow(
+      l10n,
+      mod,
+      onToggle: (on) => notifier.setGraphicModDisabled(mod.fileName, !on),
+      onRemove: () => notifier.removeGraphicMod(mod.fileName),
+      actions: [
+        _rowIcon(
+          tooltip: l10n.thirdPartyMoveToGame,
+          icon: Icons.swap_horiz,
+          onTap: () =>
+              notifier.moveDll(mod.fileName, ThirdPartyRuntime.graphicMods),
+        ),
+      ],
+    );
+  }
+
+  Widget _gameModSettings(AppLocalizations l10n, GameModEntry mod) {
+    final s = mod.settings ?? const GameModSettings();
+    void apply(GameModSettings next) => ref
+        .read(thirdPartyStateControllerProvider.notifier)
+        .setGameModSettings(mod.fileName, next);
+    const known = [
+      GameModSettings.steam2021SizeOfImage,
+      GameModSettings.steam2026SizeOfImage,
+      0,
+    ];
+    final custom = !known.contains(s.sizeOfImage);
+    return Padding(
+      padding: const EdgeInsets.only(left: 44),
+      child: _configGroup(l10n, [
+        ConfigFieldBool(
+          label: l10n.thirdPartyGameModFakeHandle,
+          tooltip: l10n.thirdPartyGameModFakeHandleHint,
+          value: s.fakeModuleHandle,
+          onChanged: (v) => apply(s.copyWith(fakeModuleHandle: v)),
+        ),
+        ConfigFieldBool(
+          label: l10n.thirdPartyGameModFakeExePath,
+          tooltip: l10n.thirdPartyGameModFakeExePathHint,
+          value: s.fakeExePath,
+          onChanged: (v) => apply(
+            s.copyWith(fakeExePath: v, waitForPatchPhase: v ? null : false),
+          ),
+        ),
+        ConfigFieldBool(
+          label: l10n.thirdPartyGameModWaitPatch,
+          tooltip: l10n.thirdPartyGameModWaitPatchHint,
+          value: s.waitForPatchPhase,
+          onChanged: (v) => apply(
+            s.copyWith(waitForPatchPhase: v, fakeExePath: v ? true : null),
+          ),
+        ),
+        if (s.waitForPatchPhase)
+          ConfigFieldDropdown(
+            label: l10n.thirdPartyGameModPatchTimeout,
+            tooltip: l10n.thirdPartyGameModPatchTimeoutHint,
+            value: s.patchPhaseTimeoutMs,
+            options: [
+              ..._patchTimeouts,
+              if (!_patchTimeouts.contains(s.patchPhaseTimeoutMs))
+                s.patchPhaseTimeoutMs,
+            ],
+            labels: {
+              for (final ms in {..._patchTimeouts, s.patchPhaseTimeoutMs})
+                ms: l10n.thirdPartyGameModSeconds(
+                  (ms / 1000).toStringAsFixed(ms % 1000 == 0 ? 0 : 1),
+                ),
+            },
+            onChanged: (v) => apply(s.copyWith(patchPhaseTimeoutMs: v)),
+          ),
+        ConfigFieldDropdown(
+          label: l10n.thirdPartyGameModSizeOfImage,
+          tooltip: l10n.thirdPartyGameModSizeOfImageHint,
+          value: s.sizeOfImage,
+          options: [...known, if (custom) s.sizeOfImage],
+          labels: {
+            GameModSettings.steam2021SizeOfImage:
+                l10n.thirdPartyGameModSize2021,
+            GameModSettings.steam2026SizeOfImage:
+                l10n.thirdPartyGameModSize2026,
+            0: l10n.thirdPartyGameModSizeReal,
+            if (custom)
+              s.sizeOfImage: l10n.thirdPartyGameModSizeCustom(s.sizeOfImage),
+          },
+          onChanged: (v) => apply(s.copyWith(sizeOfImage: v)),
+        ),
+        ConfigFieldBool(
+          label: l10n.thirdPartyGameModReportPatches,
+          tooltip: l10n.thirdPartyGameModReportPatchesHint,
+          value: s.reportPatches,
+          onChanged: (v) => apply(s.copyWith(reportPatches: v)),
+        ),
+      ]),
+    );
+  }
+
+  Widget _rowIcon({
+    required String tooltip,
+    required IconData icon,
+    required VoidCallback onTap,
+    Color? color,
+  }) {
+    return HoverIconButton(
+      bordered: false,
+      padding: const EdgeInsets.all(4),
+      tooltip: tooltip,
+      icon: Icon(
+        icon,
+        size: AppSizes.iconSM(context),
+        color: color ?? AppColors.textSecondary,
+      ),
+      onTap: onTap,
+    );
+  }
+
+  Widget _dllRow(
+    AppLocalizations l10n,
+    GameModEntry mod, {
+    required ValueChanged<bool> onToggle,
+    required VoidCallback onRemove,
+    List<Widget> actions = const [],
+  }) {
     final color = mod.disabled ? AppColors.textMuted : AppColors.textSecondary;
     return Padding(
       padding: EdgeInsets.only(top: AppSizes.spacingSM(context)),
@@ -691,9 +886,7 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
                 fit: BoxFit.contain,
                 child: Switch(
                   value: !mod.disabled,
-                  onChanged: (v) => ref
-                      .read(thirdPartyStateControllerProvider.notifier)
-                      .setGameModDisabled(mod.fileName, !v),
+                  onChanged: onToggle,
                   activeThumbColor: AppColors.accentPrimary,
                   activeTrackColor: AppColors.accentPrimary.withValues(
                     alpha: 0.4,
@@ -729,18 +922,12 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
                 ),
               ),
             ),
-          HoverIconButton(
-            bordered: false,
-            padding: const EdgeInsets.all(4),
+          ...actions,
+          _rowIcon(
             tooltip: l10n.thirdPartyGameModsRemoveOne,
-            icon: Icon(
-              Icons.delete_outline,
-              size: AppSizes.iconSM(context),
-              color: AppColors.error,
-            ),
-            onTap: () => ref
-                .read(thirdPartyStateControllerProvider.notifier)
-                .removeGameMod(mod.fileName),
+            icon: Icons.delete_outline,
+            color: AppColors.error,
+            onTap: onRemove,
           ),
         ],
       ),

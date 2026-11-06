@@ -1,14 +1,24 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:path/path.dart' as path;
+import 'package:toml/toml.dart';
 import 'package:yp_launcher/constants/naiom_keys.dart';
 import 'package:yp_launcher/services/isolate_service.dart';
+import 'package:yp_launcher/services/lodmod_config_service.dart';
 import 'package:yp_launcher/services/nams_settings_service.dart';
+import 'package:yp_launcher/services/toml_service.dart';
 import 'package:yp_launcher/services/wine/proton.dart';
 import 'package:yp_launcher/services/wine/wine_paths.dart';
 import 'package:yp_launcher/models/config_fields.dart';
 
 class NamsConfigService {
+  static Map<String, String> get shippedTemplates => {
+    'nams.toml': _namsToml,
+    'naiom.toml': _naiomToml,
+    'lodmod.toml': _lodmodToml,
+    'texture_injection.toml': _textureInjectionToml,
+  };
+
   static const _lodmodToml =
       '''# NAMS LodMod Ext - Visual quality improvements. Inspired by Automata-LodMod by
 # emoose and extended well past it. Most settings apply live while the game is
@@ -49,7 +59,7 @@ shadow_distance_multiplier = 1.0
 # Advanced: min/max clamp for shadow distance. 0 = off
 shadow_distance_minimum = 0.0
 shadow_distance_maximum = 0.0
-# Advanced: even shadow distribution factor. 0 = off, try 0.5-0.9
+# Advanced: even shadow distribution distance. 0 = off, try ~1500 for large open areas
 shadow_distance_pss = 0.0
 
 # Advanced: shadow softness tweaks. 0 = no change
@@ -221,11 +231,14 @@ blocked_from_grid = []
 # stand-in sits inside them. grid = 0x0 applies to every grid. Find names with the
 # mesh picker in the YP Devkit.
 hidden_meshes = [
+    { mesh = "nolowmap_enkei", from_rings = 2, grid = 0x1121 },
+    { mesh = "nolowmap_seaplane", from_rings = 2, grid = 0x0922 },
     # { mesh = "nolowmap_komono1", from_rings = 2, grid = 0x0 },
 ]
 ''';
 
-  static const _namsToml = '''# NAMS General Config. Restart game after changes.
+  static final String _namsToml =
+      '''# NAMS General Config. Restart game after changes.
 
 validate_model_data = false
 validate_scripts = false
@@ -233,17 +246,11 @@ loading_stall_hints = true
 disable_plugin_loading = false
 disable_content_features = false
 
-# Per-feature content-layer toggles. All default to true. Useful for bisecting
-# mod bugs without disabling the entire content layer.
-content_items = true
-content_accessories = true
-content_assemble_meshes = true
-content_effect_areas = true
-content_quest_integration = true
-content_effects_applier = true
-content_equip_tracker = true
-content_mcd = true
-content_buddy_ruby_selector = true
+# Skip starting the main Flutter overlay, the in-game mod UI that also hosts the
+# YoRHa Protocol UI. Plugins and every NAMS feature still run; only the overlay
+# and its panels, the YoRHa Protocol UI included, are gone, together with the
+# memory they use. Requires restart.
+disable_main_overlay = false
 
 # Play the visual effects during an outfit hot-swap: the pod spawn-in blinder
 # animation, the curtain, and the hacking-screen glitch filter. Set to false for
@@ -258,6 +265,12 @@ experimental_default_outfits = false
 disable_reshade_loading = false
 disable_3dmigoto_loading = false
 disable_game_mods_loading = false
+
+# Skip loading Direct3D proxies from thirdparty/graphic/: DLLs named like a
+# system DLL (d3d11.dll, dxgi.dll, ...) that the game's calls have to pass
+# through. NAMS points its own and the game's imports of that DLL at the mod.
+disable_graphic_mods_loading = false
+
 disable_texture_injection = false
 
 # Skip the startup splash window shown while the game loads. Vanilla revealed
@@ -281,78 +294,13 @@ disable_debug_hotkeys = true
 # keybind settings are ignored and the game keeps stock input. Requires restart.
 disable_input_features = false
 
-[mouse]
-fix_camera_acceleration = false
-sensitivity = 2.0
-third_person_mode = false
-third_person_char_follow = false
-third_person_smoothing = 0.0
-third_person_sensitivity_x = 1.0
-third_person_sensitivity_y = 1.0
-aim_mode = false
-aim_crosshair = false
-aim_crosshair_always = false
-aim_sensitivity = 0.001
-aim_sensitivity_x = 1.0
-aim_sensitivity_y = 1.0
-aim_output_multiplier = 15.0
-movement_disable_tap_evade = false
-misc_disable_pod_pet = false
-misc_open_debug_menu = 0
-misc_custom_cursor_menu = ""
-misc_custom_cursor_hacking = ""
-misc_disable_default_cursor = false
-
-[mouse.bindings]
-standard_move_forward = ""
-standard_move_left = ""
-standard_move_backward = ""
-standard_move_right = ""
-standard_jump = ""
-standard_walk = ""
-standard_auto_run = ""
-standard_light_attack = ""
-standard_heavy_attack = ""
-standard_program = ""
-standard_lock_on = ""
-standard_use = ""
-standard_self_destruct = ""
-standard_light = ""
-standard_reset_camera = ""
-standard_menu_up = ""
-standard_menu_left = ""
-standard_menu_down = ""
-standard_menu_right = ""
-standard_menu_open = ""
-standard_menu_back = ""
-standard_menu_enter = ""
-standard_shortcut_menu = ""
-standard_switch_weapon = ""
-standard_next_program = ""
-standard_previous_program = ""
-standard_fire = ""
-non_standard_evade = ""
-non_standard_auto_fire = ""
-non_standard_next_item = ""
-non_standard_previous_item = ""
-non_standard_use_item = ""
-third_person_mode_toggle = ""
-aim_mode_toggle = ""
-
+${_contentSectionSync(const {})}
 [cutscene]
-hd_cutscenes = false
 enable_h264 = false
 hide_subtitle_overlay = false
 keep_subtitle_text = false
 hide_subtitle_in_events = false
 solid_letterbox_bars = false
-
-[heap]
-global_heap_extra = 0
-pl_file_heap_extra = 0
-pl_vram_heap_extra = 0
-em_bg_file_heap_extra = 0
-em_bg_vram_heap_extra = 0
 ''';
 
   static const _textureInjectionToml =
@@ -377,6 +325,12 @@ streaming_enabled = true
 # Turn this on if you have a huge pack and want to save VRAM / loading time.
 load_only_relevant = false
 
+# Load the textures of the built-in priority list (the GPUnity HD Pack) at startup and
+# keep them in VRAM for the whole session, so they never pop in.
+# Set to false on GPUs with 4 GB VRAM or less: they then go through vram_budget_mb like
+# every other texture and get unloaded when the game needs the memory.
+pin_priority_textures = true
+
 # Load order for texture pack folders inside nams/inject/textures/.
 # Earlier entries win when the same texture hash exists in multiple packs.
 # Loose .dds files directly in nams/inject/textures/ win over the packs below.
@@ -384,16 +338,26 @@ load_only_relevant = false
 # Example (Androids Remastered wins over GPUnity HD Pack):
 #   load_order = ["Androids Remastered", "GPUnity HD Pack"]
 load_order = []
+
+# Pack folder names to skip during scanning. The launcher writes this list
+# to disable specific packs per profile without moving folders on disk.
+disabled_packs = []
+
+# Watch the texture folders and apply changed .dds files while the game runs.
+# Same-size changes apply instantly, size/format changes on the next scene load.
+hot_reload = true
 ''';
 
-  static const _mouseSectionDefault = '''
-# Mouse input fixes.
-[mouse]
+  static const _naiomToml =
+      '''# NAIOM: mouse and keyboard settings. Ignored while disable_input_features is
+# set in nams.toml.
+
 # Remove the deadzone and acceleration curve from camera rotation.
 fix_camera_acceleration = false
 # Sensitivity multiplier for fix_camera_acceleration. Higher = faster rotation.
 sensitivity = 2.0
-# Raw-input third-person camera driven directly from raw mouse deltas.
+# Raw-input third-person camera: the mouse also turns the camera by its raw
+# counts, and the camera turn by mouse, keys and gamepad has no deadzone.
 third_person_mode = false
 # Keep the game's automatic camera-follow while moving.
 third_person_char_follow = false
@@ -428,16 +392,13 @@ misc_custom_cursor_menu = ""
 misc_custom_cursor_hacking = ""
 # Keep the system cursor instead of the bundled default.
 misc_disable_default_cursor = false
-''';
-
-  static const _bindingsSectionDefault = '''
 
 # Additional key bindings. All bindings are additive - the vanilla keys keep
 # working. "" = unbound. Supported key names: A-Z, 0-9, SPACE, END, UPARROW,
 # DOWNARROW, LEFTARROW, RIGHTARROW, LSHIFT, RSHIFT, LCTRL, RCTRL, MOUSE1-MOUSE5.
 # Combinations use +, e.g. "CTRL+X". SHIFT, CTRL and ALT match either side
 # and are modifier-only.
-[mouse.bindings]
+[bindings]
 standard_move_forward = ""
 standard_move_left = ""
 standard_move_backward = ""
@@ -483,8 +444,6 @@ aim_mode_toggle = ""
 
 # Cutscene settings.
 [cutscene]
-# Enable HD cutscene support. Set true if you installed HD cutscene mods.
-hd_cutscenes = false
 # Enable H264 codec for USM playback. Required for H264-encoded cutscene mods.
 enable_h264 = false
 # Hide the black bars and caption overlay shown during cutscenes. Only affects
@@ -499,6 +458,114 @@ hide_subtitle_in_events = false
 # translucent, uneven ones. Wins over hide_subtitle_overlay when both are set.
 solid_letterbox_bars = false
 ''';
+
+  static const _contentHeaderComment =
+      '# Every content feature on its own. false turns it off: no mod entry of that\n'
+      '# feature is loaded, and neither is any mod entry that needs it, e.g. a shop\n'
+      '# entry selling a modded outfit while custom_outfits is off.\n'
+      '# disable_content_features turns all of them off at once. Requires restart.\n';
+
+  static const _contentKeyComments = <String, String>{
+    'custom_items':
+        '# New items from mods (consumables, materials, key items) with their icons and\n'
+        '# texts, and items mods hand out automatically.',
+    'custom_weapons':
+        '# New weapons from mods with their stats, upgrades, texts and story images.',
+    'weapon_patches': '# Mod changes to existing weapons.',
+    'custom_outfits':
+        '# New outfits from mods, WAX outfit mods, and the "Default Outfit" item that\n'
+        '# takes a modded outfit off again.',
+    'custom_hairsprays': '# New hairsprays from mods.',
+    'accessories':
+        '# New accessories from mods, and wearing several accessories at once.',
+    'player_mesh_swaps':
+        '# NAMS puts the 2B, 9S and A2 models together itself, so outfit and accessory\n'
+        "# mods can swap, hide or add model parts. false = the game's own model setup.",
+    'mesh_visibility': '# Mods that hide or show single parts of a model.',
+    'shop_items': '# Items that mods add to shops.',
+    'item_shortcut_menu':
+        '# Modded healing items you own show up in the quick-item menu.',
+    'effect_rules':
+        '# What modded weapons, outfits, accessories and items do to the player, such as\n'
+        '# damage, dodging, immunities and flashlight charge.',
+    'outfit_selector_npc':
+        '# The outfit selection NPC that offers modded outfits.',
+    'buddy_outfit_menu':
+        '# EXPERIMENTAL. A "Change outfit" entry when talking to your buddy that lists\n'
+        '# modded buddy outfits. Turn off if it clashes with other script mods.',
+    'custom_quests':
+        '# New quests from mods with their texts, rewards and conditions.',
+    'custom_mails': '# New mails from mods.',
+    'custom_voice_lines': '# New voice lines from mods.',
+    'custom_maps':
+        '# New map rooms and story phases from mods, with their Chapter Select entries\n'
+        '# and save slot names.',
+    'map_layouts':
+        '# Mod rules for objects placed on the map, such as removing them or how far\n'
+        '# away they appear.',
+    'novels': '# New novels from mods in the Data menu.',
+    'archives': '# New archives from mods in the Data menu.',
+    'cutscene_replacements':
+        '# Cutscene videos that mods replace, and in-game cutscenes that mods move.',
+    'camera_settings': '# Mod settings for the player camera.',
+    'script_overlays': "# Mod additions and changes to the game's scripts.",
+    'script_groups':
+        '# Mod rules that turn groups of game scripts on or off per story phase.',
+    'ruby_patches': "# Mod edits to the game's Ruby scripts.",
+    'custom_music': '# New background music from mods.',
+    'ambient_sounds':
+        '# Ambient sounds and crowd voices that mods add or mute.',
+    'custom_sounds': '# New sound effects from mods.',
+    'effect_areas': '# Effects that mods place in rooms or remove from them.',
+    'effect_type_mute':
+        '# Mods that mute whole effect types in a room or story phase.',
+    'global_effects':
+        '# Effects that mods run across a whole room or story phase.',
+    'lighting_filters': '# Mod color and lighting filters for rooms.',
+    'cloth_physics': '# Extra cloth physics parts on modded models.',
+    'custom_texts':
+        "# Mod texts in menus, such as item names and descriptions. false = the game's\n"
+        '# own texts.',
+    'ui_overrides':
+        '# Menu and HUD layouts that mods replace. false = the shipped layouts.',
+  };
+
+  static const _legacyContentKeys = <String, List<String>>{
+    'content_items': [
+      'custom_items',
+      'custom_weapons',
+      'weapon_patches',
+      'custom_outfits',
+      'custom_hairsprays',
+      'shop_items',
+      'item_shortcut_menu',
+    ],
+    'content_accessories': ['accessories'],
+    'content_assemble_meshes': ['player_mesh_swaps', 'mesh_visibility'],
+    'content_effect_areas': [
+      'effect_areas',
+      'effect_type_mute',
+      'global_effects',
+    ],
+    'content_quest_integration': [
+      'custom_quests',
+      'custom_mails',
+      'custom_voice_lines',
+      'custom_maps',
+      'custom_music',
+      'ambient_sounds',
+      'custom_sounds',
+      'script_groups',
+      'lighting_filters',
+      'outfit_selector_npc',
+      'buddy_outfit_menu',
+      'cutscene_replacements',
+    ],
+    'content_effects_applier': ['effect_rules'],
+    'content_equip_tracker': [],
+    'content_mcd': ['custom_texts'],
+    'content_buddy_ruby_selector': ['buddy_outfit_menu'],
+  };
 
   static const _newCutsceneKeyBlocks = <String, String>{
     'hide_subtitle_overlay':
@@ -524,45 +591,6 @@ solid_letterbox_bars = false
     'debug_menu_key': 'misc_open_debug_menu',
   };
 
-  static const _newMouseKeyBlocks = <String, String>{
-    'third_person_mode':
-        '# Raw-input third-person camera driven directly from raw mouse deltas.\n'
-        'third_person_mode = false',
-    'third_person_char_follow':
-        '# Keep the game\'s automatic camera-follow while moving.\n'
-        'third_person_char_follow = false',
-    'third_person_smoothing':
-        '# Camera easing for third_person_mode: 0.0 = follows the mouse without delay,\n'
-        '# 1.0 = the game\'s own smoothing, in between blends the two.\n'
-        'third_person_smoothing = 0.0',
-    'third_person_sensitivity_x':
-        '# Per-axis sensitivity for third_person_mode. Negative inverts the axis.\n'
-        'third_person_sensitivity_x = 1.0',
-    'third_person_sensitivity_y': 'third_person_sensitivity_y = 1.0',
-    'aim_crosshair':
-        '# Aim follows the hidden mouse cursor and draws a crosshair. Needs aim_mode.\n'
-        'aim_crosshair = false',
-    'aim_crosshair_always':
-        '# Keep the crosshair visible even when not firing. Off = only while shooting.\n'
-        'aim_crosshair_always = false',
-    'aim_sensitivity_x':
-        '# Per-axis multipliers on top of aim_sensitivity. Negative inverts the axis.\n'
-        'aim_sensitivity_x = 1.0',
-    'aim_sensitivity_y': 'aim_sensitivity_y = 1.0',
-    'movement_disable_tap_evade':
-        '# Disable dodge on double-tapping movement keys (use with non_standard_evade).\n'
-        'movement_disable_tap_evade = false',
-    'misc_custom_cursor_menu':
-        '# Custom mouse cursor. Path to a .cur/.ani file; "" uses the bundled default.\n'
-        'misc_custom_cursor_menu = ""',
-    'misc_custom_cursor_hacking':
-        '# Cursor for the hacking minigame. "" falls back to the menu cursor.\n'
-        'misc_custom_cursor_hacking = ""',
-    'misc_disable_default_cursor':
-        '# Keep the system cursor instead of the bundled default.\n'
-        'misc_disable_default_cursor = false',
-  };
-
   static Future<void> ensureConfigs(String gameDir) {
     return IsolateService.run(_ensureConfigsSync, gameDir);
   }
@@ -580,7 +608,16 @@ solid_letterbox_bars = false
       _textureInjectionToml,
     );
 
-    _migrateNamsTomlSync(path.join(namsDir.path, 'nams.toml'));
+    final evadeName = _migrateNamsTomlSync(
+      path.join(namsDir.path, 'nams.toml'),
+    );
+    _ensureNaiomTomlSync(namsDir.path, evadeName);
+    final lodmodFile = File(path.join(namsDir.path, 'lodmod.toml'));
+    final lodmodRaw = lodmodFile.readAsStringSync();
+    final migratedLodmod = LodmodConfigService.migrate(lodmodRaw);
+    if (migratedLodmod != lodmodRaw) {
+      lodmodFile.writeAsStringSync(migratedLodmod);
+    }
     _migrateTextureInjectionTomlSync(
       path.join(namsDir.path, 'texture_injection.toml'),
     );
@@ -635,6 +672,33 @@ solid_letterbox_bars = false
     ];
   }
 
+  static void _ensureNaiomTomlSync(String namsDirPath, String? evadeName) {
+    final file = File(path.join(namsDirPath, 'naiom.toml'));
+    if (file.existsSync()) return;
+    final nams = File(path.join(namsDirPath, 'nams.toml'));
+    final parsed = nams.existsSync()
+        ? TomlService.parse(nams.readAsStringSync())['mouse']
+        : null;
+    final legacy = parsed is Map<String, dynamic>
+        ? Map<String, dynamic>.from(parsed)
+        : <String, dynamic>{};
+    if (evadeName != null) {
+      final evadeKey = NamsBindingFields.nonStandardEvade.key;
+      final rawBindings = legacy['bindings'];
+      final bindings = rawBindings is Map<String, dynamic>
+          ? Map<String, dynamic>.from(rawBindings)
+          : <String, dynamic>{};
+      final current = bindings[evadeKey];
+      if (current is! String || current.isEmpty) {
+        bindings[evadeKey] = evadeName;
+        legacy['bindings'] = bindings;
+      }
+    }
+    file.writeAsStringSync(
+      legacy.isEmpty ? _naiomToml : TomlService.updateToml(_naiomToml, legacy),
+    );
+  }
+
   static void _writeIfMissingSync(String filePath, String content) {
     final file = File(filePath);
     if (!file.existsSync()) {
@@ -642,9 +706,9 @@ solid_letterbox_bars = false
     }
   }
 
-  static void _migrateNamsTomlSync(String filePath) {
+  static String? _migrateNamsTomlSync(String filePath) {
     final file = File(filePath);
-    if (!file.existsSync()) return;
+    if (!file.existsSync()) return null;
 
     var content = file.readAsStringSync();
     var modified = false;
@@ -676,49 +740,21 @@ solid_letterbox_bars = false
           modified = true;
         }
       } else {
-        content += '\ndisable_content_features = false\n';
+        content = _insertTopLevelSync(
+          content,
+          'disable_content_features = false\n',
+        );
         modified = true;
       }
     }
 
-    final contentToggleKeys = <String>[
-      NamsFields.contentItems.key,
-      NamsFields.contentAccessories.key,
-      NamsFields.contentAssembleMeshes.key,
-      NamsFields.contentEffectAreas.key,
-      NamsFields.contentQuestIntegration.key,
-      NamsFields.contentEffectsApplier.key,
-      NamsFields.contentEquipTracker.key,
-      NamsFields.contentMcd.key,
-      NamsFields.contentBuddyRubySelector.key,
-    ];
-    final missingContent = contentToggleKeys
-        .where((k) => !content.contains(k))
-        .toList();
-    if (missingContent.isNotEmpty) {
-      // Insert before any [section] header so new keys land at the top level.
-      final firstSectionIdx = content.indexOf(RegExp(r'^\[', multiLine: true));
-      final block = StringBuffer();
-      if (!content.endsWith('\n')) block.write('\n');
-      block.writeln();
-      block.writeln(
-        '# Per-feature content-layer toggles. All default to true. Useful for bisecting',
-      );
-      block.writeln('# mod bugs without disabling the entire content layer.');
-      for (final k in missingContent) {
-        block.writeln('$k = true');
-      }
-      block.writeln();
-      if (firstSectionIdx == -1) {
-        content = '$content${block.toString()}';
-      } else {
-        content =
-            '${content.substring(0, firstSectionIdx)}${block.toString()}${content.substring(firstSectionIdx)}';
-      }
-      modified = true;
-    }
-
     final topLevelAdditions = <String, String>{
+      NamsFields.disableMainOverlay.key:
+          '# Skip starting the main Flutter overlay, the in-game mod UI that also\n'
+          '# hosts the YoRHa Protocol UI. Plugins and every NAMS feature still run;\n'
+          '# only the overlay and its panels, the YoRHa Protocol UI included, are\n'
+          '# gone, together with the memory they use. Requires restart.\n'
+          'disable_main_overlay = false\n',
       NamsFields.outfitSwapVisualEffects.key:
           '# Play the visual effects during an outfit hot-swap: the pod spawn-in\n'
           '# blinder animation, the curtain, and the hacking-screen glitch filter.\n'
@@ -747,6 +783,11 @@ solid_letterbox_bars = false
           '# their imports so game.bin answers as the main module. Managed by\n'
           '# the Third Party tab. Per-DLL tweaks: thirdparty/game/game.toml\n'
           'disable_game_mods_loading = false\n',
+      NamsFields.disableGraphicModsLoading.key:
+          '# Skip loading Direct3D proxies from thirdparty/graphic/: DLLs named\n'
+          '# like a system DLL (d3d11.dll, dxgi.dll, ...) that the game\'s calls\n'
+          '# have to pass through. Requires restart.\n'
+          'disable_graphic_mods_loading = false\n',
       NamsFields.loadingStallHints.key:
           '# Show escalating hints when the "Loading Map" screen takes too long.\n'
           'loading_stall_hints = true\n',
@@ -770,6 +811,12 @@ solid_letterbox_bars = false
     for (final entry in topLevelAdditions.entries) {
       if (content.contains(entry.key)) continue;
       content = _insertTopLevelSync(content, entry.value);
+      modified = true;
+    }
+
+    final withContent = _migrateContentSectionSync(content);
+    if (withContent != content) {
+      content = withContent;
       modified = true;
     }
 
@@ -805,41 +852,6 @@ solid_letterbox_bars = false
         RegExp(r'^evade_key\s*=.*\r?\n?', multiLine: true),
         '',
       );
-      modified = true;
-    }
-
-    if (!content.contains('[mouse]')) {
-      content += _mouseSectionDefault;
-      modified = true;
-    } else {
-      final missingBlocks = <String>[];
-      for (final entry in _newMouseKeyBlocks.entries) {
-        final re = RegExp('^${entry.key}\\s*=', multiLine: true);
-        if (!re.hasMatch(content)) {
-          missingBlocks.add(entry.value);
-        }
-      }
-      if (missingBlocks.isNotEmpty) {
-        final afterMouse = content.indexOf('[mouse]') + '[mouse]'.length;
-        final nextSection = content.indexOf(
-          RegExp(r'^\[', multiLine: true),
-          afterMouse,
-        );
-        final block = '${missingBlocks.join('\n')}\n';
-        if (nextSection == -1) {
-          final sep = content.endsWith('\n') ? '' : '\n';
-          content = '$content$sep$block';
-        } else {
-          content =
-              '${content.substring(0, nextSection)}$block\n'
-              '${content.substring(nextSection)}';
-        }
-        modified = true;
-      }
-    }
-
-    if (!content.contains('[mouse.bindings]')) {
-      content += _bindingsSectionDefault;
       modified = true;
     }
 
@@ -891,16 +903,156 @@ solid_letterbox_bars = false
     if (modified) {
       file.writeAsStringSync(content);
     }
+    return migratedEvadeName;
   }
 
   static String _insertTopLevelSync(String content, String block) {
-    final firstSectionIdx = content.indexOf(RegExp(r'^\[', multiLine: true));
-    final prefix = content.endsWith('\n') || content.isEmpty ? '' : '\n';
-    if (firstSectionIdx == -1) {
+    final at = _firstTableStartSync(content);
+    if (at == -1) {
+      final prefix = content.endsWith('\n') || content.isEmpty ? '' : '\n';
       return '$content$prefix\n$block';
     }
-    return '${content.substring(0, firstSectionIdx)}$block\n'
-        '${content.substring(firstSectionIdx)}';
+    final before = content.substring(0, at);
+    final gap =
+        before.isEmpty || before.endsWith('\n\n') || before.endsWith('\n\r\n')
+        ? ''
+        : '\n';
+    return '$before$gap$block\n${content.substring(at)}';
+  }
+
+  static int _firstTableStartSync(String content) {
+    var lineStart = 0;
+    var commentStart = -1;
+    while (lineStart < content.length) {
+      final newline = content.indexOf('\n', lineStart);
+      final lineEnd = newline == -1 ? content.length : newline;
+      final line = content.substring(lineStart, lineEnd).trim();
+      if (line.startsWith('[')) {
+        return commentStart == -1 ? lineStart : commentStart;
+      }
+      if (!line.startsWith('#')) {
+        commentStart = -1;
+      } else if (commentStart == -1) {
+        commentStart = lineStart;
+      }
+      if (newline == -1) break;
+      lineStart = newline + 1;
+    }
+    return -1;
+  }
+
+  static String _contentSectionSync(Set<String> off) {
+    final out = StringBuffer(_contentHeaderComment)..writeln('[content]');
+    for (final entry in _contentKeyComments.entries) {
+      out
+        ..writeln(entry.value)
+        ..writeln('${entry.key} = ${!off.contains(entry.key)}');
+    }
+    return out.toString();
+  }
+
+  static String _migrateContentSectionSync(String content) {
+    final parsed = TomlService.parseStrict(content);
+    if (!parsed.ok) return content;
+    final existing = parsed.values[NamsContentFields.section];
+    final off = <String>{};
+    if (existing == null) {
+      for (final entry in _legacyContentKeys.entries) {
+        if (parsed.values[entry.key] == false) off.addAll(entry.value);
+      }
+    }
+
+    final result = _withoutLegacyContentKeysSync(content);
+    if (existing == null) {
+      return _insertTopLevelSync(result, _contentSectionSync(off));
+    }
+    if (existing is! Map) return result;
+
+    final missing = [
+      for (final entry in _contentKeyComments.entries)
+        if (!existing.containsKey(entry.key))
+          '${entry.value}\n${entry.key} = true\n',
+    ];
+    if (missing.isEmpty) return result;
+    return _appendToTableSync(
+      result,
+      NamsContentFields.section,
+      missing.join(),
+    );
+  }
+
+  static String _withoutLegacyContentKeysSync(String content) {
+    final spans = TomlService.sourceExpressions(content).toList();
+    String source(int i) => content.substring(spans[i].start, spans[i].end);
+    bool isComment(int i) =>
+        spans[i].expression == null && source(i).trimLeft().startsWith('#');
+
+    final drop = List<bool>.filled(spans.length, false);
+    for (var i = 0; i < spans.length; i++) {
+      final expression = spans[i].expression;
+      if (expression is TomlTable) break;
+      if (expression is! TomlKeyValuePair) continue;
+      final key = expression.key.parts.map((part) => part.name).join('.');
+      if (!_legacyContentKeys.containsKey(key)) continue;
+      drop[i] = true;
+      for (var j = i - 1; j >= 0 && isComment(j); j--) {
+        drop[j] = true;
+      }
+    }
+    if (!drop.contains(true)) return content;
+
+    final out = StringBuffer();
+    var lastKeptBlank = true;
+    var afterDrop = false;
+    for (var i = 0; i < spans.length; i++) {
+      if (drop[i]) {
+        afterDrop = true;
+        continue;
+      }
+      final text = source(i);
+      final blank = text.trim().isEmpty;
+      if (blank && lastKeptBlank && afterDrop) continue;
+      out.write(text);
+      lastKeptBlank = blank;
+      afterDrop = false;
+    }
+    return out.toString();
+  }
+
+  static String _appendToTableSync(String content, String table, String block) {
+    final spans = TomlService.sourceExpressions(content).toList();
+    String source(int i) => content.substring(spans[i].start, spans[i].end);
+    bool isComment(int i) =>
+        spans[i].expression == null && source(i).trimLeft().startsWith('#');
+    String? tableName(int i) {
+      final expression = spans[i].expression;
+      if (expression is! TomlTable) return null;
+      return expression.name.parts.map((part) => part.name).join('.');
+    }
+
+    var header = 0;
+    while (header < spans.length && tableName(header) != table) {
+      header++;
+    }
+    if (header == spans.length) return content;
+
+    var end = header + 1;
+    while (end < spans.length && spans[end].expression is! TomlTable) {
+      end++;
+    }
+    if (end < spans.length) {
+      while (end - 1 > header && isComment(end - 1)) {
+        end--;
+      }
+    }
+    while (end - 1 > header && source(end - 1).trim().isEmpty) {
+      end--;
+    }
+
+    final at = spans[end - 1].end;
+    final before = content.substring(0, at);
+    final sep = before.endsWith('\n') ? '' : '\n';
+    return '$before$sep$block${content.substring(at)}';
   }
 
   static void _migrateTextureInjectionTomlSync(String filePath) {
@@ -972,6 +1124,16 @@ hot_reload = true
 
 # Only load priority textures from huge packs (400+ files). Small packs loaded fully.
 load_only_relevant = false
+''';
+      modified = true;
+    }
+
+    if (!content.contains(TextureInjectionFields.pinPriorityTextures.key)) {
+      content += '''
+
+# Load the priority-list textures at startup and keep them in VRAM for the
+# whole session. Set to false on GPUs with 4 GB VRAM or less.
+pin_priority_textures = true
 ''';
       modified = true;
     }

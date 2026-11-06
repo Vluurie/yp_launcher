@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
+import 'package:yp_launcher/services/disabled_mods_service.dart';
 import 'package:yp_launcher/services/mod_profiles_service.dart';
 
 void main() {
@@ -85,6 +86,48 @@ void main() {
   });
 
   group('switchProfile', () {
+    test('shared texture disables survive profile creation and switching',
+        () async {
+      await DisabledModsService.setDisabled(
+        gameDir.path, 'inject/textures/pack', true,
+      );
+      await DisabledModsService.setDisabled(
+        gameDir.path, 'mods/alpha', true,
+      );
+
+      await ModProfilesService.createProfile(gameDir.path, 'beta');
+      expect(await DisabledModsService.list(gameDir.path),
+          ['inject/textures/pack']);
+      await DisabledModsService.setDisabled(
+        gameDir.path, 'mods/beta', true,
+      );
+
+      await ModProfilesService.switchProfile(gameDir.path, 'default');
+      expect(await DisabledModsService.list(gameDir.path),
+          unorderedEquals(['mods/alpha', 'inject/textures/pack']));
+
+      await ModProfilesService.switchProfile(gameDir.path, 'beta');
+      expect(await DisabledModsService.list(gameDir.path),
+          unorderedEquals(['mods/beta', 'inject/textures/pack']));
+    });
+
+    test('re-enabled textures stay enabled when an older profile is restored',
+        () async {
+      await DisabledModsService.setDisabled(
+        gameDir.path, 'inject/textures/pack', true,
+      );
+      await ModProfilesService.createProfile(gameDir.path, 'beta');
+      await DisabledModsService.setDisabled(
+        gameDir.path, 'inject/textures/pack', false,
+      );
+
+      await ModProfilesService.switchProfile(gameDir.path, 'default');
+      expect(await DisabledModsService.list(gameDir.path), isEmpty);
+
+      await ModProfilesService.switchProfile(gameDir.path, 'beta');
+      expect(await DisabledModsService.list(gameDir.path), isEmpty);
+    });
+
     test('every sidecar follows the profile it belongs to', () async {
       writeSidecars('alpha');
       await ModProfilesService.createProfile(gameDir.path, 'beta');

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -47,25 +48,69 @@ class NamsTexturePack {
   }
 }
 
+class NamsInfo {
+  final String? version;
+  final String? nierInstallError;
+  final bool gameBinPresent;
+  final int? gameBinSize;
+  final List<({String name, int size})> plugins;
+
+  const NamsInfo({
+    this.version,
+    this.nierInstallError,
+    this.gameBinPresent = false,
+    this.gameBinSize,
+    this.plugins = const [],
+  });
+
+  factory NamsInfo.fromJson(Map<String, dynamic> json) {
+    final paths = json['paths'];
+    final runtime = json['runtime_files'];
+    final gameBin = runtime is Map ? runtime['game_bin'] : null;
+    final plugins = json['plugins'];
+    return NamsInfo(
+      version: json['version'] as String?,
+      nierInstallError: paths is Map
+          ? paths['nier_install_error'] as String?
+          : null,
+      gameBinPresent: gameBin is Map && gameBin['present'] == true,
+      gameBinSize: gameBin is Map ? (gameBin['size'] as num?)?.toInt() : null,
+      plugins: plugins is List
+          ? [
+              for (final p in plugins.whereType<Map>())
+                (
+                  name: '${p['name'] ?? '?'}',
+                  size: (p['size'] as num?)?.toInt() ?? 0,
+                ),
+            ]
+          : const [],
+    );
+  }
+}
+
+const _verifyTimeout = Duration(seconds: 30);
+
 class NamsCliService {
   NamsCliService._();
 
-  static Future<List<NamsTexturePack>?> texturesList(String gameDir) async {
+  static Future<List<NamsTexturePack>?> texturesList(
+    String gameDir, {
+    Duration? timeout,
+  }) async {
     try {
       final paths = await LauncherSetupService.getLauncherPaths();
       final namsExe = paths['namsExe'];
       final launcherDir = paths['launcherDir'];
       if (namsExe == null || !File(namsExe).existsSync()) return null;
 
-      final result = await Process.run(namsExe, [
-        'textures',
-        'list',
-        '--nier-path',
-        gameDir,
-        '--json',
-      ], workingDirectory: launcherDir);
-      if (result.exitCode != 0) return null;
-      final decoded = jsonDecode(result.stdout as String);
+      final stdout = await _runForStdout(
+        namsExe,
+        ['textures', 'list', '--nier-path', gameDir, '--json'],
+        workingDirectory: launcherDir,
+        timeout: timeout,
+      );
+      if (stdout == null) return null;
+      final decoded = jsonDecode(stdout);
       if (decoded is! Map || decoded['packs'] is! List) return null;
       return (decoded['packs'] as List)
           .whereType<Map>()
@@ -74,6 +119,61 @@ class NamsCliService {
     } catch (_) {
       return null;
     }
+  }
+
+  static Future<NamsInfo?> info(String gameDir, {Duration? timeout}) async {
+    try {
+      final paths = await LauncherSetupService.getLauncherPaths();
+      final namsExe = paths['namsExe'];
+      if (namsExe == null || !File(namsExe).existsSync()) return null;
+      final stdout = await _runForStdout(
+        namsExe,
+        ['info', '--nier-path', gameDir, '--json'],
+        workingDirectory: paths['launcherDir'],
+        timeout: timeout,
+      );
+      if (stdout == null) return null;
+      final decoded = jsonDecode(stdout);
+      if (decoded is! Map) return null;
+      return NamsInfo.fromJson(Map<String, dynamic>.from(decoded));
+    } catch (_) {
+      return null;
+    }
+  }
+
+  static Future<String?> _runForStdout(
+    String exe,
+    List<String> args, {
+    String? workingDirectory,
+    Duration? timeout,
+  }) async {
+    if (timeout == null) {
+      final result = await Process.run(
+        exe,
+        args,
+        workingDirectory: workingDirectory,
+      );
+      return result.exitCode == 0 ? result.stdout as String : null;
+    }
+    final process = await Process.start(
+      exe,
+      args,
+      workingDirectory: workingDirectory,
+    );
+    final out = StringBuffer();
+    const decoder = Utf8Decoder(allowMalformed: true);
+    final stdoutDone = process.stdout.transform(decoder).forEach(out.write);
+    final stderrDone = process.stderr.drain<void>();
+    int code;
+    try {
+      code = await process.exitCode.timeout(timeout);
+    } on TimeoutException {
+      process.kill();
+      return null;
+    }
+    await stdoutDone;
+    await stderrDone;
+    return code == 0 ? out.toString() : null;
   }
 
   static Future<VerifyOutcome> verify(
@@ -108,13 +208,23 @@ class NamsCliService {
         return const VerifyOutcome(status: VerifyStatus.noRuntime);
       }
 
-      final r = await Process.run(
+      final process = await Process.start(
         cmd.command,
         cmd.args,
         workingDirectory: cmd.cwd,
         environment: cmd.env,
       );
-      final exitCode = r.exitCode;
+      const decoder = Utf8Decoder(allowMalformed: true);
+      final stdoutText = process.stdout.transform(decoder).join();
+      final stderrText = process.stderr.transform(decoder).join();
+
+      final int exitCode;
+      try {
+        exitCode = await process.exitCode.timeout(_verifyTimeout);
+      } on TimeoutException {
+        process.kill();
+        return const VerifyOutcome(status: VerifyStatus.timedOut);
+      }
 
       if (exitCode == 20 || exitCode == 21 || exitCode == 22) {
         return VerifyOutcome(
@@ -126,8 +236,8 @@ class NamsCliService {
         return VerifyOutcome(status: VerifyStatus.error, exitCode: exitCode);
       }
 
-      final stdout = r.stdout as String? ?? '';
-      final stderr = r.stderr as String? ?? '';
+      final stdout = await stdoutText;
+      final stderr = await stderrText;
       dynamic decoded;
       try {
         decoded = jsonDecode(stdout);

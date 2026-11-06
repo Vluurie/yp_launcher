@@ -6,6 +6,7 @@ import 'package:yp_launcher/constants/app_strings.dart';
 import 'package:yp_launcher/models/config_fields.dart';
 import 'package:yp_launcher/services/launcher_setup_service.dart';
 import 'package:yp_launcher/services/thirdparty/game_mods_runtime.dart';
+import 'package:yp_launcher/services/thirdparty/graphic_mods_runtime.dart';
 import 'package:yp_launcher/services/thirdparty/thirdparty_classifier.dart';
 import 'package:yp_launcher/services/thirdparty/thirdparty_models.dart';
 import 'package:yp_launcher/services/thirdparty/thirdparty_paths.dart';
@@ -91,6 +92,48 @@ void main() {
       final c = ThirdPartyClassifier.classify(drop.path);
 
       expect(c.kind, ThirdPartyKind.migoto);
+    });
+
+    test('a WAX DLL is installed as a game mod, not rejected', () {
+      final drop = Directory.systemTemp.createTempSync('yp_gm_wax_');
+      addTearDown(() => drop.deleteSync(recursive: true));
+      _writeMarkedDll(p.join(drop.path, 'wax.dll'), '_wax loaded_');
+
+      final c = ThirdPartyClassifier.classify(drop.path);
+
+      expect(c.kind, ThirdPartyKind.gameMod);
+      expect(c.gameModDlls.map(p.basename), ['wax.dll']);
+    });
+
+    test('a plain dinput8.dll is a game mod, not Special K', () {
+      final drop = Directory.systemTemp.createTempSync('yp_gm_di8_');
+      addTearDown(() => drop.deleteSync(recursive: true));
+      _writePlainDll(p.join(drop.path, 'dinput8.dll'));
+
+      expect(ThirdPartyClassifier.classify(drop.path).kind,
+          ThirdPartyKind.gameMod);
+    });
+
+    test('Special K is still recognised by its own marker', () {
+      final drop = Directory.systemTemp.createTempSync('yp_gm_sk_');
+      addTearDown(() => drop.deleteSync(recursive: true));
+      _writeMarkedDll(p.join(drop.path, 'dinput8.dll'), 'SpecialK64');
+
+      expect(ThirdPartyClassifier.classify(drop.path).kind,
+          ThirdPartyKind.specialK);
+    });
+
+    test('a plain Direct3D proxy is a graphic mod with its files', () {
+      final drop = Directory.systemTemp.createTempSync('yp_gm_gfx_');
+      addTearDown(() => drop.deleteSync(recursive: true));
+      _writePlainDll(p.join(drop.path, 'pkg', 'd3d11.dll'));
+      File(p.join(drop.path, 'pkg', 'd3d11.ini')).writeAsStringSync('x=1');
+
+      final c = ThirdPartyClassifier.classify(drop.path);
+
+      expect(c.kind, ThirdPartyKind.graphicMod);
+      expect(c.graphicModDlls.map(p.basename), ['d3d11.dll']);
+      expect(c.gameModDlls, isEmpty);
     });
 
     test('several DLLs in one drop are all collected', () {
@@ -258,17 +301,127 @@ disabled = true
       expect((cfg['celestial.dll'] as Map)['disabled'], isTrue);
     });
 
-    test('the defaults section is not mistaken for a DLL', () async {
+    test('[defaults] applies to a DLL without its own section, like NAMS',
+        () async {
       final game = await installed();
       addTearDown(() => game.deleteSync(recursive: true));
       File(_runtime.configPath(game.path)).writeAsStringSync('''[defaults]
 disabled = true
+size_of_image = 0
 ''');
 
-      final status = await _runtime.status(game.path);
+      final mod = (await _runtime.status(game.path)).gameModsInfo!.mods.single;
 
-      expect(status.gameModsInfo!.mods.single.disabled, isFalse,
-          reason: '[defaults] must not disable an unrelated DLL');
+      expect(mod.disabled, isTrue,
+          reason: 'NAMS for_dll falls back to [defaults] for every field');
+      expect(mod.settings!.sizeOfImage, 0);
+    });
+
+    test('a new section starts from [defaults], so nothing else changes',
+        () async {
+      final game = await installed();
+      addTearDown(() => game.deleteSync(recursive: true));
+      File(_runtime.configPath(game.path)).writeAsStringSync('''[defaults]
+fake_exe_path = false
+size_of_image = 0
+''');
+
+      await _runtime.setModDisabled(game.path, 'celestial.dll', true);
+
+      final section =
+          _readGameToml(game.path)['celestial.dll'] as Map<String, dynamic>;
+      expect(section['disabled'], isTrue);
+      expect(section['fake_exe_path'], isFalse);
+      expect(section['size_of_image'], 0);
+      expect(section['fake_module_handle'], isTrue);
+    });
+
+    test('every game.toml field round-trips through the settings', () async {
+      final game = await installed();
+      addTearDown(() => game.deleteSync(recursive: true));
+
+      const settings = GameModSettings(
+        fakeModuleHandle: false,
+        fakeExePath: false,
+        sizeOfImage: GameModSettings.steam2026SizeOfImage,
+        reportPatches: true,
+        waitForPatchPhase: true,
+        patchPhaseTimeoutMs: 30000,
+      );
+      expect(
+        await _runtime.setModSettings(game.path, 'celestial.dll', settings),
+        isTrue,
+      );
+
+      final section =
+          _readGameToml(game.path)['celestial.dll'] as Map<String, dynamic>;
+      expect(section, {
+        'fake_module_handle': false,
+        'fake_exe_path': false,
+        'size_of_image': 25944064,
+        'disabled': false,
+        'report_patches': true,
+        'wait_for_patch_phase': true,
+        'patch_phase_timeout_ms': 30000,
+      });
+      final read =
+          (await _runtime.status(game.path)).gameModsInfo!.mods.single.settings!;
+      expect(read.sizeOfImage, GameModSettings.steam2026SizeOfImage);
+      expect(read.reportPatches, isTrue);
+      expect(read.fakeModuleHandle, isFalse);
+      expect(read.waitForPatchPhase, isTrue);
+      expect(read.patchPhaseTimeoutMs, 30000);
+    });
+
+    test('patch-phase wait defaults match NAMS', () {
+      const d = GameModSettings();
+      expect(d.waitForPatchPhase, isFalse);
+      expect(d.patchPhaseTimeoutMs, 10000);
+      final fromFile = GameModSettings.fromToml({'wait_for_patch_phase': true});
+      expect(fromFile.waitForPatchPhase, isTrue);
+      expect(fromFile.patchPhaseTimeoutMs, 10000);
+    });
+
+    test('keys the launcher does not show are kept', () async {
+      final game = await installed();
+      addTearDown(() => game.deleteSync(recursive: true));
+      File(_runtime.configPath(game.path)).writeAsStringSync(
+        '["celestial.dll"]\nwait_for_patch_phase = true\nsome_future_key = 7\n',
+      );
+
+      await _runtime.setModDisabled(game.path, 'celestial.dll', true);
+
+      final section =
+          _readGameToml(game.path)['celestial.dll'] as Map<String, dynamic>;
+      expect(section['some_future_key'], 7);
+      expect(section['wait_for_patch_phase'], isTrue);
+      expect(section['disabled'], isTrue);
+    });
+
+    test('a case-mismatched section is updated, not duplicated', () async {
+      final game = await installed();
+      addTearDown(() => game.deleteSync(recursive: true));
+      File(_runtime.configPath(game.path))
+          .writeAsStringSync('["CELESTIAL.DLL"]\ndisabled = true\n');
+
+      await _runtime.setModDisabled(game.path, 'celestial.dll', false);
+
+      final cfg = _readGameToml(game.path);
+      expect(cfg.keys, ['CELESTIAL.DLL']);
+      expect((cfg['CELESTIAL.DLL'] as Map)['disabled'], isFalse);
+    });
+
+    test('a game.toml that does not parse is left alone', () async {
+      final game = await installed();
+      addTearDown(() => game.deleteSync(recursive: true));
+      const broken = '["celestial.dll"\ndisabled = = true\n';
+      File(_runtime.configPath(game.path)).writeAsStringSync(broken);
+
+      expect(
+        await _runtime.setModDisabled(game.path, 'celestial.dll', true),
+        isFalse,
+      );
+      expect(File(_runtime.configPath(game.path)).readAsStringSync(), broken);
     });
 
     test('a case-mismatched section still matches the DLL', () async {
@@ -338,6 +491,81 @@ disabled = true
 
       expect(File(_runtime.configPath(game.path)).existsSync(), isTrue,
           reason: 'per-DLL settings should outlive the DLLs themselves');
+    });
+  });
+
+  group('graphic proxies', () {
+    const graphic = GraphicModsRuntime();
+
+    Future<Directory> installedProxy() async {
+      final game = _freshGame();
+      final drop = Directory.systemTemp.createTempSync('yp_gx_');
+      addTearDown(() => drop.deleteSync(recursive: true));
+      _writePlainDll(p.join(drop.path, 'd3d11.dll'));
+      File(p.join(drop.path, 'd3d11.ini')).writeAsStringSync('x=1');
+      final result = await graphic.install(
+          game.path, ThirdPartyClassifier.classify(drop.path));
+      expect(result.ok, isTrue);
+      return game;
+    }
+
+    test('install puts the proxy and its files in thirdparty/graphic',
+        () async {
+      final game = await installedProxy();
+      addTearDown(() => game.deleteSync(recursive: true));
+
+      final dir = ThirdPartyPaths.graphicMods();
+      expect(File(p.join(dir, 'd3d11.dll')).existsSync(), isTrue);
+      expect(File(p.join(dir, 'd3d11.ini')).existsSync(), isTrue);
+      expect(File(p.join(ThirdPartyPaths.gameMods(), 'd3d11.dll')).existsSync(),
+          isFalse);
+      expect(_readNams(game.path)[NamsFields.disableGraphicModsLoading.key],
+          isFalse);
+      final status = await graphic.status(game.path);
+      expect(status.installed, isTrue);
+      expect(status.graphicModsInfo!.mods.single.fileName, 'd3d11.dll');
+    });
+
+    test('disabling parks the DLL where NAMS does not look', () async {
+      final game = await installedProxy();
+      addTearDown(() => game.deleteSync(recursive: true));
+
+      await graphic.setModDisabled(game.path, 'd3d11.dll', true);
+
+      expect(
+        File(p.join(ThirdPartyPaths.graphicMods(), 'd3d11.dll')).existsSync(),
+        isFalse,
+        reason: 'NAMS loads every *.dll directly in thirdparty/graphic',
+      );
+      final mod =
+          (await graphic.status(game.path)).graphicModsInfo!.mods.single;
+      expect(mod.disabled, isTrue);
+
+      await graphic.setModDisabled(game.path, 'd3d11.dll', false);
+      expect(
+        File(p.join(ThirdPartyPaths.graphicMods(), 'd3d11.dll')).existsSync(),
+        isTrue,
+      );
+    });
+
+    test('remove clears enabled and parked DLLs and sets the flag', () async {
+      final game = await installedProxy();
+      addTearDown(() => game.deleteSync(recursive: true));
+      await graphic.setModDisabled(game.path, 'd3d11.dll', true);
+
+      await graphic.remove(game.path);
+
+      expect((await graphic.status(game.path)).installed, isFalse);
+      expect(_readNams(game.path)[NamsFields.disableGraphicModsLoading.key],
+          isTrue);
+    });
+
+    test('the graphic dir matches what NAMS scans', () {
+      expect(p.basename(ThirdPartyPaths.graphicMods()), 'graphic');
+      expect(
+        p.basename(p.dirname(ThirdPartyPaths.graphicMods())),
+        AppStrings.thirdPartyDirName,
+      );
     });
   });
 

@@ -64,6 +64,13 @@ void main() {
       expect(cmd.env!['WINEDEBUG'], '-all');
     });
 
+    test('passes only its own variables, the rest is inherited', () {
+      expect(
+        cmd.env!.keys,
+        unorderedEquals(['WINEDEBUG', 'CX_BOTTLE', 'WINEPREFIX']),
+      );
+    });
+
     test('names the bottle in the label', () {
       expect(cmd.label, 'CrossOver Wine (Steam)');
     });

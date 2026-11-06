@@ -16,6 +16,7 @@ import 'package:yp_launcher/services/launch_wrapper_service.dart';
 import 'package:yp_launcher/services/launcher_setup_service.dart';
 import 'package:yp_launcher/services/log_service.dart';
 import 'package:yp_launcher/services/nams_cli_service.dart';
+import 'package:yp_launcher/services/platform/platform_adapter.dart';
 import 'package:yp_launcher/services/platform_gate.dart';
 import 'package:yp_launcher/services/process_service.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
@@ -515,6 +516,14 @@ class _LauncherSettingsViewState extends ConsumerState<LauncherSettingsView> {
         return [_statusLine(context, false, l10n.verifyNoRuntime)];
       case VerifyStatus.steamNotRunning:
         return [_statusLine(context, false, l10n.verifySteamNotRunning)];
+      case VerifyStatus.timedOut:
+        return [
+          _statusLine(
+            context,
+            false,
+            PlatformAdapter.current.verifyTimedOut(l10n),
+          ),
+        ];
       case VerifyStatus.cannotParse:
       case VerifyStatus.error:
         return [_statusLine(context, false, l10n.verifyInstallError)];

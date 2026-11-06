@@ -111,74 +111,18 @@ class NamsFields {
     tooltip: (l) => l.tooltipDisablePluginLoading,
   );
 
+  static final disableMainOverlay = ConfigField<bool>(
+    key: 'disable_main_overlay',
+    defaultValue: false,
+    label: (l) => l.labelDisableMainOverlay,
+    tooltip: (l) => l.tooltipDisableMainOverlay,
+  );
+
   static final disableContentFeatures = ConfigField<bool>(
     key: 'disable_content_features',
     defaultValue: false,
     label: (l) => l.labelDisableContentFeatures,
     tooltip: (l) => l.tooltipDisableContentFeatures,
-  );
-
-  static final contentItems = ConfigField<bool>(
-    key: 'content_items',
-    defaultValue: true,
-    label: (l) => l.labelContentItems,
-    tooltip: (l) => l.tooltipContentItems,
-  );
-
-  static final contentAccessories = ConfigField<bool>(
-    key: 'content_accessories',
-    defaultValue: true,
-    label: (l) => l.labelContentAccessories,
-    tooltip: (l) => l.tooltipContentAccessories,
-  );
-
-  static final contentAssembleMeshes = ConfigField<bool>(
-    key: 'content_assemble_meshes',
-    defaultValue: true,
-    label: (l) => l.labelContentAssembleMeshes,
-    tooltip: (l) => l.tooltipContentAssembleMeshes,
-  );
-
-  static final contentEffectAreas = ConfigField<bool>(
-    key: 'content_effect_areas',
-    defaultValue: true,
-    label: (l) => l.labelContentEffectAreas,
-    tooltip: (l) => l.tooltipContentEffectAreas,
-  );
-
-  static final contentQuestIntegration = ConfigField<bool>(
-    key: 'content_quest_integration',
-    defaultValue: true,
-    label: (l) => l.labelContentQuestIntegration,
-    tooltip: (l) => l.tooltipContentQuestIntegration,
-  );
-
-  static final contentEffectsApplier = ConfigField<bool>(
-    key: 'content_effects_applier',
-    defaultValue: true,
-    label: (l) => l.labelContentEffectsApplier,
-    tooltip: (l) => l.tooltipContentEffectsApplier,
-  );
-
-  static final contentEquipTracker = ConfigField<bool>(
-    key: 'content_equip_tracker',
-    defaultValue: true,
-    label: (l) => l.labelContentEquipTracker,
-    tooltip: (l) => l.tooltipContentEquipTracker,
-  );
-
-  static final contentMcd = ConfigField<bool>(
-    key: 'content_mcd',
-    defaultValue: true,
-    label: (l) => l.labelContentMcd,
-    tooltip: (l) => l.tooltipContentMcd,
-  );
-
-  static final contentBuddyRubySelector = ConfigField<bool>(
-    key: 'content_buddy_ruby_selector',
-    defaultValue: true,
-    label: (l) => l.labelContentBuddyRubySelector,
-    tooltip: (l) => l.tooltipContentBuddyRubySelector,
   );
 
   static final outfitSwapVisualEffects = ConfigField<bool>(
@@ -215,6 +159,14 @@ class NamsFields {
     defaultValue: false,
     label: (l) => l.labelDisableGameModsLoading,
     tooltip: (l) => l.tooltipDisableGameModsLoading,
+  );
+
+  static final disableGraphicModsLoading = ConfigField<bool>(
+    key: 'disable_graphic_mods_loading',
+    defaultValue: false,
+    restartRequired: true,
+    label: (l) => l.labelDisableGraphicModsLoading,
+    tooltip: (l) => l.tooltipDisableGraphicModsLoading,
   );
 
   static final disableTextureInjection = ConfigField<bool>(
@@ -292,7 +244,6 @@ class NamsFields {
     section: 'mouse',
     label: (l) => l.labelFixCameraAcceleration,
     tooltip: (l) => l.tooltipFixCameraAcceleration,
-    restartRequired: true,
   );
 
   static final sensitivity = ConfigField<double>(
@@ -304,7 +255,6 @@ class NamsFields {
     min: 0.25,
     max: 10.0,
     step: 0.25,
-    restartRequired: true,
   );
 
   static final thirdPersonMode = ConfigField<bool>(
@@ -340,9 +290,9 @@ class NamsFields {
     section: 'mouse',
     label: (l) => l.labelThirdPersonSensX,
     tooltip: (l) => l.tooltipThirdPersonSensX,
-    min: -5.0,
-    max: 5.0,
-    step: 0.05,
+    min: -100.0,
+    max: 100.0,
+    step: 0.1,
   );
 
   static final thirdPersonSensitivityY = ConfigField<double>(
@@ -351,9 +301,9 @@ class NamsFields {
     section: 'mouse',
     label: (l) => l.labelThirdPersonSensY,
     tooltip: (l) => l.tooltipThirdPersonSensY,
-    min: -5.0,
-    max: 5.0,
-    step: 0.05,
+    min: -100.0,
+    max: 100.0,
+    step: 0.1,
   );
 
   static final aimMode = ConfigField<bool>(
@@ -476,41 +426,294 @@ class NamsFields {
     tooltip: (l) => l.tooltipDebugMenuKey,
     restartRequired: true,
   );
+}
 
-  static final globalHeapExtra = ConfigField<int>(
-    key: 'global_heap_extra',
-    defaultValue: 0,
-    section: 'heap',
-    label: (l) => l.heapScriptEngine,
+class NamsContentGroup {
+  final String Function(AppLocalizations l10n) title;
+  final List<ConfigField<bool>> fields;
+
+  const NamsContentGroup(this.title, this.fields);
+}
+
+class NamsContentFields {
+  static const section = 'content';
+
+  static ConfigField<bool> _feature(
+    String key,
+    String Function(AppLocalizations l10n) label,
+    String Function(AppLocalizations l10n) tooltip,
+  ) {
+    return ConfigField<bool>(
+      key: key,
+      defaultValue: true,
+      section: section,
+      restartRequired: true,
+      label: label,
+      tooltip: tooltip,
+    );
+  }
+
+  static final customItems = _feature(
+    'custom_items',
+    (l) => l.labelContentCustomItems,
+    (l) => l.tooltipContentCustomItems,
   );
 
-  static final plFileHeapExtra = ConfigField<int>(
-    key: 'pl_file_heap_extra',
-    defaultValue: 0,
-    section: 'heap',
-    label: (l) => l.heapPlayerModels,
+  static final customWeapons = _feature(
+    'custom_weapons',
+    (l) => l.labelContentCustomWeapons,
+    (l) => l.tooltipContentCustomWeapons,
   );
 
-  static final plVramHeapExtra = ConfigField<int>(
-    key: 'pl_vram_heap_extra',
-    defaultValue: 0,
-    section: 'heap',
-    label: (l) => l.heapPlayerTextures,
+  static final weaponPatches = _feature(
+    'weapon_patches',
+    (l) => l.labelContentWeaponPatches,
+    (l) => l.tooltipContentWeaponPatches,
   );
 
-  static final emBgFileHeapExtra = ConfigField<int>(
-    key: 'em_bg_file_heap_extra',
-    defaultValue: 0,
-    section: 'heap',
-    label: (l) => l.heapEnemyBgModels,
+  static final customOutfits = _feature(
+    'custom_outfits',
+    (l) => l.labelContentCustomOutfits,
+    (l) => l.tooltipContentCustomOutfits,
   );
 
-  static final emBgVramHeapExtra = ConfigField<int>(
-    key: 'em_bg_vram_heap_extra',
-    defaultValue: 0,
-    section: 'heap',
-    label: (l) => l.heapEnemyBgTextures,
+  static final customHairsprays = _feature(
+    'custom_hairsprays',
+    (l) => l.labelContentCustomHairsprays,
+    (l) => l.tooltipContentCustomHairsprays,
   );
+
+  static final accessories = _feature(
+    'accessories',
+    (l) => l.labelContentAccessories,
+    (l) => l.tooltipContentAccessories,
+  );
+
+  static final playerMeshSwaps = _feature(
+    'player_mesh_swaps',
+    (l) => l.labelContentPlayerMeshSwaps,
+    (l) => l.tooltipContentPlayerMeshSwaps,
+  );
+
+  static final meshVisibility = _feature(
+    'mesh_visibility',
+    (l) => l.labelContentMeshVisibility,
+    (l) => l.tooltipContentMeshVisibility,
+  );
+
+  static final shopItems = _feature(
+    'shop_items',
+    (l) => l.labelContentShopItems,
+    (l) => l.tooltipContentShopItems,
+  );
+
+  static final itemShortcutMenu = _feature(
+    'item_shortcut_menu',
+    (l) => l.labelContentItemShortcutMenu,
+    (l) => l.tooltipContentItemShortcutMenu,
+  );
+
+  static final effectRules = _feature(
+    'effect_rules',
+    (l) => l.labelContentEffectRules,
+    (l) => l.tooltipContentEffectRules,
+  );
+
+  static final outfitSelectorNpc = _feature(
+    'outfit_selector_npc',
+    (l) => l.labelContentOutfitSelectorNpc,
+    (l) => l.tooltipContentOutfitSelectorNpc,
+  );
+
+  static final buddyOutfitMenu = _feature(
+    'buddy_outfit_menu',
+    (l) => l.labelContentBuddyOutfitMenu,
+    (l) => l.tooltipContentBuddyOutfitMenu,
+  );
+
+  static final customQuests = _feature(
+    'custom_quests',
+    (l) => l.labelContentCustomQuests,
+    (l) => l.tooltipContentCustomQuests,
+  );
+
+  static final customMails = _feature(
+    'custom_mails',
+    (l) => l.labelContentCustomMails,
+    (l) => l.tooltipContentCustomMails,
+  );
+
+  static final customVoiceLines = _feature(
+    'custom_voice_lines',
+    (l) => l.labelContentCustomVoiceLines,
+    (l) => l.tooltipContentCustomVoiceLines,
+  );
+
+  static final customMaps = _feature(
+    'custom_maps',
+    (l) => l.labelContentCustomMaps,
+    (l) => l.tooltipContentCustomMaps,
+  );
+
+  static final mapLayouts = _feature(
+    'map_layouts',
+    (l) => l.labelContentMapLayouts,
+    (l) => l.tooltipContentMapLayouts,
+  );
+
+  static final novels = _feature(
+    'novels',
+    (l) => l.labelContentNovels,
+    (l) => l.tooltipContentNovels,
+  );
+
+  static final archives = _feature(
+    'archives',
+    (l) => l.labelContentArchives,
+    (l) => l.tooltipContentArchives,
+  );
+
+  static final cutsceneReplacements = _feature(
+    'cutscene_replacements',
+    (l) => l.labelContentCutsceneReplacements,
+    (l) => l.tooltipContentCutsceneReplacements,
+  );
+
+  static final cameraSettings = _feature(
+    'camera_settings',
+    (l) => l.labelContentCameraSettings,
+    (l) => l.tooltipContentCameraSettings,
+  );
+
+  static final scriptOverlays = _feature(
+    'script_overlays',
+    (l) => l.labelContentScriptOverlays,
+    (l) => l.tooltipContentScriptOverlays,
+  );
+
+  static final scriptGroups = _feature(
+    'script_groups',
+    (l) => l.labelContentScriptGroups,
+    (l) => l.tooltipContentScriptGroups,
+  );
+
+  static final rubyPatches = _feature(
+    'ruby_patches',
+    (l) => l.labelContentRubyPatches,
+    (l) => l.tooltipContentRubyPatches,
+  );
+
+  static final customMusic = _feature(
+    'custom_music',
+    (l) => l.labelContentCustomMusic,
+    (l) => l.tooltipContentCustomMusic,
+  );
+
+  static final ambientSounds = _feature(
+    'ambient_sounds',
+    (l) => l.labelContentAmbientSounds,
+    (l) => l.tooltipContentAmbientSounds,
+  );
+
+  static final customSounds = _feature(
+    'custom_sounds',
+    (l) => l.labelContentCustomSounds,
+    (l) => l.tooltipContentCustomSounds,
+  );
+
+  static final effectAreas = _feature(
+    'effect_areas',
+    (l) => l.labelContentEffectAreas,
+    (l) => l.tooltipContentEffectAreas,
+  );
+
+  static final effectTypeMute = _feature(
+    'effect_type_mute',
+    (l) => l.labelContentEffectTypeMute,
+    (l) => l.tooltipContentEffectTypeMute,
+  );
+
+  static final globalEffects = _feature(
+    'global_effects',
+    (l) => l.labelContentGlobalEffects,
+    (l) => l.tooltipContentGlobalEffects,
+  );
+
+  static final lightingFilters = _feature(
+    'lighting_filters',
+    (l) => l.labelContentLightingFilters,
+    (l) => l.tooltipContentLightingFilters,
+  );
+
+  static final clothPhysics = _feature(
+    'cloth_physics',
+    (l) => l.labelContentClothPhysics,
+    (l) => l.tooltipContentClothPhysics,
+  );
+
+  static final customTexts = _feature(
+    'custom_texts',
+    (l) => l.labelContentCustomTexts,
+    (l) => l.tooltipContentCustomTexts,
+  );
+
+  static final uiOverrides = _feature(
+    'ui_overrides',
+    (l) => l.labelContentUiOverrides,
+    (l) => l.tooltipContentUiOverrides,
+  );
+
+  static final List<NamsContentGroup> groups = [
+    NamsContentGroup((l) => l.contentGroupItems, [
+      customItems,
+      customWeapons,
+      weaponPatches,
+      customOutfits,
+      customHairsprays,
+      accessories,
+      playerMeshSwaps,
+      meshVisibility,
+      shopItems,
+      itemShortcutMenu,
+      effectRules,
+      outfitSelectorNpc,
+      buddyOutfitMenu,
+    ]),
+    NamsContentGroup((l) => l.contentGroupStory, [
+      customQuests,
+      customMails,
+      customVoiceLines,
+      customMaps,
+      mapLayouts,
+      novels,
+      archives,
+      cutsceneReplacements,
+      cameraSettings,
+    ]),
+    NamsContentGroup((l) => l.contentGroupScripts, [
+      scriptOverlays,
+      scriptGroups,
+      rubyPatches,
+    ]),
+    NamsContentGroup((l) => l.contentGroupAudio, [
+      customMusic,
+      ambientSounds,
+      customSounds,
+    ]),
+    NamsContentGroup((l) => l.contentGroupVisuals, [
+      effectAreas,
+      effectTypeMute,
+      globalEffects,
+      lightingFilters,
+      clothPhysics,
+      customTexts,
+      uiOverrides,
+    ]),
+  ];
+
+  static final List<ConfigField<bool>> all = [
+    for (final group in groups) ...group.fields,
+  ];
 }
 
 class NamsBindingFields {
@@ -1170,7 +1373,10 @@ class LodModFields {
 
   static final highGridsHiddenMeshes = ConfigField<List<dynamic>>(
     key: 'hidden_meshes',
-    defaultValue: const [],
+    defaultValue: const [
+      {'mesh': 'nolowmap_enkei', 'from_rings': 2, 'grid': 0x1121},
+      {'mesh': 'nolowmap_seaplane', 'from_rings': 2, 'grid': 0x0922},
+    ],
     section: 'high_grids',
     label: (l) => l.labelHighGridsHiddenMeshes,
     tooltip: (l) => l.tooltipHighGridsHiddenMeshes,
@@ -1235,6 +1441,14 @@ class TextureInjectionFields {
     defaultValue: false,
     label: (l) => l.labelLoadOnlyRelevant,
     tooltip: (l) => l.tooltipLoadOnlyRelevant,
+  );
+
+  static final pinPriorityTextures = ConfigField<bool>(
+    key: 'pin_priority_textures',
+    defaultValue: true,
+    restartRequired: true,
+    label: (l) => l.labelPinPriorityTextures,
+    tooltip: (l) => l.tooltipPinPriorityTextures,
   );
 
   static final loadOrder = ConfigField<List<String>>(
@@ -1372,16 +1586,23 @@ class YpWorkspaceFields {
 
   static final shadersEnabled = ConfigField<bool>(
     key: 'shadersEnabled',
-    defaultValue: false,
+    defaultValue: true,
     label: (l) => l.labelShaders,
     tooltip: (l) => l.tooltipShaders,
   );
 
   static final soundEnabled = ConfigField<bool>(
     key: 'soundEnabled',
-    defaultValue: false,
+    defaultValue: true,
     label: (l) => l.labelSound,
     tooltip: (l) => l.tooltipSound,
+  );
+
+  static final editorMcpEnabled = ConfigField<bool>(
+    key: 'editorMcpEnabled',
+    defaultValue: false,
+    label: (l) => l.labelEditorMcp,
+    tooltip: (l) => l.tooltipEditorMcp,
   );
 
   static final impeller = ConfigField<bool>(
@@ -1447,28 +1668,28 @@ class YpRandomizerFields {
 
   static final randomizeGroundEnemies = ConfigField<bool>(
     key: 'randomizeGroundEnemies',
-    defaultValue: false,
+    defaultValue: true,
     label: (l) => l.labelGroundEnemies,
     tooltip: (l) => l.tooltipGroundEnemies,
   );
 
   static final randomizeFlyingEnemies = ConfigField<bool>(
     key: 'randomizeFlyingEnemies',
-    defaultValue: false,
+    defaultValue: true,
     label: (l) => l.labelFlyingEnemies,
     tooltip: (l) => l.tooltipFlyingEnemies,
   );
 
   static final allowBigEnemies = ConfigField<bool>(
     key: 'allowBigEnemies',
-    defaultValue: false,
+    defaultValue: true,
     label: (l) => l.labelAllowBigEnemies,
     tooltip: (l) => l.tooltipAllowBigEnemies,
   );
 
   static final includeDlcEnemies = ConfigField<bool>(
     key: 'includeDlcEnemies',
-    defaultValue: false,
+    defaultValue: true,
     label: (l) => l.labelIncludeDlcEnemies,
     tooltip: (l) => l.tooltipIncludeDlcEnemies,
   );

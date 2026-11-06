@@ -846,6 +846,13 @@ class _LodmodViewState extends ConsumerState<LodmodView> {
                         l10n,
                         LodModFields.bloomReferenceHeight,
                       ),
+                      _bloom2017Button(
+                        context,
+                        config,
+                        notifier,
+                        gameDir,
+                        l10n,
+                      ),
                       ConfigComparison(
                         beforeImage: 'assets/images/config/bloom_2021.jpg',
                         afterImage: 'assets/images/config/bloom_2017.jpg',
@@ -868,13 +875,6 @@ class _LodmodViewState extends ConsumerState<LodmodView> {
                         decimals: 1,
                       ),
                       _bloomDropLevelsDropdown(config, notifier, gameDir, l10n),
-                      _bloom2017Button(
-                        context,
-                        config,
-                        notifier,
-                        gameDir,
-                        l10n,
-                      ),
                     ]),
                     _card(context, l10n.cardGlobalIllumination, [
                       _bool(
