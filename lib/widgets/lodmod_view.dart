@@ -147,6 +147,7 @@ class _LodmodViewState extends ConsumerState<LodmodView> {
   }) {
     return ConfigFieldSlider(
       label: field.label(l10n),
+      defaultValue: field.defaultValue,
       tooltip: field.tooltip?.call(l10n),
       restartRequired: field.restartRequired,
       showApplyMarker: true,
@@ -168,6 +169,7 @@ class _LodmodViewState extends ConsumerState<LodmodView> {
   ) {
     return ConfigFieldBool(
       label: field.label(l10n),
+      defaultValue: field.defaultValue,
       tooltip: field.tooltip?.call(l10n),
       restartRequired: field.restartRequired,
       showApplyMarker: true,
@@ -185,6 +187,7 @@ class _LodmodViewState extends ConsumerState<LodmodView> {
   ) {
     return ConfigFieldInt(
       label: field.label(l10n),
+      defaultValue: field.defaultValue,
       tooltip: field.tooltip?.call(l10n),
       restartRequired: field.restartRequired,
       showApplyMarker: true,
@@ -209,6 +212,7 @@ class _LodmodViewState extends ConsumerState<LodmodView> {
   ) {
     return ConfigFieldBool(
       label: field.label(l10n),
+      defaultValue: field.defaultValue,
       tooltip: field.tooltip?.call(l10n),
       restartRequired: field.restartRequired,
       showApplyMarker: true,
@@ -233,6 +237,7 @@ class _LodmodViewState extends ConsumerState<LodmodView> {
     final current = field.valueIn(config.lodmodValues);
     return ConfigFieldSlider(
       label: field.label(l10n),
+      defaultValue: field.defaultValue.toDouble(),
       tooltip: field.tooltip?.call(l10n),
       restartRequired: field.restartRequired,
       showApplyMarker: true,
@@ -269,7 +274,7 @@ class _LodmodViewState extends ConsumerState<LodmodView> {
         child: Tooltip(
           message: l10n.bloom2017Tooltip,
           decoration: BoxDecoration(
-            color: const Color(0xE6303030),
+            color: AppColors.tooltipBackground,
             borderRadius: BorderRadius.circular(AppSizes.borderRadius(context)),
           ),
           child: HoverButton(
@@ -292,6 +297,7 @@ class _LodmodViewState extends ConsumerState<LodmodView> {
   ) {
     return ConfigFieldGridRules(
       label: field.label(l10n),
+      defaultValue: field.defaultValue,
       tooltip: field.tooltip?.call(l10n),
       restartRequired: field.restartRequired,
       rules: field.valueIn(config.lodmodValues),
@@ -317,6 +323,7 @@ class _LodmodViewState extends ConsumerState<LodmodView> {
     final current = field.valueIn(config.lodmodValues);
     return ConfigFieldDropdown(
       label: field.label(l10n),
+      defaultValue: field.defaultValue,
       tooltip: field.tooltip?.call(l10n),
       restartRequired: field.restartRequired,
       showApplyMarker: true,
@@ -357,6 +364,7 @@ class _LodmodViewState extends ConsumerState<LodmodView> {
     };
     return ConfigFieldDropdown(
       label: field.label(l10n),
+      defaultValue: (field.defaultValue * 100).round(),
       tooltip: field.tooltip?.call(l10n),
       restartRequired: field.restartRequired,
       showApplyMarker: true,
@@ -375,6 +383,7 @@ class _LodmodViewState extends ConsumerState<LodmodView> {
     final field = LodModFields.shadowResolution;
     return ConfigFieldDropdown(
       label: field.label(l10n),
+      defaultValue: field.defaultValue,
       tooltip: field.tooltip?.call(l10n),
       restartRequired: field.restartRequired,
       showApplyMarker: true,
@@ -508,6 +517,7 @@ class _LodmodViewState extends ConsumerState<LodmodView> {
     final field = LodModFields.bloomDropCoarseLevels;
     return ConfigFieldDropdown(
       label: field.label(l10n),
+      defaultValue: field.defaultValue,
       tooltip: field.tooltip?.call(l10n),
       restartRequired: field.restartRequired,
       showApplyMarker: true,
@@ -531,6 +541,7 @@ class _LodmodViewState extends ConsumerState<LodmodView> {
     final field = LodModFields.giWorkgroupSize;
     return ConfigFieldDropdown(
       label: field.label(l10n),
+      defaultValue: field.defaultValue,
       tooltip: field.tooltip?.call(l10n),
       restartRequired: field.restartRequired,
       showApplyMarker: true,
@@ -549,6 +560,7 @@ class _LodmodViewState extends ConsumerState<LodmodView> {
     final field = LodModFields.shadowCascades;
     return ConfigFieldDropdown(
       label: field.label(l10n),
+      defaultValue: field.defaultValue,
       tooltip: field.tooltip?.call(l10n),
       restartRequired: field.restartRequired,
       showApplyMarker: true,
@@ -579,6 +591,7 @@ class _LodmodViewState extends ConsumerState<LodmodView> {
       for (var i = 0; i < 4; i++)
         ConfigFieldSlider(
           label: '${field.label(l10n)} - ${l10n.shadowBlurCascade(i + 1)}',
+          defaultValue: (field.defaultValue[i] as num).toDouble(),
           tooltip: i == 0 ? field.tooltip?.call(l10n) : null,
           restartRequired: field.restartRequired,
           showApplyMarker: true,

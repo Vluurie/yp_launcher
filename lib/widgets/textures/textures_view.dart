@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:isolate';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,15 +21,13 @@ import 'package:yp_launcher/services/archive_service.dart';
 import 'package:yp_launcher/widgets/config_field_dropdown.dart';
 import 'package:yp_launcher/models/config_fields.dart';
 import 'package:yp_launcher/services/texture_install_service.dart';
-import 'package:yp_launcher/services/mods_service.dart';
 import 'package:yp_launcher/services/nams_cli_service.dart';
-import 'package:yp_launcher/models/installed_mod.dart';
-import 'package:yp_launcher/widgets/mods/mod_variant_dialog.dart';
 import 'package:yp_launcher/widgets/texture_widgets.dart';
 import 'package:yp_launcher/widgets/textures/texture_dialogs.dart';
 import 'package:yp_launcher/widgets/textures/texture_header.dart';
 import 'package:yp_launcher/widgets/textures/texture_drop_zone.dart';
 import 'package:yp_launcher/widgets/textures/texture_inject_card.dart';
+import 'package:yp_launcher/widgets/textures/texture_pack_install.dart';
 
 class TexturesView extends ConsumerStatefulWidget {
   const TexturesView({super.key});
@@ -77,7 +74,7 @@ class _TexturesViewState extends ConsumerState<TexturesView> {
   String _deleteMessage = '';
 
   String get _gameDir => ref.read(appStateControllerProvider).selectedDirectory;
-  String get _textureDir => path.join(_gameDir, 'nams', 'inject', 'textures');
+  String get _textureDir => textureInjectDir(_gameDir);
 
   @override
   void initState() {
@@ -254,18 +251,12 @@ class _TexturesViewState extends ConsumerState<TexturesView> {
       AppColors.accentPrimary,
     );
 
-    final effectivePaths = <String>[];
-    final archiveNames = <String, String>{};
-    final tempExtractDirs = <String>[];
-
-    final archivePaths = paths.where(isArchive).toList();
-    final nonArchivePaths = paths.where((p) => !isArchive(p)).toList();
-    effectivePaths.addAll(nonArchivePaths);
-
-    for (final archivePath in archivePaths) {
-      final extracted = await ArchiveService.extract(
-        archivePath,
-        onProgress: (percent, currentFile) {
+    try {
+      final count = await TexturePackInstall.run(
+        context,
+        paths: paths,
+        textureDir: _textureDir,
+        onExtractProgress: (percent, currentFile) {
           if (!mounted) return;
           setState(() {
             _installPhase = currentFile == null || currentFile.isEmpty
@@ -277,148 +268,59 @@ class _TexturesViewState extends ConsumerState<TexturesView> {
             _progressPercent = percent;
           });
         },
-      );
-      if (extracted == null) {
-        _notify(
+        onExtractFailed: (_) => _notify(
           l10n.failedToExtractArchive,
           Icons.error_outline,
           AppColors.error,
-        );
-        continue;
-      }
-      tempExtractDirs.add(extracted);
-
-      final packs = await ModsService.detectTexturePacks(extracted);
-      if (!mounted) return;
-
-      if (packs.length <= 1) {
-        final fallback = path.basenameWithoutExtension(archivePath);
-        var name = packs.isNotEmpty ? packs.first.label : fallback;
-        if (name == path.basename(extracted)) {
-          name = await _promptPackName(fallback) ?? fallback;
-        }
-        if (!mounted) return;
-        effectivePaths.add(extracted);
-        archiveNames[extracted] = name;
-      } else {
-        final chosen = await showModVariantDialog(
-          context,
-          variants: [
-            for (final p in packs)
-              ModVariant(
-                subPath: p.path,
-                label: p.label,
-                kind: ModKind.texture,
-                textureOnly: true,
+        ),
+        promptName: _promptPackName,
+        chooseMergeTarget: _detectedFolders.isEmpty
+            ? null
+            : () => showTextureMergeDialog(
+                context: context,
+                detectedFolders: _detectedFolders,
               ),
-          ],
-        );
-        if (chosen == null || chosen.isEmpty) {
+        onCopyStart: () {
+          if (!mounted) return;
+          setState(() {
+            _installPhase = l10n.texturesProgressCopying;
+            _progressBytes = 0;
+            _progressTotalBytes = 0;
+            _progressFiles = 0;
+            _progressTotalFiles = 0;
+            _progressPercent = 0;
+          });
+        },
+        onCopyProgress: (progress) {
+          if (!mounted) return;
+          setState(() {
+            _progressBytes = progress.copied;
+            _progressTotalBytes = progress.total;
+            _progressFiles = progress.files;
+            _progressTotalFiles = progress.totalFiles;
+            _progressPercent = progress.percent;
+          });
+        },
+      );
+      if (count == null) {
+        if (mounted) {
           setState(() {
             _installing = false;
             _installPhase = '';
           });
-          ref.read(texturesBusyProvider.notifier).state = false;
-          return;
         }
-        final packName = chosen.length == 1
-            ? chosen.first.label
-            : path.basenameWithoutExtension(archivePath);
-        for (final v in chosen) {
-          effectivePaths.add(v.subPath);
-          archiveNames[v.subPath] = packName;
-        }
+        ref.read(texturesBusyProvider.notifier).state = false;
+        return;
       }
-    }
-
-    if (effectivePaths.isEmpty) {
-      setState(() {
-        _installing = false;
-        _installPhase = '';
-      });
-      ref.read(texturesBusyProvider.notifier).state = false;
-      return;
-    }
-
-    try {
-      if (_detectedFolders.isNotEmpty && effectivePaths.length == 1) {
-        final choice = await showTextureMergeDialog(
-          context: context,
-          detectedFolders: _detectedFolders,
-        );
-        if (choice == null) {
-          setState(() => _installing = false);
-          ref.read(texturesBusyProvider.notifier).state = false;
-          return;
-        }
-        if (choice.isNotEmpty) {
-          for (var i = 0; i < effectivePaths.length; i++) {
-            final ep = effectivePaths[i];
-            archiveNames[ep] = choice;
-          }
-        }
-      }
-
-      if (mounted) {
-        setState(() {
-          _installPhase = l10n.texturesProgressCopying;
-          _progressBytes = 0;
-          _progressTotalBytes = 0;
-          _progressFiles = 0;
-          _progressTotalFiles = 0;
-          _progressPercent = 0;
-        });
-      }
-
-      final installPaths = effectivePaths.map((ep) {
-        final name = archiveNames[ep];
-        return name != null ? '$ep|$name' : ep;
-      }).toList();
-
-      final receivePort = ReceivePort();
-      final isolate = await Isolate.spawn(
-        installTexturesWithProgress,
-        TextureInstallProgressParams(
-          paths: installPaths,
-          textureDir: _textureDir,
-          sendPort: receivePort.sendPort,
-        ),
-      );
-
-      int count = 0;
-      await for (final message in receivePort) {
-        if (message is Map<String, dynamic>) {
-          final type = message['type'] as String;
-          if (type == 'progress') {
-            if (mounted) {
-              final copied = message['copied'] as int;
-              final total = message['total'] as int;
-              setState(() {
-                _progressBytes = copied;
-                _progressTotalBytes = total;
-                _progressFiles = message['files'] as int;
-                _progressTotalFiles = message['totalFiles'] as int;
-                _progressPercent = total > 0 ? copied / total : 0;
-              });
-            }
-          } else if (type == 'done') {
-            count = message['count'] as int;
-            break;
-          }
-        }
-      }
-
-      isolate.kill(priority: Isolate.immediate);
-      receivePort.close();
-
-      if (count > 0)
+      if (count > 0) {
         _notify(
           l10n.installedTextureCount(count),
           Icons.check_circle,
           AppColors.success,
         );
-      else
+      } else {
         _notify(l10n.noTextureFilesFound, Icons.warning, AppColors.warning);
+      }
     } catch (e) {
       _notify(
         l10n.installationFailed('$e'),
@@ -436,12 +338,6 @@ class _TexturesViewState extends ConsumerState<TexturesView> {
       });
     }
     ref.read(texturesBusyProvider.notifier).state = false;
-
-    for (final dir in tempExtractDirs) {
-      try {
-        await Directory(dir).delete(recursive: true);
-      } catch (_) {}
-    }
   }
 
   Future<bool> _dropContainsDds(List<String> paths) async {

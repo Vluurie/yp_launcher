@@ -13,7 +13,7 @@ class BusyOverlay extends StatelessWidget {
     return Positioned.fill(
       child: AbsorbPointer(
         child: Container(
-          color: Colors.black.withValues(alpha: 0.4),
+          color: AppColors.scrim.withValues(alpha: 0.4),
           alignment: Alignment.center,
           child: Container(
             padding: EdgeInsets.symmetric(

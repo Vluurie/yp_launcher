@@ -510,6 +510,18 @@ abstract class AppLocalizations {
   /// **'Tells the system to run the game on the dedicated graphics card instead of the power-saving one. Only matters on PCs with two GPUs (e.g. gaming laptops).'**
   String get launchOptionPreferDedicatedGpuTooltip;
 
+  /// No description provided for @launchOptionVanilla.
+  ///
+  /// In en, this message translates to:
+  /// **'Start vanilla (no mods, for debugging)'**
+  String get launchOptionVanilla;
+
+  /// No description provided for @launchOptionVanillaTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Starts NieR through NAMS without the modloader: no mods, plugins, textures or overlay. Use it to check whether a problem also happens in the unmodded game. Turns itself off when the launcher restarts.'**
+  String get launchOptionVanillaTooltip;
+
   /// No description provided for @failTitlePanic.
   ///
   /// In en, this message translates to:
@@ -1649,6 +1661,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'NAMS'**
   String get tabNams;
+
+  /// No description provided for @cardChangedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} changed'**
+  String cardChangedCount(int count);
+
+  /// No description provided for @cardChangedTooltipHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Changed from default:'**
+  String get cardChangedTooltipHeader;
 
   /// No description provided for @tabLodMod.
   ///
@@ -3921,7 +3945,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingModInstallAskBody.
   ///
   /// In en, this message translates to:
-  /// **'Got a .zip or folder? We\'ll handle it.\n(Textures and cutscenes have their own tabs - install those later.)'**
+  /// **'Got a .zip or folder? We\'ll handle it, texture packs too.\n(Cutscenes have their own tab - install those later.)'**
   String get onboardingModInstallAskBody;
 
   /// No description provided for @onboardingModInstallYes.
@@ -3984,47 +4008,83 @@ abstract class AppLocalizations {
   /// **'That does not look like a valid NAMS mod. Make sure it is a .zip / .7z file with a mod.toml or a recognised data layout.'**
   String get onboardingModInstallNotAMod;
 
-  /// No description provided for @onboardingOutfitHintHeader.
+  /// No description provided for @onboardingTexturePackChip.
   ///
   /// In en, this message translates to:
-  /// **'To wear it'**
-  String get onboardingOutfitHintHeader;
-
-  /// No description provided for @onboardingOutfitHintCompat.
-  ///
-  /// In en, this message translates to:
-  /// **'Buy or equip from your inventory.'**
-  String get onboardingOutfitHintCompat;
-
-  /// No description provided for @onboardingOutfitHintData.
-  ///
-  /// In en, this message translates to:
-  /// **'F1 in-game → wardrobe icon (top-left).'**
-  String get onboardingOutfitHintData;
-
-  /// No description provided for @onboardingOutfitHintMultiOutfit.
-  ///
-  /// In en, this message translates to:
-  /// **'Or use Multi-Outfit NPC at Resistance Camp.'**
-  String get onboardingOutfitHintMultiOutfit;
-
-  /// No description provided for @onboardingOutfitHintMultiOutfitLink.
-  ///
-  /// In en, this message translates to:
-  /// **'Get Multi-Outfit NPC'**
-  String get onboardingOutfitHintMultiOutfitLink;
-
-  /// No description provided for @onboardingOutfitHintMultiOutfitUrl.
-  ///
-  /// In en, this message translates to:
-  /// **'https://www.nexusmods.com/nierautomata/mods/789'**
-  String get onboardingOutfitHintMultiOutfitUrl;
+  /// **'{name} (texture pack)'**
+  String onboardingTexturePackChip(String name);
 
   /// No description provided for @onboardingModInstallFailed.
   ///
   /// In en, this message translates to:
   /// **'Install failed: {reason}'**
   String onboardingModInstallFailed(String reason);
+
+  /// No description provided for @outfitGuideTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How to wear your new outfit'**
+  String get outfitGuideTitle;
+
+  /// No description provided for @outfitGuideIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'\"{name}\" is installed. You can put it on in three ways:'**
+  String outfitGuideIntro(String name);
+
+  /// No description provided for @outfitGuideWardrobeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'YoRHa Protocol wardrobe'**
+  String get outfitGuideWardrobeTitle;
+
+  /// No description provided for @outfitGuideWardrobeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'In game, press {key} to open YoRHa Protocol, click the wardrobe icon at the top left and pick the outfit.'**
+  String outfitGuideWardrobeBody(String key);
+
+  /// No description provided for @outfitGuideNpcTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Multi-Outfit NPC'**
+  String get outfitGuideNpcTitle;
+
+  /// No description provided for @outfitGuideNpcBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Talk to the Multi-Outfit NPC at the Resistance Camp and choose the outfit.'**
+  String get outfitGuideNpcBody;
+
+  /// No description provided for @outfitGuideNpcLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Get Multi-Outfit NPC'**
+  String get outfitGuideNpcLink;
+
+  /// No description provided for @outfitGuideDefaultTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Wear it from game start'**
+  String get outfitGuideDefaultTitle;
+
+  /// No description provided for @outfitGuideDefaultBody.
+  ///
+  /// In en, this message translates to:
+  /// **'In the Mod Manager, select the mod and click the star next to the character. The outfit is then worn every time the game starts. Needs Default Outfits turned on in the NAMS tab.'**
+  String get outfitGuideDefaultBody;
+
+  /// No description provided for @outfitGuideCompatNote.
+  ///
+  /// In en, this message translates to:
+  /// **'This mod also adds the outfit as an item, so you can buy it in a shop or equip it from your inventory.'**
+  String get outfitGuideCompatNote;
+
+  /// No description provided for @outfitGuideDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Got it'**
+  String get outfitGuideDone;
 
   /// No description provided for @onboardingModInstallNoGameDir.
   ///
@@ -6609,13 +6669,13 @@ abstract class AppLocalizations {
   /// No description provided for @labelHideSubtitleInEvents.
   ///
   /// In en, this message translates to:
-  /// **'Also Hide In Event Scenes (Experimental)'**
+  /// **'Also Hide In Event Scenes'**
   String get labelHideSubtitleInEvents;
 
   /// No description provided for @tooltipHideSubtitleInEvents.
   ///
   /// In en, this message translates to:
-  /// **'EXPERIMENTAL. Also apply during in-engine event scenes, not just pre-rendered movies. May miss some scenes or hide text you wanted to keep - turn off if anything looks wrong. Requires Hide Subtitle Overlay.'**
+  /// **'Also apply during in-engine event scenes, not just pre-rendered movies. Requires Hide Subtitle Overlay.'**
   String get tooltipHideSubtitleInEvents;
 
   /// No description provided for @labelOutfitSwapVisualEffects.
@@ -6633,13 +6693,13 @@ abstract class AppLocalizations {
   /// No description provided for @labelExperimentalDefaultOutfits.
   ///
   /// In en, this message translates to:
-  /// **'Default Outfits (experimental)'**
+  /// **'Default Outfits'**
   String get labelExperimentalDefaultOutfits;
 
   /// No description provided for @tooltipExperimentalDefaultOutfits.
   ///
   /// In en, this message translates to:
-  /// **'Lets you mark installed outfit mods as active from the moment the game starts, as if their files were placed in the game\'s data folder. When on, the mod details panel shows a star button per player model to set it as the boot default. Off by default while the feature stabilizes. Requires a game restart.'**
+  /// **'Lets you mark installed outfit mods as active from the moment the game starts, as if their files were placed in the game\'s data folder. When on, the mod details panel shows a star button per player model to set it as the boot default. Requires a game restart.'**
   String get tooltipExperimentalDefaultOutfits;
 
   /// No description provided for @labelSolidLetterboxBars.
@@ -7077,13 +7137,13 @@ abstract class AppLocalizations {
   /// No description provided for @labelImpeller.
   ///
   /// In en, this message translates to:
-  /// **'Impeller Renderer (experimental)'**
+  /// **'Impeller Renderer'**
   String get labelImpeller;
 
   /// No description provided for @tooltipImpeller.
   ///
   /// In en, this message translates to:
-  /// **'Render the overlay with Flutter\'s Impeller renderer instead of Skia. Off by default: several users hit crashes with it. Try it, and if the game is stable you can keep it for a faster overlay when you press F1. With it on, images in the overlay do not render, apart from the world map card. Takes effect on the next game start.'**
+  /// **'Render the overlay with Flutter\'s Impeller renderer on Vulkan instead of Skia. Off by default. If Vulkan works on your system, this can make the overlay faster. If your system only runs OpenGL and not Vulkan, leave it off. Takes effect on the next game start.'**
   String get tooltipImpeller;
 
   /// No description provided for @labelDamageMultiplier.

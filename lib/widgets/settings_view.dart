@@ -9,6 +9,7 @@ import 'package:yp_launcher/theme/app_colors.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
 import 'package:path/path.dart' as p;
 import 'package:yp_launcher/widgets/collapsible_card.dart';
+import 'package:yp_launcher/widgets/config_change_status.dart';
 import 'package:yp_launcher/widgets/config_error_banner.dart';
 import 'package:yp_launcher/widgets/two_column_layout.dart';
 import 'package:yp_launcher/widgets/config_field_bool.dart';
@@ -192,6 +193,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                   _card(context, l10n.cardGeneral, [
                     ConfigFieldBool(
                       label: NamsFields.validateModelData.label(l10n),
+                      defaultValue: NamsFields.validateModelData.defaultValue,
                       value: nams[NamsFields.validateModelData.key] == true,
                       onChanged: (v) => notifier.updateNams(
                         NamsFields.validateModelData.key,
@@ -205,6 +207,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                     ),
                     ConfigFieldBool(
                       label: NamsFields.validateScripts.label(l10n),
+                      defaultValue: NamsFields.validateScripts.defaultValue,
                       value: nams[NamsFields.validateScripts.key] == true,
                       onChanged: (v) => notifier.updateNams(
                         NamsFields.validateScripts.key,
@@ -218,6 +221,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                     ),
                     ConfigFieldBool(
                       label: NamsFields.loadingStallHints.label(l10n),
+                      defaultValue: NamsFields.loadingStallHints.defaultValue,
                       value: nams[NamsFields.loadingStallHints.key] != false,
                       onChanged: (v) => notifier.updateNams(
                         NamsFields.loadingStallHints.key,
@@ -227,6 +231,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                     ),
                     ConfigFieldBool(
                       label: NamsFields.fixWindTimerBug.label(l10n),
+                      defaultValue: NamsFields.fixWindTimerBug.defaultValue,
                       value: nams[NamsFields.fixWindTimerBug.key] != false,
                       onChanged: (v) => notifier.updateNams(
                         NamsFields.fixWindTimerBug.key,
@@ -236,6 +241,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                     ),
                     ConfigFieldBool(
                       label: NamsFields.disableDebugHotkeys.label(l10n),
+                      defaultValue: NamsFields.disableDebugHotkeys.defaultValue,
                       value: nams[NamsFields.disableDebugHotkeys.key] != false,
                       onChanged: (v) => notifier.updateNams(
                         NamsFields.disableDebugHotkeys.key,
@@ -308,6 +314,8 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                   _card(context, l10n.cardLoading, [
                     ConfigFieldBool(
                       label: NamsFields.disablePluginLoading.label(l10n),
+                      defaultValue:
+                          NamsFields.disablePluginLoading.defaultValue,
                       value: nams[NamsFields.disablePluginLoading.key] == true,
                       onChanged: (v) => notifier.updateNams(
                         NamsFields.disablePluginLoading.key,
@@ -317,6 +325,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                     ),
                     ConfigFieldBool(
                       label: NamsFields.disableMainOverlay.label(l10n),
+                      defaultValue: NamsFields.disableMainOverlay.defaultValue,
                       value: nams[NamsFields.disableMainOverlay.key] == true,
                       onChanged: (v) => notifier.updateNams(
                         NamsFields.disableMainOverlay.key,
@@ -326,6 +335,8 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                     ),
                     ConfigFieldBool(
                       label: NamsFields.disableContentFeatures.label(l10n),
+                      defaultValue:
+                          NamsFields.disableContentFeatures.defaultValue,
                       value:
                           nams[NamsFields.disableContentFeatures.key] == true,
                       onChanged: (v) => notifier.updateNams(
@@ -336,6 +347,8 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                     ),
                     ConfigFieldBool(
                       label: NamsFields.disableReShadeLoading.label(l10n),
+                      defaultValue:
+                          NamsFields.disableReShadeLoading.defaultValue,
                       value: nams[NamsFields.disableReShadeLoading.key] == true,
                       onChanged: (v) => notifier.updateNams(
                         NamsFields.disableReShadeLoading.key,
@@ -345,6 +358,8 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                     ),
                     ConfigFieldBool(
                       label: NamsFields.disable3dmigotoLoading.label(l10n),
+                      defaultValue:
+                          NamsFields.disable3dmigotoLoading.defaultValue,
                       value:
                           nams[NamsFields.disable3dmigotoLoading.key] == true,
                       onChanged: (v) => notifier.updateNams(
@@ -355,6 +370,8 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                     ),
                     ConfigFieldBool(
                       label: NamsFields.disableGraphicModsLoading.label(l10n),
+                      defaultValue:
+                          NamsFields.disableGraphicModsLoading.defaultValue,
                       value: NamsFields.disableGraphicModsLoading.valueIn(nams),
                       onChanged: (v) => notifier.updateNams(
                         NamsFields.disableGraphicModsLoading.key,
@@ -366,6 +383,8 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                     ),
                     ConfigFieldBool(
                       label: NamsFields.disableTextureInjection.label(l10n),
+                      defaultValue:
+                          NamsFields.disableTextureInjection.defaultValue,
                       value:
                           nams[NamsFields.disableTextureInjection.key] == true,
                       onChanged: (v) => notifier.updateNams(
@@ -378,6 +397,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                     ),
                     ConfigFieldBool(
                       label: NamsFields.disableSplashScreen.label(l10n),
+                      defaultValue: NamsFields.disableSplashScreen.defaultValue,
                       value: nams[NamsFields.disableSplashScreen.key] == true,
                       onChanged: (v) => notifier.updateNams(
                         NamsFields.disableSplashScreen.key,
@@ -387,6 +407,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                     ),
                     ConfigFieldBool(
                       label: NamsFields.skipStartupLogos.label(l10n),
+                      defaultValue: NamsFields.skipStartupLogos.defaultValue,
                       value: nams[NamsFields.skipStartupLogos.key] == true,
                       onChanged: (v) => notifier.updateNams(
                         NamsFields.skipStartupLogos.key,
@@ -433,6 +454,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
       ),
       ConfigFieldBool(
         label: NamsFields.outfitSwapVisualEffects.label(l10n),
+        defaultValue: NamsFields.outfitSwapVisualEffects.defaultValue,
         value: nams[NamsFields.outfitSwapVisualEffects.key] != false,
         onChanged: (v) =>
             notifier.updateNams(NamsFields.outfitSwapVisualEffects.key, v),
@@ -440,6 +462,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
       ),
       ConfigFieldBool(
         label: NamsFields.experimentalDefaultOutfits.label(l10n),
+        defaultValue: NamsFields.experimentalDefaultOutfits.defaultValue,
         value: nams[NamsFields.experimentalDefaultOutfits.key] == true,
         onChanged: (v) =>
             notifier.updateNams(NamsFields.experimentalDefaultOutfits.key, v),
@@ -456,37 +479,44 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
     AppLocalizations l10n,
   ) {
     final gap = AppSizes.spacingLG(context);
-    return Padding(
-      padding: EdgeInsets.only(bottom: AppSizes.paddingMD(context)),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final width = constraints.maxWidth;
-          final columns = width >= 1100
-              ? 4
-              : width >= 820
-              ? 3
-              : width >= 520
-              ? 2
-              : 1;
-          final cellWidth = ((width - gap * (columns - 1)) / columns)
-              .floorToDouble();
-          return Wrap(
-            spacing: gap,
-            children: [
-              for (final f in fields)
-                SizedBox(
-                  width: cellWidth,
-                  child: ConfigFieldBool(
-                    label: f.label(l10n),
-                    value: f.valueIn(nams),
-                    onChanged: (v) =>
-                        notifier.updateNams(f.key, v, section: f.section),
-                    tooltip: f.tooltip!(l10n),
+    return ConfigChangeGroup(
+      changedLabels: [
+        for (final f in fields)
+          ...changedLabelOf(f.label(l10n), f.valueIn(nams), f.defaultValue),
+      ],
+      child: Padding(
+        padding: EdgeInsets.only(bottom: AppSizes.paddingMD(context)),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final width = constraints.maxWidth;
+            final columns = width >= 1100
+                ? 4
+                : width >= 820
+                ? 3
+                : width >= 520
+                ? 2
+                : 1;
+            final cellWidth = ((width - gap * (columns - 1)) / columns)
+                .floorToDouble();
+            return Wrap(
+              spacing: gap,
+              children: [
+                for (final f in fields)
+                  SizedBox(
+                    width: cellWidth,
+                    child: ConfigFieldBool(
+                      label: f.label(l10n),
+                      defaultValue: f.defaultValue,
+                      value: f.valueIn(nams),
+                      onChanged: (v) =>
+                          notifier.updateNams(f.key, v, section: f.section),
+                      tooltip: f.tooltip!(l10n),
+                    ),
                   ),
-                ),
-            ],
-          );
-        },
+              ],
+            );
+          },
+        ),
       ),
     );
   }

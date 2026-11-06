@@ -502,7 +502,7 @@ class LogPanelState extends ConsumerState<LogPanel>
       case 'ERROR':
         return AppColors.error;
       case 'DEBUG':
-        return const Color(0xFF64B5F6);
+        return AppColors.logDebug;
       default:
         return AppColors.textMuted;
     }

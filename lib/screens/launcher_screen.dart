@@ -335,8 +335,8 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
           SnackBar(
             content: Text(
               AppLocalizations.of(context)!.texturesBusyMessage,
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: AppColors.textOnDark,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -726,7 +726,11 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
   }
 
   List<Widget> _launchOptionItems() {
-    return const [MinimizeOnLaunchToggle(), PreferDedicatedGpuToggle()];
+    return const [
+      MinimizeOnLaunchToggle(),
+      PreferDedicatedGpuToggle(),
+      VanillaLaunchToggle(),
+    ];
   }
 
   Widget _buildLaunchOptionsHeader(BuildContext context) {

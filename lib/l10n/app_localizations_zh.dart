@@ -232,6 +232,13 @@ class AppLocalizationsZh extends AppLocalizations {
       '让系统使用独立显卡而非节能显卡运行游戏。仅在配备双显卡的电脑上有效（例如游戏笔记本）。';
 
   @override
+  String get launchOptionVanilla => '以原版启动（无模组，用于排查问题）';
+
+  @override
+  String get launchOptionVanillaTooltip =>
+      '通过 NAMS 启动 NieR，但不加载模组加载器：没有模组、插件、纹理或叠加层。可用来确认问题是否在未修改的游戏中也会出现。重启启动器后会自动关闭。';
+
+  @override
   String get failTitlePanic => 'NAMS 已崩溃';
 
   @override
@@ -849,6 +856,14 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get tabNams => 'NAMS';
+
+  @override
+  String cardChangedCount(int count) {
+    return '$count 项已更改';
+  }
+
+  @override
+  String get cardChangedTooltipHeader => '与默认值不同：';
 
   @override
   String get tabLodMod => 'LOD Mod Ext';
@@ -2153,7 +2168,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get onboardingModInstallAskBody =>
-      '有 .zip 文件或文件夹？交给我们处理。\n（纹理和过场动画有各自的选项卡，稍后再安装。）';
+      '有 .zip 文件或文件夹？交给我们处理，纹理包也可以。\n（过场动画有自己的选项卡，稍后再安装。）';
 
   @override
   String get onboardingModInstallYes => '是，现在安装模组';
@@ -2191,28 +2206,52 @@ class AppLocalizationsZh extends AppLocalizations {
       '这似乎不是有效的 NAMS 模组。请确保它是包含 mod.toml 或可识别数据结构的 .zip / .7z 文件。';
 
   @override
-  String get onboardingOutfitHintHeader => '穿戴方法';
-
-  @override
-  String get onboardingOutfitHintCompat => '从物品栏购买或装备。';
-
-  @override
-  String get onboardingOutfitHintData => '游戏中按 F1 → 左上角衣柜图标。';
-
-  @override
-  String get onboardingOutfitHintMultiOutfit => '也可使用抵抗军营地中的 Multi-Outfit NPC。';
-
-  @override
-  String get onboardingOutfitHintMultiOutfitLink => '获取 Multi-Outfit NPC';
-
-  @override
-  String get onboardingOutfitHintMultiOutfitUrl =>
-      'https://www.nexusmods.com/nierautomata/mods/789';
+  String onboardingTexturePackChip(String name) {
+    return '$name（纹理包）';
+  }
 
   @override
   String onboardingModInstallFailed(String reason) {
     return '安装失败：$reason';
   }
+
+  @override
+  String get outfitGuideTitle => '如何穿上新服装';
+
+  @override
+  String outfitGuideIntro(String name) {
+    return '“$name”已安装。你可以通过三种方式穿上它：';
+  }
+
+  @override
+  String get outfitGuideWardrobeTitle => 'YoRHa Protocol 衣柜';
+
+  @override
+  String outfitGuideWardrobeBody(String key) {
+    return '在游戏中按 $key 打开 YoRHa Protocol，点击左上角的衣柜图标，然后选择服装。';
+  }
+
+  @override
+  String get outfitGuideNpcTitle => 'Multi-Outfit NPC';
+
+  @override
+  String get outfitGuideNpcBody => '在抵抗军营地与 Multi-Outfit NPC 对话并选择服装。';
+
+  @override
+  String get outfitGuideNpcLink => '获取 Multi-Outfit NPC';
+
+  @override
+  String get outfitGuideDefaultTitle => '从游戏启动起穿着';
+
+  @override
+  String get outfitGuideDefaultBody =>
+      '在模组管理器中选中该模组，点击角色旁边的星标。之后每次启动游戏都会穿着这套服装。需要在 NAMS 选项卡中开启“默认服装”。';
+
+  @override
+  String get outfitGuideCompatNote => '此模组还会把服装添加为物品，你可以在商店购买，或从物品栏中装备。';
+
+  @override
+  String get outfitGuideDone => '知道了';
 
   @override
   String get onboardingModInstallNoGameDir => '尚未选择游戏目录。请返回并先选择安装位置。';
@@ -3636,11 +3675,11 @@ class AppLocalizationsZh extends AppLocalizations {
   String get tooltipKeepSubtitleText => '仅移除字幕后方的深色背景，保留文字本身可读。需先启用“隐藏字幕遮罩”。';
 
   @override
-  String get labelHideSubtitleInEvents => '同时隐藏引擎事件场景（实验性）';
+  String get labelHideSubtitleInEvents => '同时隐藏引擎事件场景';
 
   @override
   String get tooltipHideSubtitleInEvents =>
-      '实验性功能。同时应用于引擎内事件场景，而不仅是预渲染影片。可能遗漏部分场景或隐藏你想保留的文字，如有异常请关闭。需先启用“隐藏字幕遮罩”。';
+      '同时应用于引擎内事件场景，而不仅是预渲染影片。需先启用“隐藏字幕遮罩”。';
 
   @override
   String get labelOutfitSwapVisualEffects => '服装切换视觉效果';
@@ -3650,11 +3689,11 @@ class AppLocalizationsZh extends AppLocalizations {
       '在热切换服装时播放视觉效果：Pod 出现时的致盲动画、帷幕以及骇入画面故障滤镜。关闭后将立即完成无特效切换，但模型仍会重新加载。立即生效，无需重启。';
 
   @override
-  String get labelExperimentalDefaultOutfits => '默认服装（实验性）';
+  String get labelExperimentalDefaultOutfits => '默认服装';
 
   @override
   String get tooltipExperimentalDefaultOutfits =>
-      '可将已安装的服装 Mod 设为游戏启动时即生效，如同将其文件放入游戏的 data 文件夹。开启后，Mod 详情面板会为每个玩家模型显示一个星标按钮，用于将其设为启动默认项。功能稳定前默认关闭。需要重启游戏。';
+      '可将已安装的服装 Mod 设为游戏启动时即生效，如同将其文件放入游戏的 data 文件夹。开启后，Mod 详情面板会为每个玩家模型显示一个星标按钮，用于将其设为启动默认项。需要重启游戏。';
 
   @override
   String get labelSolidLetterboxBars => '不透明黑边';
@@ -3878,11 +3917,11 @@ class AppLocalizationsZh extends AppLocalizations {
       '在 http://127.0.0.1:47820/mcp 运行 YoRHa Protocol 编辑器的 MCP 服务器，让 AI 代理和其他 MCP 客户端可以在游戏运行时读取和操作编辑器。默认关闭。';
 
   @override
-  String get labelImpeller => 'Impeller 渲染器（实验性）';
+  String get labelImpeller => 'Impeller 渲染器';
 
   @override
   String get tooltipImpeller =>
-      '使用 Flutter 的 Impeller 渲染器（而非 Skia）绘制叠加层。默认关闭：已有多名用户遇到崩溃。可以先试用，如果游戏运行稳定，就能保留它以便按 F1 时叠加层启动更快。开启后叠加层中的图像将无法显示，只有世界地图卡片除外。下次启动游戏时生效。';
+      '使用 Flutter 的 Impeller 渲染器（基于 Vulkan）而非 Skia 绘制叠加层。默认关闭。如果你的系统支持 Vulkan，开启后可以让叠加层更快。如果你的系统只能运行 OpenGL 而不支持 Vulkan，请保持关闭。下次启动游戏时生效。';
 
   @override
   String get labelDamageMultiplier => '伤害倍率';

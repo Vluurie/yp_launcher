@@ -343,12 +343,14 @@ class _NaiomViewState extends ConsumerState<NaiomView> {
           _divider(context),
           ConfigFieldCursorFile(
             label: NamsFields.miscCustomCursorMenu.label(l10n),
+            defaultValue: NamsFields.miscCustomCursorMenu.defaultValue,
             value: _stringOf(NamsFields.miscCustomCursorMenu),
             onChanged: (v) => _setMouse(NamsFields.miscCustomCursorMenu, v),
             tooltip: NamsFields.miscCustomCursorMenu.tooltip!(l10n),
           ),
           ConfigFieldCursorFile(
             label: NamsFields.miscCustomCursorHacking.label(l10n),
+            defaultValue: NamsFields.miscCustomCursorHacking.defaultValue,
             value: _stringOf(NamsFields.miscCustomCursorHacking),
             onChanged: (v) => _setMouse(NamsFields.miscCustomCursorHacking, v),
             tooltip: NamsFields.miscCustomCursorHacking.tooltip!(l10n),
@@ -422,6 +424,7 @@ class _NaiomViewState extends ConsumerState<NaiomView> {
   Widget _bool(ConfigField<bool> field, AppLocalizations l10n) {
     return ConfigFieldBool(
       label: field.label(l10n),
+      defaultValue: field.defaultValue,
       value: _boolOf(field),
       onChanged: (v) => _setMouse(field, v),
       tooltip: field.tooltip!(l10n),
@@ -437,6 +440,7 @@ class _NaiomViewState extends ConsumerState<NaiomView> {
   }) {
     return ConfigFieldSlider(
       label: field.label(l10n),
+      defaultValue: field.defaultValue,
       tooltip: field.tooltip!(l10n),
       restartRequired: field.restartRequired,
       showApplyMarker: field.restartRequired,
@@ -604,6 +608,7 @@ class _NaiomViewState extends ConsumerState<NaiomView> {
           ),
           ConfigFieldBool(
             label: NamsFields.disableInputFeatures.label(l10n),
+            defaultValue: NamsFields.disableInputFeatures.defaultValue,
             tooltip: NamsFields.disableInputFeatures.tooltip!(l10n),
             value: _inputFeaturesDisabled,
             onChanged: (v) => ref

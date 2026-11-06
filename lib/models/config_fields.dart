@@ -134,7 +134,7 @@ class NamsFields {
 
   static final experimentalDefaultOutfits = ConfigField<bool>(
     key: 'experimental_default_outfits',
-    defaultValue: false,
+    defaultValue: true,
     restartRequired: true,
     label: (l) => l.labelExperimentalDefaultOutfits,
     tooltip: (l) => l.tooltipExperimentalDefaultOutfits,
@@ -1168,7 +1168,7 @@ class LodModFields {
     label: (l) => l.labelDistanceMultiplier,
     tooltip: (l) => l.tooltipDistanceMultiplier,
     min: 1.0,
-    max: 10.0,
+    max: 3.0,
     step: 0.1,
   );
 

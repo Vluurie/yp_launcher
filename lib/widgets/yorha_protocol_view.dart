@@ -302,6 +302,7 @@ class _YorhaProtocolViewState extends ConsumerState<YorhaProtocolView> {
               _card(context, l10n.cardWorkspace, [
                 ConfigFieldBool(
                   label: YpWorkspaceFields.gameKeybindsGlobal.label(l10n),
+                  defaultValue: YpWorkspaceFields.gameKeybindsGlobal.defaultValue,
                   value: data.gameKeybindsGlobal,
                   onChanged: (v) => notifier.updateToggle(
                     YpWorkspaceFields.gameKeybindsGlobal.key,
@@ -311,6 +312,7 @@ class _YorhaProtocolViewState extends ConsumerState<YorhaProtocolView> {
                 ),
                 ConfigFieldBool(
                   label: YpWorkspaceFields.loadingSpeedupEnabled.label(l10n),
+                  defaultValue: YpWorkspaceFields.loadingSpeedupEnabled.defaultValue,
                   value: data.loadingSpeedupEnabled,
                   onChanged: (v) => notifier.updateToggle(
                     YpWorkspaceFields.loadingSpeedupEnabled.key,
@@ -322,6 +324,7 @@ class _YorhaProtocolViewState extends ConsumerState<YorhaProtocolView> {
                 ),
                 ConfigFieldBool(
                   label: YpWorkspaceFields.shadersEnabled.label(l10n),
+                  defaultValue: YpWorkspaceFields.shadersEnabled.defaultValue,
                   value: data.shadersEnabled,
                   onChanged: (v) => notifier.updateToggle(
                     YpWorkspaceFields.shadersEnabled.key,
@@ -331,6 +334,7 @@ class _YorhaProtocolViewState extends ConsumerState<YorhaProtocolView> {
                 ),
                 ConfigFieldBool(
                   label: YpWorkspaceFields.soundEnabled.label(l10n),
+                  defaultValue: YpWorkspaceFields.soundEnabled.defaultValue,
                   value: data.soundEnabled,
                   onChanged: (v) => notifier.updateToggle(
                     YpWorkspaceFields.soundEnabled.key,
@@ -340,6 +344,7 @@ class _YorhaProtocolViewState extends ConsumerState<YorhaProtocolView> {
                 ),
                 ConfigFieldBool(
                   label: YpWorkspaceFields.editorMcpEnabled.label(l10n),
+                  defaultValue: YpWorkspaceFields.editorMcpEnabled.defaultValue,
                   value: data.editorMcpEnabled,
                   onChanged: (v) => notifier.updateToggle(
                     YpWorkspaceFields.editorMcpEnabled.key,
@@ -349,6 +354,7 @@ class _YorhaProtocolViewState extends ConsumerState<YorhaProtocolView> {
                 ),
                 ConfigFieldBool(
                   label: YpWorkspaceFields.impeller.label(l10n),
+                  defaultValue: YpWorkspaceFields.impeller.defaultValue,
                   value: data.impeller,
                   onChanged: (v) =>
                       notifier.updateToggle(YpWorkspaceFields.impeller.key, v),
@@ -362,6 +368,7 @@ class _YorhaProtocolViewState extends ConsumerState<YorhaProtocolView> {
               _card(context, l10n.cardCheats, [
                 ConfigFieldFloat(
                   label: YpCheatsFields.damageMultiplier.label(l10n),
+                  defaultValue: YpCheatsFields.damageMultiplier.defaultValue,
                   value: YpCheatsFields.damageMultiplier.valueIn(cheats),
                   onChanged: (v) => notifier.updateCheat(
                     YpCheatsFields.damageMultiplier.key,
@@ -371,6 +378,7 @@ class _YorhaProtocolViewState extends ConsumerState<YorhaProtocolView> {
                 ),
                 ConfigFieldBool(
                   label: YpCheatsFields.syncEnemyLevels.label(l10n),
+                  defaultValue: YpCheatsFields.syncEnemyLevels.defaultValue,
                   value: cheats[YpCheatsFields.syncEnemyLevels.key] == true,
                   onChanged: (v) => notifier.updateCheat(
                     YpCheatsFields.syncEnemyLevels.key,
@@ -380,6 +388,7 @@ class _YorhaProtocolViewState extends ConsumerState<YorhaProtocolView> {
                 ),
                 ConfigFieldBool(
                   label: YpCheatsFields.infiniteHealth.label(l10n),
+                  defaultValue: YpCheatsFields.infiniteHealth.defaultValue,
                   value: cheats[YpCheatsFields.infiniteHealth.key] == true,
                   onChanged: (v) => notifier.updateCheat(
                     YpCheatsFields.infiniteHealth.key,
@@ -389,6 +398,7 @@ class _YorhaProtocolViewState extends ConsumerState<YorhaProtocolView> {
                 ),
                 ConfigFieldBool(
                   label: YpCheatsFields.infiniteJump.label(l10n),
+                  defaultValue: YpCheatsFields.infiniteJump.defaultValue,
                   value: cheats[YpCheatsFields.infiniteJump.key] == true,
                   onChanged: (v) =>
                       notifier.updateCheat(YpCheatsFields.infiniteJump.key, v),
@@ -396,6 +406,7 @@ class _YorhaProtocolViewState extends ConsumerState<YorhaProtocolView> {
                 ),
                 ConfigFieldBool(
                   label: YpCheatsFields.noPodCooldown.label(l10n),
+                  defaultValue: YpCheatsFields.noPodCooldown.defaultValue,
                   value: cheats[YpCheatsFields.noPodCooldown.key] == true,
                   onChanged: (v) =>
                       notifier.updateCheat(YpCheatsFields.noPodCooldown.key, v),
@@ -403,6 +414,7 @@ class _YorhaProtocolViewState extends ConsumerState<YorhaProtocolView> {
                 ),
                 ConfigFieldBool(
                   label: YpCheatsFields.infiniteAirDash.label(l10n),
+                  defaultValue: YpCheatsFields.infiniteAirDash.defaultValue,
                   value: cheats[YpCheatsFields.infiniteAirDash.key] == true,
                   onChanged: (v) => notifier.updateCheat(
                     YpCheatsFields.infiniteAirDash.key,
@@ -425,6 +437,7 @@ class _YorhaProtocolViewState extends ConsumerState<YorhaProtocolView> {
               _card(context, l10n.cardRandomizer, [
                 ConfigFieldBool(
                   label: YpRandomizerFields.autoStartOnStartup.label(l10n),
+                  defaultValue: YpRandomizerFields.autoStartOnStartup.defaultValue,
                   value: YpRandomizerFields.autoStartOnStartup.valueIn(
                     randomizer,
                   ),
@@ -436,6 +449,7 @@ class _YorhaProtocolViewState extends ConsumerState<YorhaProtocolView> {
                 ),
                 ConfigFieldBool(
                   label: YpRandomizerFields.randomizeGroundEnemies.label(l10n),
+                  defaultValue: YpRandomizerFields.randomizeGroundEnemies.defaultValue,
                   value: YpRandomizerFields.randomizeGroundEnemies.valueIn(
                     randomizer,
                   ),
@@ -449,6 +463,7 @@ class _YorhaProtocolViewState extends ConsumerState<YorhaProtocolView> {
                 ),
                 ConfigFieldBool(
                   label: YpRandomizerFields.randomizeFlyingEnemies.label(l10n),
+                  defaultValue: YpRandomizerFields.randomizeFlyingEnemies.defaultValue,
                   value: YpRandomizerFields.randomizeFlyingEnemies.valueIn(
                     randomizer,
                   ),
@@ -462,6 +477,7 @@ class _YorhaProtocolViewState extends ConsumerState<YorhaProtocolView> {
                 ),
                 ConfigFieldBool(
                   label: YpRandomizerFields.allowBigEnemies.label(l10n),
+                  defaultValue: YpRandomizerFields.allowBigEnemies.defaultValue,
                   value: YpRandomizerFields.allowBigEnemies.valueIn(randomizer),
                   onChanged: (v) => notifier.updateRandomizer(
                     YpRandomizerFields.allowBigEnemies.key,
@@ -471,6 +487,7 @@ class _YorhaProtocolViewState extends ConsumerState<YorhaProtocolView> {
                 ),
                 ConfigFieldBool(
                   label: YpRandomizerFields.includeDlcEnemies.label(l10n),
+                  defaultValue: YpRandomizerFields.includeDlcEnemies.defaultValue,
                   value: YpRandomizerFields.includeDlcEnemies.valueIn(
                     randomizer,
                   ),

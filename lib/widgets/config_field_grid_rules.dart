@@ -4,6 +4,7 @@ import 'package:yp_launcher/theme/app_colors.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
 import 'package:yp_launcher/widgets/app_dropdown.dart';
 import 'package:yp_launcher/widgets/config_apply_marker.dart';
+import 'package:yp_launcher/widgets/config_change_status.dart';
 
 class GridRuleColumn {
   final String key;
@@ -23,11 +24,13 @@ class GridRuleColumn {
   });
 }
 
-class ConfigFieldGridRules extends StatelessWidget {
+class ConfigFieldGridRules extends StatelessWidget
+    implements ConfigChangeSource {
   final String label;
   final String? tooltip;
   final bool restartRequired;
   final List<dynamic> rules;
+  final List<dynamic>? defaultValue;
   final List<GridRuleColumn> columns;
   final String addLabel;
   final String emptyLabel;
@@ -43,7 +46,11 @@ class ConfigFieldGridRules extends StatelessWidget {
     required this.onChanged,
     this.tooltip,
     this.restartRequired = false,
+    this.defaultValue,
   });
+
+  @override
+  List<String> get changedLabels => changedLabelOf(label, rules, defaultValue);
 
   Map<String, dynamic> _rowAt(int index) {
     final raw = rules[index];

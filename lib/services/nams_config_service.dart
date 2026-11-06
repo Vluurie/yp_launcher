@@ -257,10 +257,10 @@ disable_main_overlay = false
 # an instant, effect-free swap (the model still reloads). Live toggle.
 outfit_swap_visual_effects = true
 
-# EXPERIMENTAL. Default-outfit boot mods: mods listed in nams/default_mods.toml
-# are active from game start, as if their files were placed in NieRAutomata/data.
-# Off by default while the feature stabilizes. Requires restart.
-experimental_default_outfits = false
+# Default-outfit boot mods: mods listed in nams/default_mods.toml are active
+# from game start, as if their files were placed in NieRAutomata/data.
+# Requires restart.
+experimental_default_outfits = true
 
 disable_reshade_loading = false
 disable_3dmigoto_loading = false
@@ -765,10 +765,9 @@ solid_letterbox_bars = false
           '# to true brings back the vanilla resize/flicker artifacts on startup.\n'
           'disable_splash_screen = false\n',
       'experimental_default_outfits':
-          '# EXPERIMENTAL. Default-outfit boot mods: mods listed in\n'
-          '# nams/default_mods.toml are active from game start. Off by default\n'
-          '# while the feature stabilizes. Requires restart.\n'
-          'experimental_default_outfits = false\n',
+          '# Default-outfit boot mods: mods listed in nams/default_mods.toml\n'
+          '# are active from game start. Requires restart.\n'
+          'experimental_default_outfits = true\n',
       NamsFields.disable3dmigotoLoading.key:
           '# Skip loading the 3DMigoto runtime from thirdparty/3dmigoto/. Managed\n'
           '# by the Third Party tab; set to true to stop loading it.\n'

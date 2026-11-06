@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:yp_launcher/widgets/config_change_status.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
 import 'package:yp_launcher/widgets/app_dropdown.dart';
 import 'package:yp_launcher/widgets/config_apply_marker.dart';
 
-class ConfigFieldDropdown extends StatefulWidget {
+class ConfigFieldDropdown extends StatefulWidget implements ConfigChangeSource {
   final String label;
   final int value;
+  final int? defaultValue;
   final List<int> options;
   final ValueChanged<int> onChanged;
   final String? tooltip;
@@ -24,7 +26,11 @@ class ConfigFieldDropdown extends StatefulWidget {
     this.labels,
     this.restartRequired = false,
     this.showApplyMarker = false,
+    this.defaultValue,
   });
+
+  @override
+  List<String> get changedLabels => changedLabelOf(label, value, defaultValue);
 
   @override
   State<ConfigFieldDropdown> createState() => _ConfigFieldDropdownState();

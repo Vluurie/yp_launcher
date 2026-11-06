@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:path/path.dart' as path;
 import 'package:yp_launcher/l10n/app_localizations.dart';
 import 'package:yp_launcher/models/installed_mod.dart';
 import 'package:yp_launcher/providers/mods_state.dart';
+import 'package:yp_launcher/services/archive_service.dart';
 import 'package:yp_launcher/services/mods_service.dart';
+import 'package:yp_launcher/services/texture_install_service.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
-import 'package:yp_launcher/theme/nier_curves.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
 import 'package:yp_launcher/widgets/mods/mod_drop_zone.dart';
 import 'package:yp_launcher/widgets/mods/mod_naming.dart';
 import 'package:yp_launcher/widgets/mods/mod_variant_dialog.dart';
+import 'package:yp_launcher/widgets/mods/outfit_equip_guide.dart';
 import 'package:yp_launcher/widgets/onboarding/shared.dart';
-
-enum _OutfitHint { none, compat, data }
+import 'package:yp_launcher/widgets/textures/texture_pack_install.dart';
 
 class ModsStep extends ConsumerStatefulWidget {
   final String? gameDir;
@@ -38,7 +39,6 @@ class _ModsStepState extends ConsumerState<ModsStep> {
   String? _error;
   String? _warning;
   final List<String> _installedNames = [];
-  _OutfitHint _outfitHint = _OutfitHint.none;
 
   @override
   Widget build(BuildContext context) {
@@ -261,12 +261,11 @@ class _ModsStepState extends ConsumerState<ModsStep> {
             ],
           ),
         ],
-        if (_outfitHint != _OutfitHint.none) _buildOutfitHintCard(l),
         const SizedBox(height: 20),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            OnboardingBackButton(onTap: widget.onBack),
+            OnboardingBackButton(onTap: _busy ? null : widget.onBack),
             const SizedBox(width: 12),
             SizedBox(
               width: 200,
@@ -310,20 +309,21 @@ class _ModsStepState extends ConsumerState<ModsStep> {
         dialogTitle: l.onboardingModInstallFolderPickerTitle,
       );
       if (dir == null) return;
-      await _install(dir);
+      await _installAll([dir]);
       return;
     }
     final filePath = result.files.first.path;
     if (filePath == null) return;
-    await _install(filePath);
+    await _installAll([filePath]);
   }
 
-  Future<void> _installAll(List<String> paths) async {
-    for (final path in paths) {
-      if (!mounted) return;
-      await _install(path);
-    }
-  }
+  Future<void> _installAll(List<String> paths) =>
+      OutfitEquipGuide.watchInstall(context, widget.gameDir, () async {
+        for (final path in paths) {
+          if (!mounted) return;
+          await _install(path);
+        }
+      });
 
   Future<void> _install(String sourcePath) async {
     final l = AppLocalizations.of(context)!;
@@ -360,6 +360,10 @@ class _ModsStepState extends ConsumerState<ModsStep> {
     }
 
     if (detect.kind == ModKind.unknown) {
+      if (detect.errorReason == 'texture_only') {
+        await _installTexturePack(sourcePath, l);
+        return;
+      }
       setState(() {
         _busy = false;
         _error = l.onboardingModInstallNotAMod;
@@ -421,9 +425,6 @@ class _ModsStepState extends ConsumerState<ModsStep> {
         ? displayNameRaw
         : (result.installedId ?? 'Unnamed mod');
 
-    final hint = await _detectOutfitHint(result.installedId);
-    if (!mounted) return;
-
     setState(() {
       _busy = false;
       _error = null;
@@ -431,10 +432,60 @@ class _ModsStepState extends ConsumerState<ModsStep> {
           ? l.modLooseUnpairedWarning(result.unpairedWarnings.join(', '))
           : null;
       _installedNames.add(displayName);
-      if (hint != _OutfitHint.none) _outfitHint = hint;
     });
 
     ref.read(modsStateControllerProvider.notifier).loadMods(widget.gameDir!);
+  }
+
+  Future<void> _installTexturePack(
+    String sourcePath,
+    AppLocalizations l,
+  ) async {
+    final name = ArchiveService.isArchive(sourcePath)
+        ? path.basenameWithoutExtension(sourcePath)
+        : path.basename(sourcePath);
+    int? count;
+    try {
+      count = await TexturePackInstall.run(
+        context,
+        paths: [sourcePath],
+        textureDir: textureInjectDir(widget.gameDir!),
+        onExtractProgress: (percent, currentFile) {
+          if (!mounted) return;
+          setState(() {
+            _busyMessage = currentFile == null || currentFile.isEmpty
+                ? l.onboardingModInstallExtractingPercent(
+                    (percent * 100).round(),
+                  )
+                : l.onboardingModInstallExtractingFile(
+                    (percent * 100).round(),
+                    currentFile,
+                  );
+          });
+        },
+        onCopyStart: () {
+          if (mounted) setState(() => _busyMessage = l.texturesProgressCopying);
+        },
+      );
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _busy = false;
+          _error = l.onboardingModInstallFailed('$e');
+        });
+      }
+      return;
+    }
+    if (!mounted) return;
+    setState(() {
+      _busy = false;
+      if (count == null) return;
+      if (count > 0) {
+        _installedNames.add(l.onboardingTexturePackChip(name));
+      } else {
+        _warning = l.noTextureFilesFound;
+      }
+    });
   }
 
   Future<void> _installVariants(
@@ -499,178 +550,5 @@ class _ModsStepState extends ConsumerState<ModsStep> {
     if (!mounted) return;
     setState(() => _busy = false);
     ref.read(modsStateControllerProvider.notifier).loadMods(widget.gameDir!);
-  }
-
-  Widget _buildOutfitHintCard(AppLocalizations l) {
-    final body = _outfitHint == _OutfitHint.compat
-        ? l.onboardingOutfitHintCompat
-        : l.onboardingOutfitHintData;
-    return Padding(
-      padding: const EdgeInsets.only(top: 10),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-        decoration: BoxDecoration(
-          color: AppColors.accentPrimary.withValues(alpha: 0.06),
-          border: Border.all(
-            color: AppColors.accentPrimary.withValues(alpha: 0.30),
-          ),
-          borderRadius: BorderRadius.circular(6),
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 1),
-              child: Icon(
-                Icons.checkroom,
-                size: 15,
-                color: AppColors.accentPrimary,
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text.rich(
-                    TextSpan(
-                      style: TextStyle(
-                        fontSize: AppSizes.fontXS(context),
-                        height: 1.4,
-                      ),
-                      children: [
-                        TextSpan(
-                          text: '${l.onboardingOutfitHintHeader}. ',
-                          style: TextStyle(
-                            color: AppColors.accentPrimary,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        TextSpan(
-                          text: body,
-                          style: TextStyle(color: AppColors.textSecondary),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Flexible(
-                        child: Text(
-                          l.onboardingOutfitHintMultiOutfit,
-                          style: TextStyle(
-                            fontSize: AppSizes.fontXS(context),
-                            color: AppColors.textMuted,
-                            height: 1.35,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 6),
-                      _MultiOutfitLink(
-                        label: l.onboardingOutfitHintMultiOutfitLink,
-                        onTap: () => _openMultiOutfitLink(
-                          l.onboardingOutfitHintMultiOutfitUrl,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Future<_OutfitHint> _detectOutfitHint(String? installedId) async {
-    if (installedId == null || widget.gameDir == null) return _OutfitHint.none;
-    try {
-      final mods = await ModsService.listInstalled(widget.gameDir!);
-      final mod = mods.firstWhere(
-        (m) => m.id == installedId,
-        orElse: () => mods.firstWhere(
-          (m) => m.displayName == installedId,
-          orElse: () => mods.first,
-        ),
-      );
-      final entries = mod.data?.entries ?? const [];
-      final hasPlayerSlot = entries.any((e) => e.dirName == 'pl');
-      if (!hasPlayerSlot) return _OutfitHint.none;
-      if (mod.data?.hasCompatConfig == true) return _OutfitHint.compat;
-      return _OutfitHint.data;
-    } catch (_) {
-      return _OutfitHint.none;
-    }
-  }
-
-  Future<void> _openMultiOutfitLink(String url) async {
-    try {
-      final uri = Uri.parse(url);
-      if (await canLaunchUrl(uri)) {
-        await launchUrl(uri, mode: LaunchMode.externalApplication);
-      }
-    } catch (_) {}
-  }
-}
-
-class _MultiOutfitLink extends StatefulWidget {
-  final String label;
-  final VoidCallback onTap;
-
-  const _MultiOutfitLink({required this.label, required this.onTap});
-
-  @override
-  State<_MultiOutfitLink> createState() => _MultiOutfitLinkState();
-}
-
-class _MultiOutfitLinkState extends State<_MultiOutfitLink> {
-  bool _hovered = false;
-
-  @override
-  Widget build(BuildContext context) {
-    final color = AppColors.accentPrimary;
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      onEnter: (_) => setState(() => _hovered = true),
-      onExit: (_) => setState(() => _hovered = false),
-      child: GestureDetector(
-        onTap: widget.onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 120),
-          curve: NierCurves.smooth,
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-          decoration: BoxDecoration(
-            color: _hovered
-                ? color.withValues(alpha: 0.16)
-                : Colors.transparent,
-            border: Border.all(
-              color: color.withValues(alpha: _hovered ? 0.6 : 0.3),
-            ),
-            borderRadius: BorderRadius.circular(4),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.open_in_new, size: 11, color: color),
-              const SizedBox(width: 3),
-              Text(
-                widget.label,
-                style: TextStyle(
-                  fontSize: AppSizes.fontXS(context),
-                  color: color,
-                  fontWeight: FontWeight.w600,
-                  decoration: _hovered
-                      ? TextDecoration.underline
-                      : TextDecoration.none,
-                  decorationColor: color,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
   }
 }

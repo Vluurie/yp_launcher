@@ -110,7 +110,7 @@ class _ConfigPreviewImageState extends State<ConfigPreviewImage> {
   void _openFullscreen(BuildContext context) {
     showDialog(
       context: context,
-      barrierColor: Colors.black87,
+      barrierColor: AppColors.scrim.withValues(alpha: 0.87),
       builder: (ctx) => GestureDetector(
         onTap: () => Navigator.of(ctx).pop(),
         child: Dialog(
@@ -147,7 +147,7 @@ class ConfigComparison extends StatelessWidget {
   void _openFullscreen(BuildContext context) {
     showDialog(
       context: context,
-      barrierColor: Colors.black87,
+      barrierColor: AppColors.scrim.withValues(alpha: 0.87),
       builder: (ctx) => _ComparisonDialog(
         beforeImage: beforeImage,
         afterImage: afterImage,

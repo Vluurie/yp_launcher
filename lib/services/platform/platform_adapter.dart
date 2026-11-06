@@ -73,8 +73,9 @@ abstract class PlatformAdapter {
     required String gameExe,
     required String launcherDir,
     required AppLocalizations l10n,
+    bool vanilla = false,
   }) => buildNamsCommand(
-    namsArgs: namsRunArgs,
+    namsArgs: (nierPath) => namsRunArgs(nierPath, vanilla: vanilla),
     namsExe: namsExe,
     gameDir: gameDir,
     gameExe: gameExe,

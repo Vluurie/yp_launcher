@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:yp_launcher/widgets/config_change_status.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
 import 'package:yp_launcher/widgets/config_apply_marker.dart';
 
-class ConfigFieldInt extends StatefulWidget {
+class ConfigFieldInt extends StatefulWidget implements ConfigChangeSource {
   final String label;
   final int value;
+  final int? defaultValue;
   final ValueChanged<int> onChanged;
   final String? tooltip;
   final bool hex;
@@ -25,7 +27,11 @@ class ConfigFieldInt extends StatefulWidget {
     this.max,
     this.restartRequired = false,
     this.showApplyMarker = false,
+    this.defaultValue,
   });
+
+  @override
+  List<String> get changedLabels => changedLabelOf(label, value, defaultValue);
 
   @override
   State<ConfigFieldInt> createState() => _ConfigFieldIntState();

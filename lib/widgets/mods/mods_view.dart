@@ -34,6 +34,7 @@ import 'package:yp_launcher/widgets/launcher_sidebar.dart';
 import 'package:yp_launcher/widgets/mods/mod_drop_zone.dart';
 import 'package:yp_launcher/widgets/mods/mod_list_row.dart';
 import 'package:yp_launcher/widgets/mods/mods_tutorial.dart';
+import 'package:yp_launcher/widgets/mods/outfit_equip_guide.dart';
 
 class ModsView extends ConsumerStatefulWidget {
   const ModsView({super.key});
@@ -130,6 +131,9 @@ class _ModsViewState extends ConsumerState<ModsView> {
       ref.read(modsStateControllerProvider.notifier).loadMods(dir);
     });
   }
+
+  Future<void> _guided(Future<void> Function() install) =>
+      OutfitEquipGuide.watchInstall(context, _gameDir, install);
 
   Future<void> _handleDrop(List<String> paths) async {
     if (ref.read(activeTabProvider) != 5) return;
@@ -824,9 +828,11 @@ class _ModsViewState extends ConsumerState<ModsView> {
                               child: KeyedSubtree(
                                 key: _dropZoneKey,
                                 child: ModDropZone(
-                                  onDrop: _handleDrop,
-                                  onBrowse: _handleBrowseFile,
-                                  onBrowseFolder: _handleBrowseFolder,
+                                  onDrop: (paths) =>
+                                      _guided(() => _handleDrop(paths)),
+                                  onBrowse: () => _guided(_handleBrowseFile),
+                                  onBrowseFolder: () =>
+                                      _guided(_handleBrowseFolder),
                                 ),
                               ),
                             ),
@@ -934,7 +940,7 @@ class _ModsViewState extends ConsumerState<ModsView> {
     return _toolbarButton(
       icon: Icons.library_add_outlined,
       tooltip: l10n.modBulkInstall,
-      onTap: _handleBulkInstall,
+      onTap: () => _guided(_handleBulkInstall),
     );
   }
 
@@ -1027,7 +1033,7 @@ class _ModsViewState extends ConsumerState<ModsView> {
     return _toolbarButton(
       icon: Icons.note_add_outlined,
       tooltip: l10n.modLooseInstall,
-      onTap: _handleLooseInstall,
+      onTap: () => _guided(_handleLooseInstall),
     );
   }
 

@@ -18,6 +18,25 @@ const _namsExe = '$_launcherDir/NAMS.exe';
 const _bottle = CrossOverBottle(name: 'Steam', path: _bottlePath);
 
 void main() {
+  group('namsRunArgs', () {
+    test('a normal start has no vanilla flag', () {
+      expect(namsRunArgs(r'C:\Games\NieR'), [
+        'run',
+        '--nier-path',
+        r'C:\Games\NieR',
+      ]);
+    });
+
+    test('a vanilla start passes --vanilla to NAMS run', () {
+      expect(namsRunArgs(r'C:\Games\NieR', vanilla: true), [
+        'run',
+        '--nier-path',
+        r'C:\Games\NieR',
+        '--vanilla',
+      ]);
+    });
+  });
+
   group('buildCrossOverLaunchCommand', () {
     final cmd = buildCrossOverLaunchCommand(
       namsExe: _namsExe,

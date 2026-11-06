@@ -31,4 +31,8 @@ class AppColors {
   static Color get logBackground => active.logBackground;
   static Color get logHeaderBackground => active.logHeaderBackground;
   static Color get logText => active.logText;
+  static Color get logDebug => active.logDebug;
+  static Color get tooltipBackground => active.tooltipBackground;
+  static Color get textOnDark => active.textOnDark;
+  static Color get scrim => active.scrim;
 }

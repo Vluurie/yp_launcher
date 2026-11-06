@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:yp_launcher/widgets/config_change_status.dart';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -9,9 +10,11 @@ import 'package:yp_launcher/theme/app_colors.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
 import 'package:yp_launcher/widgets/hover_button.dart';
 
-class ConfigFieldCursorFile extends StatefulWidget {
+class ConfigFieldCursorFile extends StatefulWidget
+    implements ConfigChangeSource {
   final String label;
   final String value;
+  final String? defaultValue;
   final ValueChanged<String> onChanged;
   final String? tooltip;
 
@@ -21,7 +24,11 @@ class ConfigFieldCursorFile extends StatefulWidget {
     required this.value,
     required this.onChanged,
     this.tooltip,
+    this.defaultValue,
   });
+
+  @override
+  List<String> get changedLabels => changedLabelOf(label, value, defaultValue);
 
   static bool isValidCursorFile(String path) {
     final file = File(path);
