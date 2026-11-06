@@ -61,7 +61,7 @@ void main() {
       }
     });
 
-    test('applyWrapper prepends the wrapper and inserts a separator', () {
+    test('applyWrapper prepends the wrapper and preserves its separator', () {
       final wrapped = LaunchWrapperService.applyWrapper(
         base,
         'gamescope -w 2560 -h 1440 -f --',
@@ -87,8 +87,7 @@ void main() {
     test('single-word wrapper (mangohud) prepends correctly', () {
       final wrapped = LaunchWrapperService.applyWrapper(base, 'mangohud');
       expect(wrapped.command, 'mangohud');
-      expect(wrapped.args[0], '--');
-      expect(wrapped.args[1], '/opt/proton/proton');
+      expect(wrapped.args, [base.command, ...base.args]);
     });
   });
 }

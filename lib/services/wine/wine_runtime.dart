@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:path/path.dart' as p;
 import 'package:yp_launcher/services/wine/crossover.dart';
 import 'package:yp_launcher/services/wine/proton.dart';
+import 'package:yp_launcher/services/wine/steam_compat_tool.dart';
 import 'package:yp_launcher/services/wine/wine_paths.dart';
 
 enum WineSource { crossOver, proton, wine }
@@ -54,6 +55,7 @@ WineRuntime? detectWineRuntime({String? gameExePath}) {
     final steam = inferSteamContext(gamePath);
     if (steam != null) {
       final proton =
+          findSteamConfiguredProton(steam.steamRoot, steam.libraryRoot) ??
           findProtonPath(steam.steamRoot, steam.libraryRoot) ??
           findAnyProtonPath();
       if (proton != null) {

@@ -22,7 +22,284 @@ Map<String, dynamic> _readNams(Directory gameDir) {
   return TomlService.parse(raw);
 }
 
+String _rawNams(Directory gameDir) =>
+    File(p.join(gameDir.path, 'nams', 'nams.toml')).readAsStringSync();
+
+String _rawNaiom(Directory gameDir) =>
+    File(p.join(gameDir.path, 'nams', 'naiom.toml')).readAsStringSync();
+
+Map<String, dynamic> _readNaiom(Directory gameDir) =>
+    TomlService.parse(_rawNaiom(gameDir));
+
+Map<String, dynamic> _content(Map<String, dynamic> cfg) =>
+    cfg['content'] as Map<String, dynamic>;
+
+const _legacyContentKeys = [
+  'content_items',
+  'content_accessories',
+  'content_assemble_meshes',
+  'content_effect_areas',
+  'content_quest_integration',
+  'content_effects_applier',
+  'content_equip_tracker',
+  'content_mcd',
+  'content_buddy_ruby_selector',
+];
+
+const _legacyMapping = <String, Set<String>>{
+  'content_items': {
+    'custom_items',
+    'custom_weapons',
+    'weapon_patches',
+    'custom_outfits',
+    'custom_hairsprays',
+    'shop_items',
+    'item_shortcut_menu',
+  },
+  'content_accessories': {'accessories'},
+  'content_assemble_meshes': {'player_mesh_swaps', 'mesh_visibility'},
+  'content_effect_areas': {'effect_areas', 'effect_type_mute', 'global_effects'},
+  'content_quest_integration': {
+    'custom_quests',
+    'custom_mails',
+    'custom_voice_lines',
+    'custom_maps',
+    'custom_music',
+    'ambient_sounds',
+    'custom_sounds',
+    'script_groups',
+    'lighting_filters',
+    'outfit_selector_npc',
+    'buddy_outfit_menu',
+    'cutscene_replacements',
+  },
+  'content_effects_applier': {'effect_rules'},
+  'content_equip_tracker': {},
+  'content_mcd': {'custom_texts'},
+  'content_buddy_ruby_selector': {'buddy_outfit_menu'},
+};
+
+String _legacyConfig(Map<String, bool> overrides) {
+  final lines = [
+    for (final key in _legacyContentKeys) '$key = ${overrides[key] ?? true}',
+  ];
+  return '''# NAMS General Config. Restart game after changes.
+
+validate_model_data = false
+validate_scripts = false
+loading_stall_hints = true
+disable_plugin_loading = false
+disable_content_features = false
+
+# Per-feature content-layer toggles. All default to true. Useful for bisecting
+# mod bugs without disabling the entire content layer.
+${lines.join('\n')}
+
+outfit_swap_visual_effects = true
+experimental_default_outfits = false
+
+# Mouse input fixes.
+[mouse]
+sensitivity = 2.0
+
+[cutscene]
+hd_cutscenes = true
+''';
+}
+
+void _expectContentOff(Map<String, dynamic> cfg, Set<String> off) {
+  final content = _content(cfg);
+  for (final f in NamsContentFields.all) {
+    expect(
+      content[f.key],
+      !off.contains(f.key),
+      reason: '${f.key} should be ${off.contains(f.key) ? 'off' : 'on'}',
+    );
+  }
+}
+
 void main() {
+  group('nams.toml [content] table', () {
+    test('NamsContentFields lists the 35 NAMS keys once each', () {
+      final keys = NamsContentFields.all.map((f) => f.key).toList();
+      expect(keys, hasLength(35));
+      expect(keys.toSet(), hasLength(35));
+      for (final f in NamsContentFields.all) {
+        expect(f.section, 'content');
+        expect(f.defaultValue, isTrue);
+        expect(f.restartRequired, isTrue);
+      }
+    });
+
+    test('fresh config has [content] with every key on and no old keys',
+        () async {
+      final gameDir = _gameDirWith(null);
+      addTearDown(() => gameDir.deleteSync(recursive: true));
+
+      await NamsConfigService.ensureConfigs(gameDir.path);
+      final cfg = _readNams(gameDir);
+
+      expect(
+        _content(cfg).keys.toSet(),
+        NamsContentFields.all.map((f) => f.key).toSet(),
+      );
+      _expectContentOff(cfg, const {});
+      for (final key in _legacyContentKeys) {
+        expect(_rawNams(gameDir), isNot(contains(key)),
+            reason: '$key must not be written any more');
+      }
+    });
+
+    test('old content_items and content_quest_integration convert to [content]',
+        () async {
+      final gameDir = _gameDirWith(_legacyConfig({
+        'content_items': false,
+        'content_quest_integration': false,
+      }));
+      addTearDown(() => gameDir.deleteSync(recursive: true));
+
+      await NamsConfigService.ensureConfigs(gameDir.path);
+      final raw = _rawNams(gameDir);
+      final cfg = TomlService.parse(raw);
+
+      _expectContentOff(cfg, {
+        ..._legacyMapping['content_items']!,
+        ..._legacyMapping['content_quest_integration']!,
+      });
+
+      for (final key in _legacyContentKeys) {
+        expect(cfg.containsKey(key), isFalse, reason: '$key must be removed');
+        expect(raw, isNot(contains(key)), reason: '$key line must be gone');
+      }
+      expect(raw, isNot(contains('Per-feature content-layer toggles')),
+          reason: 'the old comment block must be removed too');
+
+      final contentAt = raw.indexOf('[content]');
+      for (final entry in cfg.entries) {
+        if (entry.value is Map) continue;
+        expect(raw.indexOf('${entry.key} ='), lessThan(contentAt),
+            reason: 'top-level ${entry.key} must stay above [content]');
+      }
+      expect(contentAt, lessThan(raw.indexOf('# Mouse input fixes.')),
+          reason: '[content] goes in front of [mouse] and its comment');
+      expect((cfg['mouse'] as Map)['sensitivity'], 2.0);
+      expect((cfg['cutscene'] as Map)['hd_cutscenes'], isTrue);
+    });
+
+    for (final entry in _legacyMapping.entries) {
+      test('${entry.key} = false turns off exactly what NAMS turns off',
+          () async {
+        final gameDir = _gameDirWith(_legacyConfig({entry.key: false}));
+        addTearDown(() => gameDir.deleteSync(recursive: true));
+
+        await NamsConfigService.ensureConfigs(gameDir.path);
+
+        _expectContentOff(_readNams(gameDir), entry.value);
+      });
+    }
+
+    test('old keys that are not literally false keep the feature on',
+        () async {
+      final gameDir = _gameDirWith('''validate_model_data = false
+content_items = "false"
+content_mcd = 0
+
+[mouse]
+sensitivity = 2.0
+''');
+      addTearDown(() => gameDir.deleteSync(recursive: true));
+
+      await NamsConfigService.ensureConfigs(gameDir.path);
+      final cfg = _readNams(gameDir);
+
+      _expectContentOff(cfg, const {});
+      expect(cfg.containsKey('content_items'), isFalse);
+      expect(cfg.containsKey('content_mcd'), isFalse);
+    });
+
+    test('existing [content] keeps user values and ignores leftover old keys',
+        () async {
+      final gameDir = _gameDirWith('''validate_model_data = false
+content_items = false
+content_mcd = false
+
+# Content features.
+[content]
+custom_items = true
+custom_texts = true
+novels = false
+
+# Mouse input fixes.
+[mouse]
+sensitivity = 2.0
+''');
+      addTearDown(() => gameDir.deleteSync(recursive: true));
+
+      await NamsConfigService.ensureConfigs(gameDir.path);
+      final raw = _rawNams(gameDir);
+      final cfg = TomlService.parse(raw);
+
+      expect(cfg.containsKey('content_items'), isFalse);
+      expect(cfg.containsKey('content_mcd'), isFalse);
+      expect(raw, isNot(contains('content_items')));
+      expect(raw, isNot(contains('content_mcd')));
+
+      _expectContentOff(cfg, {'novels'});
+
+      final contentAt = raw.indexOf('[content]');
+      final mouseAt = raw.indexOf('# Mouse input fixes.');
+      for (final f in NamsContentFields.all) {
+        final at = raw.indexOf('\n${f.key} =');
+        expect(at, greaterThan(contentAt), reason: '${f.key} below [content]');
+        expect(at, lessThan(mouseAt), reason: '${f.key} above [mouse]');
+      }
+      expect(raw, contains('# Content features.\n[content]'),
+          reason: 'the user comment stays on its table');
+      expect((cfg['mouse'] as Map)['sensitivity'], 2.0);
+    });
+
+    test('content migration is idempotent', () async {
+      for (final fixture in [
+        null,
+        _legacyConfig({'content_items': false, 'content_mcd': false}),
+        '''content_items = false
+
+[content]
+novels = false
+''',
+      ]) {
+        final gameDir = _gameDirWith(fixture);
+        addTearDown(() => gameDir.deleteSync(recursive: true));
+
+        await NamsConfigService.ensureConfigs(gameDir.path);
+        final first = _rawNams(gameDir);
+        await NamsConfigService.ensureConfigs(gameDir.path);
+
+        expect(_rawNams(gameDir), first);
+      }
+    });
+
+    test('saving a [content] toggle rewrites only that line', () async {
+      final gameDir = _gameDirWith(null);
+      addTearDown(() => gameDir.deleteSync(recursive: true));
+
+      await NamsConfigService.ensureConfigs(gameDir.path);
+      final raw = _rawNams(gameDir);
+      final values = TomlService.parse(raw);
+      values['content'] = {
+        ..._content(values),
+        NamsContentFields.novels.key: false,
+      };
+
+      final updated = TomlService.updateToml(raw, values);
+
+      expect(
+        updated.trimRight(),
+        raw.replaceFirst('novels = true', 'novels = false').trimRight(),
+      );
+    });
+  });
+
   group('nams.toml matches the NAMS config surface', () {
     test('fresh config has every top-level key with NAMS defaults', () async {
       final gameDir = _gameDirWith(null);
@@ -37,19 +314,12 @@ void main() {
         NamsFields.loadingStallHints,
         NamsFields.disablePluginLoading,
         NamsFields.disableContentFeatures,
-        NamsFields.contentItems,
-        NamsFields.contentAccessories,
-        NamsFields.contentAssembleMeshes,
-        NamsFields.contentQuestIntegration,
-        NamsFields.contentEffectsApplier,
-        NamsFields.contentEquipTracker,
-        NamsFields.contentMcd,
-        NamsFields.contentBuddyRubySelector,
         NamsFields.experimentalDefaultOutfits,
         NamsFields.outfitSwapVisualEffects,
         NamsFields.disableReShadeLoading,
         NamsFields.disable3dmigotoLoading,
         NamsFields.disableGameModsLoading,
+        NamsFields.disableGraphicModsLoading,
         NamsFields.disableTextureInjection,
         NamsFields.disableSplashScreen,
         NamsFields.fixWindTimerBug,
@@ -84,7 +354,7 @@ sensitivity = 2.0
       expect(cfg[NamsFields.outfitSwapVisualEffects.key], isTrue);
       expect(cfg[NamsFields.disableSplashScreen.key], isFalse);
       expect(cfg[NamsFields.disableContentFeatures.key], isFalse);
-      expect(cfg[NamsFields.contentItems.key], isTrue);
+      expect(_content(cfg)[NamsContentFields.customItems.key], isTrue);
       expect(cfg[NamsFields.disable3dmigotoLoading.key], isFalse,
           reason: 'disable_3dmigoto_loading migrated into an old config');
       expect(cfg[NamsFields.disableReShadeLoading.key], isFalse,
@@ -93,6 +363,8 @@ sensitivity = 2.0
           reason: 'disable_debug_hotkeys migrated into an old config');
       expect(cfg[NamsFields.disableInputFeatures.key], isFalse,
           reason: 'disable_input_features migrated into an old config');
+      expect(cfg[NamsFields.disableGraphicModsLoading.key], isFalse,
+          reason: 'disable_graphic_mods_loading migrated into an old config');
       expect((cfg['cutscene'] as Map)[NamsFields.solidLetterboxBars.key],
           isFalse,
           reason: 'solid_letterbox_bars migrated into [cutscene]');
@@ -176,14 +448,13 @@ outfit_swap_visual_effects = false
           reason: 'user opt-out must survive migration');
     });
 
-    test('mouse fallback section carries every mouse field', () async {
+    test('naiom.toml carries every mouse field', () async {
       final gameDir = _gameDirWith('''validate_model_data = false
 ''');
       addTearDown(() => gameDir.deleteSync(recursive: true));
 
       await NamsConfigService.ensureConfigs(gameDir.path);
-      final raw =
-          File(p.join(gameDir.path, 'nams', 'nams.toml')).readAsStringSync();
+      final raw = _rawNaiom(gameDir);
 
       for (final f in <ConfigField>[
         NamsFields.fixCameraAcceleration,
@@ -207,12 +478,68 @@ outfit_swap_visual_effects = false
         NamsFields.miscDisableDefaultCursor,
       ]) {
         expect(raw.contains(f.key), isTrue,
-            reason: '${f.key} missing from the [mouse] fallback');
+            reason: '${f.key} missing from naiom.toml');
       }
       for (final f in NamsBindingFields.all) {
         expect(raw.contains(f.key), isTrue,
-            reason: '${f.key} missing from the [mouse.bindings] fallback');
+            reason: '${f.key} missing from naiom.toml [bindings]');
       }
+    });
+  });
+
+  group('texture_injection.toml matches the NAMS config surface', () {
+    Map<String, dynamic> readTextures(Directory gameDir) => TomlService.parse(
+          File(p.join(gameDir.path, 'nams', 'texture_injection.toml'))
+              .readAsStringSync(),
+        );
+
+    test('fresh config has every key with NAMS defaults', () async {
+      final gameDir = _gameDirWith(null);
+      addTearDown(() => gameDir.deleteSync(recursive: true));
+
+      await NamsConfigService.ensureConfigs(gameDir.path);
+      final cfg = readTextures(gameDir);
+
+      final expected = <ConfigField>[
+        TextureInjectionFields.vramBudgetMb,
+        TextureInjectionFields.streamingEnabled,
+        TextureInjectionFields.loadOnlyRelevant,
+        TextureInjectionFields.pinPriorityTextures,
+        TextureInjectionFields.loadOrder,
+        TextureInjectionFields.disabledPacks,
+        TextureInjectionFields.hotReload,
+      ];
+      for (final f in expected) {
+        expect(cfg.containsKey(f.key), isTrue,
+            reason: '${f.key} missing from generated texture_injection.toml');
+        expect(cfg[f.key].toString(), f.defaultValue.toString(),
+            reason: '${f.key} default does not match NAMS');
+      }
+    });
+
+    test('migration adds pin_priority_textures and keeps user values',
+        () async {
+      final gameDir = _gameDirWith(null);
+      addTearDown(() => gameDir.deleteSync(recursive: true));
+      final namsDir = Directory(p.join(gameDir.path, 'nams'))
+        ..createSync(recursive: true);
+      File(p.join(namsDir.path, 'texture_injection.toml')).writeAsStringSync(
+        'vram_budget_mb = 2048\n'
+        'streaming_enabled = false\n'
+        'load_only_relevant = true\n'
+        'load_order = ["A", "B"]\n'
+        'hot_reload = false\n',
+      );
+
+      await NamsConfigService.ensureConfigs(gameDir.path);
+      final cfg = readTextures(gameDir);
+
+      expect(cfg[TextureInjectionFields.pinPriorityTextures.key], isTrue);
+      expect(cfg[TextureInjectionFields.vramBudgetMb.key], 2048);
+      expect(cfg[TextureInjectionFields.streamingEnabled.key], isFalse);
+      expect(cfg[TextureInjectionFields.loadOnlyRelevant.key], isTrue);
+      expect(cfg[TextureInjectionFields.loadOrder.key], ['A', 'B']);
+      expect(cfg[TextureInjectionFields.hotReload.key], isFalse);
     });
   });
 
@@ -298,25 +625,21 @@ global_heap_extra = 0
       addTearDown(() => gameDir.deleteSync(recursive: true));
 
       await NamsConfigService.ensureConfigs(gameDir.path);
-      final cfg = _readNams(gameDir);
       final bindings =
-          (cfg['mouse'] as Map<String, dynamic>)['bindings']
-              as Map<String, dynamic>;
+          _readNaiom(gameDir)['bindings'] as Map<String, dynamic>;
 
       expect(bindings['non_standard_evade'], 'R',
           reason: 'VK 82 (0x52) is the R key');
     });
 
-    test('new mouse keys and all bindings are added inside their sections',
+    test('naiom.toml gets the old [mouse] values and every new key',
         () async {
       final gameDir = _gameDirWith(oldMouseConfig);
       addTearDown(() => gameDir.deleteSync(recursive: true));
 
       await NamsConfigService.ensureConfigs(gameDir.path);
-      final raw =
-          File(p.join(gameDir.path, 'nams', 'nams.toml')).readAsStringSync();
-      final cfg = TomlService.parse(raw);
-      final mouse = cfg['mouse'] as Map<String, dynamic>;
+      final raw = _rawNaiom(gameDir);
+      final mouse = TomlService.parse(raw);
       final bindings = mouse['bindings'] as Map<String, dynamic>;
 
       for (final key in [
@@ -335,17 +658,25 @@ global_heap_extra = 0
         'misc_disable_default_cursor',
       ]) {
         expect(mouse.containsKey(key), isTrue,
-            reason: '$key must be added to [mouse]');
+            reason: '$key must be in naiom.toml');
       }
       for (final f in NamsBindingFields.all) {
         expect(bindings.containsKey(f.key), isTrue,
-            reason: '${f.key} must exist in [mouse.bindings]');
+            reason: '${f.key} must exist in naiom.toml [bindings]');
       }
       expect(raw.indexOf('third_person_mode = false'),
-          lessThan(raw.indexOf('[cutscene]')),
-          reason: 'new mouse keys must land inside [mouse], not at EOF');
+          lessThan(raw.indexOf('[bindings]')),
+          reason: 'mouse keys must stay top-level, not inside [bindings]');
       expect(raw, contains('# Remove the deadzone and acceleration curve'));
-      expect((cfg['cutscene'] as Map)['hd_cutscenes'], isTrue);
+      expect(mouse['sensitivity'], 3.75);
+      expect(mouse['aim_mode'], isTrue);
+      expect(mouse['misc_disable_pod_pet'], isTrue);
+      expect(mouse['misc_open_debug_menu'], 112);
+      expect(mouse['aim_sensitivity'], 0.002);
+      expect(mouse['aim_output_multiplier'], 12.0);
+      expect(mouse['fix_camera_acceleration'], isTrue);
+      expect(mouse.containsKey('evade_key'), isFalse);
+      expect((_readNams(gameDir)['cutscene'] as Map)['hd_cutscenes'], isTrue);
     });
 
     test('rename migration is idempotent', () async {
@@ -445,10 +776,8 @@ evade_key = 112
       addTearDown(() => gameDir.deleteSync(recursive: true));
 
       await NamsConfigService.ensureConfigs(gameDir.path);
-      final cfg = _readNams(gameDir);
       final bindings =
-          (cfg['mouse'] as Map<String, dynamic>)['bindings']
-              as Map<String, dynamic>;
+          _readNaiom(gameDir)['bindings'] as Map<String, dynamic>;
 
       expect(bindings['non_standard_evade'], '',
           reason: 'VK 112 (F1) has no NAMS key name and must not be migrated');

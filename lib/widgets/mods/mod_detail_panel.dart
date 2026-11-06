@@ -907,6 +907,8 @@ class _CameraField {
   final String Function(AppLocalizations) label;
   final String Function(AppLocalizations) hint;
 
+  final double defaultValue;
+
   const _CameraField(
     this.key,
     this.min,
@@ -914,8 +916,9 @@ class _CameraField {
     this.step,
     this.decimals,
     this.label,
-    this.hint,
-  );
+    this.hint, {
+    this.defaultValue = 0,
+  });
 }
 
 /// Sliders for a mod's `player_camera_settings` entity; every change is written back to its file.
@@ -973,6 +976,26 @@ class _CameraSettingsSectionState extends State<_CameraSettingsSection> {
       (l) => l.modCameraFovOffset,
       (l) => l.modCameraFovOffsetHint,
     ),
+    _CameraField(
+      'pitch_up_limit',
+      1,
+      89,
+      1,
+      0,
+      (l) => l.modCameraPitchUpLimit,
+      (l) => l.modCameraPitchUpLimitHint,
+      defaultValue: 72,
+    ),
+    _CameraField(
+      'pitch_down_limit',
+      1,
+      89,
+      1,
+      0,
+      (l) => l.modCameraPitchDownLimit,
+      (l) => l.modCameraPitchDownLimitHint,
+      defaultValue: 72,
+    ),
   ];
 
   String? _filePath;
@@ -1012,7 +1035,9 @@ class _CameraSettingsSectionState extends State<_CameraSettingsSection> {
         _raw = raw;
         for (final field in _fields) {
           final value = table[field.key];
-          _values[field.key] = value is num ? value.toDouble() : 0.0;
+          _values[field.key] = value is num
+              ? value.toDouble()
+              : field.defaultValue;
         }
       });
       return;
@@ -1062,7 +1087,7 @@ class _CameraSettingsSectionState extends State<_CameraSettingsSection> {
               max: field.max,
               step: field.step,
               decimals: field.decimals,
-              value: _values[field.key] ?? 0.0,
+              value: _values[field.key] ?? field.defaultValue,
               onChanged: (value) => _onChanged(field, value),
             ),
         ],

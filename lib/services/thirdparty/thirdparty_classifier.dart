@@ -1,3 +1,4 @@
+import 'package:path/path.dart' as path;
 import 'package:yp_launcher/services/detection/graphics_dll_id.dart';
 import 'package:yp_launcher/services/detection/lodmod_detection.dart';
 import 'package:yp_launcher/services/file_ops.dart';
@@ -16,13 +17,6 @@ class ThirdPartyClassifier {
         kind: ThirdPartyKind.multiBundle,
         sourceRoot: root,
         innerArchives: inner,
-      );
-    }
-
-    if (findIncompatibleModloaderDlls(root).isNotEmpty) {
-      return ThirdPartyClassification(
-        kind: ThirdPartyKind.incompatibleModloader,
-        sourceRoot: root,
       );
     }
 
@@ -53,7 +47,14 @@ class ThirdPartyClassifier {
       );
     }
 
-    if (hasFileMatching(root, (rel) => baseName(rel) == 'dinput8.dll') ||
+    final specialKDll = FileOps.anyFile(
+      root,
+      (rel, full) =>
+          baseName(rel).endsWith('.dll') &&
+          GraphicsDllId.identifyFile(full) == GraphicsDll.none &&
+          isSpecialKDll(full),
+    );
+    if (specialKDll ||
         hasFileMatching(
           root,
           (rel) => rel.contains('specialk') || baseName(rel).startsWith('sk_'),
@@ -120,6 +121,18 @@ class ThirdPartyClassifier {
     }
 
     final gameModDlls = findGameModDlls(root);
+    final proxies = gameModDlls
+        .where(
+          (d) => directXProxyNames.contains(path.basename(d).toLowerCase()),
+        )
+        .toList();
+    if (proxies.isNotEmpty) {
+      return ThirdPartyClassification(
+        kind: ThirdPartyKind.graphicMod,
+        sourceRoot: root,
+        graphicModDlls: proxies,
+      );
+    }
     if (gameModDlls.isNotEmpty) {
       return ThirdPartyClassification(
         kind: ThirdPartyKind.gameMod,

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:path/path.dart' as p;
+import 'package:yp_launcher/l10n/app_localizations.dart';
 import 'package:yp_launcher/models/nier_installation.dart';
 import 'package:yp_launcher/services/platform/wine_adapter_base.dart';
 import 'package:yp_launcher/services/wine/native_steam.dart';
@@ -42,6 +43,9 @@ class LinuxAdapter extends WineAdapterBase {
         : p.join(env['HOME'] ?? '', '.local', 'share');
     return p.join(root, 'yp_launcher', 'bins');
   }
+
+  @override
+  String verifyTimedOut(AppLocalizations l10n) => l10n.verifyTimedOutLinux;
 
   @override
   List<String> get systemSevenZipCandidates => const [

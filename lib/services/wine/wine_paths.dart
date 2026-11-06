@@ -10,7 +10,6 @@ const _driveC = 'drive_c';
 
 /// Environment passed to every wine invocation.
 Map<String, String> createWineEnv() => {
-  ...Platform.environment,
   'WINEDEBUG': Platform.environment['WINEDEBUG'] ?? '-all',
 };
 

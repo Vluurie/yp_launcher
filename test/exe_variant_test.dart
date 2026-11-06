@@ -47,6 +47,11 @@ void main() {
     expect(GameDetection.windows10Size, 17837952);
     expect(GameDetection.windows10Sha1,
         '420cbab7daa1d94a79473c0a6271ef9c30e516e5');
+    expect(GameDetection.steam2026Size, 17601536);
+    expect(GameDetection.steam2026Sha1,
+        '537be3ea1083114cc1e444b85ac270f2043ac4d6');
+    expect(GameDetection.supportedExeSizes,
+        {GameDetection.windows10Size, GameDetection.steam2026Size});
   });
 
   test('sha1 of the exact legacy bytes would match the reference', () {

@@ -154,8 +154,7 @@ class _YorhaProtocolViewState extends ConsumerState<YorhaProtocolView> {
     NamsSettingsStateController notifier,
   ) {
     final l10n = AppLocalizations.of(context)!;
-    final mainBinds = data.mainKeybinds;
-    final ypBinds = data.ypKeybinds;
+    final binds = data.keybinds;
     final randomizer = data.randomizerConfig;
     final cheats = data.cheatsConfig;
 
@@ -170,7 +169,7 @@ class _YorhaProtocolViewState extends ConsumerState<YorhaProtocolView> {
                 _keybindRow(
                   context,
                   YpKeybindFields.openWorkspace.label(l10n),
-                  YpKeybindFields.openWorkspace.valueIn(mainBinds),
+                  YpKeybindFields.openWorkspace.valueIn(binds),
                   (v) => notifier.updateKeybind(
                     YpKeybindFields.openWorkspace.section!,
                     YpKeybindFields.openWorkspace.key,
@@ -181,7 +180,7 @@ class _YorhaProtocolViewState extends ConsumerState<YorhaProtocolView> {
                 _keybindRow(
                   context,
                   YpKeybindFields.freezeGame.label(l10n),
-                  YpKeybindFields.freezeGame.valueIn(ypBinds),
+                  YpKeybindFields.freezeGame.valueIn(binds),
                   (v) => notifier.updateKeybind(
                     YpKeybindFields.freezeGame.section!,
                     YpKeybindFields.freezeGame.key,
@@ -192,7 +191,7 @@ class _YorhaProtocolViewState extends ConsumerState<YorhaProtocolView> {
                 _keybindRow(
                   context,
                   YpKeybindFields.maxSpeed.label(l10n),
-                  YpKeybindFields.maxSpeed.valueIn(ypBinds),
+                  YpKeybindFields.maxSpeed.valueIn(binds),
                   (v) => notifier.updateKeybind(
                     YpKeybindFields.maxSpeed.section!,
                     YpKeybindFields.maxSpeed.key,
@@ -203,7 +202,7 @@ class _YorhaProtocolViewState extends ConsumerState<YorhaProtocolView> {
                 _keybindRow(
                   context,
                   YpKeybindFields.freeCam.label(l10n),
-                  YpKeybindFields.freeCam.valueIn(ypBinds),
+                  YpKeybindFields.freeCam.valueIn(binds),
                   (v) => notifier.updateKeybind(
                     YpKeybindFields.freeCam.section!,
                     YpKeybindFields.freeCam.key,
@@ -214,7 +213,7 @@ class _YorhaProtocolViewState extends ConsumerState<YorhaProtocolView> {
                 _keybindRow(
                   context,
                   YpKeybindFields.phaseJump.label(l10n),
-                  YpKeybindFields.phaseJump.valueIn(ypBinds),
+                  YpKeybindFields.phaseJump.valueIn(binds),
                   (v) => notifier.updateKeybind(
                     YpKeybindFields.phaseJump.section!,
                     YpKeybindFields.phaseJump.key,
@@ -225,7 +224,7 @@ class _YorhaProtocolViewState extends ConsumerState<YorhaProtocolView> {
                 _keybindRow(
                   context,
                   YpKeybindFields.toggleGameInput.label(l10n),
-                  YpKeybindFields.toggleGameInput.valueIn(ypBinds),
+                  YpKeybindFields.toggleGameInput.valueIn(binds),
                   (v) => notifier.updateKeybind(
                     YpKeybindFields.toggleGameInput.section!,
                     YpKeybindFields.toggleGameInput.key,
@@ -236,7 +235,7 @@ class _YorhaProtocolViewState extends ConsumerState<YorhaProtocolView> {
                 _keybindRow(
                   context,
                   YpKeybindFields.advanceFrame.label(l10n),
-                  YpKeybindFields.advanceFrame.valueIn(ypBinds),
+                  YpKeybindFields.advanceFrame.valueIn(binds),
                   (v) => notifier.updateKeybind(
                     YpKeybindFields.advanceFrame.section!,
                     YpKeybindFields.advanceFrame.key,
@@ -247,7 +246,7 @@ class _YorhaProtocolViewState extends ConsumerState<YorhaProtocolView> {
                 _keybindRow(
                   context,
                   YpKeybindFields.devMode.label(l10n),
-                  YpKeybindFields.devMode.valueIn(ypBinds),
+                  YpKeybindFields.devMode.valueIn(binds),
                   (v) => notifier.updateKeybind(
                     YpKeybindFields.devMode.section!,
                     YpKeybindFields.devMode.key,
@@ -258,7 +257,7 @@ class _YorhaProtocolViewState extends ConsumerState<YorhaProtocolView> {
                 _keybindRow(
                   context,
                   YpKeybindFields.warpSave1.label(l10n),
-                  YpKeybindFields.warpSave1.valueIn(ypBinds),
+                  YpKeybindFields.warpSave1.valueIn(binds),
                   (v) => notifier.updateKeybind(
                     YpKeybindFields.warpSave1.section!,
                     YpKeybindFields.warpSave1.key,
@@ -269,7 +268,7 @@ class _YorhaProtocolViewState extends ConsumerState<YorhaProtocolView> {
                 _keybindRow(
                   context,
                   YpKeybindFields.warpGoto1.label(l10n),
-                  YpKeybindFields.warpGoto1.valueIn(ypBinds),
+                  YpKeybindFields.warpGoto1.valueIn(binds),
                   (v) => notifier.updateKeybind(
                     YpKeybindFields.warpGoto1.section!,
                     YpKeybindFields.warpGoto1.key,
@@ -280,7 +279,7 @@ class _YorhaProtocolViewState extends ConsumerState<YorhaProtocolView> {
                 _keybindRow(
                   context,
                   YpKeybindFields.warpSave2.label(l10n),
-                  YpKeybindFields.warpSave2.valueIn(ypBinds),
+                  YpKeybindFields.warpSave2.valueIn(binds),
                   (v) => notifier.updateKeybind(
                     YpKeybindFields.warpSave2.section!,
                     YpKeybindFields.warpSave2.key,
@@ -291,7 +290,7 @@ class _YorhaProtocolViewState extends ConsumerState<YorhaProtocolView> {
                 _keybindRow(
                   context,
                   YpKeybindFields.warpGoto2.label(l10n),
-                  YpKeybindFields.warpGoto2.valueIn(ypBinds),
+                  YpKeybindFields.warpGoto2.valueIn(binds),
                   (v) => notifier.updateKeybind(
                     YpKeybindFields.warpGoto2.section!,
                     YpKeybindFields.warpGoto2.key,
@@ -338,6 +337,15 @@ class _YorhaProtocolViewState extends ConsumerState<YorhaProtocolView> {
                     v,
                   ),
                   tooltip: YpWorkspaceFields.soundEnabled.tooltip!(l10n),
+                ),
+                ConfigFieldBool(
+                  label: YpWorkspaceFields.editorMcpEnabled.label(l10n),
+                  value: data.editorMcpEnabled,
+                  onChanged: (v) => notifier.updateToggle(
+                    YpWorkspaceFields.editorMcpEnabled.key,
+                    v,
+                  ),
+                  tooltip: YpWorkspaceFields.editorMcpEnabled.tooltip!(l10n),
                 ),
                 ConfigFieldBool(
                   label: YpWorkspaceFields.impeller.label(l10n),
@@ -417,9 +425,9 @@ class _YorhaProtocolViewState extends ConsumerState<YorhaProtocolView> {
               _card(context, l10n.cardRandomizer, [
                 ConfigFieldBool(
                   label: YpRandomizerFields.autoStartOnStartup.label(l10n),
-                  value:
-                      randomizer[YpRandomizerFields.autoStartOnStartup.key] ==
-                      true,
+                  value: YpRandomizerFields.autoStartOnStartup.valueIn(
+                    randomizer,
+                  ),
                   onChanged: (v) => notifier.updateRandomizer(
                     YpRandomizerFields.autoStartOnStartup.key,
                     v,
@@ -428,11 +436,9 @@ class _YorhaProtocolViewState extends ConsumerState<YorhaProtocolView> {
                 ),
                 ConfigFieldBool(
                   label: YpRandomizerFields.randomizeGroundEnemies.label(l10n),
-                  value:
-                      randomizer[YpRandomizerFields
-                          .randomizeGroundEnemies
-                          .key] ==
-                      true,
+                  value: YpRandomizerFields.randomizeGroundEnemies.valueIn(
+                    randomizer,
+                  ),
                   onChanged: (v) => notifier.updateRandomizer(
                     YpRandomizerFields.randomizeGroundEnemies.key,
                     v,
@@ -443,11 +449,9 @@ class _YorhaProtocolViewState extends ConsumerState<YorhaProtocolView> {
                 ),
                 ConfigFieldBool(
                   label: YpRandomizerFields.randomizeFlyingEnemies.label(l10n),
-                  value:
-                      randomizer[YpRandomizerFields
-                          .randomizeFlyingEnemies
-                          .key] ==
-                      true,
+                  value: YpRandomizerFields.randomizeFlyingEnemies.valueIn(
+                    randomizer,
+                  ),
                   onChanged: (v) => notifier.updateRandomizer(
                     YpRandomizerFields.randomizeFlyingEnemies.key,
                     v,
@@ -458,9 +462,7 @@ class _YorhaProtocolViewState extends ConsumerState<YorhaProtocolView> {
                 ),
                 ConfigFieldBool(
                   label: YpRandomizerFields.allowBigEnemies.label(l10n),
-                  value:
-                      randomizer[YpRandomizerFields.allowBigEnemies.key] ==
-                      true,
+                  value: YpRandomizerFields.allowBigEnemies.valueIn(randomizer),
                   onChanged: (v) => notifier.updateRandomizer(
                     YpRandomizerFields.allowBigEnemies.key,
                     v,
@@ -469,9 +471,9 @@ class _YorhaProtocolViewState extends ConsumerState<YorhaProtocolView> {
                 ),
                 ConfigFieldBool(
                   label: YpRandomizerFields.includeDlcEnemies.label(l10n),
-                  value:
-                      randomizer[YpRandomizerFields.includeDlcEnemies.key] ==
-                      true,
+                  value: YpRandomizerFields.includeDlcEnemies.valueIn(
+                    randomizer,
+                  ),
                   onChanged: (v) => notifier.updateRandomizer(
                     YpRandomizerFields.includeDlcEnemies.key,
                     v,

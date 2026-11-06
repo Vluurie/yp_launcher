@@ -194,6 +194,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get verifySteamNotRunning => '无法验证：Steam 必须正在运行并拥有该游戏。';
 
   @override
+  String get verifyTimedOut => '无法验证：NAMS 在 30 秒内没有响应。';
+
+  @override
+  String get verifyTimedOutLinux =>
+      '无法验证：NAMS 在 30 秒内没有响应。很可能是 Proton 卡住了，常见原因是游戏位于 NTFS 磁盘上。将游戏移到 Linux 格式的磁盘通常可以解决。';
+
+  @override
   String get verifyInstallError => '无法运行检查。请确保已选择游戏文件夹。';
 
   @override
@@ -560,7 +567,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get notifyNaiomMigrated =>
-      '已找到旧的 NAIOM 设置并导入 nams.toml。请查看 NAIOM 选项卡。你可以从游戏文件夹中删除旧的 NAIOM 文件（dinput8.dll、NAIOM.ini）。';
+      '已找到旧的 NAIOM 设置并导入 naiom.toml。请查看 NAIOM 选项卡。你可以从游戏文件夹中删除旧的 NAIOM 文件（dinput8.dll、NAIOM.ini）。';
 
   @override
   String notifyNaiomSkipped(String entries) {
@@ -695,8 +702,7 @@ class AppLocalizationsZh extends AppLocalizations {
       '编辑 nams\\_internal\\cache\\settings.json';
 
   @override
-  String get tooltipEditsNaiom =>
-      '编辑 nams/nams.toml 中的 [mouse] 设置。大多数设置保存后生效，少数设置需要重启游戏。';
+  String get tooltipEditsNaiom => '编辑 nams/naiom.toml。大多数设置保存后生效，少数设置需要重启游戏。';
 
   @override
   String get tooltipCutscenesLocation =>
@@ -707,9 +713,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get cardLoading => '加载';
-
-  @override
-  String get cardHeapOverrides => '堆内存覆盖';
 
   @override
   String get cardPerformance => '性能';
@@ -1350,10 +1353,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get thirdPartyGameModsNone => '未安装游戏模组';
 
   @override
-  String get thirdPartyWaxRejected =>
-      'WAX 无法与 NAMS 一起使用。两者功能相同，同时运行会导致游戏崩溃。你的 WAX 服装和物品请改用模组标签页。';
-
-  @override
   String thirdPartyGameModsCount(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -1372,6 +1371,83 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get thirdPartyGameModsRemoveOne => '删除此模组';
+
+  @override
+  String get thirdPartyGraphicModsHeader => '图形代理';
+
+  @override
+  String get thirdPartyGraphicModsHowto =>
+      '包装游戏渲染的 Direct3D 代理 DLL（d3d11.dll、dxgi.dll）。NAMS 从 thirdparty/graphic 加载它们，并让游戏的 Direct3D 调用经过它们；放在游戏文件夹中的副本永远不会被加载。ReShade 和 3DMigoto 有各自的卡片。请通过顶部的拖放区安装。';
+
+  @override
+  String get thirdPartyMoveToGraphic => '移到图形代理（用于 Direct3D 包装器）';
+
+  @override
+  String get thirdPartyMoveToGame => '移到游戏模组（用于读取游戏内存的模组）';
+
+  @override
+  String get thirdPartyGameModSettings => '此 DLL 的加载设置（game.toml）';
+
+  @override
+  String get thirdPartyGameModFakeHandle => '将 game.bin 显示为主模块';
+
+  @override
+  String get thirdPartyGameModFakeHandleHint =>
+      '对 GetModuleHandle(NULL) 返回 game.bin，让按固定偏移读取游戏内存的模组能找到游戏。仅当模组有意挂钩 NAMS.exe 时才关闭。';
+
+  @override
+  String get thirdPartyGameModFakeExePath => '将 NieRAutomata.exe 显示为主程序';
+
+  @override
+  String get thirdPartyGameModFakeExePathHint =>
+      '对 GetModuleFileName(NULL) 返回你安装目录中的 NieRAutomata.exe。检查程序名或对程序计算哈希以识别游戏版本的模组（如 WAX）需要此项。';
+
+  @override
+  String get thirdPartyGameModSizeOfImage => '模组看到的游戏版本';
+
+  @override
+  String get thirdPartyGameModSizeOfImageHint =>
+      '有些模组通过主模块的映像大小识别游戏版本。请选择模组所针对的版本。为 2021 版制作的模组在 2026 更新上会读取错误的内存，除非模组支持新版本。';
+
+  @override
+  String get thirdPartyGameModSize2021 => 'Steam 2021（默认）';
+
+  @override
+  String get thirdPartyGameModSize2026 => 'Steam 2026-11';
+
+  @override
+  String get thirdPartyGameModSizeReal => 'game.bin 的实际大小';
+
+  @override
+  String thirdPartyGameModSizeCustom(int value) {
+    return '自定义（$value）';
+  }
+
+  @override
+  String get thirdPartyGameModReportPatches => '记录此模组修改的游戏代码';
+
+  @override
+  String get thirdPartyGameModReportPatchesHint =>
+      '将此模组改写的每一处游戏代码写入 nams.log。用于排查问题。';
+
+  @override
+  String get thirdPartyGameModWaitPatch => '等待模组完成对游戏的修补';
+
+  @override
+  String get thirdPartyGameModWaitPatchHint =>
+      '暂停启动，直到模组报告已完成改写游戏代码（完成后它会请求程序路径），让 NAMS 自己的挂钩在其修补之后安装。需要“将 NieRAutomata.exe 显示为主程序”，开启此项时会一并开启。';
+
+  @override
+  String get thirdPartyGameModPatchTimeout => '最长等待时间';
+
+  @override
+  String get thirdPartyGameModPatchTimeoutHint =>
+      '如果模组一直没有回应，超过此时间后游戏仍会启动，NAMS 会在 nams.log 中写入警告。';
+
+  @override
+  String thirdPartyGameModSeconds(String seconds) {
+    return '$seconds 秒';
+  }
 
   @override
   String get thirdPartyStatusInstalled => '已安装';
@@ -1721,10 +1797,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get warningTextureInjectionDisabled => '纹理注入已禁用';
 
   @override
-  String get heapOverridesDescription =>
-      '在 NAMS 默认值之外额外增加内存。父堆会自动扩展。仅当模组需要更多内存时才提高。需要重启。';
-
-  @override
   String get lodModDescription =>
       'NAMS 内置的画质补丁，灵感来自 emoose 的 Automata-LodMod，并在其基础上大幅扩展——这正是 Ext 的由来。可消除 LOD 物体弹出、锐化阴影和环境光遮蔽、强制包括植被在内的所有物体投射阴影、禁用手动剔除以避免物体突然出现或消失，并移除暗角。此外还新增了阴影级联与逐级模糊、重写的泛光、全局光照、带事件保护的 FPS 解锁、FXAA、渲染缩放以及高分辨率地图网格。';
 
@@ -1733,7 +1805,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get namsDescription =>
-      'NAMS 是托管《尼尔：机械纪元》的模组加载器。它在自己的进程中启动游戏，在运行时加载你的模组，并应用这些引擎设置。这些选项控制校验、内容功能、插件/ReShade/3DMigoto 的加载以及内存堆大小。';
+      'NAMS 是托管《尼尔：机械纪元》的模组加载器。它在自己的进程中启动游戏，在运行时加载你的模组，并应用这些引擎设置。这些选项控制校验、内容功能以及插件/ReShade/3DMigoto 的加载。';
 
   @override
   String get yorhaProtocolDescription =>
@@ -2584,6 +2656,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get diagnosticsSectionRecentIssues => '最近的 NAMS 问题';
 
   @override
+  String get diagnosticsSectionFindings => '检查结果';
+
+  @override
+  String get diagnosticsNoFindings => '未发现问题';
+
+  @override
   String diagnosticsExeVariant(String variant) {
     return 'exe：$variant';
   }
@@ -2819,7 +2897,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get tooltipDistancePss =>
-      '启用 PSS 阴影分布，使阴影质量更均匀。0 = 关闭。推荐值：0.5–0.9。在某些区域效果很好，但在其他区域可能显得模糊。该值应远大于其他距离值（大型开放区域约为 1500）。';
+      '启用 PSS 阴影分布，使阴影质量更均匀。0 = 关闭。在某些区域效果很好，但在其他区域可能显得模糊。该值应远大于其他距离值（大型开放区域约为 1500）。';
 
   @override
   String get labelFilterStrengthBias => '滤镜强度偏移';
@@ -3008,12 +3086,6 @@ class AppLocalizationsZh extends AppLocalizations {
   @override
   String get tooltipHighGridsBlockedFromGrid =>
       '当你站在某个特定网格上时永不加载的网格。适用于屏蔽整个区域范围过大的情况。';
-
-  @override
-  String get labelContentEffectAreas => '效果区域';
-
-  @override
-  String get tooltipContentEffectAreas => '模组在房间中放置的效果。重新进入房间后生效。';
 
   @override
   String get labelSkipStartupLogos => '跳过启动动画';
@@ -3263,72 +3335,257 @@ class AppLocalizationsZh extends AppLocalizations {
       '跳过所有插件 DLL 的加载（例如 YoRHa Protocol 工作区）。所有 NAMS 引擎功能仍可正常工作。';
 
   @override
+  String get labelDisableMainOverlay => '禁用 Mod 叠加界面';
+
+  @override
+  String get tooltipDisableMainOverlay =>
+      '不启动游戏内的 Mod 叠加界面，YoRHa Protocol 的界面也运行在其中。插件和所有 NAMS 功能仍会运行；只有叠加界面及其面板（包括 YoRHa Protocol 界面）不再加载，它们占用的内存也随之释放。自带界面的插件仍会显示其界面。需要重启。';
+
+  @override
   String get labelDisableContentFeatures => '禁用内容功能';
 
   @override
   String get tooltipDisableContentFeatures =>
-      '所有内容层功能的总开关。启用后，NAMS 将作为纯引擎层运行（鼠标修复、验证、堆内存调整、崩溃修复），不再支持任何物品 / 武器 / 服装 / 任务 / 饰品模组。适合性能基准测试，或用于区分引擎问题与内容问题。';
-
-  @override
-  String get labelContentItems => '物品 / 武器 / 商店';
-
-  @override
-  String get tooltipContentItems =>
-      '自定义物品、武器、服装和商店条目。禁用后可在不加载任何物品相关模组的情况下游玩。需要重启。';
-
-  @override
-  String get labelContentAccessories => '饰品';
-
-  @override
-  String get tooltipContentAccessories =>
-      '自定义饰品（面具、月之泪、正宗面具等）及饰品装备/卸下流程。禁用后可在不加载饰品模组的情况下游玩。需要重启。';
-
-  @override
-  String get labelContentAssembleMeshes => '玩家网格';
-
-  @override
-  String get tooltipContentAssembleMeshes =>
-      '自定义玩家网格（网格替换、发型 / 服装 / 面具覆盖）。禁用后将保持原版玩家模型不变。需要重启。';
-
-  @override
-  String get labelContentQuestIntegration => '任务 / 邮件 / 语音';
-
-  @override
-  String get tooltipContentQuestIntegration =>
-      '自定义任务、自定义邮件、自定义语音，以及用于激活它们的任务 UI 集成。禁用后可在不加载任务模组的情况下游玩。需要重启。';
-
-  @override
-  String get labelContentEffectsApplier => '效果规则';
-
-  @override
-  String get tooltipContentEffectsApplier =>
-      '每帧将武器/服装效果规则应用到玩家属性（伤害倍率、闪避调整、免疫等）。';
-
-  @override
-  String get labelContentEquipTracker => '装备追踪器';
-
-  @override
-  String get tooltipContentEquipTracker => '检测武器装备/卸下变化，用于驱动效果规则和装备时 SDK 回调。';
-
-  @override
-  String get labelContentMcd => '自定义文本';
-
-  @override
-  String get tooltipContentMcd => '自定义游戏内文本（由模组提供的物品名称、说明和对话字符串）。';
-
-  @override
-  String get labelContentBuddyRubySelector => '伙伴服装选择器（实验性）';
-
-  @override
-  String get tooltipContentBuddyRubySelector =>
-      '修补全局伙伴对话脚本，添加“更换服装”条目，并列出模组提供的伙伴服装。如果修补后的对话脚本导致不稳定或干扰其他脚本模组，请禁用此功能。';
+      '所有内容功能的总开关。启用后，NAMS 会将“内容功能”下的每个开关（nams.toml 中的 [content] 表）视为关闭，并作为纯引擎层运行（鼠标修复、验证、堆内存调整、崩溃修复），不加载任何模组内容。适合性能基准测试，或用于区分引擎问题与内容问题。需要重启。';
 
   @override
   String get cardContentFeatures => '内容功能';
 
   @override
   String get contentFeaturesDescription =>
-      '内容层各项功能的独立开关，默认全部开启。适合将问题缩小到特定子系统。需要重启游戏。';
+      '每项内容功能可单独开关，默认全部开启。关闭某项后，会跳过该功能的所有模组条目，以及依赖它的所有模组条目。“禁用内容功能”会一次性全部关闭。需要重启游戏。';
+
+  @override
+  String get contentGroupItems => '物品与装备';
+
+  @override
+  String get contentGroupStory => '剧情与世界';
+
+  @override
+  String get contentGroupScripts => '脚本';
+
+  @override
+  String get contentGroupAudio => '音频';
+
+  @override
+  String get contentGroupVisuals => '视觉效果';
+
+  @override
+  String get labelContentCustomItems => '新物品';
+
+  @override
+  String get tooltipContentCustomItems =>
+      '新物品（消耗品、素材、重要物品）及其图标和文本，以及模组自动发放的物品。需要重启。';
+
+  @override
+  String get labelContentCustomWeapons => '新武器';
+
+  @override
+  String get tooltipContentCustomWeapons => '新武器及其属性、强化、文本和剧情图片。需要重启。';
+
+  @override
+  String get labelContentWeaponPatches => '武器修改';
+
+  @override
+  String get tooltipContentWeaponPatches => '模组对现有武器的修改。需要重启。';
+
+  @override
+  String get labelContentCustomOutfits => '新服装';
+
+  @override
+  String get tooltipContentCustomOutfits =>
+      '新服装、WAX 服装模组，以及用于脱下模组服装的“Default Outfit”物品。需要重启。';
+
+  @override
+  String get labelContentCustomHairsprays => '新发胶';
+
+  @override
+  String get tooltipContentCustomHairsprays => '新发胶。需要重启。';
+
+  @override
+  String get labelContentAccessories => '饰品';
+
+  @override
+  String get tooltipContentAccessories => '新饰品，以及同时佩戴多个饰品。需要重启。';
+
+  @override
+  String get labelContentPlayerMeshSwaps => '玩家模型部件';
+
+  @override
+  String get tooltipContentPlayerMeshSwaps =>
+      'NAMS 自行组装 2B、9S 和 A2 的模型，使服装和饰品模组可以替换、隐藏或添加模型部件。关闭 = 使用游戏自身的模型组装。需要重启。';
+
+  @override
+  String get labelContentMeshVisibility => '隐藏 / 显示模型部件';
+
+  @override
+  String get tooltipContentMeshVisibility => '隐藏或显示模型单个部件的模组。需要重启。';
+
+  @override
+  String get labelContentShopItems => '商店物品';
+
+  @override
+  String get tooltipContentShopItems => '模组添加到商店的物品。需要重启。';
+
+  @override
+  String get labelContentItemShortcutMenu => '快捷物品菜单';
+
+  @override
+  String get tooltipContentItemShortcutMenu => '你拥有的模组回复道具会显示在快捷物品菜单中。需要重启。';
+
+  @override
+  String get labelContentEffectRules => '效果规则';
+
+  @override
+  String get tooltipContentEffectRules =>
+      '模组武器、服装、饰品和物品对玩家产生的作用（伤害、闪避、免疫、手电筒电量）。需要重启。';
+
+  @override
+  String get labelContentOutfitSelectorNpc => '服装选择 NPC';
+
+  @override
+  String get tooltipContentOutfitSelectorNpc => '提供模组服装的服装选择 NPC。需要重启。';
+
+  @override
+  String get labelContentBuddyOutfitMenu => '伙伴服装菜单（实验性）';
+
+  @override
+  String get tooltipContentBuddyOutfitMenu =>
+      '实验性。与伙伴对话时的“更换服装”选项。如与其他脚本模组冲突，请关闭。需要重启。';
+
+  @override
+  String get labelContentCustomQuests => '新任务';
+
+  @override
+  String get tooltipContentCustomQuests => '新任务及其文本、奖励和条件。需要重启。';
+
+  @override
+  String get labelContentCustomMails => '新邮件';
+
+  @override
+  String get tooltipContentCustomMails => '新邮件。需要重启。';
+
+  @override
+  String get labelContentCustomVoiceLines => '新语音';
+
+  @override
+  String get tooltipContentCustomVoiceLines => '新语音。需要重启。';
+
+  @override
+  String get labelContentCustomMaps => '新地图和剧情阶段';
+
+  @override
+  String get tooltipContentCustomMaps => '新地图房间和剧情阶段，及其章节选择条目和存档栏位名称。需要重启。';
+
+  @override
+  String get labelContentMapLayouts => '地图物体规则';
+
+  @override
+  String get tooltipContentMapLayouts => '模组针对地图上放置物体的规则（移除物体、物体在多远处出现）。需要重启。';
+
+  @override
+  String get labelContentNovels => '小说';
+
+  @override
+  String get tooltipContentNovels => '数据菜单中的新小说。需要重启。';
+
+  @override
+  String get labelContentArchives => '档案';
+
+  @override
+  String get tooltipContentArchives => '数据菜单中的新档案。需要重启。';
+
+  @override
+  String get labelContentCutsceneReplacements => '过场动画替换';
+
+  @override
+  String get tooltipContentCutsceneReplacements =>
+      '模组替换的过场动画视频，以及模组移动的游戏内过场。需要重启。';
+
+  @override
+  String get labelContentCameraSettings => '镜头设置';
+
+  @override
+  String get tooltipContentCameraSettings => '模组对玩家镜头的设置。需要重启。';
+
+  @override
+  String get labelContentScriptOverlays => '脚本修改';
+
+  @override
+  String get tooltipContentScriptOverlays => '模组对游戏脚本的添加和修改。需要重启。';
+
+  @override
+  String get labelContentScriptGroups => '脚本组';
+
+  @override
+  String get tooltipContentScriptGroups => '按剧情阶段开启或关闭游戏脚本组的模组规则。需要重启。';
+
+  @override
+  String get labelContentRubyPatches => 'Ruby 脚本修改';
+
+  @override
+  String get tooltipContentRubyPatches => '模组对游戏 Ruby 脚本的修改。需要重启。';
+
+  @override
+  String get labelContentCustomMusic => '新音乐';
+
+  @override
+  String get tooltipContentCustomMusic => '新背景音乐。需要重启。';
+
+  @override
+  String get labelContentAmbientSounds => '环境音';
+
+  @override
+  String get tooltipContentAmbientSounds => '模组添加或静音的环境音和人群语音。需要重启。';
+
+  @override
+  String get labelContentCustomSounds => '新音效';
+
+  @override
+  String get tooltipContentCustomSounds => '新音效。需要重启。';
+
+  @override
+  String get labelContentEffectAreas => '效果区域';
+
+  @override
+  String get tooltipContentEffectAreas => '模组在房间中放置或移除的效果。需要重启。';
+
+  @override
+  String get labelContentEffectTypeMute => '效果类型静默';
+
+  @override
+  String get tooltipContentEffectTypeMute => '在某个房间或剧情阶段中静默整类效果的模组。需要重启。';
+
+  @override
+  String get labelContentGlobalEffects => '全局效果';
+
+  @override
+  String get tooltipContentGlobalEffects => '模组在整个房间或剧情阶段中运行的效果。需要重启。';
+
+  @override
+  String get labelContentLightingFilters => '光照滤镜';
+
+  @override
+  String get tooltipContentLightingFilters => '模组为房间提供的颜色和光照滤镜。需要重启。';
+
+  @override
+  String get labelContentClothPhysics => '布料物理';
+
+  @override
+  String get tooltipContentClothPhysics => '模组模型上额外的布料物理部件。需要重启。';
+
+  @override
+  String get labelContentCustomTexts => '模组文本';
+
+  @override
+  String get tooltipContentCustomTexts =>
+      '菜单中的模组文本（物品名称、说明）。关闭 = 使用游戏自身的文本。需要重启。';
+
+  @override
+  String get labelContentUiOverrides => '模组界面布局';
+
+  @override
+  String get tooltipContentUiOverrides => '模组替换的菜单和 HUD 布局。关闭 = 使用自带的布局。需要重启。';
 
   @override
   String get labelDisableReShadeLoading => '禁用 ReShade 加载';
@@ -3343,6 +3600,13 @@ class AppLocalizationsZh extends AppLocalizations {
   @override
   String get tooltipDisable3dmigotoLoading =>
       '不再从 thirdparty/3dmigoto/ 加载 3DMigoto 运行时。关闭以停止加载着色器模组。';
+
+  @override
+  String get labelDisableGraphicModsLoading => '禁用图形代理加载';
+
+  @override
+  String get tooltipDisableGraphicModsLoading =>
+      '不再从 thirdparty/graphic/ 加载 Direct3D 代理 DLL：这些 DLL 与系统 DLL 同名（d3d11.dll、dxgi.dll 等），游戏的图形调用会经过它们。开启后即可在不删除文件的情况下不使用它们。下次启动游戏时生效。';
 
   @override
   String get labelDisableGameModsLoading => '禁用游戏模组加载';
@@ -3422,59 +3686,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get tooltipValidateModelDataSettings => '以对话框显示模型验证错误，而不是静默失败。';
-
-  @override
-  String get heapDefault => '默认';
-
-  @override
-  String get heapPlus16MB => '+16 MB';
-
-  @override
-  String get heapPlus32MB => '+32 MB';
-
-  @override
-  String get heapPlus64MB => '+64 MB';
-
-  @override
-  String get heapPlus128MB => '+128 MB';
-
-  @override
-  String get heapPlus256MB => '+256 MB';
-
-  @override
-  String heapCustomMB(String mb) {
-    return '+$mb MB';
-  }
-
-  @override
-  String get heapScriptEngine => '脚本引擎';
-
-  @override
-  String get heapScriptEngineDesc => '用于复杂脚本模组（mRuby / HAP）。';
-
-  @override
-  String get heapPlayerModels => '玩家模型';
-
-  @override
-  String get heapPlayerModelsDesc => '用于大型玩家模型替换模组。';
-
-  @override
-  String get heapPlayerTextures => '玩家纹理';
-
-  @override
-  String get heapPlayerTexturesDesc => '用于高分辨率玩家纹理模组。';
-
-  @override
-  String get heapEnemyBgModels => '敌人/背景模型';
-
-  @override
-  String get heapEnemyBgModelsDesc => '用于敌人或环境模型模组。';
-
-  @override
-  String get heapEnemyBgTextures => '敌人/背景纹理';
-
-  @override
-  String get heapEnemyBgTexturesDesc => '用于高分辨率敌人/环境纹理。';
 
   @override
   String get tutorialLodModEnable => '开启此功能可改善画面，这是影响最大的设置。';
@@ -3658,6 +3869,13 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get tooltipSound => '工作区 UI 交互音效。';
+
+  @override
+  String get labelEditorMcp => '编辑器 MCP 服务器';
+
+  @override
+  String get tooltipEditorMcp =>
+      '在 http://127.0.0.1:47820/mcp 运行 YoRHa Protocol 编辑器的 MCP 服务器，让 AI 代理和其他 MCP 客户端可以在游戏运行时读取和操作编辑器。默认关闭。';
 
   @override
   String get labelImpeller => 'Impeller 渲染器（实验性）';
@@ -4205,6 +4423,13 @@ class AppLocalizationsZh extends AppLocalizations {
       '对于大型纹理包（400 个以上文件），仅加载与精选优先列表匹配的纹理，以节省显存和加载时间。小型纹理包（服装、武器）始终会完整加载。使用超大型纹理包并希望节省内存时可开启。';
 
   @override
+  String get labelPinPriorityTextures => '常驻优先纹理';
+
+  @override
+  String get tooltipPinPriorityTextures =>
+      '启动时加载内置优先列表（GPUnity HD Pack）中的纹理，并在整个会话中保留在显存中，避免纹理延迟出现。显存为 4 GB 或更少的显卡请关闭：这些纹理将与其他纹理一样受显存预算限制，并在游戏需要内存时被卸载。下次启动游戏时生效。';
+
+  @override
   String get tutorialDropTextures => '将纹理模组拖到这里进行安装。Zip 文件会自动解压。';
 
   @override
@@ -4585,13 +4810,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get cutsceneSubtitleCard => '字幕与黑边';
 
   @override
-  String get cutsceneStatusHd => '高清';
-
-  @override
-  String get cutsceneStatusHdTooltip =>
-      'nams.toml 中的 [cutscene] hd_cutscenes；必须设为 true，高清过场动画模组才能加载。';
-
-  @override
   String get cutsceneStatusH264 => 'H264';
 
   @override
@@ -4863,6 +5081,18 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get modCameraFovOffsetHint => '单位：度。正值扩大视野，负值拉近。';
+
+  @override
+  String get modCameraPitchUpLimit => '向上视角上限';
+
+  @override
+  String get modCameraPitchUpLimitHint => '单位：度。镜头可向上转到水平线以上的角度，游戏本身为 72。';
+
+  @override
+  String get modCameraPitchDownLimit => '向下视角上限';
+
+  @override
+  String get modCameraPitchDownLimitHint => '单位：度。镜头可向下转到水平线以下的角度，游戏本身为 72。';
 
   @override
   String get threeDInspectorOpen => '打开 3D 检查器';

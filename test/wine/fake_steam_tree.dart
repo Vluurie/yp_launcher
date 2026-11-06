@@ -53,6 +53,29 @@ class FakeSteamTree {
     return proton;
   }
 
+  String addSteamConfig(String contents) {
+    final vdf = p.join(steamRoot, 'config', 'config.vdf');
+    File(vdf)
+      ..parent.createSync(recursive: true)
+      ..writeAsStringSync(contents);
+    return vdf;
+  }
+
+  String addOfficialProton(String dirName) {
+    final proton = p.join(steamRoot, 'steamapps', 'common', dirName, 'proton');
+    File(proton)
+      ..parent.createSync(recursive: true)
+      ..writeAsStringSync('#!/bin/sh\n');
+    return proton;
+  }
+
+  String addCompatTool(String dirName, String manifest) {
+    final proton = addProton(dirName);
+    File(p.join(p.dirname(proton), 'compatibilitytool.vdf'))
+        .writeAsStringSync(manifest);
+    return proton;
+  }
+
   String addCompatPrefix() {
     final pfx = p.join(steamRoot, 'steamapps', 'compatdata', '524220', 'pfx');
     Directory(p.join(pfx, 'drive_c', 'users', 'steamuser', 'AppData', 'Roaming'))

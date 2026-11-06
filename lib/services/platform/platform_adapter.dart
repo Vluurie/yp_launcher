@@ -94,6 +94,8 @@ abstract class PlatformAdapter {
   String? rejectGameSelection(String pickedExePath, AppLocalizations l10n) =>
       null;
 
+  String verifyTimedOut(AppLocalizations l10n) => l10n.verifyTimedOut;
+
   /// Null when the bottle is not known yet; callers must not turn that into
   /// a write.
   Future<String?> resolveNamsSettingsPath(String? gameDir);

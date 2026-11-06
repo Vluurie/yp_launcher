@@ -201,6 +201,14 @@ class AppLocalizationsTh extends AppLocalizations {
       'ไม่สามารถตรวจสอบได้: Steam ต้องกำลังทำงานและบัญชีต้องเป็นเจ้าของเกม';
 
   @override
+  String get verifyTimedOut =>
+      'ไม่สามารถตรวจสอบได้: NAMS ไม่ตอบสนองภายใน 30 วินาที';
+
+  @override
+  String get verifyTimedOutLinux =>
+      'ไม่สามารถตรวจสอบได้: NAMS ไม่ตอบสนองภายใน 30 วินาที น่าจะเป็นเพราะ Proton ค้าง ซึ่งมักเกิดจากเกมอยู่บนไดรฟ์ NTFS การย้ายเกมไปยังไดรฟ์ที่ฟอร์แมตสำหรับ Linux มักจะแก้ปัญหาได้';
+
+  @override
   String get verifyInstallError =>
       'ไม่สามารถเรียกใช้การตรวจสอบได้ โปรดตรวจสอบว่าได้เลือกโฟลเดอร์เกมแล้ว';
 
@@ -590,7 +598,7 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get notifyNaiomMigrated =>
-      'พบการตั้งค่า NAIOM เดิมของคุณและนำเข้าไปยัง nams.toml แล้ว โปรดตรวจสอบแท็บ NAIOM คุณสามารถลบไฟล์ NAIOM เก่า (dinput8.dll, NAIOM.ini) ออกจากโฟลเดอร์เกมได้';
+      'พบการตั้งค่า NAIOM เดิมของคุณและนำเข้าไปยัง naiom.toml แล้ว โปรดตรวจสอบแท็บ NAIOM คุณสามารถลบไฟล์ NAIOM เก่า (dinput8.dll, NAIOM.ini) ออกจากโฟลเดอร์เกมได้';
 
   @override
   String notifyNaiomSkipped(String entries) {
@@ -729,7 +737,7 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get tooltipEditsNaiom =>
-      'แก้ไขการตั้งค่า [mouse] ใน nams/nams.toml การตั้งค่าส่วนใหญ่จะมีผลหลังบันทึก แต่บางรายการต้องรีสตาร์ตเกม';
+      'แก้ไข nams/naiom.toml การตั้งค่าส่วนใหญ่จะมีผลหลังบันทึก แต่บางรายการต้องรีสตาร์ตเกม';
 
   @override
   String get tooltipCutscenesLocation =>
@@ -740,9 +748,6 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get cardLoading => 'การโหลด';
-
-  @override
-  String get cardHeapOverrides => 'การแทนค่าฮีป';
 
   @override
   String get cardPerformance => 'ประสิทธิภาพ';
@@ -1410,10 +1415,6 @@ class AppLocalizationsTh extends AppLocalizations {
   String get thirdPartyGameModsNone => 'ยังไม่ได้ติดตั้งม็อดเกม';
 
   @override
-  String get thirdPartyWaxRejected =>
-      'WAX ใช้ร่วมกับ NAMS ไม่ได้ เพราะทั้งคู่ทำงานแบบเดียวกัน หากใช้พร้อมกันเกมจะแครช ชุดและไอเทมของ WAX ให้ใช้ผ่านแท็บม็อดแทน';
-
-  @override
   String thirdPartyGameModsCount(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -1432,6 +1433,87 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get thirdPartyGameModsRemoveOne => 'ลบม็อดนี้';
+
+  @override
+  String get thirdPartyGraphicModsHeader => 'พร็อกซีกราฟิก';
+
+  @override
+  String get thirdPartyGraphicModsHowto =>
+      'DLL พร็อกซี Direct3D (d3d11.dll, dxgi.dll) ที่ครอบการเรนเดอร์ของเกม NAMS โหลดจาก thirdparty/graphic และส่งการเรียก Direct3D ของเกมผ่านไฟล์เหล่านี้ ไฟล์ที่วางไว้ในโฟลเดอร์เกมจะไม่ถูกโหลดเลย ReShade และ 3DMigoto มีการ์ดของตัวเอง ติดตั้งผ่านช่องวางไฟล์ด้านบน';
+
+  @override
+  String get thirdPartyMoveToGraphic =>
+      'ย้ายไปที่พร็อกซีกราฟิก (สำหรับตัวครอบ Direct3D)';
+
+  @override
+  String get thirdPartyMoveToGame =>
+      'ย้ายไปที่ม็อดเกม (สำหรับม็อดที่อ่านหน่วยความจำของเกม)';
+
+  @override
+  String get thirdPartyGameModSettings =>
+      'การตั้งค่าตัวโหลดสำหรับ DLL นี้ (game.toml)';
+
+  @override
+  String get thirdPartyGameModFakeHandle => 'แสดง game.bin เป็นโมดูลหลัก';
+
+  @override
+  String get thirdPartyGameModFakeHandleHint =>
+      'ตอบ GetModuleHandle(NULL) ด้วย game.bin เพื่อให้ม็อดที่อ่านหน่วยความจำเกมที่ออฟเซ็ตคงที่หาเกมเจอ ปิดเฉพาะเมื่อม็อดตั้งใจฮุก NAMS.exe';
+
+  @override
+  String get thirdPartyGameModFakeExePath =>
+      'แสดง NieRAutomata.exe เป็น exe หลัก';
+
+  @override
+  String get thirdPartyGameModFakeExePathHint =>
+      'ตอบ GetModuleFileName(NULL) ด้วย NieRAutomata.exe ของเกมที่ติดตั้งไว้ ม็อดที่ตรวจชื่อ exe หรือแฮช exe เพื่อดูเวอร์ชันเกม เช่น WAX ต้องใช้ตัวเลือกนี้';
+
+  @override
+  String get thirdPartyGameModSizeOfImage => 'เวอร์ชันเกมที่ม็อดเห็น';
+
+  @override
+  String get thirdPartyGameModSizeOfImageHint =>
+      'ม็อดบางตัวตรวจเวอร์ชันเกมจากขนาดอิมเมจของโมดูลหลัก ให้เลือกบิลด์ที่ม็อดสร้างมา ม็อดที่ทำสำหรับเวอร์ชัน 2021 จะอ่านหน่วยความจำผิดบนอัปเดต 2026 เว้นแต่ม็อดจะรองรับ';
+
+  @override
+  String get thirdPartyGameModSize2021 => 'Steam 2021 (ค่าเริ่มต้น)';
+
+  @override
+  String get thirdPartyGameModSize2026 => 'Steam 2026-11';
+
+  @override
+  String get thirdPartyGameModSizeReal => 'ขนาดจริงของ game.bin';
+
+  @override
+  String thirdPartyGameModSizeCustom(int value) {
+    return 'กำหนดเอง ($value)';
+  }
+
+  @override
+  String get thirdPartyGameModReportPatches => 'บันทึกโค้ดเกมที่ม็อดนี้แก้ไข';
+
+  @override
+  String get thirdPartyGameModReportPatchesHint =>
+      'เขียนทุกตำแหน่งในโค้ดเกมที่ม็อดนี้เขียนทับลงใน nams.log สำหรับการแก้ปัญหา';
+
+  @override
+  String get thirdPartyGameModWaitPatch => 'รอจนม็อดแพตช์เกมเสร็จ';
+
+  @override
+  String get thirdPartyGameModWaitPatchHint =>
+      'หยุดการเริ่มเกมไว้จนกว่าม็อดจะแจ้งว่าเขียนโค้ดเกมเสร็จแล้ว (ม็อดจะขอพาธ exe เมื่อเสร็จ) เพื่อให้ฮุกของ NAMS ติดตั้งหลังแพตช์ของม็อด ต้องเปิด \"แสดง NieRAutomata.exe เป็น exe หลัก\" ซึ่งจะเปิดไปพร้อมกัน';
+
+  @override
+  String get thirdPartyGameModPatchTimeout => 'เวลารอนานสุด';
+
+  @override
+  String get thirdPartyGameModPatchTimeoutHint =>
+      'หากม็อดไม่ตอบกลับ เกมจะเริ่มหลังเวลานี้อยู่ดี และ NAMS จะเขียนคำเตือนลงใน nams.log';
+
+  @override
+  String thirdPartyGameModSeconds(String seconds) {
+    return '$seconds วินาที';
+  }
 
   @override
   String get thirdPartyStatusInstalled => 'ติดตั้งแล้ว';
@@ -1797,10 +1879,6 @@ class AppLocalizationsTh extends AppLocalizations {
   String get warningTextureInjectionDisabled => 'ปิดการฉีดเท็กซ์เจอร์อยู่';
 
   @override
-  String get heapOverridesDescription =>
-      'เพิ่มหน่วยความจำเหนือค่าเริ่มต้นของ NAMS ฮีปหลักจะขยายอัตโนมัติ เพิ่มเฉพาะเมื่อม็อดต้องการหน่วยความจำมากขึ้น ต้องรีสตาร์ตเกม';
-
-  @override
   String get lodModDescription =>
       'แพตช์คุณภาพภาพที่รวมอยู่ใน NAMS โดยได้รับแรงบันดาลใจจาก Automata-LodMod ของ emoose และขยายต่อไปไกลกว่ามาก จึงเป็นที่มาของคำว่า Ext ช่วยลดอาการ LOD โผล่ เพิ่มความคมของเงาและ Ambient Occlusion บังคับให้วัตถุทุกชนิดรวมถึงพืชสร้างเงา ปิดการ culling แบบกำหนดเองเพื่อไม่ให้วัตถุโผล่เข้าออก และลบ vignette นอกจากนี้ยังเพิ่ม shadow cascade พร้อมการเบลอแยกต่อ cascade, การเขียน bloom ขึ้นใหม่, global illumination, การปลดล็อก FPS พร้อมการป้องกันในคัตซีน, FXAA, การปรับสเกลการเรนเดอร์ และกริดแผนที่ความละเอียดสูง';
 
@@ -1810,7 +1888,7 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get namsDescription =>
-      'NAMS คือ mod loader ที่โฮสต์ NieR:Automata โดยจะเปิดเกมภายในโปรเซสของตัวเอง โหลดม็อดของคุณขณะรันไทม์ และใช้การตั้งค่าเอนจินเหล่านี้ ตัวเลือกเหล่านี้ควบคุมการตรวจสอบ ฟีเจอร์เนื้อหา การโหลดปลั๊กอิน/ReShade/3DMigoto และขนาดหน่วยความจำ heap';
+      'NAMS คือ mod loader ที่โฮสต์ NieR:Automata โดยจะเปิดเกมภายในโปรเซสของตัวเอง โหลดม็อดของคุณขณะรันไทม์ และใช้การตั้งค่าเอนจินเหล่านี้ ตัวเลือกเหล่านี้ควบคุมการตรวจสอบ ฟีเจอร์เนื้อหา และการโหลดปลั๊กอิน/ReShade/3DMigoto';
 
   @override
   String get yorhaProtocolDescription =>
@@ -2693,6 +2771,12 @@ class AppLocalizationsTh extends AppLocalizations {
   String get diagnosticsSectionRecentIssues => 'ปัญหา NAMS ล่าสุด';
 
   @override
+  String get diagnosticsSectionFindings => 'สิ่งที่พบ';
+
+  @override
+  String get diagnosticsNoFindings => 'ไม่พบปัญหา';
+
+  @override
   String diagnosticsExeVariant(String variant) {
     return 'exe: $variant';
   }
@@ -2933,7 +3017,7 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get tooltipDistancePss =>
-      'เปิดใช้การกระจายเงาแบบ PSS เพื่อให้คุณภาพเงาสม่ำเสมอขึ้น 0 = ปิด ค่าที่เหมาะสม: 0.5 - 0.9 ดูดีมากในบางพื้นที่ แต่อาจดูเบลอในบางพื้นที่ ควรตั้งให้สูงกว่าค่าระยะอื่นมาก (~1500 สำหรับพื้นที่เปิดขนาดใหญ่)';
+      'เปิดใช้การกระจายเงาแบบ PSS เพื่อให้คุณภาพเงาสม่ำเสมอขึ้น 0 = ปิด ดูดีมากในบางพื้นที่ แต่อาจดูเบลอในบางพื้นที่ ควรตั้งให้สูงกว่าค่าระยะอื่นมาก (~1500 สำหรับพื้นที่เปิดขนาดใหญ่)';
 
   @override
   String get labelFilterStrengthBias => 'อคติความแรงของฟิลเตอร์';
@@ -3123,13 +3207,6 @@ class AppLocalizationsTh extends AppLocalizations {
   @override
   String get tooltipHighGridsBlockedFromGrid =>
       'กริดที่จะไม่ถูกโหลดขณะคุณยืนอยู่บนกริดที่ระบุ ใช้เมื่อการบล็อกทั้งห้องกว้างเกินไป';
-
-  @override
-  String get labelContentEffectAreas => 'พื้นที่เอฟเฟกต์';
-
-  @override
-  String get tooltipContentEffectAreas =>
-      'เอฟเฟกต์ที่ม็อดวางไว้ในห้อง การเปลี่ยนแปลงจะเห็นเมื่อเข้าห้องใหม่';
 
   @override
   String get labelSkipStartupLogos => 'ข้ามโลโก้เริ่มเกม';
@@ -3390,74 +3467,279 @@ class AppLocalizationsTh extends AppLocalizations {
       'ข้ามการโหลด DLL ปลั๊กอินทั้งหมด (เช่น เวิร์กสเปซ YoRHa Protocol) ฟีเจอร์เอนจินทั้งหมดของ NAMS ยังทำงานตามปกติ';
 
   @override
+  String get labelDisableMainOverlay => 'ปิดโอเวอร์เลย์ม็อด';
+
+  @override
+  String get tooltipDisableMainOverlay =>
+      'ไม่เริ่มโอเวอร์เลย์ม็อดในเกม ซึ่งเป็นที่อยู่ของ UI ของ YoRHa Protocol ด้วย ปลั๊กอินและฟีเจอร์ทั้งหมดของ NAMS ยังทำงานตามปกติ มีเพียงโอเวอร์เลย์และแผงต่าง ๆ รวมถึง UI ของ YoRHa Protocol ที่หายไป พร้อมกับหน่วยความจำที่ใช้อยู่ ปลั๊กอินที่มี UI ของตัวเองยังแสดง UI นั้นได้ ต้องรีสตาร์ทเกม';
+
+  @override
   String get labelDisableContentFeatures => 'ปิดฟีเจอร์เนื้อหา';
 
   @override
   String get tooltipDisableContentFeatures =>
-      'สวิตช์หลักสำหรับฟีเจอร์ชั้นเนื้อหาทั้งหมด เมื่อเปิดตัวเลือกนี้ NAMS จะทำงานเป็นชั้นเอนจินล้วน (แก้เมาส์, ตรวจสอบข้อมูล, ปรับฮีป, แก้การล่ม) โดยไม่มีการรองรับม็อดไอเท็ม / อาวุธ / ชุด / เควสต์ / เครื่องประดับ เหมาะสำหรับวัดประสิทธิภาพหรือแยกปัญหาเอนจินออกจากปัญหาเนื้อหา';
-
-  @override
-  String get labelContentItems => 'ไอเท็ม / อาวุธ / ร้านค้า';
-
-  @override
-  String get tooltipContentItems =>
-      'ไอเท็ม อาวุธ ชุด และรายการร้านค้าแบบกำหนดเอง ปิดเพื่อเล่นโดยไม่มีม็อดที่เกี่ยวข้องกับไอเท็ม ต้องรีสตาร์ตเกม';
-
-  @override
-  String get labelContentAccessories => 'เครื่องประดับ';
-
-  @override
-  String get tooltipContentAccessories =>
-      'เครื่องประดับแบบกำหนดเอง (หน้ากาก, Lunar Tear, หน้ากาก Masamune เป็นต้น) และขั้นตอนสวม/ถอดเครื่องประดับ ปิดเพื่อเล่นโดยไม่มีม็อดเครื่องประดับ ต้องรีสตาร์ตเกม';
-
-  @override
-  String get labelContentAssembleMeshes => 'โมเดลผู้เล่น';
-
-  @override
-  String get tooltipContentAssembleMeshes =>
-      'โมเดลผู้เล่นแบบกำหนดเอง (สลับ mesh, แทนที่ผม / ชุด / หน้ากาก) ปิดเพื่อแสดงโมเดลผู้เล่นวานิลลาโดยไม่เปลี่ยนแปลง ต้องรีสตาร์ตเกม';
-
-  @override
-  String get labelContentQuestIntegration => 'เควสต์ / เมล / เสียงพากย์';
-
-  @override
-  String get tooltipContentQuestIntegration =>
-      'เควสต์แบบกำหนดเอง เมลแบบกำหนดเอง เสียงพากย์แบบกำหนดเอง และการเชื่อมต่อ UI เควสต์ที่เปิดใช้งานเนื้อหาเหล่านี้ ปิดเพื่อเล่นโดยไม่มีม็อดเควสต์ ต้องรีสตาร์ตเกม';
-
-  @override
-  String get labelContentEffectsApplier => 'กฎเอฟเฟกต์';
-
-  @override
-  String get tooltipContentEffectsApplier =>
-      'นำกฎเอฟเฟกต์ของอาวุธ / ชุดไปใช้กับค่าสถานะผู้เล่นทุกเฟรม (ตัวคูณความเสียหาย การปรับการหลบ ภูมิคุ้มกัน เป็นต้น)';
-
-  @override
-  String get labelContentEquipTracker => 'ตัวติดตามการสวมใส่';
-
-  @override
-  String get tooltipContentEquipTracker =>
-      'ตรวจจับการสวม/ถอดอาวุธ ใช้ขับเคลื่อนกฎเอฟเฟกต์และ callback ของ SDK ตอนสวมใส่';
-
-  @override
-  String get labelContentMcd => 'ข้อความแบบกำหนดเอง';
-
-  @override
-  String get tooltipContentMcd =>
-      'ปรับข้อความในเกมแบบกำหนดเอง (ชื่อไอเท็ม คำอธิบาย และบทสนทนาที่ม็อดกำหนด)';
-
-  @override
-  String get labelContentBuddyRubySelector => 'ตัวเลือกชุดคู่หู (ทดลอง)';
-
-  @override
-  String get tooltipContentBuddyRubySelector =>
-      'แพตช์สคริปต์บทสนทนาคู่หูส่วนกลางเพื่อเพิ่มรายการ \"เปลี่ยนชุด\" ที่แสดงชุดคู่หูจากม็อด ปิดหากสคริปต์บทสนทนาที่แพตช์แล้วทำให้ไม่เสถียรหรือรบกวนม็อดสคริปต์อื่น';
+      'สวิตช์หลักสำหรับฟีเจอร์เนื้อหาทั้งหมด เมื่อเปิดตัวเลือกนี้ NAMS จะถือว่าทุกสวิตช์ในฟีเจอร์เนื้อหา (ตาราง [content] ใน nams.toml) ปิดอยู่ และทำงานเป็นชั้นเอนจินล้วน (แก้เมาส์, ตรวจสอบข้อมูล, ปรับฮีป, แก้การล่ม) โดยไม่โหลดเนื้อหาจากม็อด เหมาะสำหรับวัดประสิทธิภาพหรือแยกปัญหาเอนจินออกจากปัญหาเนื้อหา ต้องรีสตาร์ตเกม';
 
   @override
   String get cardContentFeatures => 'ฟีเจอร์เนื้อหา';
 
   @override
   String get contentFeaturesDescription =>
-      'สวิตช์แยกแต่ละฟีเจอร์ของชั้นเนื้อหา ค่าเริ่มต้นทั้งหมดเป็นเปิด ใช้เพื่อจำกัดปัญหาไปยังระบบย่อยเฉพาะ ต้องรีสตาร์ตเกม';
+      'เปิด/ปิดฟีเจอร์เนื้อหาแต่ละอย่างแยกกัน ค่าเริ่มต้นเปิดทั้งหมด เมื่อปิดฟีเจอร์ใด รายการม็อดทั้งหมดของฟีเจอร์นั้นจะถูกข้าม รวมถึงรายการม็อดที่ต้องใช้ฟีเจอร์นั้นด้วย \"ปิดฟีเจอร์เนื้อหา\" จะปิดทั้งหมดในครั้งเดียว ต้องรีสตาร์ตเกม';
+
+  @override
+  String get contentGroupItems => 'ไอเท็มและอุปกรณ์';
+
+  @override
+  String get contentGroupStory => 'เนื้อเรื่องและโลก';
+
+  @override
+  String get contentGroupScripts => 'สคริปต์';
+
+  @override
+  String get contentGroupAudio => 'เสียง';
+
+  @override
+  String get contentGroupVisuals => 'ภาพ';
+
+  @override
+  String get labelContentCustomItems => 'ไอเท็มใหม่';
+
+  @override
+  String get tooltipContentCustomItems =>
+      'ไอเท็มใหม่ (ของใช้สิ้นเปลือง วัตถุดิบ ไอเท็มสำคัญ) พร้อมไอคอนและข้อความ รวมถึงไอเท็มที่ม็อดแจกให้อัตโนมัติ ต้องรีสตาร์ตเกม';
+
+  @override
+  String get labelContentCustomWeapons => 'อาวุธใหม่';
+
+  @override
+  String get tooltipContentCustomWeapons =>
+      'อาวุธใหม่พร้อมค่าสถานะ การอัปเกรด ข้อความ และภาพเนื้อเรื่อง ต้องรีสตาร์ตเกม';
+
+  @override
+  String get labelContentWeaponPatches => 'การแก้ไขอาวุธ';
+
+  @override
+  String get tooltipContentWeaponPatches =>
+      'การเปลี่ยนแปลงจากม็อดกับอาวุธที่มีอยู่ ต้องรีสตาร์ตเกม';
+
+  @override
+  String get labelContentCustomOutfits => 'ชุดใหม่';
+
+  @override
+  String get tooltipContentCustomOutfits =>
+      'ชุดใหม่ ม็อดชุดแบบ WAX และไอเท็ม \"Default Outfit\" ที่ใช้ถอดชุดจากม็อดออก ต้องรีสตาร์ตเกม';
+
+  @override
+  String get labelContentCustomHairsprays => 'สเปรย์ผมใหม่';
+
+  @override
+  String get tooltipContentCustomHairsprays => 'สเปรย์ผมใหม่ ต้องรีสตาร์ตเกม';
+
+  @override
+  String get labelContentAccessories => 'เครื่องประดับ';
+
+  @override
+  String get tooltipContentAccessories =>
+      'เครื่องประดับใหม่ และการสวมเครื่องประดับหลายชิ้นพร้อมกัน ต้องรีสตาร์ตเกม';
+
+  @override
+  String get labelContentPlayerMeshSwaps => 'ชิ้นส่วนโมเดลผู้เล่น';
+
+  @override
+  String get tooltipContentPlayerMeshSwaps =>
+      'NAMS ประกอบโมเดล 2B, 9S และ A2 เอง เพื่อให้ม็อดชุดและเครื่องประดับสลับ ซ่อน หรือเพิ่มชิ้นส่วนโมเดลได้ ปิด = ใช้การประกอบโมเดลของเกมเอง ต้องรีสตาร์ตเกม';
+
+  @override
+  String get labelContentMeshVisibility => 'ซ่อน / แสดงชิ้นส่วนโมเดล';
+
+  @override
+  String get tooltipContentMeshVisibility =>
+      'ม็อดที่ซ่อนหรือแสดงชิ้นส่วนเดี่ยวของโมเดล ต้องรีสตาร์ตเกม';
+
+  @override
+  String get labelContentShopItems => 'ไอเท็มในร้านค้า';
+
+  @override
+  String get tooltipContentShopItems =>
+      'ไอเท็มที่ม็อดเพิ่มเข้าไปในร้านค้า ต้องรีสตาร์ตเกม';
+
+  @override
+  String get labelContentItemShortcutMenu => 'เมนูไอเท็มด่วน';
+
+  @override
+  String get tooltipContentItemShortcutMenu =>
+      'ไอเท็มฟื้นฟูจากม็อดที่คุณมีจะแสดงในเมนูไอเท็มด่วน ต้องรีสตาร์ตเกม';
+
+  @override
+  String get labelContentEffectRules => 'กฎเอฟเฟกต์';
+
+  @override
+  String get tooltipContentEffectRules =>
+      'ผลที่อาวุธ ชุด เครื่องประดับ และไอเท็มจากม็อดมีต่อผู้เล่น (ความเสียหาย การหลบ ภูมิคุ้มกัน พลังงานไฟฉาย) ต้องรีสตาร์ตเกม';
+
+  @override
+  String get labelContentOutfitSelectorNpc => 'NPC เลือกชุด';
+
+  @override
+  String get tooltipContentOutfitSelectorNpc =>
+      'NPC เลือกชุดที่เสนอชุดจากม็อด ต้องรีสตาร์ตเกม';
+
+  @override
+  String get labelContentBuddyOutfitMenu => 'เมนูชุดคู่หู (ทดลอง)';
+
+  @override
+  String get tooltipContentBuddyOutfitMenu =>
+      'ทดลอง ตัวเลือก \"เปลี่ยนชุด\" เมื่อคุยกับคู่หู ปิดหากขัดแย้งกับม็อดสคริปต์อื่น ต้องรีสตาร์ตเกม';
+
+  @override
+  String get labelContentCustomQuests => 'เควสต์ใหม่';
+
+  @override
+  String get tooltipContentCustomQuests =>
+      'เควสต์ใหม่พร้อมข้อความ รางวัล และเงื่อนไข ต้องรีสตาร์ตเกม';
+
+  @override
+  String get labelContentCustomMails => 'เมลใหม่';
+
+  @override
+  String get tooltipContentCustomMails => 'เมลใหม่ ต้องรีสตาร์ตเกม';
+
+  @override
+  String get labelContentCustomVoiceLines => 'เสียงพากย์ใหม่';
+
+  @override
+  String get tooltipContentCustomVoiceLines => 'เสียงพากย์ใหม่ ต้องรีสตาร์ตเกม';
+
+  @override
+  String get labelContentCustomMaps => 'แผนที่และช่วงเนื้อเรื่องใหม่';
+
+  @override
+  String get tooltipContentCustomMaps =>
+      'ห้องแผนที่และช่วงเนื้อเรื่องใหม่ พร้อมรายการใน Chapter Select และชื่อช่องเซฟ ต้องรีสตาร์ตเกม';
+
+  @override
+  String get labelContentMapLayouts => 'กฎวัตถุบนแผนที่';
+
+  @override
+  String get tooltipContentMapLayouts =>
+      'กฎจากม็อดสำหรับวัตถุที่วางบนแผนที่ (การลบออก ระยะที่วัตถุปรากฏ) ต้องรีสตาร์ตเกม';
+
+  @override
+  String get labelContentNovels => 'นิยาย';
+
+  @override
+  String get tooltipContentNovels => 'นิยายใหม่ในเมนู Data ต้องรีสตาร์ตเกม';
+
+  @override
+  String get labelContentArchives => 'อาร์ไคฟ์';
+
+  @override
+  String get tooltipContentArchives =>
+      'อาร์ไคฟ์ใหม่ในเมนู Data ต้องรีสตาร์ตเกม';
+
+  @override
+  String get labelContentCutsceneReplacements => 'การแทนที่คัตซีน';
+
+  @override
+  String get tooltipContentCutsceneReplacements =>
+      'วิดีโอคัตซีนที่ม็อดแทนที่ และคัตซีนในเกมที่ม็อดย้ายตำแหน่ง ต้องรีสตาร์ตเกม';
+
+  @override
+  String get labelContentCameraSettings => 'การตั้งค่ากล้อง';
+
+  @override
+  String get tooltipContentCameraSettings =>
+      'การตั้งค่ากล้องผู้เล่นจากม็อด ต้องรีสตาร์ตเกม';
+
+  @override
+  String get labelContentScriptOverlays => 'การเปลี่ยนแปลงสคริปต์';
+
+  @override
+  String get tooltipContentScriptOverlays =>
+      'สิ่งที่ม็อดเพิ่มและเปลี่ยนในสคริปต์ของเกม ต้องรีสตาร์ตเกม';
+
+  @override
+  String get labelContentScriptGroups => 'กลุ่มสคริปต์';
+
+  @override
+  String get tooltipContentScriptGroups =>
+      'กฎจากม็อดที่เปิดหรือปิดกลุ่มสคริปต์ของเกมตามช่วงเนื้อเรื่อง ต้องรีสตาร์ตเกม';
+
+  @override
+  String get labelContentRubyPatches => 'การแก้ไขสคริปต์ Ruby';
+
+  @override
+  String get tooltipContentRubyPatches =>
+      'การแก้ไขสคริปต์ Ruby ของเกมจากม็อด ต้องรีสตาร์ตเกม';
+
+  @override
+  String get labelContentCustomMusic => 'เพลงใหม่';
+
+  @override
+  String get tooltipContentCustomMusic => 'เพลงประกอบใหม่ ต้องรีสตาร์ตเกม';
+
+  @override
+  String get labelContentAmbientSounds => 'เสียงบรรยากาศ';
+
+  @override
+  String get tooltipContentAmbientSounds =>
+      'เสียงบรรยากาศและเสียงฝูงชนที่ม็อดเพิ่มหรือปิด ต้องรีสตาร์ตเกม';
+
+  @override
+  String get labelContentCustomSounds => 'เอฟเฟกต์เสียงใหม่';
+
+  @override
+  String get tooltipContentCustomSounds => 'เอฟเฟกต์เสียงใหม่ ต้องรีสตาร์ตเกม';
+
+  @override
+  String get labelContentEffectAreas => 'พื้นที่เอฟเฟกต์';
+
+  @override
+  String get tooltipContentEffectAreas =>
+      'เอฟเฟกต์ที่ม็อดวางในห้องหรือลบออกจากห้อง ต้องรีสตาร์ตเกม';
+
+  @override
+  String get labelContentEffectTypeMute => 'ปิดเอฟเฟกต์ตามประเภท';
+
+  @override
+  String get tooltipContentEffectTypeMute =>
+      'ม็อดที่ปิดเอฟเฟกต์ทั้งประเภทในห้องหรือช่วงเนื้อเรื่อง ต้องรีสตาร์ตเกม';
+
+  @override
+  String get labelContentGlobalEffects => 'เอฟเฟกต์ทั้งพื้นที่';
+
+  @override
+  String get tooltipContentGlobalEffects =>
+      'เอฟเฟกต์ที่ม็อดเปิดใช้ทั่วทั้งห้องหรือช่วงเนื้อเรื่อง ต้องรีสตาร์ตเกม';
+
+  @override
+  String get labelContentLightingFilters => 'ฟิลเตอร์แสง';
+
+  @override
+  String get tooltipContentLightingFilters =>
+      'ฟิลเตอร์สีและแสงจากม็อดสำหรับห้อง ต้องรีสตาร์ตเกม';
+
+  @override
+  String get labelContentClothPhysics => 'ฟิสิกส์ผ้า';
+
+  @override
+  String get tooltipContentClothPhysics =>
+      'ชิ้นส่วนฟิสิกส์ผ้าเพิ่มเติมบนโมเดลจากม็อด ต้องรีสตาร์ตเกม';
+
+  @override
+  String get labelContentCustomTexts => 'ข้อความจากม็อด';
+
+  @override
+  String get tooltipContentCustomTexts =>
+      'ข้อความจากม็อดในเมนู (ชื่อไอเท็ม คำอธิบาย) ปิด = ใช้ข้อความของเกมเอง ต้องรีสตาร์ตเกม';
+
+  @override
+  String get labelContentUiOverrides => 'เลย์เอาต์ UI จากม็อด';
+
+  @override
+  String get tooltipContentUiOverrides =>
+      'เลย์เอาต์เมนูและ HUD ที่ม็อดแทนที่ ปิด = ใช้เลย์เอาต์ที่มาพร้อมกัน ต้องรีสตาร์ต';
 
   @override
   String get labelDisableReShadeLoading => 'ปิดการโหลด ReShade';
@@ -3472,6 +3754,13 @@ class AppLocalizationsTh extends AppLocalizations {
   @override
   String get tooltipDisable3dmigotoLoading =>
       'ข้ามการโหลดรันไทม์ 3DMigoto จาก thirdparty/3dmigoto/ ปิดเพื่อหยุดโหลดม็อด shader';
+
+  @override
+  String get labelDisableGraphicModsLoading => 'ปิดการโหลดพร็อกซีกราฟิก';
+
+  @override
+  String get tooltipDisableGraphicModsLoading =>
+      'ข้ามการโหลด DLL พร็อกซี Direct3D จาก thirdparty/graphic/ คือ DLL ที่ตั้งชื่อเหมือน DLL ของระบบ (d3d11.dll, dxgi.dll, ...) ซึ่งคำสั่งกราฟิกของเกมต้องผ่าน เปิดตัวเลือกนี้เพื่อเล่นโดยไม่ใช้ DLL เหล่านั้นโดยไม่ต้องลบไฟล์ มีผลเมื่อเริ่มเกมครั้งถัดไป';
 
   @override
   String get labelDisableGameModsLoading => 'ปิดการโหลดม็อดเกม';
@@ -3553,61 +3842,6 @@ class AppLocalizationsTh extends AppLocalizations {
   @override
   String get tooltipValidateModelDataSettings =>
       'แสดงข้อผิดพลาดตรวจสอบโมเดลเป็นกล่องข้อความ แทนการล้มเหลวแบบเงียบ';
-
-  @override
-  String get heapDefault => 'ค่าเริ่มต้น';
-
-  @override
-  String get heapPlus16MB => '+16 MB';
-
-  @override
-  String get heapPlus32MB => '+32 MB';
-
-  @override
-  String get heapPlus64MB => '+64 MB';
-
-  @override
-  String get heapPlus128MB => '+128 MB';
-
-  @override
-  String get heapPlus256MB => '+256 MB';
-
-  @override
-  String heapCustomMB(String mb) {
-    return '+$mb MB';
-  }
-
-  @override
-  String get heapScriptEngine => 'เอนจินสคริปต์';
-
-  @override
-  String get heapScriptEngineDesc => 'สำหรับม็อดสคริปต์ซับซ้อน (mRuby / HAP)';
-
-  @override
-  String get heapPlayerModels => 'โมเดลผู้เล่น';
-
-  @override
-  String get heapPlayerModelsDesc => 'สำหรับม็อดแทนที่โมเดลผู้เล่นขนาดใหญ่';
-
-  @override
-  String get heapPlayerTextures => 'เท็กซ์เจอร์ผู้เล่น';
-
-  @override
-  String get heapPlayerTexturesDesc =>
-      'สำหรับม็อดเท็กซ์เจอร์ผู้เล่นความละเอียดสูง';
-
-  @override
-  String get heapEnemyBgModels => 'โมเดลศัตรู/ฉากหลัง';
-
-  @override
-  String get heapEnemyBgModelsDesc => 'สำหรับม็อดโมเดลศัตรูหรือสภาพแวดล้อม';
-
-  @override
-  String get heapEnemyBgTextures => 'เท็กซ์เจอร์ศัตรู/ฉากหลัง';
-
-  @override
-  String get heapEnemyBgTexturesDesc =>
-      'สำหรับเท็กซ์เจอร์ศัตรู/สภาพแวดล้อมความละเอียดสูง';
 
   @override
   String get tutorialLodModEnable =>
@@ -3802,6 +4036,13 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get tooltipSound => 'เสียงตอบสนองของ UI เวิร์กสเปซ';
+
+  @override
+  String get labelEditorMcp => 'เซิร์ฟเวอร์ MCP ของเอดิเตอร์';
+
+  @override
+  String get tooltipEditorMcp =>
+      'เปิดเซิร์ฟเวอร์ MCP ของเอดิเตอร์ YoRHa Protocol ที่ http://127.0.0.1:47820/mcp เพื่อให้เอเจนต์ AI และไคลเอนต์ MCP อื่นอ่านและควบคุมเอดิเตอร์ได้ขณะเกมทำงาน ปิดไว้โดยค่าเริ่มต้น';
 
   @override
   String get labelImpeller => 'ตัวเรนเดอร์ Impeller (ทดลอง)';
@@ -4378,6 +4619,13 @@ class AppLocalizationsTh extends AppLocalizations {
       'สำหรับแพ็กขนาดใหญ่มาก (400+ ไฟล์) โหลดเฉพาะเท็กซ์เจอร์ที่ตรงกับรายการลำดับความสำคัญที่คัดไว้ ช่วยประหยัด VRAM และเวลาโหลด แพ็กขนาดเล็ก (เสื้อผ้า อาวุธ) จะโหลดเต็มเสมอ เปิดหากใช้แพ็กขนาดใหญ่และต้องการประหยัดหน่วยความจำ';
 
   @override
+  String get labelPinPriorityTextures => 'คงเท็กซ์เจอร์สำคัญไว้ใน VRAM';
+
+  @override
+  String get tooltipPinPriorityTextures =>
+      'โหลดเท็กซ์เจอร์ในรายการลำดับความสำคัญในตัว (GPUnity HD Pack) ตอนเริ่มเกมและเก็บไว้ใน VRAM ตลอดเซสชัน เพื่อไม่ให้โผล่ขึ้นมาช้า ปิดตัวเลือกนี้หากการ์ดจอมี VRAM 4 GB หรือน้อยกว่า เท็กซ์เจอร์เหล่านั้นจะใช้งบ VRAM เหมือนเท็กซ์เจอร์อื่น และถูกปล่อยออกเมื่อเกมต้องการหน่วยความจำ มีผลเมื่อเริ่มเกมครั้งถัดไป';
+
+  @override
   String get tutorialDropTextures =>
       'ลากม็อดเท็กซ์เจอร์มาวางที่นี่เพื่อติดตั้ง ไฟล์ Zip จะถูกแตกโดยอัตโนมัติ';
 
@@ -4776,13 +5024,6 @@ class AppLocalizationsTh extends AppLocalizations {
   String get cutsceneSubtitleCard => 'คำบรรยายและแถบสีดำ';
 
   @override
-  String get cutsceneStatusHd => 'HD';
-
-  @override
-  String get cutsceneStatusHdTooltip =>
-      '[cutscene] hd_cutscenes ใน nams.toml ต้องเป็น true เพื่อโหลดม็อดคัตซีน HD';
-
-  @override
   String get cutsceneStatusH264 => 'H264';
 
   @override
@@ -5068,6 +5309,20 @@ class AppLocalizationsTh extends AppLocalizations {
   @override
   String get modCameraFovOffsetHint =>
       'หน่วยองศา ค่าบวกขยายมุมมอง ค่าลบซูมเข้า';
+
+  @override
+  String get modCameraPitchUpLimit => 'ขีดจำกัดการเงยกล้อง';
+
+  @override
+  String get modCameraPitchUpLimitHint =>
+      'หน่วยองศาเหนือแนวระดับที่หมุนกล้องขึ้นได้ ค่าเดิมของเกมคือ 72';
+
+  @override
+  String get modCameraPitchDownLimit => 'ขีดจำกัดการก้มกล้อง';
+
+  @override
+  String get modCameraPitchDownLimitHint =>
+      'หน่วยองศาใต้แนวระดับที่หมุนกล้องลงได้ ค่าเดิมของเกมคือ 72';
 
   @override
   String get threeDInspectorOpen => 'เปิดตัวตรวจสอบ 3 มิติ';

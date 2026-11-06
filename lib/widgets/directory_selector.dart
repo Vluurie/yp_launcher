@@ -10,7 +10,6 @@ import 'package:yp_launcher/l10n/app_localizations.dart';
 import 'package:yp_launcher/models/nier_installation.dart';
 import 'package:yp_launcher/providers/app_state.dart';
 import 'package:yp_launcher/providers/notification_state.dart';
-import 'package:yp_launcher/services/mods_service.dart';
 import 'package:yp_launcher/services/nams_config_service.dart';
 import 'package:yp_launcher/services/platform/platform_adapter.dart';
 import 'package:yp_launcher/services/win10_compat_setup_service.dart';
@@ -711,7 +710,6 @@ class _DirectorySelectorState extends ConsumerState<DirectorySelector> {
     await controller.setDirectory(directory);
     await NamsConfigService.ensureConfigs(directory);
     await Win10CompatSetupService.ensureRanForDirectory(directory);
-    await ModsService.syncDlcSlots(directory);
     await ref
         .read(notificationStateControllerProvider.notifier)
         .refreshDetections(directory);

@@ -216,9 +216,8 @@ void main() {
       }
       expect(Directory(p.join(modRoot, 'Kimono')).existsSync(), isFalse);
 
-      expect(File(p.join(modRoot, 'data', 'pl', 'pl0000.dat')).existsSync(),
-          isTrue,
-          reason: 'pl000d should be DLC-renamed to pl0000 on a no-DLC dir');
+      expect(File(p.join(modRoot, 'data', 'pl', 'pl000d.dat')).existsSync(),
+          isTrue);
       expect(File(p.join(modRoot, 'data', 'et', 'ete00d.dat')).existsSync(),
           isTrue);
       expect(

@@ -438,6 +438,18 @@ abstract class AppLocalizations {
   /// **'Cannot verify: Steam must be running and own the game.'**
   String get verifySteamNotRunning;
 
+  /// No description provided for @verifyTimedOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot verify: NAMS did not respond within 30 seconds.'**
+  String get verifyTimedOut;
+
+  /// No description provided for @verifyTimedOutLinux.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot verify: NAMS did not respond within 30 seconds. Proton is most likely stuck, often because the game is on an NTFS drive. Moving the game to a Linux-formatted drive usually fixes it.'**
+  String get verifyTimedOutLinux;
+
   /// No description provided for @verifyInstallError.
   ///
   /// In en, this message translates to:
@@ -1131,7 +1143,7 @@ abstract class AppLocalizations {
   /// No description provided for @notifyNaiomMigrated.
   ///
   /// In en, this message translates to:
-  /// **'Found your old NAIOM settings - imported into nams.toml. Check the NAIOM tab. You can remove the old NAIOM files (dinput8.dll, NAIOM.ini) from the game folder.'**
+  /// **'Found your old NAIOM settings - imported into naiom.toml. Check the NAIOM tab. You can remove the old NAIOM files (dinput8.dll, NAIOM.ini) from the game folder.'**
   String get notifyNaiomMigrated;
 
   /// No description provided for @notifyNaiomSkipped.
@@ -1347,7 +1359,7 @@ abstract class AppLocalizations {
   /// No description provided for @tooltipEditsNaiom.
   ///
   /// In en, this message translates to:
-  /// **'Edits the [mouse] settings in nams/nams.toml. Most settings apply after saving; a few need a game restart.'**
+  /// **'Edits nams/naiom.toml. Most settings apply after saving; a few need a game restart.'**
   String get tooltipEditsNaiom;
 
   /// No description provided for @tooltipCutscenesLocation.
@@ -1367,12 +1379,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'LOADING'**
   String get cardLoading;
-
-  /// No description provided for @cardHeapOverrides.
-  ///
-  /// In en, this message translates to:
-  /// **'HEAP OVERRIDES'**
-  String get cardHeapOverrides;
 
   /// No description provided for @cardPerformance.
   ///
@@ -2550,12 +2556,6 @@ abstract class AppLocalizations {
   /// **'No game mods installed'**
   String get thirdPartyGameModsNone;
 
-  /// No description provided for @thirdPartyWaxRejected.
-  ///
-  /// In en, this message translates to:
-  /// **'WAX cannot be used with NAMS. Both do the same job, so running them together crashes the game. Your WAX outfits and items work in the Mods tab instead.'**
-  String get thirdPartyWaxRejected;
-
   /// No description provided for @thirdPartyGameModsCount.
   ///
   /// In en, this message translates to:
@@ -2579,6 +2579,138 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Delete this mod'**
   String get thirdPartyGameModsRemoveOne;
+
+  /// No description provided for @thirdPartyGraphicModsHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'GRAPHIC PROXIES'**
+  String get thirdPartyGraphicModsHeader;
+
+  /// No description provided for @thirdPartyGraphicModsHowto.
+  ///
+  /// In en, this message translates to:
+  /// **'Direct3D proxy DLLs (d3d11.dll, dxgi.dll) that wrap the game\'s rendering. NAMS loads them from thirdparty/graphic and sends the game\'s Direct3D calls through them; a copy in the game folder is never loaded. ReShade and 3DMigoto have their own cards. Install them through the drop zone at the top.'**
+  String get thirdPartyGraphicModsHowto;
+
+  /// No description provided for @thirdPartyMoveToGraphic.
+  ///
+  /// In en, this message translates to:
+  /// **'Move to graphic proxies (for a Direct3D wrapper)'**
+  String get thirdPartyMoveToGraphic;
+
+  /// No description provided for @thirdPartyMoveToGame.
+  ///
+  /// In en, this message translates to:
+  /// **'Move to game mods (for a mod that reads the game\'s memory)'**
+  String get thirdPartyMoveToGame;
+
+  /// No description provided for @thirdPartyGameModSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Loader settings for this DLL (game.toml)'**
+  String get thirdPartyGameModSettings;
+
+  /// No description provided for @thirdPartyGameModFakeHandle.
+  ///
+  /// In en, this message translates to:
+  /// **'Show game.bin as the main module'**
+  String get thirdPartyGameModFakeHandle;
+
+  /// No description provided for @thirdPartyGameModFakeHandleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Answers GetModuleHandle(NULL) with game.bin, so a mod that reads the game\'s memory at fixed offsets finds the game. Only turn it off for a mod that hooks NAMS.exe on purpose.'**
+  String get thirdPartyGameModFakeHandleHint;
+
+  /// No description provided for @thirdPartyGameModFakeExePath.
+  ///
+  /// In en, this message translates to:
+  /// **'Show NieRAutomata.exe as the main exe'**
+  String get thirdPartyGameModFakeExePath;
+
+  /// No description provided for @thirdPartyGameModFakeExePathHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Answers GetModuleFileName(NULL) with the NieRAutomata.exe of your install. Mods that check the exe name or hash the exe to detect the game version, like WAX, need this.'**
+  String get thirdPartyGameModFakeExePathHint;
+
+  /// No description provided for @thirdPartyGameModSizeOfImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Game version the mod sees'**
+  String get thirdPartyGameModSizeOfImage;
+
+  /// No description provided for @thirdPartyGameModSizeOfImageHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Some mods detect the game version from the image size of the main module. Pick the build the mod was made for. A mod made for the 2021 version reads the wrong memory on the 2026 update unless the mod supports it.'**
+  String get thirdPartyGameModSizeOfImageHint;
+
+  /// No description provided for @thirdPartyGameModSize2021.
+  ///
+  /// In en, this message translates to:
+  /// **'Steam 2021 (default)'**
+  String get thirdPartyGameModSize2021;
+
+  /// No description provided for @thirdPartyGameModSize2026.
+  ///
+  /// In en, this message translates to:
+  /// **'Steam 2026-11'**
+  String get thirdPartyGameModSize2026;
+
+  /// No description provided for @thirdPartyGameModSizeReal.
+  ///
+  /// In en, this message translates to:
+  /// **'Real size of game.bin'**
+  String get thirdPartyGameModSizeReal;
+
+  /// No description provided for @thirdPartyGameModSizeCustom.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom ({value})'**
+  String thirdPartyGameModSizeCustom(int value);
+
+  /// No description provided for @thirdPartyGameModReportPatches.
+  ///
+  /// In en, this message translates to:
+  /// **'Log the game code this mod changes'**
+  String get thirdPartyGameModReportPatches;
+
+  /// No description provided for @thirdPartyGameModReportPatchesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Writes every place in the game code this mod rewrote to nams.log. For troubleshooting.'**
+  String get thirdPartyGameModReportPatchesHint;
+
+  /// No description provided for @thirdPartyGameModWaitPatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Wait until the mod has patched the game'**
+  String get thirdPartyGameModWaitPatch;
+
+  /// No description provided for @thirdPartyGameModWaitPatchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Holds the start until the mod reports that it finished rewriting game code (it asks for the exe path once it is done), so NAMS\'s own hooks go in after its patches. Needs \"Show NieRAutomata.exe as the main exe\", which turns on with it.'**
+  String get thirdPartyGameModWaitPatchHint;
+
+  /// No description provided for @thirdPartyGameModPatchTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'Longest wait'**
+  String get thirdPartyGameModPatchTimeout;
+
+  /// No description provided for @thirdPartyGameModPatchTimeoutHint.
+  ///
+  /// In en, this message translates to:
+  /// **'If the mod never reports back, the game starts anyway after this time and NAMS writes a warning to nams.log.'**
+  String get thirdPartyGameModPatchTimeoutHint;
+
+  /// No description provided for @thirdPartyGameModSeconds.
+  ///
+  /// In en, this message translates to:
+  /// **'{seconds} s'**
+  String thirdPartyGameModSeconds(String seconds);
 
   /// No description provided for @thirdPartyStatusInstalled.
   ///
@@ -3180,12 +3312,6 @@ abstract class AppLocalizations {
   /// **'Texture injection is disabled'**
   String get warningTextureInjectionDisabled;
 
-  /// No description provided for @heapOverridesDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'Extra memory added on top of NAMS defaults. Parent heaps grow automatically. Only increase if mods need more memory. Restart required.'**
-  String get heapOverridesDescription;
-
   /// No description provided for @lodModDescription.
   ///
   /// In en, this message translates to:
@@ -3201,7 +3327,7 @@ abstract class AppLocalizations {
   /// No description provided for @namsDescription.
   ///
   /// In en, this message translates to:
-  /// **'NAMS is the mod loader that hosts NieR:Automata. It launches the game inside its own process, loads your mods at runtime, and applies these engine settings. These options control validation, content features, plugin/ReShade/3DMigoto loading, and memory heap sizes.'**
+  /// **'NAMS is the mod loader that hosts NieR:Automata. It launches the game inside its own process, loads your mods at runtime, and applies these engine settings. These options control validation, content features, and plugin/ReShade/3DMigoto loading.'**
   String get namsDescription;
 
   /// No description provided for @yorhaProtocolDescription.
@@ -4728,6 +4854,18 @@ abstract class AppLocalizations {
   /// **'Recent NAMS issues'**
   String get diagnosticsSectionRecentIssues;
 
+  /// No description provided for @diagnosticsSectionFindings.
+  ///
+  /// In en, this message translates to:
+  /// **'Findings'**
+  String get diagnosticsSectionFindings;
+
+  /// No description provided for @diagnosticsNoFindings.
+  ///
+  /// In en, this message translates to:
+  /// **'No problems found'**
+  String get diagnosticsNoFindings;
+
   /// No description provided for @diagnosticsExeVariant.
   ///
   /// In en, this message translates to:
@@ -5133,7 +5271,7 @@ abstract class AppLocalizations {
   /// No description provided for @tooltipDistancePss.
   ///
   /// In en, this message translates to:
-  /// **'Enables PSS shadow distribution for more even shadow quality. 0 = off. Good values: 0.5 - 0.9. Looks great in some areas but may appear blurry in others. Should be set much larger than other distance values (~1500 for large open areas).'**
+  /// **'Enables PSS shadow distribution for more even shadow quality. 0 = off. Looks great in some areas but may appear blurry in others. Should be set much larger than other distance values (~1500 for large open areas).'**
   String get tooltipDistancePss;
 
   /// No description provided for @labelFilterStrengthBias.
@@ -5465,18 +5603,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Grids that never load while you stand on one specific grid. Use when blocking the grid for the whole room would be too broad.'**
   String get tooltipHighGridsBlockedFromGrid;
-
-  /// No description provided for @labelContentEffectAreas.
-  ///
-  /// In en, this message translates to:
-  /// **'Effect areas'**
-  String get labelContentEffectAreas;
-
-  /// No description provided for @tooltipContentEffectAreas.
-  ///
-  /// In en, this message translates to:
-  /// **'Effects a mod places in a room. Changes show after re-entering the room.'**
-  String get tooltipContentEffectAreas;
 
   /// No description provided for @labelSkipStartupLogos.
   ///
@@ -5910,6 +6036,18 @@ abstract class AppLocalizations {
   /// **'Skip loading all plugin DLLs (e.g. YoRHa Protocol workspace). All NAMS engine features still work.'**
   String get tooltipDisablePluginLoading;
 
+  /// No description provided for @labelDisableMainOverlay.
+  ///
+  /// In en, this message translates to:
+  /// **'Disable Mod Overlay'**
+  String get labelDisableMainOverlay;
+
+  /// No description provided for @tooltipDisableMainOverlay.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t start the in-game mod overlay, which also hosts the YoRHa Protocol UI. Plugins and all NAMS features still run; only the overlay and its panels, the YoRHa Protocol UI included, are gone, together with the memory they use. Plugins with their own UI still show it. Requires restart.'**
+  String get tooltipDisableMainOverlay;
+
   /// No description provided for @labelDisableContentFeatures.
   ///
   /// In en, this message translates to:
@@ -5919,104 +6057,8 @@ abstract class AppLocalizations {
   /// No description provided for @tooltipDisableContentFeatures.
   ///
   /// In en, this message translates to:
-  /// **'Master switch for all content-layer features. When on, NAMS runs as a pure engine layer (mouse fixes, validation, heap tuning, crash fixes) without any item / weapon / outfit / quest / accessory mod support. Useful for benchmarking or isolating engine vs content issues.'**
+  /// **'Master switch for all content features. When on, NAMS treats every toggle under Content Features (the [content] table in nams.toml) as off and runs as a pure engine layer (mouse fixes, validation, heap tuning, crash fixes) without any mod content. Useful for benchmarking or isolating engine vs content issues. Requires restart.'**
   String get tooltipDisableContentFeatures;
-
-  /// No description provided for @labelContentItems.
-  ///
-  /// In en, this message translates to:
-  /// **'Items / Weapons / Shops'**
-  String get labelContentItems;
-
-  /// No description provided for @tooltipContentItems.
-  ///
-  /// In en, this message translates to:
-  /// **'Custom items, weapons, outfits and shop entries. Disable to play without any item-related mods. Requires restart.'**
-  String get tooltipContentItems;
-
-  /// No description provided for @labelContentAccessories.
-  ///
-  /// In en, this message translates to:
-  /// **'Accessories'**
-  String get labelContentAccessories;
-
-  /// No description provided for @tooltipContentAccessories.
-  ///
-  /// In en, this message translates to:
-  /// **'Custom accessories (face masks, lunar tear, masamune mask, etc.) and the accessory equip / unequip flow. Disable to play without accessory mods. Requires restart.'**
-  String get tooltipContentAccessories;
-
-  /// No description provided for @labelContentAssembleMeshes.
-  ///
-  /// In en, this message translates to:
-  /// **'Player Meshes'**
-  String get labelContentAssembleMeshes;
-
-  /// No description provided for @tooltipContentAssembleMeshes.
-  ///
-  /// In en, this message translates to:
-  /// **'Custom player meshes (mesh swaps, hair / outfit / mask overrides). Disable to render the vanilla player models unchanged. Requires restart.'**
-  String get tooltipContentAssembleMeshes;
-
-  /// No description provided for @labelContentQuestIntegration.
-  ///
-  /// In en, this message translates to:
-  /// **'Quests / Mails / Voice'**
-  String get labelContentQuestIntegration;
-
-  /// No description provided for @tooltipContentQuestIntegration.
-  ///
-  /// In en, this message translates to:
-  /// **'Custom quests, custom mails, custom voice lines, and the quest UI integration that activates them. Disable to play without quest mods. Requires restart.'**
-  String get tooltipContentQuestIntegration;
-
-  /// No description provided for @labelContentEffectsApplier.
-  ///
-  /// In en, this message translates to:
-  /// **'Effect Rules'**
-  String get labelContentEffectsApplier;
-
-  /// No description provided for @tooltipContentEffectsApplier.
-  ///
-  /// In en, this message translates to:
-  /// **'Per-frame application of weapon / outfit effect rules to player stats (damage multipliers, dodge tweaks, immunities, etc.).'**
-  String get tooltipContentEffectsApplier;
-
-  /// No description provided for @labelContentEquipTracker.
-  ///
-  /// In en, this message translates to:
-  /// **'Equip Tracker'**
-  String get labelContentEquipTracker;
-
-  /// No description provided for @tooltipContentEquipTracker.
-  ///
-  /// In en, this message translates to:
-  /// **'Detection of weapon equip / unequip changes. Drives effect rules and equip-time SDK callbacks.'**
-  String get tooltipContentEquipTracker;
-
-  /// No description provided for @labelContentMcd.
-  ///
-  /// In en, this message translates to:
-  /// **'Custom Text'**
-  String get labelContentMcd;
-
-  /// No description provided for @tooltipContentMcd.
-  ///
-  /// In en, this message translates to:
-  /// **'In-game text customization (custom item names, descriptions, dialogue strings supplied by mods).'**
-  String get tooltipContentMcd;
-
-  /// No description provided for @labelContentBuddyRubySelector.
-  ///
-  /// In en, this message translates to:
-  /// **'Buddy Outfit Selector (experimental)'**
-  String get labelContentBuddyRubySelector;
-
-  /// No description provided for @tooltipContentBuddyRubySelector.
-  ///
-  /// In en, this message translates to:
-  /// **'Patches the global buddy conversation script to add a \"Change outfit\" entry that lists modded buddy outfits. Disable if the patched conversation script causes instability or interferes with other script mods.'**
-  String get tooltipContentBuddyRubySelector;
 
   /// No description provided for @cardContentFeatures.
   ///
@@ -6027,8 +6069,458 @@ abstract class AppLocalizations {
   /// No description provided for @contentFeaturesDescription.
   ///
   /// In en, this message translates to:
-  /// **'Per-feature toggles for the content layer. All default to ON. Useful for narrowing a problem down to a specific subsystem. Requires a game restart.'**
+  /// **'Every content feature on its own. All on by default. Turning one off skips every mod entry of that feature, and every mod entry that needs it. Disable Content Features turns all of them off at once. Requires a game restart.'**
   String get contentFeaturesDescription;
+
+  /// No description provided for @contentGroupItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Items & equipment'**
+  String get contentGroupItems;
+
+  /// No description provided for @contentGroupStory.
+  ///
+  /// In en, this message translates to:
+  /// **'Story & world'**
+  String get contentGroupStory;
+
+  /// No description provided for @contentGroupScripts.
+  ///
+  /// In en, this message translates to:
+  /// **'Scripts'**
+  String get contentGroupScripts;
+
+  /// No description provided for @contentGroupAudio.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio'**
+  String get contentGroupAudio;
+
+  /// No description provided for @contentGroupVisuals.
+  ///
+  /// In en, this message translates to:
+  /// **'Visuals'**
+  String get contentGroupVisuals;
+
+  /// No description provided for @labelContentCustomItems.
+  ///
+  /// In en, this message translates to:
+  /// **'New items'**
+  String get labelContentCustomItems;
+
+  /// No description provided for @tooltipContentCustomItems.
+  ///
+  /// In en, this message translates to:
+  /// **'New items (consumables, materials, key items) with their icons and texts, and items mods hand out automatically. Requires restart.'**
+  String get tooltipContentCustomItems;
+
+  /// No description provided for @labelContentCustomWeapons.
+  ///
+  /// In en, this message translates to:
+  /// **'New weapons'**
+  String get labelContentCustomWeapons;
+
+  /// No description provided for @tooltipContentCustomWeapons.
+  ///
+  /// In en, this message translates to:
+  /// **'New weapons with their stats, upgrades, texts and story images. Requires restart.'**
+  String get tooltipContentCustomWeapons;
+
+  /// No description provided for @labelContentWeaponPatches.
+  ///
+  /// In en, this message translates to:
+  /// **'Weapon changes'**
+  String get labelContentWeaponPatches;
+
+  /// No description provided for @tooltipContentWeaponPatches.
+  ///
+  /// In en, this message translates to:
+  /// **'Mod changes to existing weapons. Requires restart.'**
+  String get tooltipContentWeaponPatches;
+
+  /// No description provided for @labelContentCustomOutfits.
+  ///
+  /// In en, this message translates to:
+  /// **'New outfits'**
+  String get labelContentCustomOutfits;
+
+  /// No description provided for @tooltipContentCustomOutfits.
+  ///
+  /// In en, this message translates to:
+  /// **'New outfits, WAX outfit mods, and the \"Default Outfit\" item that takes a modded outfit off again. Requires restart.'**
+  String get tooltipContentCustomOutfits;
+
+  /// No description provided for @labelContentCustomHairsprays.
+  ///
+  /// In en, this message translates to:
+  /// **'New hairsprays'**
+  String get labelContentCustomHairsprays;
+
+  /// No description provided for @tooltipContentCustomHairsprays.
+  ///
+  /// In en, this message translates to:
+  /// **'New hairsprays. Requires restart.'**
+  String get tooltipContentCustomHairsprays;
+
+  /// No description provided for @labelContentAccessories.
+  ///
+  /// In en, this message translates to:
+  /// **'Accessories'**
+  String get labelContentAccessories;
+
+  /// No description provided for @tooltipContentAccessories.
+  ///
+  /// In en, this message translates to:
+  /// **'New accessories, and wearing several accessories at once. Requires restart.'**
+  String get tooltipContentAccessories;
+
+  /// No description provided for @labelContentPlayerMeshSwaps.
+  ///
+  /// In en, this message translates to:
+  /// **'Player model parts'**
+  String get labelContentPlayerMeshSwaps;
+
+  /// No description provided for @tooltipContentPlayerMeshSwaps.
+  ///
+  /// In en, this message translates to:
+  /// **'NAMS puts 2B, 9S and A2 together itself, so outfit and accessory mods can swap, hide or add model parts. Off = the game\'s own model setup. Requires restart.'**
+  String get tooltipContentPlayerMeshSwaps;
+
+  /// No description provided for @labelContentMeshVisibility.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide / show model parts'**
+  String get labelContentMeshVisibility;
+
+  /// No description provided for @tooltipContentMeshVisibility.
+  ///
+  /// In en, this message translates to:
+  /// **'Mods that hide or show single parts of a model. Requires restart.'**
+  String get tooltipContentMeshVisibility;
+
+  /// No description provided for @labelContentShopItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Shop items'**
+  String get labelContentShopItems;
+
+  /// No description provided for @tooltipContentShopItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Items that mods add to shops. Requires restart.'**
+  String get tooltipContentShopItems;
+
+  /// No description provided for @labelContentItemShortcutMenu.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick-item menu'**
+  String get labelContentItemShortcutMenu;
+
+  /// No description provided for @tooltipContentItemShortcutMenu.
+  ///
+  /// In en, this message translates to:
+  /// **'Modded healing items you own show up in the quick-item menu. Requires restart.'**
+  String get tooltipContentItemShortcutMenu;
+
+  /// No description provided for @labelContentEffectRules.
+  ///
+  /// In en, this message translates to:
+  /// **'Effect rules'**
+  String get labelContentEffectRules;
+
+  /// No description provided for @tooltipContentEffectRules.
+  ///
+  /// In en, this message translates to:
+  /// **'What modded weapons, outfits, accessories and items do to the player (damage, dodging, immunities, flashlight charge). Requires restart.'**
+  String get tooltipContentEffectRules;
+
+  /// No description provided for @labelContentOutfitSelectorNpc.
+  ///
+  /// In en, this message translates to:
+  /// **'Outfit selection NPC'**
+  String get labelContentOutfitSelectorNpc;
+
+  /// No description provided for @tooltipContentOutfitSelectorNpc.
+  ///
+  /// In en, this message translates to:
+  /// **'The outfit selection NPC that offers modded outfits. Requires restart.'**
+  String get tooltipContentOutfitSelectorNpc;
+
+  /// No description provided for @labelContentBuddyOutfitMenu.
+  ///
+  /// In en, this message translates to:
+  /// **'Buddy outfit menu (experimental)'**
+  String get labelContentBuddyOutfitMenu;
+
+  /// No description provided for @tooltipContentBuddyOutfitMenu.
+  ///
+  /// In en, this message translates to:
+  /// **'EXPERIMENTAL. \"Change outfit\" entry when talking to your buddy. Turn off if it clashes with other script mods. Requires restart.'**
+  String get tooltipContentBuddyOutfitMenu;
+
+  /// No description provided for @labelContentCustomQuests.
+  ///
+  /// In en, this message translates to:
+  /// **'New quests'**
+  String get labelContentCustomQuests;
+
+  /// No description provided for @tooltipContentCustomQuests.
+  ///
+  /// In en, this message translates to:
+  /// **'New quests with their texts, rewards and conditions. Requires restart.'**
+  String get tooltipContentCustomQuests;
+
+  /// No description provided for @labelContentCustomMails.
+  ///
+  /// In en, this message translates to:
+  /// **'New mails'**
+  String get labelContentCustomMails;
+
+  /// No description provided for @tooltipContentCustomMails.
+  ///
+  /// In en, this message translates to:
+  /// **'New mails. Requires restart.'**
+  String get tooltipContentCustomMails;
+
+  /// No description provided for @labelContentCustomVoiceLines.
+  ///
+  /// In en, this message translates to:
+  /// **'New voice lines'**
+  String get labelContentCustomVoiceLines;
+
+  /// No description provided for @tooltipContentCustomVoiceLines.
+  ///
+  /// In en, this message translates to:
+  /// **'New voice lines. Requires restart.'**
+  String get tooltipContentCustomVoiceLines;
+
+  /// No description provided for @labelContentCustomMaps.
+  ///
+  /// In en, this message translates to:
+  /// **'New maps and story phases'**
+  String get labelContentCustomMaps;
+
+  /// No description provided for @tooltipContentCustomMaps.
+  ///
+  /// In en, this message translates to:
+  /// **'New map rooms and story phases, with their Chapter Select entries and save slot names. Requires restart.'**
+  String get tooltipContentCustomMaps;
+
+  /// No description provided for @labelContentMapLayouts.
+  ///
+  /// In en, this message translates to:
+  /// **'Map object rules'**
+  String get labelContentMapLayouts;
+
+  /// No description provided for @tooltipContentMapLayouts.
+  ///
+  /// In en, this message translates to:
+  /// **'Mod rules for objects placed on the map (removing them, how far away they appear). Requires restart.'**
+  String get tooltipContentMapLayouts;
+
+  /// No description provided for @labelContentNovels.
+  ///
+  /// In en, this message translates to:
+  /// **'Novels'**
+  String get labelContentNovels;
+
+  /// No description provided for @tooltipContentNovels.
+  ///
+  /// In en, this message translates to:
+  /// **'New novels in the Data menu. Requires restart.'**
+  String get tooltipContentNovels;
+
+  /// No description provided for @labelContentArchives.
+  ///
+  /// In en, this message translates to:
+  /// **'Archives'**
+  String get labelContentArchives;
+
+  /// No description provided for @tooltipContentArchives.
+  ///
+  /// In en, this message translates to:
+  /// **'New archives in the Data menu. Requires restart.'**
+  String get tooltipContentArchives;
+
+  /// No description provided for @labelContentCutsceneReplacements.
+  ///
+  /// In en, this message translates to:
+  /// **'Cutscene replacements'**
+  String get labelContentCutsceneReplacements;
+
+  /// No description provided for @tooltipContentCutsceneReplacements.
+  ///
+  /// In en, this message translates to:
+  /// **'Cutscene videos that mods replace, and in-game cutscenes that mods move. Requires restart.'**
+  String get tooltipContentCutsceneReplacements;
+
+  /// No description provided for @labelContentCameraSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera settings'**
+  String get labelContentCameraSettings;
+
+  /// No description provided for @tooltipContentCameraSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Mod settings for the player camera. Requires restart.'**
+  String get tooltipContentCameraSettings;
+
+  /// No description provided for @labelContentScriptOverlays.
+  ///
+  /// In en, this message translates to:
+  /// **'Script changes'**
+  String get labelContentScriptOverlays;
+
+  /// No description provided for @tooltipContentScriptOverlays.
+  ///
+  /// In en, this message translates to:
+  /// **'Mod additions and changes to the game\'s scripts. Requires restart.'**
+  String get tooltipContentScriptOverlays;
+
+  /// No description provided for @labelContentScriptGroups.
+  ///
+  /// In en, this message translates to:
+  /// **'Script groups'**
+  String get labelContentScriptGroups;
+
+  /// No description provided for @tooltipContentScriptGroups.
+  ///
+  /// In en, this message translates to:
+  /// **'Mod rules that turn groups of game scripts on or off per story phase. Requires restart.'**
+  String get tooltipContentScriptGroups;
+
+  /// No description provided for @labelContentRubyPatches.
+  ///
+  /// In en, this message translates to:
+  /// **'Ruby script edits'**
+  String get labelContentRubyPatches;
+
+  /// No description provided for @tooltipContentRubyPatches.
+  ///
+  /// In en, this message translates to:
+  /// **'Mod edits to the game\'s Ruby scripts. Requires restart.'**
+  String get tooltipContentRubyPatches;
+
+  /// No description provided for @labelContentCustomMusic.
+  ///
+  /// In en, this message translates to:
+  /// **'New music'**
+  String get labelContentCustomMusic;
+
+  /// No description provided for @tooltipContentCustomMusic.
+  ///
+  /// In en, this message translates to:
+  /// **'New background music. Requires restart.'**
+  String get tooltipContentCustomMusic;
+
+  /// No description provided for @labelContentAmbientSounds.
+  ///
+  /// In en, this message translates to:
+  /// **'Ambient sounds'**
+  String get labelContentAmbientSounds;
+
+  /// No description provided for @tooltipContentAmbientSounds.
+  ///
+  /// In en, this message translates to:
+  /// **'Ambient sounds and crowd voices that mods add or mute. Requires restart.'**
+  String get tooltipContentAmbientSounds;
+
+  /// No description provided for @labelContentCustomSounds.
+  ///
+  /// In en, this message translates to:
+  /// **'New sound effects'**
+  String get labelContentCustomSounds;
+
+  /// No description provided for @tooltipContentCustomSounds.
+  ///
+  /// In en, this message translates to:
+  /// **'New sound effects. Requires restart.'**
+  String get tooltipContentCustomSounds;
+
+  /// No description provided for @labelContentEffectAreas.
+  ///
+  /// In en, this message translates to:
+  /// **'Effect areas'**
+  String get labelContentEffectAreas;
+
+  /// No description provided for @tooltipContentEffectAreas.
+  ///
+  /// In en, this message translates to:
+  /// **'Effects that mods place in rooms or remove from them. Requires restart.'**
+  String get tooltipContentEffectAreas;
+
+  /// No description provided for @labelContentEffectTypeMute.
+  ///
+  /// In en, this message translates to:
+  /// **'Effect type mute'**
+  String get labelContentEffectTypeMute;
+
+  /// No description provided for @tooltipContentEffectTypeMute.
+  ///
+  /// In en, this message translates to:
+  /// **'Mods that mute whole effect types in a room or story phase. Requires restart.'**
+  String get tooltipContentEffectTypeMute;
+
+  /// No description provided for @labelContentGlobalEffects.
+  ///
+  /// In en, this message translates to:
+  /// **'Global effects'**
+  String get labelContentGlobalEffects;
+
+  /// No description provided for @tooltipContentGlobalEffects.
+  ///
+  /// In en, this message translates to:
+  /// **'Effects that mods run across a whole room or story phase. Requires restart.'**
+  String get tooltipContentGlobalEffects;
+
+  /// No description provided for @labelContentLightingFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Lighting filters'**
+  String get labelContentLightingFilters;
+
+  /// No description provided for @tooltipContentLightingFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Mod color and lighting filters for rooms. Requires restart.'**
+  String get tooltipContentLightingFilters;
+
+  /// No description provided for @labelContentClothPhysics.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloth physics'**
+  String get labelContentClothPhysics;
+
+  /// No description provided for @tooltipContentClothPhysics.
+  ///
+  /// In en, this message translates to:
+  /// **'Extra cloth physics parts on modded models. Requires restart.'**
+  String get tooltipContentClothPhysics;
+
+  /// No description provided for @labelContentCustomTexts.
+  ///
+  /// In en, this message translates to:
+  /// **'Mod texts'**
+  String get labelContentCustomTexts;
+
+  /// No description provided for @tooltipContentCustomTexts.
+  ///
+  /// In en, this message translates to:
+  /// **'Mod texts in menus (item names, descriptions). Off = the game\'s own texts. Requires restart.'**
+  String get tooltipContentCustomTexts;
+
+  /// No description provided for @labelContentUiOverrides.
+  ///
+  /// In en, this message translates to:
+  /// **'Mod UI layouts'**
+  String get labelContentUiOverrides;
+
+  /// No description provided for @tooltipContentUiOverrides.
+  ///
+  /// In en, this message translates to:
+  /// **'Menu and HUD layouts that mods replace. Off = the shipped layouts. Requires restart.'**
+  String get tooltipContentUiOverrides;
 
   /// No description provided for @labelDisableReShadeLoading.
   ///
@@ -6053,6 +6545,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Skip loading the 3DMigoto runtime from thirdparty/3dmigoto/. Turn off to stop loading shader mods.'**
   String get tooltipDisable3dmigotoLoading;
+
+  /// No description provided for @labelDisableGraphicModsLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Disable Graphics Proxy Loading'**
+  String get labelDisableGraphicModsLoading;
+
+  /// No description provided for @tooltipDisableGraphicModsLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip loading the Direct3D proxy DLLs from thirdparty/graphic/: DLLs named like a system DLL (d3d11.dll, dxgi.dll, ...) that the game\'s graphics calls pass through. Turn this on to play without them without having to delete anything. Takes effect on the next game start.'**
+  String get tooltipDisableGraphicModsLoading;
 
   /// No description provided for @labelDisableGameModsLoading.
   ///
@@ -6191,108 +6695,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Surfaces model validation errors as a dialog instead of silent failure.'**
   String get tooltipValidateModelDataSettings;
-
-  /// No description provided for @heapDefault.
-  ///
-  /// In en, this message translates to:
-  /// **'Default'**
-  String get heapDefault;
-
-  /// No description provided for @heapPlus16MB.
-  ///
-  /// In en, this message translates to:
-  /// **'+16 MB'**
-  String get heapPlus16MB;
-
-  /// No description provided for @heapPlus32MB.
-  ///
-  /// In en, this message translates to:
-  /// **'+32 MB'**
-  String get heapPlus32MB;
-
-  /// No description provided for @heapPlus64MB.
-  ///
-  /// In en, this message translates to:
-  /// **'+64 MB'**
-  String get heapPlus64MB;
-
-  /// No description provided for @heapPlus128MB.
-  ///
-  /// In en, this message translates to:
-  /// **'+128 MB'**
-  String get heapPlus128MB;
-
-  /// No description provided for @heapPlus256MB.
-  ///
-  /// In en, this message translates to:
-  /// **'+256 MB'**
-  String get heapPlus256MB;
-
-  /// No description provided for @heapCustomMB.
-  ///
-  /// In en, this message translates to:
-  /// **'+{mb} MB'**
-  String heapCustomMB(String mb);
-
-  /// No description provided for @heapScriptEngine.
-  ///
-  /// In en, this message translates to:
-  /// **'Script Engine'**
-  String get heapScriptEngine;
-
-  /// No description provided for @heapScriptEngineDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'For complex script mods (mRuby / HAP).'**
-  String get heapScriptEngineDesc;
-
-  /// No description provided for @heapPlayerModels.
-  ///
-  /// In en, this message translates to:
-  /// **'Player Models'**
-  String get heapPlayerModels;
-
-  /// No description provided for @heapPlayerModelsDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'For large player model replacement mods.'**
-  String get heapPlayerModelsDesc;
-
-  /// No description provided for @heapPlayerTextures.
-  ///
-  /// In en, this message translates to:
-  /// **'Player Textures'**
-  String get heapPlayerTextures;
-
-  /// No description provided for @heapPlayerTexturesDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'For high-res player texture mods.'**
-  String get heapPlayerTexturesDesc;
-
-  /// No description provided for @heapEnemyBgModels.
-  ///
-  /// In en, this message translates to:
-  /// **'Enemy/BG Models'**
-  String get heapEnemyBgModels;
-
-  /// No description provided for @heapEnemyBgModelsDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'For enemy or environment model mods.'**
-  String get heapEnemyBgModelsDesc;
-
-  /// No description provided for @heapEnemyBgTextures.
-  ///
-  /// In en, this message translates to:
-  /// **'Enemy/BG Textures'**
-  String get heapEnemyBgTextures;
-
-  /// No description provided for @heapEnemyBgTexturesDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'For high-res enemy/environment textures.'**
-  String get heapEnemyBgTexturesDesc;
 
   /// No description provided for @tutorialLodModEnable.
   ///
@@ -6659,6 +7061,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Workspace UI interaction sound.'**
   String get tooltipSound;
+
+  /// No description provided for @labelEditorMcp.
+  ///
+  /// In en, this message translates to:
+  /// **'Editor MCP Server'**
+  String get labelEditorMcp;
+
+  /// No description provided for @tooltipEditorMcp.
+  ///
+  /// In en, this message translates to:
+  /// **'Run the MCP server of the YoRHa Protocol editors at http://127.0.0.1:47820/mcp, so AI agents and other MCP clients can read and drive the editors while the game runs. Off by default.'**
+  String get tooltipEditorMcp;
 
   /// No description provided for @labelImpeller.
   ///
@@ -7704,6 +8118,18 @@ abstract class AppLocalizations {
   /// **'For huge packs (400+ files), only load textures matching a curated priority list - saves VRAM and loading time. Small packs (clothing, weapons) are always loaded in full. Turn on if you use a massive pack and want to save memory.'**
   String get tooltipLoadOnlyRelevant;
 
+  /// No description provided for @labelPinPriorityTextures.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep Priority Textures Loaded'**
+  String get labelPinPriorityTextures;
+
+  /// No description provided for @tooltipPinPriorityTextures.
+  ///
+  /// In en, this message translates to:
+  /// **'Load the textures of the built-in priority list (GPUnity HD Pack) at startup and keep them in VRAM for the whole session, so they never pop in. Turn this off on GPUs with 4 GB VRAM or less: they then follow the VRAM budget like every other texture and get unloaded when the game needs the memory. Takes effect on the next game start.'**
+  String get tooltipPinPriorityTextures;
+
   /// No description provided for @tutorialDropTextures.
   ///
   /// In en, this message translates to:
@@ -8237,18 +8663,6 @@ abstract class AppLocalizations {
   /// **'SUBTITLES & BLACK BARS'**
   String get cutsceneSubtitleCard;
 
-  /// No description provided for @cutsceneStatusHd.
-  ///
-  /// In en, this message translates to:
-  /// **'HD'**
-  String get cutsceneStatusHd;
-
-  /// No description provided for @cutsceneStatusHdTooltip.
-  ///
-  /// In en, this message translates to:
-  /// **'[cutscene] hd_cutscenes in nams.toml - must be true for HD cutscene mods to load.'**
-  String get cutsceneStatusHdTooltip;
-
   /// No description provided for @cutsceneStatusH264.
   ///
   /// In en, this message translates to:
@@ -8758,6 +9172,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Degrees. Positive widens the view, negative zooms in.'**
   String get modCameraFovOffsetHint;
+
+  /// No description provided for @modCameraPitchUpLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Look-up limit'**
+  String get modCameraPitchUpLimit;
+
+  /// No description provided for @modCameraPitchUpLimitHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Degrees above level the camera turns up to. The game\'s own limit is 72.'**
+  String get modCameraPitchUpLimitHint;
+
+  /// No description provided for @modCameraPitchDownLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Look-down limit'**
+  String get modCameraPitchDownLimit;
+
+  /// No description provided for @modCameraPitchDownLimitHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Degrees below level the camera turns down to. The game\'s own limit is 72.'**
+  String get modCameraPitchDownLimitHint;
 
   /// No description provided for @threeDInspectorOpen.
   ///

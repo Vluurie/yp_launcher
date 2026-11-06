@@ -120,15 +120,13 @@ class NaiomDetection {
     String gameDir,
     Map<String, String> iniValues,
   ) async {
-    final tomlPath = path.join(gameDir, 'nams', 'nams.toml');
+    final tomlPath = path.join(gameDir, 'nams', 'naiom.toml');
     final rawContent = await TomlService.readTomlFile(tomlPath);
     if (rawContent.isEmpty) {
       return const NaiomMigrationResult(migrated: false);
     }
 
-    final currentValues = TomlService.parse(rawContent);
-    final currentMouse =
-        (currentValues['mouse'] as Map<String, dynamic>?) ?? const {};
+    final currentMouse = TomlService.parse(rawContent);
     final currentBindings =
         (currentMouse['bindings'] as Map<String, dynamic>?) ?? const {};
 
@@ -219,10 +217,7 @@ class NaiomDetection {
       mergedMouse['bindings'] = Map<String, dynamic>.from(currentBindings)
         ..addAll(bindingUpdates);
     }
-    final merged = Map<String, dynamic>.from(currentValues)
-      ..['mouse'] = mergedMouse;
-
-    final updatedContent = TomlService.updateToml(rawContent, merged);
+    final updatedContent = TomlService.updateToml(rawContent, mergedMouse);
     await TomlService.writeTomlFile(tomlPath, updatedContent);
     return NaiomMigrationResult(migrated: true, skippedEntries: skipped);
   }

@@ -64,17 +64,12 @@ class LaunchWrapperService {
     final tokens = tokenize(trimmed);
     if (tokens.isEmpty) return base;
 
-    final withoutTrailingSeparator = tokens.last == '--'
-        ? tokens.sublist(0, tokens.length - 1)
-        : tokens;
-    if (withoutTrailingSeparator.isEmpty) return base;
-
-    final wrapperCmd = withoutTrailingSeparator.first;
-    final wrapperArgs = withoutTrailingSeparator.sublist(1);
+    final wrapperCmd = tokens.first;
+    final wrapperArgs = tokens.sublist(1);
 
     return LaunchCommand(
       command: wrapperCmd,
-      args: [...wrapperArgs, '--', base.command, ...base.args],
+      args: [...wrapperArgs, base.command, ...base.args],
       cwd: base.cwd,
       env: base.env,
       label: base.label,

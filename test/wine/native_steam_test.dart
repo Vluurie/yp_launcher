@@ -15,8 +15,14 @@ void main() {
       tree.addLibraryFolders('''
 "libraryfolders"
 {
-	"0" { "path" "$root" }
-	"1" { "path" "/mnt/games/SteamLibrary" }
+	"0"
+	{
+		"path"		"$root"
+	}
+	"1"
+	{
+		"path"		"/mnt/games/SteamLibrary"
+	}
 }
 ''');
 
@@ -50,7 +56,10 @@ void main() {
       tree.addLibraryFolders('''
 "libraryfolders"
 {
-	"0" { "path" "$root" }
+	"0"
+	{
+		"path"		"$root"
+	}
 }
 ''');
 

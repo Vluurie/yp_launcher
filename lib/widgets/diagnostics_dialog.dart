@@ -358,7 +358,11 @@ class _DiagnosticsDialogState extends ConsumerState<_DiagnosticsDialog> {
             spacing: gap,
             runSpacing: gap,
             children: [
-              for (final card in cards) SizedBox(width: cardWidth, child: card),
+              for (final card in cards)
+                SizedBox(
+                  width: card is _FullWidth ? constraints.maxWidth : cardWidth,
+                  child: card,
+                ),
             ],
           );
         },
@@ -379,7 +383,22 @@ class _DiagnosticsDialogState extends ConsumerState<_DiagnosticsDialog> {
     final rsInfo = rs.reshadeInfo;
     final miInfo = mi.migotoInfo;
 
+    final worst = r.findings.isEmpty ? null : r.findings.first.level;
     return [
+      _sectionCard(
+        context,
+        icon: Icons.fact_check_outlined,
+        title: l10n.diagnosticsSectionFindings,
+        accent: worst == null ? AppColors.success : _findingColor(worst),
+        trailing: _countBadge(r.findings.length),
+        fullWidth: true,
+        children: [
+          if (r.findings.isEmpty)
+            _mutedLine(context, l10n.diagnosticsNoFindings)
+          else
+            for (final f in r.findings) _findingRow(context, f),
+        ],
+      ),
       _sectionCard(
         context,
         icon: Icons.computer_outlined,
@@ -406,7 +425,7 @@ class _DiagnosticsDialogState extends ConsumerState<_DiagnosticsDialog> {
         children: [
           _kvRow(
             context,
-            l10n.diagnosticsExeVariant(gi.exeVariant),
+            l10n.diagnosticsExeVariant(gi.buildDisplay),
             gi.exeVariantSupported ? '' : l10n.diagnosticsExeUnsupported,
           ),
           Wrap(
@@ -416,6 +435,14 @@ class _DiagnosticsDialogState extends ConsumerState<_DiagnosticsDialog> {
               _flagChip(context, l10n.diagnosticsDlcPresent, gi.hasDlc),
               if (gi.exeSize != null)
                 _chip(context, _mb(gi.exeSize!), AppColors.textMuted),
+              if (gi.steamManifest?.buildId != null)
+                _chip(
+                  context,
+                  'Steam ${gi.steamManifest!.buildId}',
+                  AppColors.textMuted,
+                ),
+              if (gi.gameBin != null)
+                _flagChip(context, 'game.bin', gi.gameBinMatchesExe),
             ],
           ),
         ],
@@ -432,9 +459,20 @@ class _DiagnosticsDialogState extends ConsumerState<_DiagnosticsDialog> {
             children: [
               _flagChip(
                 context,
-                l10n.diagnosticsNamsPresent,
+                r.namsHealth.namsVersion == null
+                    ? l10n.diagnosticsNamsPresent
+                    : '${l10n.diagnosticsNamsPresent} ${r.namsHealth.namsVersion}',
                 r.namsHealth.namsExePresent,
               ),
+              if (r.namsHealth.steamRunning != null)
+                _flagChip(context, 'Steam', r.namsHealth.steamRunning!),
+              for (final fs in r.filesystems.entries)
+                if (fs.value != null)
+                  _chip(
+                    context,
+                    '${fs.key}: ${fs.value!.fsType}',
+                    fs.value!.risky ? AppColors.error : AppColors.textMuted,
+                  ),
               if (r.namsHealth.missingFiles.isNotEmpty)
                 _chip(
                   context,
@@ -694,15 +732,69 @@ class _DiagnosticsDialogState extends ConsumerState<_DiagnosticsDialog> {
     return '$bytes B';
   }
 
+  Color _findingColor(FindingLevel level) => switch (level) {
+    FindingLevel.error => AppColors.error,
+    FindingLevel.warning => AppColors.warning,
+    FindingLevel.info => AppColors.accentPrimary,
+  };
+
+  Widget _findingRow(BuildContext context, DiagnosticFinding f) {
+    final color = _findingColor(f.level);
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 1),
+            child: Icon(
+              switch (f.level) {
+                FindingLevel.error => Icons.error_outline,
+                FindingLevel.warning => Icons.warning_amber_rounded,
+                FindingLevel.info => Icons.info_outline,
+              },
+              size: 14,
+              color: color,
+            ),
+          ),
+          SizedBox(width: AppSizes.spacingSM(context)),
+          Expanded(
+            child: SelectableText(
+              f.message,
+              style: TextStyle(
+                fontSize: AppSizes.fontXS(context),
+                color: AppColors.textSecondary,
+                height: 1.35,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _sectionCard(
     BuildContext context, {
     required IconData icon,
     required String title,
     Color? accent,
     Widget? trailing,
+    bool fullWidth = false,
     required List<Widget> children,
   }) {
     final color = accent ?? AppColors.accentPrimary;
+    final card = _buildCard(context, icon, title, color, trailing, children);
+    return fullWidth ? _FullWidth(child: card) : card;
+  }
+
+  Widget _buildCard(
+    BuildContext context,
+    IconData icon,
+    String title,
+    Color color,
+    Widget? trailing,
+    List<Widget> children,
+  ) {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.surfaceLight,
@@ -930,4 +1022,12 @@ class _DiagnosticsDialogState extends ConsumerState<_DiagnosticsDialog> {
       ),
     );
   }
+}
+
+class _FullWidth extends StatelessWidget {
+  final Widget child;
+  const _FullWidth({required this.child});
+
+  @override
+  Widget build(BuildContext context) => child;
 }

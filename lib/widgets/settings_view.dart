@@ -8,7 +8,6 @@ import 'package:yp_launcher/providers/config_state.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
 import 'package:path/path.dart' as p;
-import 'package:yp_launcher/widgets/app_dropdown.dart';
 import 'package:yp_launcher/widgets/collapsible_card.dart';
 import 'package:yp_launcher/widgets/config_error_banner.dart';
 import 'package:yp_launcher/widgets/two_column_layout.dart';
@@ -172,11 +171,6 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
     final l10n = AppLocalizations.of(context)!;
     final nams = config.namsValues;
 
-    final rawHeap = nams['heap'];
-    final heap = rawHeap is Map<String, dynamic>
-        ? rawHeap
-        : <String, dynamic>{};
-
     return Scrollbar(
       controller: _scrollController,
       thumbVisibility: true,
@@ -307,35 +301,6 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                         ),
                       ),
                   ]),
-                  _card(context, l10n.cardContentFeatures, [
-                    Padding(
-                      padding: EdgeInsets.only(
-                        bottom: AppSizes.spacingMD(context),
-                      ),
-                      child: Text(
-                        l10n.contentFeaturesDescription,
-                        style: TextStyle(
-                          fontSize: AppSizes.fontXS(context),
-                          color: AppColors.textMuted,
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
-                    ),
-                    ..._contentToggles(context, nams, notifier, l10n),
-                    ConfigFieldBool(
-                      label: NamsFields.experimentalDefaultOutfits.label(l10n),
-                      value:
-                          nams[NamsFields.experimentalDefaultOutfits.key] ==
-                          true,
-                      onChanged: (v) => notifier.updateNams(
-                        NamsFields.experimentalDefaultOutfits.key,
-                        v,
-                      ),
-                      tooltip: NamsFields.experimentalDefaultOutfits.tooltip!(
-                        l10n,
-                      ),
-                    ),
-                  ]),
                 ],
               ),
               right: Column(
@@ -349,6 +314,15 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                         v,
                       ),
                       tooltip: NamsFields.disablePluginLoading.tooltip!(l10n),
+                    ),
+                    ConfigFieldBool(
+                      label: NamsFields.disableMainOverlay.label(l10n),
+                      value: nams[NamsFields.disableMainOverlay.key] == true,
+                      onChanged: (v) => notifier.updateNams(
+                        NamsFields.disableMainOverlay.key,
+                        v,
+                      ),
+                      tooltip: NamsFields.disableMainOverlay.tooltip!(l10n),
                     ),
                     ConfigFieldBool(
                       label: NamsFields.disableContentFeatures.label(l10n),
@@ -378,6 +352,17 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                         v,
                       ),
                       tooltip: NamsFields.disable3dmigotoLoading.tooltip!(l10n),
+                    ),
+                    ConfigFieldBool(
+                      label: NamsFields.disableGraphicModsLoading.label(l10n),
+                      value: NamsFields.disableGraphicModsLoading.valueIn(nams),
+                      onChanged: (v) => notifier.updateNams(
+                        NamsFields.disableGraphicModsLoading.key,
+                        v,
+                      ),
+                      tooltip: NamsFields.disableGraphicModsLoading.tooltip!(
+                        l10n,
+                      ),
                     ),
                     ConfigFieldBool(
                       label: NamsFields.disableTextureInjection.label(l10n),
@@ -410,176 +395,113 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                       tooltip: NamsFields.skipStartupLogos.tooltip!(l10n),
                     ),
                   ]),
-                  _card(context, l10n.cardHeapOverrides, [
-                    Padding(
-                      padding: EdgeInsets.only(
-                        bottom: AppSizes.spacingMD(context),
-                      ),
-                      child: Text(
-                        l10n.heapOverridesDescription,
-                        style: TextStyle(
-                          fontSize: AppSizes.fontXS(context),
-                          color: AppColors.textMuted,
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
-                    ),
-                    _heapField(
-                      context,
-                      NamsFields.globalHeapExtra.label(l10n),
-                      NamsFields.globalHeapExtra.key,
-                      heap,
-                      notifier,
-                      l10n.heapScriptEngineDesc,
-                    ),
-                    _heapField(
-                      context,
-                      NamsFields.plFileHeapExtra.label(l10n),
-                      NamsFields.plFileHeapExtra.key,
-                      heap,
-                      notifier,
-                      l10n.heapPlayerModelsDesc,
-                    ),
-                    _heapField(
-                      context,
-                      NamsFields.plVramHeapExtra.label(l10n),
-                      NamsFields.plVramHeapExtra.key,
-                      heap,
-                      notifier,
-                      l10n.heapPlayerTexturesDesc,
-                    ),
-                    _heapField(
-                      context,
-                      NamsFields.emBgFileHeapExtra.label(l10n),
-                      NamsFields.emBgFileHeapExtra.key,
-                      heap,
-                      notifier,
-                      l10n.heapEnemyBgModelsDesc,
-                    ),
-                    _heapField(
-                      context,
-                      NamsFields.emBgVramHeapExtra.label(l10n),
-                      NamsFields.emBgVramHeapExtra.key,
-                      heap,
-                      notifier,
-                      l10n.heapEnemyBgTexturesDesc,
-                    ),
-                  ]),
                 ],
               ),
             ),
+            _contentCard(context, nams, notifier, l10n),
           ],
         ),
       ),
     );
   }
 
-  static const _heapPresetBytes = <int>[
-    0,
-    16 * 1024 * 1024,
-    32 * 1024 * 1024,
-    64 * 1024 * 1024,
-    128 * 1024 * 1024,
-    256 * 1024 * 1024,
-  ];
-
-  Map<int, String> _heapPresets(AppLocalizations l10n) => {
-    0: l10n.heapDefault,
-    16 * 1024 * 1024: l10n.heapPlus16MB,
-    32 * 1024 * 1024: l10n.heapPlus32MB,
-    64 * 1024 * 1024: l10n.heapPlus64MB,
-    128 * 1024 * 1024: l10n.heapPlus128MB,
-    256 * 1024 * 1024: l10n.heapPlus256MB,
-  };
-
-  String _heapLabel(AppLocalizations l10n, int bytes) {
-    if (bytes == 0) return l10n.heapDefault;
-    final presets = _heapPresets(l10n);
-    if (presets.containsKey(bytes)) return presets[bytes]!;
-    final mb = bytes / (1024 * 1024);
-    return l10n.heapCustomMB(
-      mb.toStringAsFixed(mb == mb.roundToDouble() ? 0 : 1),
-    );
-  }
-
-  List<Widget> _contentToggles(
+  Widget _contentCard(
     BuildContext context,
     Map<String, dynamic> nams,
     ConfigStateController notifier,
     AppLocalizations l10n,
   ) {
-    final fields = <ConfigField<bool>>[
-      NamsFields.contentItems,
-      NamsFields.contentAccessories,
-      NamsFields.contentAssembleMeshes,
-      NamsFields.contentEffectAreas,
-      NamsFields.contentQuestIntegration,
-      NamsFields.contentEffectsApplier,
-      NamsFields.contentEquipTracker,
-      NamsFields.contentMcd,
-      NamsFields.contentBuddyRubySelector,
-      NamsFields.outfitSwapVisualEffects,
-    ];
-    return fields.map((f) {
-      return ConfigFieldBool(
-        label: f.label(l10n),
-        value: nams[f.key] != false,
-        onChanged: (v) => notifier.updateNams(f.key, v),
-        tooltip: f.tooltip!(l10n),
-      );
-    }).toList();
+    return _card(context, l10n.cardContentFeatures, [
+      Padding(
+        padding: EdgeInsets.only(bottom: AppSizes.spacingMD(context)),
+        child: Text(
+          l10n.contentFeaturesDescription,
+          style: TextStyle(
+            fontSize: AppSizes.fontXS(context),
+            color: AppColors.textMuted,
+            fontStyle: FontStyle.italic,
+          ),
+        ),
+      ),
+      for (final group in NamsContentFields.groups) ...[
+        _subheading(context, group.title(l10n)),
+        _contentGrid(context, group.fields, nams, notifier, l10n),
+      ],
+      Padding(
+        padding: EdgeInsets.symmetric(vertical: AppSizes.paddingXS(context)),
+        child: Divider(height: 1, color: AppColors.borderLight),
+      ),
+      ConfigFieldBool(
+        label: NamsFields.outfitSwapVisualEffects.label(l10n),
+        value: nams[NamsFields.outfitSwapVisualEffects.key] != false,
+        onChanged: (v) =>
+            notifier.updateNams(NamsFields.outfitSwapVisualEffects.key, v),
+        tooltip: NamsFields.outfitSwapVisualEffects.tooltip!(l10n),
+      ),
+      ConfigFieldBool(
+        label: NamsFields.experimentalDefaultOutfits.label(l10n),
+        value: nams[NamsFields.experimentalDefaultOutfits.key] == true,
+        onChanged: (v) =>
+            notifier.updateNams(NamsFields.experimentalDefaultOutfits.key, v),
+        tooltip: NamsFields.experimentalDefaultOutfits.tooltip!(l10n),
+      ),
+    ]);
   }
 
-  Widget _heapField(
+  Widget _contentGrid(
     BuildContext context,
-    String label,
-    String key,
-    Map<String, dynamic> heap,
+    List<ConfigField<bool>> fields,
+    Map<String, dynamic> nams,
     ConfigStateController notifier,
-    String description,
+    AppLocalizations l10n,
   ) {
-    final l10n = AppLocalizations.of(context)!;
-    final rawValue = heap[key];
-    final value = rawValue is int
-        ? rawValue
-        : (rawValue is num ? rawValue.toInt() : 0);
-    final isCustom = value != 0 && !_heapPresetBytes.contains(value);
-    final items = [..._heapPresetBytes, if (isCustom) value];
-
+    final gap = AppSizes.spacingLG(context);
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: AppSizes.paddingXS(context)),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: AppSizes.fontSM(context),
-                    color: AppColors.textPrimary,
+      padding: EdgeInsets.only(bottom: AppSizes.paddingMD(context)),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final width = constraints.maxWidth;
+          final columns = width >= 1100
+              ? 4
+              : width >= 820
+              ? 3
+              : width >= 520
+              ? 2
+              : 1;
+          final cellWidth = ((width - gap * (columns - 1)) / columns)
+              .floorToDouble();
+          return Wrap(
+            spacing: gap,
+            children: [
+              for (final f in fields)
+                SizedBox(
+                  width: cellWidth,
+                  child: ConfigFieldBool(
+                    label: f.label(l10n),
+                    value: f.valueIn(nams),
+                    onChanged: (v) =>
+                        notifier.updateNams(f.key, v, section: f.section),
+                    tooltip: f.tooltip!(l10n),
                   ),
                 ),
-                Text(
-                  description,
-                  style: TextStyle(
-                    fontSize: AppSizes.fontXS(context),
-                    color: AppColors.textMuted,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(width: AppSizes.spacingMD(context)),
-          AppDropdown<int>(
-            value: value,
-            items: items,
-            highlight: value != 0,
-            itemLabel: (v) => _heapLabel(l10n, v),
-            onChanged: (v) => notifier.updateNams(key, v, section: 'heap'),
-          ),
-        ],
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _subheading(BuildContext context, String title) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: AppSizes.spacingSM(context)),
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: AppSizes.fontSM(context),
+          fontWeight: FontWeight.w700,
+          color: AppColors.textSecondary,
+          letterSpacing: 0.8,
+        ),
       ),
     );
   }

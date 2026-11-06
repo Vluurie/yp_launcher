@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:toml/toml.dart';
 import 'package:yp_launcher/services/isolate_service.dart';
@@ -25,7 +26,87 @@ class TomlParseResult {
 }
 
 class TomlService {
-  static final _sectionRegex = RegExp(r'^\[([a-zA-Z_][\w.]*)\]$');
+  static Iterable<({TomlExpression? expression, int start, int end})>
+  sourceExpressions(String raw) sync* {
+    final parser = TomlExpression.parser;
+    var offset = 0;
+    while (offset < raw.length) {
+      final parsed = parser.parse(raw, start: offset);
+      final expression = parsed.value;
+      var end = parsed.position;
+      if (raw.startsWith('\r\n', end)) {
+        end += 2;
+      } else if (raw.startsWith('\n', end)) {
+        end++;
+      }
+      if (end <= offset) throw const FormatException('Invalid TOML expression');
+      yield (expression: expression, start: offset, end: end);
+      offset = end;
+    }
+  }
+
+  static bool sameValues(dynamic a, dynamic b) {
+    if (a is Map && b is Map) {
+      return a.length == b.length &&
+          a.keys.every(
+            (key) => b.containsKey(key) && sameValues(a[key], b[key]),
+          );
+    }
+    if (a is List && b is List) {
+      return a.length == b.length &&
+          a.asMap().entries.every((e) => sameValues(e.value, b[e.key]));
+    }
+    if (a is double && b is double && a.isNaN && b.isNaN) return true;
+    return a == b;
+  }
+
+  static Map<String, dynamic> _mergeValues(
+    Map<String, dynamic> original,
+    Map<String, dynamic> updates,
+  ) {
+    final merged = Map<String, dynamic>.from(original);
+    for (final entry in updates.entries) {
+      final previous = merged[entry.key];
+      merged[entry.key] =
+          previous is Map<String, dynamic> &&
+              entry.value is Map<String, dynamic>
+          ? _mergeValues(previous, entry.value as Map<String, dynamic>)
+          : entry.value;
+    }
+    return merged;
+  }
+
+  static String serialize(
+    Map<String, dynamic> values, {
+    String commentsFrom = '',
+  }) {
+    final comments = StringBuffer();
+    for (final span in sourceExpressions(commentsFrom)) {
+      final source = commentsFrom.substring(span.start, span.end);
+      final expression = span.expression;
+      if (expression == null) {
+        if (source.trimLeft().startsWith('#')) comments.write(source);
+      } else {
+        final trimmed = source.trimLeft();
+        final end = expression is TomlKeyValuePair
+            ? TomlKeyValuePair.parser.parse(trimmed).position
+            : TomlTable.parser.parse(trimmed).position;
+        final trailing = trimmed.substring(end).trim();
+        if (trailing.startsWith('#')) comments.writeln(trailing);
+      }
+      if (comments.isNotEmpty && !comments.toString().endsWith('\n')) {
+        comments.writeln();
+      }
+    }
+    final output = '$comments${TomlDocument.fromMap(values)}';
+    final parsed = parseStrict(output);
+    if (!parsed.ok || !sameValues(parsed.values, values)) {
+      throw const FormatException(
+        'TOML write would change configuration values',
+      );
+    }
+    return output;
+  }
 
   static Map<String, dynamic>? _sectionIn(
     Map<String, dynamic> values,
@@ -101,9 +182,11 @@ class TomlService {
 
   static String updateToml(
     String originalContent,
-    Map<String, dynamic> values,
+    Map<String, dynamic> updates,
   ) {
-    final lines = originalContent.split('\n');
+    final original = parseStrict(originalContent);
+    if (!original.ok) throw FormatException(original.error ?? 'Invalid TOML');
+    final values = _mergeValues(original.values, updates);
     final result = <String>[];
     String? currentSection;
     final writtenTopLevel = <String>{};
@@ -129,23 +212,17 @@ class TomlService {
       result.add('');
     }
 
-    var skipUntilArrayEnd = 0;
-
-    for (final line in lines) {
-      final trimmed = line.trim();
-
-      if (skipUntilArrayEnd > 0) {
-        skipUntilArrayEnd += _bracketDelta(trimmed);
-        continue;
-      }
-
-      if (trimmed.isEmpty || trimmed.startsWith('#')) {
+    for (final span in sourceExpressions(originalContent)) {
+      final line = originalContent
+          .substring(span.start, span.end)
+          .replaceFirst(RegExp(r'\r?\n$'), '');
+      final expression = span.expression;
+      if (expression == null) {
         result.add(line);
         continue;
       }
 
-      final sectionMatch = _sectionRegex.firstMatch(trimmed);
-      if (sectionMatch != null) {
+      if (expression is TomlTable) {
         flushSection(currentSection);
         if (firstSectionIndex == -1) {
           var insertAt = result.length;
@@ -154,21 +231,16 @@ class TomlService {
           }
           firstSectionIndex = insertAt;
         }
-        currentSection = sectionMatch.group(1)!;
+        currentSection = expression.name.parts
+            .map((part) => part.name)
+            .join('.');
         writtenBySection[currentSection] ??= <String>{};
         result.add(line);
         continue;
       }
 
-      final eqIndex = trimmed.indexOf('=');
-      if (eqIndex == -1) {
-        result.add(line);
-        continue;
-      }
-
-      final key = trimmed.substring(0, eqIndex).trim();
-      final delta = _bracketDelta(trimmed.substring(eqIndex + 1));
-      if (delta > 0) skipUntilArrayEnd = delta;
+      if (expression is! TomlKeyValuePair) continue;
+      final key = expression.key.parts.map((part) => part.name).join('.');
 
       if (currentSection != null) {
         final sectionMap = _sectionIn(values, currentSection);
@@ -226,49 +298,23 @@ class TomlService {
       }
     }
 
-    return result.join('\n');
-  }
-
-  /// Net `[` minus `]` in [text], ignoring brackets inside quotes or comments.
-  /// A positive result means the value continues on the following lines.
-  static int _bracketDelta(String text) {
-    var depth = 0;
-    var inSingle = false;
-    var inDouble = false;
-    for (var i = 0; i < text.length; i++) {
-      final ch = text[i];
-      if (ch == "'" && !inDouble) {
-        inSingle = !inSingle;
-      } else if (ch == '"' && !inSingle) {
-        inDouble = !inDouble;
-      } else if (!inSingle && !inDouble) {
-        if (ch == '#') break;
-        if (ch == '[') depth++;
-        if (ch == ']') depth--;
-      }
-    }
-    return depth;
+    final output = result.join('\n');
+    final parsed = parseStrict(output);
+    if (parsed.ok && sameValues(parsed.values, values)) return output;
+    return serialize(values, commentsFrom: originalContent);
   }
 
   static String _formatValue(dynamic value) {
-    if (value is bool) return value.toString();
-    if (value is int) return value.toString();
-    if (value is double) {
-      final s = value.toString();
-      return s.contains('.') ? s : '$s.0';
-    }
-    if (value is List) {
-      if (value.isEmpty) return '[]';
-      final items = value.map(_formatValue).join(', ');
-      return '[$items]';
-    }
+    if (value is String) return jsonEncode(value);
+    if (value is List) return '[${value.map(_formatValue).join(', ')}]';
     if (value is Map) {
-      final pairs = value.entries
-          .map((e) => '${e.key} = ${_formatValue(e.value)}')
-          .join(', ');
-      return '{ $pairs }';
+      final entries = value.entries.map(
+        (entry) =>
+            '${TomlSimpleKey.from(entry.key)} = ${_formatValue(entry.value)}',
+      );
+      return '{ ${entries.join(', ')} }';
     }
-    return '"$value"';
+    return TomlValue.from(value).toString();
   }
 
   static Future<String> readTomlFile(String path) {

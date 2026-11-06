@@ -1,8 +1,10 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
 import 'package:path/path.dart' as path;
 import 'package:yp_launcher/constants/app_strings.dart';
 import 'package:yp_launcher/services/isolate_service.dart';
+import 'package:yp_launcher/services/wine/steam_vdf.dart';
 
 enum ExeVariant { missing, original, wolfLimitBreak, legacyWindows7, unknown }
 
@@ -43,11 +45,106 @@ class GameDetection {
   static const String windows10Sha1 =
       '420cbab7daa1d94a79473c0a6271ef9c30e516e5';
 
-  /// Checks if DLC `data100.cpk` is present and ~928 MB. Steam's
-  /// "3C3C-Concert & Costume Pack" DLC ships exactly this file at this
-  /// size (with a small tolerance). Other unrelated mods can ship a
-  /// `data100.cpk` of a different size, hence the size guard.
+  static const int steam2026Size = 17601536;
+  static const String steam2026Sha1 =
+      '537be3ea1083114cc1e444b85ac270f2043ac4d6';
+
+  static const Set<int> supportedExeSizes = {windows10Size, steam2026Size};
+
+  static const int steam2021TimeDateStamp = 0x60d3a8d2;
+  static const int steam2026TimeDateStamp = 0x6ac89519;
+
+  static const String steamAppId = '524220';
+  static const String dlcAppId = '580600';
+
+  static const List<GameBuildInfo> knownBuilds = [
+    GameBuildInfo(
+      build: GameBuild.steam2021,
+      label: 'Steam 2021',
+      exeSize: windows10Size,
+      exeSha1: windows10Sha1,
+      timeDateStamp: steam2021TimeDateStamp,
+    ),
+    GameBuildInfo(
+      build: GameBuild.steam2026_11,
+      label: 'Steam 2026-11',
+      exeSize: steam2026Size,
+      exeSha1: steam2026Sha1,
+      timeDateStamp: steam2026TimeDateStamp,
+    ),
+  ];
+
+  static GameBuildInfo? buildOfExe(int size, String sha1) {
+    for (final info in knownBuilds) {
+      if (info.exeSize == size && info.exeSha1 == sha1) return info;
+    }
+    return null;
+  }
+
+  static GameBuildInfo? buildOfTimeDateStamp(int? stamp) {
+    if (stamp == null) return null;
+    for (final info in knownBuilds) {
+      if (info.timeDateStamp == stamp) return info;
+    }
+    return null;
+  }
+
+  static bool newerThanEveryBuild(int? stamp) =>
+      stamp != null && knownBuilds.every((b) => stamp > b.timeDateStamp);
+
+  static int? peTimeDateStamp(List<int> header) {
+    final bytes = Uint8List.fromList(header);
+    final data = ByteData.sublistView(bytes);
+    int? u32(int at) => at >= 0 && at + 4 <= bytes.length
+        ? data.getUint32(at, Endian.little)
+        : null;
+    if (bytes.length < 2 || bytes[0] != 0x4d || bytes[1] != 0x5a) return null;
+    final nt = u32(0x3c);
+    if (nt == null || u32(nt) != 0x00004550) return null;
+    return u32(nt + 8);
+  }
+
+  static int? fileTimeDateStamp(String filePath) {
+    try {
+      final raf = File(filePath).openSync();
+      try {
+        return peTimeDateStamp(raf.readSync(0x1000));
+      } finally {
+        raf.closeSync();
+      }
+    } catch (_) {
+      return null;
+    }
+  }
+
+  static Future<ExeProbe> probeExe(String gameDir) => IsolateService.run(
+    _probeExeSync,
+    path.join(gameDir, AppStrings.gameExeName),
+  );
+
+  static String? steamManifestPath(String gameDir) {
+    final common = path.dirname(path.normalize(gameDir));
+    final steamapps = path.dirname(common);
+    if (path.basename(common).toLowerCase() != 'common') return null;
+    if (path.basename(steamapps).toLowerCase() != 'steamapps') return null;
+    return path.join(steamapps, 'appmanifest_$steamAppId.acf');
+  }
+
+  static SteamAppManifest? readSteamManifest(String gameDir) {
+    final manifestPath = steamManifestPath(gameDir);
+    if (manifestPath == null) return null;
+    final file = File(manifestPath);
+    if (!file.existsSync()) return null;
+    try {
+      return SteamAppManifest.parse(file.readAsStringSync());
+    } catch (_) {
+      return null;
+    }
+  }
+
   static Future<bool> hasDlc(String gameDir) async {
+    final manifest = readSteamManifest(gameDir);
+    if (manifest != null) return manifest.dlcInstalled(dlcAppId);
     final file = File(path.join(gameDir, 'data', 'data100.cpk'));
     if (!await file.exists()) return false;
     final size = await file.length();
@@ -71,6 +168,156 @@ class GameDetection {
     if (hash == null) return ExeVariant.unknown;
     if (hash == wolfLimitBreakSha256) return ExeVariant.wolfLimitBreak;
     return ExeVariant.original;
+  }
+}
+
+enum GameBuild { steam2021, steam2026_11 }
+
+class GameBuildInfo {
+  final GameBuild build;
+  final String label;
+  final int exeSize;
+  final String exeSha1;
+  final int timeDateStamp;
+
+  const GameBuildInfo({
+    required this.build,
+    required this.label,
+    required this.exeSize,
+    required this.exeSha1,
+    required this.timeDateStamp,
+  });
+}
+
+enum ExeBuildStatus { missing, known, legacyWindows7, modified, newer, unknown }
+
+class ExeProbe {
+  final bool exists;
+  final int? size;
+  final String? sha1;
+  final int? timeDateStamp;
+
+  const ExeProbe({
+    this.exists = false,
+    this.size,
+    this.sha1,
+    this.timeDateStamp,
+  });
+
+  GameBuildInfo? get build => size == null || sha1 == null
+      ? null
+      : GameDetection.buildOfExe(size!, sha1!);
+
+  GameBuildInfo? get stampBuild =>
+      GameDetection.buildOfTimeDateStamp(timeDateStamp);
+
+  ExeBuildStatus get status {
+    if (!exists) return ExeBuildStatus.missing;
+    if (build != null) return ExeBuildStatus.known;
+    if (size == GameDetection.legacyWindows7Size &&
+        sha1 == GameDetection.legacyWindows7Sha1) {
+      return ExeBuildStatus.legacyWindows7;
+    }
+    if (stampBuild != null) return ExeBuildStatus.modified;
+    if (GameDetection.newerThanEveryBuild(timeDateStamp)) {
+      return ExeBuildStatus.newer;
+    }
+    return ExeBuildStatus.unknown;
+  }
+}
+
+class SteamAppManifest {
+  final String? buildId;
+  final String? targetBuildId;
+  final String? stateFlags;
+  final String? lastUpdated;
+  final String? betaKey;
+  final Set<String> installedDlc;
+  final Set<String> disabledDlc;
+
+  const SteamAppManifest({
+    this.buildId,
+    this.targetBuildId,
+    this.stateFlags,
+    this.lastUpdated,
+    this.betaKey,
+    this.installedDlc = const {},
+    this.disabledDlc = const {},
+  });
+
+  factory SteamAppManifest.parse(String content) {
+    final root = parseVdf(content);
+    final state = vdfBlock(root, 'AppState') ?? root;
+    final dlc = <String>{};
+    final depots = vdfBlock(state, 'InstalledDepots');
+    if (depots != null) {
+      for (final depot in depots.values) {
+        if (depot is! Map) continue;
+        final id = vdfString(depot, 'dlcappid');
+        if (id != null && id.isNotEmpty) dlc.add(id);
+      }
+    }
+    final userConfig = vdfBlock(state, 'UserConfig');
+    final mounted = vdfBlock(state, 'MountedConfig');
+    final disabledRaw =
+        (mounted == null ? null : vdfString(mounted, 'DisabledDLC')) ??
+        (userConfig == null ? null : vdfString(userConfig, 'DisabledDLC')) ??
+        '';
+    final beta = userConfig == null ? null : vdfString(userConfig, 'BetaKey');
+    return SteamAppManifest(
+      buildId: vdfString(state, 'buildid'),
+      targetBuildId: vdfString(state, 'TargetBuildID'),
+      stateFlags: vdfString(state, 'StateFlags'),
+      lastUpdated: vdfString(state, 'LastUpdated'),
+      betaKey: beta == null || beta.isEmpty ? null : beta,
+      installedDlc: dlc,
+      disabledDlc: disabledRaw
+          .split(',')
+          .map((s) => s.trim())
+          .where((s) => s.isNotEmpty)
+          .toSet(),
+    );
+  }
+
+  bool dlcInstalled(String appId) =>
+      installedDlc.contains(appId) && !disabledDlc.contains(appId);
+
+  bool get updatePending =>
+      targetBuildId != null &&
+      buildId != null &&
+      targetBuildId != '0' &&
+      targetBuildId != buildId;
+
+  DateTime? get lastUpdatedAt {
+    final seconds = int.tryParse(lastUpdated ?? '');
+    if (seconds == null || seconds <= 0) return null;
+    return DateTime.fromMillisecondsSinceEpoch(seconds * 1000, isUtc: true);
+  }
+}
+
+ExeProbe _probeExeSync(String exePath) {
+  final file = File(exePath);
+  if (!file.existsSync()) return const ExeProbe();
+  try {
+    final bytes = file.readAsBytesSync();
+    return ExeProbe(
+      exists: true,
+      size: bytes.length,
+      sha1: sha1.convert(bytes).toString(),
+      timeDateStamp: GameDetection.peTimeDateStamp(
+        bytes.length > 0x1000 ? bytes.sublist(0, 0x1000) : bytes,
+      ),
+    );
+  } catch (_) {
+    return ExeProbe(exists: true, size: _lengthOrNull(file));
+  }
+}
+
+int? _lengthOrNull(File file) {
+  try {
+    return file.lengthSync();
+  } catch (_) {
+    return null;
   }
 }
 
