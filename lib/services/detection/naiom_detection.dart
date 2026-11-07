@@ -199,7 +199,7 @@ class NaiomDetection {
         skipped.add('${_displayKey(bindingKey)} ($value)');
         continue;
       }
-      if (NaiomKeys.comboContainsMouse(normalized) &&
+      if (NaiomKeys.comboContainsNonKeyboard(normalized) &&
           !NaiomKeys.allowsMouse(bindingKey)) {
         skipped.add('${_displayKey(bindingKey)} ($value)');
         continue;

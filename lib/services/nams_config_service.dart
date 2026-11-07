@@ -394,10 +394,19 @@ misc_custom_cursor_hacking = ""
 misc_disable_default_cursor = false
 
 # Additional key bindings. All bindings are additive - the vanilla keys keep
-# working. "" = unbound. Supported key names: A-Z, 0-9, SPACE, END, UPARROW,
-# DOWNARROW, LEFTARROW, RIGHTARROW, LSHIFT, RSHIFT, LCTRL, RCTRL, MOUSE1-MOUSE5.
-# Combinations use +, e.g. "CTRL+X". SHIFT, CTRL and ALT match either side
-# and are modifier-only.
+# working. "" = unbound. Supported key names: A-Z, 0-9, F1-F12, SPACE, TAB,
+# ENTER, ESCAPE, BACKSPACE, INS, DEL, PGUP, PGDN, HOME, END, UPARROW, DOWNARROW,
+# LEFTARROW, RIGHTARROW, LALT, RALT, LCTRL, RCTRL, LSHIFT, RSHIFT, KP_0-KP_9,
+# KP_PLUS, KP_MINUS, KP_SLASH, KP_STAR, MOUSE1-MOUSE5, MOUSE_WHEEL_UP,
+# MOUSE_WHEEL_DOWN, and the buttons of the first controller: CONTROLLER_A,
+# CONTROLLER_B, CONTROLLER_X, CONTROLLER_Y, CONTROLLER_BACK, CONTROLLER_START,
+# CONTROLLER_DUP, CONTROLLER_DDOWN, CONTROLLER_DLEFT, CONTROLLER_DRIGHT,
+# CONTROLLER_LB, CONTROLLER_RB, CONTROLLER_LT, CONTROLLER_RT, CONTROLLER_LTHUMB,
+# CONTROLLER_RTHUMB. A controller button keeps its own action as well.
+# Combinations use +, e.g. "CTRL+X". SHIFT, CTRL and ALT match either side and
+# are modifier-only. Mouse buttons, the wheel and controller buttons do not work
+# for movement, walk, auto run, light, self destruct, reset camera and menu
+# up/down/left/right.
 [bindings]
 standard_move_forward = ""
 standard_move_left = ""

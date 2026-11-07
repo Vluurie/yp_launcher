@@ -1729,8 +1729,15 @@ class AppLocalizationsDe extends AppLocalizations {
       'Keine d3dcompiler_47.dll hier. Unter Wine greift ReShade auf Wines Stub zurück und Effekte kompilieren nicht. Installiere eine ReShade-Version, die sie mitliefert, oder lege eine native d3dcompiler_47.dll in diesen Ordner.';
 
   @override
+  String get thirdPartyBannerTitle => 'KEIN SUPPORT FÜR DRITTANBIETER-TOOLS';
+
+  @override
+  String get thirdPartyReadDoc =>
+      'Tool-Autoren: So lädt NAMS Drittanbieter-Tools';
+
+  @override
   String get thirdPartyBanner =>
-      'Die Tools auf diesem Tab sind Drittanbieter-Software. NAMS lädt sie nur. NAMS implementiert sie nicht und kann ihr Verhalten nicht ändern. Alles, was du darüber installierst, läuft eigenständig, daher liegen Korrektheit, Kompatibilität und Sicherheit in deiner Verantwortung. Wenn etwas nicht richtig funktioniert, liegt das am Tool oder am Mod, nicht an NAMS.';
+      'ReShade, 3DMigoto, ReShade-Addons (Luma, DLSS/DLAA, Upscaler, Frame Generation) und jede DLL, die sie mitbringen, stammen von anderen Leuten. NAMS und das YoRHa-Protocol-Team entwickeln sie nicht, testen sie nicht und debuggen sie nicht. Wenn eins davon abstürzt, nicht lädt oder nicht mehr funktioniert, melde das dem Autor auf dessen Mod-Seite oder GitHub, nicht uns. Bevor du uns einen Absturz meldest, entferne alles aus diesem Tab und jede DLL, die du selbst in den Launcher-Ordner kopiert hast, und teste erneut. Ist der Absturz dann weg, ist es kein Fehler von NAMS oder YoRHa Protocol. „Im Vanilla-Spiel funktioniert es“ ist kein Argument: Unter NAMS läuft das Spiel in NAMS.exe, nicht in NieRAutomata.exe, deshalb kann ein Tool, das im Vanilla-Spiel funktioniert, hier trotzdem kaputtgehen. Es unter NAMS zum Laufen zu bringen, ist Sache des Tool-Autors.';
 
   @override
   String get thirdPartyConfigSection => 'EINSTELLUNGEN';
@@ -4614,7 +4621,10 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get keybindMouseNotSupported =>
-      'Maustasten funktionieren für diese Aktion nicht – sie benötigt eine Tastaturtaste.';
+      'Maus- und Controller-Tasten funktionieren für diese Aktion nicht – sie benötigt eine Tastaturtaste.';
+
+  @override
+  String get keybindPickController => 'Controller-Taste wählen';
 
   @override
   String get naiomResetConfirmTitle => 'NAIOM-Einstellungen zurücksetzen?';

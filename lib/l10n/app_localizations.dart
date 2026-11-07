@@ -3000,10 +3000,22 @@ abstract class AppLocalizations {
   /// **'No d3dcompiler_47.dll here. Under Wine, ReShade falls back to Wine\'s stub and effects won\'t compile. Reinstall a ReShade build that ships it, or drop a native d3dcompiler_47.dll into this folder.'**
   String get thirdPartyD3dCompilerMissing;
 
+  /// No description provided for @thirdPartyBannerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'NO SUPPORT FOR THIRD-PARTY TOOLS'**
+  String get thirdPartyBannerTitle;
+
+  /// No description provided for @thirdPartyReadDoc.
+  ///
+  /// In en, this message translates to:
+  /// **'Tool authors: read how NAMS loads third-party tools'**
+  String get thirdPartyReadDoc;
+
   /// No description provided for @thirdPartyBanner.
   ///
   /// In en, this message translates to:
-  /// **'The tools on this tab are third-party software. NAMS only loads them. It does not implement them and cannot change how they behave. Anything you install through them runs on its own, so correctness, compatibility and safety are your responsibility. If something misbehaves, that is on the tool or the mod, not on NAMS.'**
+  /// **'ReShade, 3DMigoto, ReShade addons (Luma, DLSS/DLAA, upscalers, frame generation) and every DLL they bring are made by other people. NAMS and the YoRHa Protocol team don\'t make them, don\'t test them and don\'t debug them. If one crashes, won\'t load or stops working, report it to its author on its own mod page or GitHub, not to us. Before you report a crash to us, remove everything from this tab and every DLL you copied into the launcher folder yourself, then try again. If the crash is gone, it\'s not a NAMS or YoRHa Protocol bug. “It works on the vanilla game” is not an argument: under NAMS the game runs inside NAMS.exe, not NieRAutomata.exe, so a tool that works in vanilla can still break here. Making it work under NAMS is the tool author\'s job.'**
   String get thirdPartyBanner;
 
   /// No description provided for @thirdPartyConfigSection.
@@ -7959,8 +7971,14 @@ abstract class AppLocalizations {
   /// No description provided for @keybindMouseNotSupported.
   ///
   /// In en, this message translates to:
-  /// **'Mouse buttons don\'t work for this action - it needs a keyboard key.'**
+  /// **'Mouse and controller buttons don\'t work for this action - it needs a keyboard key.'**
   String get keybindMouseNotSupported;
+
+  /// No description provided for @keybindPickController.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a controller button'**
+  String get keybindPickController;
 
   /// No description provided for @naiomResetConfirmTitle.
   ///

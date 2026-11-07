@@ -665,7 +665,9 @@
   "thirdPartyUpdateKeep": "保留当前",
   "thirdPartyUpdateSkipped": "已保留安装的版本。",
   "thirdPartyD3dCompilerMissing": "此处没有 d3dcompiler_47.dll。在 Wine 下，ReShade 会退回到 Wine 的存根，特效将无法编译。请重新安装自带该文件的 ReShade 版本，或将原生 d3dcompiler_47.dll 放入此文件夹。",
-  "thirdPartyBanner": "此标签页中的工具是第三方软件。NAMS 只负责加载它们，并不实现它们，也无法改变它们的行为。你通过它们安装的任何内容都独立运行，因此正确性、兼容性和安全性由你自行负责。如果出现问题，责任在于该工具或模组，而非 NAMS。",
+  "thirdPartyBannerTitle": "不提供第三方工具支持",
+  "thirdPartyReadDoc": "工具作者：阅读 NAMS 如何加载第三方工具",
+  "thirdPartyBanner": "ReShade、3DMigoto、ReShade 插件（Luma、DLSS/DLAA、超分辨率、帧生成）以及它们附带的所有 DLL 均由他人制作。NAMS 和 YoRHa Protocol 团队不开发、不测试，也不调试它们。如果其中某个崩溃、无法加载或停止工作，请到它自己的模组页面或 GitHub 向作者反馈，而不是向我们反馈。在向我们报告崩溃之前，请先移除此标签页中的所有内容，以及你自己复制到启动器文件夹中的所有 DLL，然后再试一次。如果崩溃消失了，那就不是 NAMS 或 YoRHa Protocol 的问题。“在原版游戏里能用”不能作为理由：在 NAMS 下，游戏运行在 NAMS.exe 中，而不是 NieRAutomata.exe，因此在原版中能用的工具在这里仍可能出问题。让它在 NAMS 下正常工作是该工具作者的责任。",
   "thirdPartyConfigSection": "设置",
   "thirdPartyRestartRequired": "下次启动游戏时生效",
   "thirdPartyReShadePerformanceMode": "性能模式",
@@ -1702,7 +1704,8 @@
       }
     }
   },
-  "keybindMouseNotSupported": "此操作不支持鼠标按键，必须使用键盘按键。",
+  "keybindMouseNotSupported": "此操作不支持鼠标按键和手柄按键，必须使用键盘按键。",
+  "keybindPickController": "选择手柄按键",
   "naiomResetConfirmTitle": "重置 NAIOM 设置？",
   "naiomResetConfirmBody": "这会将此选项卡中的所有镜头、瞄准、光标和按键绑定设置恢复为默认值。在你点击保存之前不会写入任何内容，因此之后仍可放弃更改。要继续吗？",
   "naiomControllerNote": "使用手柄游玩？这些设置主要为鼠标和键盘设计，但其中一些——尤其是镜头和瞄准修复——也会影响手柄输入。如果切回手柄游玩，请先禁用这些设置，以恢复原版手柄操作感。",

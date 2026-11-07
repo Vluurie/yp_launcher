@@ -97,12 +97,10 @@ flutter:
     - assets/images/config/
     - assets/bins/
     - assets/bins/plugins/
-    # DOCS-WIP: docs is work in progress for later
-    # - assets/docs/native/
-    # - assets/docs/native/authoring/
-    # - assets/docs/native/resources/
-    # - assets/docs/scripting/
-    # - assets/docs/images/
+    - assets/docs/native/
+    - assets/docs/native/resources/
+    - assets/docs/scripting/
+    - assets/docs/images/
     - assets/fonts/OFL.txt
 
   fonts:

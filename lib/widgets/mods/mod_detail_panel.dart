@@ -21,8 +21,7 @@ import 'package:yp_launcher/theme/app_colors.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
 import 'package:yp_launcher/widgets/app_dropdown.dart';
 import 'package:yp_launcher/widgets/bundled_link_chip.dart';
-// DOCS-WIP: docs is work in progress for later
-// import 'package:yp_launcher/widgets/docs/docs_view.dart';
+import 'package:yp_launcher/widgets/docs/docs_view.dart';
 import 'package:yp_launcher/widgets/hover_button.dart';
 import 'package:yp_launcher/widgets/mods/mod_kind_badge.dart';
 import 'package:yp_launcher/widgets/three_d_inspector/three_d_inspector_preview.dart';
@@ -222,8 +221,6 @@ class ModDetailPanel extends ConsumerWidget {
     );
   }
 
-  // DOCS-WIP: docs is work in progress for later
-  // ignore: unused_field
   static const _kindDocPages = {
     'item': '03_item.md',
     'weapon': '04_weapon.md',
@@ -250,11 +247,10 @@ class ModDetailPanel extends ConsumerWidget {
   };
 
   Widget _kindRow(BuildContext context, String kind, int count) {
-    // DOCS-WIP: docs is work in progress for later
-    // final page = _kindDocPages[kind];
-    // if (page != null) {
-    //   return _KindDocRow(kind: kind, count: count, docPage: page);
-    // }
+    final page = _kindDocPages[kind];
+    if (page != null) {
+      return _KindDocRow(kind: kind, count: count, docPage: page);
+    }
     return Text(
       '$kind: $count',
       style: TextStyle(
@@ -1415,59 +1411,58 @@ class _StemRow extends StatelessWidget {
   }
 }
 
-// DOCS-WIP: docs is work in progress for later
-// class _KindDocRow extends StatefulWidget {
-//   final String kind;
-//   final int count;
-//   final String docPage;
-//
-//   const _KindDocRow({
-//     required this.kind,
-//     required this.count,
-//     required this.docPage,
-//   });
-//
-//   @override
-//   State<_KindDocRow> createState() => _KindDocRowState();
-// }
-//
-// class _KindDocRowState extends State<_KindDocRow> {
-//   bool _hovered = false;
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return MouseRegion(
-//       cursor: SystemMouseCursors.click,
-//       onEnter: (_) => setState(() => _hovered = true),
-//       onExit: (_) => setState(() => _hovered = false),
-//       child: GestureDetector(
-//         onTap: () => DocsScreen.open(
-//           context,
-//           initialPath: 'assets/docs/native/${widget.docPage}',
-//         ),
-//         child: Row(
-//           mainAxisSize: MainAxisSize.min,
-//           children: [
-//             Text(
-//               '${widget.kind}: ${widget.count}',
-//               style: TextStyle(
-//                 fontSize: AppSizes.fontSM(context),
-//                 color: _hovered
-//                     ? AppColors.textPrimary
-//                     : AppColors.textSecondary,
-//               ),
-//             ),
-//             SizedBox(width: AppSizes.spacingSM(context)),
-//             Icon(
-//               Icons.menu_book_outlined,
-//               size: AppSizes.iconSM(context),
-//               color: _hovered
-//                   ? AppColors.accentPrimary
-//                   : AppColors.accentPrimary.withValues(alpha: 0.5),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
+class _KindDocRow extends StatefulWidget {
+  final String kind;
+  final int count;
+  final String docPage;
+
+  const _KindDocRow({
+    required this.kind,
+    required this.count,
+    required this.docPage,
+  });
+
+  @override
+  State<_KindDocRow> createState() => _KindDocRowState();
+}
+
+class _KindDocRowState extends State<_KindDocRow> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: GestureDetector(
+        onTap: () => DocsScreen.open(
+          context,
+          initialPath: 'assets/docs/native/${widget.docPage}',
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              '${widget.kind}: ${widget.count}',
+              style: TextStyle(
+                fontSize: AppSizes.fontSM(context),
+                color: _hovered
+                    ? AppColors.textPrimary
+                    : AppColors.textSecondary,
+              ),
+            ),
+            SizedBox(width: AppSizes.spacingSM(context)),
+            Icon(
+              Icons.menu_book_outlined,
+              size: AppSizes.iconSM(context),
+              color: _hovered
+                  ? AppColors.accentPrimary
+                  : AppColors.accentPrimary.withValues(alpha: 0.5),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

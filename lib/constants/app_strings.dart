@@ -42,6 +42,7 @@ class AppStrings {
 
   static const String reshadeMeUrl = 'https://reshade.me';
   static const String migotoUrl = 'https://github.com/bo3b/3Dmigoto';
+  static const String thirdPartyDocPath = 'assets/docs/native/35_third_party.md';
 
   static const String argRun = 'run';
   static const String argNierPath = '--nier-path';

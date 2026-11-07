@@ -583,17 +583,16 @@ List<SidebarSection> buildLauncherSections(AppLocalizations l10n) {
           label: l10n.tabThirdParty,
           icon: Icons.auto_fix_high,
         ),
-        // DOCS-WIP: docs is work in progress for later
-        // SidebarTabItem(
-        //   index: 10,
-        //   label: l10n.tabDocs,
-        //   icon: Icons.menu_book_outlined,
-        // ),
-        // SidebarTabItem(
-        //   index: 11,
-        //   label: l10n.tabTools,
-        //   icon: Icons.handyman_outlined,
-        // ),
+        SidebarTabItem(
+          index: 10,
+          label: l10n.tabDocs,
+          icon: Icons.menu_book_outlined,
+        ),
+        SidebarTabItem(
+          index: 11,
+          label: l10n.tabTools,
+          icon: Icons.handyman_outlined,
+        ),
       ],
     ),
     SidebarSection(

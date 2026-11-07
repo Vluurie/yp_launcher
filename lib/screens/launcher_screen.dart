@@ -31,10 +31,8 @@ import 'package:yp_launcher/widgets/yorha_protocol_view.dart';
 import 'package:yp_launcher/widgets/mods/mods_view.dart';
 import 'package:yp_launcher/widgets/cutscenes_view.dart';
 import 'package:yp_launcher/widgets/thirdparty/thirdparty_view.dart';
-// DOCS-WIP: docs is work in progress for later
-// import 'package:yp_launcher/widgets/docs/docs_view.dart' show DocsScreen;
-// DOCS-WIP: docs is work in progress for later
-// import 'package:yp_launcher/widgets/tools_view.dart';
+import 'package:yp_launcher/widgets/docs/docs_view.dart' show DocsScreen;
+import 'package:yp_launcher/widgets/tools_view.dart';
 import 'package:yp_launcher/widgets/naiom_view.dart';
 import 'package:yp_launcher/widgets/onboarding_wizard.dart';
 import 'package:yp_launcher/widgets/info_bar.dart';
@@ -323,11 +321,10 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
   }
 
   Future<void> _switchTab(int index) async {
-    // DOCS-WIP: docs is work in progress for later
-    // if (index == docsTabIndex) {
-    //   await DocsScreen.open(context);
-    //   return;
-    // }
+    if (index == docsTabIndex) {
+      await DocsScreen.open(context);
+      return;
+    }
     if (_selectedTab == index) return;
     if (ref.read(texturesBusyProvider)) {
       if (mounted) {
@@ -438,9 +435,8 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
         return const LauncherSettingsView();
       case 9:
         return const ThirdPartyView();
-      // DOCS-WIP: docs is work in progress for later
-      // case 11:
-      //   return const ToolsView();
+      case 11:
+        return const ToolsView();
       default:
         return const SizedBox.shrink();
     }

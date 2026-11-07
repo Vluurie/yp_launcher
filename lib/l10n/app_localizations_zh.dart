@@ -1626,8 +1626,14 @@ class AppLocalizationsZh extends AppLocalizations {
       '此处没有 d3dcompiler_47.dll。在 Wine 下，ReShade 会退回到 Wine 的存根，特效将无法编译。请重新安装自带该文件的 ReShade 版本，或将原生 d3dcompiler_47.dll 放入此文件夹。';
 
   @override
+  String get thirdPartyBannerTitle => '不提供第三方工具支持';
+
+  @override
+  String get thirdPartyReadDoc => '工具作者：阅读 NAMS 如何加载第三方工具';
+
+  @override
   String get thirdPartyBanner =>
-      '此标签页中的工具是第三方软件。NAMS 只负责加载它们，并不实现它们，也无法改变它们的行为。你通过它们安装的任何内容都独立运行，因此正确性、兼容性和安全性由你自行负责。如果出现问题，责任在于该工具或模组，而非 NAMS。';
+      'ReShade、3DMigoto、ReShade 插件（Luma、DLSS/DLAA、超分辨率、帧生成）以及它们附带的所有 DLL 均由他人制作。NAMS 和 YoRHa Protocol 团队不开发、不测试，也不调试它们。如果其中某个崩溃、无法加载或停止工作，请到它自己的模组页面或 GitHub 向作者反馈，而不是向我们反馈。在向我们报告崩溃之前，请先移除此标签页中的所有内容，以及你自己复制到启动器文件夹中的所有 DLL，然后再试一次。如果崩溃消失了，那就不是 NAMS 或 YoRHa Protocol 的问题。“在原版游戏里能用”不能作为理由：在 NAMS 下，游戏运行在 NAMS.exe 中，而不是 NieRAutomata.exe，因此在原版中能用的工具在这里仍可能出问题。让它在 NAMS 下正常工作是该工具作者的责任。';
 
   @override
   String get thirdPartyConfigSection => '设置';
@@ -4340,7 +4346,10 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get keybindMouseNotSupported => '此操作不支持鼠标按键，必须使用键盘按键。';
+  String get keybindMouseNotSupported => '此操作不支持鼠标按键和手柄按键，必须使用键盘按键。';
+
+  @override
+  String get keybindPickController => '选择手柄按键';
 
   @override
   String get naiomResetConfirmTitle => '重置 NAIOM 设置？';

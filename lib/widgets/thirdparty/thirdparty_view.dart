@@ -21,6 +21,7 @@ import 'package:yp_launcher/theme/app_colors.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
 import 'package:yp_launcher/widgets/config_field_bool.dart';
 import 'package:yp_launcher/widgets/config_field_dropdown.dart';
+import 'package:yp_launcher/widgets/docs/docs_view.dart';
 import 'package:yp_launcher/widgets/hover_button.dart';
 import 'package:yp_launcher/widgets/mods/mod_drop_zone.dart';
 
@@ -348,7 +349,11 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                _infoBanner(l10n.thirdPartyBanner),
+                _noSupportBanner(
+                  l10n.thirdPartyBannerTitle,
+                  l10n.thirdPartyBanner,
+                  l10n.thirdPartyReadDoc,
+                ),
                 LayoutBuilder(
                   builder: (context, constraints) {
                     final stack = constraints.maxWidth < 760;
@@ -391,38 +396,57 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
     );
   }
 
-  Widget _infoBanner(String text) {
+  Widget _noSupportBanner(String title, String text, String docLabel) {
     return Container(
       width: double.infinity,
       margin: EdgeInsets.only(bottom: AppSizes.paddingLG(context)),
-      padding: EdgeInsets.symmetric(
-        horizontal: AppSizes.paddingMD(context),
-        vertical: AppSizes.paddingSM(context),
-      ),
+      padding: EdgeInsets.all(AppSizes.paddingLG(context)),
       decoration: BoxDecoration(
-        color: AppColors.accentPrimary.withValues(alpha: 0.06),
+        color: AppColors.warning.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius(context)),
-        border: Border.all(
-          color: AppColors.accentPrimary.withValues(alpha: 0.25),
-        ),
+        border: Border.all(color: AppColors.warning, width: 2),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(
-            Icons.shield_outlined,
-            size: AppSizes.iconLG(context),
-            color: AppColors.accentPrimary,
+            Icons.warning_amber_rounded,
+            size: AppSizes.fontXXL(context) * 1.5,
+            color: AppColors.warning,
           ),
-          SizedBox(width: AppSizes.spacingMD(context)),
+          SizedBox(width: AppSizes.spacingLG(context)),
           Expanded(
-            child: Text(
-              text,
-              style: TextStyle(
-                fontSize: AppSizes.fontXS(context),
-                color: AppColors.textSecondary,
-                height: 1.4,
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: AppSizes.fontXL(context),
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.warning,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                SizedBox(height: AppSizes.spacingSM(context)),
+                Text(
+                  text,
+                  style: TextStyle(
+                    fontSize: AppSizes.fontSM(context),
+                    color: AppColors.textPrimary,
+                    height: 1.5,
+                  ),
+                ),
+                SizedBox(height: AppSizes.spacingMD(context)),
+                HoverButton(
+                  label: docLabel,
+                  color: AppColors.warning,
+                  onTap: () => DocsScreen.open(
+                    context,
+                    initialPath: AppStrings.thirdPartyDocPath,
+                  ),
+                ),
+              ],
             ),
           ),
         ],

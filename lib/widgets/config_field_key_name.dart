@@ -40,8 +40,8 @@ class _ConfigFieldKeyNameState extends State<ConfigFieldKeyName> {
         PhysicalKeyboardKey.shiftRight: (generic: 'SHIFT', side: 'RSHIFT'),
         PhysicalKeyboardKey.controlLeft: (generic: 'CTRL', side: 'LCTRL'),
         PhysicalKeyboardKey.controlRight: (generic: 'CTRL', side: 'RCTRL'),
-        PhysicalKeyboardKey.altLeft: (generic: 'ALT', side: null),
-        PhysicalKeyboardKey.altRight: (generic: 'ALT', side: null),
+        PhysicalKeyboardKey.altLeft: (generic: 'ALT', side: 'LALT'),
+        PhysicalKeyboardKey.altRight: (generic: 'ALT', side: 'RALT'),
       };
 
   static final _physicalToName = <PhysicalKeyboardKey, String>{
@@ -87,6 +87,40 @@ class _ConfigFieldKeyNameState extends State<ConfigFieldKeyName> {
     PhysicalKeyboardKey.arrowDown: 'DOWNARROW',
     PhysicalKeyboardKey.arrowLeft: 'LEFTARROW',
     PhysicalKeyboardKey.arrowRight: 'RIGHTARROW',
+    PhysicalKeyboardKey.tab: 'TAB',
+    PhysicalKeyboardKey.enter: 'ENTER',
+    PhysicalKeyboardKey.backspace: 'BACKSPACE',
+    PhysicalKeyboardKey.insert: 'INS',
+    PhysicalKeyboardKey.delete: 'DEL',
+    PhysicalKeyboardKey.home: 'HOME',
+    PhysicalKeyboardKey.pageUp: 'PGUP',
+    PhysicalKeyboardKey.pageDown: 'PGDN',
+    PhysicalKeyboardKey.f1: 'F1',
+    PhysicalKeyboardKey.f2: 'F2',
+    PhysicalKeyboardKey.f3: 'F3',
+    PhysicalKeyboardKey.f4: 'F4',
+    PhysicalKeyboardKey.f5: 'F5',
+    PhysicalKeyboardKey.f6: 'F6',
+    PhysicalKeyboardKey.f7: 'F7',
+    PhysicalKeyboardKey.f8: 'F8',
+    PhysicalKeyboardKey.f9: 'F9',
+    PhysicalKeyboardKey.f10: 'F10',
+    PhysicalKeyboardKey.f11: 'F11',
+    PhysicalKeyboardKey.f12: 'F12',
+    PhysicalKeyboardKey.numpad0: 'KP_0',
+    PhysicalKeyboardKey.numpad1: 'KP_1',
+    PhysicalKeyboardKey.numpad2: 'KP_2',
+    PhysicalKeyboardKey.numpad3: 'KP_3',
+    PhysicalKeyboardKey.numpad4: 'KP_4',
+    PhysicalKeyboardKey.numpad5: 'KP_5',
+    PhysicalKeyboardKey.numpad6: 'KP_6',
+    PhysicalKeyboardKey.numpad7: 'KP_7',
+    PhysicalKeyboardKey.numpad8: 'KP_8',
+    PhysicalKeyboardKey.numpad9: 'KP_9',
+    PhysicalKeyboardKey.numpadAdd: 'KP_PLUS',
+    PhysicalKeyboardKey.numpadSubtract: 'KP_MINUS',
+    PhysicalKeyboardKey.numpadDivide: 'KP_SLASH',
+    PhysicalKeyboardKey.numpadMultiply: 'KP_STAR',
   };
 
   List<String> get _heldGenerics =>
@@ -178,6 +212,18 @@ class _ConfigFieldKeyNameState extends State<ConfigFieldKeyName> {
     _finish([..._heldGenerics, name].join('+'));
   }
 
+  void _onPointerSignal(PointerSignalEvent event) {
+    if (!_capturing || event is! PointerScrollEvent) return;
+    if (!NaiomKeys.allowsMouse(widget.bindingKey)) return;
+    GestureBinding.instance.pointerSignalResolver.register(event, (resolved) {
+      if (!_capturing || resolved is! PointerScrollEvent) return;
+      final dy = resolved.scrollDelta.dy;
+      if (dy == 0) return;
+      final name = dy < 0 ? 'MOUSE_WHEEL_UP' : 'MOUSE_WHEEL_DOWN';
+      _finish([..._heldGenerics, name].join('+'));
+    });
+  }
+
   String _captureText(AppLocalizations l10n) {
     if (_heldModifiers.isEmpty) return l10n.pressKey;
     return '${_heldGenerics.join('+')}+…';
@@ -241,6 +287,7 @@ class _ConfigFieldKeyNameState extends State<ConfigFieldKeyName> {
                   },
                   child: Listener(
                     onPointerDown: _capturing ? _onPointerDown : null,
+                    onPointerSignal: _capturing ? _onPointerSignal : null,
                     child: GestureDetector(
                       onTap: _capturing ? null : _startCapture,
                       child: AnimatedContainer(
@@ -290,6 +337,20 @@ class _ConfigFieldKeyNameState extends State<ConfigFieldKeyName> {
                   ),
                 ),
               ),
+              if (NaiomKeys.allowsMouse(widget.bindingKey))
+                PopupMenuButton<String>(
+                  tooltip: l10n.keybindPickController,
+                  icon: Icon(
+                    Icons.sports_esports_outlined,
+                    size: 18,
+                    color: AppColors.textMuted,
+                  ),
+                  onSelected: widget.onChanged,
+                  itemBuilder: (context) => [
+                    for (final name in NaiomKeys.controllerButtons)
+                      PopupMenuItem(value: name, child: Text(name)),
+                  ],
+                ),
             ],
           ),
           if (_capturing && !NaiomKeys.allowsMouse(widget.bindingKey))
