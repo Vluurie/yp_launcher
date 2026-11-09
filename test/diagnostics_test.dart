@@ -196,7 +196,10 @@ void main() {
     expect(r.gameIdentity.buildDisplay, contains('Steam 2026-11'));
     expect(
       r.findings.first.message,
-      contains('modified copy of Steam 2026-11'),
+      allOf(
+        contains('build stamp of Steam 2026-11'),
+        contains('modified copy'),
+      ),
     );
   });
 
