@@ -2,7 +2,7 @@ name: yp_launcher
 description: "Simple Launcher for YoRHa Protocol with Mod Managing and NAMS Config Editing."
 
 publish_to: 'none'
-version: 3.0.1+1
+version: 3.1.0+1
 
 environment:
   sdk: ^3.9.2
@@ -74,6 +74,12 @@ dev_dependencies:
   riverpod_lint: ^3.0.0
   flutter_test:
     sdk: flutter
+  path_provider_linux: ^2.2.2
+  path_provider_platform_interface: ^2.1.3
+  path_provider_windows: ^2.3.0
+  shared_preferences_linux: ^2.4.1
+  shared_preferences_platform_interface: ^2.4.2
+  shared_preferences_windows: ^2.4.1
 
   # Icon generation
   flutter_launcher_icons: ^0.14.3
@@ -97,12 +103,7 @@ flutter:
     - assets/images/config/
     - assets/bins/
     - assets/bins/plugins/
-    # DOCS-WIP: docs is work in progress for later
-    # - assets/docs/native/
-    # - assets/docs/native/authoring/
-    # - assets/docs/native/resources/
-    # - assets/docs/scripting/
-    # - assets/docs/images/
+    - assets/docs/native/35_third_party.md
     - assets/fonts/OFL.txt
 
   fonts:

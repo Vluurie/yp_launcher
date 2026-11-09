@@ -26,20 +26,37 @@ class FileOps {
   }
 
   static void mergeDirectory(String src, String dest, {bool overwrite = true}) {
-    final srcDir = Directory(src);
-    if (!srcDir.existsSync()) return;
-    Directory(dest).createSync(recursive: true);
-    for (final entity in srcDir.listSync(recursive: true, followLinks: false)) {
-      final rel = path.relative(entity.path, from: src);
-      final target = path.join(dest, rel);
-      if (entity is Directory) {
-        Directory(target).createSync(recursive: true);
-      } else if (entity is File) {
-        final targetFile = File(target);
-        if (targetFile.existsSync() && !overwrite) continue;
-        Directory(path.dirname(target)).createSync(recursive: true);
+    if (!Directory(src).existsSync()) return;
+    _mergeInto(src, dest, overwrite, <String>{});
+  }
+
+  static void _mergeInto(
+    String src,
+    String dest,
+    bool overwrite,
+    Set<String> visited,
+  ) {
+    try {
+      if (!visited.add(Directory(src).resolveSymbolicLinksSync())) return;
+    } catch (_) {
+      return;
+    }
+    final List<FileSystemEntity> entries;
+    try {
+      Directory(dest).createSync(recursive: true);
+      entries = Directory(src).listSync(followLinks: false);
+    } catch (_) {
+      return;
+    }
+    for (final entity in entries) {
+      final target = path.join(dest, path.basename(entity.path));
+      final type = FileSystemEntity.typeSync(entity.path);
+      if (type == FileSystemEntityType.directory) {
+        _mergeInto(entity.path, target, overwrite, visited);
+      } else if (type == FileSystemEntityType.file) {
+        if (!overwrite && File(target).existsSync()) continue;
         try {
-          entity.copySync(target);
+          File(entity.path).copySync(target);
         } catch (_) {}
       }
     }
@@ -59,6 +76,87 @@ class FileOps {
     } catch (_) {}
     mergeDirectory(src, dest, overwrite: true);
     deleteDirQuiet(src);
+  }
+
+  static List<String> moveMerging(String src, String dest) {
+    final left = <String>[];
+    _moveMerging(src, dest, left);
+    return left;
+  }
+
+  static void _moveMerging(String src, String dest, List<String> left) {
+    final type = FileSystemEntity.typeSync(src, followLinks: false);
+    final destType = FileSystemEntity.typeSync(dest, followLinks: false);
+
+    if (type == FileSystemEntityType.directory) {
+      final dir = Directory(src);
+      if (destType == FileSystemEntityType.notFound) {
+        try {
+          Directory(dest).parent.createSync(recursive: true);
+          dir.renameSync(dest);
+          return;
+        } catch (_) {}
+      } else if (destType != FileSystemEntityType.directory) {
+        left.add(src);
+        return;
+      }
+      final List<FileSystemEntity> children;
+      try {
+        Directory(dest).createSync(recursive: true);
+        children = dir.listSync(followLinks: false);
+      } catch (_) {
+        left.add(src);
+        return;
+      }
+      for (final child in children) {
+        _moveMerging(
+          child.path,
+          path.join(dest, path.basename(child.path)),
+          left,
+        );
+      }
+      try {
+        dir.deleteSync();
+      } catch (_) {}
+      return;
+    }
+
+    if (type != FileSystemEntityType.file) {
+      if (type != FileSystemEntityType.notFound) left.add(src);
+      return;
+    }
+
+    final file = File(src);
+    if (destType != FileSystemEntityType.notFound) {
+      if (destType == FileSystemEntityType.file && !filesDiffer(src, dest)) {
+        try {
+          file.deleteSync();
+        } catch (_) {}
+      } else {
+        left.add(src);
+      }
+      return;
+    }
+    try {
+      Directory(path.dirname(dest)).createSync(recursive: true);
+      file.renameSync(dest);
+      return;
+    } catch (_) {}
+    try {
+      file.copySync(dest);
+      if (File(dest).lengthSync() != file.lengthSync()) {
+        throw const FileSystemException('incomplete copy');
+      }
+    } catch (_) {
+      try {
+        File(dest).deleteSync();
+      } catch (_) {}
+      left.add(src);
+      return;
+    }
+    try {
+      file.deleteSync();
+    } catch (_) {}
   }
 
   static void copyFileInto(String srcFile, String destDir, {String? asName}) {

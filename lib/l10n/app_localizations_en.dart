@@ -612,6 +612,16 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String notifyThirdPartyMigrated(String path) {
+    return 'Your third-party mods were moved to $path. Launcher updates no longer remove them.';
+  }
+
+  @override
+  String notifyThirdPartyMigrationIncomplete(String oldPath, String newPath) {
+    return 'Some third-party files could not be moved and are still in $oldPath. Move them into $newPath yourself, because a launcher update removes the old folder.';
+  }
+
+  @override
   String notifyPlatformUnsupported(String platform) {
     return 'No Windows compatibility layer found on $platform, so the game cannot be started from here. Mods, textures and configs all still work. Install CrossOver and put NieR:Automata in a bottle to enable launching.';
   }
@@ -741,7 +751,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tooltipEditsNaiom =>
-      'Edits nams/naiom.toml. Most settings apply after saving; a few need a game restart.';
+      'Edits nams/naiom.toml. Changes are saved right away; most apply in game without a restart, a few need one.';
 
   @override
   String get tooltipCutscenesLocation =>
@@ -785,9 +795,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cardInstallTextures => 'INSTALL TEXTURES';
 
   @override
-  String get cardHowItWorks => 'HOW IT WORKS';
-
-  @override
   String get cardKeybinds => 'KEYBINDS';
 
   @override
@@ -819,9 +826,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cardMenuNavigation => 'MENU NAVIGATION';
-
-  @override
-  String get cardStructure => 'STRUCTURE';
 
   @override
   String get buttonSave => 'SAVE';
@@ -1458,7 +1462,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get thirdPartyGraphicModsHowto =>
-      'Direct3D proxy DLLs (d3d11.dll, dxgi.dll) that wrap the game\'s rendering. NAMS loads them from thirdparty/graphic and sends the game\'s Direct3D calls through them; a copy in the game folder is never loaded. ReShade and 3DMigoto have their own cards. Install them through the drop zone at the top.';
+      'Direct3D proxy DLLs (d3d11.dll, dxgi.dll) that wrap the game\'s rendering. NAMS loads them from nams/thirdparty/graphic and sends the game\'s Direct3D calls through them; a copy in the game folder is never loaded. ReShade and 3DMigoto have their own cards. Install them through the drop zone at the top.';
 
   @override
   String get thirdPartyMoveToGraphic =>
@@ -1706,8 +1710,16 @@ class AppLocalizationsEn extends AppLocalizations {
       'No d3dcompiler_47.dll here. Under Wine, ReShade falls back to Wine\'s stub and effects won\'t compile. Reinstall a ReShade build that ships it, or drop a native d3dcompiler_47.dll into this folder.';
 
   @override
+  String get thirdPartyBannerTitle =>
+      'ReShade, 3DMigoto and addons are made by other people';
+
+  @override
+  String get thirdPartyReadDoc =>
+      'How NAMS loads ReShade, 3DMigoto and DLL mods';
+
+  @override
   String get thirdPartyBanner =>
-      'The tools on this tab are third-party software. NAMS only loads them. It does not implement them and cannot change how they behave. Anything you install through them runs on its own, so correctness, compatibility and safety are your responsibility. If something misbehaves, that is on the tool or the mod, not on NAMS.';
+      'The NAMS and YoRHa Protocol team can\'t test or fix them. If one gives you trouble, ask the ReShade, 3DMigoto or addon developer. If the game crashes, try again without anything from this tab and without DLLs you copied into the launcher folder before reporting it to us.\n\nWorks in vanilla but not with NAMS? That can happen: with NAMS the game runs inside NAMS.exe, not NieRAutomata.exe, so ReShade, 3DMigoto or the addon has to support NAMS. Only their developers can fix that, not the NAMS team.';
 
   @override
   String get thirdPartyConfigSection => 'SETTINGS';
@@ -2139,8 +2151,8 @@ class AppLocalizationsEn extends AppLocalizations {
       'If a custom file is missing or broken, the original plays as fallback.';
 
   @override
-  String get cutsceneHowItWorks3 =>
-      'Your original game files are never touched - mods load from a separate location.';
+  String get cutsceneBannerTitle =>
+      'Cutscene mods never change your game files';
 
   @override
   String get cutsceneStructurePath =>
@@ -3017,18 +3029,11 @@ class AppLocalizationsEn extends AppLocalizations {
       'Places every patch of grass, bush and small map object as soon as its part of the map is loaded, no matter how far away you are. Ignores Object Spawn Range. The objects still appear one after another, so a freshly loaded area fills in gradually. Costs frame rate in areas with a lot of grass.';
 
   @override
-  String get labelAoWidth => 'AO Width';
+  String get labelAoFullResolution => 'Full Resolution AO';
 
   @override
-  String get tooltipAoWidth =>
-      'Multiplier for AO horizontal resolution. Vanilla AO runs at 1/4 screen res. 2.0 = half screen res (crisper AO but heavy). 1.5 is a good balance. Range: 0.1 - 2.0. Setting only one axis to 2 can be a lighter alternative.';
-
-  @override
-  String get labelAoHeight => 'AO Height';
-
-  @override
-  String get tooltipAoHeight =>
-      'Multiplier for AO vertical resolution. Vanilla AO runs at 1/4 screen res. 2.0 = half screen res (crisper AO but heavy). 1.5 is a good balance. Range: 0.1 - 2.0. Both at 2.0 can cost ~10 FPS in worst case.';
+  String get tooltipAoFullResolution =>
+      'Computes ambient occlusion (AO) at full instead of half resolution, so it follows thin objects and fine edges more closely. Costs GPU time. Ambient occlusion has to be on in the game\'s graphics settings. Applies live.';
 
   @override
   String get labelShadowResolution => 'Shadow Resolution';
@@ -3098,7 +3103,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tooltipForceAllShadowModels =>
-      'Forces all models to cast shadows, including small objects like rocks and grass. Experimental - may rarely cause invisible models to cast shadows. No issues noticed so far.';
+      'Forces all models to cast shadows, including small objects like rocks. Grass needs Grass Shadows. Experimental - may rarely cause invisible models to cast shadows. No issues noticed so far.';
+
+  @override
+  String get labelShadowForceAllFilters => 'Excluded Meshes';
+
+  @override
+  String get tooltipShadowForceAllFilters =>
+      'Models with a mesh of one of these names keep their original shadow setting while Force All Shadow Models is on. A name must match exactly; upper and lower case do not matter. Takes effect live.';
+
+  @override
+  String get shadowForceAllFiltersAdd => 'Add mesh';
+
+  @override
+  String get shadowForceAllFiltersEmpty =>
+      'No exclusions - Force All Shadow Models applies to every model.';
+
+  @override
+  String get labelGrassShadows => 'Grass Shadows';
+
+  @override
+  String get tooltipGrassShadows =>
+      'Grass and other objects that have no shadow in their object settings cast shadows too. Takes effect live.';
 
   @override
   String get labelDisableVignette => 'Disable Vignette';
@@ -3804,14 +3830,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tooltipDisable3dmigotoLoading =>
-      'Skip loading the 3DMigoto runtime from thirdparty/3dmigoto/. Turn off to stop loading shader mods.';
+      'Skip loading the 3DMigoto runtime from nams/thirdparty/3dmigoto/. Turn off to stop loading shader mods.';
 
   @override
   String get labelDisableGraphicModsLoading => 'Disable Graphics Proxy Loading';
 
   @override
   String get tooltipDisableGraphicModsLoading =>
-      'Skip loading the Direct3D proxy DLLs from thirdparty/graphic/: DLLs named like a system DLL (d3d11.dll, dxgi.dll, ...) that the game\'s graphics calls pass through. Turn this on to play without them without having to delete anything. Takes effect on the next game start.';
+      'Skip loading the Direct3D proxy DLLs from nams/thirdparty/graphic/: DLLs named like a system DLL (d3d11.dll, dxgi.dll, ...) that the game\'s graphics calls pass through. Turn this on to play without them without having to delete anything. Takes effect on the next game start.';
 
   @override
   String get labelDisableGameModsLoading => 'Disable Game Mod Loading';
@@ -3877,6 +3903,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'Skip the startup splash window shown while the game loads. The original game revealed its window before it was ready, causing resize and flicker artifacts; NAMS finished the splash so the window is only revealed once ready. Turning this on brings those vanilla startup artifacts back.';
 
   @override
+  String get labelIngameSettings => 'In-Game NAMS Settings';
+
+  @override
+  String get tooltipIngameSettings =>
+      'Adds the NAMS tab and the NAMS rows to the in-game options menu. On by default. Turn off to keep the vanilla options menu. Requires restart.';
+
+  @override
   String get labelDisableDebugHotkeys => 'Ignore Developer Hotkeys';
 
   @override
@@ -3911,12 +3944,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get comparisonDefaultEnabled => 'DEFAULT (ENABLED)';
-
-  @override
-  String get comparisonAo05x => 'AO 0.5x';
-
-  @override
-  String get comparisonAo20x => 'AO 2.0x';
 
   @override
   String get comparisonVignetteOn => 'VIGNETTE ON';
@@ -4549,15 +4576,65 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get keybindMouseNotSupported =>
-      'Mouse buttons don\'t work for this action - it needs a keyboard key.';
+  String get keybindMouseNotSupported => 'Keyboard keys only';
+
+  @override
+  String get keybindPickController => 'Pick a controller button';
+
+  @override
+  String get controllerA => 'A / Cross';
+
+  @override
+  String get controllerB => 'B / Circle';
+
+  @override
+  String get controllerX => 'X / Square';
+
+  @override
+  String get controllerY => 'Y / Triangle';
+
+  @override
+  String get controllerLB => 'LB / L1';
+
+  @override
+  String get controllerRB => 'RB / R1';
+
+  @override
+  String get controllerLT => 'LT / L2';
+
+  @override
+  String get controllerRT => 'RT / R2';
+
+  @override
+  String get controllerLThumb => 'Left stick press / L3';
+
+  @override
+  String get controllerRThumb => 'Right stick press / R3';
+
+  @override
+  String get controllerDUp => 'D-pad up';
+
+  @override
+  String get controllerDDown => 'D-pad down';
+
+  @override
+  String get controllerDLeft => 'D-pad left';
+
+  @override
+  String get controllerDRight => 'D-pad right';
+
+  @override
+  String get controllerBack => 'Back / Share';
+
+  @override
+  String get controllerStart => 'Start / Options';
 
   @override
   String get naiomResetConfirmTitle => 'Reset NAIOM settings?';
 
   @override
   String get naiomResetConfirmBody =>
-      'This will reset every camera, aiming, cursor and keybind setting on this tab to its default value. Nothing is written until you press Save, so you can still discard afterwards. Continue?';
+      'This resets every camera, aiming, cursor and keybind setting on this tab to its default value. Continue?';
 
   @override
   String get naiomControllerNote =>
@@ -4585,9 +4662,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get cheatTableConvertError =>
       'Could not fix this table. Make sure the file is a valid .CT file.';
-
-  @override
-  String get naiomBetaBadge => 'BETA';
 
   @override
   String get naiomRestartBadge => 'RESTART';
@@ -4624,7 +4698,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get naiomBindingsIntro =>
-      'Extra keys on top of the game\'s own controls - the original keys keep working. Changes apply after saving, no restart needed.';
+      'Extra keys on top of the game\'s own controls - the original keys keep working. Changes apply right away, no restart needed.';
 
   @override
   String get naiomCrosshairPreviewLabel => 'Crosshair Mode in-game';

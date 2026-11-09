@@ -771,7 +771,7 @@ sensitivity = 2.0
 
     test('unbindable evade_key VK is dropped, binding stays empty', () async {
       final gameDir = _gameDirWith('''[mouse]
-evade_key = 112
+evade_key = 19
 ''');
       addTearDown(() => gameDir.deleteSync(recursive: true));
 
@@ -780,7 +780,20 @@ evade_key = 112
           _readNaiom(gameDir)['bindings'] as Map<String, dynamic>;
 
       expect(bindings['non_standard_evade'], '',
-          reason: 'VK 112 (F1) has no NAMS key name and must not be migrated');
+          reason: 'VK 19 (Pause) has no NAMS key name and must not be migrated');
+    });
+
+    test('a function key evade_key VK is migrated by name', () async {
+      final gameDir = _gameDirWith('''[mouse]
+evade_key = 112
+''');
+      addTearDown(() => gameDir.deleteSync(recursive: true));
+
+      await NamsConfigService.ensureConfigs(gameDir.path);
+      final bindings =
+          _readNaiom(gameDir)['bindings'] as Map<String, dynamic>;
+
+      expect(bindings['non_standard_evade'], 'F1');
     });
   });
 }

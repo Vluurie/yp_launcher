@@ -50,6 +50,7 @@ custom_grid = "untouched"
         expect(config['msaa_per_pixel'], isFalse);
         expect(config['msaa_per_pixel_terrain'], isFalse);
         expect(config['ao_fade_fix'], isTrue);
+        expect(config['ao_full_resolution'], isFalse);
         expect(config['constant_buffer_dedup'], isFalse);
         expect(config['constant_buffer_upload_on_bind'], isFalse);
         expect(config['decrease_stutter_during_grid_loading'], isFalse);
@@ -76,10 +77,10 @@ custom_grid = "untouched"
       expect(config['enabled'], isTrue);
       expect(config['high_grids']['enabled'], isFalse);
       expect(config['high_grids']['rings'], 1);
-      expect(config['high_grids']['hidden_meshes'], [
-        {'mesh': 'nolowmap_enkei', 'from_rings': 2, 'grid': 0x1121},
-        {'mesh': 'nolowmap_seaplane', 'from_rings': 2, 'grid': 0x0922},
-      ]);
+      expect(
+        config['high_grids']['hidden_meshes'],
+        LodModFields.highGridsHiddenMeshes.defaultValue,
+      );
     });
 
     test(

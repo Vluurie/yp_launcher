@@ -230,6 +230,14 @@ class NamsFields {
     tooltip: (l) => l.tooltipDisableDebugHotkeys,
   );
 
+  static final ingameSettings = ConfigField<bool>(
+    key: 'ingame_settings',
+    defaultValue: true,
+    restartRequired: true,
+    label: (l) => l.labelIngameSettings,
+    tooltip: (l) => l.tooltipIngameSettings,
+  );
+
   static final disableInputFeatures = ConfigField<bool>(
     key: 'disable_input_features',
     defaultValue: false,
@@ -1026,24 +1034,11 @@ class LodModFields {
     tooltip: (l) => l.tooltipDisableManualCulling,
   );
 
-  static final aoMultiplierWidth = ConfigField<double>(
-    key: 'ao_multiplier_width',
-    defaultValue: 1.0,
-    label: (l) => l.labelAoWidth,
-    tooltip: (l) => l.tooltipAoWidth,
-    min: 0.1,
-    max: 2.0,
-    step: 0.05,
-  );
-
-  static final aoMultiplierHeight = ConfigField<double>(
-    key: 'ao_multiplier_height',
-    defaultValue: 1.0,
-    label: (l) => l.labelAoHeight,
-    tooltip: (l) => l.tooltipAoHeight,
-    min: 0.1,
-    max: 2.0,
-    step: 0.05,
+  static final aoFullResolution = ConfigField<bool>(
+    key: 'ao_full_resolution',
+    defaultValue: false,
+    label: (l) => l.labelAoFullResolution,
+    tooltip: (l) => l.tooltipAoFullResolution,
   );
 
   static final disableVignette = ConfigField<bool>(
@@ -1159,7 +1154,7 @@ class LodModFields {
     defaultValue: 2048,
     label: (l) => l.labelShadowResolution,
     tooltip: (l) => l.tooltipShadowResolution,
-    allowedValues: const [512, 1024, 2048, 4096, 8192, 16384],
+    allowedValues: const [512, 1024, 2048, 4096, 8192],
   );
 
   static final shadowDistanceMultiplier = ConfigField<double>(
@@ -1244,6 +1239,20 @@ class LodModFields {
     defaultValue: false,
     label: (l) => l.labelForceAllShadowModels,
     tooltip: (l) => l.tooltipForceAllShadowModels,
+  );
+
+  static final shadowForceAllFilters = ConfigField<List<dynamic>>(
+    key: 'shadow_force_all_filters',
+    defaultValue: const ['ENKEI', 'landscape', 'GROUND_g11118jimen'],
+    label: (l) => l.labelShadowForceAllFilters,
+    tooltip: (l) => l.tooltipShadowForceAllFilters,
+  );
+
+  static final shadowModelForceObjectParam = ConfigField<bool>(
+    key: 'shadow_model_force_object_param',
+    defaultValue: false,
+    label: (l) => l.labelGrassShadows,
+    tooltip: (l) => l.tooltipGrassShadows,
   );
 
   static final giEnabled = ConfigField<bool>(
@@ -1376,6 +1385,7 @@ class LodModFields {
     defaultValue: const [
       {'mesh': 'nolowmap_enkei', 'from_rings': 2, 'grid': 0x1121},
       {'mesh': 'nolowmap_seaplane', 'from_rings': 2, 'grid': 0x0922},
+      {'mesh': 'nolowmap_g11517_bigtree_05', 'from_rings': 2, 'grid': 0x1517},
     ],
     section: 'high_grids',
     label: (l) => l.labelHighGridsHiddenMeshes,

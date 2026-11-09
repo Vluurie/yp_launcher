@@ -8,105 +8,75 @@ import 'package:yp_launcher/theme/app_colors.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
 import 'package:yp_launcher/widgets/header_info_icon.dart';
 
-class CutsceneInfoCard extends StatelessWidget {
-  const CutsceneInfoCard({super.key});
+class CutsceneInfoBanner extends StatelessWidget {
+  const CutsceneInfoBanner({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
-      decoration: BoxDecoration(
-        color: AppColors.backgroundCard,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppColors.borderLight),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.shadow,
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(
+        horizontal: AppSizes.paddingMD(context),
+        vertical: AppSizes.paddingSM(context),
       ),
-      child: Column(
+      decoration: BoxDecoration(
+        color: AppColors.accentPrimary.withValues(alpha: 0.06),
+        borderRadius: BorderRadius.circular(AppSizes.borderRadius(context)),
+        border: Border.all(
+          color: AppColors.accentPrimary.withValues(alpha: 0.3),
+        ),
+      ),
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            decoration: BoxDecoration(
-              color: AppColors.surfaceMedium,
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(8),
-                topRight: Radius.circular(8),
-              ),
-            ),
-            child: Text(
-              AppLocalizations.of(context)!.cardHowItWorks,
-              style: TextStyle(
-                fontSize: AppSizes.fontSM(context),
-                fontWeight: FontWeight.bold,
-                color: AppColors.accentPrimary,
-                letterSpacing: 1.0,
-              ),
+          Padding(
+            padding: EdgeInsets.only(top: AppSizes.spacingXS(context)),
+            child: Icon(
+              Icons.info_outline,
+              size: AppSizes.iconMD(context),
+              color: AppColors.accentPrimary,
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(16),
+          SizedBox(width: AppSizes.spacingMD(context)),
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  AppLocalizations.of(context)!.cutsceneHowItWorks1,
+                  l10n.cutsceneBannerTitle,
+                  style: TextStyle(
+                    fontSize: AppSizes.fontMD(context),
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                SizedBox(height: AppSizes.spacingXS(context)),
+                Text(
+                  '${l10n.cutsceneHowItWorks1} ${l10n.cutsceneHowItWorks2}',
                   style: TextStyle(
                     fontSize: AppSizes.fontSM(context),
                     color: AppColors.textSecondary,
                     height: 1.4,
                   ),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: AppSizes.spacingSM(context)),
                 Text(
-                  AppLocalizations.of(context)!.cutsceneHowItWorks2,
-                  style: TextStyle(
-                    fontSize: AppSizes.fontSM(context),
-                    color: AppColors.textSecondary,
-                    height: 1.4,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  AppLocalizations.of(context)!.cutsceneHowItWorks3,
-                  style: TextStyle(
-                    fontSize: AppSizes.fontSM(context),
-                    color: AppColors.textSecondary,
-                    height: 1.4,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  AppLocalizations.of(context)!.cardStructure,
-                  style: TextStyle(
-                    fontSize: AppSizes.fontXS(context),
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.accentPrimary,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  AppLocalizations.of(context)!.cutsceneStructurePath,
+                  l10n.cutsceneStructurePath,
                   style: TextStyle(
                     fontSize: AppSizes.fontXS(context),
                     color: AppColors.textMuted,
-                    height: 1.6,
+                    height: 1.4,
                     fontFamily: AppSizes.monoFamily,
                     fontFamilyFallback: AppSizes.monoFallback,
                   ),
                 ),
-                const SizedBox(height: 8),
                 Text(
-                  AppLocalizations.of(context)!.cutsceneFolderNameLimit,
+                  l10n.cutsceneFolderNameLimit,
                   style: TextStyle(
                     fontSize: AppSizes.fontXS(context),
                     color: AppColors.textMuted,
+                    height: 1.4,
                   ),
                 ),
               ],

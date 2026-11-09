@@ -1164,6 +1164,18 @@ abstract class AppLocalizations {
   /// **'Some NAIOM bindings use keys NAMS does not support and were not imported: {entries}. Rebind them in the NAIOM tab.'**
   String notifyNaiomSkipped(String entries);
 
+  /// No description provided for @notifyThirdPartyMigrated.
+  ///
+  /// In en, this message translates to:
+  /// **'Your third-party mods were moved to {path}. Launcher updates no longer remove them.'**
+  String notifyThirdPartyMigrated(String path);
+
+  /// No description provided for @notifyThirdPartyMigrationIncomplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Some third-party files could not be moved and are still in {oldPath}. Move them into {newPath} yourself, because a launcher update removes the old folder.'**
+  String notifyThirdPartyMigrationIncomplete(String oldPath, String newPath);
+
   /// No description provided for @notifyPlatformUnsupported.
   ///
   /// In en, this message translates to:
@@ -1371,7 +1383,7 @@ abstract class AppLocalizations {
   /// No description provided for @tooltipEditsNaiom.
   ///
   /// In en, this message translates to:
-  /// **'Edits nams/naiom.toml. Most settings apply after saving; a few need a game restart.'**
+  /// **'Edits nams/naiom.toml. Changes are saved right away; most apply in game without a restart, a few need one.'**
   String get tooltipEditsNaiom;
 
   /// No description provided for @tooltipCutscenesLocation.
@@ -1452,12 +1464,6 @@ abstract class AppLocalizations {
   /// **'INSTALL TEXTURES'**
   String get cardInstallTextures;
 
-  /// No description provided for @cardHowItWorks.
-  ///
-  /// In en, this message translates to:
-  /// **'HOW IT WORKS'**
-  String get cardHowItWorks;
-
   /// No description provided for @cardKeybinds.
   ///
   /// In en, this message translates to:
@@ -1523,12 +1529,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'MENU NAVIGATION'**
   String get cardMenuNavigation;
-
-  /// No description provided for @cardStructure.
-  ///
-  /// In en, this message translates to:
-  /// **'STRUCTURE'**
-  String get cardStructure;
 
   /// No description provided for @buttonSave.
   ///
@@ -2613,7 +2613,7 @@ abstract class AppLocalizations {
   /// No description provided for @thirdPartyGraphicModsHowto.
   ///
   /// In en, this message translates to:
-  /// **'Direct3D proxy DLLs (d3d11.dll, dxgi.dll) that wrap the game\'s rendering. NAMS loads them from thirdparty/graphic and sends the game\'s Direct3D calls through them; a copy in the game folder is never loaded. ReShade and 3DMigoto have their own cards. Install them through the drop zone at the top.'**
+  /// **'Direct3D proxy DLLs (d3d11.dll, dxgi.dll) that wrap the game\'s rendering. NAMS loads them from nams/thirdparty/graphic and sends the game\'s Direct3D calls through them; a copy in the game folder is never loaded. ReShade and 3DMigoto have their own cards. Install them through the drop zone at the top.'**
   String get thirdPartyGraphicModsHowto;
 
   /// No description provided for @thirdPartyMoveToGraphic.
@@ -3000,10 +3000,22 @@ abstract class AppLocalizations {
   /// **'No d3dcompiler_47.dll here. Under Wine, ReShade falls back to Wine\'s stub and effects won\'t compile. Reinstall a ReShade build that ships it, or drop a native d3dcompiler_47.dll into this folder.'**
   String get thirdPartyD3dCompilerMissing;
 
+  /// No description provided for @thirdPartyBannerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'ReShade, 3DMigoto and addons are made by other people'**
+  String get thirdPartyBannerTitle;
+
+  /// No description provided for @thirdPartyReadDoc.
+  ///
+  /// In en, this message translates to:
+  /// **'How NAMS loads ReShade, 3DMigoto and DLL mods'**
+  String get thirdPartyReadDoc;
+
   /// No description provided for @thirdPartyBanner.
   ///
   /// In en, this message translates to:
-  /// **'The tools on this tab are third-party software. NAMS only loads them. It does not implement them and cannot change how they behave. Anything you install through them runs on its own, so correctness, compatibility and safety are your responsibility. If something misbehaves, that is on the tool or the mod, not on NAMS.'**
+  /// **'The NAMS and YoRHa Protocol team can\'t test or fix them. If one gives you trouble, ask the ReShade, 3DMigoto or addon developer. If the game crashes, try again without anything from this tab and without DLLs you copied into the launcher folder before reporting it to us.\n\nWorks in vanilla but not with NAMS? That can happen: with NAMS the game runs inside NAMS.exe, not NieRAutomata.exe, so ReShade, 3DMigoto or the addon has to support NAMS. Only their developers can fix that, not the NAMS team.'**
   String get thirdPartyBanner;
 
   /// No description provided for @thirdPartyConfigSection.
@@ -3738,11 +3750,11 @@ abstract class AppLocalizations {
   /// **'If a custom file is missing or broken, the original plays as fallback.'**
   String get cutsceneHowItWorks2;
 
-  /// No description provided for @cutsceneHowItWorks3.
+  /// No description provided for @cutsceneBannerTitle.
   ///
   /// In en, this message translates to:
-  /// **'Your original game files are never touched - mods load from a separate location.'**
-  String get cutsceneHowItWorks3;
+  /// **'Cutscene mods never change your game files'**
+  String get cutsceneBannerTitle;
 
   /// No description provided for @cutsceneStructurePath.
   ///
@@ -5250,29 +5262,17 @@ abstract class AppLocalizations {
   /// **'Places every patch of grass, bush and small map object as soon as its part of the map is loaded, no matter how far away you are. Ignores Object Spawn Range. The objects still appear one after another, so a freshly loaded area fills in gradually. Costs frame rate in areas with a lot of grass.'**
   String get tooltipLayoutSpawnEverything;
 
-  /// No description provided for @labelAoWidth.
+  /// No description provided for @labelAoFullResolution.
   ///
   /// In en, this message translates to:
-  /// **'AO Width'**
-  String get labelAoWidth;
+  /// **'Full Resolution AO'**
+  String get labelAoFullResolution;
 
-  /// No description provided for @tooltipAoWidth.
+  /// No description provided for @tooltipAoFullResolution.
   ///
   /// In en, this message translates to:
-  /// **'Multiplier for AO horizontal resolution. Vanilla AO runs at 1/4 screen res. 2.0 = half screen res (crisper AO but heavy). 1.5 is a good balance. Range: 0.1 - 2.0. Setting only one axis to 2 can be a lighter alternative.'**
-  String get tooltipAoWidth;
-
-  /// No description provided for @labelAoHeight.
-  ///
-  /// In en, this message translates to:
-  /// **'AO Height'**
-  String get labelAoHeight;
-
-  /// No description provided for @tooltipAoHeight.
-  ///
-  /// In en, this message translates to:
-  /// **'Multiplier for AO vertical resolution. Vanilla AO runs at 1/4 screen res. 2.0 = half screen res (crisper AO but heavy). 1.5 is a good balance. Range: 0.1 - 2.0. Both at 2.0 can cost ~10 FPS in worst case.'**
-  String get tooltipAoHeight;
+  /// **'Computes ambient occlusion (AO) at full instead of half resolution, so it follows thin objects and fine edges more closely. Costs GPU time. Ambient occlusion has to be on in the game\'s graphics settings. Applies live.'**
+  String get tooltipAoFullResolution;
 
   /// No description provided for @labelShadowResolution.
   ///
@@ -5391,8 +5391,44 @@ abstract class AppLocalizations {
   /// No description provided for @tooltipForceAllShadowModels.
   ///
   /// In en, this message translates to:
-  /// **'Forces all models to cast shadows, including small objects like rocks and grass. Experimental - may rarely cause invisible models to cast shadows. No issues noticed so far.'**
+  /// **'Forces all models to cast shadows, including small objects like rocks. Grass needs Grass Shadows. Experimental - may rarely cause invisible models to cast shadows. No issues noticed so far.'**
   String get tooltipForceAllShadowModels;
+
+  /// No description provided for @labelShadowForceAllFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Excluded Meshes'**
+  String get labelShadowForceAllFilters;
+
+  /// No description provided for @tooltipShadowForceAllFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Models with a mesh of one of these names keep their original shadow setting while Force All Shadow Models is on. A name must match exactly; upper and lower case do not matter. Takes effect live.'**
+  String get tooltipShadowForceAllFilters;
+
+  /// No description provided for @shadowForceAllFiltersAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add mesh'**
+  String get shadowForceAllFiltersAdd;
+
+  /// No description provided for @shadowForceAllFiltersEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No exclusions - Force All Shadow Models applies to every model.'**
+  String get shadowForceAllFiltersEmpty;
+
+  /// No description provided for @labelGrassShadows.
+  ///
+  /// In en, this message translates to:
+  /// **'Grass Shadows'**
+  String get labelGrassShadows;
+
+  /// No description provided for @tooltipGrassShadows.
+  ///
+  /// In en, this message translates to:
+  /// **'Grass and other objects that have no shadow in their object settings cast shadows too. Takes effect live.'**
+  String get tooltipGrassShadows;
 
   /// No description provided for @labelDisableVignette.
   ///
@@ -6603,7 +6639,7 @@ abstract class AppLocalizations {
   /// No description provided for @tooltipDisable3dmigotoLoading.
   ///
   /// In en, this message translates to:
-  /// **'Skip loading the 3DMigoto runtime from thirdparty/3dmigoto/. Turn off to stop loading shader mods.'**
+  /// **'Skip loading the 3DMigoto runtime from nams/thirdparty/3dmigoto/. Turn off to stop loading shader mods.'**
   String get tooltipDisable3dmigotoLoading;
 
   /// No description provided for @labelDisableGraphicModsLoading.
@@ -6615,7 +6651,7 @@ abstract class AppLocalizations {
   /// No description provided for @tooltipDisableGraphicModsLoading.
   ///
   /// In en, this message translates to:
-  /// **'Skip loading the Direct3D proxy DLLs from thirdparty/graphic/: DLLs named like a system DLL (d3d11.dll, dxgi.dll, ...) that the game\'s graphics calls pass through. Turn this on to play without them without having to delete anything. Takes effect on the next game start.'**
+  /// **'Skip loading the Direct3D proxy DLLs from nams/thirdparty/graphic/: DLLs named like a system DLL (d3d11.dll, dxgi.dll, ...) that the game\'s graphics calls pass through. Turn this on to play without them without having to delete anything. Takes effect on the next game start.'**
   String get tooltipDisableGraphicModsLoading;
 
   /// No description provided for @labelDisableGameModsLoading.
@@ -6726,6 +6762,18 @@ abstract class AppLocalizations {
   /// **'Skip the startup splash window shown while the game loads. The original game revealed its window before it was ready, causing resize and flicker artifacts; NAMS finished the splash so the window is only revealed once ready. Turning this on brings those vanilla startup artifacts back.'**
   String get tooltipDisableSplashScreen;
 
+  /// No description provided for @labelIngameSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'In-Game NAMS Settings'**
+  String get labelIngameSettings;
+
+  /// No description provided for @tooltipIngameSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Adds the NAMS tab and the NAMS rows to the in-game options menu. On by default. Turn off to keep the vanilla options menu. Requires restart.'**
+  String get tooltipIngameSettings;
+
   /// No description provided for @labelDisableDebugHotkeys.
   ///
   /// In en, this message translates to:
@@ -6785,18 +6833,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'DEFAULT (ENABLED)'**
   String get comparisonDefaultEnabled;
-
-  /// No description provided for @comparisonAo05x.
-  ///
-  /// In en, this message translates to:
-  /// **'AO 0.5x'**
-  String get comparisonAo05x;
-
-  /// No description provided for @comparisonAo20x.
-  ///
-  /// In en, this message translates to:
-  /// **'AO 2.0x'**
-  String get comparisonAo20x;
 
   /// No description provided for @comparisonVignetteOn.
   ///
@@ -7959,8 +7995,110 @@ abstract class AppLocalizations {
   /// No description provided for @keybindMouseNotSupported.
   ///
   /// In en, this message translates to:
-  /// **'Mouse buttons don\'t work for this action - it needs a keyboard key.'**
+  /// **'Keyboard keys only'**
   String get keybindMouseNotSupported;
+
+  /// No description provided for @keybindPickController.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a controller button'**
+  String get keybindPickController;
+
+  /// No description provided for @controllerA.
+  ///
+  /// In en, this message translates to:
+  /// **'A / Cross'**
+  String get controllerA;
+
+  /// No description provided for @controllerB.
+  ///
+  /// In en, this message translates to:
+  /// **'B / Circle'**
+  String get controllerB;
+
+  /// No description provided for @controllerX.
+  ///
+  /// In en, this message translates to:
+  /// **'X / Square'**
+  String get controllerX;
+
+  /// No description provided for @controllerY.
+  ///
+  /// In en, this message translates to:
+  /// **'Y / Triangle'**
+  String get controllerY;
+
+  /// No description provided for @controllerLB.
+  ///
+  /// In en, this message translates to:
+  /// **'LB / L1'**
+  String get controllerLB;
+
+  /// No description provided for @controllerRB.
+  ///
+  /// In en, this message translates to:
+  /// **'RB / R1'**
+  String get controllerRB;
+
+  /// No description provided for @controllerLT.
+  ///
+  /// In en, this message translates to:
+  /// **'LT / L2'**
+  String get controllerLT;
+
+  /// No description provided for @controllerRT.
+  ///
+  /// In en, this message translates to:
+  /// **'RT / R2'**
+  String get controllerRT;
+
+  /// No description provided for @controllerLThumb.
+  ///
+  /// In en, this message translates to:
+  /// **'Left stick press / L3'**
+  String get controllerLThumb;
+
+  /// No description provided for @controllerRThumb.
+  ///
+  /// In en, this message translates to:
+  /// **'Right stick press / R3'**
+  String get controllerRThumb;
+
+  /// No description provided for @controllerDUp.
+  ///
+  /// In en, this message translates to:
+  /// **'D-pad up'**
+  String get controllerDUp;
+
+  /// No description provided for @controllerDDown.
+  ///
+  /// In en, this message translates to:
+  /// **'D-pad down'**
+  String get controllerDDown;
+
+  /// No description provided for @controllerDLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'D-pad left'**
+  String get controllerDLeft;
+
+  /// No description provided for @controllerDRight.
+  ///
+  /// In en, this message translates to:
+  /// **'D-pad right'**
+  String get controllerDRight;
+
+  /// No description provided for @controllerBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Back / Share'**
+  String get controllerBack;
+
+  /// No description provided for @controllerStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start / Options'**
+  String get controllerStart;
 
   /// No description provided for @naiomResetConfirmTitle.
   ///
@@ -7971,7 +8109,7 @@ abstract class AppLocalizations {
   /// No description provided for @naiomResetConfirmBody.
   ///
   /// In en, this message translates to:
-  /// **'This will reset every camera, aiming, cursor and keybind setting on this tab to its default value. Nothing is written until you press Save, so you can still discard afterwards. Continue?'**
+  /// **'This resets every camera, aiming, cursor and keybind setting on this tab to its default value. Continue?'**
   String get naiomResetConfirmBody;
 
   /// No description provided for @naiomControllerNote.
@@ -8015,12 +8153,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not fix this table. Make sure the file is a valid .CT file.'**
   String get cheatTableConvertError;
-
-  /// No description provided for @naiomBetaBadge.
-  ///
-  /// In en, this message translates to:
-  /// **'BETA'**
-  String get naiomBetaBadge;
 
   /// No description provided for @naiomRestartBadge.
   ///
@@ -8079,7 +8211,7 @@ abstract class AppLocalizations {
   /// No description provided for @naiomBindingsIntro.
   ///
   /// In en, this message translates to:
-  /// **'Extra keys on top of the game\'s own controls - the original keys keep working. Changes apply after saving, no restart needed.'**
+  /// **'Extra keys on top of the game\'s own controls - the original keys keep working. Changes apply right away, no restart needed.'**
   String get naiomBindingsIntro;
 
   /// No description provided for @naiomCrosshairPreviewLabel.

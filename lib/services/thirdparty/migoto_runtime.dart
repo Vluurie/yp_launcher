@@ -19,6 +19,8 @@ class MigotoRuntime extends GraphicsRuntime {
 
   static const supportDlls = ['nvapi64.dll', 'd3dcompiler_46.dll'];
 
+  static const runtimeDlls = ['3dmigoto.dll', 'd3d11.dll'];
+
   @override
   ThirdPartyRuntime get runtime => ThirdPartyRuntime.migoto;
 
@@ -26,7 +28,12 @@ class MigotoRuntime extends GraphicsRuntime {
   String get disableFlagKey => NamsFields.disable3dmigotoLoading.key;
 
   @override
-  String installDir(String gameDir) => ThirdPartyPaths.migoto();
+  String installDir(String gameDir) {
+    final kindDir = ThirdPartyPaths.migoto(gameDir);
+    return ThirdPartyPaths.modDirWithDll(kindDir, runtimeDlls) ??
+        ThirdPartyPaths.modDirs(kindDir).firstOrNull?.path ??
+        path.join(kindDir, AppStrings.migotoModDirName);
+  }
 
   @override
   bool canInstall(ThirdPartyClassification c) =>
@@ -323,7 +330,7 @@ class MigotoRuntime extends GraphicsRuntime {
 
   @override
   Future<void> remove(String gameDir) async {
-    FileOps.deleteDirQuiet(installDir(gameDir));
+    FileOps.deleteDirQuiet(ThirdPartyPaths.migoto(gameDir));
     await ThirdPartyFlags.set(gameDir, disableFlagKey, true);
   }
 

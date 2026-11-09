@@ -92,10 +92,12 @@ void main() {
         expect(result.ok, isTrue);
 
         final tp = reshade.installDir(gameDir);
-        expect(p.isWithin(launcherDir, tp), isTrue,
-            reason: 'thirdparty install tree lives under the launcher dir');
-        expect(Directory(p.join(gameDir, 'thirdparty')).existsSync(), isFalse,
-            reason: 'nothing written into the NieRAutomata game dir');
+        expect(p.isWithin(p.join(gameDir, 'nams', 'thirdparty', 'reshade'), tp),
+            isTrue,
+            reason: 'the ReShade mod folder lives in <game>/nams/thirdparty, '
+                'which a launcher update does not replace');
+        expect(p.isWithin(launcherDir, tp), isFalse,
+            reason: 'nothing installed into the launcher dir');
         final ini = File(p.join(tp, 'ReShade.ini'));
 
         if (ini.existsSync()) {

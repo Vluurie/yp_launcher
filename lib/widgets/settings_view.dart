@@ -249,6 +249,16 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                       ),
                       tooltip: NamsFields.disableDebugHotkeys.tooltip!(l10n),
                     ),
+                    ConfigFieldBool(
+                      label: NamsFields.ingameSettings.label(l10n),
+                      defaultValue: NamsFields.ingameSettings.defaultValue,
+                      value: nams[NamsFields.ingameSettings.key] != false,
+                      onChanged: (v) => notifier.updateNams(
+                        NamsFields.ingameSettings.key,
+                        v,
+                      ),
+                      tooltip: NamsFields.ingameSettings.tooltip!(l10n),
+                    ),
                     Padding(
                       padding: EdgeInsets.symmetric(
                         vertical: AppSizes.paddingXS(context),

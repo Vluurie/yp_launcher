@@ -5,6 +5,28 @@ import 'package:yp_launcher/constants/naiom_keys.dart';
 import 'package:yp_launcher/l10n/app_localizations.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
+import 'package:yp_launcher/widgets/app_dropdown.dart';
+
+String controllerButtonLabel(AppLocalizations l10n, String name) =>
+    switch (name) {
+      'CONTROLLER_A' => l10n.controllerA,
+      'CONTROLLER_B' => l10n.controllerB,
+      'CONTROLLER_X' => l10n.controllerX,
+      'CONTROLLER_Y' => l10n.controllerY,
+      'CONTROLLER_LB' => l10n.controllerLB,
+      'CONTROLLER_RB' => l10n.controllerRB,
+      'CONTROLLER_LT' => l10n.controllerLT,
+      'CONTROLLER_RT' => l10n.controllerRT,
+      'CONTROLLER_LTHUMB' => l10n.controllerLThumb,
+      'CONTROLLER_RTHUMB' => l10n.controllerRThumb,
+      'CONTROLLER_DUP' => l10n.controllerDUp,
+      'CONTROLLER_DDOWN' => l10n.controllerDDown,
+      'CONTROLLER_DLEFT' => l10n.controllerDLeft,
+      'CONTROLLER_DRIGHT' => l10n.controllerDRight,
+      'CONTROLLER_BACK' => l10n.controllerBack,
+      'CONTROLLER_START' => l10n.controllerStart,
+      _ => name,
+    };
 
 class ConfigFieldKeyName extends StatefulWidget {
   final String label;
@@ -40,8 +62,8 @@ class _ConfigFieldKeyNameState extends State<ConfigFieldKeyName> {
         PhysicalKeyboardKey.shiftRight: (generic: 'SHIFT', side: 'RSHIFT'),
         PhysicalKeyboardKey.controlLeft: (generic: 'CTRL', side: 'LCTRL'),
         PhysicalKeyboardKey.controlRight: (generic: 'CTRL', side: 'RCTRL'),
-        PhysicalKeyboardKey.altLeft: (generic: 'ALT', side: null),
-        PhysicalKeyboardKey.altRight: (generic: 'ALT', side: null),
+        PhysicalKeyboardKey.altLeft: (generic: 'ALT', side: 'LALT'),
+        PhysicalKeyboardKey.altRight: (generic: 'ALT', side: 'RALT'),
       };
 
   static final _physicalToName = <PhysicalKeyboardKey, String>{
@@ -87,6 +109,40 @@ class _ConfigFieldKeyNameState extends State<ConfigFieldKeyName> {
     PhysicalKeyboardKey.arrowDown: 'DOWNARROW',
     PhysicalKeyboardKey.arrowLeft: 'LEFTARROW',
     PhysicalKeyboardKey.arrowRight: 'RIGHTARROW',
+    PhysicalKeyboardKey.tab: 'TAB',
+    PhysicalKeyboardKey.enter: 'ENTER',
+    PhysicalKeyboardKey.backspace: 'BACKSPACE',
+    PhysicalKeyboardKey.insert: 'INS',
+    PhysicalKeyboardKey.delete: 'DEL',
+    PhysicalKeyboardKey.home: 'HOME',
+    PhysicalKeyboardKey.pageUp: 'PGUP',
+    PhysicalKeyboardKey.pageDown: 'PGDN',
+    PhysicalKeyboardKey.f1: 'F1',
+    PhysicalKeyboardKey.f2: 'F2',
+    PhysicalKeyboardKey.f3: 'F3',
+    PhysicalKeyboardKey.f4: 'F4',
+    PhysicalKeyboardKey.f5: 'F5',
+    PhysicalKeyboardKey.f6: 'F6',
+    PhysicalKeyboardKey.f7: 'F7',
+    PhysicalKeyboardKey.f8: 'F8',
+    PhysicalKeyboardKey.f9: 'F9',
+    PhysicalKeyboardKey.f10: 'F10',
+    PhysicalKeyboardKey.f11: 'F11',
+    PhysicalKeyboardKey.f12: 'F12',
+    PhysicalKeyboardKey.numpad0: 'KP_0',
+    PhysicalKeyboardKey.numpad1: 'KP_1',
+    PhysicalKeyboardKey.numpad2: 'KP_2',
+    PhysicalKeyboardKey.numpad3: 'KP_3',
+    PhysicalKeyboardKey.numpad4: 'KP_4',
+    PhysicalKeyboardKey.numpad5: 'KP_5',
+    PhysicalKeyboardKey.numpad6: 'KP_6',
+    PhysicalKeyboardKey.numpad7: 'KP_7',
+    PhysicalKeyboardKey.numpad8: 'KP_8',
+    PhysicalKeyboardKey.numpad9: 'KP_9',
+    PhysicalKeyboardKey.numpadAdd: 'KP_PLUS',
+    PhysicalKeyboardKey.numpadSubtract: 'KP_MINUS',
+    PhysicalKeyboardKey.numpadDivide: 'KP_SLASH',
+    PhysicalKeyboardKey.numpadMultiply: 'KP_STAR',
   };
 
   List<String> get _heldGenerics =>
@@ -178,6 +234,18 @@ class _ConfigFieldKeyNameState extends State<ConfigFieldKeyName> {
     _finish([..._heldGenerics, name].join('+'));
   }
 
+  void _onPointerSignal(PointerSignalEvent event) {
+    if (!_capturing || event is! PointerScrollEvent) return;
+    if (!NaiomKeys.allowsMouse(widget.bindingKey)) return;
+    GestureBinding.instance.pointerSignalResolver.register(event, (resolved) {
+      if (!_capturing || resolved is! PointerScrollEvent) return;
+      final dy = resolved.scrollDelta.dy;
+      if (dy == 0) return;
+      final name = dy < 0 ? 'MOUSE_WHEEL_UP' : 'MOUSE_WHEEL_DOWN';
+      _finish([..._heldGenerics, name].join('+'));
+    });
+  }
+
   String _captureText(AppLocalizations l10n) {
     if (_heldModifiers.isEmpty) return l10n.pressKey;
     return '${_heldGenerics.join('+')}+…';
@@ -188,11 +256,23 @@ class _ConfigFieldKeyNameState extends State<ConfigFieldKeyName> {
     final l10n = AppLocalizations.of(context)!;
     final unbound = widget.value.isEmpty;
     final hasConflict = widget.conflictWith != null;
+    final parts = NaiomKeys.comboParts(widget.value);
+    final isController =
+        !_capturing && parts.any(NaiomKeys.controllerButtons.contains);
     final displayText = _capturing
         ? _captureText(l10n)
         : unbound
         ? l10n.keybindUnbound
+        : isController
+        ? parts.map((part) => controllerButtonLabel(l10n, part)).join('+')
         : widget.value;
+    final keyboardOnlyHint =
+        _capturing && !NaiomKeys.allowsMouse(widget.bindingKey);
+    final textColor = _capturing
+        ? AppColors.accentPrimary
+        : unbound
+        ? AppColors.textMuted
+        : AppColors.textPrimary;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
@@ -213,7 +293,27 @@ class _ConfigFieldKeyNameState extends State<ConfigFieldKeyName> {
                         color: AppColors.textPrimary,
                       ),
                     ),
-                    if (widget.tooltip != null)
+                    if (keyboardOnlyHint)
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.keyboard_outlined,
+                            size: 13,
+                            color: AppColors.accentPrimary,
+                          ),
+                          const SizedBox(width: 4),
+                          Flexible(
+                            child: Text(
+                              l10n.keybindMouseNotSupported,
+                              style: TextStyle(
+                                fontSize: AppSizes.fontXS(context),
+                                color: AppColors.accentPrimary,
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                    else if (widget.tooltip != null)
                       Text(
                         widget.tooltip!,
                         style: TextStyle(
@@ -241,6 +341,7 @@ class _ConfigFieldKeyNameState extends State<ConfigFieldKeyName> {
                   },
                   child: Listener(
                     onPointerDown: _capturing ? _onPointerDown : null,
+                    onPointerSignal: _capturing ? _onPointerSignal : null,
                     child: GestureDetector(
                       onTap: _capturing ? null : _startCapture,
                       child: AnimatedContainer(
@@ -272,48 +373,47 @@ class _ConfigFieldKeyNameState extends State<ConfigFieldKeyName> {
                                 : 1.0,
                           ),
                         ),
-                        child: Text(
-                          displayText,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: AppSizes.fontSM(context),
-                            color: _capturing
-                                ? AppColors.accentPrimary
-                                : unbound
-                                ? AppColors.textMuted
-                                : AppColors.textPrimary,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            if (isController) ...[
+                              Icon(
+                                Icons.sports_esports_outlined,
+                                size: 14,
+                                color: AppColors.accentPrimary,
+                              ),
+                              const SizedBox(width: 6),
+                            ],
+                            Text(
+                              displayText,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: AppSizes.fontSM(context),
+                                color: textColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
                   ),
                 ),
               ),
+              if (NaiomKeys.allowsMouse(widget.bindingKey)) ...[
+                const SizedBox(width: 4),
+                AppDropdown<String>(
+                  value: widget.value,
+                  items: NaiomKeys.controllerButtons,
+                  itemLabel: (name) => controllerButtonLabel(l10n, name),
+                  onChanged: widget.onChanged,
+                  triggerIcon: Icons.sports_esports_outlined,
+                  tooltip: l10n.keybindPickController,
+                ),
+              ],
             ],
           ),
-          if (_capturing && !NaiomKeys.allowsMouse(widget.bindingKey))
-            Padding(
-              padding: const EdgeInsets.only(top: 2),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Icon(
-                    Icons.keyboard_outlined,
-                    size: 13,
-                    color: AppColors.textMuted,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    l10n.keybindMouseNotSupported,
-                    style: TextStyle(
-                      fontSize: AppSizes.fontXS(context),
-                      color: AppColors.textMuted,
-                    ),
-                  ),
-                ],
-              ),
-            ),
           if (hasConflict)
             Padding(
               padding: const EdgeInsets.only(top: 2),
@@ -326,11 +426,14 @@ class _ConfigFieldKeyNameState extends State<ConfigFieldKeyName> {
                     color: AppColors.warning,
                   ),
                   const SizedBox(width: 4),
-                  Text(
-                    l10n.keybindConflict(widget.conflictWith!),
-                    style: TextStyle(
-                      fontSize: AppSizes.fontXS(context),
-                      color: AppColors.warning,
+                  Flexible(
+                    child: Text(
+                      l10n.keybindConflict(widget.conflictWith!),
+                      textAlign: TextAlign.end,
+                      style: TextStyle(
+                        fontSize: AppSizes.fontXS(context),
+                        color: AppColors.warning,
+                      ),
                     ),
                   ),
                 ],

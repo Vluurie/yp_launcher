@@ -9,6 +9,7 @@ import 'package:yp_launcher/services/log_service.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
 import 'package:yp_launcher/widgets/autoscroll_selection.dart';
+import 'package:yp_launcher/widgets/hover_button.dart';
 
 class LogPanel extends ConsumerStatefulWidget {
   final VoidCallback onClose;
@@ -208,15 +209,21 @@ class LogPanelState extends ConsumerState<LogPanel>
                     ),
                     suffixIcon: logData.searchQuery.isEmpty
                         ? null
-                        : InkWell(
-                            onTap: () {
-                              _searchController.clear();
-                              notifier.setSearchQuery('');
-                            },
-                            child: Icon(
-                              Icons.close,
-                              size: AppSizes.iconSM(context),
-                              color: AppColors.textMuted,
+                        : Center(
+                            widthFactor: 1,
+                            heightFactor: 1,
+                            child: HoverIconButton(
+                              onTap: () {
+                                _searchController.clear();
+                                notifier.setSearchQuery('');
+                              },
+                              bordered: false,
+                              padding: const EdgeInsets.all(4),
+                              icon: Icon(
+                                Icons.close,
+                                size: AppSizes.iconSM(context),
+                                color: AppColors.textMuted,
+                              ),
                             ),
                           ),
                     border: OutlineInputBorder(

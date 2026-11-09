@@ -765,29 +765,12 @@ class _LodmodViewState extends ConsumerState<LodmodView> {
                       ),
                     ]),
                     _card(context, l10n.cardAmbientOcclusion, [
-                      _slider(
+                      _bool(
                         config,
                         notifier,
                         gameDir,
                         l10n,
-                        LodModFields.aoMultiplierWidth,
-                        decimals: 2,
-                      ),
-                      _slider(
-                        config,
-                        notifier,
-                        gameDir,
-                        l10n,
-                        LodModFields.aoMultiplierHeight,
-                        decimals: 2,
-                      ),
-                      ConfigComparison(
-                        beforeImage:
-                            'assets/images/config/ao_multiplier_0.5.jpg',
-                        afterImage:
-                            'assets/images/config/ao_multiplier_2.0.jpg',
-                        beforeLabel: l10n.comparisonAo05x,
-                        afterLabel: l10n.comparisonAo20x,
+                        LodModFields.aoFullResolution,
                       ),
                       _bool(
                         config,
@@ -1024,6 +1007,30 @@ class _LodmodViewState extends ConsumerState<LodmodView> {
                             'assets/images/config/hq_shadow_models_on.jpg',
                         beforeLabel: l10n.comparisonOff,
                         afterLabel: l10n.comparisonHqForceAll,
+                      ),
+                      ConfigFieldNameList(
+                        label: LodModFields.shadowForceAllFilters.label(l10n),
+                        defaultValue:
+                            LodModFields.shadowForceAllFilters.defaultValue,
+                        tooltip: LodModFields.shadowForceAllFilters.tooltip
+                            ?.call(l10n),
+                        names: LodModFields.shadowForceAllFilters.valueIn(
+                          config.lodmodValues,
+                        ),
+                        addLabel: l10n.shadowForceAllFiltersAdd,
+                        emptyLabel: l10n.shadowForceAllFiltersEmpty,
+                        onChanged: (names) => notifier.updateLodmodLive(
+                          gameDir,
+                          LodModFields.shadowForceAllFilters.key,
+                          names,
+                        ),
+                      ),
+                      _bool(
+                        config,
+                        notifier,
+                        gameDir,
+                        l10n,
+                        LodModFields.shadowModelForceObjectParam,
                       ),
                       ..._blurScaleSliders(config, notifier, gameDir, l10n),
                     ]),

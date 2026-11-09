@@ -147,6 +147,8 @@ class _CutscenesViewState extends ConsumerState<CutscenesView> {
                       padding: EdgeInsets.all(AppSizes.contentPadding(context)),
                       child: Column(
                         children: [
+                          const CutsceneInfoBanner(),
+                          SizedBox(height: AppSizes.paddingMD(context)),
                           if (_directOverrides.isNotEmpty) ...[
                             CutsceneMigrationBanner(
                               directOverrides: _directOverrides,
@@ -174,8 +176,6 @@ class _CutscenesViewState extends ConsumerState<CutscenesView> {
                                   ),
                                   const SizedBox(height: 16),
                                   const CutsceneSubtitleCard(),
-                                  const SizedBox(height: 16),
-                                  const CutsceneInfoCard(),
                                 ],
                               );
                               final rightCol = CutsceneInstalledList(

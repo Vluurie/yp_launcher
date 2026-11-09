@@ -92,10 +92,12 @@ class _NaiomViewState extends ConsumerState<NaiomView> {
     return NamsFields.miscOpenDebugMenu.defaultValue;
   }
 
+  String get _gameDir => ref.read(appStateControllerProvider).selectedDirectory;
+
   void _setMouse(ConfigField f, dynamic value) {
     ref
         .read(configStateControllerProvider.notifier)
-        .updateNams(f.key, value, section: f.section!);
+        .updateNaiomLive(_gameDir, f.key, value, section: f.section!);
   }
 
   static final List<ConfigField<bool>> _mouseBools = [
@@ -217,7 +219,7 @@ class _NaiomViewState extends ConsumerState<NaiomView> {
       color: AppColors.backgroundPrimary,
       child: Column(
         children: [
-          _buildHeader(context, config, gameDir),
+          _buildHeader(context, gameDir),
           Expanded(
             child: config.isLoading
                 ? Center(
@@ -613,7 +615,7 @@ class _NaiomViewState extends ConsumerState<NaiomView> {
             value: _inputFeaturesDisabled,
             onChanged: (v) => ref
                 .read(configStateControllerProvider.notifier)
-                .updateNams(NamsFields.disableInputFeatures.key, v),
+                .updateNamsNow(_gameDir, NamsFields.disableInputFeatures.key, v),
           ),
         ],
       ),
@@ -666,9 +668,8 @@ class _NaiomViewState extends ConsumerState<NaiomView> {
     );
   }
 
-  Widget _buildHeader(BuildContext context, ConfigData config, String gameDir) {
+  Widget _buildHeader(BuildContext context, String gameDir) {
     final l10n = AppLocalizations.of(context)!;
-    final notifier = ref.read(configStateControllerProvider.notifier);
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: AppSizes.cardPaddingH(context),
@@ -693,51 +694,6 @@ class _NaiomViewState extends ConsumerState<NaiomView> {
             tooltip: l10n.tooltipEditsNaiom,
             revealPath: p.join(gameDir, 'nams', 'naiom.toml'),
           ),
-          SizedBox(width: AppSizes.spacingMD(context)),
-          Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: AppSizes.paddingSM(context),
-              vertical: AppSizes.paddingXS(context),
-            ),
-            decoration: BoxDecoration(
-              color: AppColors.accentPrimary.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(4),
-            ),
-            child: Text(
-              l10n.naiomBetaBadge,
-              style: TextStyle(
-                fontSize: AppSizes.fontXS(context),
-                fontWeight: FontWeight.bold,
-                color: AppColors.accentPrimary,
-              ),
-            ),
-          ),
-          if (config.hasUnsavedChanges) ...[
-            Padding(
-              padding: EdgeInsets.only(left: AppSizes.spacingMD(context)),
-              child: Text(
-                '*',
-                style: TextStyle(
-                  fontSize: AppSizes.fontXL(context),
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.warning,
-                ),
-              ),
-            ),
-            const Spacer(),
-            HoverButton(
-              label: l10n.buttonSave,
-              color: AppColors.success,
-              onTap: () => notifier.saveConfigs(gameDir),
-            ),
-            SizedBox(width: AppSizes.paddingXS(context)),
-            HoverButton(
-              label: l10n.buttonDiscard,
-              color: AppColors.textMuted,
-              onTap: () => notifier.discardChanges(gameDir),
-            ),
-          ] else
-            const Spacer(),
         ],
       ),
     );

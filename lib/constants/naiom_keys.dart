@@ -43,7 +43,16 @@ class NaiomKeys {
 
   static const List<String> special = [
     'SPACE',
+    'TAB',
+    'ENTER',
+    'ESCAPE',
+    'BACKSPACE',
+    'INS',
+    'DEL',
+    'HOME',
     'END',
+    'PGUP',
+    'PGDN',
     'UPARROW',
     'DOWNARROW',
     'LEFTARROW',
@@ -52,6 +61,20 @@ class NaiomKeys {
     'RSHIFT',
     'LCTRL',
     'RCTRL',
+    'LALT',
+    'RALT',
+  ];
+
+  static final List<String> functionKeys = [
+    for (var n = 1; n <= 12; n++) 'F$n',
+  ];
+
+  static final List<String> keypad = [
+    for (var n = 0; n <= 9; n++) 'KP_$n',
+    'KP_PLUS',
+    'KP_MINUS',
+    'KP_SLASH',
+    'KP_STAR',
   ];
 
   static const List<String> mouseButtons = [
@@ -60,6 +83,27 @@ class NaiomKeys {
     'MOUSE3',
     'MOUSE4',
     'MOUSE5',
+    'MOUSE_WHEEL_UP',
+    'MOUSE_WHEEL_DOWN',
+  ];
+
+  static const List<String> controllerButtons = [
+    'CONTROLLER_A',
+    'CONTROLLER_B',
+    'CONTROLLER_X',
+    'CONTROLLER_Y',
+    'CONTROLLER_LB',
+    'CONTROLLER_RB',
+    'CONTROLLER_LT',
+    'CONTROLLER_RT',
+    'CONTROLLER_LTHUMB',
+    'CONTROLLER_RTHUMB',
+    'CONTROLLER_DUP',
+    'CONTROLLER_DDOWN',
+    'CONTROLLER_DLEFT',
+    'CONTROLLER_DRIGHT',
+    'CONTROLLER_BACK',
+    'CONTROLLER_START',
   ];
 
   static const List<String> genericModifiers = ['SHIFT', 'CTRL', 'ALT'];
@@ -69,13 +113,18 @@ class NaiomKeys {
     'RSHIFT',
     'LCTRL',
     'RCTRL',
+    'LALT',
+    'RALT',
   ];
 
   static final List<String> all = [
     ...letters,
     ...digits,
     ...special,
+    ...functionKeys,
+    ...keypad,
     ...mouseButtons,
+    ...controllerButtons,
   ];
 
   static final Set<String> validSet = all.toSet();
@@ -101,8 +150,9 @@ class NaiomKeys {
         .every((p) => modifierSet.contains(p) || validSet.contains(p));
   }
 
-  static bool comboContainsMouse(String binding) =>
-      comboParts(binding).any(mouseButtons.contains);
+  static bool comboContainsNonKeyboard(String binding) => comboParts(
+    binding,
+  ).any((p) => mouseButtons.contains(p) || controllerButtons.contains(p));
 
   static const Set<String> keyboardOnlyBindings = {
     'standard_move_forward',
@@ -159,14 +209,81 @@ class NaiomKeys {
         return 0xA2;
       case 'RCTRL':
         return 0xA3;
+      case 'LALT':
+        return 0xA4;
+      case 'RALT':
+        return 0xA5;
+      case 'TAB':
+        return 0x09;
+      case 'ENTER':
+        return 0x0D;
+      case 'ESCAPE':
+        return 0x1B;
+      case 'BACKSPACE':
+        return 0x08;
+      case 'INS':
+        return 0x2D;
+      case 'DEL':
+        return 0x2E;
+      case 'HOME':
+        return 0x24;
+      case 'PGUP':
+        return 0x21;
+      case 'PGDN':
+        return 0x22;
+      case 'KP_PLUS':
+        return 0x6B;
+      case 'KP_MINUS':
+        return 0x6D;
+      case 'KP_SLASH':
+        return 0x6F;
+      case 'KP_STAR':
+        return 0x6A;
     }
+    final fn = functionKeys.indexOf(upper);
+    if (fn != -1) return 0x70 + fn;
+    final kp = keypad.indexOf(upper);
+    if (kp != -1 && kp <= 9) return 0x60 + kp;
     return null;
   }
 
   static String? vkToKeyName(int vk) {
     if (vk >= 0x41 && vk <= 0x5A) return String.fromCharCode(vk);
     if (vk >= 0x30 && vk <= 0x39) return String.fromCharCode(vk);
+    if (vk >= 0x70 && vk <= 0x7B) return functionKeys[vk - 0x70];
+    if (vk >= 0x60 && vk <= 0x69) return keypad[vk - 0x60];
     switch (vk) {
+      case 0x12:
+      case 0xA4:
+        return 'LALT';
+      case 0xA5:
+        return 'RALT';
+      case 0x09:
+        return 'TAB';
+      case 0x0D:
+        return 'ENTER';
+      case 0x1B:
+        return 'ESCAPE';
+      case 0x08:
+        return 'BACKSPACE';
+      case 0x2D:
+        return 'INS';
+      case 0x2E:
+        return 'DEL';
+      case 0x24:
+        return 'HOME';
+      case 0x21:
+        return 'PGUP';
+      case 0x22:
+        return 'PGDN';
+      case 0x6B:
+        return 'KP_PLUS';
+      case 0x6D:
+        return 'KP_MINUS';
+      case 0x6F:
+        return 'KP_SLASH';
+      case 0x6A:
+        return 'KP_STAR';
       case 0x20:
         return 'SPACE';
       case 0x23:

@@ -613,6 +613,16 @@ class AppLocalizationsTh extends AppLocalizations {
   }
 
   @override
+  String notifyThirdPartyMigrated(String path) {
+    return 'ย้ายม็อดของบุคคลที่สามไปที่ $path แล้ว การอัปเดตตัวเรียกใช้งานจะไม่ลบม็อดเหล่านี้อีก';
+  }
+
+  @override
+  String notifyThirdPartyMigrationIncomplete(String oldPath, String newPath) {
+    return 'ไฟล์ของบุคคลที่สามบางไฟล์ย้ายไม่ได้และยังอยู่ใน $oldPath โปรดย้ายไปไว้ใน $newPath ด้วยตนเอง เพราะการอัปเดตตัวเรียกใช้งานจะลบโฟลเดอร์เดิม';
+  }
+
+  @override
   String notifyPlatformUnsupported(String platform) {
     return 'ไม่พบชั้นความเข้ากันได้ของ Windows บน $platform จึงไม่สามารถเริ่มเกมจากที่นี่ได้ อย่างไรก็ตาม ม็อด เท็กซ์เจอร์ และการตั้งค่าทั้งหมดยังใช้งานได้ โปรดติดตั้ง CrossOver และติดตั้ง NieR:Automata ใน bottle เพื่อเปิดใช้งานการเริ่มเกม';
   }
@@ -744,7 +754,7 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get tooltipEditsNaiom =>
-      'แก้ไข nams/naiom.toml การตั้งค่าส่วนใหญ่จะมีผลหลังบันทึก แต่บางรายการต้องรีสตาร์ตเกม';
+      'แก้ไข nams/naiom.toml การเปลี่ยนแปลงจะบันทึกทันที การตั้งค่าส่วนใหญ่มีผลโดยไม่ต้องรีสตาร์ตเกม แต่บางรายการต้องรีสตาร์ต';
 
   @override
   String get tooltipCutscenesLocation =>
@@ -788,9 +798,6 @@ class AppLocalizationsTh extends AppLocalizations {
   String get cardInstallTextures => 'ติดตั้งเท็กซ์เจอร์';
 
   @override
-  String get cardHowItWorks => 'วิธีการทำงาน';
-
-  @override
   String get cardKeybinds => 'การกำหนดปุ่ม';
 
   @override
@@ -822,9 +829,6 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get cardMenuNavigation => 'การนำทางเมนู';
-
-  @override
-  String get cardStructure => 'โครงสร้าง';
 
   @override
   String get buttonSave => 'บันทึก';
@@ -1454,7 +1458,7 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get thirdPartyGraphicModsHowto =>
-      'DLL พร็อกซี Direct3D (d3d11.dll, dxgi.dll) ที่ครอบการเรนเดอร์ของเกม NAMS โหลดจาก thirdparty/graphic และส่งการเรียก Direct3D ของเกมผ่านไฟล์เหล่านี้ ไฟล์ที่วางไว้ในโฟลเดอร์เกมจะไม่ถูกโหลดเลย ReShade และ 3DMigoto มีการ์ดของตัวเอง ติดตั้งผ่านช่องวางไฟล์ด้านบน';
+      'DLL พร็อกซี Direct3D (d3d11.dll, dxgi.dll) ที่ครอบการเรนเดอร์ของเกม NAMS โหลดจาก nams/thirdparty/graphic และส่งการเรียก Direct3D ของเกมผ่านไฟล์เหล่านี้ ไฟล์ที่วางไว้ในโฟลเดอร์เกมจะไม่ถูกโหลดเลย ReShade และ 3DMigoto มีการ์ดของตัวเอง ติดตั้งผ่านช่องวางไฟล์ด้านบน';
 
   @override
   String get thirdPartyMoveToGraphic =>
@@ -1700,8 +1704,16 @@ class AppLocalizationsTh extends AppLocalizations {
       'ไม่พบ d3dcompiler_47.dll ที่นี่ บน Wine, ReShade จะถอยไปใช้ stub ของ Wine และเอฟเฟกต์จะคอมไพล์ไม่ได้ โปรดติดตั้ง ReShade เวอร์ชันที่มีไฟล์นี้ใหม่ หรือวาง d3dcompiler_47.dll แบบเนทีฟลงในโฟลเดอร์นี้';
 
   @override
+  String get thirdPartyBannerTitle =>
+      'ReShade, 3DMigoto และแอดออนสร้างโดยผู้พัฒนาอื่น';
+
+  @override
+  String get thirdPartyReadDoc =>
+      'วิธีที่ NAMS โหลด ReShade, 3DMigoto และม็อด DLL';
+
+  @override
   String get thirdPartyBanner =>
-      'เครื่องมือในแท็บนี้เป็นซอฟต์แวร์จากบุคคลที่สาม NAMS เพียงแค่โหลดมันเท่านั้น ไม่ได้เป็นผู้พัฒนาและไม่สามารถเปลี่ยนพฤติกรรมของมันได้ สิ่งที่คุณติดตั้งผ่านเครื่องมือเหล่านี้จะทำงานด้วยตัวเอง ดังนั้นความถูกต้อง ความเข้ากันได้ และความปลอดภัยเป็นความรับผิดชอบของคุณ หากมีสิ่งใดทำงานผิดปกติ นั่นเป็นเพราะเครื่องมือหรือม็อด ไม่ใช่ NAMS';
+      'ทีม NAMS และ YoRHa Protocol ไม่สามารถทดสอบหรือแก้ไขสิ่งเหล่านี้ได้ หากตัวใดมีปัญหา โปรดติดต่อผู้พัฒนา ReShade, 3DMigoto หรือแอดออนนั้น หากเกมแครช โปรดลองใหม่โดยไม่มีสิ่งใดจากแท็บนี้ และไม่มีไฟล์ DLL ที่คุณคัดลอกไปไว้ในโฟลเดอร์ลอนเชอร์เอง ก่อนรายงานให้เรา\n\nใช้ได้ในเกมเวอร์ชันปกติ แต่ใช้ไม่ได้กับ NAMS? เป็นเรื่องที่เกิดขึ้นได้ เมื่อใช้ NAMS เกมจะทำงานอยู่ใน NAMS.exe ไม่ใช่ NieRAutomata.exe ดังนั้น ReShade, 3DMigoto หรือแอดออนนั้นต้องรองรับ NAMS เอง ซึ่งมีเพียงผู้พัฒนาของสิ่งเหล่านั้นที่แก้ไขได้ ไม่ใช่ทีม NAMS';
 
   @override
   String get thirdPartyConfigSection => 'การตั้งค่า';
@@ -2132,8 +2144,7 @@ class AppLocalizationsTh extends AppLocalizations {
       'หากไฟล์แบบกำหนดเองหายหรือเสียหาย ระบบจะเล่นไฟล์ต้นฉบับแทน';
 
   @override
-  String get cutsceneHowItWorks3 =>
-      'ไฟล์เกมต้นฉบับของคุณจะไม่ถูกแก้ไข ม็อดโหลดจากตำแหน่งแยกต่างหาก';
+  String get cutsceneBannerTitle => 'ม็อดคัตซีนไม่แก้ไขไฟล์เกมของคุณ';
 
   @override
   String get cutsceneStructurePath =>
@@ -3009,18 +3020,11 @@ class AppLocalizationsTh extends AppLocalizations {
       'วางหญ้า พุ่มไม้ และวัตถุขนาดเล็กบนแผนที่ทุกชิ้นทันทีที่ส่วนนั้นของแผนที่โหลดเสร็จ ไม่ว่าคุณจะอยู่ไกลแค่ไหน ไม่สนใจระยะการเกิดวัตถุ วัตถุยังคงปรากฏทีละชิ้น พื้นที่ที่เพิ่งโหลดจึงค่อย ๆ เต็ม ลดเฟรมเรตในพื้นที่ที่มีหญ้ามาก';
 
   @override
-  String get labelAoWidth => 'ความกว้าง AO';
+  String get labelAoFullResolution => 'AO ความละเอียดเต็ม';
 
   @override
-  String get tooltipAoWidth =>
-      'ตัวคูณความละเอียดแนวนอนของ AO ค่า AO วานิลลาทำงานที่ 1/4 ของความละเอียดหน้าจอ 2.0 = ครึ่งหนึ่งของความละเอียดหน้าจอ (คมขึ้นแต่หนัก) 1.5 เป็นสมดุลที่ดี ช่วง: 0.1 - 2.0 การตั้งเพียงแกนเดียวเป็น 2 เป็นทางเลือกที่เบากว่า';
-
-  @override
-  String get labelAoHeight => 'ความสูง AO';
-
-  @override
-  String get tooltipAoHeight =>
-      'ตัวคูณความละเอียดแนวตั้งของ AO ค่า AO วานิลลาทำงานที่ 1/4 ของความละเอียดหน้าจอ 2.0 = ครึ่งหนึ่งของความละเอียดหน้าจอ (คมขึ้นแต่หนัก) 1.5 เป็นสมดุลที่ดี ช่วง: 0.1 - 2.0 การตั้งทั้งสองแกนเป็น 2.0 อาจเสียประมาณ 10 FPS ในกรณีแย่ที่สุด';
+  String get tooltipAoFullResolution =>
+      'คำนวณ Ambient Occlusion (AO) ที่ความละเอียดเต็มแทนครึ่งหนึ่ง จึงตามวัตถุบางและขอบละเอียดได้แม่นขึ้น ใช้เวลา GPU มากขึ้น ต้องเปิด Ambient Occlusion ในการตั้งค่ากราฟิกของเกม มีผลทันที';
 
   @override
   String get labelShadowResolution => 'ความละเอียดเงา';
@@ -3090,7 +3094,28 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get tooltipForceAllShadowModels =>
-      'บังคับให้โมเดลทั้งหมดสร้างเงา รวมถึงวัตถุขนาดเล็กอย่างก้อนหินและหญ้า อยู่ในขั้นทดลอง อาจมีบางกรณีที่โมเดลมองไม่เห็นแต่ยังสร้างเงา ยังไม่พบปัญหาในการทดสอบปัจจุบัน';
+      'บังคับให้โมเดลทั้งหมดสร้างเงา รวมถึงวัตถุขนาดเล็กอย่างก้อนหิน หญ้าต้องเปิด “เงาหญ้า” อยู่ในขั้นทดลอง อาจมีบางกรณีที่โมเดลมองไม่เห็นแต่ยังสร้างเงา ยังไม่พบปัญหาในการทดสอบปัจจุบัน';
+
+  @override
+  String get labelShadowForceAllFilters => 'เมชที่ยกเว้น';
+
+  @override
+  String get tooltipShadowForceAllFilters =>
+      'โมเดลที่มีเมชชื่อตรงกับรายการนี้จะคงการตั้งค่าเงาเดิมไว้เมื่อเปิด “บังคับใช้โมเดลเงาทั้งหมด” ชื่อต้องตรงกันทุกตัวอักษร ไม่สนตัวพิมพ์เล็กหรือใหญ่ มีผลทันที';
+
+  @override
+  String get shadowForceAllFiltersAdd => 'เพิ่มเมช';
+
+  @override
+  String get shadowForceAllFiltersEmpty =>
+      'ไม่มีข้อยกเว้น - “บังคับใช้โมเดลเงาทั้งหมด” มีผลกับทุกโมเดล';
+
+  @override
+  String get labelGrassShadows => 'เงาหญ้า';
+
+  @override
+  String get tooltipGrassShadows =>
+      'หญ้าและวัตถุอื่นที่ไม่มีเงาตามการตั้งค่าวัตถุจะสร้างเงาด้วย มีผลทันที';
 
   @override
   String get labelDisableVignette => 'ปิด Vignette';
@@ -3791,14 +3816,14 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get tooltipDisable3dmigotoLoading =>
-      'ข้ามการโหลดรันไทม์ 3DMigoto จาก thirdparty/3dmigoto/ ปิดเพื่อหยุดโหลดม็อด shader';
+      'ข้ามการโหลดรันไทม์ 3DMigoto จาก nams/thirdparty/3dmigoto/ ปิดเพื่อหยุดโหลดม็อด shader';
 
   @override
   String get labelDisableGraphicModsLoading => 'ปิดการโหลดพร็อกซีกราฟิก';
 
   @override
   String get tooltipDisableGraphicModsLoading =>
-      'ข้ามการโหลด DLL พร็อกซี Direct3D จาก thirdparty/graphic/ คือ DLL ที่ตั้งชื่อเหมือน DLL ของระบบ (d3d11.dll, dxgi.dll, ...) ซึ่งคำสั่งกราฟิกของเกมต้องผ่าน เปิดตัวเลือกนี้เพื่อเล่นโดยไม่ใช้ DLL เหล่านั้นโดยไม่ต้องลบไฟล์ มีผลเมื่อเริ่มเกมครั้งถัดไป';
+      'ข้ามการโหลด DLL พร็อกซี Direct3D จาก nams/thirdparty/graphic/ คือ DLL ที่ตั้งชื่อเหมือน DLL ของระบบ (d3d11.dll, dxgi.dll, ...) ซึ่งคำสั่งกราฟิกของเกมต้องผ่าน เปิดตัวเลือกนี้เพื่อเล่นโดยไม่ใช้ DLL เหล่านั้นโดยไม่ต้องลบไฟล์ มีผลเมื่อเริ่มเกมครั้งถัดไป';
 
   @override
   String get labelDisableGameModsLoading => 'ปิดการโหลดม็อดเกม';
@@ -3864,6 +3889,13 @@ class AppLocalizationsTh extends AppLocalizations {
       'ข้ามหน้าต่าง splash ตอนเริ่มเกมที่แสดงระหว่างโหลด เกมต้นฉบับเปิดหน้าต่างก่อนพร้อมใช้งาน ทำให้เกิดอาการปรับขนาดและกระพริบ NAMS ทำ splash ให้สมบูรณ์เพื่อให้หน้าต่างแสดงเมื่อพร้อมเท่านั้น การเปิดตัวเลือกนี้จะนำอาการเริ่มเกมแบบวานิลลากลับมา';
 
   @override
+  String get labelIngameSettings => 'การตั้งค่า NAMS ในเกม';
+
+  @override
+  String get tooltipIngameSettings =>
+      'เพิ่มแท็บ NAMS และรายการตั้งค่าของ NAMS ลงในเมนูตัวเลือกในเกม เปิดใช้งานโดยค่าเริ่มต้น ปิดเพื่อใช้เมนูตัวเลือกแบบวานิลลา ต้องรีสตาร์ต';
+
+  @override
   String get labelDisableDebugHotkeys => 'ไม่สนใจปุ่มลัดของนักพัฒนา';
 
   @override
@@ -3897,12 +3929,6 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get comparisonDefaultEnabled => 'ค่าเริ่มต้น (เปิดใช้งาน)';
-
-  @override
-  String get comparisonAo05x => 'AO 0.5x';
-
-  @override
-  String get comparisonAo20x => 'AO 2.0x';
 
   @override
   String get comparisonVignetteOn => 'เปิด VIGNETTE';
@@ -4525,15 +4551,65 @@ class AppLocalizationsTh extends AppLocalizations {
   }
 
   @override
-  String get keybindMouseNotSupported =>
-      'ปุ่มเมาส์ใช้กับการกระทำนี้ไม่ได้ ต้องใช้ปุ่มคีย์บอร์ด';
+  String get keybindMouseNotSupported => 'ใช้ได้เฉพาะปุ่มคีย์บอร์ด';
+
+  @override
+  String get keybindPickController => 'เลือกปุ่มคอนโทรลเลอร์';
+
+  @override
+  String get controllerA => 'A / กากบาท';
+
+  @override
+  String get controllerB => 'B / วงกลม';
+
+  @override
+  String get controllerX => 'X / สี่เหลี่ยม';
+
+  @override
+  String get controllerY => 'Y / สามเหลี่ยม';
+
+  @override
+  String get controllerLB => 'LB / L1';
+
+  @override
+  String get controllerRB => 'RB / R1';
+
+  @override
+  String get controllerLT => 'LT / L2';
+
+  @override
+  String get controllerRT => 'RT / R2';
+
+  @override
+  String get controllerLThumb => 'กดสติ๊กซ้าย / L3';
+
+  @override
+  String get controllerRThumb => 'กดสติ๊กขวา / R3';
+
+  @override
+  String get controllerDUp => 'D-pad ขึ้น';
+
+  @override
+  String get controllerDDown => 'D-pad ลง';
+
+  @override
+  String get controllerDLeft => 'D-pad ซ้าย';
+
+  @override
+  String get controllerDRight => 'D-pad ขวา';
+
+  @override
+  String get controllerBack => 'Back / Share';
+
+  @override
+  String get controllerStart => 'Start / Options';
 
   @override
   String get naiomResetConfirmTitle => 'รีเซ็ตการตั้งค่า NAIOM หรือไม่?';
 
   @override
   String get naiomResetConfirmBody =>
-      'การดำเนินการนี้จะรีเซ็ตการตั้งค่ากล้อง การเล็ง เคอร์เซอร์ และปุ่มทั้งหมดในแท็บนี้กลับเป็นค่าเริ่มต้น ระบบจะยังไม่เขียนไฟล์จนกว่าคุณกด Save ดังนั้นยังสามารถละทิ้งภายหลังได้ ต้องการดำเนินการต่อหรือไม่?';
+      'การดำเนินการนี้จะรีเซ็ตการตั้งค่ากล้อง การเล็ง เคอร์เซอร์ และปุ่มทั้งหมดในแท็บนี้กลับเป็นค่าเริ่มต้น ต้องการดำเนินการต่อหรือไม่?';
 
   @override
   String get naiomControllerNote =>
@@ -4561,9 +4637,6 @@ class AppLocalizationsTh extends AppLocalizations {
   @override
   String get cheatTableConvertError =>
       'ไม่สามารถแก้ไขตารางนี้ได้ โปรดตรวจสอบว่าเป็นไฟล์ .CT ที่ถูกต้อง';
-
-  @override
-  String get naiomBetaBadge => 'เบต้า';
 
   @override
   String get naiomRestartBadge => 'รีสตาร์ต';
@@ -4600,7 +4673,7 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get naiomBindingsIntro =>
-      'ปุ่มเพิ่มเติมจากการควบคุมเดิมของเกม ปุ่มเดิมยังทำงาน การเปลี่ยนแปลงมีผลหลังบันทึก ไม่ต้องรีสตาร์ต';
+      'ปุ่มเพิ่มเติมจากการควบคุมเดิมของเกม ปุ่มเดิมยังทำงาน การเปลี่ยนแปลงมีผลทันที ไม่ต้องรีสตาร์ต';
 
   @override
   String get naiomCrosshairPreviewLabel => 'Crosshair Mode ในเกม';

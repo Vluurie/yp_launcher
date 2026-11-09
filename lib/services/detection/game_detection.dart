@@ -49,7 +49,17 @@ class GameDetection {
   static const String steam2026Sha1 =
       '537be3ea1083114cc1e444b85ac270f2043ac4d6';
 
-  static const Set<int> supportedExeSizes = {windows10Size, steam2026Size};
+  /// Steam build 26534214 (2026-11-09): the 2026-11 exe with Authenticode
+  /// same image.
+  static const int steam2026SignedSize = 17613568;
+  static const String steam2026SignedSha1 =
+      'f2fbdbbdddb939a992185dfa9ff404c8e25dd605';
+
+  static const Set<int> supportedExeSizes = {
+    windows10Size,
+    steam2026Size,
+    steam2026SignedSize,
+  };
 
   static const int steam2021TimeDateStamp = 0x60d3a8d2;
   static const int steam2026TimeDateStamp = 0x6ac89519;
@@ -70,6 +80,13 @@ class GameDetection {
       label: 'Steam 2026-11',
       exeSize: steam2026Size,
       exeSha1: steam2026Sha1,
+      timeDateStamp: steam2026TimeDateStamp,
+    ),
+    GameBuildInfo(
+      build: GameBuild.steam2026_11,
+      label: 'Steam 2026-11 (signed)',
+      exeSize: steam2026SignedSize,
+      exeSha1: steam2026SignedSha1,
       timeDateStamp: steam2026TimeDateStamp,
     ),
   ];

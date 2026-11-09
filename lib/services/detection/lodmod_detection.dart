@@ -8,8 +8,6 @@ class LodModDetection {
 
   static final _iniToTomlMap = <String, String>{
     'LODMultiplier': LodModFields.lodMultiplier.key,
-    'AOMultiplierWidth': LodModFields.aoMultiplierWidth.key,
-    'AOMultiplierHeight': LodModFields.aoMultiplierHeight.key,
     'ShadowResolution': LodModFields.shadowResolution.key,
     'ShadowDistanceMultiplier': LodModFields.shadowDistanceMultiplier.key,
     'ShadowDistanceMinimum': LodModFields.shadowDistanceMinimum.key,
