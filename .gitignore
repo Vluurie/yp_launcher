@@ -57,3 +57,5 @@ app.*.map.json
 test/fixtures/cpk_mod_709.zip
 
 test/tmp_cmp_test.dart
+
+/yp_launcher_gpui/

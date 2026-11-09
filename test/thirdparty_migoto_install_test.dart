@@ -120,13 +120,16 @@ void main() {
           reason: 'the loader dll is renamed so NAMS owns d3d11.dll');
       expect(Directory(p.join(dest, 'ShaderFixes')).existsSync(), isTrue);
 
-      expect(p.isWithin(launcherDir.path, dest), isTrue,
-          reason: 'thirdparty install tree lives under the launcher dir');
       expect(
-          Directory(p.join(game.path, AppStrings.thirdPartyDirName))
-              .existsSync(),
-          isFalse,
-          reason: 'nothing written into the NieRAutomata game dir');
+          p.isWithin(
+              p.join(game.path, 'nams', AppStrings.thirdPartyDirName,
+                  AppStrings.migotoDirName),
+              dest),
+          isTrue,
+          reason: 'the 3DMigoto mod folder lives in <game>/nams/thirdparty, '
+              'which a launcher update does not replace');
+      expect(p.isWithin(launcherDir.path, dest), isFalse,
+          reason: 'nothing installed into the launcher dir');
 
       final d3dx = File(p.join(dest, 'd3dx.ini')).readAsStringSync();
       expect(_loaderTarget(d3dx), AppStrings.namsExeName,

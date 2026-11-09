@@ -4,7 +4,6 @@ import 'package:path/path.dart' as path;
 import 'package:yp_launcher/constants/app_strings.dart';
 import 'package:yp_launcher/services/detection/graphics_dll_id.dart';
 import 'package:yp_launcher/services/file_ops.dart';
-import 'package:yp_launcher/services/launcher_setup_service.dart';
 
 const reshadeIniName = 'ReShade.ini';
 const migotoIniName = 'd3dx.ini';
@@ -15,25 +14,136 @@ class DllHit {
   const DllHit(this.file, this.isAddon);
 }
 
+/// Third-party mods live in `<game>\nams\thirdparty\<kind>\<mod>\`, one folder
+/// per mod. NAMS loads the mod folders of a kind sorted by name and reads the
+/// `.dll` files directly inside each one.
 class ThirdPartyPaths {
   ThirdPartyPaths._();
 
-  static String root() => path.join(
-    LauncherSetupService.launcherDirectory,
-    AppStrings.thirdPartyDirName,
+  static String root(String gameDir) =>
+      path.join(gameDir, 'nams', AppStrings.thirdPartyDirName);
+
+  /// `thirdparty\` next to NAMS.exe, which NAMS still loads as a fallback.
+  static String legacyRoot(String launcherDir) =>
+      path.join(launcherDir, AppStrings.thirdPartyDirName);
+
+  static String reshade(String gameDir) =>
+      path.join(root(gameDir), AppStrings.reshadeDirName);
+
+  static String migoto(String gameDir) =>
+      path.join(root(gameDir), AppStrings.migotoDirName);
+
+  static String gameMods(String gameDir) =>
+      path.join(root(gameDir), AppStrings.gameModsDirName);
+
+  static String graphicMods(String gameDir) =>
+      path.join(root(gameDir), AppStrings.graphicModsDirName);
+
+  /// Outside the `graphic` folder, so NAMS never sees a turned-off mod.
+  static String graphicModsDisabled(String gameDir) => path.join(
+    root(gameDir),
+    AppStrings.thirdPartyDisabledDirName,
+    AppStrings.graphicModsDirName,
   );
 
-  static String reshade() => path.join(root(), AppStrings.reshadeDirName);
+  static List<Directory> modDirs(String kindDir) {
+    final dir = Directory(kindDir);
+    if (!dir.existsSync()) return const [];
+    final List<Directory> dirs;
+    try {
+      dirs = dir.listSync(followLinks: false).whereType<Directory>().toList();
+    } catch (_) {
+      return const [];
+    }
+    dirs.sort(
+      (a, b) => path
+          .basename(a.path)
+          .toLowerCase()
+          .compareTo(path.basename(b.path).toLowerCase()),
+    );
+    return dirs;
+  }
 
-  static String migoto() => path.join(root(), AppStrings.migotoDirName);
+  static List<File> dllsIn(String dir) {
+    final d = Directory(dir);
+    if (!d.existsSync()) return const [];
+    final List<File> dlls;
+    try {
+      dlls = d
+          .listSync(followLinks: false)
+          .whereType<File>()
+          .where((f) => f.path.toLowerCase().endsWith('.dll'))
+          .toList();
+    } catch (_) {
+      return const [];
+    }
+    dlls.sort(
+      (a, b) => path
+          .basename(a.path)
+          .toLowerCase()
+          .compareTo(path.basename(b.path).toLowerCase()),
+    );
+    return dlls;
+  }
 
-  static String gameMods() => path.join(root(), AppStrings.gameModsDirName);
+  /// The first mod folder of [kindDir] that holds a DLL named like one of
+  /// [dllNames].
+  static String? modDirWithDll(String kindDir, Iterable<String> dllNames) {
+    final wanted = dllNames.map((n) => n.toLowerCase()).toSet();
+    for (final dir in modDirs(kindDir)) {
+      if (dllsIn(
+        dir.path,
+      ).any((f) => wanted.contains(path.basename(f.path).toLowerCase()))) {
+        return dir.path;
+      }
+    }
+    return null;
+  }
 
-  static String graphicMods() =>
-      path.join(root(), AppStrings.graphicModsDirName);
+  /// The first DLL named [fileName] in a mod folder of [kindDir].
+  static String? findDll(String kindDir, String fileName) {
+    final wanted = fileName.toLowerCase();
+    for (final dir in modDirs(kindDir)) {
+      for (final dll in dllsIn(dir.path)) {
+        if (path.basename(dll.path).toLowerCase() == wanted) return dll.path;
+      }
+    }
+    return null;
+  }
 
-  static String graphicModsDisabled() =>
-      path.join(graphicMods(), AppStrings.graphicModsDisabledDirName);
+  /// [raw] as a folder name Windows accepts, or [fallback] when nothing is left.
+  static String modDirName(String raw, {required String fallback}) {
+    final name = raw
+        .replaceAll(RegExp(r'[<>:"/\\|?*\x00-\x1F]'), ' ')
+        .replaceAll(RegExp(r'\s+'), ' ')
+        .replaceAll(RegExp(r'[. ]+$'), '')
+        .trim();
+    return name.isEmpty ? fallback : name;
+  }
+
+  /// [name], or `name (2)`, `name (3)`, ... when [parent] already has an entry
+  /// of that name.
+  static String uniqueDirName(String parent, String name) {
+    bool taken(String n) =>
+        FileSystemEntity.typeSync(path.join(parent, n), followLinks: false) !=
+        FileSystemEntityType.notFound;
+    if (!taken(name)) return name;
+    var i = 2;
+    while (taken('$name ($i)')) {
+      i++;
+    }
+    return '$name ($i)';
+  }
+
+  /// Whether [name] is a single folder name, so joining it to a kind folder
+  /// cannot point anywhere else.
+  static bool isPlainName(String name) =>
+      name.isNotEmpty &&
+      name != '.' &&
+      name != '..' &&
+      path.basename(name) == name &&
+      !name.contains('/') &&
+      !name.contains('\\');
 }
 
 const directXProxyNames = <String>{

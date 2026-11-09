@@ -4,6 +4,7 @@ import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:yp_launcher/l10n/app_localizations.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
+import 'package:yp_launcher/widgets/hover_button.dart';
 
 class TutorialStep {
   final GlobalKey? anchor;
@@ -443,16 +444,14 @@ class _TutorialCard extends StatelessWidget {
                 ),
               ),
               const Spacer(),
-              InkWell(
+              HoverIconButton(
                 onTap: onSkip,
-                borderRadius: BorderRadius.circular(4),
-                child: Padding(
-                  padding: const EdgeInsets.all(4),
-                  child: Icon(
-                    Icons.close,
-                    size: AppSizes.iconSM(context),
-                    color: AppColors.textMuted,
-                  ),
+                bordered: false,
+                padding: const EdgeInsets.all(4),
+                icon: Icon(
+                  Icons.close,
+                  size: AppSizes.iconSM(context),
+                  color: AppColors.textMuted,
                 ),
               ),
             ],

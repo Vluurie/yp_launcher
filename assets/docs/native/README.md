@@ -50,7 +50,7 @@ For normal authoring, use the bundle-style files such as
 - [How to configure NAMS (`nams.toml`)](13_nams_toml.md)
 - [How to replace textures (packs, mesh picker, hot reload)](33_texture_injection.md)
 - [How to turn a mod off without deleting it](14_disabled_mods.md)
-- [How to use ReShade, 3DMigoto and other tools with NAMS](35_third_party.md)
+- [ReShade, 3DMigoto and DLL mods](35_third_party.md)
 - [Load order, default outfits, and reload behavior](20_runtime_configuration.md)
 - [The NAMS save file](43_nams_save_file.md)
 

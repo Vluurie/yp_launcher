@@ -280,25 +280,14 @@ class ConfigPanelState extends ConsumerState<ConfigPanel>
           ConfigSection(
             title: l10n.sectionAmbientOcclusion,
             children: [
-              ConfigFieldFloat(
-                label: LodModFields.aoMultiplierWidth.label(l10n),
-                value:
-                    LodModFields.aoMultiplierWidth.valueIn(lod),
+              ConfigFieldBool(
+                label: LodModFields.aoFullResolution.label(l10n),
+                value: LodModFields.aoFullResolution.valueIn(lod),
                 onChanged: (v) => notifier.updateLodmod(
-                  LodModFields.aoMultiplierWidth.key,
+                  LodModFields.aoFullResolution.key,
                   v,
                 ),
-                tooltip: LodModFields.aoMultiplierWidth.tooltip!(l10n),
-              ),
-              ConfigFieldFloat(
-                label: LodModFields.aoMultiplierHeight.label(l10n),
-                value:
-                    LodModFields.aoMultiplierHeight.valueIn(lod),
-                onChanged: (v) => notifier.updateLodmod(
-                  LodModFields.aoMultiplierHeight.key,
-                  v,
-                ),
-                tooltip: LodModFields.aoMultiplierHeight.tooltip!(l10n),
+                tooltip: LodModFields.aoFullResolution.tooltip!(l10n),
               ),
             ],
           ),

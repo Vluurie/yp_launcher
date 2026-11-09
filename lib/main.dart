@@ -19,6 +19,7 @@ import 'package:yp_launcher/screens/launcher_screen.dart';
 import 'package:yp_launcher/services/launcher_setup_service.dart';
 import 'package:yp_launcher/services/platform/platform_adapter.dart';
 import 'package:yp_launcher/services/platform_gate.dart';
+import 'package:yp_launcher/services/prefs_recovery_service.dart';
 
 void main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,6 +36,8 @@ void main(List<String> args) async {
   } else if (args.contains('--simulate-windows')) {
     PlatformGate.overrideAs = SimulatedOs.windows;
   }
+
+  await PrefsRecoveryService.ensureReadable();
 
   if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
     await windowManager.ensureInitialized();
@@ -68,7 +71,7 @@ void main(List<String> args) async {
 
   await _loadAppTheme();
 
-  final themeNotifier = await AutomatoThemeNotifier.loadFromPreferences();
+  final themeNotifier = await _loadThemeNotifier();
 
   runApp(
     ProviderScope(
@@ -88,6 +91,19 @@ Future<void> _loadAppTheme() async {
       saved == AppThemeId.nier.name ? AppThemeId.nier : AppThemeId.dark,
     );
   } catch (_) {}
+}
+
+Future<AutomatoThemeNotifier> _loadThemeNotifier() async {
+  try {
+    return await AutomatoThemeNotifier.loadFromPreferences();
+  } catch (_) {
+    return AutomatoThemeNotifier(
+      ThemeState(
+        theme: AutomatoThemeNotifier.defaultTheme,
+        colors: AutomatoThemeNotifier.defaultColors,
+      ),
+    );
+  }
 }
 
 class YoRHaProtocolLauncher extends ConsumerWidget {

@@ -89,7 +89,7 @@ class GameIdentity {
     ExeBuildStatus.missing => 'missing',
     ExeBuildStatus.legacyWindows7 => 'Windows 7/8 legacy build',
     ExeBuildStatus.modified =>
-      'modified copy of ${stampBuildLabel ?? '?'}'
+      'changed or modified copy of ${stampBuildLabel ?? '?'}'
           '${exeVariant == ExeVariant.wolfLimitBreak.name ? ' (Wolf Limit Break)' : ''}',
     ExeBuildStatus.newer => 'newer than every build NAMS knows',
     ExeBuildStatus.unknown => 'unknown build',
@@ -1049,9 +1049,12 @@ class DiagnosticsService {
         case ExeBuildStatus.modified:
           add(
             FindingLevel.error,
-            'NieRAutomata.exe is a modified copy of ${gi.stampBuildLabel}'
+            'NieRAutomata.exe carries the build stamp of ${gi.stampBuildLabel} but a '
+            'different SHA-1'
             '${gi.exeVariant == ExeVariant.wolfLimitBreak.name ? ' (Wolf Limit Break)' : ''}. '
-            'NAMS refuses it: verify game files in Steam.',
+            'Either a NieR:Automata update changed the exe and this NAMS does not '
+            'support it yet (update the launcher), or it is a modified copy (verify '
+            'game files in Steam).',
           );
         case ExeBuildStatus.newer:
           add(
@@ -1247,7 +1250,7 @@ class DiagnosticsService {
         FindingLevel.warning,
         '${others.join(', ')} in the game folder ${others.length == 1 ? 'is' : 'are'} '
         'never loaded: NAMS runs the game from its own folder. Install DLL mods '
-        'through Third Party, which puts them in thirdparty/graphic or thirdparty/game.',
+        'through Third Party, which puts them in nams/thirdparty/graphic or nams/thirdparty/game.',
       );
     }
 
@@ -1328,7 +1331,10 @@ class DiagnosticsService {
     return hit ? 'disabled_mods.toml' : null;
   }
 
-  static const _steamBuildIds = <String, String>{'25901062': 'Steam 2026-11'};
+  static const _steamBuildIds = <String, String>{
+    '25901062': 'Steam 2026-11',
+    '26534214': 'Steam 2026-11 (signed)',
+  };
 
   static bool _deltaIs(
     DiagnosticsReport r,
@@ -1834,13 +1840,13 @@ class DiagnosticsService {
     section('Third-party game & graphic DLLs');
     final gm = r.thirdParty.gameMods;
     b.writeln(
-      'thirdparty/game: ${gm.installed ? '' : '(none)'}'
+      'nams/thirdparty/game: ${gm.installed ? '' : '(none)'}'
       '${gm.installed ? 'loading ${gm.enabled ? 'enabled' : 'DISABLED'}' : ''}',
     );
     for (final m in gm.gameModsInfo?.mods ?? const <GameModEntry>[]) {
       final s = m.settings;
       b.writeln(
-        '  - ${m.fileName}  ${m.sizeLabel ?? ''}${m.disabled ? '  [disabled]' : ''}'
+        '  - ${m.key}  ${m.sizeLabel ?? ''}${m.disabled ? '  [disabled]' : ''}'
         '${s == null ? '' : '  module=${s.fakeModuleHandle ? 'game.bin' : 'NAMS.exe'}'
                   '  exePath=${s.fakeExePath ? 'NieRAutomata.exe' : 'NAMS.exe'}'
                   '  sizeOfImage=${s.sizeOfImage}${s.reportPatches ? '  reportPatches' : ''}${s.waitForPatchPhase ? '  waitForPatchPhase=${s.patchPhaseTimeoutMs}ms' : ''}'}',
@@ -1848,12 +1854,12 @@ class DiagnosticsService {
     }
     final gx = r.thirdParty.graphicMods;
     b.writeln(
-      'thirdparty/graphic: ${gx.installed ? '' : '(none)'}'
+      'nams/thirdparty/graphic: ${gx.installed ? '' : '(none)'}'
       '${gx.installed ? 'loading ${gx.enabled ? 'enabled' : 'DISABLED'}' : ''}',
     );
     for (final m in gx.graphicModsInfo?.mods ?? const <GameModEntry>[]) {
       b.writeln(
-        '  - ${m.fileName}  ${m.sizeLabel ?? ''}${m.disabled ? '  [disabled]' : ''}',
+        '  - ${m.key}  ${m.sizeLabel ?? ''}${m.disabled ? '  [disabled]' : ''}',
       );
     }
 

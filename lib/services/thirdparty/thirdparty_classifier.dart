@@ -75,24 +75,29 @@ class ThirdPartyClassifier {
     final reshadeDll = findGraphicsDll(root, GraphicsDll.reshade);
     final shaders = hasReShadeShaders(root);
     final presets = findPresets(root);
+    final addons = hasAddonFiles(root);
 
     final hasDxgiIni = hasFileMatching(
       root,
       (rel) => baseName(rel) == 'dxgi.ini',
     );
-    if (hasDxgiIni && reshadeDll == null && presets.isEmpty && !shaders) {
+    if (hasDxgiIni &&
+        reshadeDll == null &&
+        presets.isEmpty &&
+        !shaders &&
+        !addons) {
       return ThirdPartyClassification(
         kind: ThirdPartyKind.brokenLegacy,
         sourceRoot: root,
       );
     }
 
-    if (reshadeDll != null || shaders) {
+    if (reshadeDll != null || shaders || addons) {
       return ThirdPartyClassification(
         kind: ThirdPartyKind.reshadeWholeInstall,
         sourceRoot: root,
         hasReShadeDll: reshadeDll != null,
-        isAddonBuild: hasAddonFiles(root) || (reshadeDll?.isAddon ?? false),
+        isAddonBuild: addons || (reshadeDll?.isAddon ?? false),
         hasShaders: shaders,
         presetCount: presets.length,
       );

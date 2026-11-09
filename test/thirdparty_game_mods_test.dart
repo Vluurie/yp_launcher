@@ -150,7 +150,7 @@ void main() {
   });
 
   group('install', () {
-    test('the DLL lands in thirdparty/game and the flag is switched on',
+    test('the DLL lands in its own mod folder and the flag is switched on',
         () async {
       final game = _freshGame();
       final drop = Directory.systemTemp.createTempSync('yp_gm_i_');
@@ -159,17 +159,71 @@ void main() {
         drop.deleteSync(recursive: true);
       });
       _writePlainDll(p.join(drop.path, 'celestial.dll'));
+      File(p.join(drop.path, 'celestial.ini')).writeAsStringSync('x=1');
 
       final c = ThirdPartyClassifier.classify(drop.path);
       final result = await _runtime.install(game.path, c);
 
       expect(result.ok, isTrue);
-      expect(
-        File(p.join(ThirdPartyPaths.gameMods(), 'celestial.dll')).existsSync(),
-        isTrue,
-      );
+      final modDir = p.join(ThirdPartyPaths.gameMods(game.path), 'celestial');
+      expect(File(p.join(modDir, 'celestial.dll')).existsSync(), isTrue);
+      expect(File(p.join(modDir, 'celestial.ini')).existsSync(), isTrue,
+          reason: 'a mod folder holds every file of the mod');
       expect(_readNams(game.path)[NamsFields.disableGameModsLoading.key],
           isFalse);
+    });
+
+    test('the mod folder is named after the dropped file', () async {
+      final game = _freshGame();
+      final drop = Directory.systemTemp.createTempSync('yp_gm_n_');
+      addTearDown(() {
+        game.deleteSync(recursive: true);
+        drop.deleteSync(recursive: true);
+      });
+      _writePlainDll(p.join(drop.path, 'celestial.dll'));
+
+      final c = ThirdPartyClassifier.classify(drop.path)
+          .withSourceName('Celestial Timer');
+      await _runtime.install(game.path, c);
+
+      expect(
+        File(p.join(ThirdPartyPaths.gameMods(game.path), 'Celestial Timer',
+                'celestial.dll'))
+            .existsSync(),
+        isTrue,
+      );
+      final mod = (await _runtime.status(game.path)).gameModsInfo!.mods.single;
+      expect(mod.modDir, 'Celestial Timer');
+      expect(mod.fileName, 'celestial.dll');
+    });
+
+    test('an update goes into the folder that already holds the DLL',
+        () async {
+      final game = _freshGame();
+      final drop = Directory.systemTemp.createTempSync('yp_gm_up_');
+      addTearDown(() {
+        game.deleteSync(recursive: true);
+        drop.deleteSync(recursive: true);
+      });
+      _writePlainDll(p.join(drop.path, 'celestial.dll'), body: 'v1');
+      await _runtime.install(game.path,
+          ThirdPartyClassifier.classify(drop.path).withSourceName('first'));
+
+      _writePlainDll(p.join(drop.path, 'celestial.dll'), body: 'v2 is longer');
+      await _runtime.install(game.path,
+          ThirdPartyClassifier.classify(drop.path).withSourceName('second'));
+
+      expect(
+        ThirdPartyPaths.modDirs(ThirdPartyPaths.gameMods(game.path))
+            .map((d) => p.basename(d.path)),
+        ['first'],
+      );
+      expect(
+        String.fromCharCodes(File(p.join(ThirdPartyPaths.gameMods(game.path),
+                'first', 'celestial.dll'))
+            .readAsBytesSync()),
+        contains('v2 is longer'),
+      );
     });
 
     test('installed DLLs are reported by status', () async {
@@ -262,7 +316,9 @@ void main() {
       expect(status.gameModsInfo!.mods.single.disabled, isTrue);
       expect(status.gameModsInfo!.enabledCount, 0);
       expect(
-        File(p.join(ThirdPartyPaths.gameMods(), 'celestial.dll')).existsSync(),
+        File(p.join(ThirdPartyPaths.gameMods(game.path), 'celestial',
+                'celestial.dll'))
+            .existsSync(),
         isTrue,
         reason: 'disabling must not delete the DLL',
       );
@@ -437,22 +493,43 @@ size_of_image = 0
   });
 
   group('removal', () {
-    test('removing one DLL leaves the others alone', () async {
+    test('removing one mod folder leaves the others alone', () async {
       final game = _freshGame();
-      final drop = Directory.systemTemp.createTempSync('yp_gm_r_');
+      final dropA = Directory.systemTemp.createTempSync('yp_gm_r_');
+      final dropB = Directory.systemTemp.createTempSync('yp_gm_r_');
+      addTearDown(() {
+        game.deleteSync(recursive: true);
+        dropA.deleteSync(recursive: true);
+        dropB.deleteSync(recursive: true);
+      });
+      _writePlainDll(p.join(dropA.path, 'celestial.dll'));
+      _writePlainDll(p.join(dropB.path, 'other.dll'));
+      await _runtime.install(
+          game.path, ThirdPartyClassifier.classify(dropA.path));
+      await _runtime.install(
+          game.path, ThirdPartyClassifier.classify(dropB.path));
+
+      await _runtime.removeMod(game.path, 'celestial');
+
+      final status = await _runtime.status(game.path);
+      expect(status.gameModsInfo!.mods.map((m) => m.fileName), ['other.dll']);
+    });
+
+    test('a name that is not a single folder removes nothing', () async {
+      final game = _freshGame();
+      final drop = Directory.systemTemp.createTempSync('yp_gm_rp_');
       addTearDown(() {
         game.deleteSync(recursive: true);
         drop.deleteSync(recursive: true);
       });
       _writePlainDll(p.join(drop.path, 'celestial.dll'));
-      _writePlainDll(p.join(drop.path, 'other.dll'));
       await _runtime.install(
           game.path, ThirdPartyClassifier.classify(drop.path));
 
-      await _runtime.removeMod(game.path, 'celestial.dll');
+      await _runtime.removeMod(game.path, '');
+      await _runtime.removeMod(game.path, '..');
 
-      final status = await _runtime.status(game.path);
-      expect(status.gameModsInfo!.mods.map((m) => m.fileName), ['other.dll']);
+      expect((await _runtime.status(game.path)).installed, isTrue);
     });
 
     test('removing the runtime clears the DLLs and sets the disable flag',
@@ -509,49 +586,61 @@ size_of_image = 0
       return game;
     }
 
-    test('install puts the proxy and its files in thirdparty/graphic',
-        () async {
+    test('install puts the proxy and its files in one mod folder', () async {
       final game = await installedProxy();
       addTearDown(() => game.deleteSync(recursive: true));
 
-      final dir = ThirdPartyPaths.graphicMods();
+      final dir = p.join(ThirdPartyPaths.graphicMods(game.path), 'd3d11');
       expect(File(p.join(dir, 'd3d11.dll')).existsSync(), isTrue);
       expect(File(p.join(dir, 'd3d11.ini')).existsSync(), isTrue);
-      expect(File(p.join(ThirdPartyPaths.gameMods(), 'd3d11.dll')).existsSync(),
-          isFalse);
+      expect(
+        ThirdPartyPaths.findDll(ThirdPartyPaths.gameMods(game.path), 'd3d11.dll'),
+        isNull,
+      );
       expect(_readNams(game.path)[NamsFields.disableGraphicModsLoading.key],
           isFalse);
       final status = await graphic.status(game.path);
       expect(status.installed, isTrue);
       expect(status.graphicModsInfo!.mods.single.fileName, 'd3d11.dll');
+      expect(status.graphicModsInfo!.mods.single.modDir, 'd3d11');
     });
 
-    test('disabling parks the DLL where NAMS does not look', () async {
+    test('disabling moves the mod folder where NAMS does not look', () async {
       final game = await installedProxy();
       addTearDown(() => game.deleteSync(recursive: true));
 
-      await graphic.setModDisabled(game.path, 'd3d11.dll', true);
+      await graphic.setModDisabled(game.path, 'd3d11', true);
 
       expect(
-        File(p.join(ThirdPartyPaths.graphicMods(), 'd3d11.dll')).existsSync(),
+        Directory(p.join(ThirdPartyPaths.graphicMods(game.path), 'd3d11'))
+            .existsSync(),
         isFalse,
-        reason: 'NAMS loads every *.dll directly in thirdparty/graphic',
+        reason: 'NAMS loads every mod folder in nams/thirdparty/graphic',
+      );
+      expect(
+        File(p.join(ThirdPartyPaths.graphicModsDisabled(game.path), 'd3d11',
+                'd3d11.ini'))
+            .existsSync(),
+        isTrue,
+        reason: 'the whole mod folder moves, not only the DLL',
       );
       final mod =
           (await graphic.status(game.path)).graphicModsInfo!.mods.single;
       expect(mod.disabled, isTrue);
 
-      await graphic.setModDisabled(game.path, 'd3d11.dll', false);
+      await graphic.setModDisabled(game.path, 'd3d11', false);
       expect(
-        File(p.join(ThirdPartyPaths.graphicMods(), 'd3d11.dll')).existsSync(),
+        File(p.join(ThirdPartyPaths.graphicMods(game.path), 'd3d11',
+                'd3d11.dll'))
+            .existsSync(),
         isTrue,
       );
     });
 
-    test('remove clears enabled and parked DLLs and sets the flag', () async {
+    test('remove clears enabled and parked mods and sets the flag', () async {
       final game = await installedProxy();
       addTearDown(() => game.deleteSync(recursive: true));
-      await graphic.setModDisabled(game.path, 'd3d11.dll', true);
+      await graphic.setModDisabled(game.path, 'd3d11', true);
 
       await graphic.remove(game.path);
 
@@ -560,23 +649,25 @@ size_of_image = 0
           isTrue);
     });
 
-    test('the graphic dir matches what NAMS scans', () {
-      expect(p.basename(ThirdPartyPaths.graphicMods()), 'graphic');
+    test('the graphic dirs match what NAMS scans', () {
+      const game = 'C:/Games/NieRAutomata';
+      final dir = ThirdPartyPaths.graphicMods(game);
+      expect(p.basename(dir), 'graphic');
+      expect(p.basename(p.dirname(dir)), AppStrings.thirdPartyDirName);
+      expect(p.basename(p.dirname(p.dirname(dir))), 'nams');
       expect(
-        p.basename(p.dirname(ThirdPartyPaths.graphicMods())),
-        AppStrings.thirdPartyDirName,
+        p.isWithin(dir, ThirdPartyPaths.graphicModsDisabled(game)),
+        isFalse,
+        reason: 'a turned-off mod must stay out of the folder NAMS loads',
       );
     });
   });
 
   test('the install dir matches what NAMS scans', () {
-    expect(
-      p.basename(ThirdPartyPaths.gameMods()),
-      AppStrings.gameModsDirName,
-    );
-    expect(
-      p.basename(p.dirname(ThirdPartyPaths.gameMods())),
-      AppStrings.thirdPartyDirName,
-    );
+    const game = 'C:/Games/NieRAutomata';
+    final dir = ThirdPartyPaths.gameMods(game);
+    expect(p.basename(dir), AppStrings.gameModsDirName);
+    expect(p.basename(p.dirname(dir)), AppStrings.thirdPartyDirName);
+    expect(p.dirname(p.dirname(dir)), p.join(game, 'nams'));
   });
 }

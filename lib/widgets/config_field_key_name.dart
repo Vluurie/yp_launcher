@@ -5,6 +5,28 @@ import 'package:yp_launcher/constants/naiom_keys.dart';
 import 'package:yp_launcher/l10n/app_localizations.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
 import 'package:yp_launcher/theme/app_sizes.dart';
+import 'package:yp_launcher/widgets/app_dropdown.dart';
+
+String controllerButtonLabel(AppLocalizations l10n, String name) =>
+    switch (name) {
+      'CONTROLLER_A' => l10n.controllerA,
+      'CONTROLLER_B' => l10n.controllerB,
+      'CONTROLLER_X' => l10n.controllerX,
+      'CONTROLLER_Y' => l10n.controllerY,
+      'CONTROLLER_LB' => l10n.controllerLB,
+      'CONTROLLER_RB' => l10n.controllerRB,
+      'CONTROLLER_LT' => l10n.controllerLT,
+      'CONTROLLER_RT' => l10n.controllerRT,
+      'CONTROLLER_LTHUMB' => l10n.controllerLThumb,
+      'CONTROLLER_RTHUMB' => l10n.controllerRThumb,
+      'CONTROLLER_DUP' => l10n.controllerDUp,
+      'CONTROLLER_DDOWN' => l10n.controllerDDown,
+      'CONTROLLER_DLEFT' => l10n.controllerDLeft,
+      'CONTROLLER_DRIGHT' => l10n.controllerDRight,
+      'CONTROLLER_BACK' => l10n.controllerBack,
+      'CONTROLLER_START' => l10n.controllerStart,
+      _ => name,
+    };
 
 class ConfigFieldKeyName extends StatefulWidget {
   final String label;
@@ -234,11 +256,23 @@ class _ConfigFieldKeyNameState extends State<ConfigFieldKeyName> {
     final l10n = AppLocalizations.of(context)!;
     final unbound = widget.value.isEmpty;
     final hasConflict = widget.conflictWith != null;
+    final parts = NaiomKeys.comboParts(widget.value);
+    final isController =
+        !_capturing && parts.any(NaiomKeys.controllerButtons.contains);
     final displayText = _capturing
         ? _captureText(l10n)
         : unbound
         ? l10n.keybindUnbound
+        : isController
+        ? parts.map((part) => controllerButtonLabel(l10n, part)).join('+')
         : widget.value;
+    final keyboardOnlyHint =
+        _capturing && !NaiomKeys.allowsMouse(widget.bindingKey);
+    final textColor = _capturing
+        ? AppColors.accentPrimary
+        : unbound
+        ? AppColors.textMuted
+        : AppColors.textPrimary;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
@@ -259,7 +293,27 @@ class _ConfigFieldKeyNameState extends State<ConfigFieldKeyName> {
                         color: AppColors.textPrimary,
                       ),
                     ),
-                    if (widget.tooltip != null)
+                    if (keyboardOnlyHint)
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.keyboard_outlined,
+                            size: 13,
+                            color: AppColors.accentPrimary,
+                          ),
+                          const SizedBox(width: 4),
+                          Flexible(
+                            child: Text(
+                              l10n.keybindMouseNotSupported,
+                              style: TextStyle(
+                                fontSize: AppSizes.fontXS(context),
+                                color: AppColors.accentPrimary,
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                    else if (widget.tooltip != null)
                       Text(
                         widget.tooltip!,
                         style: TextStyle(
@@ -319,62 +373,47 @@ class _ConfigFieldKeyNameState extends State<ConfigFieldKeyName> {
                                 : 1.0,
                           ),
                         ),
-                        child: Text(
-                          displayText,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: AppSizes.fontSM(context),
-                            color: _capturing
-                                ? AppColors.accentPrimary
-                                : unbound
-                                ? AppColors.textMuted
-                                : AppColors.textPrimary,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            if (isController) ...[
+                              Icon(
+                                Icons.sports_esports_outlined,
+                                size: 14,
+                                color: AppColors.accentPrimary,
+                              ),
+                              const SizedBox(width: 6),
+                            ],
+                            Text(
+                              displayText,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: AppSizes.fontSM(context),
+                                color: textColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
                   ),
                 ),
               ),
-              if (NaiomKeys.allowsMouse(widget.bindingKey))
-                PopupMenuButton<String>(
+              if (NaiomKeys.allowsMouse(widget.bindingKey)) ...[
+                const SizedBox(width: 4),
+                AppDropdown<String>(
+                  value: widget.value,
+                  items: NaiomKeys.controllerButtons,
+                  itemLabel: (name) => controllerButtonLabel(l10n, name),
+                  onChanged: widget.onChanged,
+                  triggerIcon: Icons.sports_esports_outlined,
                   tooltip: l10n.keybindPickController,
-                  icon: Icon(
-                    Icons.sports_esports_outlined,
-                    size: 18,
-                    color: AppColors.textMuted,
-                  ),
-                  onSelected: widget.onChanged,
-                  itemBuilder: (context) => [
-                    for (final name in NaiomKeys.controllerButtons)
-                      PopupMenuItem(value: name, child: Text(name)),
-                  ],
                 ),
+              ],
             ],
           ),
-          if (_capturing && !NaiomKeys.allowsMouse(widget.bindingKey))
-            Padding(
-              padding: const EdgeInsets.only(top: 2),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Icon(
-                    Icons.keyboard_outlined,
-                    size: 13,
-                    color: AppColors.textMuted,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    l10n.keybindMouseNotSupported,
-                    style: TextStyle(
-                      fontSize: AppSizes.fontXS(context),
-                      color: AppColors.textMuted,
-                    ),
-                  ),
-                ],
-              ),
-            ),
           if (hasConflict)
             Padding(
               padding: const EdgeInsets.only(top: 2),
@@ -387,11 +426,14 @@ class _ConfigFieldKeyNameState extends State<ConfigFieldKeyName> {
                     color: AppColors.warning,
                   ),
                   const SizedBox(width: 4),
-                  Text(
-                    l10n.keybindConflict(widget.conflictWith!),
-                    style: TextStyle(
-                      fontSize: AppSizes.fontXS(context),
-                      color: AppColors.warning,
+                  Flexible(
+                    child: Text(
+                      l10n.keybindConflict(widget.conflictWith!),
+                      textAlign: TextAlign.end,
+                      style: TextStyle(
+                        fontSize: AppSizes.fontXS(context),
+                        color: AppColors.warning,
+                      ),
                     ),
                   ),
                 ],

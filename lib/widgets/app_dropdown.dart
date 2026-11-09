@@ -15,6 +15,8 @@ class AppDropdown<T> extends StatefulWidget {
   final bool highlight;
   final IconData? icon;
   final bool menuMatchesTriggerWidth;
+  final IconData? triggerIcon;
+  final String? tooltip;
 
   const AppDropdown({
     super.key,
@@ -27,6 +29,8 @@ class AppDropdown<T> extends StatefulWidget {
     this.highlight = false,
     this.icon,
     this.menuMatchesTriggerWidth = false,
+    this.triggerIcon,
+    this.tooltip,
   });
 
   @override
@@ -193,6 +197,53 @@ class _AppDropdownState<T> extends State<AppDropdown<T>> {
     final selectedLabel = widget.items.contains(widget.value)
         ? widget.itemLabel(widget.value)
         : (widget.items.isNotEmpty ? widget.itemLabel(widget.items.first) : '');
+
+    final triggerIcon = widget.triggerIcon;
+    if (triggerIcon != null) {
+      final trigger = CompositedTransformTarget(
+        link: _link,
+        child: MouseRegion(
+          cursor: enabled
+              ? SystemMouseCursors.click
+              : SystemMouseCursors.basic,
+          onEnter: (_) {
+            if (!enabled || _hovered) return;
+            setState(() => _hovered = true);
+          },
+          onExit: (_) {
+            if (!_hovered) return;
+            setState(() => _hovered = false);
+          },
+          child: GestureDetector(
+            onTap: enabled ? _toggle : null,
+            child: AnimatedContainer(
+              key: _triggerKey,
+              duration: const Duration(milliseconds: 100),
+              padding: const EdgeInsets.all(5),
+              decoration: BoxDecoration(
+                color: _hovered || _open
+                    ? AppColors.accentPrimary.withValues(alpha: 0.10)
+                    : Colors.transparent,
+                borderRadius: BorderRadius.circular(4),
+                border: Border.all(
+                  color: _open
+                      ? AppColors.accentPrimary.withValues(alpha: 0.55)
+                      : Colors.transparent,
+                ),
+              ),
+              child: Icon(
+                triggerIcon,
+                size: 18,
+                color: _hovered || _open ? AppColors.accentPrimary : iconColor,
+              ),
+            ),
+          ),
+        ),
+      );
+      final tooltip = widget.tooltip;
+      if (tooltip == null) return trigger;
+      return Tooltip(message: tooltip, child: trigger);
+    }
 
     return CompositedTransformTarget(
       link: _link,

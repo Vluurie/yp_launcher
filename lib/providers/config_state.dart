@@ -99,6 +99,8 @@ class ConfigStateController extends _$ConfigStateController {
     ref.onDispose(() {
       _lodmodAutosaveTimer?.cancel();
       _lodmodAutosaveTimer = null;
+      _naiomAutosaveTimer?.cancel();
+      _naiomAutosaveTimer = null;
       _reloadDebounce?.cancel();
       _reloadDebounce = null;
       _watchSub?.cancel();
@@ -140,6 +142,7 @@ class ConfigStateController extends _$ConfigStateController {
   }
 
   Future<void> loadConfigs(String gameDir) async {
+    await _flushPendingNaiom();
     state = state.copyWith(isLoading: true);
 
     await NamsConfigService.ensureConfigs(gameDir);
@@ -248,9 +251,52 @@ class ConfigStateController extends _$ConfigStateController {
     _lastSelfWrite = DateTime.now();
     await TomlService.writeTomlFile(namsPath, newRaw);
     state = state.copyWith(
-      namsValues: {...merged, naiomSection: state.namsValues[naiomSection]},
+      namsValues: _withValue(state.namsValues, key, value, section: section),
       namsRawContent: newRaw,
     );
+  }
+
+  Timer? _naiomAutosaveTimer;
+  String? _naiomAutosaveDir;
+  static const _naiomAutosaveDelay = Duration(milliseconds: 300);
+
+  void updateNaiomLive(
+    String gameDir,
+    String key,
+    dynamic value, {
+    required String section,
+  }) {
+    state = state.copyWith(
+      namsValues: _withValue(state.namsValues, key, value, section: section),
+    );
+    _naiomAutosaveTimer?.cancel();
+    _naiomAutosaveDir = gameDir;
+    _naiomAutosaveTimer = Timer(_naiomAutosaveDelay, () {
+      unawaited(_flushNaiom(gameDir));
+    });
+  }
+
+  Future<void> _flushPendingNaiom() async {
+    final dir = _naiomAutosaveDir;
+    if (!(_naiomAutosaveTimer?.isActive ?? false) || dir == null) return;
+    _naiomAutosaveTimer!.cancel();
+    await _flushNaiom(dir);
+  }
+
+  Future<void> _flushNaiom(String gameDir) async {
+    if (state.naiomError != null) return;
+    final values = state.namsValues[naiomSection];
+    final newRaw = TomlService.updateToml(
+      state.naiomRawContent,
+      values is Map<String, dynamic> ? values : const {},
+    );
+    if (newRaw == state.naiomRawContent) return;
+    _lastSelfWrite = DateTime.now();
+    await TomlService.writeTomlFile(
+      path.join(gameDir, 'nams', 'naiom.toml'),
+      newRaw,
+    );
+    state = state.copyWith(naiomRawContent: newRaw);
   }
 
   void updateNams(String key, dynamic value, {String? section}) {
@@ -272,7 +318,7 @@ class ConfigStateController extends _$ConfigStateController {
   }
 
   void updateLodmod(String key, dynamic value, {String? section}) {
-    final updated = _withLodmodValue(
+    final updated = _withValue(
       state.lodmodValues,
       key,
       value,
@@ -281,7 +327,7 @@ class ConfigStateController extends _$ConfigStateController {
     state = state.copyWith(lodmodValues: updated, hasUnsavedChanges: true);
   }
 
-  static Map<String, dynamic> _withLodmodValue(
+  static Map<String, dynamic> _withValue(
     Map<String, dynamic> values,
     String key,
     dynamic value, {
@@ -313,7 +359,7 @@ class ConfigStateController extends _$ConfigStateController {
     dynamic value, {
     String? section,
   }) {
-    var updated = _withLodmodValue(
+    var updated = _withValue(
       state.lodmodValues,
       key,
       value,
@@ -323,13 +369,13 @@ class ConfigStateController extends _$ConfigStateController {
     if (section == LodModFields.highGridsEnabled.section &&
         key == LodModFields.highGridsEnabled.key &&
         value is bool) {
-      updated = _withLodmodValue(
+      updated = _withValue(
         updated,
         LodModFields.disableManualCulling.key,
         value,
       );
       if (value) {
-        updated = _withLodmodValue(
+        updated = _withValue(
           updated,
           LodModFields.disableCameraCulling.key,
           true,
@@ -349,7 +395,7 @@ class ConfigStateController extends _$ConfigStateController {
     _lodmodAutosaveTimer?.cancel();
     var values = state.lodmodValues;
     for (final entry in LodModFields.bloom2017Preset.entries) {
-      values = _withLodmodValue(values, entry.key, entry.value);
+      values = _withValue(values, entry.key, entry.value);
     }
     state = state.copyWith(lodmodValues: values);
     await _flushLodmod(gameDir);
@@ -359,7 +405,7 @@ class ConfigStateController extends _$ConfigStateController {
     _lodmodAutosaveTimer?.cancel();
     var defaults = <String, dynamic>{};
     for (final f in LodmodConfigService.fields) {
-      defaults = _withLodmodValue(
+      defaults = _withValue(
         defaults,
         f.key,
         f.defaultValue,

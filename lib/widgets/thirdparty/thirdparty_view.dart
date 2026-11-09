@@ -327,7 +327,11 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
   }
 
   Future<void> _revealShaders() async {
-    final dir = p.join(ThirdPartyPaths.reshade(), 'reshade-shaders', 'Shaders');
+    final dir = p.join(
+      const ReShadeRuntime().installDir(_gameDir),
+      'reshade-shaders',
+      'Shaders',
+    );
     if (Directory(dir).existsSync()) {
       await launchUrl(Uri.file(dir));
     }
@@ -399,22 +403,30 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
   Widget _noSupportBanner(String title, String text, String docLabel) {
     return Container(
       width: double.infinity,
-      margin: EdgeInsets.only(bottom: AppSizes.paddingLG(context)),
-      padding: EdgeInsets.all(AppSizes.paddingLG(context)),
+      margin: EdgeInsets.only(bottom: AppSizes.paddingMD(context)),
+      padding: EdgeInsets.symmetric(
+        horizontal: AppSizes.paddingMD(context),
+        vertical: AppSizes.paddingSM(context),
+      ),
       decoration: BoxDecoration(
-        color: AppColors.warning.withValues(alpha: 0.12),
+        color: AppColors.accentPrimary.withValues(alpha: 0.06),
         borderRadius: BorderRadius.circular(AppSizes.borderRadius(context)),
-        border: Border.all(color: AppColors.warning, width: 2),
+        border: Border.all(
+          color: AppColors.accentPrimary.withValues(alpha: 0.3),
+        ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(
-            Icons.warning_amber_rounded,
-            size: AppSizes.fontXXL(context) * 1.5,
-            color: AppColors.warning,
+          Padding(
+            padding: EdgeInsets.only(top: AppSizes.spacingXS(context)),
+            child: Icon(
+              Icons.info_outline,
+              size: AppSizes.iconMD(context),
+              color: AppColors.accentPrimary,
+            ),
           ),
-          SizedBox(width: AppSizes.spacingLG(context)),
+          SizedBox(width: AppSizes.spacingMD(context)),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -422,28 +434,27 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
                 Text(
                   title,
                   style: TextStyle(
-                    fontSize: AppSizes.fontXL(context),
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.warning,
-                    letterSpacing: 0.5,
+                    fontSize: AppSizes.fontMD(context),
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
                   ),
                 ),
-                SizedBox(height: AppSizes.spacingSM(context)),
+                SizedBox(height: AppSizes.spacingXS(context)),
                 Text(
                   text,
                   style: TextStyle(
                     fontSize: AppSizes.fontSM(context),
-                    color: AppColors.textPrimary,
-                    height: 1.5,
+                    color: AppColors.textSecondary,
+                    height: 1.4,
                   ),
                 ),
-                SizedBox(height: AppSizes.spacingMD(context)),
+                SizedBox(height: AppSizes.spacingSM(context)),
                 HoverButton(
                   label: docLabel,
-                  color: AppColors.warning,
-                  onTap: () => DocsScreen.open(
+                  color: AppColors.accentPrimary,
+                  onTap: () => DocsScreen.openPage(
                     context,
-                    initialPath: AppStrings.thirdPartyDocPath,
+                    AppStrings.thirdPartyDocPath,
                   ),
                 ),
               ],
@@ -517,7 +528,7 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
     }
 
     final info = status.reshadeInfo ?? const ReShadeInfo();
-    final reshadeDir = ThirdPartyPaths.reshade();
+    final reshadeDir = runtime.installDir(_gameDir);
     return _card(
       l10n.thirdPartyReShadeHeader,
       [
@@ -593,7 +604,7 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
     }
 
     final info = status.migotoInfo ?? const MigotoInfo();
-    final migotoDir = ThirdPartyPaths.migoto();
+    final migotoDir = runtime.installDir(_gameDir);
     return _card(
       l10n.thirdPartyMigotoHeader,
       [
@@ -694,7 +705,7 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
       trailing: _statusChip(l10n, status.enabled),
       actions: _iconActions(
         l10n,
-        ThirdPartyPaths.gameMods(),
+        ThirdPartyPaths.gameMods(_gameDir),
         ThirdPartyRuntime.gameMods,
       ),
     );
@@ -732,7 +743,7 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
       trailing: _statusChip(l10n, status.enabled),
       actions: _iconActions(
         l10n,
-        ThirdPartyPaths.graphicMods(),
+        ThirdPartyPaths.graphicMods(_gameDir),
         ThirdPartyRuntime.graphicMods,
       ),
     );
@@ -740,7 +751,7 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
 
   Widget _gameModRow(AppLocalizations l10n, GameModEntry mod) {
     final notifier = ref.read(thirdPartyStateControllerProvider.notifier);
-    final expanded = _expandedGameMods.contains(mod.fileName);
+    final expanded = _expandedGameMods.contains(mod.key);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -748,14 +759,14 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
           l10n,
           mod,
           onToggle: (on) => notifier.setGameModDisabled(mod.fileName, !on),
-          onRemove: () => notifier.removeGameMod(mod.fileName),
+          onRemove: () => notifier.removeGameMod(mod.modDir),
           actions: [
             _rowIcon(
               tooltip: l10n.thirdPartyGameModSettings,
               icon: expanded ? Icons.expand_less : Icons.tune,
               onTap: () => setState(() {
-                if (!_expandedGameMods.remove(mod.fileName)) {
-                  _expandedGameMods.add(mod.fileName);
+                if (!_expandedGameMods.remove(mod.key)) {
+                  _expandedGameMods.add(mod.key);
                 }
               }),
             ),
@@ -763,7 +774,7 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
               tooltip: l10n.thirdPartyMoveToGraphic,
               icon: Icons.swap_horiz,
               onTap: () =>
-                  notifier.moveDll(mod.fileName, ThirdPartyRuntime.gameMods),
+                  notifier.moveMod(mod.modDir, ThirdPartyRuntime.gameMods),
             ),
           ],
         ),
@@ -777,14 +788,14 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
     return _dllRow(
       l10n,
       mod,
-      onToggle: (on) => notifier.setGraphicModDisabled(mod.fileName, !on),
-      onRemove: () => notifier.removeGraphicMod(mod.fileName),
+      onToggle: (on) => notifier.setGraphicModDisabled(mod.modDir, !on),
+      onRemove: () => notifier.removeGraphicMod(mod.modDir),
       actions: [
         _rowIcon(
           tooltip: l10n.thirdPartyMoveToGame,
           icon: Icons.swap_horiz,
           onTap: () =>
-              notifier.moveDll(mod.fileName, ThirdPartyRuntime.graphicMods),
+              notifier.moveMod(mod.modDir, ThirdPartyRuntime.graphicMods),
         ),
       ],
     );
@@ -925,8 +936,8 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
           Expanded(
             child: Text(
               mod.sizeLabel == null
-                  ? mod.fileName
-                  : '${mod.fileName} · ${mod.sizeLabel}',
+                  ? mod.label
+                  : '${mod.label} · ${mod.sizeLabel}',
               style: TextStyle(
                 fontSize: AppSizes.fontXS(context),
                 color: color,
@@ -1316,7 +1327,7 @@ class _ThirdPartyViewState extends ConsumerState<ThirdPartyView> {
   Widget _d3dCompilerMissing(AppLocalizations l10n) => _warningBox(
     l10n.thirdPartyD3dCompilerMissing,
     l10n.thirdPartyOpenFolder,
-    () => _openDir(ThirdPartyPaths.reshade()),
+    () => _openDir(const ReShadeRuntime().installDir(_gameDir)),
   );
 
   Widget _warningBox(String text, String actionLabel, VoidCallback onAction) {

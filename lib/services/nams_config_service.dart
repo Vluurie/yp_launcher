@@ -47,9 +47,9 @@ layout_spawn_everything = false
 # pop. With this on they stay visible, which costs some frame rate. Takes effect live.
 disable_camera_culling = false
 
-# AO sharpness (0.1-2.0). Set to 2.0 for crisp ambient occlusion
-ao_multiplier_width = 1.0
-ao_multiplier_height = 1.0
+# Computes ambient occlusion (AO) at full resolution instead of half, so it follows thin objects
+# and fine edges more closely. Costs GPU time. Takes effect live.
+ao_full_resolution = false
 
 # Shadow texture size. 4096 or 8192 for sharper shadows (vanilla: 2048)
 shadow_resolution = 2048
@@ -71,6 +71,10 @@ shadow_filter_strength_maximum = 0.0
 shadow_model_hq = false
 # More objects cast shadows. Recommended: true
 shadow_model_force_all = false
+# Mesh names shadow_model_force_all leaves alone.
+shadow_force_all_filters = ["ENKEI", "landscape", "GROUND_g11118jimen"]
+# Grass and other objects with ShadowCast = 0 in their ObjectParam cast shadows.
+shadow_model_force_object_param = false
 
 # Shadow cascades (EXPERIMENTAL): 4 = vanilla, 8 adds four far cascades. With 8 the
 # atlas is tiled 4x4, so each cascade gets a quarter of shadow_resolution.
@@ -233,6 +237,7 @@ blocked_from_grid = []
 hidden_meshes = [
     { mesh = "nolowmap_enkei", from_rings = 2, grid = 0x1121 },
     { mesh = "nolowmap_seaplane", from_rings = 2, grid = 0x0922 },
+    { mesh = "nolowmap_g11517_bigtree_05", from_rings = 2, grid = 0x1517 },
     # { mesh = "nolowmap_komono1", from_rings = 2, grid = 0x0 },
 ]
 ''';
@@ -266,7 +271,7 @@ disable_reshade_loading = false
 disable_3dmigoto_loading = false
 disable_game_mods_loading = false
 
-# Skip loading Direct3D proxies from thirdparty/graphic/: DLLs named like a
+# Skip loading Direct3D proxies from nams/thirdparty/graphic/: DLLs named like a
 # system DLL (d3d11.dll, dxgi.dll, ...) that the game's calls have to pass
 # through. NAMS points its own and the game's imports of that DLL at the mod.
 disable_graphic_mods_loading = false
@@ -289,6 +294,10 @@ fix_wind_timer_bug = true
 # Ignore the leftover developer hotkeys Shift+3/6/K/L, which force every render
 # target to 1600x900 and break the look until you restart.
 disable_debug_hotkeys = true
+
+# Add the NAMS tab and the NAMS rows to the in-game options menu. Set to false
+# to keep the vanilla options menu. Requires restart.
+ingame_settings = true
 
 # Master switch for the mouse and keyboard layer. When true, all mouse and
 # keybind settings are ignored and the game keeps stock input. Requires restart.
@@ -778,21 +787,21 @@ solid_letterbox_bars = false
           '# are active from game start. Requires restart.\n'
           'experimental_default_outfits = true\n',
       NamsFields.disable3dmigotoLoading.key:
-          '# Skip loading the 3DMigoto runtime from thirdparty/3dmigoto/. Managed\n'
+          '# Skip loading the 3DMigoto runtime from nams/thirdparty/3dmigoto/. Managed\n'
           '# by the Third Party tab; set to true to stop loading it.\n'
           'disable_3dmigoto_loading = false\n',
       NamsFields.disableReShadeLoading.key:
-          '# Skip loading ReShade from thirdparty/reshade/. Managed by the Third\n'
+          '# Skip loading ReShade from nams/thirdparty/reshade/. Managed by the Third\n'
           '# Party tab; set to true to run without ReShade.\n'
           'disable_reshade_loading = false\n',
       NamsFields.disableGameModsLoading.key:
-          '# Skip loading third-party game-offset mods from thirdparty/game/.\n'
+          '# Skip loading third-party game-offset mods from nams/thirdparty/game/.\n'
           '# These are DLLs built for a stock NieRAutomata.exe; NAMS rewrites\n'
           '# their imports so game.bin answers as the main module. Managed by\n'
-          '# the Third Party tab. Per-DLL tweaks: thirdparty/game/game.toml\n'
+          '# the Third Party tab. Per-DLL tweaks: nams/thirdparty/game/game.toml\n'
           'disable_game_mods_loading = false\n',
       NamsFields.disableGraphicModsLoading.key:
-          '# Skip loading Direct3D proxies from thirdparty/graphic/: DLLs named\n'
+          '# Skip loading Direct3D proxies from nams/thirdparty/graphic/: DLLs named\n'
           '# like a system DLL (d3d11.dll, dxgi.dll, ...) that the game\'s calls\n'
           '# have to pass through. Requires restart.\n'
           'disable_graphic_mods_loading = false\n',
@@ -806,6 +815,10 @@ solid_letterbox_bars = false
           '# Ignore the leftover developer hotkeys Shift+3/6/K/L, which force every\n'
           '# render target to 1600x900 and break the look until you restart.\n'
           'disable_debug_hotkeys = true\n',
+      NamsFields.ingameSettings.key:
+          '# Add the NAMS tab and the NAMS rows to the in-game options menu. Set\n'
+          '# to false to keep the vanilla options menu. Requires restart.\n'
+          'ingame_settings = true\n',
       NamsFields.disableInputFeatures.key:
           '# Master switch for the mouse and keyboard layer. When true, all mouse\n'
           '# and keybind settings are ignored and the game keeps stock input. Restart.\n'

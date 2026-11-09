@@ -7,6 +7,7 @@ import 'package:automato_theme/automato_theme.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:yp_launcher/constants/app_strings.dart';
+import 'package:yp_launcher/constants/feature_flags.dart';
 import 'package:yp_launcher/l10n/app_localizations.dart';
 import 'package:yp_launcher/widgets/directory_selector.dart';
 import 'package:yp_launcher/widgets/language_selector.dart';
@@ -322,9 +323,10 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
 
   Future<void> _switchTab(int index) async {
     if (index == docsTabIndex) {
-      await DocsScreen.open(context);
+      if (FeatureFlags.docs) await DocsScreen.open(context);
       return;
     }
+    if (index == toolsTabIndex && !FeatureFlags.tools) return;
     if (_selectedTab == index) return;
     if (ref.read(texturesBusyProvider)) {
       if (mounted) {
@@ -401,7 +403,9 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
     var next = 1;
     _warmupTimer = Timer.periodic(const Duration(milliseconds: 350), (timer) {
       while (next < 12 &&
-          (next == docsTabIndex || _visitedTabs.contains(next))) {
+          (next == docsTabIndex ||
+              (next == toolsTabIndex && !FeatureFlags.tools) ||
+              _visitedTabs.contains(next))) {
         next++;
       }
       if (next >= 12) {
@@ -435,8 +439,10 @@ class _LauncherScreenState extends ConsumerState<LauncherScreen>
         return const LauncherSettingsView();
       case 9:
         return const ThirdPartyView();
-      case 11:
-        return const ToolsView();
+      case toolsTabIndex:
+        return FeatureFlags.tools
+            ? const ToolsView()
+            : const SizedBox.shrink();
       default:
         return const SizedBox.shrink();
     }

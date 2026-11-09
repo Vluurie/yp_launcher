@@ -21,7 +21,7 @@ class GameModsRuntime extends GraphicsRuntime {
   String get disableFlagKey => NamsFields.disableGameModsLoading.key;
 
   @override
-  String installDir(String gameDir) => ThirdPartyPaths.gameMods();
+  String installDir(String gameDir) => ThirdPartyPaths.gameMods(gameDir);
 
   String configPath(String gameDir) =>
       path.join(installDir(gameDir), AppStrings.gameModsConfigName);
@@ -38,11 +38,26 @@ class GameModsRuntime extends GraphicsRuntime {
     if (c.gameModDlls.isEmpty) {
       return const ThirdPartyInstallResult(ok: false, errorKey: 'no_dll');
     }
-    final dest = installDir(gameDir);
+    final kindDir = installDir(gameDir);
+    final dest =
+        ThirdPartyPaths.modDirWithDll(
+          kindDir,
+          c.gameModDlls.map(path.basename),
+        ) ??
+        path.join(
+          kindDir,
+          ThirdPartyPaths.uniqueDirName(
+            kindDir,
+            ThirdPartyPaths.modDirName(
+              c.sourceName ?? '',
+              fallback: path.basenameWithoutExtension(c.gameModDlls.first),
+            ),
+          ),
+        );
     Directory(dest).createSync(recursive: true);
 
-    for (final dll in c.gameModDlls) {
-      FileOps.copyFileInto(dll, dest);
+    for (final folder in c.gameModDlls.map(path.dirname).toSet()) {
+      FileOps.mergeDirectory(folder, dest);
     }
 
     await ThirdPartyFlags.set(gameDir, disableFlagKey, false);
@@ -55,8 +70,11 @@ class GameModsRuntime extends GraphicsRuntime {
     ThirdPartyClassification c,
   ) async {
     for (final incoming in c.gameModDlls) {
-      final installed = path.join(installDir(gameDir), path.basename(incoming));
-      if (!File(installed).existsSync()) continue;
+      final installed = ThirdPartyPaths.findDll(
+        installDir(gameDir),
+        path.basename(incoming),
+      );
+      if (installed == null) continue;
       if (!FileOps.filesDiffer(incoming, installed)) continue;
       return ThirdPartyUpdateInfo(
         runtime: runtime,
@@ -94,22 +112,21 @@ class GameModsRuntime extends GraphicsRuntime {
         : const <String, dynamic>{};
 
     final mods = <GameModEntry>[];
-    for (final entity in d.listSync().whereType<File>()) {
-      final name = path.basename(entity.path);
-      if (!name.toLowerCase().endsWith('.dll')) continue;
-      final settings = settingsFor(config, name);
-      mods.add(
-        GameModEntry(
-          fileName: name,
-          sizeLabel: FileOps.sizeLabel(entity.path),
-          disabled: settings.disabled,
-          settings: settings,
-        ),
-      );
+    for (final modDir in ThirdPartyPaths.modDirs(dir)) {
+      for (final dll in ThirdPartyPaths.dllsIn(modDir.path)) {
+        final name = path.basename(dll.path);
+        final settings = settingsFor(config, name);
+        mods.add(
+          GameModEntry(
+            fileName: name,
+            modDir: path.basename(modDir.path),
+            sizeLabel: FileOps.sizeLabel(dll.path),
+            disabled: settings.disabled,
+            settings: settings,
+          ),
+        );
+      }
     }
-    mods.sort(
-      (a, b) => a.fileName.toLowerCase().compareTo(b.fileName.toLowerCase()),
-    );
 
     return GameModsInfo(mods: mods, hasConfig: configFile.existsSync());
   }
@@ -181,19 +198,21 @@ class GameModsRuntime extends GraphicsRuntime {
     );
   }
 
-  Future<void> removeMod(String gameDir, String fileName) async {
-    FileOps.deleteFileQuiet(path.join(installDir(gameDir), fileName));
+  String? pathOf(String gameDir, String modDir) {
+    if (!ThirdPartyPaths.isPlainName(modDir)) return null;
+    final dir = path.join(installDir(gameDir), modDir);
+    return Directory(dir).existsSync() ? dir : null;
+  }
+
+  Future<void> removeMod(String gameDir, String modDir) async {
+    final dir = pathOf(gameDir, modDir);
+    if (dir != null) FileOps.deleteDirQuiet(dir);
   }
 
   @override
   Future<void> remove(String gameDir) async {
-    final dir = Directory(installDir(gameDir));
-    if (dir.existsSync()) {
-      for (final f in dir.listSync().whereType<File>()) {
-        if (f.path.toLowerCase().endsWith('.dll')) {
-          FileOps.deleteFileQuiet(f.path);
-        }
-      }
+    for (final dir in ThirdPartyPaths.modDirs(installDir(gameDir))) {
+      FileOps.deleteDirQuiet(dir.path);
     }
     await ThirdPartyFlags.set(gameDir, disableFlagKey, true);
   }

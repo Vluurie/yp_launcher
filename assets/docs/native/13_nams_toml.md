@@ -11,6 +11,7 @@ which counts as `true` when left out.
 | `disable_texture_injection` | `false` | Loads no replacement textures. Restart. |
 | `fix_wind_timer_bug` | `true` | Keeps wind animations moving after the play-time counter reaches its maximum. Live. |
 | `disable_debug_hotkeys` | `true` | Ignores the leftover dev hotkeys Shift+3/6/K/L, which reset the render scale and size the render targets for 1600x900. Live. |
+| `ingame_settings` | `true` | Adds the NAMS tab and the NAMS rows to the in-game options menu. `false` keeps the vanilla options menu. Restart. |
 | `validate_model_data` | `false` | Shows the result of the model data check as a dialog while you play. Live. |
 | `validate_scripts` | `false` | Shows script errors as a dialog. |
 | `loading_stall_hints` | `true` | Shows hints when the "Loading Map" screen takes long. Live. |
@@ -19,15 +20,15 @@ which counts as `true` when left out.
 | `disable_input_features` | `false` | Installs no mouse and keyboard hooks. Restart. |
 | `experimental_default_outfits` | `true` in the launcher's file, left out (`false`) in the file NAMS writes | Turns on `default_mods.toml`, see [Load order, default outfits, and reload behavior](20_runtime_configuration.md). Restart. |
 | `outfit_swap_visual_effects` | `true` | Plays the visual effects of an outfit change. `false` swaps without them. Live. |
-| `disable_reshade_loading` | `false` | Does not load ReShade from `thirdparty\reshade\`. Restart. |
-| `disable_3dmigoto_loading` | `false` | Does not load 3DMigoto from `thirdparty\3dmigoto\`. Restart. |
-| `disable_graphic_mods_loading` | `false` | Does not load the DLLs in `thirdparty\graphic\`. Restart. |
-| `disable_game_mods_loading` | `false` | Does not load the DLLs in `thirdparty\game\`. Restart. |
+| `disable_reshade_loading` | `false` | Does not load ReShade from `nams\thirdparty\reshade\`. Restart. |
+| `disable_3dmigoto_loading` | `false` | Does not load 3DMigoto from `nams\thirdparty\3dmigoto\`. Restart. |
+| `disable_graphic_mods_loading` | `false` | Does not load the DLLs in `nams\thirdparty\graphic\`. Restart. |
+| `disable_game_mods_loading` | `false` | Does not load the DLLs in `nams\thirdparty\game\`. Restart. |
 | `disable_splash_screen` | `false` | Shows no startup splash window. Restart. |
 | `skip_startup_logos` | `false` | Skips the logo movies at startup. Restart. |
 
-The `thirdparty\` folder sits next to `NAMS.exe`, see
-[third-party mods](35_third_party.md).
+`nams\thirdparty\` is in your NieRAutomata folder, see
+[ReShade, 3DMigoto and DLL mods](35_third_party.md).
 
 `[content]` - every content feature on its own, all `true` by default.
 `false` skips the mod entries of that feature and every mod entry that

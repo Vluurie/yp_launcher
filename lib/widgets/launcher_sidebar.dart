@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yp_launcher/constants/app_strings.dart';
+import 'package:yp_launcher/constants/feature_flags.dart';
 import 'package:yp_launcher/l10n/app_localizations.dart';
 import 'package:yp_launcher/theme/app_colors.dart';
 import 'package:yp_launcher/theme/app_theme.dart';
@@ -9,6 +10,7 @@ import 'package:yp_launcher/theme/app_sizes.dart';
 import 'package:yp_launcher/widgets/play_button.dart';
 
 const docsTabIndex = 10;
+const toolsTabIndex = 11;
 
 class SidebarKeys {
   SidebarKeys._();
@@ -583,16 +585,18 @@ List<SidebarSection> buildLauncherSections(AppLocalizations l10n) {
           label: l10n.tabThirdParty,
           icon: Icons.auto_fix_high,
         ),
-        SidebarTabItem(
-          index: 10,
-          label: l10n.tabDocs,
-          icon: Icons.menu_book_outlined,
-        ),
-        SidebarTabItem(
-          index: 11,
-          label: l10n.tabTools,
-          icon: Icons.handyman_outlined,
-        ),
+        if (FeatureFlags.docs)
+          SidebarTabItem(
+            index: 10,
+            label: l10n.tabDocs,
+            icon: Icons.menu_book_outlined,
+          ),
+        if (FeatureFlags.tools)
+          SidebarTabItem(
+            index: 11,
+            label: l10n.tabTools,
+            icon: Icons.handyman_outlined,
+          ),
       ],
     ),
     SidebarSection(

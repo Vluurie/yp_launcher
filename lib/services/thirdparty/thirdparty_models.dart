@@ -134,17 +134,32 @@ class GameModSettings {
 }
 
 class GameModEntry {
+  /// The DLL's file name; `game.toml` keys its settings by it.
   final String fileName;
+
+  /// The mod folder holding the DLL.
+  final String modDir;
   final String? sizeLabel;
   final bool disabled;
   final GameModSettings? settings;
 
   const GameModEntry({
     required this.fileName,
+    this.modDir = '',
     this.sizeLabel,
     this.disabled = false,
     this.settings,
   });
+
+  String get key => modDir.isEmpty ? fileName : '$modDir/$fileName';
+
+  /// The file name, prefixed with the mod folder when that is not named after it.
+  String get label =>
+      modDir.isEmpty ||
+          modDir.toLowerCase() ==
+              fileName.toLowerCase().replaceAll(RegExp(r'\.dll$'), '')
+      ? fileName
+      : '$modDir / $fileName';
 }
 
 class GameModsInfo {

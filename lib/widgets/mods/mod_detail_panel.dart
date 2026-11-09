@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
+import 'package:yp_launcher/constants/feature_flags.dart';
 import 'package:yp_launcher/services/toml_service.dart';
 import 'package:yp_launcher/widgets/app_dialog.dart';
 import 'package:yp_launcher/widgets/config_field_slider.dart';
@@ -248,7 +249,7 @@ class ModDetailPanel extends ConsumerWidget {
 
   Widget _kindRow(BuildContext context, String kind, int count) {
     final page = _kindDocPages[kind];
-    if (page != null) {
+    if (FeatureFlags.docs && page != null) {
       return _KindDocRow(kind: kind, count: count, docPage: page);
     }
     return Text(

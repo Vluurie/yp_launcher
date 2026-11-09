@@ -80,31 +80,34 @@ class _PageTransitionState extends State<_PageTransition>
 
 class DocsScreen extends StatelessWidget {
   final String? initialPath;
+  final bool singlePage;
 
-  const DocsScreen({super.key, this.initialPath});
+  const DocsScreen({super.key, this.initialPath, this.singlePage = false});
 
-  static Future<void> open(BuildContext context, {String? initialPath}) {
+  static Future<void> openPage(BuildContext context, String path) =>
+      open(context, initialPath: path, singlePage: true);
+
+  static Future<void> open(
+    BuildContext context, {
+    String? initialPath,
+    bool singlePage = false,
+  }) {
     return Navigator.of(context).push(
       PageRouteBuilder(
         transitionDuration: const Duration(milliseconds: 420),
         reverseTransitionDuration: const Duration(milliseconds: 320),
-        pageBuilder: (_, __, ___) => DocsScreen(initialPath: initialPath),
+        pageBuilder: (_, __, ___) =>
+            DocsScreen(initialPath: initialPath, singlePage: singlePage),
         transitionsBuilder: (_, animation, __, child) {
           return FadeTransition(
-            opacity: CurvedAnimation(
-              parent: animation,
-              curve: NierCurves.fade,
-            ),
+            opacity: CurvedAnimation(parent: animation, curve: NierCurves.fade),
             child: SlideTransition(
               position:
                   Tween<Offset>(
                     begin: const Offset(0, 0.02),
                     end: Offset.zero,
                   ).animate(
-                    CurvedAnimation(
-                      parent: animation,
-                      curve: NierCurves.fill,
-                    ),
+                    CurvedAnimation(parent: animation, curve: NierCurves.fill),
                   ),
               child: child,
             ),
@@ -136,25 +139,29 @@ class DocsScreen extends StatelessWidget {
               children: [
                 _BackToLauncher(label: l10n.docsBackToLauncher),
                 const Spacer(),
-                Icon(
-                  Icons.menu_book_outlined,
-                  size: AppSizes.iconSM(context),
-                  color: AppColors.textMuted,
-                ),
-                SizedBox(width: AppSizes.spacingSM(context)),
-                Text(
-                  l10n.tabDocs,
-                  style: TextStyle(
-                    fontSize: AppSizes.fontXS(context),
-                    fontWeight: FontWeight.bold,
+                if (!singlePage) ...[
+                  Icon(
+                    Icons.menu_book_outlined,
+                    size: AppSizes.iconSM(context),
                     color: AppColors.textMuted,
-                    letterSpacing: 1.0,
                   ),
-                ),
+                  SizedBox(width: AppSizes.spacingSM(context)),
+                  Text(
+                    l10n.tabDocs,
+                    style: TextStyle(
+                      fontSize: AppSizes.fontXS(context),
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textMuted,
+                      letterSpacing: 1.0,
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
-          Expanded(child: DocsView(initialPath: initialPath)),
+          Expanded(
+            child: DocsView(initialPath: initialPath, singlePage: singlePage),
+          ),
         ],
       ),
     );
@@ -213,8 +220,9 @@ class _BackToLauncherState extends State<_BackToLauncher> {
 
 class DocsView extends ConsumerStatefulWidget {
   final String? initialPath;
+  final bool singlePage;
 
-  const DocsView({super.key, this.initialPath});
+  const DocsView({super.key, this.initialPath, this.singlePage = false});
 
   @override
   ConsumerState<DocsView> createState() => _DocsViewState();
@@ -359,7 +367,9 @@ class _DocsViewState extends ConsumerState<DocsView> {
     await Clipboard.setData(ClipboardData(text: href));
     if (!mounted) return;
 
-    ref.read(notificationStateControllerProvider.notifier).addNotification(
+    ref
+        .read(notificationStateControllerProvider.notifier)
+        .addNotification(
           NotificationItem(
             id: 'docs_link_copied',
             message: (l10n) => l10n.docsLinkCopied(href),
@@ -464,6 +474,15 @@ class _DocsViewState extends ConsumerState<DocsView> {
           ? Center(
               child: CircularProgressIndicator(color: AppColors.accentPrimary),
             )
+          : widget.singlePage
+          ? _current == null
+                ? _emptyState(context)
+                : Row(
+                    children: [
+                      Expanded(child: _contentPanel(context, l10n)),
+                      if (_outline.length > 2) _outlinePanel(context, l10n),
+                    ],
+                  )
           : _pages.isEmpty
           ? _emptyState(context)
           : Row(
@@ -738,7 +757,7 @@ class _DocsViewState extends ConsumerState<DocsView> {
 
     return Column(
       children: [
-        _contentHeader(context, l10n, page),
+        if (!widget.singlePage) _contentHeader(context, l10n, page),
         Expanded(
           child: AutoScrollSelection(
             controller: _contentScroll,
@@ -867,7 +886,11 @@ class _DocsViewState extends ConsumerState<DocsView> {
             child: HoverIconButton(
               tooltip: MaterialLocalizations.of(context).backButtonTooltip,
               bordered: false,
-              onTap: _history.isNotEmpty ? _goBack : _goHome,
+              onTap: _history.isNotEmpty
+                  ? _goBack
+                  : widget.singlePage
+                  ? () => Navigator.of(context).maybePop()
+                  : _goHome,
               icon: Icon(
                 Icons.arrow_back,
                 size: AppSizes.iconMD(context),
@@ -912,30 +935,31 @@ class _DocsViewState extends ConsumerState<DocsView> {
             ),
             SizedBox(width: AppSizes.spacingMD(context)),
           ],
-          Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: AppSizes.chipPaddingH(context),
-              vertical: AppSizes.chipPaddingV(context),
-            ),
-            decoration: BoxDecoration(
-              color: AppColors.accentPrimary.withValues(alpha: 0.10),
-              borderRadius: BorderRadius.circular(
-                AppSizes.borderRadius(context),
+          if (!widget.singlePage)
+            Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: AppSizes.chipPaddingH(context),
+                vertical: AppSizes.chipPaddingV(context),
               ),
-              border: Border.all(
-                color: AppColors.accentPrimary.withValues(alpha: 0.3),
+              decoration: BoxDecoration(
+                color: AppColors.accentPrimary.withValues(alpha: 0.10),
+                borderRadius: BorderRadius.circular(
+                  AppSizes.borderRadius(context),
+                ),
+                border: Border.all(
+                  color: AppColors.accentPrimary.withValues(alpha: 0.3),
+                ),
+              ),
+              child: Text(
+                _categoryLabel(page.category, l10n),
+                style: TextStyle(
+                  fontSize: AppSizes.fontXS(context),
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.accentPrimary,
+                  letterSpacing: 0.5,
+                ),
               ),
             ),
-            child: Text(
-              _categoryLabel(page.category, l10n),
-              style: TextStyle(
-                fontSize: AppSizes.fontXS(context),
-                fontWeight: FontWeight.bold,
-                color: AppColors.accentPrimary,
-                letterSpacing: 0.5,
-              ),
-            ),
-          ),
         ],
       ),
     );
@@ -1194,11 +1218,13 @@ class _CodeBlockState extends State<_CodeBlock> {
         ),
         child: Stack(
           children: [
-            Padding(
-              padding: EdgeInsets.all(AppSizes.paddingMD(context)),
+            Scrollbar(
+              controller: _codeScroll,
+              thumbVisibility: true,
               child: SingleChildScrollView(
                 controller: _codeScroll,
                 scrollDirection: Axis.horizontal,
+                padding: EdgeInsets.all(AppSizes.paddingMD(context)),
                 child: Text.rich(
                   _span(context),
                   style: TextStyle(

@@ -5,6 +5,7 @@ import 'package:yp_launcher/theme/app_sizes.dart';
 import 'package:yp_launcher/widgets/app_dropdown.dart';
 import 'package:yp_launcher/widgets/config_apply_marker.dart';
 import 'package:yp_launcher/widgets/config_change_status.dart';
+import 'package:yp_launcher/widgets/hover_button.dart';
 
 class GridRuleColumn {
   final String key;
@@ -180,18 +181,7 @@ class ConfigFieldGridRules extends StatelessWidget
             ),
             const SizedBox(width: 8),
           ],
-          InkWell(
-            onTap: () => _remove(index),
-            borderRadius: BorderRadius.circular(4),
-            child: Padding(
-              padding: const EdgeInsets.all(4),
-              child: Icon(
-                Icons.close,
-                size: AppSizes.iconSM(context),
-                color: AppColors.textMuted,
-              ),
-            ),
-          ),
+          _removeButton(context, () => _remove(index)),
         ],
       ),
     );
@@ -279,6 +269,164 @@ class ConfigFieldGridRules extends StatelessWidget
       ],
     );
   }
+}
+
+class ConfigFieldNameList extends StatelessWidget
+    implements ConfigChangeSource {
+  final String label;
+  final String? tooltip;
+  final bool restartRequired;
+  final List<dynamic> names;
+  final List<dynamic>? defaultValue;
+  final String addLabel;
+  final String emptyLabel;
+  final ValueChanged<List<dynamic>> onChanged;
+
+  const ConfigFieldNameList({
+    super.key,
+    required this.label,
+    required this.names,
+    required this.addLabel,
+    required this.emptyLabel,
+    required this.onChanged,
+    this.tooltip,
+    this.restartRequired = false,
+    this.defaultValue,
+  });
+
+  @override
+  List<String> get changedLabels => changedLabelOf(label, names, defaultValue);
+
+  List<String> _current() => [
+    for (final raw in names) raw is String ? raw : '',
+  ];
+
+  void _update(int index, String name) {
+    final next = _current();
+    next[index] = name;
+    onChanged(next);
+  }
+
+  void _add() => onChanged([..._current(), '']);
+
+  void _remove(int index) => onChanged(_current()..removeAt(index));
+
+  @override
+  Widget build(BuildContext context) {
+    final current = _current();
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Flexible(
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: AppSizes.fontMD(context),
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 6),
+              ConfigApplyMarker(restartRequired: restartRequired),
+            ],
+          ),
+          if (tooltip != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 2),
+              child: Text(
+                tooltip!,
+                style: TextStyle(
+                  fontSize: AppSizes.fontXS(context),
+                  color: AppColors.textMuted,
+                  height: 1.3,
+                ),
+              ),
+            ),
+          SizedBox(height: AppSizes.spacingSM(context)),
+          if (current.isEmpty)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 6),
+              child: Text(
+                emptyLabel,
+                style: TextStyle(
+                  fontSize: AppSizes.fontXS(context),
+                  color: AppColors.textMuted.withValues(alpha: 0.7),
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            )
+          else
+            for (var i = 0; i < current.length; i++)
+              _row(context, i, current[i]),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton.icon(
+              onPressed: _add,
+              icon: Icon(
+                Icons.add,
+                size: AppSizes.iconSM(context),
+                color: AppColors.accentPrimary,
+              ),
+              label: Text(
+                addLabel,
+                style: TextStyle(
+                  fontSize: AppSizes.fontXS(context),
+                  color: AppColors.accentPrimary,
+                ),
+              ),
+              style: TextButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                minimumSize: Size.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _row(BuildContext context, int index, String name) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceLight,
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: AppColors.borderLight),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: _TextRuleField(
+              value: name,
+              onChanged: (v) => _update(index, v),
+            ),
+          ),
+          const SizedBox(width: 8),
+          _removeButton(context, () => _remove(index)),
+        ],
+      ),
+    );
+  }
+}
+
+Widget _removeButton(BuildContext context, VoidCallback onTap) {
+  return HoverIconButton(
+    onTap: onTap,
+    bordered: false,
+    borderColor: AppColors.error,
+    padding: const EdgeInsets.all(4),
+    icon: Icon(
+      Icons.close,
+      size: AppSizes.iconSM(context),
+      color: AppColors.textMuted,
+    ),
+  );
 }
 
 class _TextRuleField extends StatefulWidget {

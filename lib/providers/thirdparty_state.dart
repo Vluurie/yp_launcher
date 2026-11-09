@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:yp_launcher/providers/app_state.dart';
+import 'package:yp_launcher/providers/notification_state.dart';
 import 'package:yp_launcher/services/file_ops.dart';
 import 'package:yp_launcher/services/thirdparty/game_mods_runtime.dart';
 import 'package:yp_launcher/services/thirdparty/graphic_mods_runtime.dart';
@@ -11,7 +13,10 @@ import 'package:yp_launcher/services/thirdparty/graphics_runtime.dart';
 import 'package:yp_launcher/services/thirdparty/migoto_runtime.dart';
 import 'package:yp_launcher/services/thirdparty/reshade_runtime.dart';
 import 'package:yp_launcher/services/thirdparty/thirdparty_classifier.dart';
+import 'package:yp_launcher/services/thirdparty/thirdparty_migration.dart';
 import 'package:yp_launcher/services/thirdparty/thirdparty_models.dart';
+import 'package:yp_launcher/services/thirdparty/thirdparty_paths.dart';
+import 'package:yp_launcher/theme/app_colors.dart';
 
 part 'thirdparty_state.g.dart';
 
@@ -93,7 +98,9 @@ class ThirdPartyStateController extends _$ThirdPartyStateController {
     final gameDir = _gameDir;
     if (gameDir == null) return;
     state = state.copyWith(isLoading: true);
+    await migrateLegacy(gameDir);
     await _autoImportFromGameRoot(gameDir);
+    await reshade.repair(gameDir);
     await _refreshInternal(gameDir);
     state = state.copyWith(isLoading: false);
     _startWatching(gameDir);
@@ -129,13 +136,61 @@ class ThirdPartyStateController extends _$ThirdPartyStateController {
     });
   }
 
+  static const _migratedId = 'thirdparty_migrated';
+  static const _migrationLeftId = 'thirdparty_migration_left';
+
+  /// Moves third-party mods out of the launcher folder, which a launcher
+  /// update replaces, into `<game>\nams\thirdparty\`.
+  Future<void> migrateLegacy(String gameDir) async {
+    final ThirdPartyMigrationResult result;
+    try {
+      result = await ThirdPartyMigration.run(gameDir);
+    } catch (_) {
+      return;
+    }
+    final notifications = ref.read(
+      notificationStateControllerProvider.notifier,
+    );
+    if (result.movedFiles > 0) {
+      final to = result.to;
+      notifications.dismiss(_migratedId);
+      notifications.addNotification(
+        NotificationItem(
+          id: _migratedId,
+          message: (l10n) => l10n.notifyThirdPartyMigrated(to),
+          icon: Icons.swap_horiz,
+          color: AppColors.success,
+          type: NotificationType.migration,
+        ),
+      );
+    }
+    if (result.leftBehind.isNotEmpty) {
+      final from = result.from;
+      final to = result.to;
+      notifications.dismiss(_migrationLeftId);
+      notifications.addNotification(
+        NotificationItem(
+          id: _migrationLeftId,
+          message: (l10n) => l10n.notifyThirdPartyMigrationIncomplete(from, to),
+          icon: Icons.warning_amber,
+          color: AppColors.warning,
+          type: NotificationType.migration,
+        ),
+      );
+    }
+  }
+
+  /// Removing ReShade or 3DMigoto turns its loading off, so a copy that stays
+  /// in the game folder for the vanilla game is not imported back.
   Future<bool> _autoImportFromGameRoot(String gameDir) async {
     var changed = false;
     if (!(await reshade.status(gameDir)).installed &&
+        await reshade.isEnabled(gameDir) &&
         reshade.findGameRootDll(gameDir) != null) {
       changed = await reshade.importFromGameRoot(gameDir) || changed;
     }
     if (!(await migoto.status(gameDir)).installed &&
+        await migoto.isEnabled(gameDir) &&
         migoto.findGameRootDll(gameDir) != null) {
       changed = await migoto.importFromGameRoot(gameDir) || changed;
     }
@@ -226,48 +281,52 @@ class ThirdPartyStateController extends _$ThirdPartyStateController {
     await _refreshInternal(gameDir);
   }
 
-  Future<void> setGraphicModDisabled(String fileName, bool disabled) async {
+  Future<void> setGraphicModDisabled(String modDir, bool disabled) async {
     final gameDir = _gameDir;
     if (gameDir == null) return;
-    await graphicMods.setModDisabled(gameDir, fileName, disabled);
+    await graphicMods.setModDisabled(gameDir, modDir, disabled);
     await _refreshInternal(gameDir);
   }
 
-  Future<void> removeGraphicMod(String fileName) async {
+  Future<void> removeGraphicMod(String modDir) async {
     final gameDir = _gameDir;
     if (gameDir == null) return;
     await _withBusy(() async {
-      await graphicMods.removeMod(gameDir, fileName);
+      await graphicMods.removeMod(gameDir, modDir);
       await _refreshInternal(gameDir);
     });
   }
 
-  Future<void> moveDll(String fileName, ThirdPartyRuntime from) async {
+  /// Moves the whole mod folder [modDir] between game mods and graphic proxies.
+  Future<void> moveMod(String modDir, ThirdPartyRuntime from) async {
     final gameDir = _gameDir;
     if (gameDir == null) return;
     await _withBusy(() async {
       final toGraphic = from == ThirdPartyRuntime.gameMods;
       final source = toGraphic
-          ? p.join(gameMods.installDir(gameDir), fileName)
-          : graphicMods.pathOf(gameDir, fileName);
-      if (source == null || !File(source).existsSync()) return;
-      final target = toGraphic
+          ? gameMods.pathOf(gameDir, modDir)
+          : graphicMods.pathOf(gameDir, modDir);
+      if (source == null) return;
+      final targetRoot = toGraphic
           ? graphicMods.installDir(gameDir)
           : gameMods.installDir(gameDir);
-      FileOps.copyFileInto(source, target);
-      if (!File(p.join(target, fileName)).existsSync()) return;
-      FileOps.deleteFileQuiet(source);
+      final target = p.join(
+        targetRoot,
+        ThirdPartyPaths.uniqueDirName(targetRoot, modDir),
+      );
+      FileOps.moveMerging(source, target);
+      if (!Directory(target).existsSync()) return;
       final runtime = toGraphic ? graphicMods : gameMods;
       await runtime.setEnabled(gameDir, true);
       await _refreshInternal(gameDir);
     });
   }
 
-  Future<void> removeGameMod(String fileName) async {
+  Future<void> removeGameMod(String modDir) async {
     final gameDir = _gameDir;
     if (gameDir == null) return;
     await _withBusy(() async {
-      await gameMods.removeMod(gameDir, fileName);
+      await gameMods.removeMod(gameDir, modDir);
       await _refreshInternal(gameDir);
     });
   }

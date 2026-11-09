@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:markdown/markdown.dart' as md;
 
 class DocPage {
   final String path;
@@ -110,10 +111,12 @@ class DocsService {
     final paths =
         manifest
             .listAssets()
-            .where((key) =>
-                key.startsWith(_root) &&
-                key.endsWith('.md') &&
-                !key.startsWith('${_root}images/'))
+            .where(
+              (key) =>
+                  key.startsWith(_root) &&
+                  key.endsWith('.md') &&
+                  !key.startsWith('${_root}images/'),
+            )
             .toList()
           ..sort(_comparePaths);
 
@@ -203,7 +206,11 @@ class DocsService {
         continue;
       }
 
-      final text = trimmed.substring(level + 1).trim();
+      final text = md.Document()
+          .parseInline(trimmed.substring(level + 1).trim())
+          .map((node) => node.textContent)
+          .join()
+          .trim();
       if (text.isEmpty) continue;
 
       final base = anchorFor(text);

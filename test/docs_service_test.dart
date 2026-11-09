@@ -5,9 +5,14 @@ void main() {
   group('anchorFor', () {
     test('slugifies headings the way markdown anchors do', () {
       expect(DocsService.anchorFor('Getting started'), 'getting-started');
-      expect(DocsService.anchorFor('What you need first'), 'what-you-need-first');
-      expect(DocsService.anchorFor('Step 1 - Make a folder'),
-          'step-1---make-a-folder');
+      expect(
+        DocsService.anchorFor('What you need first'),
+        'what-you-need-first',
+      );
+      expect(
+        DocsService.anchorFor('Step 1 - Make a folder'),
+        'step-1---make-a-folder',
+      );
     });
 
     test('drops punctuation and collapses spacing', () {
@@ -48,14 +53,27 @@ void main() {
       expect(headings.map((h) => h.text), ['Real']);
     });
 
+    test('shows inline code and emphasis as plain text', () {
+      final headings = DocsService.outline(
+        '## How do mods in `thirdparty\\graphic\\` work?\n\n## A **bold** one\n',
+      );
+      expect(headings.map((h) => h.text), [
+        'How do mods in thirdparty\\graphic\\ work?',
+        'A bold one',
+      ]);
+      expect(headings.first.anchor, 'how-do-mods-in-thirdpartygraphic-work');
+    });
+
     test('numbers repeated headings so anchors stay unique', () {
-      const markdown = '## Attribute 0x400\n\n'
+      const markdown =
+          '## Attribute 0x400\n\n'
           'text\n\n'
           '## Attribute 0x400\n\n'
           'more\n\n'
           '## Attribute 0x400\n';
-      final anchors =
-          DocsService.outline(markdown).map((h) => h.anchor).toList();
+      final anchors = DocsService.outline(
+        markdown,
+      ).map((h) => h.anchor).toList();
       expect(anchors, [
         'attribute-0x400',
         'attribute-0x400-1',
@@ -65,12 +83,14 @@ void main() {
     });
 
     test('anchors of a real page are unique', () {
-      const markdown = '## Step 2 - Create `mod.toml`\n\n'
+      const markdown =
+          '## Step 2 - Create `mod.toml`\n\n'
           '## `mod.toml` fields\n\n'
           '### Notes\n\n'
           '### Notes\n';
-      final anchors =
-          DocsService.outline(markdown).map((h) => h.anchor).toList();
+      final anchors = DocsService.outline(
+        markdown,
+      ).map((h) => h.anchor).toList();
       expect(anchors.toSet().length, anchors.length);
     });
   });
@@ -78,8 +98,10 @@ void main() {
   group('prettyName', () {
     test('strips the numeric prefix and extension', () {
       expect(DocsService.prettyName('03_item.md'), 'Item');
-      expect(DocsService.prettyName('16_wax_to_toml_migration.md'),
-          'Wax to toml migration');
+      expect(
+        DocsService.prettyName('16_wax_to_toml_migration.md'),
+        'Wax to toml migration',
+      );
     });
 
     test('leaves names without a numeric prefix intact', () {

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:path/path.dart' as path;
+import 'package:yp_launcher/constants/app_strings.dart';
 import 'package:yp_launcher/models/config_fields.dart';
 import 'package:yp_launcher/services/detection/graphics_dll_id.dart';
 import 'package:yp_launcher/services/file_ops.dart';
@@ -22,6 +23,12 @@ class ReShadeRuntime extends GraphicsRuntime {
     'd3d11.dll',
   ];
 
+  static const runtimeDlls = [
+    'dxgi.dll',
+    'ReShade64_Addon.dll',
+    'ReShade64.dll',
+  ];
+
   @override
   ThirdPartyRuntime get runtime => ThirdPartyRuntime.reshade;
 
@@ -29,7 +36,12 @@ class ReShadeRuntime extends GraphicsRuntime {
   String get disableFlagKey => NamsFields.disableReShadeLoading.key;
 
   @override
-  String installDir(String gameDir) => ThirdPartyPaths.reshade();
+  String installDir(String gameDir) {
+    final kindDir = ThirdPartyPaths.reshade(gameDir);
+    return ThirdPartyPaths.modDirWithDll(kindDir, runtimeDlls) ??
+        ThirdPartyPaths.modDirs(kindDir).firstOrNull?.path ??
+        path.join(kindDir, AppStrings.reshadeModDirName);
+  }
 
   @override
   bool canInstall(ThirdPartyClassification c) =>
@@ -51,6 +63,7 @@ class ReShadeRuntime extends GraphicsRuntime {
     _placePresets(c.sourceRoot, dest);
     _placeIni(c.sourceRoot, dest);
     _placeD3dCompiler(c.sourceRoot, dest);
+    ensureIniPaths(dest);
 
     await ThirdPartyFlags.set(gameDir, disableFlagKey, false);
 
@@ -93,6 +106,135 @@ class ReShadeRuntime extends GraphicsRuntime {
     final dest = installDir(gameDir);
     if (!Directory(dest).existsSync()) return;
     ensureReShadeTree(dest);
+    ensureIniPaths(dest);
+  }
+
+  static const shaderSearchPath = r'.\reshade-shaders\Shaders\**';
+  static const textureSearchPath = r'.\reshade-shaders\Textures\**';
+  static const addonSearchPath = r'.\reshade-addons';
+
+  /// ReShade only looks for effects, textures and add-ons where `ReShade.ini`
+  /// says. Without an ini it searches `.\` only and finds none of the effects
+  /// the launcher installed into `reshade-shaders`.
+  static void ensureIniPaths(String dest) {
+    final ini = File(path.join(dest, reshadeIniName));
+    final String before;
+    try {
+      before = ini.existsSync() ? ini.readAsStringSync() : '';
+    } catch (_) {
+      return;
+    }
+    var content = before;
+    content = _withSearchPath(
+      content,
+      dest,
+      'EffectSearchPaths',
+      shaderSearchPath,
+    );
+    content = _withSearchPath(
+      content,
+      dest,
+      'TextureSearchPaths',
+      textureSearchPath,
+    );
+    final addonPath = IniPatch.getKey(content, 'ADDON', 'AddonPath');
+    final addonDir = _resolveRelative(dest, _searchDir(addonPath ?? ''));
+    if (!_hasAddonsDirectlyIn(addonDir) &&
+        _hasAddonsDirectlyIn(path.join(dest, 'reshade-addons'))) {
+      content = IniPatch.setKey(content, 'ADDON', 'AddonPath', addonSearchPath);
+    }
+    if (content == before) return;
+    try {
+      ini.writeAsStringSync(content);
+    } catch (_) {}
+  }
+
+  static String _withSearchPath(
+    String content,
+    String dest,
+    String key,
+    String wanted,
+  ) {
+    final current = IniPatch.getKey(content, 'GENERAL', key) ?? '';
+    final wantedDir = _searchDir(wanted).toLowerCase();
+    final kept = <String>[];
+    for (final raw in current.split(',')) {
+      final entry = raw.trim();
+      if (entry.isEmpty || _isAbsolute(entry)) continue;
+      final dir = _searchDir(entry);
+      if (dir.toLowerCase() == wantedDir) continue;
+      if (!Directory(_resolveRelative(dest, dir)).existsSync()) continue;
+      kept.add(entry);
+    }
+    final value = [wanted, ...kept].join(',');
+    if (current == value) return content;
+    return IniPatch.setKey(content, 'GENERAL', key, value);
+  }
+
+  static String _searchDir(String entry) {
+    var dir = entry.trim().replaceAll('\\', '/');
+    if (dir.endsWith('**')) dir = dir.substring(0, dir.length - 2);
+    while (dir.endsWith('/')) {
+      dir = dir.substring(0, dir.length - 1);
+    }
+    while (dir.startsWith('./')) {
+      dir = dir.substring(2);
+    }
+    return dir == '.' ? '' : dir;
+  }
+
+  static String _resolveRelative(String base, String dir) => path.normalize(
+    path.joinAll([base, ...dir.split('/').where((s) => s.isNotEmpty)]),
+  );
+
+  static bool _isAddonFile(String name) {
+    final lower = name.toLowerCase();
+    return lower.endsWith('.addon') ||
+        lower.endsWith('.addon64') ||
+        lower.endsWith('.addon32');
+  }
+
+  static bool _hasAddonsDirectlyIn(String dir) {
+    try {
+      return Directory(dir)
+          .listSync(followLinks: false)
+          .any((e) => _isAddonFile(path.basename(e.path)));
+    } catch (_) {
+      return false;
+    }
+  }
+
+  /// Folders the game folder's `ReShade.ini` searches for effects or
+  /// textures, outside `reshade-shaders`, which is copied as a whole.
+  static List<String> referencedSearchDirs(String gameDir, String key) {
+    final ini = File(path.join(gameDir, reshadeIniName));
+    final String content;
+    try {
+      if (!ini.existsSync()) return const [];
+      content = ini.readAsStringSync();
+    } catch (_) {
+      return const [];
+    }
+    final game = path.normalize(path.absolute(gameDir));
+    final dirs = <String>[];
+    for (final raw in (IniPatch.getKey(content, 'GENERAL', key) ?? '').split(
+      ',',
+    )) {
+      final entry = raw.trim();
+      if (entry.isEmpty) continue;
+      final rel = _searchDir(entry);
+      final dir = _isAbsolute(entry)
+          ? path.normalize(rel)
+          : _resolveRelative(game, rel);
+      if (path.equals(dir, game) || path.isWithin(dir, game)) continue;
+      if (path.isWithin(path.join(game, 'reshade-shaders'), dir) ||
+          path.equals(path.join(game, 'reshade-shaders'), dir)) {
+        continue;
+      }
+      if (!FileSystemEntity.isDirectorySync(dir)) continue;
+      if (!dirs.any((d) => path.equals(d, dir))) dirs.add(dir);
+    }
+    return dirs;
   }
 
   DllHit? findGameRootDll(String gameDir) {
@@ -141,10 +283,33 @@ class ReShadeRuntime extends GraphicsRuntime {
       }
     }
 
+    for (final entry in const [
+      ('EffectSearchPaths', 'Shaders'),
+      ('TextureSearchPaths', 'Textures'),
+    ]) {
+      for (final dir in referencedSearchDirs(gameDir, entry.$1)) {
+        FileOps.mergeDirectory(
+          dir,
+          path.join(dest, 'reshade-shaders', entry.$2),
+          overwrite: false,
+        );
+      }
+    }
+
+    try {
+      for (final e in Directory(gameDir).listSync(followLinks: false)) {
+        if (_isAddonFile(path.basename(e.path)) &&
+            FileSystemEntity.isFileSync(e.path)) {
+          FileOps.copyFileInto(e.path, path.join(dest, 'reshade-addons'));
+        }
+      }
+    } catch (_) {}
+
     final ini = File(path.join(dest, reshadeIniName));
     if (ini.existsSync()) {
       ini.writeAsStringSync(fixIniPaths(ini.readAsStringSync()));
     }
+    ensureIniPaths(dest);
 
     await ThirdPartyFlags.set(gameDir, disableFlagKey, false);
     return true;
@@ -295,7 +460,7 @@ class ReShadeRuntime extends GraphicsRuntime {
 
   @override
   Future<void> remove(String gameDir) async {
-    FileOps.deleteDirQuiet(installDir(gameDir));
+    FileOps.deleteDirQuiet(ThirdPartyPaths.reshade(gameDir));
     await ThirdPartyFlags.set(gameDir, disableFlagKey, true);
   }
 
@@ -367,15 +532,47 @@ class ReShadeRuntime extends GraphicsRuntime {
         overwrite: false,
       );
     }
-    for (final af in FileOps.filesWhere(
+    final addonFiles = FileOps.filesWhere(
       src,
       (rel, _) =>
           rel.endsWith('.addon') ||
           rel.endsWith('.addon32') ||
           rel.endsWith('.addon64'),
-    )) {
+    );
+    for (final af in addonFiles) {
       FileOps.copyFileInto(af.path, path.join(dest, 'reshade-addons'));
     }
+    for (final dll in addonCompanionDlls(addonFiles)) {
+      FileOps.copyFileInto(dll.path, dest);
+    }
+  }
+
+  /// DLLs shipped next to an add-on, like the DLSS, Streamline or XeSS files
+  /// of an upscaler add-on. They go next to the ReShade DLL, where NAMS loads
+  /// them before ReShade, so the add-on's own loads find them.
+  static List<File> addonCompanionDlls(List<File> addonFiles) {
+    final out = <File>[];
+    final seen = <String>{};
+    for (final dir in addonFiles.map((f) => f.parent.path).toSet()) {
+      final List<FileSystemEntity> entries;
+      try {
+        entries = Directory(dir).listSync(followLinks: false);
+      } catch (_) {
+        continue;
+      }
+      for (final e in entries) {
+        final name = path.basename(e.path).toLowerCase();
+        if (!name.endsWith('.dll') || !FileSystemEntity.isFileSync(e.path)) {
+          continue;
+        }
+        if (name == d3dCompilerName || directXProxyNames.contains(name)) {
+          continue;
+        }
+        if (GraphicsDllId.identifyFile(e.path) != GraphicsDll.none) continue;
+        if (seen.add(name)) out.add(File(e.path));
+      }
+    }
+    return out;
   }
 
   void _placePresets(String src, String dest) {

@@ -582,6 +582,16 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String notifyThirdPartyMigrated(String path) {
+    return '你的第三方模组已移动到 $path。启动器更新不会再删除它们。';
+  }
+
+  @override
+  String notifyThirdPartyMigrationIncomplete(String oldPath, String newPath) {
+    return '部分第三方文件无法移动，仍在 $oldPath 中。请自行将它们移动到 $newPath，因为启动器更新会删除旧文件夹。';
+  }
+
+  @override
   String notifyPlatformUnsupported(String platform) {
     return '在 $platform 上未找到 Windows 兼容层，因此无法从这里启动游戏。模组、纹理和配置仍可正常使用。请安装 CrossOver 并将 NieR:Automata 放入 bottle 中以启用启动功能。';
   }
@@ -709,7 +719,8 @@ class AppLocalizationsZh extends AppLocalizations {
       '编辑 nams\\_internal\\cache\\settings.json';
 
   @override
-  String get tooltipEditsNaiom => '编辑 nams/naiom.toml。大多数设置保存后生效，少数设置需要重启游戏。';
+  String get tooltipEditsNaiom =>
+      '编辑 nams/naiom.toml。更改会立即保存，大多数设置无需重启游戏即可生效，少数设置需要重启。';
 
   @override
   String get tooltipCutscenesLocation =>
@@ -753,9 +764,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get cardInstallTextures => '安装纹理';
 
   @override
-  String get cardHowItWorks => '工作原理';
-
-  @override
   String get cardKeybinds => '按键绑定';
 
   @override
@@ -787,9 +795,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get cardMenuNavigation => '菜单导航';
-
-  @override
-  String get cardStructure => '结构';
 
   @override
   String get buttonSave => '保存';
@@ -1392,7 +1397,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get thirdPartyGraphicModsHowto =>
-      '包装游戏渲染的 Direct3D 代理 DLL（d3d11.dll、dxgi.dll）。NAMS 从 thirdparty/graphic 加载它们，并让游戏的 Direct3D 调用经过它们；放在游戏文件夹中的副本永远不会被加载。ReShade 和 3DMigoto 有各自的卡片。请通过顶部的拖放区安装。';
+      '包装游戏渲染的 Direct3D 代理 DLL（d3d11.dll、dxgi.dll）。NAMS 从 nams/thirdparty/graphic 加载它们，并让游戏的 Direct3D 调用经过它们；放在游戏文件夹中的副本永远不会被加载。ReShade 和 3DMigoto 有各自的卡片。请通过顶部的拖放区安装。';
 
   @override
   String get thirdPartyMoveToGraphic => '移到图形代理（用于 Direct3D 包装器）';
@@ -1626,14 +1631,14 @@ class AppLocalizationsZh extends AppLocalizations {
       '此处没有 d3dcompiler_47.dll。在 Wine 下，ReShade 会退回到 Wine 的存根，特效将无法编译。请重新安装自带该文件的 ReShade 版本，或将原生 d3dcompiler_47.dll 放入此文件夹。';
 
   @override
-  String get thirdPartyBannerTitle => '不提供第三方工具支持';
+  String get thirdPartyBannerTitle => 'ReShade、3DMigoto 及插件由其他开发者制作';
 
   @override
-  String get thirdPartyReadDoc => '工具作者：阅读 NAMS 如何加载第三方工具';
+  String get thirdPartyReadDoc => 'NAMS 如何加载 ReShade、3DMigoto 和 DLL 模组';
 
   @override
   String get thirdPartyBanner =>
-      'ReShade、3DMigoto、ReShade 插件（Luma、DLSS/DLAA、超分辨率、帧生成）以及它们附带的所有 DLL 均由他人制作。NAMS 和 YoRHa Protocol 团队不开发、不测试，也不调试它们。如果其中某个崩溃、无法加载或停止工作，请到它自己的模组页面或 GitHub 向作者反馈，而不是向我们反馈。在向我们报告崩溃之前，请先移除此标签页中的所有内容，以及你自己复制到启动器文件夹中的所有 DLL，然后再试一次。如果崩溃消失了，那就不是 NAMS 或 YoRHa Protocol 的问题。“在原版游戏里能用”不能作为理由：在 NAMS 下，游戏运行在 NAMS.exe 中，而不是 NieRAutomata.exe，因此在原版中能用的工具在这里仍可能出问题。让它在 NAMS 下正常工作是该工具作者的责任。';
+      'NAMS 和 YoRHa Protocol 团队无法测试或修复它们。如果其中某个出现问题，请联系 ReShade、3DMigoto 或该插件的开发者。如果游戏崩溃，请先在不使用此标签页中任何内容、也不使用你自己复制到启动器文件夹中的 DLL 的情况下重试，再向我们报告。\n\n原版能用，但在 NAMS 下不能用？这是可能的：使用 NAMS 时，游戏运行在 NAMS.exe 中，而不是 NieRAutomata.exe，因此 ReShade、3DMigoto 或该插件本身需要支持 NAMS。这只能由它们的开发者修复，而不是 NAMS 团队。';
 
   @override
   String get thirdPartyConfigSection => '设置';
@@ -2050,7 +2055,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get cutsceneHowItWorks2 => '如果自定义文件缺失或损坏，将回退播放原版文件。';
 
   @override
-  String get cutsceneHowItWorks3 => '原始游戏文件绝不会被修改，模组会从单独位置加载。';
+  String get cutsceneBannerTitle => '过场动画模组不会修改你的游戏文件';
 
   @override
   String get cutsceneStructurePath =>
@@ -2896,18 +2901,11 @@ class AppLocalizationsZh extends AppLocalizations {
       '只要所在的地图区域已加载，就立即放置每一片草、每一丛灌木和每个小型地图物体，无论你离得多远。忽略物体生成范围。物体仍会一个接一个出现，因此刚加载的区域会逐渐被填满。在草很多的区域会降低帧率。';
 
   @override
-  String get labelAoWidth => 'AO 宽度';
+  String get labelAoFullResolution => '全分辨率 AO';
 
   @override
-  String get tooltipAoWidth =>
-      'AO 水平分辨率倍率。原版 AO 以屏幕分辨率的 1/4 运行。2.0 = 半分辨率（AO 更清晰，但性能开销较大）；1.5 是较好的平衡。范围：0.1–2.0。只将一个轴设为 2 可作为开销较低的替代方案。';
-
-  @override
-  String get labelAoHeight => 'AO 高度';
-
-  @override
-  String get tooltipAoHeight =>
-      'AO 垂直分辨率倍率。原版 AO 以屏幕分辨率的 1/4 运行。2.0 = 半分辨率（AO 更清晰，但性能开销较大）；1.5 是较好的平衡。范围：0.1–2.0。两个轴都设为 2.0 时，最坏情况下可能损失约 10 FPS。';
+  String get tooltipAoFullResolution =>
+      '以全分辨率而非一半分辨率计算环境光遮蔽（AO），能更贴合细小物体和精细边缘。会增加 GPU 耗时。需要在游戏图形设置中开启环境光遮蔽。实时生效。';
 
   @override
   String get labelShadowResolution => '阴影分辨率';
@@ -2977,7 +2975,26 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get tooltipForceAllShadowModels =>
-      '强制所有模型投射阴影，包括石头和草等小型物体。实验性功能——极少数情况下可能导致不可见模型仍然投射阴影。目前尚未发现问题。';
+      '强制所有模型投射阴影，包括石头等小型物体。草需要开启“草地阴影”。实验性功能——极少数情况下可能导致不可见模型仍然投射阴影。目前尚未发现问题。';
+
+  @override
+  String get labelShadowForceAllFilters => '排除的网格';
+
+  @override
+  String get tooltipShadowForceAllFilters =>
+      '开启“强制所有模型投射阴影”时，含有这些名称网格的模型保持其原有的阴影设置。名称必须完全一致，不区分大小写。立即生效。';
+
+  @override
+  String get shadowForceAllFiltersAdd => '添加网格';
+
+  @override
+  String get shadowForceAllFiltersEmpty => '无排除项 - “强制所有模型投射阴影”作用于所有模型。';
+
+  @override
+  String get labelGrassShadows => '草地阴影';
+
+  @override
+  String get tooltipGrassShadows => '草和其他在对象设置中没有阴影的物体也会投射阴影。立即生效。';
 
   @override
   String get labelDisableVignette => '禁用暗角';
@@ -3644,14 +3661,14 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get tooltipDisable3dmigotoLoading =>
-      '不再从 thirdparty/3dmigoto/ 加载 3DMigoto 运行时。关闭以停止加载着色器模组。';
+      '不再从 nams/thirdparty/3dmigoto/ 加载 3DMigoto 运行时。关闭以停止加载着色器模组。';
 
   @override
   String get labelDisableGraphicModsLoading => '禁用图形代理加载';
 
   @override
   String get tooltipDisableGraphicModsLoading =>
-      '不再从 thirdparty/graphic/ 加载 Direct3D 代理 DLL：这些 DLL 与系统 DLL 同名（d3d11.dll、dxgi.dll 等），游戏的图形调用会经过它们。开启后即可在不删除文件的情况下不使用它们。下次启动游戏时生效。';
+      '不再从 nams/thirdparty/graphic/ 加载 Direct3D 代理 DLL：这些 DLL 与系统 DLL 同名（d3d11.dll、dxgi.dll 等），游戏的图形调用会经过它们。开启后即可在不删除文件的情况下不使用它们。下次启动游戏时生效。';
 
   @override
   String get labelDisableGameModsLoading => '禁用游戏模组加载';
@@ -3716,6 +3733,13 @@ class AppLocalizationsZh extends AppLocalizations {
       '跳过游戏加载时显示的启动画面窗口。原版游戏会在窗口准备完成前就将其显示出来，导致缩放和闪烁问题；NAMS 完善了启动画面，使窗口仅在准备好后显示。启用此选项会重新带回原版启动时的这些问题。';
 
   @override
+  String get labelIngameSettings => '游戏内 NAMS 设置';
+
+  @override
+  String get tooltipIngameSettings =>
+      '在游戏内的选项菜单中添加 NAMS 标签页和 NAMS 设置项。默认启用。关闭可保留原版选项菜单。需要重启。';
+
+  @override
   String get labelDisableDebugHotkeys => '忽略开发者快捷键';
 
   @override
@@ -3746,12 +3770,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get comparisonDefaultEnabled => '默认（已启用）';
-
-  @override
-  String get comparisonAo05x => 'AO 0.5x';
-
-  @override
-  String get comparisonAo20x => 'AO 2.0x';
 
   @override
   String get comparisonVignetteOn => '暗角开启';
@@ -4346,17 +4364,64 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get keybindMouseNotSupported => '此操作不支持鼠标按键和手柄按键，必须使用键盘按键。';
+  String get keybindMouseNotSupported => '仅限键盘按键';
 
   @override
   String get keybindPickController => '选择手柄按键';
 
   @override
+  String get controllerA => 'A / 叉';
+
+  @override
+  String get controllerB => 'B / 圆圈';
+
+  @override
+  String get controllerX => 'X / 方块';
+
+  @override
+  String get controllerY => 'Y / 三角';
+
+  @override
+  String get controllerLB => 'LB / L1';
+
+  @override
+  String get controllerRB => 'RB / R1';
+
+  @override
+  String get controllerLT => 'LT / L2';
+
+  @override
+  String get controllerRT => 'RT / R2';
+
+  @override
+  String get controllerLThumb => '按下左摇杆 / L3';
+
+  @override
+  String get controllerRThumb => '按下右摇杆 / R3';
+
+  @override
+  String get controllerDUp => '方向键上';
+
+  @override
+  String get controllerDDown => '方向键下';
+
+  @override
+  String get controllerDLeft => '方向键左';
+
+  @override
+  String get controllerDRight => '方向键右';
+
+  @override
+  String get controllerBack => 'Back / Share';
+
+  @override
+  String get controllerStart => 'Start / Options';
+
+  @override
   String get naiomResetConfirmTitle => '重置 NAIOM 设置？';
 
   @override
-  String get naiomResetConfirmBody =>
-      '这会将此选项卡中的所有镜头、瞄准、光标和按键绑定设置恢复为默认值。在你点击保存之前不会写入任何内容，因此之后仍可放弃更改。要继续吗？';
+  String get naiomResetConfirmBody => '这会将此选项卡中的所有镜头、瞄准、光标和按键绑定设置恢复为默认值。要继续吗？';
 
   @override
   String get naiomControllerNote =>
@@ -4382,9 +4447,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get cheatTableConvertError => '无法修复此表。请确保文件是有效的 .CT 文件。';
-
-  @override
-  String get naiomBetaBadge => '测试版';
 
   @override
   String get naiomRestartBadge => '需重启';
@@ -4416,7 +4478,7 @@ class AppLocalizationsZh extends AppLocalizations {
       '准星仅会在使用鼠标进行普通俯视/横版玩法时显示。如果某些场景中看不到，通常属于正常情况，并非错误。';
 
   @override
-  String get naiomBindingsIntro => '这些是游戏原有控制之外的额外按键，原始按键仍可使用。保存后立即生效，无需重启。';
+  String get naiomBindingsIntro => '这些是游戏原有控制之外的额外按键，原始按键仍可使用。更改立即生效，无需重启。';
 
   @override
   String get naiomCrosshairPreviewLabel => '游戏中的准星模式';
