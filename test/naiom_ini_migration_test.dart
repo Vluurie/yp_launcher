@@ -68,6 +68,9 @@ AimModeToggle <unbound>
 StandardMoveForward W
 
 ; Type: binding
+StandardMoveBackward CAPSLOCK
+
+; Type: binding
 StandardJump SPACE
 
 ; Type: binding
@@ -155,14 +158,19 @@ void main() {
       final result = await NaiomDetection.migrateNaiomIni(gameDir.path, ini!);
 
       expect(
-        result.skippedEntries.any((e) => e.contains('F5')),
+        result.skippedEntries.any((e) => e.contains('CAPSLOCK')),
         isTrue,
-        reason: 'F5 is not a valid NAMS key name',
+        reason: 'CAPSLOCK is not a valid NAMS key name',
+      );
+      expect(
+        result.skippedEntries.any((e) => e.contains('F5')),
+        isFalse,
+        reason: 'function keys are valid NAMS key names',
       );
       expect(
         result.skippedEntries.any((e) => e.contains('CONTROLLER_A')),
-        isTrue,
-        reason: 'controller bindings are not supported by NAMS',
+        isFalse,
+        reason: 'controller buttons are valid on mouse-capable bindings',
       );
       expect(
         result.skippedEntries.any((e) => e.contains('MOUSE2')),
@@ -172,8 +180,9 @@ void main() {
 
       final mouse = await _mouse(gameDir);
       final bindings = mouse['bindings'] as Map<String, dynamic>;
-      expect(bindings['third_person_mode_toggle'], '');
-      expect(bindings['non_standard_auto_fire'], '');
+      expect(bindings['third_person_mode_toggle'], 'F5');
+      expect(bindings['standard_move_backward'], '');
+      expect(bindings['non_standard_auto_fire'], 'CONTROLLER_A');
       expect(bindings['standard_walk'], '');
     });
 
