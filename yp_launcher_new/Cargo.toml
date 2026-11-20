@@ -32,8 +32,8 @@ yp_settings_ui = { path = "crates/yp_settings_ui" }
 yp_mods_ui = { path = "crates/yp_mods_ui" }
 yp_docs_ui = { path = "crates/yp_docs_ui", default-features = false }
 
-gpui = { git = "https://github.com/longbridge/gpui-fast", branch = "main" }
-gpui_platform = { git = "https://github.com/longbridge/gpui-fast", branch = "main", features = ["font-kit", "wayland", "x11"] }
+gpui = { git = "https://github.com/longbridge/gpui-fast", rev = "2002081b4a61249a1cef2b8a552f6ba0998d9f52" }
+gpui_platform = { git = "https://github.com/longbridge/gpui-fast", rev = "2002081b4a61249a1cef2b8a552f6ba0998d9f52", features = ["font-kit", "wayland", "x11"] }
 futures = "0.3.34"
 serde = { version = "1.0.229", features = ["derive"] }
 serde_json = { version = "1.0.154", features = ["preserve_order"] }
