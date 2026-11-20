@@ -1,0 +1,197 @@
+{
+  "settingsTomlErrorAt": "Zeile {line}, Spalte {column}: {message}",
+  "@settingsTomlErrorAt": {
+    "placeholders": {
+      "line": {
+        "type": "int"
+      },
+      "column": {
+        "type": "int"
+      },
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsConfigNotToml": "{file} ist kein gültiges TOML. {detail}",
+  "@settingsConfigNotToml": {
+    "placeholders": {
+      "file": {
+        "type": "String"
+      },
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsSettingsNotObject": "{file} enthält kein Einstellungsobjekt.",
+  "@settingsSettingsNotObject": {
+    "placeholders": {
+      "file": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsConfigLoadFailed": "Die Einstellungen konnten nicht gelesen werden. {detail}",
+  "@settingsConfigLoadFailed": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsConfigSaveFailed": "Die Änderungen konnten nicht gespeichert werden. {detail}",
+  "@settingsConfigSaveFailed": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsConfigAutosaveFailed": "{file} konnte nicht gespeichert werden. {detail}",
+  "@settingsConfigAutosaveFailed": {
+    "placeholders": {
+      "file": {
+        "type": "String"
+      },
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsConfigReloadFailed": "Die Einstellungen wurden auf dem Datenträger geändert, konnten aber nicht neu geladen werden. {detail}",
+  "@settingsConfigReloadFailed": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsRemoveEntry": "Entfernen",
+  "naiomKeyDisabled": "Deaktiviert",
+  "lodmodUiCascadeLabel": "{label} - {cascade}",
+  "@lodmodUiCascadeLabel": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "cascade": {
+        "type": "String"
+      }
+    }
+  },
+  "texturesUiFolderCount": "{folder} ({count})",
+  "@texturesUiFolderCount": {
+    "placeholders": {
+      "folder": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "texturesUiNameWithOwner": "{name} ({owner})",
+  "@texturesUiNameWithOwner": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "owner": {
+        "type": "String"
+      }
+    }
+  },
+  "modelViewLodOption": "LOD: {name}",
+  "@modelViewLodOption": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "modelViewStats": "{vertices} Eckpunkte · {triangles} Dreiecke",
+  "@modelViewStats": {
+    "placeholders": {
+      "vertices": {
+        "type": "int"
+      },
+      "triangles": {
+        "type": "int"
+      }
+    }
+  },
+  "modelViewErrNoArchives": "In diesen Dateien ist kein Modell enthalten.",
+  "modelViewErrNoReadableArchive": "Keine der Modelldateien konnte gelesen werden.",
+  "modelViewErrMissingArchive": "Die {side}-Datei dieses Modells fehlt.",
+  "@modelViewErrMissingArchive": {
+    "placeholders": {
+      "side": {
+        "type": "String"
+      }
+    }
+  },
+  "modelViewErrEntryMissing": "Das Modell ist nicht mehr in der {side}-Datei. Die Datei wurde geändert; Ansicht schließen und erneut öffnen.",
+  "@modelViewErrEntryMissing": {
+    "placeholders": {
+      "side": {
+        "type": "String"
+      }
+    }
+  },
+  "modelViewErrMeshMissing": "Mesh {id} existiert in diesem Modell nicht.",
+  "@modelViewErrMeshMissing": {
+    "placeholders": {
+      "id": {
+        "type": "int"
+      }
+    }
+  },
+  "modelViewErrLodMissing": "Detailstufe {id} existiert in diesem Modell nicht.",
+  "@modelViewErrLodMissing": {
+    "placeholders": {
+      "id": {
+        "type": "int"
+      }
+    }
+  },
+  "modelViewErrRenderSize": "Die Vorschau kann nicht in {width}x{height} gezeichnet werden. Fenstergröße ändern.",
+  "@modelViewErrRenderSize": {
+    "placeholders": {
+      "width": {
+        "type": "int"
+      },
+      "height": {
+        "type": "int"
+      }
+    }
+  },
+  "modelViewErrModelUnreadable": "Dieses Modell konnte nicht gelesen werden: {detail}",
+  "@modelViewErrModelUnreadable": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "modelViewErrArchiveUnreadable": "Die Modelldatei ist beschädigt oder hat ein unerwartetes Format: {detail}",
+  "@modelViewErrArchiveUnreadable": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "modelViewWarningsTitle": "Einige Dateien konnten nicht gelesen werden",
+  "modelViewWarnFileUnreadable": "{file}: {detail}",
+  "@modelViewWarnFileUnreadable": {
+    "placeholders": {
+      "file": {
+        "type": "String"
+      },
+      "detail": {
+        "type": "String"
+      }
+    }
+  }
+}

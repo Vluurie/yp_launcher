@@ -1,0 +1,198 @@
+{
+  "version": "2.0.0",
+  "options": {
+    "cwd": "${workspaceFolder}",
+    "env": {
+      "YP_ASSETS_DIR": "${workspaceFolder}/assets",
+      "RUST_BACKTRACE": "1"
+    }
+  },
+  "presentation": {
+    "reveal": "always",
+    "panel": "dedicated"
+  },
+  "problemMatcher": [
+    "$rustc"
+  ],
+  "tasks": [
+    {
+      "label": "Build and run: native (debug)",
+      "type": "process",
+      "command": "cargo",
+      "args": [
+        "run",
+        "--locked",
+        "--package",
+        "yp_app",
+        "--bin",
+        "YoRHa-Protocol-Launcher"
+      ],
+      "detail": "Build and launch the launcher for this machine using its normal settings.",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "Build and run: native (debug symbols)",
+      "type": "process",
+      "command": "cargo",
+      "args": [
+        "run",
+        "--locked",
+        "--package",
+        "yp_app",
+        "--bin",
+        "YoRHa-Protocol-Launcher",
+        "--config",
+        "profile.dev.debug=2"
+      ],
+      "detail": "Build and launch with full Rust debug information; use F5 for a debugger session.",
+      "group": "build"
+    },
+    {
+      "label": "Build and run: native (small release)",
+      "type": "process",
+      "command": "cargo",
+      "args": [
+        "run",
+        "--locked",
+        "--package",
+        "yp_app",
+        "--bin",
+        "YoRHa-Protocol-Launcher",
+        "--profile",
+        "small",
+        "--features",
+        "embedded-assets"
+      ],
+      "detail": "Build and launch the optimized small-release binary with embedded assets.",
+      "group": "build"
+    },
+    {
+      "label": "Build and run: Windows x64",
+      "type": "process",
+      "command": "cargo",
+      "args": [
+        "run",
+        "--locked",
+        "--package",
+        "yp_app",
+        "--bin",
+        "YoRHa-Protocol-Launcher",
+        "--target",
+        "x86_64-pc-windows-msvc"
+      ],
+      "detail": "Build and launch a Windows x64 binary on a compatible host with its native toolchain.",
+      "group": "build"
+    },
+    {
+      "label": "Build and run: Linux x64",
+      "type": "process",
+      "command": "cargo",
+      "args": [
+        "run",
+        "--locked",
+        "--package",
+        "yp_app",
+        "--bin",
+        "YoRHa-Protocol-Launcher",
+        "--target",
+        "x86_64-unknown-linux-gnu"
+      ],
+      "detail": "Build and launch a Linux x64 binary on a compatible host with its native toolchain.",
+      "group": "build"
+    },
+    {
+      "label": "Build and run: macOS Apple Silicon",
+      "type": "process",
+      "command": "cargo",
+      "args": [
+        "run",
+        "--locked",
+        "--package",
+        "yp_app",
+        "--bin",
+        "YoRHa-Protocol-Launcher",
+        "--target",
+        "aarch64-apple-darwin"
+      ],
+      "detail": "Build and launch a macOS Apple Silicon binary on a compatible host with its native toolchain.",
+      "group": "build"
+    },
+    {
+      "label": "Build and run: macOS Intel",
+      "type": "process",
+      "command": "cargo",
+      "args": [
+        "run",
+        "--locked",
+        "--package",
+        "yp_app",
+        "--bin",
+        "YoRHa-Protocol-Launcher",
+        "--target",
+        "x86_64-apple-darwin"
+      ],
+      "detail": "Build and launch a macOS Intel binary on a compatible host with its native toolchain.",
+      "group": "build"
+    },
+    {
+      "label": "Build and run: Windows UI preview",
+      "type": "process",
+      "command": "cargo",
+      "args": [
+        "run",
+        "--locked",
+        "--package",
+        "yp_app",
+        "--bin",
+        "YoRHa-Protocol-Launcher",
+        "--",
+        "--sandbox",
+        "${workspaceFolder}/target/previews/windows",
+        "--simulate-windows"
+      ],
+      "detail": "Build and preview the Windows UI on this machine using isolated settings; the executable and host APIs stay native.",
+      "group": "build"
+    },
+    {
+      "label": "Build and run: Linux UI preview",
+      "type": "process",
+      "command": "cargo",
+      "args": [
+        "run",
+        "--locked",
+        "--package",
+        "yp_app",
+        "--bin",
+        "YoRHa-Protocol-Launcher",
+        "--",
+        "--sandbox",
+        "${workspaceFolder}/target/previews/linux",
+        "--simulate-linux"
+      ],
+      "detail": "Build and preview the Linux UI on this machine using isolated settings; the executable and host APIs stay native.",
+      "group": "build"
+    },
+    {
+      "label": "Build and run: macOS UI preview",
+      "type": "process",
+      "command": "cargo",
+      "args": [
+        "run",
+        "--locked",
+        "--package",
+        "yp_app",
+        "--bin",
+        "YoRHa-Protocol-Launcher",
+        "--",
+        "--sandbox",
+        "${workspaceFolder}/target/previews/macos",
+        "--simulate-macos"
+      ],
+      "detail": "Build and preview the macOS UI on this machine using isolated settings; the executable and host APIs stay native.",
+      "group": "build"
+    }
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "uiConfirm": "Confirm",
+  "uiOk": "OK",
+  "uiSearch": "Search",
+  "uiNoMatches": "No matches",
+  "uiClearInput": "Clear",
+  "uiDismiss": "Dismiss",
+  "uiLoading": "Loading…",
+  "uiIncrease": "Increase",
+  "uiDecrease": "Decrease",
+  "uiImageUnavailable": "Image unavailable",
+  "uiOpenFullscreen": "Open fullscreen",
+  "uiClickToClose": "Click anywhere to close",
+  "uiTourStep": "{current} / {total}",
+  "@uiTourStep": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "uiNothingHere": "Nothing here yet",
+  "uiKeyCaptureClear": "Clear binding",
+  "uiSelectedCount": "{count} selected",
+  "@uiSelectedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "uiInputTooLong": "At most {max} characters",
+  "@uiInputTooLong": {
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "uiDragToReorder": "Drag to reorder",
+  "uiBrowseFiles": "Browse files",
+  "uiDropToAdd": "Drop to add",
+  "uiViewportLoading": "Rendering preview…",
+  "uiCollapse": "Collapse",
+  "uiExpand": "Expand",
+  "uiRequiredField": "This field is required",
+  "uiGalleryTitle": "Component gallery",
+  "uiGalleryBreakpointAuto": "Follow window",
+  "uiGalleryBreakpointCompact": "Compact",
+  "uiGalleryBreakpointMedium": "Medium",
+  "uiGalleryBreakpointWide": "Wide",
+  "uiGallerySample": "The android stood in the ruins and counted the stars.",
+  "uiGalleryToast": "This is a toast. Hover it to keep it open.",
+  "uiGalleryOpenModal": "Open modal",
+  "uiGalleryOpenSheet": "Open sheet",
+  "uiGalleryOpenConfirm": "Ask to confirm",
+  "uiGalleryOpenPrompt": "Ask for a name",
+  "uiGalleryOpenPick": "Pick one",
+  "uiGalleryOpenPickMany": "Pick several",
+  "uiGalleryStartTour": "Start tour",
+  "uiGalleryShowToast": "Show toast",
+  "uiGalleryResult": "Result: {value}",
+  "@uiGalleryResult": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "uiGalleryRow": "Row {index}",
+  "@uiGalleryRow": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      }
+    }
+  },
+  "uiGalleryTourIntro": "Tours point at real elements on the page.",
+  "uiGalleryTourSecond": "Each step waits one frame for its anchor.",
+  "uiGalleryPlaceholder": "Type something",
+  "uiGalleryMultiline": "Several lines\nwith selection, clipboard and IME.",
+  "uiGalleryLongText": "The android stood in the ruins and counted the stars, twice, to be sure. Then she wrote the number down, compared it with the record of the night before, and found that one of them was missing.",
+  "uiGalleryLongName": "2B_YoRHa_Official_Uniform_Recolor_4K_Textures_Complete_Edition_v2.1_final.zip",
+  "uiCut": "Cut",
+  "uiPaste": "Paste",
+  "uiSelectAll": "Select all",
+  "uiKeyCtrl": "Ctrl",
+  "uiKeyCmd": "Cmd",
+  "uiShortcut": "{modifier}+{key}",
+  "@uiShortcut": {
+    "placeholders": {
+      "modifier": {
+        "type": "String"
+      },
+      "key": {
+        "type": "String"
+      }
+    }
+  }
+}

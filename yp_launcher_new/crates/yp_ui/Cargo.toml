@@ -1,0 +1,28 @@
+[package]
+name = "yp_ui"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[features]
+embedded-images = []
+embedded-docs = []
+docs-library = []
+
+[dependencies]
+gpui.workspace = true
+yp_i18n.workspace = true
+rust-embed.workspace = true
+unicode-segmentation.workspace = true
+image.workspace = true
+futures.workspace = true
+log.workspace = true
+
+[dev-dependencies]
+gpui_platform.workspace = true
+gpui = { workspace = true, features = ["test-support"] }
+yp_core = { workspace = true, features = ["test-support"] }
+tempfile.workspace = true
+
+[lints]
+workspace = true

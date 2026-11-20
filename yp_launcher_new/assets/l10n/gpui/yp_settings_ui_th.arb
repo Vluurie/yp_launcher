@@ -1,0 +1,197 @@
+{
+  "settingsTomlErrorAt": "บรรทัด {line} คอลัมน์ {column}: {message}",
+  "@settingsTomlErrorAt": {
+    "placeholders": {
+      "line": {
+        "type": "int"
+      },
+      "column": {
+        "type": "int"
+      },
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsConfigNotToml": "{file} ไม่ใช่ TOML ที่ถูกต้อง {detail}",
+  "@settingsConfigNotToml": {
+    "placeholders": {
+      "file": {
+        "type": "String"
+      },
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsSettingsNotObject": "{file} ไม่มีออบเจ็กต์การตั้งค่า",
+  "@settingsSettingsNotObject": {
+    "placeholders": {
+      "file": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsConfigLoadFailed": "อ่านการตั้งค่าไม่ได้ {detail}",
+  "@settingsConfigLoadFailed": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsConfigSaveFailed": "บันทึกการเปลี่ยนแปลงไม่ได้ {detail}",
+  "@settingsConfigSaveFailed": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsConfigAutosaveFailed": "บันทึก {file} ไม่ได้ {detail}",
+  "@settingsConfigAutosaveFailed": {
+    "placeholders": {
+      "file": {
+        "type": "String"
+      },
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsConfigReloadFailed": "การตั้งค่าถูกแก้ไขบนดิสก์ แต่โหลดใหม่ไม่ได้ {detail}",
+  "@settingsConfigReloadFailed": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsRemoveEntry": "ลบ",
+  "naiomKeyDisabled": "ปิดใช้งาน",
+  "lodmodUiCascadeLabel": "{label} - {cascade}",
+  "@lodmodUiCascadeLabel": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "cascade": {
+        "type": "String"
+      }
+    }
+  },
+  "texturesUiFolderCount": "{folder} ({count})",
+  "@texturesUiFolderCount": {
+    "placeholders": {
+      "folder": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "texturesUiNameWithOwner": "{name} ({owner})",
+  "@texturesUiNameWithOwner": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "owner": {
+        "type": "String"
+      }
+    }
+  },
+  "modelViewLodOption": "LOD: {name}",
+  "@modelViewLodOption": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "modelViewStats": "{vertices} จุดยอด · {triangles} สามเหลี่ยม",
+  "@modelViewStats": {
+    "placeholders": {
+      "vertices": {
+        "type": "int"
+      },
+      "triangles": {
+        "type": "int"
+      }
+    }
+  },
+  "modelViewErrNoArchives": "ไม่พบโมเดลในไฟล์เหล่านี้",
+  "modelViewErrNoReadableArchive": "อ่านไฟล์โมเดลไม่ได้เลยสักไฟล์",
+  "modelViewErrMissingArchive": "ไฟล์ {side} ของโมเดลนี้หายไป",
+  "@modelViewErrMissingArchive": {
+    "placeholders": {
+      "side": {
+        "type": "String"
+      }
+    }
+  },
+  "modelViewErrEntryMissing": "ไม่พบโมเดลในไฟล์ {side} แล้ว ไฟล์ถูกแก้ไขบนดิสก์ ให้ปิดตัวแสดงผลแล้วเปิดใหม่",
+  "@modelViewErrEntryMissing": {
+    "placeholders": {
+      "side": {
+        "type": "String"
+      }
+    }
+  },
+  "modelViewErrMeshMissing": "ไม่มีเมช {id} ในโมเดลนี้",
+  "@modelViewErrMeshMissing": {
+    "placeholders": {
+      "id": {
+        "type": "int"
+      }
+    }
+  },
+  "modelViewErrLodMissing": "ไม่มีระดับรายละเอียด {id} ในโมเดลนี้",
+  "@modelViewErrLodMissing": {
+    "placeholders": {
+      "id": {
+        "type": "int"
+      }
+    }
+  },
+  "modelViewErrRenderSize": "วาดภาพตัวอย่างขนาด {width}x{height} ไม่ได้ ให้ปรับขนาดหน้าต่าง",
+  "@modelViewErrRenderSize": {
+    "placeholders": {
+      "width": {
+        "type": "int"
+      },
+      "height": {
+        "type": "int"
+      }
+    }
+  },
+  "modelViewErrModelUnreadable": "อ่านโมเดลนี้ไม่ได้: {detail}",
+  "@modelViewErrModelUnreadable": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "modelViewErrArchiveUnreadable": "ไฟล์โมเดลเสียหายหรืออยู่ในรูปแบบที่ไม่รองรับ: {detail}",
+  "@modelViewErrArchiveUnreadable": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "modelViewWarningsTitle": "อ่านบางไฟล์ไม่ได้",
+  "modelViewWarnFileUnreadable": "{file}: {detail}",
+  "@modelViewWarnFileUnreadable": {
+    "placeholders": {
+      "file": {
+        "type": "String"
+      },
+      "detail": {
+        "type": "String"
+      }
+    }
+  }
+}

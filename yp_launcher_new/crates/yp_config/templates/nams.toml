@@ -1,0 +1,150 @@
+# NAMS General Config. Restart game after changes.
+
+validate_model_data = false
+validate_scripts = false
+loading_stall_hints = true
+disable_plugin_loading = false
+disable_content_features = false
+
+# Skip starting the main Flutter overlay, the in-game mod UI that also hosts the
+# YoRHa Protocol UI. Plugins and every NAMS feature still run; only the overlay
+# and its panels, the YoRHa Protocol UI included, are gone, together with the
+# memory they use. Requires restart.
+disable_main_overlay = false
+
+# Play the visual effects during an outfit hot-swap: the pod spawn-in blinder
+# animation, the curtain, and the hacking-screen glitch filter. Set to false for
+# an instant, effect-free swap (the model still reloads). Live toggle.
+outfit_swap_visual_effects = true
+
+# Default-outfit boot mods: mods listed in nams/default_mods.toml are active
+# from game start, as if their files were placed in NieRAutomata/data.
+# Requires restart.
+experimental_default_outfits = true
+
+disable_reshade_loading = false
+disable_3dmigoto_loading = false
+disable_game_mods_loading = false
+
+# Skip loading Direct3D proxies from nams/thirdparty/graphic/: DLLs named like a
+# system DLL (d3d11.dll, dxgi.dll, ...) that the game's calls have to pass
+# through. NAMS points its own and the game's imports of that DLL at the mod.
+disable_graphic_mods_loading = false
+
+disable_texture_injection = false
+
+# Skip the startup splash window shown while the game loads. Vanilla revealed
+# the game window before it was ready, causing resize/flicker artifacts during
+# startup. NAMS finished the implementation so the splash covers startup and
+# only reveals the window once ready. Set to true to bring the artifacts back.
+disable_splash_screen = false
+
+# Skip the Platinum Games / Square Enix logo movies played while the game
+# loads. Loading itself is untouched; the game already lets you skip them
+# with a button press.
+skip_startup_logos = false
+
+fix_wind_timer_bug = true
+
+# Ignore the leftover developer hotkeys Shift+3/6/K/L, which force every render
+# target to 1600x900 and break the look until you restart.
+disable_debug_hotkeys = true
+
+# Add the NAMS tab and the NAMS rows to the in-game options menu. Set to false
+# to keep the vanilla options menu. Requires restart.
+ingame_settings = true
+
+# Master switch for the mouse and keyboard layer. When true, all mouse and
+# keybind settings are ignored and the game keeps stock input. Live toggle.
+disable_input_features = false
+
+# Every content feature on its own. false turns it off: no mod entry of that
+# feature is loaded, and neither is any mod entry that needs it, e.g. a shop
+# entry selling a modded outfit while custom_outfits is off.
+# disable_content_features turns all of them off at once. Requires restart.
+[content]
+# New items from mods (consumables, materials, key items) with their icons and
+# texts, and items mods hand out automatically.
+custom_items = true
+# New weapons from mods with their stats, upgrades, texts and story images.
+custom_weapons = true
+# Mod changes to existing weapons.
+weapon_patches = true
+# New outfits from mods, WAX outfit mods, and the "Default Outfit" item that
+# takes a modded outfit off again.
+custom_outfits = true
+# New hairsprays from mods.
+custom_hairsprays = true
+# New accessories from mods, and wearing several accessories at once.
+accessories = true
+# NAMS puts the 2B, 9S and A2 models together itself, so outfit and accessory
+# mods can swap, hide or add model parts. false = the game's own model setup.
+player_mesh_swaps = true
+# Mods that hide or show single parts of a model.
+mesh_visibility = true
+# Items that mods add to shops.
+shop_items = true
+# Modded healing items you own show up in the quick-item menu.
+item_shortcut_menu = true
+# What modded weapons, outfits, accessories and items do to the player, such as
+# damage, dodging, immunities and flashlight charge.
+effect_rules = true
+# The outfit selection NPC that offers modded outfits.
+outfit_selector_npc = true
+# EXPERIMENTAL. A "Change outfit" entry when talking to your buddy that lists
+# modded buddy outfits. Turn off if it clashes with other script mods.
+buddy_outfit_menu = true
+# New quests from mods with their texts, rewards and conditions.
+custom_quests = true
+# New mails from mods.
+custom_mails = true
+# New voice lines from mods.
+custom_voice_lines = true
+# New map rooms and story phases from mods, with their Chapter Select entries
+# and save slot names.
+custom_maps = true
+# Mod rules for objects placed on the map, such as removing them or how far
+# away they appear.
+map_layouts = true
+# New novels from mods in the Data menu.
+novels = true
+# New archives from mods in the Data menu.
+archives = true
+# Cutscene videos that mods replace, and in-game cutscenes that mods move.
+cutscene_replacements = true
+# Mod settings for the player camera.
+camera_settings = true
+# Mod additions and changes to the game's scripts.
+script_overlays = true
+# Mod rules that turn groups of game scripts on or off per story phase.
+script_groups = true
+# Mod edits to the game's Ruby scripts.
+ruby_patches = true
+# New background music from mods.
+custom_music = true
+# Ambient sounds and crowd voices that mods add or mute.
+ambient_sounds = true
+# New sound effects from mods.
+custom_sounds = true
+# Effects that mods place in rooms or remove from them.
+effect_areas = true
+# Mods that mute whole effect types in a room or story phase.
+effect_type_mute = true
+# Effects that mods run across a whole room or story phase.
+global_effects = true
+# Mod color and lighting filters for rooms.
+lighting_filters = true
+# Extra cloth physics parts on modded models.
+cloth_physics = true
+# Mod texts in menus, such as item names and descriptions. false = the game's
+# own texts.
+custom_texts = true
+# Menu and HUD layouts that mods replace. false = the shipped layouts.
+ui_overrides = true
+
+[cutscene]
+enable_h264 = false
+hide_subtitle_overlay = false
+keep_subtitle_text = false
+hide_subtitle_in_events = false
+solid_letterbox_bars = false

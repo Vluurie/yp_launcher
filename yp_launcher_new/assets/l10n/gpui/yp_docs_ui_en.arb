@@ -1,0 +1,49 @@
+{
+  "docsUnavailable": "The documentation is missing from this installation.",
+  "docsPageFailed": "Could not open this page: {detail}",
+  "@docsPageFailed": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "docsSaveFailed": "Could not save the page: {detail}",
+  "@docsSaveFailed": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "docsSaveShortcut": "Ctrl+S",
+  "docsLinkBroken": "That link points to a page that does not exist: {target}",
+  "@docsLinkBroken": {
+    "placeholders": {
+      "target": {
+        "type": "String"
+      }
+    }
+  },
+  "errWeaponStemUnreadable": "That file name is not a weapon. Expected something like wp0003.",
+  "errWeaponStemLengthMismatch": "The new weapon name has a different length than the old one, so the files cannot be renamed.",
+  "errWeaponSameStem": "The weapon already sits in that slot.",
+  "outfitBuilderPreviewFailed": "This model cannot be shown here. {detail}",
+  "@outfitBuilderPreviewFailed": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "weaponConvertSlot": "Free slot",
+  "toolsWeaponConvertNextStep": "The model is in place. To make it a weapon of its own, create one with obj_id {objId} in the weapon builder.",
+  "@toolsWeaponConvertNextStep": {
+    "placeholders": {
+      "objId": {
+        "type": "String"
+      }
+    }
+  },
+  "toolsOpenWeaponBuilder": "Open the weapon builder"
+}

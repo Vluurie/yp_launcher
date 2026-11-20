@@ -1,0 +1,191 @@
+{
+  "shellTitleShort": "YP",
+  "shellSandboxBadge": "SANDBOX",
+  "shellSandboxTooltip": "Sandbox mode. Settings, data and runtime files are kept in {dir}. Your real installation is not touched.",
+  "@shellSandboxTooltip": {
+    "placeholders": {
+      "dir": {
+        "type": "String"
+      }
+    }
+  },
+  "shellNamsExitedWithCode": "NAMS exited with code {code}",
+  "@shellNamsExitedWithCode": {
+    "placeholders": {
+      "code": {
+        "type": "int"
+      }
+    }
+  },
+  "shellInternalLauncherError": "Internal launcher error",
+  "shellMissingFilesDetail": "Missing required files in {dir}:\n{files}",
+  "@shellMissingFilesDetail": {
+    "placeholders": {
+      "dir": {
+        "type": "String"
+      },
+      "files": {
+        "type": "String"
+      }
+    }
+  },
+  "shellExeNotFoundDetail": "NieRAutomata.exe was not found at:\n{path}\n\nThe game install path saved in the launcher may be wrong, or the drive letter changed.",
+  "@shellExeNotFoundDetail": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "shellTabUnavailableTitle": "Not part of this build",
+  "shellTabUnavailableBody": "This screen was not compiled into this build of the launcher.",
+  "shellOverlayUnavailable": "This feature is not part of this build.",
+  "shellRuntimeSetupFailed": "The bundled runtime could not be prepared: {reason}",
+  "@shellRuntimeSetupFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "shellSettingsRecovered": "The launcher settings file was damaged and has been reset. The old file was kept as {path}.",
+  "@shellSettingsRecovered": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "shellDataFolderUnavailable": "The launcher data folder could not be opened ({reason}). Settings will not be saved in this session.",
+  "@shellDataFolderUnavailable": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "shellDiagnosticsFailed": "Could not collect diagnostics: {reason}",
+  "@shellDiagnosticsFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "shellDiagDedicatedGpu": "dGPU",
+  "shellDiagGameBin": "game.bin",
+  "shellDiagSteam": "Steam",
+  "shellDiagSteamBuild": "Steam {build}",
+  "@shellDiagSteamBuild": {
+    "placeholders": {
+      "build": {
+        "type": "String"
+      }
+    }
+  },
+  "shellDiagDisabledPrefixes": "{count, plural, =1{1 disabled prefix in disabled_mods.toml} other{{count} disabled prefixes in disabled_mods.toml}}",
+  "@shellDiagDisabledPrefixes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellDiagPresets": "presets: {count}",
+  "@shellDiagPresets": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellDiagShaders": "shaders: {count}",
+  "@shellDiagShaders": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellDiagLoader": "loader",
+  "shellDiagNamsList": "NAMS list: {count}",
+  "@shellDiagNamsList": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellDiagNamsInject": "nams/inject: {count}",
+  "@shellDiagNamsInject": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellDiagSkRes": "SK_Res: {count}",
+  "@shellDiagSkRes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellDiagWax": "WAX: {count}",
+  "@shellDiagWax": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellDiagHd": "HD",
+  "shellDiagH264": "H264",
+  "shellDiagMovieOverrides": "data/movie overrides: {count}",
+  "@shellDiagMovieOverrides": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellDiagWaxMods": "wax/mods/",
+  "shellDiagSkResPacks": "SK_Res packs",
+  "shellDiagReshadeDir": "reshade/",
+  "shellDiagDirEntry": "{name}/",
+  "@shellDiagDirEntry": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "shellDiagBullet": "• {name}",
+  "@shellDiagBullet": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "shellDiagHeaderLine": "{version}  ·  {time}",
+  "@shellDiagHeaderLine": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "shellSummaryLabel": "{label}:",
+  "@shellSummaryLabel": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  }
+}

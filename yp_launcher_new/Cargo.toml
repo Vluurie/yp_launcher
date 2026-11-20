@@ -1,0 +1,157 @@
+
+[workspace]
+resolver = "3"
+members = ["crates/*"]
+exclude = ["patches"]
+
+[patch.crates-io]
+image = { path = "patches/image" }
+
+[workspace.package]
+version = "3.1.0"
+edition = "2024"
+license = "CC-BY-NC-SA-4.0"
+
+[workspace.dependencies]
+yp_core = { path = "crates/yp_core" }
+yp_i18n = { path = "crates/yp_i18n" }
+yp_formats = { path = "crates/yp_formats" }
+yp_host = { path = "crates/yp_host" }
+yp_config = { path = "crates/yp_config" }
+yp_docs = { path = "crates/yp_docs" }
+yp_mods = { path = "crates/yp_mods" }
+yp_thirdparty = { path = "crates/yp_thirdparty" }
+yp_builders = { path = "crates/yp_builders" }
+yp_inspector = { path = "crates/yp_inspector" }
+yp_cutscenes = { path = "crates/yp_cutscenes" }
+yp_health = { path = "crates/yp_health" }
+yp_ui = { path = "crates/yp_ui" }
+yp_state = { path = "crates/yp_state" }
+yp_shell = { path = "crates/yp_shell" }
+yp_settings_ui = { path = "crates/yp_settings_ui" }
+yp_mods_ui = { path = "crates/yp_mods_ui" }
+yp_docs_ui = { path = "crates/yp_docs_ui", default-features = false }
+
+gpui = { git = "https://github.com/longbridge/gpui-fast", branch = "main" }
+gpui_platform = { git = "https://github.com/longbridge/gpui-fast", branch = "main", features = ["font-kit", "wayland", "x11"] }
+futures = "0.3.34"
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = { version = "1.0.154", features = ["preserve_order"] }
+toml_edit = "0.25.19"
+toml = { version = "1.2.1", features = ["preserve_order"] }
+thiserror = "2.0.21"
+log = { version = "0.4.35", features = ["std"] }
+walkdir = "2.5.0"
+ignore = "0.4.34"
+gilrs = { version = "0.11.2", default-features = false, features = ["xinput"] }
+sha2 = "0.11.1"
+sha1 = "0.11.0"
+tempfile = "3.27.0"
+dirs = "7.0.0"
+jiff = "1.0"
+notify = "8"
+pulldown-cmark = { version = "0.13", default-features = false }
+quick-xml = "0.42.0"
+image = { version = "0.25.10", default-features = false, features = ["dds", "png", "jpeg", "webp", "bmp", "tga"] }
+indexmap = { version = "2.14.2", features = ["serde"] }
+windows = "0.62.2"
+windows-registry = "0.100.0"
+texpresso = "=2.0.2"
+rust-embed = { version = "8.13.0", features = ["include-exclude"] }
+unicode-segmentation = "1.13.3"
+embed-resource = "3.0.12"
+zip = { version = "9.5.0", default-features = false, features = ["deflate-flate2-zlib-rs", "deflate64", "bzip2", "lzma", "ppmd"] }
+sevenz-rust2 = { version = "0.25.0", default-features = false, features = ["bzip2", "ppmd"] }
+unrar-ng = "0.7.7"
+encoding_rs = "0.8.44"
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+
+[workspace.lints.clippy]
+dbg_macro = "warn"
+todo = "warn"
+
+[profile.dev]
+debug = "line-tables-only"
+
+[profile.dev.package."*"]
+debug = false
+
+[profile.dev.package.taffy]
+opt-level = 3
+
+[profile.dev.package.resvg]
+opt-level = 3
+
+[profile.dev.package.usvg]
+opt-level = 3
+
+[profile.dev.package.tiny-skia]
+opt-level = 3
+
+[profile.dev.package.image]
+opt-level = 3
+
+[profile.dev.package.zune-jpeg]
+opt-level = 3
+
+[profile.dev.package.sha2]
+opt-level = 3
+
+[profile.dev.package.zip]
+opt-level = 3
+
+[profile.dev.package.zlib-rs]
+opt-level = 3
+
+[profile.dev.package.flate2]
+opt-level = 3
+
+[profile.dev.package.crc32fast]
+opt-level = 3
+
+[profile.dev.package.deflate64]
+opt-level = 3
+
+[profile.dev.package.bzip2]
+opt-level = 3
+
+[profile.dev.package.libbz2-rs-sys]
+opt-level = 3
+
+[profile.dev.package.lzma-rust2]
+opt-level = 3
+
+[profile.dev.package.ppmd-rust]
+opt-level = 3
+
+[profile.dev.package.sevenz-rust2]
+opt-level = 3
+
+# Final release: maximum binary size reduction.
+[profile.release]
+opt-level = "z"
+lto = "fat"
+codegen-units = 1
+incremental = false
+
+# Remove generated debug information and removable symbols.
+debug = 0
+strip = "symbols"
+
+# Release runtime.
+panic = "abort"
+debug-assertions = false
+overflow-checks = false
+rpath = false
+
+# Optimize build scripts, procedural macros, and their dependencies.
+[profile.release.build-override]
+opt-level = "z"
+codegen-units = 1
+debug = 0
+
+# Same size-focused settings when using --profile small.
+[profile.small]
+inherits = "release"

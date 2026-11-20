@@ -1,0 +1,136 @@
+HAP action documentation - state of play
+====================================================================
+
+  action blocks in the game   18590
+  distinct action types       110
+  types with a page           28
+  blocks those pages cover    16695  (89.8%)
+
+Every page carries: what it does, the cycle, one section per XML field,
+a 'Start here' recipe where the action is big enough to need one, advanced
+sections marked skippable, and a real vanilla XML block at the bottom.
+
+
+DONE
+--------------------------------------------------------------------
+   #  TYPE                                BLOCKS
+   1. SendCommand                           2892
+   2. ConditionBlock                        1545
+   3. EntityLayoutAction                    1478
+   4. ConditionCommands                     1347
+   5. AreaAction                             934
+   6. EnemySetAction                         873
+   7. DelayAction                            833
+   8. EnemySetArea                           718
+   9. EnemyGenerator                         683
+  10. ShootingEnemyCurveAction               594
+  11. CameraAction                           513
+  12. SendCommands                           474
+  13. BezierCurveAction                      399
+  14. ScriptAction                           386
+  15. PhaseEventAction                       353
+  16. HapMultiMarkLocationAction             332
+  17. EntityLayoutArea                       268
+  18. HapGoalLocationAction                  267
+  19. AreaCommand                            253
+  20. PhaseJumpAction                        243
+  21. CameraTargetAction                     237
+  22. HapLocationAction                      219
+  23. PathCameraArea                         200
+  24. MultiConditionBlock                    198
+  25. HackingRequestEndAction                166
+  26. MemorySaveAction                       152
+  27. PlayerCombatLimitAction                135
+  28. PathCameraAction                         3
+
+Plus the shared pages: 00_hap_system, 01_hap, 02_action,
+03_getting_started, 04_scripts, _areas, _layouts, README.
+
+
+TO DO, most-used first
+--------------------------------------------------------------------
+CUMULATIVE = share of all action blocks covered once that row is written.
+
+   #  TYPE                                BLOCKS  CUMULATIVE
+   1. CameraShooting                         146       90.6%
+   2. HackingAction                          125       91.3%
+   3. SubPhaseAction                         106       91.8%
+   4. UITimerAction                          103       92.4%
+   5. ResetAction                             95       92.9%
+   6. FadeAction                              91       93.4%
+   7. HackingCollectiveSetAction              90       93.9%
+   8. Caption                                 73       94.3%
+   9. RecoveryPointArea                       62       94.6%
+  10. AreaEntityAction                        58       94.9%
+  11. HackingStageDmgAction                   52       95.2%
+  12. RouteMove                               48       95.4%
+  13. ChangeAreaAction                        47       95.7%
+  14. TravelPointAction                       46       95.9%
+  15. EntityLayoutLottery                     41       96.2%
+  16. PositionSet                             41       96.4%
+  17. PressAreaAction                         36       96.6%
+  18. CommentAction                           35       96.8%
+  19. PlayerTurnOffAction                     33       96.9%
+  20. PositionJump                            33       97.1%
+  21. EmListUnlockAction                      28       97.3%
+  22. UIMessageBlock                          27       97.4%
+  23. Tutorial                                26       97.6%
+  24. NoAnimalArea                            24       97.7%
+  25. MinimapAreaAction                       24       97.8%
+  26. CameraArea                              21       97.9%
+  27. RandomCommandsArea                      19       98.0%
+  28. SoundNovelAction                        18       98.1%
+  29. tr::BattleCounter                       17       98.2%
+  30. TravelPointConditionResetAction         16       98.3%
+  31. HackingRetryAction                      16       98.4%
+  32. HackingRequestStartAction               15       98.5%
+  33. RecoveryArea                            15       98.6%
+  34. ArchiveAction                           15       98.6%
+  35. QuestBindArea                           15       98.7%
+  36. SeamlessMapStopArea                     14       98.8%
+  37. LoopElevatorAction                      14       98.9%
+  38. BgmAction                               14       98.9%
+  39. ConditionLayout                         13       99.0%
+  40. ConditionAction                         13       99.1%
+  41. ScrollMap                               12       99.2%
+  42. PositionSetBunker                       12       99.2%
+  43. QuestArea                               10       99.3%
+  44. LadderPointAction                       10       99.3%
+  45. BattleBgmAction                         10       99.4%
+  46. AirCurveAction                           8       99.4%
+  47. MultiRouteMove                           8       99.5%
+  48. CameraFovy                               7       99.5%
+  49. ElevatorAction                           6       99.5%
+  50. CameraResetAction                        6       99.6%
+  51. UINameTagAction                          6       99.6%
+  52. NoticeAction                             6       99.6%
+  53. PositionLoadJump                         6       99.7%
+  54. ElevatorWayPoint                         6       99.7%
+  55. MessageWalkAction                        4       99.7%
+  56. RouteAction                              4       99.7%
+  57. ActionKeyArea                            4       99.8%
+  58. MinimapReadStopAreaAction                4       99.8%
+  59. ColosseumAction                          4       99.8%
+  60. AirBezierAction                          3       99.8%
+  61. HapSOSLocationAction                     3       99.8%
+  62. PressConveyorAction                      3       99.8%
+  63. ScriptLibraryAction                      2       99.9%
+  64. HackingCheckClearAction                  2       99.9%
+  65. OffsetCameraAction                       2       99.9%
+  66. TravelPointChanger                       2       99.9%
+  67. PodWait                                  2       99.9%
+  68. SacredArea                               2       99.9%
+  69. ConditionBgm                             2       99.9%
+  70. DlcAreaMoveAction                        2       99.9%
+  71. RoboOilArea                              1       99.9%
+  72. BunkerStop                               1       99.9%
+  73. UISkillDlGaugeAction                     1      100.0%
+  74. SubphaseChangeAction                     1      100.0%
+  75. KillArea                                 1      100.0%
+  76. ShootingLaserAction                      1      100.0%
+  77. UIHudAction                              1      100.0%
+  78. BunkerAction                             1      100.0%
+  79. HapSandStormAreaAction                   1      100.0%
+  80. GlaringArea                              1      100.0%
+  81. NoiseAction                              1      100.0%
+  82. SQ090_Layout                             1      100.0%

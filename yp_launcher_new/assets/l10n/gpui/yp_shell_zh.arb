@@ -1,0 +1,191 @@
+{
+  "shellTitleShort": "YP",
+  "shellSandboxBadge": "沙盒",
+  "shellSandboxTooltip": "沙盒模式。设置、数据和运行时文件保存在 {dir}。不会改动你的真实安装。",
+  "@shellSandboxTooltip": {
+    "placeholders": {
+      "dir": {
+        "type": "String"
+      }
+    }
+  },
+  "shellNamsExitedWithCode": "NAMS 已退出，代码 {code}",
+  "@shellNamsExitedWithCode": {
+    "placeholders": {
+      "code": {
+        "type": "int"
+      }
+    }
+  },
+  "shellInternalLauncherError": "启动器内部错误",
+  "shellMissingFilesDetail": "{dir} 中缺少必需文件：\n{files}",
+  "@shellMissingFilesDetail": {
+    "placeholders": {
+      "dir": {
+        "type": "String"
+      },
+      "files": {
+        "type": "String"
+      }
+    }
+  },
+  "shellExeNotFoundDetail": "未在以下位置找到 NieRAutomata.exe：\n{path}\n\n启动器保存的游戏路径可能有误，或盘符已更改。",
+  "@shellExeNotFoundDetail": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "shellTabUnavailableTitle": "此版本未包含该功能",
+  "shellTabUnavailableBody": "此页面未编译进当前版本的启动器。",
+  "shellOverlayUnavailable": "此功能未包含在当前版本中。",
+  "shellRuntimeSetupFailed": "无法准备内置运行时：{reason}",
+  "@shellRuntimeSetupFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "shellSettingsRecovered": "启动器设置文件已损坏并被重置。旧文件已保留为 {path}。",
+  "@shellSettingsRecovered": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "shellDataFolderUnavailable": "无法打开启动器数据文件夹（{reason}）。本次会话不会保存设置。",
+  "@shellDataFolderUnavailable": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "shellDiagnosticsFailed": "无法收集诊断信息：{reason}",
+  "@shellDiagnosticsFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "shellDiagDedicatedGpu": "dGPU",
+  "shellDiagGameBin": "game.bin",
+  "shellDiagSteam": "Steam",
+  "shellDiagSteamBuild": "Steam {build}",
+  "@shellDiagSteamBuild": {
+    "placeholders": {
+      "build": {
+        "type": "String"
+      }
+    }
+  },
+  "shellDiagDisabledPrefixes": "{count, plural, =1{disabled_mods.toml 中有 1 个已禁用前缀} other{disabled_mods.toml 中有 {count} 个已禁用前缀}}",
+  "@shellDiagDisabledPrefixes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellDiagPresets": "预设：{count}",
+  "@shellDiagPresets": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellDiagShaders": "着色器：{count}",
+  "@shellDiagShaders": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellDiagLoader": "加载器",
+  "shellDiagNamsList": "NAMS 列表：{count}",
+  "@shellDiagNamsList": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellDiagNamsInject": "nams/inject：{count}",
+  "@shellDiagNamsInject": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellDiagSkRes": "SK_Res：{count}",
+  "@shellDiagSkRes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellDiagWax": "WAX：{count}",
+  "@shellDiagWax": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellDiagHd": "HD",
+  "shellDiagH264": "H264",
+  "shellDiagMovieOverrides": "data/movie 覆盖：{count}",
+  "@shellDiagMovieOverrides": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellDiagWaxMods": "wax/mods/",
+  "shellDiagSkResPacks": "SK_Res 包",
+  "shellDiagReshadeDir": "reshade/",
+  "shellDiagDirEntry": "{name}/",
+  "@shellDiagDirEntry": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "shellDiagBullet": "• {name}",
+  "@shellDiagBullet": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "shellDiagHeaderLine": "{version}  ·  {time}",
+  "@shellDiagHeaderLine": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "shellSummaryLabel": "{label}：",
+  "@shellSummaryLabel": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  }
+}

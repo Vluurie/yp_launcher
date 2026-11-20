@@ -1,0 +1,41 @@
+[package]
+name = "yp_core"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[features]
+test-support = ["sevenz-rust2/compress"]
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+toml_edit.workspace = true
+toml.workspace = true
+thiserror.workspace = true
+log.workspace = true
+walkdir.workspace = true
+sha2.workspace = true
+sha1.workspace = true
+tempfile.workspace = true
+dirs.workspace = true
+jiff.workspace = true
+notify.workspace = true
+indexmap.workspace = true
+zip.workspace = true
+sevenz-rust2.workspace = true
+unrar-ng.workspace = true
+encoding_rs.workspace = true
+
+[target.'cfg(windows)'.dependencies]
+windows-registry.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true
+
+[lints]
+workspace = true
+
+[[test]]
+name = "archive"
+required-features = ["test-support"]

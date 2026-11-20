@@ -1,0 +1,173 @@
+{
+  "modsUiCatPlayer": "Player models",
+  "modsUiCatWeapon": "Weapons (wp)",
+  "modsUiCatEnemy": "Enemies (em)",
+  "modsUiCatAccessory": "Accessories / items (et)",
+  "modsUiCatItem": "Items (it)",
+  "modsUiCatWorldProp": "World props ({dir})",
+  "@modsUiCatWorldProp": {
+    "placeholders": {
+      "dir": {
+        "type": "String"
+      }
+    }
+  },
+  "modsUiCatModelVariant": "Model variants (um)",
+  "modsUiCatMap": "Map ({dir})",
+  "@modsUiCatMap": {
+    "placeholders": {
+      "dir": {
+        "type": "String"
+      }
+    }
+  },
+  "modsUiCatScripting": "Scripts ({dir})",
+  "@modsUiCatScripting": {
+    "placeholders": {
+      "dir": {
+        "type": "String"
+      }
+    }
+  },
+  "modsUiCatLocalization": "Localization ({dir})",
+  "@modsUiCatLocalization": {
+    "placeholders": {
+      "dir": {
+        "type": "String"
+      }
+    }
+  },
+  "modsUiCatEffects": "Effects ({dir})",
+  "@modsUiCatEffects": {
+    "placeholders": {
+      "dir": {
+        "type": "String"
+      }
+    }
+  },
+  "modsUiCatUi": "UI ({dir})",
+  "@modsUiCatUi": {
+    "placeholders": {
+      "dir": {
+        "type": "String"
+      }
+    }
+  },
+  "modsUiCatMisc": "Misc textures (misctex)",
+  "modsUiCatCutscenes": "Cutscenes (movie)",
+  "modsUiCatAudio": "Audio (sound)",
+  "modsUiCatArchive": "CPK archives",
+  "modsUiCatOther": "Other ({dir})",
+  "@modsUiCatOther": {
+    "placeholders": {
+      "dir": {
+        "type": "String"
+      }
+    }
+  },
+  "modsUiCodecMpeg": "MPEG-2",
+  "modsUiResolution": "{width}x{height}",
+  "@modsUiResolution": {
+    "placeholders": {
+      "width": {
+        "type": "int"
+      },
+      "height": {
+        "type": "int"
+      }
+    }
+  },
+  "modsUiScanProgress": "{scanned} / {total} USM",
+  "@modsUiScanProgress": {
+    "placeholders": {
+      "scanned": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "modsUiCutsceneNameInvalid": "This name can't be used as a folder name. It must not contain < > : \" / \\ | ? * or end with a dot.",
+  "modsUiCutsceneScanFailed": "Couldn't read the cutscene folders.",
+  "modsUiCutsceneWriteFailed": "Couldn't write the cutscene files. Check the free disk space and that the game is closed.",
+  "modsUiDotJoin": "{first} · {second}",
+  "@modsUiDotJoin": {
+    "placeholders": {
+      "first": {
+        "type": "String"
+      },
+      "second": {
+        "type": "String"
+      }
+    }
+  },
+  "modsUiLabelValue": "{label}: {value}",
+  "@modsUiLabelValue": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "modsUiTwoSentences": "{first} {second}",
+  "@modsUiTwoSentences": {
+    "placeholders": {
+      "first": {
+        "type": "String"
+      },
+      "second": {
+        "type": "String"
+      }
+    }
+  },
+  "modsUiWithNote": "{text} ({note})",
+  "@modsUiWithNote": {
+    "placeholders": {
+      "text": {
+        "type": "String"
+      },
+      "note": {
+        "type": "String"
+      }
+    }
+  },
+  "modsUiNone": "—",
+  "modsUiInstalling": "Installing…",
+  "modsUiLodmodTitle": "LodMod found",
+  "modsUiLodmodImported": "LodMod settings imported into the LodMod Ext tab.",
+  "modsUiLodmodNotImported": "LodMod Ext is already enabled, so its settings were left as they are.",
+  "modsUiModsLoadFailed": "Couldn't read nams/mods. Check that the game folder is accessible.",
+  "modsUiNameMigoto": "3DMigoto",
+  "modsUiNameReshade": "ReShade",
+  "modsUiOutfitFallback": "Outfit {id}",
+  "@modsUiOutfitFallback": {
+    "placeholders": {
+      "id": {
+        "type": "int"
+      }
+    }
+  },
+  "modsUiReasonCancelled": "The install was cancelled.",
+  "modsUiReasonIo": "Couldn't read or write {path}.",
+  "@modsUiReasonIo": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "modsUiReasonVariantMissing": "The selected option is no longer in the archive.",
+  "modsUiThirdPartyFailed": "That didn't work. Close the game if it is running and try again.",
+  "modsUiUninstallFailed": "Couldn't remove \"{id}\". Close the game if it is running and try again.",
+  "@modsUiUninstallFailed": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  }
+}

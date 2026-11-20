@@ -1,0 +1,17 @@
+[package]
+name = "yp_inspector"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+yp_formats.workspace = true
+image.workspace = true
+thiserror.workspace = true
+
+[lints]
+workspace = true
+
+[dev-dependencies]
+yp_formats = { workspace = true, features = ["test-support"] }
+tempfile.workspace = true

@@ -1,0 +1,28 @@
+[package]
+name = "yp_health"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+yp_core.workspace = true
+yp_host.workspace = true
+yp_config.workspace = true
+yp_mods.workspace = true
+yp_thirdparty.workspace = true
+yp_cutscenes.workspace = true
+walkdir.workspace = true
+jiff.workspace = true
+indexmap.workspace = true
+toml.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+log.workspace = true
+
+[dev-dependencies]
+yp_core = { workspace = true, features = ["test-support"] }
+tempfile.workspace = true
+
+[lints]
+workspace = true

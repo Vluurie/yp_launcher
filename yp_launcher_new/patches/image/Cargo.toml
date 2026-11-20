@@ -1,0 +1,28 @@
+[package]
+name = "image"
+version = "0.25.99"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+description = "Re-exports the upstream image crate with only the formats the launcher reads, so the codecs gpui requests (EXR, TIFF, HDR and others) are not linked."
+publish = false
+
+[dependencies]
+upstream = { package = "image", git = "https://github.com/image-rs/image", tag = "v0.25.10", default-features = false }
+
+[features]
+default = ["bmp", "dds", "gif", "jpeg", "png", "tga", "webp"]
+bmp = ["upstream/bmp"]
+dds = ["upstream/dds"]
+gif = ["upstream/gif"]
+jpeg = ["upstream/jpeg"]
+png = ["upstream/png"]
+tga = ["upstream/tga"]
+webp = ["upstream/webp"]
+exr = []
+ff = []
+hdr = []
+ico = []
+pnm = []
+qoi = []
+rayon = []
+tiff = []

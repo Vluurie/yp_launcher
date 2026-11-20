@@ -1,0 +1,10 @@
+{
+  "platformNameWindows": "Windows",
+  "platformNameLinux": "Linux",
+  "platformNameMacos": "macOS",
+  "archivePasswordProtected": "Dieses Archiv ist passwortgeschützt. Entpacke es selbst und ziehe den entpackten Ordner hierher.",
+  "archiveDamaged": "Dieses Archiv ist beschädigt oder unvollständig. Lade es erneut herunter.",
+  "archiveUnsupportedMethod": "Dieses Archiv verwendet ein Kompressionsverfahren, das der Launcher nicht lesen kann. Entpacke es mit einem anderen Programm und ziehe den entpackten Ordner hierher.",
+  "archivePartMissing": "Dieses Archiv ist in mehrere Teile aufgeteilt und einer davon fehlt. Lege alle Teile in denselben Ordner und ziehe den ersten Teil hierher.",
+  "archiveHoldsNoFiles": "Dieses Archiv enthält keine Dateien."
+}

@@ -1,0 +1,173 @@
+{
+  "modsUiCatPlayer": "玩家模型",
+  "modsUiCatWeapon": "武器 (wp)",
+  "modsUiCatEnemy": "敌人 (em)",
+  "modsUiCatAccessory": "饰品 / 道具 (et)",
+  "modsUiCatItem": "道具 (it)",
+  "modsUiCatWorldProp": "场景物件 ({dir})",
+  "@modsUiCatWorldProp": {
+    "placeholders": {
+      "dir": {
+        "type": "String"
+      }
+    }
+  },
+  "modsUiCatModelVariant": "模型变体 (um)",
+  "modsUiCatMap": "地图 ({dir})",
+  "@modsUiCatMap": {
+    "placeholders": {
+      "dir": {
+        "type": "String"
+      }
+    }
+  },
+  "modsUiCatScripting": "脚本 ({dir})",
+  "@modsUiCatScripting": {
+    "placeholders": {
+      "dir": {
+        "type": "String"
+      }
+    }
+  },
+  "modsUiCatLocalization": "本地化 ({dir})",
+  "@modsUiCatLocalization": {
+    "placeholders": {
+      "dir": {
+        "type": "String"
+      }
+    }
+  },
+  "modsUiCatEffects": "特效 ({dir})",
+  "@modsUiCatEffects": {
+    "placeholders": {
+      "dir": {
+        "type": "String"
+      }
+    }
+  },
+  "modsUiCatUi": "界面 ({dir})",
+  "@modsUiCatUi": {
+    "placeholders": {
+      "dir": {
+        "type": "String"
+      }
+    }
+  },
+  "modsUiCatMisc": "杂项贴图 (misctex)",
+  "modsUiCatCutscenes": "过场动画 (movie)",
+  "modsUiCatAudio": "音频 (sound)",
+  "modsUiCatArchive": "CPK 归档",
+  "modsUiCatOther": "其他 ({dir})",
+  "@modsUiCatOther": {
+    "placeholders": {
+      "dir": {
+        "type": "String"
+      }
+    }
+  },
+  "modsUiCodecMpeg": "MPEG-2",
+  "modsUiResolution": "{width}x{height}",
+  "@modsUiResolution": {
+    "placeholders": {
+      "width": {
+        "type": "int"
+      },
+      "height": {
+        "type": "int"
+      }
+    }
+  },
+  "modsUiScanProgress": "{scanned} / {total} USM",
+  "@modsUiScanProgress": {
+    "placeholders": {
+      "scanned": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "modsUiCutsceneNameInvalid": "这个名称不能用作文件夹名。不能包含 < > : \" / \\ | ? *，也不能以句点结尾。",
+  "modsUiCutsceneScanFailed": "无法读取过场动画文件夹。",
+  "modsUiCutsceneWriteFailed": "无法写入过场动画文件。请检查磁盘剩余空间，并确认游戏已关闭。",
+  "modsUiDotJoin": "{first} · {second}",
+  "@modsUiDotJoin": {
+    "placeholders": {
+      "first": {
+        "type": "String"
+      },
+      "second": {
+        "type": "String"
+      }
+    }
+  },
+  "modsUiLabelValue": "{label}：{value}",
+  "@modsUiLabelValue": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "modsUiTwoSentences": "{first}{second}",
+  "@modsUiTwoSentences": {
+    "placeholders": {
+      "first": {
+        "type": "String"
+      },
+      "second": {
+        "type": "String"
+      }
+    }
+  },
+  "modsUiWithNote": "{text}（{note}）",
+  "@modsUiWithNote": {
+    "placeholders": {
+      "text": {
+        "type": "String"
+      },
+      "note": {
+        "type": "String"
+      }
+    }
+  },
+  "modsUiNone": "—",
+  "modsUiInstalling": "正在安装…",
+  "modsUiLodmodTitle": "检测到 LodMod",
+  "modsUiLodmodImported": "LodMod 设置已导入 LodMod Ext 选项卡。",
+  "modsUiLodmodNotImported": "LodMod Ext 已启用，其设置保持不变。",
+  "modsUiModsLoadFailed": "无法读取 nams/mods。请检查游戏文件夹是否可以访问。",
+  "modsUiNameMigoto": "3DMigoto",
+  "modsUiNameReshade": "ReShade",
+  "modsUiOutfitFallback": "服装 {id}",
+  "@modsUiOutfitFallback": {
+    "placeholders": {
+      "id": {
+        "type": "int"
+      }
+    }
+  },
+  "modsUiReasonCancelled": "安装已取消。",
+  "modsUiReasonIo": "无法读取或写入 {path}。",
+  "@modsUiReasonIo": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "modsUiReasonVariantMissing": "所选选项已不在压缩包中。",
+  "modsUiThirdPartyFailed": "操作失败。如果游戏正在运行，请先关闭游戏再重试。",
+  "modsUiUninstallFailed": "无法移除“{id}”。如果游戏正在运行，请先关闭游戏再重试。",
+  "@modsUiUninstallFailed": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  }
+}

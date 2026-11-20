@@ -1,0 +1,33 @@
+#define YP_TEXT_OF(value) #value
+#define YP_TEXT(value) YP_TEXT_OF(value)
+
+1 ICON "../../assets/icon/app_icon.ico"
+
+1 VERSIONINFO
+ FILEVERSION YP_MAJOR,YP_MINOR,YP_PATCH,0
+ PRODUCTVERSION YP_MAJOR,YP_MINOR,YP_PATCH,0
+ FILEFLAGSMASK 0x3fL
+ FILEFLAGS 0x0L
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904e4"
+        BEGIN
+            VALUE "CompanyName", "YoRHa Protocol" "\0"
+            VALUE "FileDescription", "YoRHa Protocol Launcher" "\0"
+            VALUE "FileVersion", YP_TEXT(YP_MAJOR) "." YP_TEXT(YP_MINOR) "." YP_TEXT(YP_PATCH) "\0"
+            VALUE "InternalName", "YoRHa Protocol Launcher" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2026 YoRHa Protocol. All rights reserved." "\0"
+            VALUE "OriginalFilename", "YoRHa-Protocol-Launcher.exe" "\0"
+            VALUE "ProductName", "YoRHa Protocol Launcher" "\0"
+            VALUE "ProductVersion", YP_TEXT(YP_MAJOR) "." YP_TEXT(YP_MINOR) "." YP_TEXT(YP_PATCH) "\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1252
+    END
+END

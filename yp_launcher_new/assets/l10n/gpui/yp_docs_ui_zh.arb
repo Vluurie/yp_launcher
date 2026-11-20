@@ -1,0 +1,14 @@
+{
+  "docsUnavailable": "此安装中缺少文档。",
+  "docsPageFailed": "无法打开此页面：{detail}",
+  "docsSaveFailed": "无法保存页面：{detail}",
+  "docsSaveShortcut": "Ctrl+S",
+  "docsLinkBroken": "该链接指向的页面不存在：{target}",
+  "errWeaponStemUnreadable": "这个文件名不是武器。应类似 wp0003。",
+  "errWeaponStemLengthMismatch": "新武器名称与旧名称长度不同，无法重命名文件。",
+  "errWeaponSameStem": "该武器已在这个槽位。",
+  "outfitBuilderPreviewFailed": "此模型无法在这里显示。{detail}",
+  "weaponConvertSlot": "空闲槽位",
+  "toolsWeaponConvertNextStep": "模型已就位。要让它成为独立的武器，请在武器生成器中使用 obj_id {objId} 创建一个。",
+  "toolsOpenWeaponBuilder": "打开武器生成器"
+}

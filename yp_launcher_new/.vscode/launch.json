@@ -1,0 +1,129 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug: native",
+      "type": "lldb",
+      "request": "launch",
+      "cargo": {
+        "args": [
+          "build",
+          "--locked",
+          "--package",
+          "yp_app",
+          "--bin",
+          "YoRHa-Protocol-Launcher",
+          "--config",
+          "profile.dev.debug=2"
+        ],
+        "cwd": "${workspaceFolder}"
+      },
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "YP_ASSETS_DIR": "${workspaceFolder}/assets",
+        "RUST_BACKTRACE": "1"
+      },
+      "sourceLanguages": [
+        "rust"
+      ],
+      "terminal": "integrated"
+    },
+    {
+      "name": "Debug: Windows UI preview",
+      "type": "lldb",
+      "request": "launch",
+      "cargo": {
+        "args": [
+          "build",
+          "--locked",
+          "--package",
+          "yp_app",
+          "--bin",
+          "YoRHa-Protocol-Launcher",
+          "--config",
+          "profile.dev.debug=2"
+        ],
+        "cwd": "${workspaceFolder}"
+      },
+      "args": [
+        "--sandbox",
+        "${workspaceFolder}/target/previews/windows",
+        "--simulate-windows"
+      ],
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "YP_ASSETS_DIR": "${workspaceFolder}/assets",
+        "RUST_BACKTRACE": "1"
+      },
+      "sourceLanguages": [
+        "rust"
+      ],
+      "terminal": "integrated"
+    },
+    {
+      "name": "Debug: Linux UI preview",
+      "type": "lldb",
+      "request": "launch",
+      "cargo": {
+        "args": [
+          "build",
+          "--locked",
+          "--package",
+          "yp_app",
+          "--bin",
+          "YoRHa-Protocol-Launcher",
+          "--config",
+          "profile.dev.debug=2"
+        ],
+        "cwd": "${workspaceFolder}"
+      },
+      "args": [
+        "--sandbox",
+        "${workspaceFolder}/target/previews/linux",
+        "--simulate-linux"
+      ],
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "YP_ASSETS_DIR": "${workspaceFolder}/assets",
+        "RUST_BACKTRACE": "1"
+      },
+      "sourceLanguages": [
+        "rust"
+      ],
+      "terminal": "integrated"
+    },
+    {
+      "name": "Debug: macOS UI preview",
+      "type": "lldb",
+      "request": "launch",
+      "cargo": {
+        "args": [
+          "build",
+          "--locked",
+          "--package",
+          "yp_app",
+          "--bin",
+          "YoRHa-Protocol-Launcher",
+          "--config",
+          "profile.dev.debug=2"
+        ],
+        "cwd": "${workspaceFolder}"
+      },
+      "args": [
+        "--sandbox",
+        "${workspaceFolder}/target/previews/macos",
+        "--simulate-macos"
+      ],
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "YP_ASSETS_DIR": "${workspaceFolder}/assets",
+        "RUST_BACKTRACE": "1"
+      },
+      "sourceLanguages": [
+        "rust"
+      ],
+      "terminal": "integrated"
+    }
+  ]
+}
