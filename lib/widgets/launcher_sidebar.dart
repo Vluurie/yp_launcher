@@ -526,6 +526,7 @@ class _SidebarTabState extends State<_SidebarTab>
                 alignment: Alignment.centerLeft,
                 child: FractionallySizedBox(
                   widthFactor: t,
+                  heightFactor: 1,
                   child: ColoredBox(color: ink),
                 ),
               ),

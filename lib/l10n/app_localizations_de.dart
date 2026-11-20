@@ -763,7 +763,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get tooltipEditsNaiom =>
-      'Bearbeitet nams/naiom.toml. Änderungen werden sofort gespeichert; die meisten gelten ohne Neustart des Spiels, einige brauchen einen.';
+      'Bearbeitet nams/naiom.toml. Änderungen werden sofort gespeichert und gelten im Spiel ohne Neustart.';
 
   @override
   String get tooltipCutscenesLocation =>
@@ -3974,7 +3974,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get tooltipDisableInputFeatures =>
-      'Schaltet die gesamte Maus- und Tastaturschicht ab. Das Spiel behält seine originale Eingabeverarbeitung, alles darunter wird ignoriert. Erfordert Neustart.';
+      'Schaltet die gesamte Maus- und Tastaturschicht ab. Das Spiel behält seine originale Eingabeverarbeitung, alles darunter wird ignoriert. Wirkt sofort.';
 
   @override
   String get tooltipValidateModelDataSettings =>
@@ -4617,6 +4617,13 @@ class AppLocalizationsDe extends AppLocalizations {
       'Verwendet den ausgewählten Schnellgegenstand sofort. Funktioniert unbemerkt im Hintergrund – im Spiel erscheint absichtlich kein Gegenstandsmenü.';
 
   @override
+  String get labelBindPodPet => 'Pod streicheln';
+
+  @override
+  String get tooltipBindPodPet =>
+      'Streichelt den Pod, solange die Taste gehalten wird, wie Kreisbewegungen mit der Maus. Funktioniert auch auf einer Controller-Taste. Nur wo das Spiel Streicheln erlaubt: im Stand oder beim Gehen, nicht in einem Gespräch, Ereignis oder Angriff.';
+
+  @override
   String get labelBindThirdPersonToggle => 'Kamerakorrektur umschalten';
 
   @override
@@ -4730,10 +4737,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get naiomRestartBadge => 'NEUSTART';
 
   @override
-  String get naiomRestartTooltip =>
-      'Wird nach einem Neustart des Spiels wirksam.';
-
-  @override
   String get naiomNeedsCameraFix =>
       'Aktiviere „Kamerabeschleunigung korrigieren“, um dies zu verwenden';
 
@@ -4748,10 +4751,6 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get naiomCrosshairOverrides =>
       'Wird bei aktiviertem Fadenkreuzmodus nicht verwendet – das Fadenkreuz besitzt eine eigene Geschwindigkeit';
-
-  @override
-  String get naiomThirdPersonRestartNote =>
-      'Das Aktivieren erfordert einen Neustart des Spiels. Das Deaktivieren funktioniert während des Spielens.';
 
   @override
   String get naiomTapEvadeWarning =>

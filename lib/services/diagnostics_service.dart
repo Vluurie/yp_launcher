@@ -1258,7 +1258,7 @@ class DiagnosticsService {
     final activeGameDlls = gameDlls.where((m) => !m.disabled).toList();
     if (r.thirdParty.gameMods.enabled &&
         activeGameDlls.isNotEmpty &&
-        r.gameIdentity.buildLabel == 'Steam 2026-11') {
+        _isSteam2026Build(r.gameIdentity.buildLabel)) {
       final old = activeGameDlls.where(
         (m) =>
             (m.settings?.sizeOfImage ?? GameModSettings.steam2021SizeOfImage) ==
@@ -1335,6 +1335,10 @@ class DiagnosticsService {
     '25901062': 'Steam 2026-11',
     '26534214': 'Steam 2026-11 (signed)',
   };
+
+  static bool _isSteam2026Build(String? label) => GameDetection.knownBuilds.any(
+    (b) => b.build == GameBuild.steam2026_11 && b.label == label,
+  );
 
   static bool _deltaIs(
     DiagnosticsReport r,

@@ -17,7 +17,7 @@ which counts as `true` when left out.
 | `loading_stall_hints` | `true` | Shows hints when the "Loading Map" screen takes long. Live. |
 | `disable_plugin_loading` | `false` | Loads no plugin DLLs, the ones named in a mod's `mod.toml` included. Restart. |
 | `disable_main_overlay` | `false` | Does not start the main in-game overlay. Restart. |
-| `disable_input_features` | `false` | Installs no mouse and keyboard hooks. Restart. |
+| `disable_input_features` | `false` | The mouse and keyboard hooks pass through. Live. |
 | `experimental_default_outfits` | `true` in the launcher's file, left out (`false`) in the file NAMS writes | Turns on `default_mods.toml`, see [Load order, default outfits, and reload behavior](20_runtime_configuration.md). Restart. |
 | `outfit_swap_visual_effects` | `true` | Plays the visual effects of an outfit change. `false` swaps without them. Live. |
 | `disable_reshade_loading` | `false` | Does not load ReShade from `nams\thirdparty\reshade\`. Restart. |

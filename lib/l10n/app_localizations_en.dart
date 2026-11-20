@@ -751,7 +751,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tooltipEditsNaiom =>
-      'Edits nams/naiom.toml. Changes are saved right away; most apply in game without a restart, a few need one.';
+      'Edits nams/naiom.toml. Changes are saved right away and apply in game without a restart.';
 
   @override
   String get tooltipCutscenesLocation =>
@@ -3921,7 +3921,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tooltipDisableInputFeatures =>
-      'Turn off the whole mouse and keyboard layer. The game keeps its stock input handling and everything below is ignored. Requires restart.';
+      'Turn off the whole mouse and keyboard layer. The game keeps its stock input handling and everything below is ignored. Applies right away.';
 
   @override
   String get tooltipValidateModelDataSettings =>
@@ -4554,6 +4554,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'Use the selected quick-item instantly. Works silently in the background - no item menu appears in-game, that\'s intended.';
 
   @override
+  String get labelBindPodPet => 'Pet Pod';
+
+  @override
+  String get tooltipBindPodPet =>
+      'Pets the pod while held, the same as moving the mouse in circles. Works on a controller button too. Only where the game allows petting: standing or walking, not in a conversation, event or attack.';
+
+  @override
   String get labelBindThirdPersonToggle => 'Camera Fix Toggle';
 
   @override
@@ -4667,9 +4674,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get naiomRestartBadge => 'RESTART';
 
   @override
-  String get naiomRestartTooltip => 'Takes effect after restarting the game.';
-
-  @override
   String get naiomNeedsCameraFix =>
       'Turn on Fix Camera Acceleration to use this';
 
@@ -4683,10 +4687,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get naiomCrosshairOverrides =>
       'Not used while Crosshair Mode is on - the crosshair has its own speed';
-
-  @override
-  String get naiomThirdPersonRestartNote =>
-      'Turning this ON needs a game restart. Turning it OFF works while playing.';
 
   @override
   String get naiomTapEvadeWarning =>

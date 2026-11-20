@@ -281,7 +281,6 @@ class _NaiomViewState extends ConsumerState<NaiomView> {
           ),
           _divider(context),
           _bool(NamsFields.thirdPersonMode, l10n),
-          _note(context, l10n.naiomThirdPersonRestartNote, Icons.info_outline),
           _dependent(
             context,
             enabled: thirdPersonOn,
@@ -358,7 +357,6 @@ class _NaiomViewState extends ConsumerState<NaiomView> {
             tooltip: NamsFields.miscCustomCursorHacking.tooltip!(l10n),
           ),
           _bool(NamsFields.miscDisableDefaultCursor, l10n),
-          _note(context, l10n.naiomRestartTooltip, Icons.refresh),
         ]),
       ],
     );
@@ -405,6 +403,7 @@ class _NaiomViewState extends ConsumerState<NaiomView> {
           _bind(NamsBindingFields.nonStandardNextItem, l10n),
           _bind(NamsBindingFields.nonStandardPreviousItem, l10n),
           _bind(NamsBindingFields.nonStandardUseItem, l10n),
+          _bind(NamsBindingFields.nonStandardPodPet, l10n),
           _divider(context),
           _bind(NamsBindingFields.thirdPersonModeToggle, l10n),
           _bind(NamsBindingFields.aimModeToggle, l10n),

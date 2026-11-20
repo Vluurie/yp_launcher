@@ -1383,7 +1383,7 @@ abstract class AppLocalizations {
   /// No description provided for @tooltipEditsNaiom.
   ///
   /// In en, this message translates to:
-  /// **'Edits nams/naiom.toml. Changes are saved right away; most apply in game without a restart, a few need one.'**
+  /// **'Edits nams/naiom.toml. Changes are saved right away and apply in game without a restart.'**
   String get tooltipEditsNaiom;
 
   /// No description provided for @tooltipCutscenesLocation.
@@ -6795,7 +6795,7 @@ abstract class AppLocalizations {
   /// No description provided for @tooltipDisableInputFeatures.
   ///
   /// In en, this message translates to:
-  /// **'Turn off the whole mouse and keyboard layer. The game keeps its stock input handling and everything below is ignored. Requires restart.'**
+  /// **'Turn off the whole mouse and keyboard layer. The game keeps its stock input handling and everything below is ignored. Applies right away.'**
   String get tooltipDisableInputFeatures;
 
   /// No description provided for @tooltipValidateModelDataSettings.
@@ -7956,6 +7956,18 @@ abstract class AppLocalizations {
   /// **'Use the selected quick-item instantly. Works silently in the background - no item menu appears in-game, that\'s intended.'**
   String get tooltipBindUseItem;
 
+  /// No description provided for @labelBindPodPet.
+  ///
+  /// In en, this message translates to:
+  /// **'Pet Pod'**
+  String get labelBindPodPet;
+
+  /// No description provided for @tooltipBindPodPet.
+  ///
+  /// In en, this message translates to:
+  /// **'Pets the pod while held, the same as moving the mouse in circles. Works on a controller button too. Only where the game allows petting: standing or walking, not in a conversation, event or attack.'**
+  String get tooltipBindPodPet;
+
   /// No description provided for @labelBindThirdPersonToggle.
   ///
   /// In en, this message translates to:
@@ -8160,12 +8172,6 @@ abstract class AppLocalizations {
   /// **'RESTART'**
   String get naiomRestartBadge;
 
-  /// No description provided for @naiomRestartTooltip.
-  ///
-  /// In en, this message translates to:
-  /// **'Takes effect after restarting the game.'**
-  String get naiomRestartTooltip;
-
   /// No description provided for @naiomNeedsCameraFix.
   ///
   /// In en, this message translates to:
@@ -8189,12 +8195,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Not used while Crosshair Mode is on - the crosshair has its own speed'**
   String get naiomCrosshairOverrides;
-
-  /// No description provided for @naiomThirdPersonRestartNote.
-  ///
-  /// In en, this message translates to:
-  /// **'Turning this ON needs a game restart. Turning it OFF works while playing.'**
-  String get naiomThirdPersonRestartNote;
 
   /// No description provided for @naiomTapEvadeWarning.
   ///
