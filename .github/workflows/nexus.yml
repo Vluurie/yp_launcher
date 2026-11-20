@@ -1,0 +1,107 @@
+name: nexus
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: release tag to upload
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    environment: nexus
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - asset: '*.zip'
+            wrap: false
+            name: YoRHa Protocol Launcher (Windows)
+            category: main
+            file_id: NEXUSMODS_FILE_ID_WINDOWS
+            changelog: true
+          - asset: '*.dmg'
+            wrap: true
+            name: YoRHa Protocol Launcher (macOS)
+            category: main
+            file_id: NEXUSMODS_FILE_ID_MACOS
+          - asset: '*.tar.gz'
+            wrap: true
+            name: YoRHa Protocol Launcher (Linux tar.gz)
+            category: main
+            file_id: NEXUSMODS_FILE_ID_LINUX_TARBALL
+          - asset: '*.AppImage'
+            wrap: true
+            name: YoRHa Protocol Launcher (Linux AppImage)
+            category: main
+            file_id: NEXUSMODS_FILE_ID_LINUX_APPIMAGE
+          - standalone: true
+            name: NAMS - Standalone
+            category: main
+            file_id: NEXUSMODS_FILE_ID_STANDALONE
+    env:
+      TAG: ${{ github.event.release.tag_name || inputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+        if: matrix.standalone && vars[matrix.file_id] != ''
+        with:
+          ref: ${{ env.TAG }}
+          sparse-checkout: |
+            yp_launcher_new/assets/bins/NAMS.exe
+            yp_launcher_new/assets/bins/plugins/yorha_protocol.dll
+          sparse-checkout-cone-mode: false
+      - name: prepare file
+        id: prep
+        if: vars[matrix.file_id] != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ASSET: ${{ matrix.asset }}
+          WRAP: ${{ matrix.wrap }}
+          STANDALONE: ${{ matrix.standalone }}
+        run: |
+          mkdir dl
+          if [ "$STANDALONE" = true ]; then
+            dir="NAMS - Standalone $TAG"
+            mkdir -p "dl/$dir/plugins"
+            cp yp_launcher_new/assets/bins/NAMS.exe "dl/$dir/"
+            cp yp_launcher_new/assets/bins/plugins/yorha_protocol.dll "dl/$dir/plugins/"
+            (cd dl && zip -r "NAMS.Standalone.$TAG.zip" "$dir")
+            file="dl/NAMS.Standalone.$TAG.zip"
+          else
+            gh release download "$TAG" -R "$GITHUB_REPOSITORY" -p "$ASSET" -D dl
+            files=(dl/*)
+            [ "${#files[@]}" -eq 1 ] || { echo "expected one asset for $ASSET, got ${#files[@]}"; exit 1; }
+            file="${files[0]}"
+            if [ "$WRAP" = true ]; then
+              zip -j "$file.zip" "$file"
+              file="$file.zip"
+            fi
+          fi
+          delim=$(openssl rand -hex 16)
+          {
+            echo "file=$file"
+            echo "version=${TAG#v}"
+            echo "notes<<$delim"
+            gh release view "$TAG" -R "$GITHUB_REPOSITORY" --json body -q .body
+            echo "$delim"
+          } >> "$GITHUB_OUTPUT"
+      - name: upload to nexus
+        if: vars[matrix.file_id] != ''
+        uses: Nexus-Mods/upload-action@v1.0.0-beta.11
+        with:
+          api_key: ${{ secrets.NEXUSMODS_API_KEY }}
+          mod_id: ${{ vars.NEXUSMODS_MOD_ID }}
+          file_id: ${{ vars[matrix.file_id] }}
+          filename: ${{ steps.prep.outputs.file }}
+          version: ${{ steps.prep.outputs.version }}
+          display_name: ${{ matrix.name }}
+          category: ${{ matrix.category }}
+          archive_existing_version: true
+          update_mod_version: true
+          changelog: ${{ matrix.changelog && steps.prep.outputs.notes || '' }}
