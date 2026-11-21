@@ -300,8 +300,12 @@ fn process_queries_use_pgrep_and_pkill() {
     assert!(adapter.is_game_running());
     assert!(!adapter.terminate_game());
     let calls = fake.calls();
+    assert_eq!(calls[0].program, PathBuf::from("pgrep"));
     assert_eq!(calls[0].args_lossy(), ["-f", "NAMS.exe"]);
-    assert_eq!(calls[1].program, PathBuf::from("pkill"));
+    assert_eq!(calls[1].args_lossy(), ["-f", "NieRAutomata.exe"]);
+    assert_eq!(calls[2].program, PathBuf::from("pkill"));
+    assert_eq!(calls[2].args_lossy(), ["-f", "NAMS.exe"]);
+    assert_eq!(calls[3].args_lossy(), ["-f", "NieRAutomata.exe"]);
 }
 
 #[test]
