@@ -6,6 +6,7 @@ license.workspace = true
 
 [dependencies]
 yp_core.workspace = true
+yp_config.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 thiserror.workspace = true

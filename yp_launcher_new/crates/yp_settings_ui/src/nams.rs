@@ -1,56 +1,28 @@
-use std::path::PathBuf;
-use std::rc::Rc;
+use std::path::{Path, PathBuf};
 
 use gpui::{PathPromptOptions, ScrollHandle, Subscription, Task};
 use yp_builders::CheatTableOutcome;
-use yp_config::ConfigFile;
-use yp_config::fields::{content, nams};
+use yp_config::{Kind, Setting};
 use yp_state::ConfigStore;
 use yp_state::prelude::*;
 use yp_ui::prelude::*;
+use yp_host::launch::nams_dll;
 use yp_ui::{
-    Button, ButtonStyle, ConfigErrorBanner, Icon, IconName, IconSize, Label, LabelSize, PageHeader,
-    TintColor, TwoColumn,
+    Button, ButtonStyle, Icon, IconButton, IconName, IconSize, Label, LabelSize, TintColor, Tooltip,
 };
 
-use crate::errors::{config_failure_text, toml_error_text};
-use crate::fields::{FieldRef, FieldRow, ValueSink, changed_in};
-use crate::page::{
-    banner, card, column, failure_banner, muted_text, reveal, row_divider, subheading, tab_page,
-};
+use crate::extras::CONTENT_GRID_PREFIX;
+use crate::fields::Marker;
+use crate::page::{banner, card, column, muted_text, row_divider, tab_page};
+use crate::schema_page::{self, CardPlan, RowContext, TabScope};
 
 const SCOPE: &str = "nams";
+const FILE: &str = "nams.toml";
+const CONTENT_CATEGORY: &str = "content";
+pub const TAB: TabScope = TabScope::roots(&["native", "content", "thirdparty"]);
 
-pub const GENERAL_FIELDS: [FieldRef; 6] = [
-    &nams::VALIDATE_MODEL_DATA,
-    &nams::VALIDATE_SCRIPTS,
-    &nams::LOADING_STALL_HINTS,
-    &nams::FIX_WIND_TIMER_BUG,
-    &nams::DISABLE_DEBUG_HOTKEYS,
-    &nams::INGAME_SETTINGS,
-];
-
-pub const LOADING_FIELDS: [FieldRef; 9] = [
-    &nams::DISABLE_PLUGIN_LOADING,
-    &nams::DISABLE_MAIN_OVERLAY,
-    &nams::DISABLE_CONTENT_FEATURES,
-    &nams::DISABLE_RESHADE_LOADING,
-    &nams::DISABLE_3DMIGOTO_LOADING,
-    &nams::DISABLE_GRAPHIC_MODS_LOADING,
-    &nams::DISABLE_TEXTURE_INJECTION,
-    &nams::DISABLE_SPLASH_SCREEN,
-    &nams::SKIP_STARTUP_LOGOS,
-];
-
-pub const CONTENT_TAIL_FIELDS: [FieldRef; 2] = [
-    &nams::OUTFIT_SWAP_VISUAL_EFFECTS,
-    &nams::EXPERIMENTAL_DEFAULT_OUTFITS,
-];
-
-pub fn content_fields() -> Vec<FieldRef> {
-    let mut fields: Vec<FieldRef> = content::fields().map(|field| field as FieldRef).collect();
-    fields.extend(CONTENT_TAIL_FIELDS);
-    fields
+pub fn is_grid_setting(setting: &Setting) -> bool {
+    setting.kind == Kind::Bool && setting.id.starts_with(CONTENT_GRID_PREFIX)
 }
 
 pub fn grid_columns(width: Pixels) -> usize {
@@ -92,25 +64,142 @@ impl CheatTableNotice {
     }
 }
 
+fn file_name(path: &Path) -> String {
+    path.file_name()
+        .map(|name| name.to_string_lossy().into_owned())
+        .unwrap_or_default()
+}
+
 pub struct NamsTab {
     config: Entity<ConfigStore>,
     scroll: ScrollHandle,
     cheat_table: Option<CheatTableNotice>,
     convert_task: Option<Task<()>>,
+    dll_rejected: bool,
+    dll_task: Option<Task<()>>,
     _subscriptions: Vec<Subscription>,
 }
 
 impl NamsTab {
     pub fn new(_window: &mut Window, cx: &mut Context<Self>) -> Self {
-        let config = cx.stores().config.clone();
-        let subscriptions = vec![cx.observe(&config, |_, _, cx| cx.notify())];
+        let stores = cx.stores().clone();
+        let config = stores.config.clone();
+        let subscriptions = vec![
+            cx.observe(&config, |_, _, cx| cx.notify()),
+            cx.observe(&stores.launch_options, |_, _, cx| cx.notify()),
+            cx.observe(&stores.session, |_, _, cx| cx.notify()),
+        ];
         Self {
             config,
             scroll: ScrollHandle::new(),
             cheat_table: None,
             convert_task: None,
+            dll_rejected: false,
+            dll_task: None,
             _subscriptions: subscriptions,
         }
+    }
+
+    pub fn dll_rejected(&self) -> bool {
+        self.dll_rejected
+    }
+
+    pub fn use_nams_dll(&mut self, path: PathBuf, cx: &mut Context<Self>) {
+        self.dll_rejected = !nams_dll::is_nams_dll(&path);
+        if !self.dll_rejected {
+            let options = cx.stores().launch_options.clone();
+            options.update(cx, |options, cx| options.set_nams_dll(Some(path), cx));
+        }
+        cx.notify();
+    }
+
+    pub fn stop_using_nams_dll(&mut self, cx: &mut Context<Self>) {
+        self.dll_rejected = false;
+        let options = cx.stores().launch_options.clone();
+        options.update(cx, |options, cx| options.set_nams_dll(None, cx));
+        cx.notify();
+    }
+
+    fn pick_nams_dll(&mut self, cx: &mut Context<Self>) {
+        let picked = cx.prompt_for_paths(PathPromptOptions {
+            files: true,
+            directories: false,
+            multiple: false,
+            prompt: None,
+        });
+        self.dll_task = Some(cx.spawn(async move |this, cx| {
+            let Ok(Ok(Some(paths))) = picked.await else {
+                return;
+            };
+            let Some(path) = paths.into_iter().next() else {
+                return;
+            };
+            this.update(cx, |this, cx| this.use_nams_dll(path, cx)).ok();
+        }));
+    }
+
+    fn nams_dll_card(&self, window: &mut Window, cx: &mut Context<Self>) -> AnyElement {
+        let strings = cx.t();
+        let sizes = window.sizes(cx);
+        let stores = cx.stores();
+        let options = stores.launch_options.read(cx);
+        let dll = options.nams_dll().map(Path::to_path_buf);
+        let changed: Vec<SharedString> = dll
+            .iter()
+            .map(|dll| SharedString::from(file_name(dll)))
+            .collect();
+        let pick_label = if dll.is_some() {
+            strings.nams_dll_change()
+        } else {
+            strings.nams_dll_pick()
+        };
+        let pick = Button::new("nams-dll-pick", pick_label)
+            .controller_support(false)
+            .style(if dll.is_some() {
+                ButtonStyle::Outlined
+            } else {
+                ButtonStyle::Tinted(TintColor::Accent)
+            })
+            .on_click(cx.listener(|this, _, _, cx| this.pick_nams_dll(cx)));
+        let chosen = dll.map(|dll| {
+            h_flex()
+                .w_full()
+                .items_center()
+                .gap(sizes.spacing_md)
+                .pb(sizes.padding_sm)
+                .child(
+                    Icon::new(IconName::ExtensionOutlined)
+                        .size(IconSize::Small)
+                        .color(Color::Accent),
+                )
+                .child(
+                    div().flex_1().min_w_0().child(
+                        Label::new(dll.to_string_lossy().into_owned())
+                            .size(LabelSize::Small)
+                            .truncate(),
+                    ),
+                )
+                .child(
+                    IconButton::new("nams-dll-remove", IconName::Close)
+                        .icon_size(IconSize::Small)
+                        .icon_color(Color::Secondary)
+                        .tooltip(Tooltip::text(strings.nams_dll_remove()))
+                        .on_click(cx.listener(|this, _, _, cx| this.stop_using_nams_dll(cx))),
+                )
+        });
+        card("nams-dll", strings.nams_dll_title(), cx)
+            .changed(changed)
+            .child(muted_text(strings.nams_dll_description(), false, window, cx))
+            .children(chosen)
+            .child(h_flex().pb(sizes.padding_sm).child(pick))
+            .when(self.dll_rejected, |this| {
+                this.child(
+                    Label::new(strings.nams_dll_not_a_dll())
+                        .size(LabelSize::XSmall)
+                        .color(Color::Warning),
+                )
+            })
+            .into_any_element()
     }
 
     pub fn scroll_handle(&self) -> &ScrollHandle {
@@ -152,42 +241,20 @@ impl NamsTab {
         }));
     }
 
-    fn sink(&self, field: FieldRef) -> ValueSink {
-        let config = self.config.clone();
-        let meta = *field.meta();
-        Rc::new(move |value, _, cx| {
-            config.update(cx, |store, cx| {
-                store.update_nams(meta.key, value, meta.section, cx)
-            });
-        })
+    pub fn confirm_reset(&mut self, window: &mut Window, cx: &mut Context<Self>) {
+        let text = schema_page::reset_text(&TAB, self.config.read(cx), cx.t());
+        schema_page::confirm_reset(TAB, &text, &self.config, window, cx);
     }
 
-    fn row(&self, field: FieldRef, values: &toml::Table) -> FieldRow {
-        FieldRow::toml(SCOPE, field, values).sink(self.sink(field))
-    }
-
-    fn general_card(
-        &self,
-        values: &toml::Table,
-        window: &mut Window,
-        cx: &mut Context<Self>,
-    ) -> AnyElement {
+    fn cheat_table_card(&self, window: &mut Window, cx: &mut Context<Self>) -> AnyElement {
         let strings = cx.t();
         let sizes = window.sizes(cx);
         let notice = self.cheat_table.clone();
-        card("nams-general", strings.card_general(), cx)
-            .changed(changed_in(&GENERAL_FIELDS, values, strings))
-            .child(self.row(&nams::VALIDATE_MODEL_DATA, values))
-            .child(self.row(&nams::VALIDATE_SCRIPTS, values))
-            .child(self.row(&nams::LOADING_STALL_HINTS, values))
-            .child(self.row(&nams::FIX_WIND_TIMER_BUG, values))
-            .child(self.row(&nams::DISABLE_DEBUG_HOTKEYS, values))
-            .child(self.row(&nams::INGAME_SETTINGS, values))
-            .child(row_divider(window, cx))
+        card("nams-cheat-table", strings.card_cheat_engine(), cx)
             .child(muted_text(strings.cheat_table_convert_desc(), false, window, cx))
             .child(
                 h_flex().child(
-                    Button::new("nams-cheat-table", strings.cheat_table_convert_button())
+                    Button::new("nams-cheat-table-convert", strings.cheat_table_convert_button())
                         .controller_support(false)
                         .style(ButtonStyle::Tinted(TintColor::Accent))
                         .on_click(cx.listener(|this, _, window, cx| {
@@ -241,49 +308,43 @@ impl NamsTab {
             .into_any_element()
     }
 
-    fn loading_card(&self, values: &toml::Table, cx: &mut Context<Self>) -> AnyElement {
-        let strings = cx.t();
-        card("nams-loading", strings.card_loading(), cx)
-            .changed(changed_in(&LOADING_FIELDS, values, strings))
-            .children(LOADING_FIELDS.iter().map(|field| self.row(*field, values)))
-            .into_any_element()
-    }
-
-    fn content_card(
-        &self,
-        values: &toml::Table,
-        window: &mut Window,
-        cx: &mut Context<Self>,
-    ) -> AnyElement {
-        let strings = cx.t();
+    fn content_card(&self, plan: CardPlan, window: &mut Window, cx: &mut Context<Self>) -> AnyElement {
         let sizes = window.sizes(cx);
         let available = sizes.window_width
             - sizes.sidebar_width
             - sizes.content_padding * 2.
             - sizes.card_padding_h * 2.;
         let columns = grid_columns(available);
-        let mut card = card("nams-content", strings.card_content_features(), cx)
-            .changed(changed_in(&content_fields(), values, strings))
-            .child(muted_text(
-                strings.content_features_description(),
-                true,
-                window,
-                cx,
-            ));
-        for group in &content::GROUPS {
-            card = card.child(subheading(group.title.text(strings), window, cx));
+        let (grid_settings, settings): (Vec<Setting>, Vec<Setting>) =
+            plan.settings.iter().cloned().partition(is_grid_setting);
+        let mut context = RowContext::default();
+        let mut rows: Vec<AnyElement> = settings
+            .iter()
+            .flat_map(|setting| {
+                context.field(SCOPE, setting, &self.config, Marker::RestartOnly, window, cx)
+            })
+            .collect();
+        if !grid_settings.is_empty() {
+            if !rows.is_empty() {
+                rows.push(row_divider(window, cx).into_any_element());
+            }
             let mut grid = v_flex().w_full().pb(sizes.padding_md);
-            for chunk in group.fields.chunks(columns) {
+            for chunk in grid_settings.chunks(columns) {
                 let mut line = h_flex().w_full().items_start().gap(sizes.spacing_lg);
-                for field in chunk {
-                    let field: FieldRef = *field;
+                for setting in chunk {
                     line = line.child(
                         div()
                             .flex_basis(relative(0.))
                             .flex_grow_1()
                             .flex_shrink_1()
                             .min_w_0()
-                            .child(self.row(field, values)),
+                            .child(schema_page::field(
+                                SCOPE,
+                                setting,
+                                &self.config,
+                                Marker::RestartOnly,
+                                cx,
+                            )),
                     );
                 }
                 for _ in chunk.len()..columns {
@@ -291,15 +352,17 @@ impl NamsTab {
                 }
                 grid = grid.child(line);
             }
-            card = card.child(grid);
+            rows.push(grid.into_any_element());
         }
-        card.child(row_divider(window, cx))
-            .children(
-                CONTENT_TAIL_FIELDS
-                    .iter()
-                    .map(|field| self.row(*field, values)),
-            )
-            .into_any_element()
+        let advanced = schema_page::generic_rows(
+            SCOPE,
+            &plan.advanced,
+            &self.config,
+            Marker::RestartOnly,
+            window,
+            cx,
+        );
+        schema_page::finish_card(plan, rows, advanced, window, cx).into_any_element()
     }
 }
 
@@ -307,57 +370,49 @@ impl Render for NamsTab {
     fn render(&mut self, window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         let strings = cx.t();
         let store = self.config.read(cx);
-        let loading = store.is_loading();
-        let dirty = store.is_dirty();
-        let values = store.nams().clone();
-        let error = store
-            .error(ConfigFile::Nams)
-            .map(|error| toml_error_text(error, strings));
-        let failure = store
-            .failure()
-            .map(|failure| config_failure_text(failure, strings));
-        let path = store.path(ConfigFile::Nams);
-        let save_store = self.config.clone();
-        let discard_store = self.config.clone();
-        let header = PageHeader::new(strings.header_nams())
-            .dirty(dirty)
-            .save_discard(
-                move |_, cx| save_store.update(cx, |store, cx| store.save(cx)),
-                move |_, cx| discard_store.update(cx, |store, cx| store.discard(cx)),
-            );
-        let header = match path {
-            Some(path) => header.info(strings.tooltip_edits_nams_toml(), move |_, cx| {
-                reveal(path.clone(), true, cx)
-            }),
-            None => header.info_tooltip(strings.tooltip_edits_nams_toml()),
-        };
+        let loading = schema_page::is_loading(store);
+        let reset = TAB.has_changes(store).then(|| {
+            let text = schema_page::reset_text(&TAB, store, strings);
+            schema_page::reset_button("nams-reset", TAB, text, &self.config, cx)
+        });
+        let header = schema_page::header(
+            strings.header_nams(),
+            strings.tooltip_edits_nams_toml(),
+            Some(FILE),
+            reset,
+            &self.config,
+            cx,
+        );
         let content = if loading {
             div().into_any_element()
         } else {
-            let general = self.general_card(&values, window, cx);
-            let loading_card = self.loading_card(&values, cx);
-            let content_card = self.content_card(&values, window, cx);
-            let mut sections: Vec<AnyElement> = Vec::new();
-            if let Some(error) = error {
-                sections.push(
-                    ConfigErrorBanner::new(ConfigFile::Nams.file_name(), error).into_any_element(),
-                );
-            }
-            if let Some(failure) = failure {
-                sections.push(failure_banner("nams-failure", failure).into_any_element());
-            }
+            let mut sections = schema_page::problems(SCOPE, &TAB, &self.config, cx);
             sections.push(
                 banner(IconName::InfoOutline, strings.nams_description(), window, cx)
                     .into_any_element(),
             );
-            sections.push(
-                TwoColumn::new(general, loading_card)
-                    .id("nams-columns")
-                    .into_any_element(),
-            );
-            sections.push(content_card);
-            column(sections, window, cx)
-            .into_any_element()
+            let plans = schema_page::plans(SCOPE, &TAB, self.config.read(cx));
+            let mut cards: Vec<AnyElement> = Vec::new();
+            let mut wide: Vec<AnyElement> = Vec::new();
+            for plan in plans {
+                if plan.category.id == CONTENT_CATEGORY {
+                    wide.push(self.content_card(plan, window, cx));
+                } else {
+                    cards.push(schema_page::generic_card(
+                        SCOPE,
+                        plan,
+                        &self.config,
+                        Marker::RestartOnly,
+                        window,
+                        cx,
+                    ));
+                }
+            }
+            cards.insert(0, self.nams_dll_card(window, cx));
+            cards.push(self.cheat_table_card(window, cx));
+            sections.push(schema_page::spread(cards, "nams-columns", window, cx));
+            sections.extend(wide);
+            column(sections, window, cx).into_any_element()
         };
         tab_page("nams-scroll", header, &self.scroll, loading, content, window, cx)
     }
@@ -396,13 +451,16 @@ mod tests {
     }
 
     #[test]
-    fn every_content_toggle_is_on_the_page_once() {
-        let fields = content_fields();
-        let mut keys: Vec<&str> = fields.iter().map(|field| field.meta().key).collect();
-        let total = keys.len();
-        keys.sort_unstable();
-        keys.dedup();
-        assert_eq!(keys.len(), total);
-        assert_eq!(total, content::fields().count() + 2);
+    fn content_features_go_into_the_grid_and_switches_stay_rows() {
+        let schema: yp_config::Schema =
+            serde_json::from_value(yp_config::testing::sample_schema()).unwrap();
+        let grid: Vec<&str> = schema
+            .settings_in(CONTENT_CATEGORY)
+            .filter(|setting| is_grid_setting(setting))
+            .map(|setting| setting.id.as_str())
+            .collect();
+        assert_eq!(grid, vec!["nams.content.custom_items"]);
+        let master = schema.setting("nams.experimental_default_outfits").unwrap();
+        assert!(!is_grid_setting(master));
     }
 }

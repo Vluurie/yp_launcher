@@ -125,7 +125,8 @@ pub fn parse_line(raw: &str) -> Option<LogEntry> {
     let (timestamp, rest) = split_timestamp(line)?;
     let (level, rest) = split_word(rest)?;
     let level = LogLevel::parse(level)?;
-    let (module, message) = split_module(rest)?;
+    let (module, message) =
+        split_module(rest).unwrap_or(("", rest.trim_start_matches(char::is_whitespace)));
     Some(LogEntry {
         timestamp: format_timestamp(timestamp),
         level,

@@ -23,8 +23,9 @@ impl WindowsAdapter {
 #[cfg(windows)]
 fn game_process_ids() -> Vec<u32> {
     yp_core::process::excluding_helpers(|helpers| {
-        super::win32::process_ids_named(yp_core::consts::NAMS_EXE_NAME)
+        [yp_core::consts::NAMS_EXE_NAME, yp_core::consts::GAME_EXE_NAME]
             .into_iter()
+            .flat_map(super::win32::process_ids_named)
             .filter(|id| !helpers.contains(id))
             .collect()
     })

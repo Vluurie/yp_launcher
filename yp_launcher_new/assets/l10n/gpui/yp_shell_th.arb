@@ -187,5 +187,10 @@
         "type": "String"
       }
     }
-  }
+  },
+  "shellNamsDllMissing": "ไม่พบ NAMS DLL",
+  "shellNamsDllMissingDetail": "ไม่พบ NAMS DLL ที่เลือกไว้ในหน้า NAMS แล้ว:\n{path}\n\nเลือกใหม่อีกครั้งในหน้า NAMS หรือกลับไปใช้ NAMS.exe ที่นั่น",
+  "shellNamsDllCopyFailed": "คัดลอก NAMS DLL ไปยังโฟลเดอร์เกมไม่ได้",
+  "shellNamsDllCopyFailedDetail": "คัดลอก\n{from}\nไปยัง\n{to}\nไม่ได้\n\n{error}\n\nหากเกมยังทำงานอยู่ ให้ปิดเกมแล้วลองอีกครั้ง",
+  "shellPlayWithNamsDll": "เริ่มด้วย NAMS DLL ({file})"
 }

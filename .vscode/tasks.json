@@ -2,6 +2,365 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "Build and run: native (debug)",
+            "type": "process",
+            "command": "cargo",
+            "args": [
+                "run",
+                "--locked",
+                "--package",
+                "yp_app",
+                "--bin",
+                "YoRHa-Protocol-Launcher"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/yp_launcher_new",
+                "env": {
+                    "YP_ASSETS_DIR": "${workspaceFolder}/yp_launcher_new/assets",
+                    "RUST_BACKTRACE": "1"
+                }
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            },
+            "problemMatcher": {
+                "base": "$rustc",
+                "fileLocation": [
+                    "relative",
+                    "${workspaceFolder}/yp_launcher_new"
+                ]
+            },
+            "detail": "Build and launch the launcher for this machine using its normal settings.",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Build and run: native (debug symbols)",
+            "type": "process",
+            "command": "cargo",
+            "args": [
+                "run",
+                "--locked",
+                "--package",
+                "yp_app",
+                "--bin",
+                "YoRHa-Protocol-Launcher",
+                "--config",
+                "profile.dev.debug=2"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/yp_launcher_new",
+                "env": {
+                    "YP_ASSETS_DIR": "${workspaceFolder}/yp_launcher_new/assets",
+                    "RUST_BACKTRACE": "1"
+                }
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            },
+            "problemMatcher": {
+                "base": "$rustc",
+                "fileLocation": [
+                    "relative",
+                    "${workspaceFolder}/yp_launcher_new"
+                ]
+            },
+            "detail": "Build and launch with full Rust debug information.",
+            "group": "build"
+        },
+        {
+            "label": "Build and run: native (small release)",
+            "type": "process",
+            "command": "cargo",
+            "args": [
+                "run",
+                "--locked",
+                "--package",
+                "yp_app",
+                "--bin",
+                "YoRHa-Protocol-Launcher",
+                "--profile",
+                "small",
+                "--features",
+                "embedded-assets"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/yp_launcher_new",
+                "env": {
+                    "YP_ASSETS_DIR": "${workspaceFolder}/yp_launcher_new/assets",
+                    "RUST_BACKTRACE": "1"
+                }
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            },
+            "problemMatcher": {
+                "base": "$rustc",
+                "fileLocation": [
+                    "relative",
+                    "${workspaceFolder}/yp_launcher_new"
+                ]
+            },
+            "detail": "Build and launch the optimized small-release binary with embedded assets.",
+            "group": "build"
+        },
+        {
+            "label": "Build and run: Windows x64",
+            "type": "process",
+            "command": "cargo",
+            "args": [
+                "run",
+                "--locked",
+                "--package",
+                "yp_app",
+                "--bin",
+                "YoRHa-Protocol-Launcher",
+                "--target",
+                "x86_64-pc-windows-msvc"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/yp_launcher_new",
+                "env": {
+                    "YP_ASSETS_DIR": "${workspaceFolder}/yp_launcher_new/assets",
+                    "RUST_BACKTRACE": "1"
+                }
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            },
+            "problemMatcher": {
+                "base": "$rustc",
+                "fileLocation": [
+                    "relative",
+                    "${workspaceFolder}/yp_launcher_new"
+                ]
+            },
+            "detail": "Build and launch a Windows x64 binary on a compatible host with its native toolchain.",
+            "group": "build"
+        },
+        {
+            "label": "Build and run: Linux x64",
+            "type": "process",
+            "command": "cargo",
+            "args": [
+                "run",
+                "--locked",
+                "--package",
+                "yp_app",
+                "--bin",
+                "YoRHa-Protocol-Launcher",
+                "--target",
+                "x86_64-unknown-linux-gnu"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/yp_launcher_new",
+                "env": {
+                    "YP_ASSETS_DIR": "${workspaceFolder}/yp_launcher_new/assets",
+                    "RUST_BACKTRACE": "1"
+                }
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            },
+            "problemMatcher": {
+                "base": "$rustc",
+                "fileLocation": [
+                    "relative",
+                    "${workspaceFolder}/yp_launcher_new"
+                ]
+            },
+            "detail": "Build and launch a Linux x64 binary on a compatible host with its native toolchain.",
+            "group": "build"
+        },
+        {
+            "label": "Build and run: macOS Apple Silicon",
+            "type": "process",
+            "command": "cargo",
+            "args": [
+                "run",
+                "--locked",
+                "--package",
+                "yp_app",
+                "--bin",
+                "YoRHa-Protocol-Launcher",
+                "--target",
+                "aarch64-apple-darwin"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/yp_launcher_new",
+                "env": {
+                    "YP_ASSETS_DIR": "${workspaceFolder}/yp_launcher_new/assets",
+                    "RUST_BACKTRACE": "1"
+                }
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            },
+            "problemMatcher": {
+                "base": "$rustc",
+                "fileLocation": [
+                    "relative",
+                    "${workspaceFolder}/yp_launcher_new"
+                ]
+            },
+            "detail": "Build and launch a macOS Apple Silicon binary on a compatible host with its native toolchain.",
+            "group": "build"
+        },
+        {
+            "label": "Build and run: macOS Intel",
+            "type": "process",
+            "command": "cargo",
+            "args": [
+                "run",
+                "--locked",
+                "--package",
+                "yp_app",
+                "--bin",
+                "YoRHa-Protocol-Launcher",
+                "--target",
+                "x86_64-apple-darwin"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/yp_launcher_new",
+                "env": {
+                    "YP_ASSETS_DIR": "${workspaceFolder}/yp_launcher_new/assets",
+                    "RUST_BACKTRACE": "1"
+                }
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            },
+            "problemMatcher": {
+                "base": "$rustc",
+                "fileLocation": [
+                    "relative",
+                    "${workspaceFolder}/yp_launcher_new"
+                ]
+            },
+            "detail": "Build and launch a macOS Intel binary on a compatible host with its native toolchain.",
+            "group": "build"
+        },
+        {
+            "label": "Build and run: Windows UI preview",
+            "type": "process",
+            "command": "cargo",
+            "args": [
+                "run",
+                "--locked",
+                "--package",
+                "yp_app",
+                "--bin",
+                "YoRHa-Protocol-Launcher",
+                "--",
+                "--sandbox",
+                "${workspaceFolder}/yp_launcher_new/target/previews/windows",
+                "--simulate-windows"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/yp_launcher_new",
+                "env": {
+                    "YP_ASSETS_DIR": "${workspaceFolder}/yp_launcher_new/assets",
+                    "RUST_BACKTRACE": "1"
+                }
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            },
+            "problemMatcher": {
+                "base": "$rustc",
+                "fileLocation": [
+                    "relative",
+                    "${workspaceFolder}/yp_launcher_new"
+                ]
+            },
+            "detail": "Preview the Windows UI on this machine using isolated settings; the executable and host APIs stay native.",
+            "group": "build"
+        },
+        {
+            "label": "Build and run: Linux UI preview",
+            "type": "process",
+            "command": "cargo",
+            "args": [
+                "run",
+                "--locked",
+                "--package",
+                "yp_app",
+                "--bin",
+                "YoRHa-Protocol-Launcher",
+                "--",
+                "--sandbox",
+                "${workspaceFolder}/yp_launcher_new/target/previews/linux",
+                "--simulate-linux"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/yp_launcher_new",
+                "env": {
+                    "YP_ASSETS_DIR": "${workspaceFolder}/yp_launcher_new/assets",
+                    "RUST_BACKTRACE": "1"
+                }
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            },
+            "problemMatcher": {
+                "base": "$rustc",
+                "fileLocation": [
+                    "relative",
+                    "${workspaceFolder}/yp_launcher_new"
+                ]
+            },
+            "detail": "Preview the Linux UI on this machine using isolated settings; the executable and host APIs stay native.",
+            "group": "build"
+        },
+        {
+            "label": "Build and run: macOS UI preview",
+            "type": "process",
+            "command": "cargo",
+            "args": [
+                "run",
+                "--locked",
+                "--package",
+                "yp_app",
+                "--bin",
+                "YoRHa-Protocol-Launcher",
+                "--",
+                "--sandbox",
+                "${workspaceFolder}/yp_launcher_new/target/previews/macos",
+                "--simulate-macos"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/yp_launcher_new",
+                "env": {
+                    "YP_ASSETS_DIR": "${workspaceFolder}/yp_launcher_new/assets",
+                    "RUST_BACKTRACE": "1"
+                }
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            },
+            "problemMatcher": {
+                "base": "$rustc",
+                "fileLocation": [
+                    "relative",
+                    "${workspaceFolder}/yp_launcher_new"
+                ]
+            },
+            "detail": "Preview the macOS UI on this machine using isolated settings; the executable and host APIs stay native.",
+            "group": "build"
+        },
+        {
             "label": "Linux: Build Tarball",
             "type": "shell",
             "command": "./scripts/build_linux_tarball.sh",

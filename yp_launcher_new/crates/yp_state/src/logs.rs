@@ -3,6 +3,9 @@ use std::path::{Path, PathBuf};
 use std::time::Duration;
 
 use gpui::{Context, EventEmitter, Task};
+use yp_core::GamePaths;
+use yp_core::consts::NAMS_LOG_NAME;
+use yp_host::launch::nams_dll;
 use yp_host::nams_log::{LogTail, POLL_INTERVAL_MS, TailUpdate};
 
 pub use yp_host::nams_log::panel::{LOG_LEVELS, LogPanel, LogTab};
@@ -40,6 +43,9 @@ impl Tailing {
 }
 
 pub struct LogStore {
+    env: AppEnv,
+    game_dir: Option<PathBuf>,
+    dll_mode: bool,
     log_file: PathBuf,
     logs_dir: PathBuf,
     panel: LogPanel,
@@ -54,10 +60,14 @@ impl EventEmitter<LogEvent> for LogStore {}
 impl LogStore {
     pub fn new(env: &AppEnv, cx: &mut Context<Self>) -> Self {
         let log_file = env.paths.nams_log();
+        let logs_dir = env.paths.logs_dir.clone();
         Self {
             tail: Guarded::new(Tailing::new(log_file.clone()), cx.background_executor()),
+            dll_mode: nams_dll::picked(&env.settings).is_some(),
+            env: env.clone(),
+            game_dir: None,
             log_file,
-            logs_dir: env.paths.logs_dir.clone(),
+            logs_dir,
             panel: LogPanel::default(),
             filtered: Vec::new(),
             streaming: false,
@@ -75,6 +85,33 @@ impl LogStore {
 
     pub fn logs_dir(&self) -> &Path {
         &self.logs_dir
+    }
+
+    pub(crate) fn bind_game(&mut self, game: Option<GamePaths>, cx: &mut Context<Self>) {
+        self.game_dir = game.map(|game| game.root().to_path_buf());
+        self.relocate(cx);
+    }
+
+    pub fn set_dll_mode(&mut self, dll_mode: bool, cx: &mut Context<Self>) {
+        self.dll_mode = dll_mode;
+        self.relocate(cx);
+    }
+
+    fn relocate(&mut self, cx: &mut Context<Self>) {
+        let logs_dir = nams_dll::logs_dir_for(&self.env.paths, self.dll_mode, self.game_dir.as_deref());
+        if logs_dir == self.logs_dir {
+            return;
+        }
+        self.log_file = logs_dir.join(NAMS_LOG_NAME);
+        self.logs_dir = logs_dir;
+        if self.streaming {
+            self.refresh(cx);
+        } else {
+            self.panel.reset();
+            self.refilter();
+            cx.emit(LogEvent::Reset);
+            cx.notify();
+        }
     }
 
     pub fn entries(&self, tab: LogTab) -> &[LogEntry] {

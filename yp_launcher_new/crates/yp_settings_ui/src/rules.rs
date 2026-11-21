@@ -1,4 +1,4 @@
-use yp_config::fields::lodmod::HIGH_GRIDS_ROOMS;
+use serde_json::{Map, Value as Json};
 use yp_ui::prelude::*;
 use yp_ui::{
     ApplyKind, ApplyMarker, Button, ButtonSize, ButtonStyle, IconButton, IconName, IconSize, Label,
@@ -7,6 +7,19 @@ use yp_ui::{
 
 use crate::fields::ValueSink;
 use crate::text_field::TextField;
+
+pub const HIGH_GRIDS_ROOMS: [(u32, &str); 10] = [
+    (0x100, "Ruined City"),
+    (0x110, "Resistance Camp"),
+    (0x120, "Factory"),
+    (0x130, "Amusement Park"),
+    (0x140, "Pascal's Village"),
+    (0x150, "Desert"),
+    (0x160, "Forest"),
+    (0x170, "Flooded City"),
+    (0x200, "City Ruins (Route B)"),
+    (0x520, "Underground"),
+];
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum ColumnKind {
@@ -20,7 +33,7 @@ pub struct RuleColumn {
     pub key: SharedString,
     pub label: SharedString,
     pub kind: ColumnKind,
-    pub fallback: toml::Value,
+    pub fallback: Json,
 }
 
 impl RuleColumn {
@@ -29,7 +42,7 @@ impl RuleColumn {
             key: SharedString::new_static(key),
             label: label.into(),
             kind: ColumnKind::Hex,
-            fallback: toml::Value::Integer(fallback),
+            fallback: Json::from(fallback),
         }
     }
 
@@ -38,7 +51,7 @@ impl RuleColumn {
             key: SharedString::new_static(key),
             label: label.into(),
             kind: ColumnKind::Text,
-            fallback: toml::Value::String(String::new()),
+            fallback: Json::String(String::new()),
         }
     }
 
@@ -55,7 +68,7 @@ impl RuleColumn {
                 options,
                 hex: false,
             },
-            fallback: toml::Value::Integer(fallback),
+            fallback: Json::from(fallback),
         }
     }
 
@@ -69,7 +82,36 @@ impl RuleColumn {
             key: SharedString::new_static(key),
             label: label.into(),
             kind: ColumnKind::Choice { options, hex: true },
-            fallback: toml::Value::Integer(fallback),
+            fallback: Json::from(fallback),
+        }
+    }
+
+    pub fn text_owned(key: &str, label: impl Into<SharedString>) -> Self {
+        Self {
+            key: SharedString::from(key.to_owned()),
+            label: label.into(),
+            kind: ColumnKind::Text,
+            fallback: Json::String(String::new()),
+        }
+    }
+
+    pub fn choice_owned(key: &str, label: impl Into<SharedString>, options: Vec<i64>, fallback: i64) -> Self {
+        Self {
+            key: SharedString::from(key.to_owned()),
+            label: label.into(),
+            kind: ColumnKind::Choice { options, hex: false },
+            fallback: Json::from(fallback),
+        }
+    }
+
+    pub fn room_owned(key: &str, label: impl Into<SharedString>) -> Self {
+        let options: Vec<i64> = HIGH_GRIDS_ROOMS.iter().map(|(room, _)| i64::from(*room)).collect();
+        let fallback = options.first().copied().unwrap_or_default();
+        Self {
+            key: SharedString::from(key.to_owned()),
+            label: label.into(),
+            kind: ColumnKind::Choice { options, hex: true },
+            fallback: Json::from(fallback),
         }
     }
 
@@ -81,16 +123,16 @@ impl RuleColumn {
     }
 }
 
-pub fn infer_columns(rules: &[toml::Value]) -> Vec<RuleColumn> {
+pub fn infer_columns(rules: &[Json]) -> Vec<RuleColumn> {
     let mut columns: Vec<RuleColumn> = Vec::new();
-    for table in rules.iter().filter_map(toml::Value::as_table) {
+    for table in rules.iter().filter_map(Json::as_object) {
         for (key, value) in table {
             if columns.iter().any(|column| column.key.as_ref() == key) {
                 continue;
             }
             let (kind, fallback) = match value {
-                toml::Value::String(_) => (ColumnKind::Text, toml::Value::String(String::new())),
-                _ => (ColumnKind::Hex, toml::Value::Integer(0)),
+                Json::String(_) => (ColumnKind::Text, Json::String(String::new())),
+                _ => (ColumnKind::Hex, Json::from(0)),
             };
             columns.push(RuleColumn {
                 key: SharedString::from(key.clone()),
@@ -103,28 +145,23 @@ pub fn infer_columns(rules: &[toml::Value]) -> Vec<RuleColumn> {
     columns
 }
 
-pub fn row_at(rules: &[toml::Value], index: usize) -> toml::Table {
+pub fn row_at(rules: &[Json], index: usize) -> Map<String, Json> {
     rules
         .get(index)
-        .and_then(toml::Value::as_table)
+        .and_then(Json::as_object)
         .cloned()
         .unwrap_or_default()
 }
 
-fn normalized(rules: &[toml::Value]) -> Vec<toml::Table> {
+fn normalized(rules: &[Json]) -> Vec<Map<String, Json>> {
     (0..rules.len()).map(|index| row_at(rules, index)).collect()
 }
 
-fn into_values(rows: Vec<toml::Table>) -> Vec<toml::Value> {
-    rows.into_iter().map(toml::Value::Table).collect()
+fn into_values(rows: Vec<Map<String, Json>>) -> Vec<Json> {
+    rows.into_iter().map(Json::Object).collect()
 }
 
-pub fn with_cell(
-    rules: &[toml::Value],
-    index: usize,
-    key: &str,
-    value: toml::Value,
-) -> Vec<toml::Value> {
+pub fn with_cell(rules: &[Json], index: usize, key: &str, value: Json) -> Vec<Json> {
     let mut rows = normalized(rules);
     if let Some(row) = rows.get_mut(index) {
         row.insert(key.to_owned(), value);
@@ -132,7 +169,7 @@ pub fn with_cell(
     into_values(rows)
 }
 
-pub fn with_added(rules: &[toml::Value], columns: &[RuleColumn]) -> Vec<toml::Value> {
+pub fn with_added(rules: &[Json], columns: &[RuleColumn]) -> Vec<Json> {
     let mut rows = normalized(rules);
     rows.push(
         columns
@@ -143,7 +180,7 @@ pub fn with_added(rules: &[toml::Value], columns: &[RuleColumn]) -> Vec<toml::Va
     into_values(rows)
 }
 
-pub fn with_removed(rules: &[toml::Value], index: usize) -> Vec<toml::Value> {
+pub fn with_removed(rules: &[Json], index: usize) -> Vec<Json> {
     let mut rows = normalized(rules);
     if index < rows.len() {
         rows.remove(index);
@@ -151,11 +188,13 @@ pub fn with_removed(rules: &[toml::Value], index: usize) -> Vec<toml::Value> {
     into_values(rows)
 }
 
-pub fn int_from(raw: Option<&toml::Value>, fallback: i64) -> i64 {
+pub fn int_from(raw: Option<&Json>, fallback: i64) -> i64 {
     match raw {
-        Some(toml::Value::Integer(number)) => *number,
-        Some(toml::Value::Float(number)) => number.trunc() as i64,
-        Some(toml::Value::String(text)) => text.trim().parse().unwrap_or(fallback),
+        Some(Json::Number(number)) => number
+            .as_i64()
+            .or_else(|| number.as_f64().map(|value| value.trunc() as i64))
+            .unwrap_or(fallback),
+        Some(Json::String(text)) => text.trim().parse().unwrap_or(fallback),
         _ => fallback,
     }
 }
@@ -200,8 +239,8 @@ pub fn names_removed(names: &[String], index: usize) -> Vec<String> {
     next
 }
 
-fn names_value(names: Vec<String>) -> toml::Value {
-    toml::Value::Array(names.into_iter().map(toml::Value::String).collect())
+fn names_value(names: Vec<String>) -> Json {
+    Json::Array(names.into_iter().map(Json::String).collect())
 }
 
 fn list_header(
@@ -281,7 +320,7 @@ fn add_button(id: ElementId, label: SharedString) -> Button {
 pub struct RulesEditor {
     id: ElementId,
     label: SharedString,
-    rules: Vec<toml::Value>,
+    rules: Vec<Json>,
     columns: Vec<RuleColumn>,
     description: Option<SharedString>,
     apply: Option<ApplyKind>,
@@ -291,7 +330,7 @@ pub struct RulesEditor {
 yp_ui::impl_into_element!(RulesEditor);
 
 impl RulesEditor {
-    pub fn new(id: impl Into<ElementId>, label: impl Into<SharedString>, rules: Vec<toml::Value>) -> Self {
+    pub fn new(id: impl Into<ElementId>, label: impl Into<SharedString>, rules: Vec<Json>) -> Self {
         Self {
             id: id.into(),
             label: label.into(),
@@ -351,10 +390,10 @@ impl RenderOnce for RulesEditor {
                 let key = column.key.clone();
                 let cell_rules = rules.clone();
                 let cell_sink = sink.clone();
-                let emit = move |value: toml::Value, window: &mut Window, cx: &mut App| {
+                let emit = move |value: Json, window: &mut Window, cx: &mut App| {
                     if let Some(sink) = &cell_sink {
                         sink(
-                            toml::Value::Array(with_cell(&cell_rules, index, &key, value)),
+                            Json::Array(with_cell(&cell_rules, index, &key, value)),
                             window,
                             cx,
                         );
@@ -364,7 +403,7 @@ impl RenderOnce for RulesEditor {
                     ColumnKind::Text => {
                         let value = row
                             .get(column.key.as_ref())
-                            .and_then(toml::Value::as_str)
+                            .and_then(Json::as_str)
                             .map(str::to_owned)
                             .unwrap_or_else(|| {
                                 column.fallback.as_str().unwrap_or_default().to_owned()
@@ -372,23 +411,23 @@ impl RenderOnce for RulesEditor {
                         TextField::new(cell_id, value)
                             .mono()
                             .on_change(move |text, window, cx| {
-                                emit(toml::Value::String(text.to_owned()), window, cx)
+                                emit(Json::String(text.to_owned()), window, cx)
                             })
                             .into_any_element()
                     }
                     ColumnKind::Hex => {
-                        let fallback = column.fallback.as_integer().unwrap_or_default();
+                        let fallback = column.fallback.as_i64().unwrap_or_default();
                         let value = int_from(row.get(column.key.as_ref()), fallback);
                         NumberField::new(cell_id, value as f64)
                             .kind(NumberKind::Hex)
                             .width(relative(1.))
                             .on_change(move |value, window, cx| {
-                                emit(toml::Value::Integer(value.round() as i64), window, cx)
+                                emit(Json::from(value.round() as i64), window, cx)
                             })
                             .into_any_element()
                     }
                     ColumnKind::Choice { options, hex } => {
-                        let fallback = column.fallback.as_integer().unwrap_or_default();
+                        let fallback = column.fallback.as_i64().unwrap_or_default();
                         let raw = int_from(row.get(column.key.as_ref()), fallback);
                         let value = if options.contains(&raw) {
                             raw
@@ -406,7 +445,7 @@ impl RenderOnce for RulesEditor {
                             .highlight(true)
                             .full_width()
                             .on_select(move |option: &i64, window, cx| {
-                                emit(toml::Value::Integer(*option), window, cx)
+                                emit(Json::from(*option), window, cx)
                             })
                             .into_any_element()
                     }
@@ -438,7 +477,7 @@ impl RenderOnce for RulesEditor {
                             .on_click(move |_, window, cx| {
                                 if let Some(sink) = &remove_sink {
                                     sink(
-                                        toml::Value::Array(with_removed(&remove_rules, index)),
+                                        Json::Array(with_removed(&remove_rules, index)),
                                         window,
                                         cx,
                                     );
@@ -471,7 +510,7 @@ impl RenderOnce for RulesEditor {
                         move |_, window, cx| {
                             if let Some(sink) = &add_sink {
                                 sink(
-                                    toml::Value::Array(with_added(&add_rules, &add_columns)),
+                                    Json::Array(with_added(&add_rules, &add_columns)),
                                     window,
                                     cx,
                                 );
@@ -624,8 +663,8 @@ impl RenderOnce for NameListEditor {
 mod tests {
     use super::*;
 
-    fn rule(pairs: &[(&str, toml::Value)]) -> toml::Value {
-        toml::Value::Table(
+    fn rule(pairs: &[(&str, Json)]) -> Json {
+        Json::Object(
             pairs
                 .iter()
                 .map(|(key, value)| ((*key).to_owned(), value.clone()))
@@ -642,45 +681,45 @@ mod tests {
         let rules = with_added(&[], &columns);
         assert_eq!(rules.len(), 1);
         let row = row_at(&rules, 0);
-        assert_eq!(row.get("room"), Some(&toml::Value::Integer(0x100)));
-        assert_eq!(row.get("rings"), Some(&toml::Value::Integer(1)));
+        assert_eq!(row.get("room"), Some(&Json::from(0x100)));
+        assert_eq!(row.get("rings"), Some(&Json::from(1)));
     }
 
     #[test]
     fn editing_and_removing_keep_the_other_rows() {
         let rules = vec![
             rule(&[
-                ("mesh", toml::Value::String("a".into())),
-                ("grid", toml::Value::Integer(1)),
+                ("mesh", Json::from("a")),
+                ("grid", Json::from(1)),
             ]),
-            toml::Value::Integer(7),
-            rule(&[("mesh", toml::Value::String("c".into()))]),
+            Json::from(7),
+            rule(&[("mesh", Json::from("c"))]),
         ];
-        let edited = with_cell(&rules, 2, "grid", toml::Value::Integer(0x1121));
+        let edited = with_cell(&rules, 2, "grid", Json::from(0x1121));
         assert_eq!(
             row_at(&edited, 2).get("grid"),
-            Some(&toml::Value::Integer(0x1121))
+            Some(&Json::from(0x1121))
         );
         assert_eq!(
             row_at(&edited, 0).get("mesh"),
-            Some(&toml::Value::String("a".into()))
+            Some(&Json::from("a"))
         );
         assert!(row_at(&edited, 1).is_empty());
         let removed = with_removed(&edited, 0);
         assert_eq!(removed.len(), 2);
         assert_eq!(
             row_at(&removed, 1).get("mesh"),
-            Some(&toml::Value::String("c".into()))
+            Some(&Json::from("c"))
         );
         assert_eq!(with_removed(&rules, 9).len(), 3);
     }
 
     #[test]
     fn integers_are_read_from_any_stored_shape() {
-        assert_eq!(int_from(Some(&toml::Value::Integer(5)), 1), 5);
-        assert_eq!(int_from(Some(&toml::Value::Float(5.9)), 1), 5);
-        assert_eq!(int_from(Some(&toml::Value::String(" 12 ".into())), 1), 12);
-        assert_eq!(int_from(Some(&toml::Value::String("x".into())), 3), 3);
+        assert_eq!(int_from(Some(&Json::from(5)), 1), 5);
+        assert_eq!(int_from(Some(&serde_json::json!(5.9)), 1), 5);
+        assert_eq!(int_from(Some(&Json::from(" 12 ")), 1), 12);
+        assert_eq!(int_from(Some(&Json::from("x")), 3), 3);
         assert_eq!(int_from(None, 4), 4);
     }
 
@@ -694,8 +733,8 @@ mod tests {
     #[test]
     fn columns_are_inferred_from_the_stored_rows() {
         let rules = vec![rule(&[
-            ("mesh", toml::Value::String("a".into())),
-            ("from_rings", toml::Value::Integer(2)),
+            ("mesh", Json::from("a")),
+            ("from_rings", Json::from(2)),
         ])];
         let columns = infer_columns(&rules);
         assert_eq!(columns.len(), 2);

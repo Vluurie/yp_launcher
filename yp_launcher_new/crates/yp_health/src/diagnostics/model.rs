@@ -2,7 +2,6 @@ use std::path::PathBuf;
 
 use indexmap::IndexMap;
 use jiff::Timestamp;
-use yp_config::ConfigFile;
 use yp_core::{HostEnv, Os};
 use yp_cutscenes::{CutsceneDetection, CutsceneMod};
 use yp_host::game_probe::{ExeBuildStatus, ExeVariant, SteamAppManifest, build_of_time_date_stamp};
@@ -264,11 +263,11 @@ pub struct LogsReport {
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ConfigDelta {
-    pub file: ConfigFile,
+    pub file: String,
     pub key: String,
     pub value: String,
     pub default_value: String,
-    pub note: Option<&'static str>,
+    pub note: Option<String>,
 }
 
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
@@ -276,8 +275,8 @@ pub struct ConfigReport {
     pub deltas: Vec<ConfigDelta>,
     pub unknown_keys: Vec<ConfigDelta>,
     pub legacy_keys: Vec<ConfigDelta>,
-    pub parse_errors: IndexMap<ConfigFile, String>,
-    pub missing_files: Vec<ConfigFile>,
+    pub parse_errors: IndexMap<String, String>,
+    pub missing_files: Vec<String>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -335,7 +334,7 @@ pub struct DiagnosticsReport {
     pub sk_res_packs: Vec<String>,
     pub reshade_contents: Vec<String>,
     pub game_root_extras: Vec<String>,
-    pub config_raw: IndexMap<ConfigFile, String>,
+    pub config_raw: IndexMap<String, String>,
     pub game_identity: GameIdentity,
     pub vanilla_dropped: Vec<VanillaDirFinding>,
     pub third_party: ThirdPartyStatuses,
@@ -347,6 +346,7 @@ pub struct DiagnosticsReport {
     pub config: ConfigReport,
     pub game_running: bool,
     pub prefer_dedicated_gpu: bool,
+    pub nams_dll_picked: bool,
     pub filesystems: IndexMap<FilesystemRole, Option<MountFacts>>,
     pub compat_layer: Option<CompatLayerReport>,
     pub last_launch: Option<LaunchRecord>,
@@ -391,6 +391,7 @@ impl DiagnosticsReport {
             config: ConfigReport::default(),
             game_running: false,
             prefer_dedicated_gpu: false,
+            nams_dll_picked: false,
             filesystems: IndexMap::new(),
             compat_layer: None,
             last_launch: None,

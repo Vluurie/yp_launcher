@@ -14,7 +14,7 @@ use yp_host::wine::WineContext;
 const BOTTLE_PATH: &str = "/Users/d/Library/Application Support/CrossOver/Bottles/Steam";
 const LAUNCHER_DIR: &str = "/Users/d/Library/Application Support/com.vluurie.yplauncher/bins";
 const WINE: &str = "/Applications/CrossOver.app/Contents/SharedSupport/CrossOver/bin/wine";
-const RUN: NamsInvocation = NamsInvocation::Run { vanilla: false };
+const RUN: NamsInvocation<'static> = NamsInvocation::Run { vanilla: false };
 
 fn game_dir() -> String {
     format!("{BOTTLE_PATH}/drive_c/Program Files (x86)/Steam/steamapps/common/NieRAutomata")
@@ -59,6 +59,15 @@ fn a_vanilla_start_passes_vanilla_to_nams_run() {
     );
     assert_eq!(invocation_args(NamsInvocation::Run { vanilla: true }, "x").last().unwrap(), "--vanilla");
     assert_eq!(nams_verify_args("x"), ["verify", "--nier-path", "x", "--json"]);
+}
+
+#[test]
+fn a_config_call_puts_the_game_path_after_the_subcommand() {
+    let args = ["set".to_owned(), "--stdin".to_owned()];
+    assert_eq!(
+        invocation_args(NamsInvocation::Config(&args), "C:\\g"),
+        ["config", "set", "--nier-path", r"C:\g", "--stdin"]
+    );
 }
 
 #[test]

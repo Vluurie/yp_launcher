@@ -11,6 +11,7 @@ use yp_core::{
 use yp_formats::testing::{cube_spec, dds_dxt1_solid, model_archives};
 use yp_host::HostPlatform;
 use yp_host::launch::command::{LaunchCommand, build_native};
+use yp_config::testing::FakeNamsCli;
 use yp_state::AppEnv;
 use yp_state::inspector::ArchivePaths;
 
@@ -105,6 +106,7 @@ pub struct Sandbox {
     pub root: TempDir,
     pub game: GamePaths,
     pub env: AppEnv,
+    pub cli: Arc<FakeNamsCli>,
 }
 
 impl Default for Sandbox {
@@ -145,6 +147,7 @@ impl Sandbox {
             root,
             game,
             env,
+            cli: Arc::new(FakeNamsCli::default()),
         }
     }
 

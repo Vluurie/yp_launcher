@@ -187,5 +187,37 @@
         "type": "String"
       }
     }
+  },
+  "shellNamsDllMissing": "NAMS DLL not found",
+  "shellNamsDllMissingDetail": "The NAMS DLL picked on the NAMS page is gone:\n{path}\n\nPick it again on the NAMS page, or switch back to NAMS.exe there.",
+  "@shellNamsDllMissingDetail": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "shellNamsDllCopyFailed": "Could not copy the NAMS DLL into the game folder",
+  "shellNamsDllCopyFailedDetail": "{from}\ncould not be copied to\n{to}\n\n{error}\n\nIf the game is still running, close it and try again.",
+  "@shellNamsDllCopyFailedDetail": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      },
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "shellPlayWithNamsDll": "Starts with the NAMS DLL ({file})",
+  "@shellPlayWithNamsDll": {
+    "placeholders": {
+      "file": {
+        "type": "String"
+      }
+    }
   }
 }

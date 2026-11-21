@@ -23,7 +23,7 @@ fn macos(ctx: yp_host::wine::WineContext) -> WineAdapter {
     macos_adapter_with(ctx, runner())
 }
 
-fn request<'a>(nams: &'a Path, game: &'a Path, launcher: &'a Path, invocation: NamsInvocation) -> NamsCommandRequest<'a> {
+fn request<'a>(nams: &'a Path, game: &'a Path, launcher: &'a Path, invocation: NamsInvocation<'a>) -> NamsCommandRequest<'a> {
     NamsCommandRequest {
         nams_exe: nams,
         launcher_dir: launcher,

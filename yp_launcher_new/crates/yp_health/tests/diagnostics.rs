@@ -3,14 +3,16 @@ mod support;
 use indexmap::IndexMap;
 use jiff::{SignedDuration, Timestamp};
 use support::{FakeGame, Rig, bare_report, manifest, messages, pe_header, write};
-use yp_config::ConfigFile;
+use serde_json::json;
+use yp_config::testing::sample_schema;
+use yp_config::{Schema, ValidateReport, Values};
 use yp_core::consts::{NAMS_EXE_NAME, YORHA_DLL_NAME};
 use yp_health::diagnostics::model::{
-    DISCORD_LIMIT, DlcSource, FilesystemRole, FindingLevel, GameIdentity, PackSwitch,
+    ConfigReport, DISCORD_LIMIT, DlcSource, FilesystemRole, FindingLevel, GameIdentity, PackSwitch,
     VanillaBucket, exe_variant_name,
 };
 use yp_health::diagnostics::{
-    build_findings, format_full_report, format_summary, pack_disabled_by, redact,
+    build_findings, collect_config, format_full_report, format_summary, pack_disabled_by, redact,
 };
 use yp_health::probes::parse_findmnt;
 use yp_host::game_probe::{
@@ -228,22 +230,39 @@ fn findmnt_output_flags_ntfs_game_folders() {
     );
 }
 
+fn settings_report(values: serde_json::Value, problems: serde_json::Value) -> ConfigReport {
+    let schema: Schema = serde_json::from_value(sample_schema()).unwrap();
+    let values: Values = serde_json::from_value(values).unwrap();
+    let validate: ValidateReport =
+        serde_json::from_value(json!({ "valid": false, "problems": problems })).unwrap();
+    collect_config(&schema, &values, Some(&validate))
+}
+
 #[test]
 fn settings_diff_covers_every_key_unknown_keys_and_parse_errors() {
-    let rig = Rig::native();
-    let game = FakeGame::create();
-    write(
-        &game.nams().join("nams.toml"),
-        "disable_splash_screen = true\ndisable_splash_screeen = true\n[cutscene]\nhd_cutscenes = true\n[mouse]\nsensitivity = 3.0\n",
+    let config = settings_report(
+        json!({
+            "files": {
+                "nams.toml": { "exists": true },
+                "naiom.toml": { "exists": true },
+                "lodmod.toml": { "exists": true, "error": "line 1, column 11: expected value" },
+                "texture_injection.toml": { "exists": false },
+            },
+            "not_in_file": ["naiom.misc_custom_cursor_menu"],
+            "values": {
+                "nams.disable_plugin_loading": false,
+                "naiom.sensitivity": 1.7000000000000002,
+                "naiom.misc_custom_cursor_menu": "cursor.png",
+                "lodmod.lod_multiplier": 5.0,
+            },
+        }),
+        json!([
+            { "code": "unknown_key", "severity": "warning", "message": "unknown key", "file": "nams.toml", "key": "disable_splash_screeen" },
+            { "code": "deprecated_key", "severity": "warning", "message": "moved to naiom.toml", "file": "nams.toml", "key": "mouse.sensitivity" },
+            { "code": "deprecated_key", "severity": "warning", "message": "removed", "file": "nams.toml", "key": "cutscene.hd_cutscenes" },
+            { "code": "out_of_range", "severity": "error", "message": "too big", "id": "lodmod.lod_multiplier" },
+        ]),
     );
-    write(
-        &game.nams().join("naiom.toml"),
-        "sensitivity = 2\nthird_person_sensitivity_x = 1.7000000000000002\n",
-    );
-    write(&game.nams().join("lodmod.toml"), "enabled = = true\n");
-
-    let report = rig.collect(Some(game.path()));
-    let config = &report.config;
     let unknown: Vec<&str> = config
         .unknown_keys
         .iter()
@@ -255,42 +274,38 @@ fn settings_diff_covers_every_key_unknown_keys_and_parse_errors() {
         .iter()
         .map(|delta| delta.key.as_str())
         .collect();
-    assert!(legacy.contains(&"cutscene.hd_cutscenes"));
-    assert!(legacy.contains(&"mouse.sensitivity"));
-    let mouse = config
-        .legacy_keys
-        .iter()
-        .find(|delta| delta.key == "mouse.sensitivity")
-        .unwrap();
-    assert!(mouse.note.unwrap().contains("naiom.toml"));
-    let naiom: Vec<_> = config
-        .deltas
-        .iter()
-        .filter(|delta| delta.file == ConfigFile::Naiom)
-        .collect();
-    assert_eq!(naiom.len(), 1);
-    assert_eq!(naiom[0].key, "third_person_sensitivity_x");
-    assert_eq!(naiom[0].value, "1.7");
+    assert_eq!(legacy, ["mouse.sensitivity", "cutscene.hd_cutscenes"]);
+    assert!(config.legacy_keys[0].note.as_deref().unwrap().contains("naiom.toml"));
+    assert_eq!(config.deltas.len(), 1);
+    assert_eq!(config.deltas[0].file, "naiom.toml");
+    assert_eq!(config.deltas[0].key, "sensitivity");
+    assert_eq!(config.deltas[0].value, "1.7");
+    assert_eq!(config.deltas[0].default_value, "2.0");
+    assert_eq!(config.missing_files, ["texture_injection.toml"]);
+    assert!(config.parse_errors.contains_key("lodmod.toml"));
+
+    let mut report = bare_report("/games/NieRAutomata");
+    report.config = config;
+    report.config_raw = IndexMap::from([("lodmod.toml".to_owned(), "enabled = = true\n".to_owned())]);
+    let findings = build_findings(&report);
     assert!(
-        report
-            .findings
+        findings
             .iter()
             .any(|finding| finding.message.contains("disable_splash_screeen"))
     );
     assert!(
-        !report
-            .findings
+        !findings
             .iter()
             .any(|finding| finding.message.contains("hd_cutscenes"))
     );
-    assert!(config.parse_errors.contains_key(&ConfigFile::LodMod));
-    assert!(report.findings.iter().any(|finding| {
+    assert!(findings.iter().any(|finding| {
         finding.level == FindingLevel::Error
             && finding.message.starts_with("lodmod.toml does not parse")
     }));
     let full = format_full_report(&report);
     assert!(full.contains("nams/lodmod.toml (does not parse)"));
     assert!(full.contains("enabled = = true"));
+    assert!(full.contains("  [nams.toml] mouse.sensitivity"));
     assert!(!full.contains("nams/nams.toml\n"));
 }
 
@@ -562,20 +577,21 @@ fn third_party_runtimes_report_not_installed_for_a_clean_dir() {
 
 #[test]
 fn config_deltas_surface_a_non_default_nams_toml_setting() {
-    let rig = Rig::native();
-    let game = FakeGame::create();
-
-    let report = rig.collect(Some(game.path()));
-    let delta: Vec<_> = report
-        .config_deltas()
-        .iter()
-        .filter(|delta| delta.key == "disable_splash_screen")
-        .collect();
-    assert_eq!(delta.len(), 1);
-    assert_eq!(delta[0].value, "true");
-    assert_eq!(delta[0].default_value, "false");
-    assert_eq!(delta[0].file, ConfigFile::Nams);
-    assert_eq!(delta[0].file.file_name(), "nams.toml");
+    let config = settings_report(
+        json!({
+            "files": { "nams.toml": { "exists": true } },
+            "values": { "nams.skip_startup_logos": true, "nams.graphics_backend": "d3d11" },
+        }),
+        json!([]),
+    );
+    assert_eq!(config.deltas.len(), 1);
+    let delta = &config.deltas[0];
+    assert_eq!(delta.file, "nams.toml");
+    assert_eq!(delta.key, "skip_startup_logos");
+    assert_eq!(delta.value, "true");
+    assert_eq!(delta.default_value, "false");
+    assert!(config.unknown_keys.is_empty());
+    assert!(config.legacy_keys.is_empty());
 }
 
 #[test]

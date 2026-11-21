@@ -15,7 +15,6 @@ pub mod inspector;
 pub mod launch_options;
 pub mod logs;
 pub mod mods;
-pub mod nams_settings;
 pub mod navigation;
 pub mod notifications;
 pub mod prefs;
@@ -33,7 +32,7 @@ pub use actions::{
     RefreshDetections, SetLocale, Stop, ToggleTheme, register_default_handlers,
 };
 pub use busy::{BusyEvent, BusyHandle, BusyScope, BusyTracker};
-pub use config::{ConfigEvent, ConfigFailure, ConfigOp, ConfigStore};
+pub use config::{CliFactory, ConfigEvent, ConfigFailure, ConfigOp, ConfigStore};
 pub use detection::{DetectionEvent, DetectionSnapshot, DetectionStore, TextureChip};
 pub use env::AppEnv;
 pub use extraction::{archive_failure_key, extraction_error_key};
@@ -44,9 +43,6 @@ pub use mods::{
     DefaultModsStore, DisabledModsStore, ModDataEvent, ModLoadOrderStore, ModNamesStore,
     ModProfilesStore, ModsEvent, ModsStore, ProfilesEvent, ProgressReceiver, ProgressSender,
     progress_channel,
-};
-pub use nams_settings::{
-    NamsSettingsEvent, NamsSettingsFailure, NamsSettingsOp, NamsSettingsStore,
 };
 pub use navigation::{
     CloseGuard, Navigation, NavigationBlock, NavigationEvent, TabRequest, TabRequestOutcome,
@@ -79,7 +75,6 @@ pub struct Stores {
     pub launch_options: Entity<LaunchOptions>,
     pub detection: Entity<DetectionStore>,
     pub config: Entity<ConfigStore>,
-    pub nams_settings: Entity<NamsSettingsStore>,
     pub mods: Entity<ModsStore>,
     pub profiles: Entity<ModProfilesStore>,
     pub disabled_mods: Entity<DisabledModsStore>,
@@ -149,9 +144,7 @@ pub fn init_with(env: AppEnv, cx: &mut App) {
 
     let busy = cx.new(BusyTracker::new);
     let config = cx.new(|cx| ConfigStore::new(&env, cx));
-    let nams_settings = cx.new(|cx| NamsSettingsStore::new(&env, cx));
-    let navigation =
-        cx.new(|cx| Navigation::new(busy.clone(), config.clone(), nams_settings.clone(), cx));
+    let navigation = cx.new(|cx| Navigation::new(busy.clone(), config.clone(), cx));
     let stores = Stores {
         session: cx.new(|cx| GameSession::new(env.clone(), cx)),
         navigation,
@@ -160,7 +153,6 @@ pub fn init_with(env: AppEnv, cx: &mut App) {
         launch_options: cx.new(|cx| LaunchOptions::new(env.clone(), cx)),
         detection: cx.new(DetectionStore::new),
         config,
-        nams_settings,
         mods: cx.new(|cx| ModsStore::new(env.clone(), cx)),
         profiles: cx.new(ModProfilesStore::new),
         disabled_mods: cx.new(DisabledModsStore::new),

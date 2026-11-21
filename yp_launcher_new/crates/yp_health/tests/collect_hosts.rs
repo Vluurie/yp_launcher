@@ -4,8 +4,7 @@ use std::sync::Arc;
 
 use jiff::{SignedDuration, Timestamp};
 use serde_json::json;
-use support::{FakeGame, Rig, messages, pe_header, write};
-use yp_config::ConfigFile;
+use support::{FakeGame, FakePlatform, Rig, messages, pe_header, write};
 use yp_core::testing::{FakeResponse, FakeRunner};
 use yp_core::{CancelToken, GamePaths, Os, ProcessOutput, ProcessRunner, ProcessSpec};
 use yp_health::cache::clear_all;
@@ -418,7 +417,8 @@ fn mods_textures_profiles_and_stray_folders_are_read_from_the_game_folder() {
     assert_eq!(report.cutscene_mods.len(), 1);
     assert_eq!(report.cutscene_mods[0].name, "hd");
     assert_eq!(report.cutscene_mods[0].usm_count(), 1);
-    assert!(report.collection_errors.is_empty());
+    let errors: Vec<&str> = report.collection_errors.keys().map(String::as_str).collect();
+    assert_eq!(errors, ["settings"]);
 
     let full = format_full_report(&report);
     assert!(full.contains("\n- alpha  [DISABLED]  ["));
@@ -437,16 +437,60 @@ fn mods_textures_profiles_and_stray_folders_are_read_from_the_game_folder() {
     );
 }
 
+fn config_answer(document: serde_json::Value) -> FakeResponse {
+    FakeResponse::Output(ProcessOutput::success(&document.to_string()))
+}
+
+fn is_config(spec: &ProcessSpec, command: &str) -> bool {
+    is_nams(spec, "config") && spec.args_lossy().get(1).map(String::as_str) == Some(command)
+}
+
 #[test]
 fn unreadable_settings_file_becomes_a_collection_error_without_leaking_its_path() {
-    let rig = Rig::native();
+    let runner = FakeRunner::new()
+        .respond(
+            |spec| is_config(spec, "schema"),
+            config_answer(yp_config::testing::sample_schema()),
+        )
+        .respond(
+            |spec| is_config(spec, "get"),
+            config_answer(json!({
+                "ok": true,
+                "files": {
+                    "nams.toml": { "exists": true },
+                    "naiom.toml": { "exists": true, "error": "not a file" },
+                },
+                "values": { "nams.skip_startup_logos": true },
+            })),
+        )
+        .respond(
+            |spec| is_config(spec, "validate"),
+            config_answer(json!({ "ok": true, "valid": true, "problems": [] })),
+        );
+    let rig = Rig::with_runner(Os::native(), runner);
+    rig.install_runtime_files();
     let game = FakeGame::create();
     std::fs::create_dir_all(game.paths().naiom_toml()).unwrap();
 
-    let report = rig.collect(Some(game.path()));
+    let report = Collector::new(
+        rig.host.clone(),
+        rig.paths.clone(),
+        rig.settings.clone(),
+        Arc::new(rig.runner.clone()),
+        Arc::new(FakePlatform::running_config(rig.host.clone())),
+    )
+    .with_wine_context(WineContext::isolated(rig.host.clone()))
+    .with_system_files(SystemFiles::under(&rig.system_root()))
+    .with_gpu_probe(GpuProbe::default())
+    .with_steam_running(Some(true))
+    .collect(Some(&game.paths()), None, &CancelToken::new())
+    .unwrap();
+    assert!(!report.collection_errors.contains_key("settings"));
+    assert_eq!(report.config.parse_errors["naiom.toml"], "not a file");
+    assert_eq!(report.config.deltas.len(), 1);
+    assert_eq!(report.config.deltas[0].key, "skip_startup_logos");
     let error = &report.collection_errors["naiom.toml"];
     assert!(error.contains(&game.text()));
-    assert!(report.config.missing_files.contains(&ConfigFile::Naiom));
     let finding = report
         .findings
         .iter()
@@ -463,6 +507,22 @@ fn unreadable_settings_file_becomes_a_collection_error_without_leaking_its_path(
         assert!(text.contains("<gameDir>"));
         assert!(!text.contains(&game.text()));
     }
+}
+
+#[test]
+fn settings_become_a_collection_error_while_nams_cannot_answer() {
+    let rig = Rig::native();
+    let game = FakeGame::create();
+
+    let report = rig.collect(Some(game.path()));
+    assert!(report.collection_errors.contains_key("settings"));
+    assert!(report.config.deltas.is_empty());
+    assert!(
+        report
+            .findings
+            .iter()
+            .any(|finding| finding.message.starts_with("Could not collect settings: "))
+    );
 }
 
 #[test]

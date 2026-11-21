@@ -1,7 +1,8 @@
 mod support;
 
-use support::{GameDir, table};
-use yp_config::legacy::{SkippedNaiomSetting, detect_naiom_ini, migrate_naiom_ini};
+use serde_json::json;
+use support::{FakeCli, GameDir};
+use yp_config::legacy::{SkippedNaiomSetting, detect_naiom_ini, import_naiom_ini};
 
 const FULL_INI: &str = "
 ;===================================================================================================
@@ -94,70 +95,59 @@ fn parses_the_space_separated_ini_format() {
 }
 
 #[test]
-fn imports_values_into_naiom_toml_with_correct_mappings() {
+fn imports_values_into_naiom_settings_with_correct_mappings() {
     let game = game_with_ini(FULL_INI);
-    game.ensure();
     let ini = detect_naiom_ini(&game.game).unwrap().unwrap();
-    let result = migrate_naiom_ini(&game.game, &ini).unwrap();
+    let cli = FakeCli::default();
+    let result = import_naiom_ini(&cli, &ini).unwrap();
     assert!(result.migrated);
 
-    let mouse = game.naiom();
-    let bindings = table(&mouse, "bindings");
-
-    assert_eq!(mouse["third_person_sensitivity_x"].as_float(), Some(1.5));
-    assert_eq!(mouse["third_person_sensitivity_y"].as_float(), Some(-0.75));
-    assert_eq!(mouse["aim_sensitivity_x"].as_float(), Some(2.0));
-    assert_eq!(mouse["movement_disable_tap_evade"].as_bool(), Some(true));
-    assert_eq!(mouse["misc_disable_pod_pet"].as_bool(), Some(true));
+    assert_eq!(cli.value("naiom.third_person_sensitivity_x"), Some(json!(1.5)));
+    assert_eq!(cli.value("naiom.third_person_sensitivity_y"), Some(json!(-0.75)));
+    assert_eq!(cli.value("naiom.aim_sensitivity_x"), Some(json!(2.0)));
+    assert_eq!(cli.value("naiom.movement_disable_tap_evade"), Some(json!(true)));
+    assert_eq!(cli.value("naiom.misc_disable_pod_pet"), Some(json!(true)));
     assert_eq!(
-        mouse["third_person_mode"].as_bool(),
-        Some(true),
+        cli.value("naiom.third_person_mode"),
+        Some(json!(true)),
         "RawInputCharFollow enables the camera fix"
     );
-    assert_eq!(mouse["third_person_char_follow"].as_bool(), Some(true));
+    assert_eq!(cli.value("naiom.third_person_char_follow"), Some(json!(true)));
+    assert_eq!(cli.value("naiom.aim_mode"), Some(json!(true)), "Crosshair enables aim fix");
+    assert_eq!(cli.value("naiom.aim_crosshair"), Some(json!(true)));
     assert_eq!(
-        mouse["aim_mode"].as_bool(),
-        Some(true),
-        "Crosshair enables aim fix"
-    );
-    assert_eq!(mouse["aim_crosshair"].as_bool(), Some(true));
-    assert_eq!(
-        mouse["misc_disable_default_cursor"].as_bool(),
-        Some(true),
+        cli.value("naiom.misc_disable_default_cursor"),
+        Some(json!(true)),
         "MiscEnableCustomCursors 0 keeps the system cursor"
     );
     assert_eq!(
-        mouse["misc_open_debug_menu"].as_integer(),
-        Some(0x4B),
+        cli.value("naiom.misc_open_debug_menu"),
+        Some(json!(0x4B)),
         "binding K becomes VK code 0x4B"
     );
 
-    assert_eq!(bindings["standard_move_forward"].as_str(), Some("W"));
-    assert_eq!(bindings["standard_jump"].as_str(), Some("SPACE"));
+    assert_eq!(cli.value("naiom.bindings.standard_move_forward"), Some(json!("W")));
+    assert_eq!(cli.value("naiom.bindings.standard_jump"), Some(json!("SPACE")));
     assert_eq!(
-        bindings["standard_fire"].as_str(),
-        Some("MOUSE1"),
+        cli.value("naiom.bindings.standard_fire"),
+        Some(json!("MOUSE1")),
         "mouse buttons are allowed on standard_fire"
     );
-    assert_eq!(bindings["non_standard_evade"].as_str(), Some("LSHIFT"));
+    assert_eq!(cli.value("naiom.bindings.non_standard_evade"), Some(json!("LSHIFT")));
     assert_eq!(
-        bindings["non_standard_use_item"].as_str(),
-        Some("LCTRL+X"),
+        cli.value("naiom.bindings.non_standard_use_item"),
+        Some(json!("LCTRL+X")),
         "combinations are normalized to uppercase with +"
     );
-    assert_eq!(
-        bindings["aim_mode_toggle"].as_str(),
-        Some(""),
-        "<unbound> stays unbound"
-    );
+    assert_eq!(cli.value("naiom.bindings.aim_mode_toggle"), None, "<unbound> is not written");
 }
 
 #[test]
 fn skips_unsupported_keys_and_reports_them_by_name() {
     let game = game_with_ini(FULL_INI);
-    game.ensure();
     let ini = detect_naiom_ini(&game.game).unwrap().unwrap();
-    let result = migrate_naiom_ini(&game.game, &ini).unwrap();
+    let cli = FakeCli::default();
+    let result = import_naiom_ini(&cli, &ini).unwrap();
     let skipped: Vec<String> = result.skipped.iter().map(ToString::to_string).collect();
 
     assert!(
@@ -181,39 +171,39 @@ fn skips_unsupported_keys_and_reports_them_by_name() {
         entry.setting == SkippedNaiomSetting::Binding("standard_walk") && entry.value == "MOUSE2"
     }));
 
-    let mouse = game.naiom();
-    let bindings = table(&mouse, "bindings");
-    assert_eq!(bindings["third_person_mode_toggle"].as_str(), Some("F5"));
-    assert_eq!(bindings["standard_move_backward"].as_str(), Some(""));
-    assert_eq!(
-        bindings["non_standard_auto_fire"].as_str(),
-        Some("CONTROLLER_A")
-    );
-    assert_eq!(bindings["standard_walk"].as_str(), Some(""));
+    assert_eq!(cli.value("naiom.bindings.third_person_mode_toggle"), Some(json!("F5")));
+    assert_eq!(cli.value("naiom.bindings.standard_move_backward"), None);
+    assert_eq!(cli.value("naiom.bindings.non_standard_auto_fire"), Some(json!("CONTROLLER_A")));
+    assert_eq!(cli.value("naiom.bindings.standard_walk"), None);
+}
+
+#[test]
+fn a_binding_nams_rejects_is_reported_and_the_rest_is_imported() {
+    let game = game_with_ini(FULL_INI);
+    let ini = detect_naiom_ini(&game.game).unwrap().unwrap();
+    let cli = FakeCli::default().rejecting(&["naiom.bindings.standard_jump"]);
+    let result = import_naiom_ini(&cli, &ini).unwrap();
+    assert!(result.migrated);
+    assert_eq!(cli.value("naiom.bindings.standard_jump"), None);
+    assert_eq!(cli.value("naiom.bindings.standard_move_forward"), Some(json!("W")));
+    assert!(result.skipped.iter().any(|entry| {
+        entry.setting == SkippedNaiomSetting::Binding("standard_jump") && entry.value == "SPACE"
+    }));
 }
 
 #[test]
 fn second_run_does_not_overwrite_existing_settings() {
     let game = game_with_ini(FULL_INI);
-    game.ensure();
     let ini = detect_naiom_ini(&game.game).unwrap().unwrap();
-    migrate_naiom_ini(&game.game, &ini).unwrap();
-
-    let content =
-        game.raw_naiom()
-            .replacen("standard_jump = \"SPACE\"", "standard_jump = \"E\"", 1);
-    game.write_nams_file("naiom.toml", &content);
-
-    let second = migrate_naiom_ini(&game.game, &ini).unwrap();
-    assert!(
-        !second.migrated,
-        "guard must refuse once bindings are configured"
-    );
+    let cli = FakeCli::with(&[("naiom.bindings.standard_jump", json!("E"))]);
+    let second = import_naiom_ini(&cli, &ini).unwrap();
+    assert!(!second.migrated, "guard must refuse once bindings are configured");
     assert_eq!(
-        table(&game.naiom(), "bindings")["standard_jump"].as_str(),
-        Some("E"),
+        cli.value("naiom.bindings.standard_jump"),
+        Some(json!("E")),
         "user changes must survive"
     );
+    assert_eq!(cli.set_calls(), 0);
 }
 
 #[test]
@@ -233,13 +223,15 @@ fn falls_back_to_the_cfg_file_and_skips_empty_ini_files() {
 
 #[test]
 fn an_unknown_debug_menu_key_is_reported() {
-    let game = game_with_ini("MiscOpenDebugMenu PAUSE\nAimMode Disabled\n");
-    game.ensure();
+    let game = game_with_ini("MiscOpenDebugMenu PAUSE
+AimMode Disabled
+");
     let ini = detect_naiom_ini(&game.game).unwrap().unwrap();
-    let result = migrate_naiom_ini(&game.game, &ini).unwrap();
+    let cli = FakeCli::default();
+    let result = import_naiom_ini(&cli, &ini).unwrap();
     assert!(result.migrated);
     assert_eq!(result.skipped.len(), 1);
     assert_eq!(result.skipped[0].setting, SkippedNaiomSetting::DebugMenuKey);
     assert_eq!(result.skipped[0].to_string(), "MiscOpenDebugMenu (PAUSE)");
-    assert_eq!(game.naiom()["aim_mode"].as_bool(), Some(false));
+    assert_eq!(cli.value("naiom.aim_mode"), Some(json!(false)));
 }

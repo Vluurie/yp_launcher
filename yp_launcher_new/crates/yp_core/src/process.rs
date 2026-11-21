@@ -1,6 +1,6 @@
 use std::collections::BTreeMap;
 use std::ffi::OsString;
-use std::io::Read;
+use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
 use std::process::{Child, Command, Stdio};
 use std::sync::mpsc::{self, Receiver, RecvTimeoutError};
@@ -66,6 +66,7 @@ pub struct ProcessSpec {
     pub env: BTreeMap<String, String>,
     pub label: String,
     pub hide_console: bool,
+    pub stdin: Option<Vec<u8>>,
 }
 
 impl ProcessSpec {
@@ -118,6 +119,11 @@ impl ProcessSpec {
 
     pub fn hide_console(mut self) -> Self {
         self.hide_console = true;
+        self
+    }
+
+    pub fn stdin(mut self, input: impl Into<Vec<u8>>) -> Self {
+        self.stdin = Some(input.into());
         self
     }
 
@@ -224,12 +230,13 @@ impl ProcessRunner for SystemRunner {
         let mut helper = HelperRun::begin();
         let mut child = spec
             .command()
-            .stdin(Stdio::null())
+            .stdin(if spec.stdin.is_some() { Stdio::piped() } else { Stdio::null() })
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
             .spawn()
             .map_err(|err| spec.spawn_error(err))?;
         helper.started(child.id());
+        let writer = write_all(child.stdin.take(), spec.stdin.clone());
         let stdout = read_all(child.stdout.take());
         let stderr = read_all(child.stderr.take());
         let deadline = timeout.map(|limit| Instant::now() + limit);
@@ -246,6 +253,9 @@ impl ProcessRunner for SystemRunner {
             }
             std::thread::sleep(POLL_INTERVAL);
         };
+        if let Some(writer) = writer {
+            let _ = writer.join();
+        }
         Ok(ProcessOutput {
             exit_code: status.and_then(|status| status.code()),
             stdout: join_text(stdout),
@@ -448,6 +458,13 @@ fn read_all(pipe: Option<impl Read + Send + 'static>) -> Option<JoinHandle<Vec<u
     })
 }
 
+fn write_all(pipe: Option<impl Write + Send + 'static>, input: Option<Vec<u8>>) -> Option<JoinHandle<()>> {
+    let (mut pipe, input) = (pipe?, input?);
+    Some(std::thread::spawn(move || {
+        let _ = pipe.write_all(&input);
+    }))
+}
+
 fn join_text(handle: Option<JoinHandle<Vec<u8>>>) -> String {
     handle
         .and_then(|handle| handle.join().ok())
@@ -597,6 +614,19 @@ mod tests {
         assert_eq!(output.exit_code, Some(3));
         assert_eq!(output.stdout.trim(), "hello");
         assert!(!output.is_success());
+    }
+
+    #[test]
+    fn output_passes_stdin_to_the_child() {
+        let spec = if cfg!(windows) {
+            ProcessSpec::new("findstr").arg("x").hide_console()
+        } else {
+            ProcessSpec::new("cat")
+        };
+        let spec = spec.stdin(b"x marks the spot\n".to_vec());
+        let output = SystemRunner.output(&spec, Some(Duration::from_secs(20))).unwrap();
+        assert_eq!(output.exit_code, Some(0));
+        assert_eq!(output.stdout.trim(), "x marks the spot");
     }
 
     #[test]

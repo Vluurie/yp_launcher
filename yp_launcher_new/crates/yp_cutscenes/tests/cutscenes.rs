@@ -462,6 +462,55 @@ fn merging_overwrites_and_adds_files() {
 }
 
 #[test]
+fn installing_an_installed_folder_onto_itself_keeps_every_file() {
+    let game = Game::new();
+    let installed = game.paths.cutscenes_dir().join("HD");
+    let movie = installed.join("movie");
+    write_usm(&movie.join("ev0010.usm"), 2560, 1440, H264);
+    write_usm(&movie.join("extra").join("ev0030.usm"), 2560, 1440, H264);
+    let prepared = prepare(&installed, &game.context(), &NoProgress, &CancelToken::new()).unwrap();
+    assert_eq!(prepared.default_name(), "HD");
+    let name = NameChoice::MergeInto("HD".to_string()).resolve().unwrap();
+    let events = Mutex::new(Vec::new());
+    let observer = |progress: &CopyProgress| events.lock().unwrap().push(progress.clone());
+    let outcome = install::install(
+        &prepared,
+        &game.paths.cutscenes_dir(),
+        &name,
+        &observer,
+        &CancelToken::new(),
+    )
+    .unwrap();
+    assert!(matches!(outcome, InstallOutcome::Installed { files: 2, .. }));
+    let expected = usm_file(2560, 1440, H264);
+    assert_eq!(std::fs::read(movie.join("ev0010.usm")).unwrap(), expected);
+    assert_eq!(std::fs::read(movie.join("extra").join("ev0030.usm")).unwrap(), expected);
+    let names: Vec<String> = std::fs::read_dir(&movie)
+        .unwrap()
+        .map(|entry| entry.unwrap().file_name().to_string_lossy().into_owned())
+        .collect();
+    assert_eq!(names.len(), 2, "{names:?}");
+    let last = events.into_inner().unwrap().pop().unwrap();
+    assert_eq!(last.file_index, 2);
+}
+
+#[test]
+fn a_cancelled_merge_leaves_the_installed_file_untouched() {
+    let game = Game::new();
+    let existing = game.paths.cutscenes_dir().join("HD").join("movie");
+    write_bytes(&existing.join("ev0010.usm"), b"old");
+    let pack = game.outside("patch");
+    write_usm(&pack.join("ev0010.usm"), 2560, 1440, H264);
+    let prepared = prepare(&pack, &game.context(), &NoProgress, &CancelToken::new()).unwrap();
+    let cancel = CancelToken::new();
+    let observer = |_: &CopyProgress| cancel.cancel();
+    let result = install::install(&prepared, &game.paths.cutscenes_dir(), "HD", &observer, &cancel);
+    assert!(matches!(result, Err(Error::Cancelled)));
+    assert_eq!(std::fs::read(existing.join("ev0010.usm")).unwrap(), b"old");
+    assert_eq!(std::fs::read_dir(&existing).unwrap().count(), 1);
+}
+
+#[test]
 fn prepare_failures_are_typed() {
     let game = Game::new();
     let empty = game.outside("empty");

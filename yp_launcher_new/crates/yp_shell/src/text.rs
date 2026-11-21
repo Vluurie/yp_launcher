@@ -43,6 +43,8 @@ pub fn failure_headline(failure: &LaunchFailure, strings: &Strings) -> String {
         FailureKind::LauncherDirNotWritable { .. } => strings.error_dir_not_writable().to_owned(),
         FailureKind::ExeNotFound { game_dir, .. } => strings.error_exe_not_found(&shown(game_dir)),
         FailureKind::GameDirNotWritable { .. } => strings.error_game_dir_not_writable().to_owned(),
+        FailureKind::NamsDllMissing { .. } => strings.shell_nams_dll_missing().to_owned(),
+        FailureKind::NamsDllCopyFailed { .. } => strings.shell_nams_dll_copy_failed().to_owned(),
         FailureKind::Unavailable(LaunchUnavailable::NoCompatLayer { os }) => match os {
             Os::Linux => strings.error_no_compat_layer_linux().to_owned(),
             Os::Windows | Os::MacOs => strings.error_no_compat_layer().to_owned(),
@@ -92,6 +94,10 @@ pub fn failure_detail(failure: &LaunchFailure, strings: &Strings) -> String {
         FailureKind::ExeNotFound { exe, .. } => strings.shell_exe_not_found_detail(&shown(exe)),
         FailureKind::GameDirNotWritable { game_dir, nams_dir } => {
             strings.error_game_dir_not_writable_body(&shown(game_dir), &shown(nams_dir))
+        }
+        FailureKind::NamsDllMissing { dll } => strings.shell_nams_dll_missing_detail(&shown(dll)),
+        FailureKind::NamsDllCopyFailed { dll, target, detail } => {
+            strings.shell_nams_dll_copy_failed_detail(&shown(dll), &shown(target), detail)
         }
         FailureKind::Unavailable(LaunchUnavailable::NoCompatLayer { os }) => match os {
             Os::Linux => strings.error_no_compat_layer_linux_body().to_owned(),
@@ -301,6 +307,30 @@ mod tests {
         assert_eq!(hints.len(), 2);
         assert_eq!(hints[0].as_ref(), strings().fail_hint_panic_share());
         assert!(failure_subtitle(&failure).unwrap().starts_with("PANIC[1]"));
+    }
+
+    #[test]
+    fn a_missing_or_uncopyable_nams_dll_explains_itself() {
+        let missing = LaunchFailure::new(
+            FailureKind::NamsDllMissing {
+                dll: PathBuf::from("D:/builds/nams.dll"),
+            },
+            String::new(),
+        );
+        assert_eq!(failure_explanation(&missing, strings()), strings().shell_nams_dll_missing());
+        assert!(failure_detail(&missing, strings()).contains("D:/builds/nams.dll"));
+        let copy = LaunchFailure::new(
+            FailureKind::NamsDllCopyFailed {
+                dll: PathBuf::from("D:/builds/nams.dll"),
+                target: PathBuf::from("G:/game/dinput8.dll"),
+                detail: "Access is denied".to_owned(),
+            },
+            String::new(),
+        );
+        assert_eq!(failure_explanation(&copy, strings()), strings().shell_nams_dll_copy_failed());
+        let detail = failure_detail(&copy, strings());
+        assert!(detail.contains("G:/game/dinput8.dll"));
+        assert!(detail.contains("Access is denied"));
     }
 
     #[test]

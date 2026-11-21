@@ -22,7 +22,7 @@ use crate::directory::{self, ManualRejection, OnboardingSearchPhase};
 use crate::metrics;
 use crate::text;
 
-const FIRST_PLAYTHROUGH_KEY: &str = "firstPlaythrough";
+const FIRST_PLAYTHROUGH_ID: &str = "plugins.yorha_protocol.firstPlaythrough";
 const SLIDE_FRACTION: f32 = 0.15;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -76,14 +76,12 @@ impl OnboardingWizard {
         self.transition += 1;
         self.scroll = ScrollHandle::new();
         if self.flow.step() == Step::FirstPlaythrough {
-            let saved = cx
-                .stores()
-                .nams_settings
-                .read(cx)
-                .settings()
-                .get(FIRST_PLAYTHROUGH_KEY)
-                .and_then(|value| value.as_bool())
-                .unwrap_or(true);
+            let config = cx.stores().config.read(cx);
+            let saved = if config.values().not_in_file.contains(FIRST_PLAYTHROUGH_ID) {
+                true
+            } else {
+                config.bool(FIRST_PLAYTHROUGH_ID)
+            };
             self.flow.set_first_playthrough(saved);
         }
         if self.flow.needs_detection() {
@@ -182,10 +180,9 @@ impl OnboardingWizard {
 
     pub fn save_first_playthrough(&mut self, cx: &mut Context<Self>) {
         let value = self.flow.first_playthrough();
-        let settings = cx.stores().nams_settings.clone();
-        settings.update(cx, |settings, cx| {
-            settings.update_toggle(FIRST_PLAYTHROUGH_KEY, value, cx);
-            settings.save(cx);
+        let config = cx.stores().config.clone();
+        config.update(cx, |config, cx| {
+            config.set_now(FIRST_PLAYTHROUGH_ID, serde_json::Value::Bool(value), cx);
         });
         self.advance(cx);
     }

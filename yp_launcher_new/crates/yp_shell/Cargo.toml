@@ -5,6 +5,7 @@ edition.workspace = true
 license.workspace = true
 
 [dependencies]
+serde_json.workspace = true
 gpui.workspace = true
 yp_ui.workspace = true
 yp_state.workspace = true
@@ -22,6 +23,7 @@ jiff.workspace = true
 toml.workspace = true
 
 [dev-dependencies]
+yp_config = { workspace = true, features = ["test-support"] }
 gpui_platform.workspace = true
 gpui = { workspace = true, features = ["test-support"] }
 yp_core = { workspace = true, features = ["test-support"] }

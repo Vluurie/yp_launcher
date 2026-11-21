@@ -193,5 +193,24 @@
         "type": "String"
       }
     }
-  }
+  },
+  "graphicsBackendD3d12Experimental": "Direct3D 12 (experimental)",
+  "graphicsBackendD3d12Warning": "Direct3D 12 is experimental. If something renders wrong or the game does not start, switch back to Direct3D 11.",
+  "namsDllTitle": "NAMS DLL",
+  "namsDllDescription": "Only for the Steam 2026 version of the game. Start the game with nams.dll instead of NAMS.exe. On every start the launcher copies it into the game folder as dinput8.dll and starts NieRAutomata.exe. nams.dll is an optional download on Nexus Mods and GitHub. You can also copy it into the game folder yourself, renamed to dinput8.dll, dxgi.dll or d3d11.dll, and start the game from Steam. Conflicts with other proxy DLLs in the game folder are yours to sort out. NAMS.exe keeps the modded runtime apart from the vanilla game and is the preferred way.",
+  "namsDllPick": "Select nams.dll…",
+  "namsDllChange": "Change…",
+  "namsDllRemove": "Use NAMS.exe again",
+  "namsDllNotADll": "Select the file named nams.dll.",
+  "namsDllUsedInPlace": "Used directly from the game folder.",
+  "namsDllCopiedAs": "Copied into the game folder as {file} on every start.",
+  "@namsDllCopiedAs": {
+    "placeholders": {
+      "file": {
+        "type": "String"
+      }
+    }
+  },
+  "namsDllConsole": "Open console",
+  "namsDllConsoleDescription": "Opens a console window with the NAMS output next to the game."
 }

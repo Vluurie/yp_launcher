@@ -187,5 +187,10 @@
         "type": "String"
       }
     }
-  }
+  },
+  "shellNamsDllMissing": "NAMS-DLL nicht gefunden",
+  "shellNamsDllMissingDetail": "Die auf der NAMS-Seite gewählte NAMS-DLL ist nicht mehr da:\n{path}\n\nWähle sie dort neu aus oder wechsle dort zurück zu NAMS.exe.",
+  "shellNamsDllCopyFailed": "NAMS-DLL konnte nicht in den Spielordner kopiert werden",
+  "shellNamsDllCopyFailedDetail": "{from}\nkonnte nicht kopiert werden nach\n{to}\n\n{error}\n\nWenn das Spiel noch läuft, schließe es und versuche es erneut.",
+  "shellPlayWithNamsDll": "Startet mit der NAMS-DLL ({file})"
 }

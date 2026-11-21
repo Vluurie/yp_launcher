@@ -26,6 +26,8 @@ use crate::mods::variant::pick_variants;
 use crate::notify::toast;
 use crate::text::{file_name_of, file_stem_of};
 
+const OPEN_OVERLAY_KEY_ID: &str = "plugins.yorha_protocol.keybinds.main.yorha_protocol";
+
 const PLAYER_DIR: &str = "pl";
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -824,8 +826,7 @@ impl Flow {
                 .data
                 .as_ref()
                 .is_some_and(|data| data.has_compat_config);
-            let key = yp_config::fields::overlay::keybinds::OPEN_WORKSPACE
-                .value_in_json(&stores.nams_settings.read(cx).keybinds());
+            let key = stores.config.read(cx).text(OPEN_OVERLAY_KEY_ID);
             cx.prefs().set(&OUTFIT_GUIDE_SHOWN, &true);
             window.open_modal(cx, |_, cx| {
                 OutfitGuideDialog::new(name, key, has_compat_config, cx)

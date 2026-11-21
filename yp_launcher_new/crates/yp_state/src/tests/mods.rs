@@ -7,6 +7,7 @@ use yp_mods::defaults::DefaultKind;
 use yp_mods::{InstallFailure, InstallRequest, ProfileRejection};
 
 use super::Harness;
+use crate::config::DEFAULT_OUTFITS_ID;
 use crate::mods::{ModsEvent, ProfilesEvent, progress_channel};
 use crate::{DetectionEvent, Stores};
 
@@ -277,19 +278,28 @@ fn rejected_profile_requests_keep_a_typed_error(cx: &mut TestAppContext) {
     });
 }
 
+fn write_default_outfits_flag(harness: &Harness, enabled: bool) {
+    std::fs::create_dir_all(harness.game.nams_dir()).unwrap();
+    std::fs::write(
+        harness.game.nams_toml(),
+        format!("{} = {enabled}
+", yp_mods::defaults::FEATURE_KEY),
+    )
+    .unwrap();
+}
+
 #[gpui::test]
-fn default_mods_follow_the_feature_switch_on_save(cx: &mut TestAppContext) {
-    let harness = Harness::new();
+fn default_mods_follow_the_feature_switch_once_it_is_written(cx: &mut TestAppContext) {
+    let harness = Harness::with_cli(
+        yp_config::testing::FakeNamsCli::default()
+            .with(DEFAULT_OUTFITS_ID, serde_json::json!(true)),
+    );
+    write_default_outfits_flag(&harness, true);
     let stores = harness.start(cx);
     let set_feature = |enabled: bool, cx: &mut TestAppContext| {
+        write_default_outfits_flag(&harness, enabled);
         stores.config.update(cx, |config, cx| {
-            config.update_nams(
-                yp_config::fields::nams::EXPERIMENTAL_DEFAULT_OUTFITS.key(),
-                toml::Value::Boolean(enabled),
-                None,
-                cx,
-            );
-            config.save(cx);
+            config.set_now(DEFAULT_OUTFITS_ID, serde_json::json!(enabled), cx);
         });
         cx.run_until_parked();
     };

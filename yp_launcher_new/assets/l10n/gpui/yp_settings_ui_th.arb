@@ -193,5 +193,17 @@
         "type": "String"
       }
     }
-  }
+  },
+  "graphicsBackendD3d12Experimental": "Direct3D 12 (ทดลอง)",
+  "graphicsBackendD3d12Warning": "Direct3D 12 ยังอยู่ในขั้นทดลอง หากภาพแสดงผลผิดปกติหรือเกมไม่เริ่มทำงาน ให้เปลี่ยนกลับไปใช้ Direct3D 11",
+  "namsDllTitle": "NAMS DLL",
+  "namsDllDescription": "ใช้ได้เฉพาะเกมเวอร์ชัน Steam 2026 เท่านั้น เริ่มเกมด้วย nams.dll แทน NAMS.exe ทุกครั้งที่เริ่ม ตัวเปิดเกมจะคัดลอกไฟล์ไปยังโฟลเดอร์เกมเป็น dinput8.dll และเปิด NieRAutomata.exe ดาวน์โหลด nams.dll ได้เป็นไฟล์เสริมบน Nexus Mods และ GitHub หรือคัดลอกไปยังโฟลเดอร์เกมเอง เปลี่ยนชื่อเป็น dinput8.dll, dxgi.dll หรือ d3d11.dll แล้วเปิดเกมผ่าน Steam ก็ได้ ความขัดแย้งกับ proxy DLL อื่นในโฟลเดอร์เกมต้องจัดการเอง NAMS.exe แยกรันไทม์ที่ม็อดไว้ออกจากเกมเวอร์ชันปกติและเป็นวิธีที่แนะนำ",
+  "namsDllPick": "เลือก nams.dll…",
+  "namsDllChange": "เปลี่ยน…",
+  "namsDllRemove": "กลับไปใช้ NAMS.exe",
+  "namsDllNotADll": "โปรดเลือกไฟล์ชื่อ nams.dll",
+  "namsDllUsedInPlace": "ใช้จากโฟลเดอร์เกมโดยตรง",
+  "namsDllCopiedAs": "จะถูกคัดลอกไปยังโฟลเดอร์เกมเป็น {file} ทุกครั้งที่เริ่ม",
+  "namsDllConsole": "เปิดคอนโซล",
+  "namsDllConsoleDescription": "เปิดหน้าต่างคอนโซลที่แสดงเอาต์พุตของ NAMS ข้างเกม"
 }

@@ -11,7 +11,7 @@ use yp_core::{AppPaths, LaunchUnavailable, Os, ProcessOutput, SettingsStore};
 use yp_host::gpu::{GpuProbe, PREFER_DEDICATED_GPU};
 use yp_host::launch::failure::{FailureCategory, FailureHint, FailureKind, HintLine};
 use yp_host::launch::wrapper;
-use yp_host::launch::{record, LaunchOutcome, Launcher};
+use yp_host::launch::{record, LaunchOutcome, Launcher, NAMS_DLL_PATH};
 use yp_host::platform::linux::linux_adapter_with;
 use yp_host::platform::macos::macos_adapter_with;
 use yp_host::platform::windows::WindowsAdapter;
@@ -245,4 +245,72 @@ fn linux_launches_get_the_gpu_offload_env_and_the_wrapper() {
     setup.settings.set(&PREFER_DEDICATED_GPU, &false).unwrap();
     let without_gpu = launcher.resolve(Path::new(&game), false).unwrap();
     assert!(!without_gpu.command.env.unwrap().contains_key("DRI_PRIME"));
+}
+
+fn pick_dll(setup: &Setup, dll: &Path) {
+    setup.settings.set(&NAMS_DLL_PATH, &dll.to_string_lossy().into_owned()).unwrap();
+}
+
+fn running_runner() -> FakeRunner {
+    FakeRunner::new().respond(|_| true, FakeResponse::Running { output: String::new() })
+}
+
+#[test]
+fn a_picked_nams_dll_is_copied_in_as_dinput8_and_starts_the_game() {
+    let setup = setup();
+    let build = setup._dir.path().join("build").join("nams.dll");
+    std::fs::create_dir_all(build.parent().unwrap()).unwrap();
+    std::fs::write(&build, "build 1").unwrap();
+    pick_dll(&setup, &build);
+    let launcher = windows_launcher(&setup, &running_runner());
+    let resolved = launcher.resolve(&setup.game, false).unwrap();
+    let game_exe = setup.game.join("NieRAutomata.exe");
+    assert_eq!(resolved.exe, game_exe);
+    assert_eq!(resolved.command.command, game_exe.to_string_lossy());
+    assert!(resolved.command.args.is_empty());
+    assert_eq!(resolved.command.cwd, setup.game.to_string_lossy());
+    let env = resolved.command.env.as_ref().unwrap();
+    assert_eq!(env["SteamAppId"], "524220");
+    assert!(!env.contains_key("WINEDLLOVERRIDES"));
+    assert_eq!(launcher.resolve(&setup.game, true).unwrap().command.args, ["--vanilla"]);
+
+    let proxy = setup.game.join("dinput8.dll");
+    assert!(launcher.start(&setup.game, false, |_| {}).started());
+    assert_eq!(std::fs::read(&proxy).unwrap(), b"build 1");
+    std::fs::write(&build, "build 2").unwrap();
+    assert!(launcher.start(&setup.game, false, |_| {}).started());
+    assert_eq!(std::fs::read(&proxy).unwrap(), b"build 2");
+
+    setup.settings.set(&NAMS_DLL_PATH, &String::new()).unwrap();
+    let exe_mode = launcher.resolve(&setup.game, false).unwrap();
+    assert_eq!(exe_mode.exe, setup.paths.nams_exe());
+    assert_eq!(exe_mode.command.args[0], "run");
+}
+
+#[test]
+fn a_picked_dll_that_is_gone_stops_the_launch_with_its_path() {
+    let setup = setup();
+    let gone = setup.game.join("builds").join("nams.dll");
+    pick_dll(&setup, &gone);
+    let runner = FakeRunner::new();
+    let failure = failure(windows_launcher(&setup, &runner).start(&setup.game, false, |_| {}));
+    assert_eq!(failure.kind, FailureKind::NamsDllMissing { dll: gone });
+    assert!(runner.calls().is_empty());
+}
+
+#[test]
+fn wine_loads_the_picked_proxy_name_as_native() {
+    let setup = setup();
+    let tree = FakeSteamTree::create();
+    tree.add_steam_root();
+    let game = PathBuf::from(tree.add_nier(None));
+    tree.add_proton("GE-Proton");
+    let runner = Arc::new(FakeRunner::new());
+    let platform = Arc::new(linux_adapter_with(tree.native(), runner.clone()));
+    let launcher = Launcher::new(platform, runner, setup.paths.clone(), setup.settings.clone());
+
+    pick_dll(&setup, &setup._dir.path().join("nams.dll"));
+    let copied = launcher.resolve(&game, false).unwrap();
+    assert_eq!(copied.command.env.as_ref().unwrap()["WINEDLLOVERRIDES"], "dinput8=n,b");
+    assert!(copied.command.args.iter().any(|arg| arg.ends_with("NieRAutomata.exe")));
 }

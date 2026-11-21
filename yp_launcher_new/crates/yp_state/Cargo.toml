@@ -5,6 +5,7 @@ edition.workspace = true
 license.workspace = true
 
 [dependencies]
+indexmap.workspace = true
 gpui.workspace = true
 yp_ui.workspace = true
 yp_i18n.workspace = true
@@ -27,6 +28,8 @@ image.workspace = true
 [dev-dependencies]
 gpui = { workspace = true, features = ["test-support"] }
 yp_core = { workspace = true, features = ["test-support"] }
+yp_config = { workspace = true, features = ["test-support"] }
+yp_formats = { workspace = true, features = ["test-support"] }
 tempfile.workspace = true
 
 [lints]

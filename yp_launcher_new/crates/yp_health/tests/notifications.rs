@@ -2,7 +2,9 @@ mod support;
 
 use std::borrow::Cow;
 
-use support::{FakeGame, FakePlatform, Rig, write};
+use serde_json::json;
+use support::{FakeGame, FakePlatform, Rig, fake_cli, write};
+use yp_config::testing::FakeNamsCli;
 use yp_config::legacy::SkippedNaiomSetting;
 use yp_core::toml_io::parse_values;
 use yp_core::{GamePaths, Os};
@@ -13,25 +15,30 @@ use yp_health::notifications::{
 };
 use yp_thirdparty::LoadingFlag;
 
-fn env(rig: &Rig) -> DetectionEnv<'_> {
+fn env<'a>(rig: &'a Rig, cli: &'a FakeNamsCli) -> DetectionEnv<'a> {
     DetectionEnv {
         settings: &rig.settings,
         paths: &rig.paths,
         host: &rig.host,
+        cli: Some(cli),
     }
 }
 
-fn configured_game(rig: &Rig) -> (FakeGame, GamePaths) {
+fn configured_game() -> (FakeGame, GamePaths) {
     let game = FakeGame::create();
     let paths = game.paths();
     std::fs::remove_dir_all(paths.nams_dir()).unwrap();
-    yp_config::ensure_configs(&paths, &rig.host).unwrap();
+    let flags: String = LoadingFlag::ALL
+        .iter()
+        .map(|flag| format!("{} = false\n", flag.key()))
+        .collect();
+    write(&paths.nams_toml(), flags);
     (game, paths)
 }
 
 fn clean_game(rig: &Rig) -> (FakeGame, GamePaths) {
     rig.install_runtime_files();
-    configured_game(rig)
+    configured_game()
 }
 
 fn nams_values(game: &GamePaths) -> toml::Table {
@@ -41,35 +48,37 @@ fn nams_values(game: &GamePaths) -> toml::Table {
 #[test]
 fn clean_install_raises_nothing_and_is_only_detected_once_per_folder() {
     let rig = Rig::windows();
+    let cli = fake_cli();
     let (_game, paths) = clean_game(&rig);
 
     assert!(!already_detected(&rig.settings, &paths));
-    assert_eq!(run_detections(&env(&rig), &paths), Some(Vec::new()));
+    assert_eq!(run_detections(&env(&rig, &cli), &paths), Some(Vec::new()));
     assert!(already_detected(&rig.settings, &paths));
     assert_eq!(
         rig.settings.get(&DETECTED_NOTIFICATIONS_DIR),
         Some(paths.root().to_string_lossy().into_owned())
     );
-    assert_eq!(run_detections(&env(&rig), &paths), None);
+    assert_eq!(run_detections(&env(&rig, &cli), &paths), None);
 
-    let (_other, other_paths) = configured_game(&rig);
-    assert_eq!(run_detections(&env(&rig), &other_paths), Some(Vec::new()));
-    assert_eq!(run_detections(&env(&rig), &paths), Some(Vec::new()));
+    let (_other, other_paths) = configured_game();
+    assert_eq!(run_detections(&env(&rig, &cli), &other_paths), Some(Vec::new()));
+    assert_eq!(run_detections(&env(&rig, &cli), &paths), Some(Vec::new()));
 }
 
 #[test]
 fn refresh_runs_again_for_the_remembered_folder() {
     let rig = Rig::windows();
+    let cli = fake_cli();
     let (game, paths) = clean_game(&rig);
-    assert_eq!(run_detections(&env(&rig), &paths), Some(Vec::new()));
+    assert_eq!(run_detections(&env(&rig, &cli), &paths), Some(Vec::new()));
 
     write(
         &game.path().join("SK_Res").join("inject").join("x.dds"),
         [0u8],
     );
-    assert_eq!(run_detections(&env(&rig), &paths), None);
+    assert_eq!(run_detections(&env(&rig, &cli), &paths), None);
     assert_eq!(
-        refresh_detections(&env(&rig), &paths),
+        refresh_detections(&env(&rig, &cli), &paths),
         vec![NotificationKind::TexturesDetected {
             folder: "SK_Res/".to_owned()
         }]
@@ -80,16 +89,17 @@ fn refresh_runs_again_for_the_remembered_folder() {
 #[test]
 fn missing_launcher_files_raise_the_quarantine_notice() {
     let rig = Rig::windows();
+    let cli = fake_cli();
     let game = FakeGame::create();
     assert_eq!(
-        detect(&env(&rig), &game.paths()),
+        detect(&env(&rig, &cli), &game.paths()),
         vec![NotificationKind::FilesQuarantined]
     );
 
     rig.install_runtime_files();
     std::fs::remove_file(rig.paths.yorha_dll()).unwrap();
     assert_eq!(
-        detect(&env(&rig), &game.paths()),
+        detect(&env(&rig, &cli), &game.paths()),
         vec![NotificationKind::FilesQuarantined]
     );
 }
@@ -97,6 +107,7 @@ fn missing_launcher_files_raise_the_quarantine_notice() {
 #[test]
 fn legacy_lodmod_ini_is_imported_once() {
     let rig = Rig::windows();
+    let cli = fake_cli();
     let (game, paths) = clean_game(&rig);
     write(
         &game.path().join("LodMod.ini"),
@@ -104,27 +115,25 @@ fn legacy_lodmod_ini_is_imported_once() {
     );
 
     assert_eq!(
-        detect(&env(&rig), &paths),
+        detect(&env(&rig, &cli), &paths),
         vec![NotificationKind::LodModMigrated]
     );
-    let lodmod = parse_values(&std::fs::read_to_string(paths.lodmod_toml()).unwrap()).unwrap();
-    assert_eq!(
-        lodmod.get("enabled").and_then(toml::Value::as_bool),
-        Some(true)
-    );
-    assert!(detect(&env(&rig), &paths).is_empty());
+    assert_eq!(cli.value("lodmod.enabled"), Some(json!(true)));
+    assert_eq!(cli.value("lodmod.shadow_resolution"), Some(json!(4096)));
+    assert!(detect(&env(&rig, &cli), &paths).is_empty());
 }
 
 #[test]
 fn legacy_naiom_ini_is_imported_and_unsupported_keys_are_listed() {
     let rig = Rig::windows();
+    let cli = fake_cli();
     let (game, paths) = clean_game(&rig);
     write(
         &game.path().join("NAIOM.ini"),
         "MiscOpenDebugMenu PAUSE\nAimMode Disabled\n",
     );
 
-    let found = detect(&env(&rig), &paths);
+    let found = detect(&env(&rig, &cli), &paths);
     assert_eq!(found.len(), 2);
     assert_eq!(found[0], NotificationKind::NaiomMigrated);
     let NotificationKind::NaiomSkipped { entries } = &found[1] else {
@@ -133,12 +142,14 @@ fn legacy_naiom_ini_is_imported_and_unsupported_keys_are_listed() {
     assert_eq!(entries.len(), 1);
     assert_eq!(entries[0].setting, SkippedNaiomSetting::DebugMenuKey);
     assert_eq!(entries[0].to_string(), "MiscOpenDebugMenu (PAUSE)");
-    assert!(paths.naiom_toml().is_file());
+    assert_eq!(cli.value("naiom.aim_crosshair"), Some(json!(false)));
+    assert_eq!(cli.value("naiom.misc_open_debug_menu"), None);
 }
 
 #[test]
 fn naiom_import_without_skipped_keys_raises_one_notice() {
     let rig = Rig::windows();
+    let cli = fake_cli();
     let (game, paths) = clean_game(&rig);
     write(
         &game.path().join("NAIOM.ini"),
@@ -146,7 +157,7 @@ fn naiom_import_without_skipped_keys_raises_one_notice() {
     );
 
     assert_eq!(
-        detect(&env(&rig), &paths),
+        detect(&env(&rig, &cli), &paths),
         vec![NotificationKind::NaiomMigrated]
     );
 }
@@ -154,11 +165,12 @@ fn naiom_import_without_skipped_keys_raises_one_notice() {
 #[test]
 fn reshade_in_the_game_folder_is_switched_off_and_announced() {
     let rig = Rig::windows();
+    let cli = fake_cli();
     let (game, paths) = clean_game(&rig);
     write(&game.path().join("dxgi.dll"), b"MZ.. reshade.me ..");
 
     assert_eq!(
-        detect(&env(&rig), &paths),
+        detect(&env(&rig, &cli), &paths),
         vec![NotificationKind::ReShadeDetected]
     );
     assert_eq!(
@@ -168,7 +180,7 @@ fn reshade_in_the_game_folder_is_switched_off_and_announced() {
         Some(true)
     );
     assert_eq!(
-        detect(&env(&rig), &paths),
+        detect(&env(&rig, &cli), &paths),
         vec![NotificationKind::ReShadeDetected]
     );
 }
@@ -176,10 +188,11 @@ fn reshade_in_the_game_folder_is_switched_off_and_announced() {
 #[test]
 fn plain_proxy_dll_is_not_reported_as_reshade() {
     let rig = Rig::windows();
+    let cli = fake_cli();
     let (game, paths) = clean_game(&rig);
     write(&game.path().join("dxgi.dll"), b"MZ plain proxy");
 
-    assert!(detect(&env(&rig), &paths).is_empty());
+    assert!(detect(&env(&rig, &cli), &paths).is_empty());
     assert_eq!(
         nams_values(&paths)
             .get(LoadingFlag::ReShade.key())
@@ -191,15 +204,16 @@ fn plain_proxy_dll_is_not_reported_as_reshade() {
 #[test]
 fn special_k_texture_folder_is_announced_only_when_it_has_content() {
     let rig = Rig::windows();
+    let cli = fake_cli();
     let (game, paths) = clean_game(&rig);
     std::fs::create_dir_all(game.path().join("SK_Res")).unwrap();
-    assert!(detect(&env(&rig), &paths).is_empty());
+    assert!(detect(&env(&rig, &cli), &paths).is_empty());
 
     write(
         &game.path().join("SK_Res").join("inject").join("x.dds"),
         [0u8],
     );
-    let found = detect(&env(&rig), &paths);
+    let found = detect(&env(&rig, &cli), &paths);
     assert_eq!(
         found,
         vec![NotificationKind::TexturesDetected {
@@ -212,7 +226,8 @@ fn special_k_texture_folder_is_announced_only_when_it_has_content() {
 #[test]
 fn every_detection_shows_up_in_startup_order() {
     let rig = Rig::windows();
-    let (game, paths) = configured_game(&rig);
+    let cli = fake_cli();
+    let (game, paths) = configured_game();
     write(
         &game.path().join("LodMod.ini"),
         "[LodMod]\nShadowResolution = 4096\n",
@@ -224,7 +239,7 @@ fn every_detection_shows_up_in_startup_order() {
     write(&game.path().join("ReShade64.dll"), b"MZ crosire");
     write(&game.path().join("SK_Res").join("x.dds"), [0u8]);
 
-    let ids: Vec<String> = run_detections(&env(&rig), &paths)
+    let ids: Vec<String> = run_detections(&env(&rig, &cli), &paths)
         .unwrap()
         .iter()
         .map(|kind| kind.id().into_owned())

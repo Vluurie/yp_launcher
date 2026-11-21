@@ -69,12 +69,6 @@ pub fn close_prompt(guard: CloseGuard, cx: &App) -> Option<ClosePrompt> {
                 .confirm_label(strings.busy_close_force())
                 .tone(ConfirmTone::Warning)
         }
-        CloseGuard::UnsavedChanges => ConfirmOptions::new(
-            strings.unsaved_changes_title(),
-            strings.unsaved_changes_message(),
-        )
-        .confirm_label(strings.discard())
-        .tone(ConfirmTone::Danger),
     };
     Some(ClosePrompt {
         options: options.cancel_label(strings.stay()),
@@ -91,7 +85,6 @@ pub struct ShellView {
     startup_task: Option<Task<()>>,
     save_task: Option<Task<()>>,
     minimize_task: Option<Task<()>>,
-    discard_task: Option<Task<()>>,
     close_task: Option<Task<()>>,
     log_release: Option<Subscription>,
     onboarding_subscription: Option<Subscription>,
@@ -136,7 +129,6 @@ impl ShellView {
             startup_task: None,
             save_task: None,
             minimize_task: None,
-            discard_task: None,
             close_task: None,
             log_release: None,
             onboarding_subscription: None,
@@ -308,34 +300,6 @@ impl ShellView {
         }));
     }
 
-    fn ask_to_discard(&mut self, window: &mut Window, cx: &mut Context<Self>) {
-        let strings = cx.t();
-        let answer = confirm(
-            ConfirmOptions::new(
-                strings.unsaved_changes_title(),
-                strings.unsaved_changes_message(),
-            )
-            .confirm_label(strings.discard())
-            .cancel_label(strings.stay())
-            .tone(ConfirmTone::Danger),
-            window,
-            cx,
-        );
-        self.discard_task = Some(cx.spawn(async move |_, cx| {
-            let discard = answer.await;
-            cx.update(|cx| {
-                let navigation = cx.stores().navigation.clone();
-                navigation.update(cx, |navigation, cx| {
-                    if discard {
-                        navigation.confirm_discard(cx);
-                    } else {
-                        navigation.cancel_discard(cx);
-                    }
-                });
-            });
-        }));
-    }
-
     fn open_overlay(&mut self, request: &OverlayRequest, window: &mut Window, cx: &mut Context<Self>) {
         match Registry::build_overlay(request, window, cx) {
             Some(view) => window.show_overlay(overlay_key(request.id()), view, cx),
@@ -405,7 +369,6 @@ impl ShellView {
                     cx,
                 );
             }
-            NavigationEvent::DiscardRequested(_) => self.ask_to_discard(window, cx),
             NavigationEvent::OverlayOpened(request) => self.open_overlay(request, window, cx),
             NavigationEvent::OverlayClosed(overlay) => {
                 window.hide_overlay(overlay_key(*overlay), cx);
@@ -460,10 +423,14 @@ impl ShellView {
     }
 
     fn toast_for(notice: &Notice, cx: &App) -> Toast {
-        Toast::new(cx.tr(&notice.msg))
+        let toast = Toast::new(cx.tr(&notice.msg))
             .id(notice.id.clone())
             .severity(notice.severity)
-            .icon(text::notice_icon(notice.kind, notice.severity))
+            .icon(text::notice_icon(notice.kind, notice.severity));
+        match notice.open_dir.clone() {
+            Some(dir) => toast.on_click(move |_, cx| crate::folders::open_dir(dir.clone(), cx)),
+            None => toast,
+        }
     }
 
     fn on_notification(

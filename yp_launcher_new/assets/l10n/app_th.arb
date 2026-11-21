@@ -951,6 +951,7 @@
   "selectTextureFiles": "เลือกไฟล์หรือไฟล์เก็บถาวรเท็กซ์เจอร์",
   "noTextureFilesFound": "ไม่พบไฟล์เท็กซ์เจอร์ (.dds, .png, .tga)",
   "cheatsAppliedNote": "นำไปใช้หนึ่งครั้งเมื่อเริ่มเกม",
+  "cheatsNeedFirstPlaythroughOff": "จะมีผลเฉพาะเมื่อปิดโหมดเล่นครั้งแรกเท่านั้น",
   "wipLabel": "กำลังพัฒนา",
   "dropCutsceneHere": "วางโฟลเดอร์หรือไฟล์เก็บถาวรม็อดคัตซีนที่นี่",
   "cutsceneMovieHint": "ม็อดต้องมีโฟลเดอร์ movie/ ที่มีไฟล์ .usm",

@@ -38,7 +38,9 @@ pub const THIRD_PARTY_DOC_PATH: &str = "docs/native/35_third_party.md";
 pub const ARG_RUN: &str = "run";
 pub const ARG_NIER_PATH: &str = "--nier-path";
 pub const ARG_VANILLA: &str = "--vanilla";
+pub const ARG_CONSOLE: &str = "--console";
 pub const ARG_VERIFY: &str = "verify";
+pub const ARG_CONFIG: &str = "config";
 pub const ARG_JSON: &str = "--json";
 
 pub const SHORTCUT_NAME: &str = "NieR Automata (YoRHa Protocol)";

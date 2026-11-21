@@ -193,5 +193,17 @@
         "type": "String"
       }
     }
-  }
+  },
+  "graphicsBackendD3d12Experimental": "Direct3D 12（实验性）",
+  "graphicsBackendD3d12Warning": "Direct3D 12 仍处于实验阶段。如果画面显示异常或游戏无法启动，请切换回 Direct3D 11。",
+  "namsDllTitle": "NAMS DLL",
+  "namsDllDescription": "仅适用于游戏的 Steam 2026 版本。使用 nams.dll 而不是 NAMS.exe 启动游戏。每次启动时，启动器会将其以 dinput8.dll 复制到游戏文件夹，并启动 NieRAutomata.exe。nams.dll 可在 Nexus Mods 和 GitHub 上作为可选文件下载。你也可以自行将其复制到游戏文件夹，重命名为 dinput8.dll、dxgi.dll 或 d3d11.dll，然后通过 Steam 启动游戏。与游戏文件夹中其他代理 DLL 的冲突需要你自行处理。NAMS.exe 会将模组运行环境与原版游戏分开，是推荐的方式。",
+  "namsDllPick": "选择 nams.dll…",
+  "namsDllChange": "更改…",
+  "namsDllRemove": "改回使用 NAMS.exe",
+  "namsDllNotADll": "请选择名为 nams.dll 的文件。",
+  "namsDllUsedInPlace": "直接从游戏文件夹使用。",
+  "namsDllCopiedAs": "每次启动时会以 {file} 的名称复制到游戏文件夹。",
+  "namsDllConsole": "打开控制台",
+  "namsDllConsoleDescription": "在游戏旁打开显示 NAMS 输出的控制台窗口。"
 }

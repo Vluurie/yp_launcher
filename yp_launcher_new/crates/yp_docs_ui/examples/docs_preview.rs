@@ -201,14 +201,14 @@ fn copy_tree(from: &Path, to: &Path) {
 }
 
 impl Fixture {
-    fn create(host: &HostEnv, editable_docs: bool) -> Self {
+    fn create(editable_docs: bool) -> Self {
         let temp = std::env::temp_dir();
         sweep_old_fixtures(&temp);
         let root = temp.join(format!("{FIXTURE_PREFIX}{}", std::process::id()));
         let game = GamePaths::new(root.join("game"));
         std::fs::create_dir_all(game.root()).expect("game folder");
         std::fs::write(game.exe(), b"MZ preview").expect("fake exe");
-        yp_config::ensure_configs(&game, host).expect("configs");
+        std::fs::create_dir_all(game.nams_dir()).expect("nams folder");
 
         let sources = root.join("sources");
         std::fs::create_dir_all(&sources).expect("sources folder");
@@ -725,7 +725,7 @@ fn main() {
         let temp = std::env::temp_dir().join(format!("{FIXTURE_PREFIX}{}", std::process::id()));
         let appdata = temp.join("appdata").to_string_lossy().into_owned();
         let host_env = HostEnv::for_test(Os::Windows, &[("APPDATA", appdata.as_str())], &temp);
-        let fixture = Arc::new(Fixture::create(&host_env, options.editable));
+        let fixture = Arc::new(Fixture::create(options.editable));
         std::fs::create_dir_all(host_env.temp_dir()).expect("temp folder");
         let paths = AppPaths::for_test(&fixture.root);
         std::fs::create_dir_all(paths.plugins_dir()).expect("plugins folder");

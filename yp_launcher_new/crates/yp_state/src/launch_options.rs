@@ -1,7 +1,11 @@
+use std::path::{Path, PathBuf};
+
 use gpui::{Context, EventEmitter};
 
 use crate::env::AppEnv;
-use crate::prefs::{LAUNCH_WRAPPER, MINIMIZE_ON_LAUNCH, PREFER_DEDICATED_GPU, save_setting};
+use crate::prefs::{
+    LAUNCH_WRAPPER, MINIMIZE_ON_LAUNCH, NAMS_DLL_PATH, PREFER_DEDICATED_GPU, save_setting,
+};
 use crate::session::LaunchRequest;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -15,6 +19,7 @@ pub struct LaunchOptions {
     show_launch_warnings: bool,
     minimize_on_launch: bool,
     prefer_dedicated_gpu: bool,
+    nams_dll: Option<PathBuf>,
     launch_wrapper: String,
 }
 
@@ -24,6 +29,7 @@ impl LaunchOptions {
     pub fn new(env: AppEnv, _cx: &mut Context<Self>) -> Self {
         let minimize_on_launch = env.settings.get(&MINIMIZE_ON_LAUNCH);
         let prefer_dedicated_gpu = env.settings.get(&PREFER_DEDICATED_GPU);
+        let nams_dll = yp_host::launch::nams_dll::picked(&env.settings);
         let launch_wrapper = yp_host::launch::wrapper::read(&env.settings);
         Self {
             env,
@@ -31,7 +37,25 @@ impl LaunchOptions {
             show_launch_warnings: false,
             minimize_on_launch,
             prefer_dedicated_gpu,
+            nams_dll,
             launch_wrapper,
+        }
+    }
+
+    pub fn nams_dll(&self) -> Option<&Path> {
+        self.nams_dll.as_deref()
+    }
+
+
+    pub fn set_nams_dll(&mut self, nams_dll: Option<PathBuf>, cx: &mut Context<Self>) {
+        if self.nams_dll != nams_dll {
+            let stored = nams_dll
+                .as_deref()
+                .map(|path| path.to_string_lossy().into_owned())
+                .unwrap_or_default();
+            save_setting(&self.env.settings, &NAMS_DLL_PATH, &stored, cx);
+            self.nams_dll = nams_dll;
+            self.changed(cx);
         }
     }
 

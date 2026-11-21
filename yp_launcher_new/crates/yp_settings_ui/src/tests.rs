@@ -1,34 +1,46 @@
 use std::cell::RefCell;
 use std::rc::Rc;
+use std::sync::Arc;
 use std::time::Duration;
 
 use gpui::{
     Entity, Modifiers, TestAppContext, VisualTestContext, div, point, prelude::*, px, size,
 };
-use yp_config::fields::{bindings, lodmod, nams, overlay, texture_injection};
-use yp_config::{AnyField, ConfigFile};
+use serde_json::{Value as Json, json};
+use yp_config::Setting;
+use yp_config::cli::NamsCli;
 use yp_state::inspector::ArchivePaths;
 use yp_state::prelude::*;
-use yp_state::{
-    NoticeSeverity, OverlayId, OverlayRequest, Registry, Stores, config::NAIOM_AUTOSAVE_DELAY,
-};
-use yp_ui::{Root, WindowExt};
+use yp_state::{CliFactory, NoticeSeverity, OverlayId, OverlayRequest, Registry, Stores};
+use yp_ui::{ActiveStrings, Root, WindowExt};
 
-use crate::fields::{FieldRef, FieldRow, Marker, value_in};
+use crate::fields::{Control, FieldRow, Marker};
 use crate::inspector::model::{InspectorModel, ViewMode, mesh_groups};
-use crate::naiom::binding_value;
 use crate::nams::CheatTableNotice;
 use crate::testing::Sandbox;
 use crate::textures::model::{InstallOutcome, TexturesEvent, TexturesModel, pack_rel_path};
 use crate::{InspectorPage, LodModTab, NaiomTab, NamsTab, TexturesTab, YorhaProtocolTab};
 
 const SETTLE: Duration = Duration::from_millis(50);
+const JUMP_ID: &str = "naiom.bindings.standard_jump";
+const FIRE_ID: &str = "naiom.bindings.standard_fire";
+const FORWARD_ID: &str = "naiom.bindings.standard_move_forward";
+const CURSOR_ID: &str = "naiom.misc_custom_cursor_menu";
+const DEBUG_KEY_ID: &str = "naiom.misc_open_debug_menu";
+const PLUGIN_LOADING_ID: &str = "nams.disable_plugin_loading";
+const OVERLAY_KEY_ID: &str = "plugins.yorha_protocol.keybinds.main.yorha_protocol";
+const LODMOD_ENABLED_ID: &str = "lodmod.enabled";
+const LOAD_ORDER_ID: &str = "texture_injection.load_order";
 
 fn boot(sandbox: &Sandbox, cx: &mut TestAppContext) -> Stores {
     let env = sandbox.env.clone();
+    let cli = sandbox.cli.clone();
     let stores = cx.update(|cx| {
         yp_ui::init_for_tests(cx);
         yp_state::init_with(env, cx);
+        let factory: CliFactory = Arc::new(move |_| cli.clone() as Arc<dyn NamsCli>);
+        let config = cx.stores().config.clone();
+        config.update(cx, |config, cx| config.set_cli_factory(factory, cx));
         crate::init(cx);
         crate::set_cards_expanded(true, cx);
         cx.stores().clone()
@@ -46,29 +58,30 @@ fn settle(cx: &mut VisualTestContext) {
     cx.run_until_parked();
 }
 
-fn read_text(path: std::path::PathBuf) -> String {
-    std::fs::read_to_string(path).unwrap_or_default()
+fn written(sandbox: &Sandbox, cx: &mut VisualTestContext, id: &str) -> Option<Json> {
+    cx.executor().advance_clock(SETTLE * 4);
+    cx.run_until_parked();
+    sandbox.cli.value(id)
 }
 
 struct FieldHarness {
-    fields: Vec<FieldRef>,
-    values: toml::Table,
-    seen: Rc<RefCell<Vec<(&'static str, toml::Value)>>>,
+    settings: Vec<Setting>,
+    seen: Rc<RefCell<Vec<(String, Json)>>>,
 }
 
 impl Render for FieldHarness {
     fn render(&mut self, _window: &mut Window, _cx: &mut Context<Self>) -> impl IntoElement {
-        let rows = self.fields.iter().map(|field| {
-            let field: FieldRef = *field;
-            let key = field.meta().key;
+        let rows = self.settings.iter().map(|setting| {
+            let id = setting.id.clone();
+            let selector = format!("field-{id}");
             let seen = self.seen.clone();
             div()
                 .w_full()
-                .debug_selector(move || format!("field-{key}"))
+                .debug_selector(move || selector.clone())
                 .child(
-                    FieldRow::toml("test", field, &self.values)
+                    FieldRow::new("test", setting, setting.default.clone())
                         .marker(Marker::Always)
-                        .on_change(move |value, _, _| seen.borrow_mut().push((key, value))),
+                        .on_change(move |value, _, _| seen.borrow_mut().push((id.clone(), value))),
                 )
         });
         div()
@@ -83,22 +96,21 @@ use gpui::{Context, IntoElement, Render, Window};
 use yp_ui::v_flex;
 
 #[gpui::test]
-fn every_registry_field_renders_and_switches_report_changes(cx: &mut TestAppContext) {
+fn every_schema_setting_renders_and_switches_report_changes(cx: &mut TestAppContext) {
     let sandbox = Sandbox::new();
-    boot(&sandbox, cx);
+    let stores = boot(&sandbox, cx);
+    let settings = stores.config.read_with(cx, |store, _| store.schema().settings.clone());
+    assert!(!settings.is_empty());
     let seen = Rc::new(RefCell::new(Vec::new()));
-    let fields: Vec<FieldRef> = yp_config::fields::all();
     let harness_seen = seen.clone();
     let (_, cx) = cx.add_window_view(|_, _| FieldHarness {
-        fields,
-        values: toml::Table::new(),
+        settings,
         seen: harness_seen,
     });
     cx.simulate_resize(size(px(900.), px(40000.)));
     settle(cx);
-    let key = nams::VALIDATE_SCRIPTS.key();
     let bounds = cx
-        .debug_bounds(Box::leak(format!("field-{key}").into_boxed_str()))
+        .debug_bounds("field-nams.disable_plugin_loading")
         .expect("the switch row is laid out");
     cx.simulate_click(
         point(bounds.origin.x + px(40.), bounds.origin.y + px(16.)),
@@ -107,22 +119,22 @@ fn every_registry_field_renders_and_switches_report_changes(cx: &mut TestAppCont
     settle(cx);
     assert_eq!(
         seen.borrow().as_slice(),
-        &[(key, toml::Value::Boolean(true))]
+        &[(PLUGIN_LOADING_ID.to_owned(), json!(true))]
     );
-    for field in yp_config::fields::all() {
-        let selector: &'static str =
-            Box::leak(format!("field-{}", field.meta().key).into_boxed_str());
+    for selector in [
+        "field-lodmod.shadow_blur_scale",
+        "field-lodmod.high_grids.room_rings",
+        "field-nams.graphics_backend",
+        "field-texture_injection.load_order",
+    ] {
         let bounds = cx.debug_bounds(selector);
-        assert!(
-            bounds.is_some_and(|bounds| bounds.size.height > px(0.)),
-            "{} was not rendered",
-            field.meta().key
-        );
+        assert!(bounds.is_some_and(|bounds| bounds.size.height > px(0.)), "{selector}");
     }
 }
 
 #[gpui::test]
 fn init_registers_tabs_overlay_and_flows(cx: &mut TestAppContext) {
+
     let sandbox = Sandbox::new();
     boot(&sandbox, cx);
     cx.update(|cx| {
@@ -148,13 +160,7 @@ fn every_tab_draws_expanded_at_wide_and_compact_sizes(cx: &mut TestAppContext) {
     sandbox.add_texture_pack("Pack A", &["a.dds"]);
     let stores = boot(&sandbox, cx);
     stores.config.update(cx, |store, cx| {
-        store.update_lodmod_live("enabled", toml::Value::Boolean(true), None, cx);
-        store.update_lodmod_live(
-            "enabled",
-            toml::Value::Boolean(true),
-            Some(lodmod::HIGH_GRIDS_SECTION),
-            cx,
-        );
+        store.set_now(LODMOD_ENABLED_ID, json!(true), cx);
     });
     for tab in [
         TabId::Nams,
@@ -176,26 +182,15 @@ fn every_tab_draws_expanded_at_wide_and_compact_sizes(cx: &mut TestAppContext) {
 }
 
 #[gpui::test]
-fn nams_switches_mark_the_page_dirty_until_saved(cx: &mut TestAppContext) {
+fn nams_switches_write_through_nams_and_the_cheat_table_converts(cx: &mut TestAppContext) {
     let sandbox = Sandbox::new();
     let stores = boot(&sandbox, cx);
     let (tab, cx) = cx.add_window_view(NamsTab::new);
     settle(cx);
-    assert!(!stores.config.read_with(cx, |store, _| store.is_dirty()));
-    stores.config.update(cx, |store, cx| {
-        store.update_nams(
-            nams::VALIDATE_SCRIPTS.key(),
-            toml::Value::Boolean(true),
-            None,
-            cx,
-        )
-    });
-    settle(cx);
-    assert!(stores.config.read_with(cx, |store, _| store.is_dirty()));
-    stores.config.update(cx, |store, cx| store.save(cx));
-    settle(cx);
-    assert!(!stores.config.read_with(cx, |store, _| store.is_dirty()));
-    assert!(read_text(sandbox.game.nams_toml()).contains("validate_scripts = true"));
+    stores.config.update(cx, |store, cx| store.set(PLUGIN_LOADING_ID, json!(true), cx));
+    assert!(stores.config.read_with(cx, |store, _| store.bool(PLUGIN_LOADING_ID)));
+    assert_eq!(written(&sandbox, cx, PLUGIN_LOADING_ID), Some(json!(true)));
+    assert!(!stores.config.read_with(cx, |store, _| store.has_pending_writes()));
 
     let table = sandbox.root.path().join("table.CT");
     std::fs::write(
@@ -214,35 +209,176 @@ fn nams_switches_mark_the_page_dirty_until_saved(cx: &mut TestAppContext) {
 }
 
 #[gpui::test]
-fn yorha_keybinds_and_toggles_edit_the_overlay_settings(cx: &mut TestAppContext) {
+fn yorha_keybinds_are_written_as_plugin_settings(cx: &mut TestAppContext) {
     let sandbox = Sandbox::new();
     let stores = boot(&sandbox, cx);
     let (tab, cx) = cx.add_window_view(YorhaProtocolTab::new);
     settle(cx);
-    tab.update(cx, |tab, cx| {
-        tab.set_keybind(&overlay::keybinds::FREE_CAM, "Shift+K", cx)
-    });
-    settle(cx);
-    stores.nams_settings.read_with(cx, |store, _| {
-        assert!(store.is_dirty());
-        let binds = store.keybinds();
-        let value = value_in_json_text(&overlay::keybinds::FREE_CAM, &binds);
-        assert_eq!(value, "Shift+K");
-    });
-    stores.nams_settings.update(cx, |store, cx| store.discard(cx));
-    settle(cx);
-    stores.nams_settings.read_with(cx, |store, _| {
-        assert!(!store.is_dirty());
-        let binds = store.keybinds();
-        assert_eq!(value_in_json_text(&overlay::keybinds::FREE_CAM, &binds), "F7");
-    });
+    tab.update(cx, |tab, cx| tab.set_keybind(OVERLAY_KEY_ID, "Shift+K", cx));
+    assert_eq!(written(&sandbox, cx, OVERLAY_KEY_ID), Some(json!("Shift+K")));
+    assert_eq!(
+        stores.config.read_with(cx, |store, _| store.text(OVERLAY_KEY_ID)),
+        "Shift+K"
+    );
 }
 
-fn value_in_json_text(
-    field: &dyn AnyField,
-    values: &serde_json::Map<String, serde_json::Value>,
-) -> String {
-    crate::fields::text_of(&crate::fields::value_in_json(field, values))
+#[gpui::test]
+fn cheats_are_locked_while_first_playthrough_mode_is_on(cx: &mut TestAppContext) {
+    let sandbox = Sandbox::new();
+    let stores = boot(&sandbox, cx);
+    let cheat = "plugins.yorha_protocol.cheatsConfig.infiniteHealth";
+    let locked = |stores: &Stores, cx: &mut TestAppContext| {
+        stores.config.read_with(cx, |store, _| {
+            let setting = store.setting(cheat).cloned().expect("cheat setting");
+            crate::extras::lock(&setting, store).is_some()
+        })
+    };
+    assert!(locked(&stores, cx));
+    stores.config.update(cx, |store, cx| {
+        store.set_now("plugins.yorha_protocol.firstPlaythrough", json!(false), cx)
+    });
+    cx.run_until_parked();
+    assert!(!locked(&stores, cx));
+}
+
+#[gpui::test]
+fn fixed_values_are_dropdowns_with_translated_labels(cx: &mut TestAppContext) {
+    let sandbox = Sandbox::new();
+    boot(&sandbox, cx);
+    let options = |id: &str, cx: &mut TestAppContext| {
+        cx.update(|cx| {
+            let config = cx.stores().config.clone();
+            let setting = config.read(cx).setting(id).cloned().expect("setting");
+            match crate::schema_page::field("test", &setting, &config, Marker::None, cx).control() {
+                Control::Select { options } => options,
+                other => panic!("{id} is not a dropdown: {other:?}"),
+            }
+        })
+    };
+    let (auto, quality, vanilla) = cx.update(|cx| {
+        let strings = cx.t();
+        (
+            strings.texture_auto_recommended(),
+            strings.lod_multiplier_option_quality(),
+            strings.lod_multiplier_option_vanilla(),
+        )
+    });
+    let vram = options("texture_injection.vram_budget_mb", cx);
+    assert_eq!(vram.len(), 8);
+    assert_eq!(vram[0], (json!(0), auto.into()));
+    assert_eq!(vram[1], (json!(1024), "1024".into()));
+    let lod = options("lodmod.lod_multiplier", cx);
+    assert_eq!(lod[0].1.as_ref(), quality);
+    assert_eq!(lod[1].1.as_ref(), vanilla);
+    let shadows = options("lodmod.shadow_resolution", cx);
+    assert_eq!(shadows.len(), 5);
+    let experimental = cx.update(|cx| cx.t().graphics_backend_d3d12_experimental());
+    let backend = options("nams.graphics_backend", cx);
+    assert_eq!(backend[0], (json!("d3d11"), "Direct3D 11".into()));
+    assert_eq!(backend[1], (json!("d3d12"), experimental.into()));
+}
+
+#[gpui::test]
+fn the_graphics_api_dropdown_shows_and_clears_the_in_game_switch(cx: &mut TestAppContext) {
+    let sandbox = Sandbox::new();
+    let stores = boot(&sandbox, cx);
+    let backend = "nams.graphics_backend";
+    let switch = "lodmod.d3d12_backend";
+    stores.config.update(cx, |store, cx| store.set_now(switch, json!(true), cx));
+    cx.run_until_parked();
+    let shown_backend = stores
+        .config
+        .read_with(cx, |store, _| crate::extras::shown_value(backend, store));
+    assert_eq!(shown_backend, json!("d3d12"));
+    let (_, cx) = cx.add_window_view(LodModTab::new);
+    settle(cx);
+    let sink = cx.update(|_, cx| crate::schema_page::sink(&cx.stores().config.clone(), backend));
+    cx.update(|window, cx| sink(json!("d3d11"), window, cx));
+    assert_eq!(written(&sandbox, cx, switch), Some(Json::Null));
+    assert_eq!(written(&sandbox, cx, backend), Some(json!("d3d11")));
+    let shown_backend = stores
+        .config
+        .read_with(cx, |store, _| crate::extras::shown_value(backend, store));
+    assert_eq!(shown_backend, json!("d3d11"));
+}
+
+#[gpui::test]
+fn the_nams_page_takes_only_dll_files_and_can_go_back_to_nams_exe(cx: &mut TestAppContext) {
+    let sandbox = Sandbox::new();
+    let stores = boot(&sandbox, cx);
+    let (tab, cx) = cx.add_window_view(NamsTab::new);
+    settle(cx);
+    let picked = |stores: &Stores, cx: &mut VisualTestContext| {
+        stores
+            .launch_options
+            .read_with(cx, |options, _| options.nams_dll().map(std::path::Path::to_path_buf))
+    };
+    tab.update(cx, |tab, cx| tab.use_nams_dll("D:/builds/readme.txt".into(), cx));
+    assert!(tab.read_with(cx, |tab, _| tab.dll_rejected()));
+    assert_eq!(picked(&stores, cx), None);
+
+    let dll = std::path::PathBuf::from("D:/builds/nams.dll");
+    tab.update(cx, |tab, cx| tab.use_nams_dll(dll.clone(), cx));
+    settle(cx);
+    assert!(!tab.read_with(cx, |tab, _| tab.dll_rejected()));
+    assert_eq!(picked(&stores, cx), Some(dll));
+
+    tab.update(cx, |tab, cx| tab.stop_using_nams_dll(cx));
+    settle(cx);
+    assert_eq!(picked(&stores, cx), None);
+}
+
+#[gpui::test]
+fn turning_lodmod_off_keeps_the_frame_rate_settings(cx: &mut TestAppContext) {
+    let sandbox = Sandbox::new();
+    let stores = boot(&sandbox, cx);
+    let shown = |id: &str, stores: &Stores, cx: &mut TestAppContext| {
+        stores.config.read_with(cx, |store, _| {
+            let setting = store.setting(id).cloned().expect("lodmod setting");
+            crate::extras::is_shown(&setting, store)
+        })
+    };
+    let uncap = "lodmod.fps_uncap_in_gameplay";
+    let lod = "lodmod.lod_multiplier";
+    assert!(shown(uncap, &stores, cx));
+    assert!(!shown(lod, &stores, cx));
+    stores.config.update(cx, |store, cx| store.set_now(LODMOD_ENABLED_ID, json!(true), cx));
+    cx.run_until_parked();
+    assert!(shown(uncap, &stores, cx));
+    assert!(shown(lod, &stores, cx));
+}
+
+#[gpui::test]
+fn direct3d_12_settings_follow_the_backend_not_lodmod(cx: &mut TestAppContext) {
+    let sandbox = Sandbox::new();
+    let stores = boot(&sandbox, cx);
+    let shown = |id: &str, stores: &Stores, cx: &mut TestAppContext| {
+        stores.config.read_with(cx, |store, _| {
+            let setting = store.setting(id).cloned().expect("d3d12 setting");
+            crate::extras::is_shown(&setting, store)
+        })
+    };
+    let switch = "lodmod.d3d12_backend";
+    let rtao = "lodmod.d3d12.ambient_occlusion";
+    let radius = "lodmod.d3d12.ao_radius";
+    assert!(!shown(switch, &stores, cx), "the dropdown stands for the in-game switch");
+    assert!(!shown(rtao, &stores, cx));
+    stores.config.update(cx, |store, cx| store.set_now("nams.graphics_backend", json!("d3d12"), cx));
+    cx.run_until_parked();
+    assert!(shown(rtao, &stores, cx), "LodMod is off, D3D12 is on");
+    assert!(!shown(radius, &stores, cx), "tuning waits for RTAO");
+    assert!(!shown("lodmod.d3d12.sun_shadows", &stores, cx));
+    assert!(!shown("lodmod.d3d12.cull_casters", &stores, cx));
+    stores.config.update(cx, |store, cx| store.set_now(rtao, json!(true), cx));
+    cx.run_until_parked();
+    assert!(shown(radius, &stores, cx));
+    stores.config.update(cx, |store, cx| store.set_now(switch, json!(false), cx));
+    cx.run_until_parked();
+    assert!(!shown(rtao, &stores, cx), "the lodmod.toml switch wins over nams.toml");
+    stores.config.update(cx, |store, cx| store.set_now(switch, json!(true), cx));
+    stores.config.update(cx, |store, cx| store.set_now("nams.graphics_backend", json!("d3d11"), cx));
+    cx.run_until_parked();
+    assert!(shown(rtao, &stores, cx));
 }
 
 #[gpui::test]
@@ -251,126 +387,97 @@ fn lodmod_values_save_on_their_own(cx: &mut TestAppContext) {
     let stores = boot(&sandbox, cx);
     let (_, cx) = cx.add_window_view(LodModTab::new);
     settle(cx);
-    stores.config.update(cx, |store, cx| {
-        store.update_lodmod_live(
-            lodmod::AO_FULL_RESOLUTION.key(),
-            toml::Value::Boolean(!lodmod::AO_FULL_RESOLUTION.default_value()),
-            None,
-            cx,
-        )
-    });
-    cx.executor().advance_clock(Duration::from_millis(400));
-    cx.run_until_parked();
-    let saved = read_text(sandbox.game.lodmod_toml());
-    let expected = format!(
-        "{} = {}",
-        lodmod::AO_FULL_RESOLUTION.key(),
-        !lodmod::AO_FULL_RESOLUTION.default_value()
-    );
-    assert!(saved.contains(&expected), "{saved}");
-    assert!(!stores.config.read_with(cx, |store, _| store.is_dirty()));
+    stores.config.update(cx, |store, cx| store.set(LODMOD_ENABLED_ID, json!(true), cx));
+    assert_eq!(written(&sandbox, cx, LODMOD_ENABLED_ID), Some(json!(true)));
 }
 
 #[gpui::test]
-fn naiom_capture_binds_keys_with_modifiers_and_autosaves(cx: &mut TestAppContext) {
+fn naiom_capture_binds_keys_with_modifiers(cx: &mut TestAppContext) {
     let sandbox = Sandbox::new();
     let stores = boot(&sandbox, cx);
     let (tab, cx) = cx.add_window_view(NaiomTab::new);
     settle(cx);
-    let jump = bindings::STANDARD_JUMP.key();
-    tab.update_in(cx, |tab, window, cx| tab.start_capture(jump, window, cx));
+    tab.update_in(cx, |tab, window, cx| tab.start_capture(JUMP_ID.into(), window, cx));
     settle(cx);
-    assert_eq!(tab.read_with(cx, |tab, _| tab.capturing()), Some(jump));
+    assert_eq!(
+        tab.read_with(cx, |tab, _| tab.capturing().map(|id| id.to_string())),
+        Some(JUMP_ID.to_owned())
+    );
     cx.simulate_keystrokes("shift-e");
     settle(cx);
-    assert_eq!(tab.read_with(cx, |tab, _| tab.capturing()), None);
-    let bound = stores
-        .config
-        .read_with(cx, |store, _| binding_value(&bindings::STANDARD_JUMP, store.nams()));
-    assert_eq!(bound, "SHIFT+E");
-    assert!(!stores.config.read_with(cx, |store, _| store.is_dirty()));
-    cx.executor().advance_clock(NAIOM_AUTOSAVE_DELAY * 2);
-    cx.run_until_parked();
-    assert!(read_text(sandbox.game.naiom_toml()).contains("standard_jump = \"SHIFT+E\""));
+    assert_eq!(tab.read_with(cx, |tab, _| tab.capturing().cloned()), None);
+    assert_eq!(
+        stores.config.read_with(cx, |store, _| store.text(JUMP_ID)),
+        "SHIFT+E"
+    );
+    assert_eq!(written(&sandbox, cx, JUMP_ID), Some(json!("SHIFT+E")));
 
-    tab.update_in(cx, |tab, window, cx| tab.start_capture(jump, window, cx));
+    tab.update_in(cx, |tab, window, cx| tab.start_capture(JUMP_ID.into(), window, cx));
     settle(cx);
     cx.simulate_keystrokes("escape");
     settle(cx);
-    let bound = stores
-        .config
-        .read_with(cx, |store, _| binding_value(&bindings::STANDARD_JUMP, store.nams()));
-    assert_eq!(bound, "");
+    assert_eq!(stores.config.read_with(cx, |store, _| store.text(JUMP_ID)), "");
 }
 
 #[gpui::test]
-fn naiom_capture_takes_mouse_buttons_only_where_allowed(cx: &mut TestAppContext) {
+fn naiom_capture_takes_mouse_buttons_only_where_the_schema_allows(cx: &mut TestAppContext) {
     let sandbox = Sandbox::new();
     let stores = boot(&sandbox, cx);
     let (tab, cx) = cx.add_window_view(NaiomTab::new);
     cx.simulate_resize(size(px(1284.), px(6000.)));
     settle(cx);
-    let fire = bindings::STANDARD_FIRE.key();
-    let forward = bindings::STANDARD_MOVE_FORWARD.key();
-    let center = |cx: &mut VisualTestContext, key: &str| {
-        let selector: &'static str = Box::leak(format!("naiom-key-{key}").into_boxed_str());
-        cx.debug_bounds(selector).expect("binding button").center()
+    let capturing = |tab: &Entity<NaiomTab>, cx: &mut VisualTestContext| {
+        tab.read_with(cx, |tab, _| tab.capturing().map(|id| id.to_string()))
     };
 
-    let fire_button = center(cx, fire);
-    cx.simulate_click(fire_button, Modifiers::none());
+    let fire = cx
+        .debug_bounds("naiom-key-naiom.bindings.standard_fire")
+        .expect("fire button")
+        .center();
+    cx.simulate_click(fire, Modifiers::none());
     settle(cx);
-    assert_eq!(tab.read_with(cx, |tab, _| tab.capturing()), Some(fire));
-    cx.simulate_click(fire_button, Modifiers::none());
+    assert_eq!(capturing(&tab, cx), Some(FIRE_ID.to_owned()));
+    cx.simulate_click(fire, Modifiers::none());
     settle(cx);
-    assert_eq!(tab.read_with(cx, |tab, _| tab.capturing()), None);
-    let bound = stores
-        .config
-        .read_with(cx, |store, _| binding_value(&bindings::STANDARD_FIRE, store.nams()));
-    assert_eq!(bound, "MOUSE1");
+    assert_eq!(capturing(&tab, cx), None);
+    assert_eq!(stores.config.read_with(cx, |store, _| store.text(FIRE_ID)), "MOUSE1");
 
-    let forward_button = center(cx, forward);
-    cx.simulate_click(forward_button, Modifiers::none());
+    let forward = cx
+        .debug_bounds("naiom-key-naiom.bindings.standard_move_forward")
+        .expect("forward button")
+        .center();
+    cx.simulate_click(forward, Modifiers::none());
     settle(cx);
-    assert_eq!(tab.read_with(cx, |tab, _| tab.capturing()), Some(forward));
-    cx.simulate_click(forward_button, Modifiers::none());
+    assert_eq!(capturing(&tab, cx), Some(FORWARD_ID.to_owned()));
+    cx.simulate_click(forward, Modifiers::none());
     settle(cx);
-    assert_eq!(tab.read_with(cx, |tab, _| tab.capturing()), Some(forward));
+    assert_eq!(capturing(&tab, cx), Some(FORWARD_ID.to_owned()));
     cx.simulate_keystrokes("w");
     settle(cx);
-    let bound = stores.config.read_with(cx, |store, _| {
-        binding_value(&bindings::STANDARD_MOVE_FORWARD, store.nams())
-    });
-    assert_eq!(bound, "W");
+    assert_eq!(stores.config.read_with(cx, |store, _| store.text(FORWARD_ID)), "W");
 }
 
 #[gpui::test]
-fn naiom_reports_conflicts_and_reset_clears_everything(cx: &mut TestAppContext) {
+fn naiom_reports_conflicts_and_the_debug_key_is_a_virtual_key(cx: &mut TestAppContext) {
     let sandbox = Sandbox::new();
     let stores = boot(&sandbox, cx);
     let (tab, cx) = cx.add_window_view(NaiomTab::new);
     settle(cx);
     tab.update(cx, |tab, cx| {
-        tab.set_binding(bindings::STANDARD_JUMP.key(), "SPACE", cx);
-        tab.set_binding(bindings::STANDARD_USE.key(), "SPACE", cx);
-        tab.capture_virtual_key(0x70, cx);
+        tab.set_binding(JUMP_ID, "SPACE", cx);
+        tab.set_binding(FIRE_ID, "SPACE", cx);
     });
+    tab.update_in(cx, |tab, window, cx| tab.start_capture(DEBUG_KEY_ID.into(), window, cx));
+    tab.update(cx, |tab, cx| tab.capture_virtual_key(DEBUG_KEY_ID, 0x70, cx));
     settle(cx);
-    let strings = cx.update(|_, cx| {
-        use yp_ui::ActiveStrings;
-        cx.t()
+    stores.config.read_with(cx, |store, _| {
+        let all = crate::naiom::binding_values(store);
+        assert_eq!(
+            crate::naiom::conflict_label(JUMP_ID, &all, store),
+            Some("Fire".into())
+        );
+        assert_eq!(store.number(DEBUG_KEY_ID), Some(112.0));
     });
-    let values = stores.config.read_with(cx, |store, _| store.nams().clone());
-    let all = crate::naiom::binding_values(&values);
-    assert_eq!(
-        crate::naiom::conflict_label(&bindings::STANDARD_JUMP, &all, strings),
-        Some(crate::fields::label_of(&bindings::STANDARD_USE, strings))
-    );
-    assert!(crate::naiom::has_non_defaults(&values));
-    tab.update(cx, |tab, cx| tab.reset_all(cx));
-    settle(cx);
-    let values = stores.config.read_with(cx, |store, _| store.nams().clone());
-    assert!(!crate::naiom::has_non_defaults(&values));
 }
 
 #[gpui::test]
@@ -379,21 +486,20 @@ fn naiom_cursor_files_are_validated_before_they_are_stored(cx: &mut TestAppConte
     let stores = boot(&sandbox, cx);
     let (tab, cx) = cx.add_window_view(NaiomTab::new);
     settle(cx);
-    let field = &nams::MISC_CUSTOM_CURSOR_MENU;
     let fake = sandbox.root.path().join("fake.cur");
     std::fs::write(&fake, b"nope").unwrap();
-    tab.update(cx, |tab, cx| tab.apply_cursor(field, fake, cx));
+    tab.update(cx, |tab, cx| tab.apply_cursor(CURSOR_ID.into(), fake, cx));
     settle(cx);
-    assert!(tab.read_with(cx, |tab, _| tab.is_cursor_invalid(field.key())));
+    assert!(tab.read_with(cx, |tab, _| tab.is_cursor_invalid(CURSOR_ID)));
     let real = sandbox.root.path().join("real.cur");
     std::fs::write(&real, [0x00, 0x00, 0x02, 0x00, 0x01]).unwrap();
-    tab.update(cx, |tab, cx| tab.apply_cursor(field, real.clone(), cx));
+    tab.update(cx, |tab, cx| tab.apply_cursor(CURSOR_ID.into(), real.clone(), cx));
     settle(cx);
-    assert!(!tab.read_with(cx, |tab, _| tab.is_cursor_invalid(field.key())));
-    let stored = stores.config.read_with(cx, |store, _| {
-        crate::fields::text_of(&value_in(field, store.nams()))
-    });
-    assert_eq!(stored, real.to_string_lossy());
+    assert!(!tab.read_with(cx, |tab, _| tab.is_cursor_invalid(CURSOR_ID)));
+    assert_eq!(
+        stores.config.read_with(cx, |store, _| store.text(CURSOR_ID)),
+        real.to_string_lossy()
+    );
 }
 
 fn textures(cx: &mut TestAppContext) -> Entity<TexturesModel> {
@@ -414,7 +520,10 @@ fn texture_packs_are_listed_reordered_and_toggled(cx: &mut TestAppContext) {
     cx.run_until_parked();
     let order = model.read_with(cx, |model, cx| model.order(cx));
     assert_eq!(order, vec!["Alpha", "Beta", "Gamma"]);
-    assert!(read_text(sandbox.game.texture_injection_toml()).contains("Gamma"));
+    assert_eq!(
+        sandbox.cli.value(LOAD_ORDER_ID),
+        Some(json!(["Alpha", "Beta", "Gamma"]))
+    );
     let rows = model.read_with(cx, |model, cx| model.rows(cx));
     assert_eq!(rows[0].conflicts, vec!["Beta"]);
     assert!(rows[2].conflicts.is_empty());
@@ -424,12 +533,9 @@ fn texture_packs_are_listed_reordered_and_toggled(cx: &mut TestAppContext) {
     cx.run_until_parked();
     let order = model.read_with(cx, |model, cx| model.order(cx));
     assert_eq!(order, vec!["Beta", "Gamma", "Alpha"]);
-    let saved: toml::Table = read_text(sandbox.game.texture_injection_toml())
-        .parse()
-        .unwrap();
     assert_eq!(
-        crate::textures::model::string_list(&saved, texture_injection::LOAD_ORDER.key()),
-        vec!["Beta", "Gamma", "Alpha"]
+        sandbox.cli.value(LOAD_ORDER_ID),
+        Some(json!(["Beta", "Gamma", "Alpha"]))
     );
 
     model.update(cx, |model, cx| model.set_pack_enabled("Gamma", false, cx));
@@ -694,21 +800,16 @@ fn inspector_viewport_follows_the_window_size_without_input(cx: &mut TestAppCont
 }
 
 #[gpui::test]
-fn config_parse_errors_reach_the_page(cx: &mut TestAppContext) {
+fn config_file_errors_reach_the_page(cx: &mut TestAppContext) {
     let sandbox = Sandbox::new();
+    sandbox.cli.break_file("lodmod.toml", "expected a value at line 1");
     let stores = boot(&sandbox, cx);
-    std::fs::write(sandbox.game.lodmod_toml(), "broken = = 1\n").unwrap();
-    stores.config.update(cx, |store, cx| store.load(cx));
-    cx.run_until_parked();
     let (_, cx) = cx.add_window_view(LodModTab::new);
     settle(cx);
-    let text = stores.config.read_with(cx, |store, cx| {
-        use yp_ui::ActiveStrings;
-        store
-            .error(ConfigFile::LodMod)
-            .map(|error| crate::toml_error_text(error, cx.t()))
-    });
-    assert!(text.is_some_and(|text| !text.is_empty()));
+    let error = stores
+        .config
+        .read_with(cx, |store, _| store.file_error("lodmod.toml").map(str::to_owned));
+    assert_eq!(error.as_deref(), Some("expected a value at line 1"));
 }
 
 fn pack_drop(sandbox: &Sandbox, folder: &std::path::Path, archive: &str) -> std::path::PathBuf {
@@ -842,12 +943,10 @@ fn a_burst_of_reload_requests_runs_the_texture_list_at_most_twice(cx: &mut TestA
 }
 
 fn saved_texture_order(sandbox: &Sandbox) -> Vec<String> {
-    let saved: toml::Table = read_text(sandbox.game.texture_injection_toml())
-        .parse()
-        .unwrap();
-    saved
-        .get("load_order")
-        .and_then(toml::Value::as_array)
+    sandbox
+        .cli
+        .value(LOAD_ORDER_ID)
+        .and_then(|value| value.as_array().cloned())
         .map(|packs| {
             packs
                 .iter()
@@ -863,15 +962,7 @@ fn a_custom_texture_load_order_survives_startup_and_refreshes(cx: &mut TestAppCo
     sandbox.add_texture_pack("Alpha", &["a.dds"]);
     sandbox.add_texture_pack("Beta", &["b.dds"]);
     sandbox.add_texture_pack("Gamma", &["g.dds"]);
-    let file = sandbox.game.texture_injection_toml();
-    std::fs::create_dir_all(file.parent().unwrap()).unwrap();
-    std::fs::write(
-        &file,
-        "load_order = [\"Gamma\", \"Alpha\", \"Beta\"]
-disabled_packs = []
-",
-    )
-    .unwrap();
+    sandbox.cli.put(LOAD_ORDER_ID, json!(["Gamma", "Alpha", "Beta"]));
     let stores = boot(&sandbox, cx);
     let model = textures(cx);
     cx.executor().advance_clock(SETTLE);

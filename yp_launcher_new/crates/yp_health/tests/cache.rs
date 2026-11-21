@@ -23,6 +23,7 @@ fn clearing_removes_logs_overlay_settings_stamp_and_the_detection_memory() {
         settings: &rig.settings,
         paths: &rig.paths,
         host: &rig.host,
+        cli: None,
     };
     assert!(run_detections(&env, &paths).is_some());
     assert!(rig.settings.contains(&DETECTED_NOTIFICATIONS_DIR));

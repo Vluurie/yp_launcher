@@ -1,8 +1,9 @@
 use std::borrow::Cow;
 use std::fmt::Display;
 
+use yp_config::cli::NamsCli;
 use yp_config::legacy::{
-    SkippedNaiomEntry, detect_lodmod_ini, detect_naiom_ini, migrate_lodmod_ini, migrate_naiom_ini,
+    SkippedNaiomEntry, detect_lodmod_ini, detect_naiom_ini, import_lodmod_ini, import_naiom_ini,
 };
 use yp_core::runtime::RuntimeSetup;
 use yp_core::{AppPaths, GamePaths, HostEnv, Os, PlatformAdapter, SettingKey, SettingsStore};
@@ -84,11 +85,12 @@ impl NotificationEntry for NotificationKind {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Clone, Copy)]
 pub struct DetectionEnv<'a> {
     pub settings: &'a SettingsStore,
     pub paths: &'a AppPaths,
     pub host: &'a HostEnv,
+    pub cli: Option<&'a dyn NamsCli>,
 }
 
 fn quiet<T, E: Display>(step: &str, result: Result<T, E>) -> Option<T> {
@@ -101,11 +103,14 @@ fn quiet<T, E: Display>(step: &str, result: Result<T, E>) -> Option<T> {
     }
 }
 
-fn detect_lodmod_migration(game: &GamePaths, found: &mut Vec<NotificationKind>) {
+fn detect_lodmod_migration(env: &DetectionEnv<'_>, game: &GamePaths, found: &mut Vec<NotificationKind>) {
+    let Some(cli) = env.cli else {
+        return;
+    };
     let Some(values) = quiet("LodMod.ini detection", detect_lodmod_ini(game)).flatten() else {
         return;
     };
-    if quiet("LodMod.ini migration", migrate_lodmod_ini(game, &values)) == Some(true) {
+    if quiet("LodMod.ini migration", import_lodmod_ini(cli, &values)) == Some(true) {
         found.push(NotificationKind::LodModMigrated);
     }
 }
@@ -115,13 +120,13 @@ fn detect_naiom_migration(
     game: &GamePaths,
     found: &mut Vec<NotificationKind>,
 ) {
+    let Some(cli) = env.cli else {
+        return;
+    };
     let Some(values) = quiet("NAIOM detection", detect_naiom_ini(game)).flatten() else {
         return;
     };
-    if quiet("config setup", yp_config::ensure_configs(game, env.host)).is_none() {
-        return;
-    }
-    let Some(migration) = quiet("NAIOM migration", migrate_naiom_ini(game, &values)) else {
+    let Some(migration) = quiet("NAIOM migration", import_naiom_ini(cli, &values)) else {
         return;
     };
     if !migration.migrated {
@@ -155,7 +160,7 @@ pub fn detect(env: &DetectionEnv<'_>, game: &GamePaths) -> Vec<NotificationKind>
     {
         found.push(NotificationKind::FilesQuarantined);
     }
-    detect_lodmod_migration(game, &mut found);
+    detect_lodmod_migration(env, game, &mut found);
     detect_naiom_migration(env, game, &mut found);
     detect_reshade_install(game, &mut found);
     found.extend(detect_hd_textures(game.root()).into_iter().map(|folder| {

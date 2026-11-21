@@ -1,25 +1,23 @@
 pub mod model;
 
 use std::path::PathBuf;
-use std::rc::Rc;
 
 use futures::channel::oneshot;
 use gpui::{Global, PathPromptOptions, ScrollHandle, Subscription, Task};
-use yp_config::ConfigFile;
-use yp_config::fields::texture_injection;
 use yp_core::GamePaths;
 use yp_state::{ConfigStore, TexturePackOutcome};
 use yp_state::prelude::*;
 use yp_ui::prelude::*;
 use yp_ui::{
     BorderPosition, BusyOverlay, ButtonSize, ButtonStyle, Callout, Card, Chip, ChipSize, ChipTone,
-    ConfigErrorBanner, DropProgress, DropZone, Icon, IconButton, IconName, IconSize, Label,
-    LabelSize, Link, PageHeader, SortableList, Switch, SwitchSize, TintColor, Tooltip, TwoColumn,
+    DropProgress, DropZone, Icon, IconButton, IconName, IconSize, Label,
+    LabelSize, Link, SortableList, Switch, SwitchSize, TintColor, Tooltip, TwoColumn,
 };
 
-use crate::errors::{config_failure_text, toml_error_text};
-use crate::fields::{FieldRef, FieldRow};
-use crate::page::{column, failure_banner, reveal, tab_page};
+use crate::extras::MANAGED_TEXTURE_IDS;
+use crate::fields::Marker;
+use crate::page::{column, reveal, tab_page};
+use crate::schema_page::{self, TabScope};
 use model::{InstallOutcome, PackRow, Priority, TexturesEvent, TexturesModel};
 
 const SCOPE: &str = "textures";
@@ -27,14 +25,10 @@ const INJECT_FOLDER_LABEL: &str = "nams/inject/textures/";
 const SK_RES_FOLDER_LABEL: &str = "SK_Res/";
 const WAX_FOLDER_LABEL: &str = "wax/mods/";
 
-pub const VRAM_BUDGET_OPTIONS: [f64; 8] = [0., 1024., 2048., 4096., 6144., 8192., 12288., 16384.];
 
-pub const SWITCH_FIELDS: [FieldRef; 4] = [
-    &texture_injection::STREAMING_ENABLED,
-    &texture_injection::LOAD_ONLY_RELEVANT,
-    &texture_injection::PIN_PRIORITY_TEXTURES,
-    &texture_injection::HOT_RELOAD,
-];
+
+const FILE: &str = "texture_injection.toml";
+pub const TAB: TabScope = TabScope::roots(&["textures"]).managed(&MANAGED_TEXTURE_IDS);
 
 pub struct SharedTextures(pub Entity<TexturesModel>);
 
@@ -328,34 +322,12 @@ impl TexturesTab {
         &self.scroll
     }
 
-    fn config_card(&self, values: &toml::Table, cx: &mut Context<Self>) -> AnyElement {
-        let strings = cx.t();
-        let model = self.model.clone();
-        let setter = move |field: FieldRef| {
-            let model = model.clone();
-            let key = field.meta().key;
-            Rc::new(move |value: toml::Value, _: &mut Window, cx: &mut App| {
-                model.update(cx, |model, cx| model.set_value(key, value, cx));
-            })
-        };
-        let vram: FieldRef = &texture_injection::VRAM_BUDGET_MB;
-        Card::new()
-            .title(strings.card_texture_config())
-            .child(
-                FieldRow::toml(SCOPE, vram, values)
-                    .options(VRAM_BUDGET_OPTIONS.to_vec())
-                    .option_label(move |option| {
-                        (option == 0.)
-                            .then(|| SharedString::new_static(strings.texture_auto_recommended()))
-                    })
-                    .sink(setter(vram)),
-            )
-            .children(
-                SWITCH_FIELDS
-                    .iter()
-                    .map(|field| FieldRow::toml(SCOPE, *field, values).sink(setter(*field))),
-            )
-            .into_any_element()
+    fn config_cards(&self, window: &mut Window, cx: &mut Context<Self>) -> Vec<AnyElement> {
+        let plans = schema_page::plans(SCOPE, &TAB, self.config.read(cx));
+        plans
+            .into_iter()
+            .map(|plan| schema_page::generic_card(SCOPE, plan, &self.config, Marker::RestartOnly, window, cx))
+            .collect()
     }
 
     fn inject_card(
@@ -551,31 +523,15 @@ impl Render for TexturesTab {
         let strings = cx.t();
         let sizes = window.sizes(cx);
         let store = self.config.read(cx);
-        let loading = store.is_loading();
-        let dirty = store.is_dirty();
-        let values = store.texture_injection().clone();
-        let error = store
-            .error(ConfigFile::TextureInjection)
-            .map(|error| toml_error_text(error, strings));
-        let failure = store
-            .failure()
-            .map(|failure| config_failure_text(failure, strings));
-        let path = store.path(ConfigFile::TextureInjection);
-        let save_store = self.config.clone();
-        let discard_store = self.config.clone();
-        let header = PageHeader::new(strings.header_textures())
-            .dirty(dirty)
-            .save_discard(
-                move |_, cx| save_store.update(cx, |store, cx| store.save(cx)),
-                move |_, cx| discard_store.update(cx, |store, cx| store.discard(cx)),
-            );
-        let header = match path {
-            Some(path) => header.info(
-                strings.tooltip_edits_texture_injection_toml(),
-                move |_, cx| reveal(path.clone(), true, cx),
-            ),
-            None => header.info_tooltip(strings.tooltip_edits_texture_injection_toml()),
-        };
+        let loading = schema_page::is_loading(store);
+        let header = schema_page::header(
+            strings.header_textures(),
+            strings.tooltip_edits_texture_injection_toml(),
+            Some(FILE),
+            None,
+            &self.config,
+            cx,
+        );
         let model = self.model.read(cx);
         let deleting = model.is_deleting();
         let listing_loading = model.is_loading();
@@ -586,17 +542,14 @@ impl Render for TexturesTab {
         let content = if loading {
             div().into_any_element()
         } else {
-            let left = column(
-                [
-                    Card::new()
-                        .title(strings.card_install_textures())
-                        .child(install_zone(&self.model, cx))
-                        .into_any_element(),
-                    self.config_card(&values, cx),
-                ],
-                window,
-                cx,
-            );
+            let mut left_sections = vec![
+                Card::new()
+                    .title(strings.card_install_textures())
+                    .child(install_zone(&self.model, cx))
+                    .into_any_element(),
+            ];
+            left_sections.extend(self.config_cards(window, cx));
+            let left = column(left_sections, window, cx);
             let mut right: Vec<AnyElement> = Vec::new();
             if let (false, Some(game)) = (listing_loading, game.as_ref()) {
                 if !has_textures {
@@ -644,16 +597,7 @@ impl Render for TexturesTab {
                 }
             }
             let right = column(right, window, cx);
-            let mut sections: Vec<AnyElement> = Vec::new();
-            if let Some(error) = error {
-                sections.push(
-                    ConfigErrorBanner::new(ConfigFile::TextureInjection.file_name(), error)
-                        .into_any_element(),
-                );
-            }
-            if let Some(failure) = failure {
-                sections.push(failure_banner("textures-failure", failure).into_any_element());
-            }
+            let mut sections = schema_page::problems(SCOPE, &TAB, &self.config, cx);
             sections.push(
                 TwoColumn::new(left, right)
                     .id("textures-columns")

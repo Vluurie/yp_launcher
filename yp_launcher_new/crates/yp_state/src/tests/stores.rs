@@ -755,3 +755,28 @@ fn probes_fail_typed_and_cache_nothing_on_error(cx: &mut TestAppContext) {
     cx.run_until_parked();
     assert!(opened.read_with(cx, |session, _| session.error().is_some()));
 }
+
+#[gpui::test]
+fn the_log_view_follows_a_picked_nams_dll_into_the_game_folder(cx: &mut TestAppContext) {
+    let harness = Harness::new();
+    let stores = harness.start(cx);
+    let log_file = |stores: &crate::Stores, cx: &mut TestAppContext| {
+        stores.logs.read_with(cx, |logs, _| logs.log_file().to_path_buf())
+    };
+    let launcher_log = harness.env.paths.nams_log();
+    assert_eq!(log_file(&stores, cx), launcher_log);
+    let dll = harness.game.root().join("dinput8.dll");
+    stores
+        .launch_options
+        .update(cx, |options, cx| options.set_nams_dll(Some(dll), cx));
+    cx.run_until_parked();
+    assert_eq!(
+        log_file(&stores, cx),
+        harness.game.nams_dir().join("logs").join("nams.log")
+    );
+    stores
+        .launch_options
+        .update(cx, |options, cx| options.set_nams_dll(None, cx));
+    cx.run_until_parked();
+    assert_eq!(log_file(&stores, cx), launcher_log);
+}

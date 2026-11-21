@@ -1,11 +1,12 @@
 use std::fmt::Display;
+use std::path::Path;
 use std::sync::Arc;
 use std::time::Duration;
 
 use indexmap::IndexMap;
 use jiff::Timestamp;
-use yp_config::ConfigFile;
-use yp_core::consts::APP_VERSION;
+use yp_config::cli;
+use yp_core::consts::{APP_VERSION, NAMS_LOG_NAME};
 use yp_core::runtime::RuntimeSetup;
 use yp_core::wine_paths::{from_posix, posix, to_posix};
 use yp_core::{
@@ -14,14 +15,15 @@ use yp_core::{
 use yp_cutscenes::{ScanDirs, ScanResult, Silent};
 use yp_host::game_probe;
 use yp_host::gpu::{self, GpuProbe};
-use yp_host::launch::CAPTURED_LOG_PREFIX;
-use yp_host::nams_cli;
+use yp_host::launch::{nams_dll, CAPTURED_LOG_PREFIX};
+use yp_host::nams_cli::{self, HostNamsCli};
 use yp_host::nams_log::{LogEntry, LogLevel};
 use yp_host::wine::WineContext;
 use yp_host::wine::runtime::{self as wine_runtime, WineSource};
 use yp_thirdparty::ThirdPartyStatuses;
 
 use super::config::{collect_config, flattened_entries};
+use super::model::ConfigReport;
 use super::findings::build_findings;
 use super::model::{
     CompatLayerReport, DEDICATED_GPU_ENV_KEY, DRM_RENDER_NODES_KEY, DiagnosticsReport, DlcSource,
@@ -109,6 +111,19 @@ pub struct Collector {
 }
 
 impl Collector {
+    fn collect_settings(&self, game: &GamePaths) -> std::result::Result<ConfigReport, yp_config::ConfigError> {
+        let cli = HostNamsCli {
+            platform: self.platform.clone(),
+            runner: self.runner.clone(),
+            paths: self.paths.clone(),
+            game: game.clone(),
+        };
+        let schema = cli::schema(&cli, None)?;
+        let values = cli::get(&cli)?;
+        let validate = cli::validate(&cli).ok();
+        Ok(collect_config(&schema, &values, validate.as_ref()))
+    }
+
     pub fn new(
         host: HostEnv,
         paths: AppPaths,
@@ -198,14 +213,11 @@ impl Collector {
             report.reshade_contents = extras.reshade_contents;
             report.game_root_extras = extras.game_root_extras;
 
-            for file in ConfigFile::ALL {
-                let raw =
-                    yp_core::fs::read_text_opt(&file.path(game)).map(Option::unwrap_or_default);
-                report
-                    .config_raw
-                    .insert(file, sections.guard(file.file_name(), raw));
+            report.config = sections.guard("settings", self.collect_settings(game));
+            for file in report.config.parse_errors.keys() {
+                let raw = yp_core::fs::read_text_opt(&game.nams_dir().join(file)).map(Option::unwrap_or_default);
+                report.config_raw.insert(file.clone(), sections.guard(file, raw));
             }
-            report.config = collect_config(&report.config_raw);
 
             report.game_identity = self.collect_game_identity(game);
             cancel.check()?;
@@ -225,9 +237,11 @@ impl Collector {
         self.collect_texture_packs(game, &mut report);
         cancel.check()?;
 
-        report.recent_log_issues = self.collect_recent_issues();
+        let nams_logs = nams_dll::logs_dir(&self.paths, &self.settings, game.map(GamePaths::root));
+        report.recent_log_issues = self.collect_recent_issues(&nams_logs);
         report.game_running = self.platform.is_game_running();
         report.prefer_dedicated_gpu = gpu::prefer_dedicated(&self.settings);
+        report.nams_dll_picked = nams_dll::picked(&self.settings).is_some();
         let gpu_probe = self
             .gpu_probe
             .unwrap_or_else(|| GpuProbe::detect(&self.host));
@@ -241,7 +255,7 @@ impl Collector {
         cancel.check()?;
 
         report.last_launch = yp_host::launch::record::read(&self.paths);
-        report.logs = self.collect_logs();
+        report.logs = self.collect_logs(&nams_logs);
 
         report.system_info = self.system_info(&report, &gpu_probe);
         report.launcher_info = self.launcher_info(game);
@@ -356,8 +370,8 @@ impl Collector {
         }
     }
 
-    fn collect_recent_issues(&self) -> Vec<LogEntry> {
-        let mut issues: Vec<LogEntry> = yp_host::nams_log::read(&self.paths)
+    fn collect_recent_issues(&self, nams_logs: &Path) -> Vec<LogEntry> {
+        let mut issues: Vec<LogEntry> = yp_host::nams_log::read_file(&nams_logs.join(NAMS_LOG_NAME))
             .into_iter()
             .filter(|entry| matches!(entry.level, LogLevel::Warn | LogLevel::Error))
             .collect();
@@ -431,17 +445,17 @@ impl Collector {
         }
     }
 
-    fn collect_logs(&self) -> LogsReport {
-        let dir = &self.paths.logs_dir;
+    fn collect_logs(&self, nams_logs: &Path) -> LogsReport {
+        let dir = nams_logs;
         let crash_dumps = probes::newest_first(dir, &|name| {
             name.starts_with(CRASH_DUMP_PREFIX) && name.ends_with(CRASH_DUMP_SUFFIX)
         });
-        let captured = probes::newest_first(dir, &|name| {
+        let captured = probes::newest_first(&self.paths.logs_dir, &|name| {
             name.starts_with(CAPTURED_LOG_PREFIX) && name.ends_with(CAPTURED_LOG_SUFFIX)
         });
         LogsReport {
             nams_log: probes::tail(
-                &self.paths.nams_log(),
+                &dir.join(NAMS_LOG_NAME),
                 probes::TAIL_MAX_LINES,
                 probes::TAIL_MAX_BYTES,
             ),

@@ -5,6 +5,7 @@ edition.workspace = true
 license.workspace = true
 
 [dependencies]
+serde_json.workspace = true
 gpui.workspace = true
 yp_ui.workspace = true
 yp_state.workspace = true

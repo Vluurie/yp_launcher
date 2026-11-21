@@ -208,18 +208,18 @@ impl ThirdPartyView {
                             break;
                         };
                         if asking.await {
-                            let game = cx
-                                .update(|_, cx| stores.session.read(cx).game())
+                            let cli = cx
+                                .update(|_, cx| stores.config.read(cx).cli())
                                 .ok()
                                 .flatten();
                             let imported = cx
                                 .background_executor()
                                 .spawn(async move {
-                                    let game = game?;
+                                    let cli = cli?;
                                     let content =
                                         yp_core::fs::read_text_opt(&ini).ok()?.unwrap_or_default();
                                     let values = yp_config::legacy::parse_lodmod_ini(&content);
-                                    yp_config::legacy::migrate_lodmod_ini(&game, &values).ok()
+                                    yp_config::legacy::import_lodmod_ini(cli.as_ref(), &values).ok()
                                 })
                                 .await;
                             let (msg, severity) = lodmod_import_notice(imported);

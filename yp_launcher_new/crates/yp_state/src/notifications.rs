@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use gpui::AppContext as _;
 use gpui::{Context, EventEmitter, SharedString, Task};
 use yp_core::GamePaths;
@@ -23,6 +25,7 @@ pub struct Notice {
     pub msg: Msg,
     pub kind: NoticeKind,
     pub severity: NoticeSeverity,
+    pub open_dir: Option<PathBuf>,
 }
 
 impl Notice {
@@ -37,7 +40,13 @@ impl Notice {
             msg: msg.into(),
             kind,
             severity,
+            open_dir: None,
         }
+    }
+
+    pub fn opening(mut self, dir: impl Into<PathBuf>) -> Self {
+        self.open_dir = Some(dir.into());
+        self
     }
 }
 

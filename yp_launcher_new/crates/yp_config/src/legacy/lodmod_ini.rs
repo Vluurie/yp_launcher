@@ -1,33 +1,40 @@
 use indexmap::IndexMap;
+use serde_json::Value as Json;
 use yp_core::GamePaths;
 use yp_core::ini::{IniDoc, IniSyntax};
 
+use crate::cli::{self, NamsCli};
 use crate::error::Result;
-use crate::fields::lodmod;
+use crate::reports::Values;
 
 pub const LODMOD_INI_FILE: &str = "LodMod.ini";
 
-pub type LodModIniValues = IndexMap<String, toml::Value>;
+pub type LodModIniValues = IndexMap<String, Json>;
 
-pub fn ini_to_toml_key(ini_key: &str) -> Option<&'static str> {
-    let key = match ini_key {
-        "LODMultiplier" => lodmod::LOD_MULTIPLIER.key(),
-        "ShadowResolution" => lodmod::SHADOW_RESOLUTION.key(),
-        "ShadowDistanceMultiplier" => lodmod::SHADOW_DISTANCE_MULTIPLIER.key(),
-        "ShadowDistanceMinimum" => lodmod::SHADOW_DISTANCE_MINIMUM.key(),
-        "ShadowDistanceMaximum" => lodmod::SHADOW_DISTANCE_MAXIMUM.key(),
-        "ShadowDistancePSS" => lodmod::SHADOW_DISTANCE_PSS.key(),
-        "ShadowFilterStrengthBias" => lodmod::SHADOW_FILTER_STRENGTH_BIAS.key(),
-        "ShadowFilterStrengthMinimum" => lodmod::SHADOW_FILTER_STRENGTH_MINIMUM.key(),
-        "ShadowFilterStrengthMaximum" => lodmod::SHADOW_FILTER_STRENGTH_MAXIMUM.key(),
-        "ShadowModelHQ" => lodmod::SHADOW_MODEL_HQ.key(),
-        "ShadowModelForceAll" => lodmod::SHADOW_MODEL_FORCE_ALL.key(),
-        "DisableManualCulling" => lodmod::DISABLE_MANUAL_CULLING.key(),
-        "DisableVignette" => lodmod::DISABLE_VIGNETTE.key(),
-        "DisableHDR" => lodmod::DISABLE_HDR.key(),
-        _ => return None,
-    };
-    Some(key)
+pub const ENABLED_ID: &str = "lodmod.enabled";
+
+const INI_KEYS: [(&str, &str); 14] = [
+    ("LODMultiplier", "lodmod.lod_multiplier"),
+    ("ShadowResolution", "lodmod.shadow_resolution"),
+    ("ShadowDistanceMultiplier", "lodmod.shadow_distance_multiplier"),
+    ("ShadowDistanceMinimum", "lodmod.shadow_distance_minimum"),
+    ("ShadowDistanceMaximum", "lodmod.shadow_distance_maximum"),
+    ("ShadowDistancePSS", "lodmod.shadow_distance_pss"),
+    ("ShadowFilterStrengthBias", "lodmod.shadow_filter_strength_bias"),
+    ("ShadowFilterStrengthMinimum", "lodmod.shadow_filter_strength_minimum"),
+    ("ShadowFilterStrengthMaximum", "lodmod.shadow_filter_strength_maximum"),
+    ("ShadowModelHQ", "lodmod.shadow_model_hq"),
+    ("ShadowModelForceAll", "lodmod.shadow_model_force_all"),
+    ("DisableManualCulling", "lodmod.disable_manual_culling"),
+    ("DisableVignette", "lodmod.disable_vignette"),
+    ("DisableHDR", "lodmod.disable_hdr"),
+];
+
+pub fn ini_to_setting_id(ini_key: &str) -> Option<&'static str> {
+    INI_KEYS
+        .iter()
+        .find(|(ini, _)| *ini == ini_key)
+        .map(|(_, id)| *id)
 }
 
 fn lodmod_ini_syntax() -> IniSyntax {
@@ -58,23 +65,25 @@ fn parse_hex_or_decimal(text: &str) -> Option<i64> {
     Some(if negative { -magnitude } else { magnitude })
 }
 
-pub fn parse_ini_value(value: &str) -> toml::Value {
+pub fn parse_ini_value(value: &str) -> Json {
     let lower = value.to_lowercase();
     if lower == "true" {
-        return toml::Value::Boolean(true);
+        return Json::Bool(true);
     }
     if lower == "false" {
-        return toml::Value::Boolean(false);
+        return Json::Bool(false);
     }
     if !value.contains('.')
         && let Some(number) = parse_hex_or_decimal(value)
     {
-        return toml::Value::Integer(number);
+        return Json::from(number);
     }
-    if let Ok(number) = value.parse::<f64>() {
-        return toml::Value::Float(number);
+    if let Ok(number) = value.parse::<f64>()
+        && let Some(number) = serde_json::Number::from_f64(number)
+    {
+        return Json::Number(number);
     }
-    toml::Value::String(value.to_owned())
+    Json::String(value.to_owned())
 }
 
 pub fn parse_lodmod_ini(content: &str) -> LodModIniValues {
@@ -82,7 +91,7 @@ pub fn parse_lodmod_ini(content: &str) -> LodModIniValues {
     let doc = IniDoc::parse_with(content, syntax.clone());
     let mut values = LodModIniValues::new();
     for (_, key, value) in doc.entries() {
-        if ini_to_toml_key(key).is_none() {
+        if ini_to_setting_id(key).is_none() {
             continue;
         }
         let value = syntax.strip_inline_comment(value);
@@ -100,28 +109,25 @@ pub fn detect_lodmod_ini(game: &GamePaths) -> Result<Option<LodModIniValues>> {
     Ok((!values.is_empty()).then_some(values))
 }
 
-pub fn migrate_lodmod_ini(game: &GamePaths, ini_values: &LodModIniValues) -> Result<bool> {
-    let path = game.lodmod_toml();
-    let raw = yp_core::fs::read_text_opt(&path)?.unwrap_or_default();
-    if raw.is_empty() {
-        return Ok(false);
-    }
-    let current = yp_core::toml_io::parse_values(&raw).unwrap_or_default();
-    if current
-        .get(lodmod::ENABLED.key())
-        .and_then(toml::Value::as_bool)
-        == Some(true)
-    {
-        return Ok(false);
-    }
-    let mut updates = toml::Table::new();
-    updates.insert(lodmod::ENABLED.key().to_owned(), toml::Value::Boolean(true));
+pub fn lodmod_ini_assignments(ini_values: &LodModIniValues) -> Vec<(String, Json)> {
+    let mut assignments = vec![(ENABLED_ID.to_owned(), Json::Bool(true))];
     for (ini_key, value) in ini_values {
-        if let Some(toml_key) = ini_to_toml_key(ini_key) {
-            updates.insert(toml_key.to_owned(), value.clone());
+        if let Some(id) = ini_to_setting_id(ini_key) {
+            assignments.push((id.to_owned(), value.clone()));
         }
     }
-    let updated = yp_core::toml_io::update_toml(&raw, &updates)?;
-    yp_core::fs::write_text_atomic(&path, &updated)?;
-    Ok(true)
+    assignments
+}
+
+pub fn should_import_lodmod_ini(current: &Values) -> bool {
+    current.get(ENABLED_ID).and_then(Json::as_bool) != Some(true)
+}
+
+pub fn import_lodmod_ini(cli: &dyn NamsCli, ini_values: &LodModIniValues) -> Result<bool> {
+    let current = cli::get(cli)?;
+    if !should_import_lodmod_ini(&current) {
+        return Ok(false);
+    }
+    let (report, _) = cli::set_accepted(cli, &lodmod_ini_assignments(ini_values))?;
+    Ok(!report.changed.is_empty())
 }

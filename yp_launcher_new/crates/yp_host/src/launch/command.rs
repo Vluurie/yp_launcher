@@ -2,7 +2,7 @@ use std::ffi::OsString;
 use std::path::PathBuf;
 
 use indexmap::IndexMap;
-use yp_core::consts::{ARG_JSON, ARG_NIER_PATH, ARG_RUN, ARG_VANILLA, ARG_VERIFY};
+use yp_core::consts::{ARG_CONFIG, ARG_CONSOLE, ARG_JSON, ARG_NIER_PATH, ARG_RUN, ARG_VANILLA, ARG_VERIFY};
 use yp_core::wine_paths::{to_wine_path, wine_env, NIER_STEAM_APP_ID};
 use yp_core::{NamsInvocation, ProcessSpec};
 
@@ -46,6 +46,7 @@ impl LaunchCommand {
                 .collect(),
             label: self.label.clone(),
             hide_console: true,
+            stdin: None,
         }
     }
 }
@@ -54,6 +55,17 @@ pub fn nams_run_args(nier_path: &str, vanilla: bool) -> Vec<String> {
     let mut args = vec![ARG_RUN.to_owned(), ARG_NIER_PATH.to_owned(), nier_path.to_owned()];
     if vanilla {
         args.push(ARG_VANILLA.to_owned());
+    }
+    args
+}
+
+pub fn game_args(vanilla: bool, console: bool) -> Vec<String> {
+    let mut args = Vec::new();
+    if vanilla {
+        args.push(ARG_VANILLA.to_owned());
+    }
+    if console {
+        args.push(ARG_CONSOLE.to_owned());
     }
     args
 }
@@ -67,14 +79,28 @@ pub fn nams_verify_args(nier_path: &str) -> Vec<String> {
     ]
 }
 
-pub fn invocation_args(invocation: NamsInvocation, nier_path: &str) -> Vec<String> {
+pub fn nams_config_args(args: &[String], nier_path: &str) -> Vec<String> {
+    let mut out = vec![ARG_CONFIG.to_owned()];
+    let mut rest = args.iter();
+    if let Some(sub) = rest.next() {
+        out.push(sub.clone());
+    }
+    out.push(ARG_NIER_PATH.to_owned());
+    out.push(nier_path.to_owned());
+    out.extend(rest.cloned());
+    out
+}
+
+pub fn invocation_args(invocation: NamsInvocation<'_>, nier_path: &str) -> Vec<String> {
     match invocation {
         NamsInvocation::Run { vanilla } => nams_run_args(nier_path, vanilla),
+        NamsInvocation::Game { vanilla, console } => game_args(vanilla, console),
         NamsInvocation::Verify => nams_verify_args(nier_path),
+        NamsInvocation::Config(args) => nams_config_args(args, nier_path),
     }
 }
 
-pub fn build_native(nams_exe: &str, game_dir: &str, launcher_dir: &str, invocation: NamsInvocation) -> LaunchCommand {
+pub fn build_native(nams_exe: &str, game_dir: &str, launcher_dir: &str, invocation: NamsInvocation<'_>) -> LaunchCommand {
     LaunchCommand {
         command: nams_exe.to_owned(),
         args: invocation_args(invocation, &game_dir.replace('/', "\\")),
@@ -97,7 +123,7 @@ pub struct CrossOverLaunch<'a> {
     pub prefix: &'a str,
 }
 
-pub fn build_crossover(ctx: &WineContext, launch: &CrossOverLaunch<'_>, invocation: NamsInvocation) -> LaunchCommand {
+pub fn build_crossover(ctx: &WineContext, launch: &CrossOverLaunch<'_>, invocation: NamsInvocation<'_>) -> LaunchCommand {
     let mut args = vec![
         "--bottle".to_owned(),
         launch.bottle.name.clone(),
@@ -125,7 +151,7 @@ pub fn build_plain_wine(
     launcher_dir: &str,
     wine_binary: &str,
     prefix: Option<&str>,
-    invocation: NamsInvocation,
+    invocation: NamsInvocation<'_>,
 ) -> LaunchCommand {
     let mut args = vec![nams_exe.to_owned()];
     args.extend(invocation_args(invocation, &to_wine_path(game_dir)));
@@ -150,7 +176,7 @@ pub struct ProtonLaunch<'a> {
     pub proton_path: &'a str,
 }
 
-pub fn build_proton(ctx: &WineContext, launch: &ProtonLaunch<'_>, invocation: NamsInvocation) -> Option<LaunchCommand> {
+pub fn build_proton(ctx: &WineContext, launch: &ProtonLaunch<'_>, invocation: NamsInvocation<'_>) -> Option<LaunchCommand> {
     if !is_file(launch.proton_path) {
         return None;
     }

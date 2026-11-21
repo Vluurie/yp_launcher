@@ -1,5 +1,6 @@
 mod binding;
 mod errors;
+mod extras;
 #[cfg(test)]
 mod testing;
 #[cfg(test)]
@@ -7,6 +8,7 @@ mod tests;
 mod fields;
 mod page;
 mod rules;
+mod schema_page;
 mod text_field;
 
 pub mod inspector;
@@ -23,9 +25,10 @@ use yp_state::{OverlayId, OverlayRequest};
 pub use binding::{Capture, Modifier, ModifierState, PointerButton};
 pub use errors::{
     config_error_text, config_failure_text, format_error_text, inspector_error_text,
-    probe_warning_text, settings_failure_text, toml_error_text,
+    probe_warning_text,
 };
 pub use fields::{Control, FieldRow, Marker, control_for};
+pub use schema_page::{TabScope, categories_under, settings_of};
 pub use inspector::{InspectorPage, ModelPreview};
 pub use lodmod::LodModTab;
 pub use naiom::NaiomTab;

@@ -2,9 +2,10 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use gpui::TestAppContext;
-use yp_config::fields::nams;
+use serde_json::json;
 
 use super::Harness;
+use crate::config::WRITE_DELAY;
 use crate::registry::OverlayRequest;
 use crate::{
     BusyScope, CloseGuard, NavigationBlock, NavigationEvent, OverlayId, Stores, TabId,
@@ -28,15 +29,17 @@ fn active(stores: &Stores, cx: &mut TestAppContext) -> TabId {
         .read_with(cx, |navigation, _| navigation.active())
 }
 
-fn make_config_dirty(stores: &Stores, cx: &mut TestAppContext) {
-    stores.config.update(cx, |config, cx| {
-        config.update_nams(
-            nams::DISABLE_PLUGIN_LOADING.key(),
-            toml::Value::Boolean(true),
-            None,
-            cx,
-        );
-    });
+const PLUGIN_LOADING_ID: &str = "nams.disable_plugin_loading";
+const FIRST_PLAYTHROUGH_ID: &str = "plugins.yorha_protocol.firstPlaythrough";
+
+fn queue_config_write(stores: &Stores, id: &str, cx: &mut TestAppContext) {
+    stores.config.update(cx, |config, cx| config.set(id, json!(true), cx));
+}
+
+fn pending(stores: &Stores, cx: &mut TestAppContext) -> bool {
+    stores
+        .config
+        .read_with(cx, |config, _| config.has_pending_writes())
 }
 
 #[gpui::test]
@@ -143,39 +146,22 @@ fn busy_textures_block_tab_changes(cx: &mut TestAppContext) {
 }
 
 #[gpui::test]
-fn unsaved_changes_ask_before_switching(cx: &mut TestAppContext) {
+fn switching_tabs_writes_pending_changes_at_once(cx: &mut TestAppContext) {
     let harness = Harness::new();
     let stores = harness.start(cx);
     request(&stores, TabId::Nams, None, cx);
-    make_config_dirty(&stores, cx);
+    queue_config_write(&stores, PLUGIN_LOADING_ID, cx);
+    assert!(pending(&stores, cx));
 
     assert_eq!(
         request(&stores, TabId::Mods, Some("kimono"), cx),
-        TabRequestOutcome::ConfirmDiscard
+        TabRequestOutcome::Switched
     );
-    assert_eq!(active(&stores, cx), TabId::Nams);
-    stores.navigation.update(cx, |navigation, cx| {
-        assert_eq!(
-            navigation.awaiting_discard().map(|request| request.tab),
-            Some(TabId::Mods)
-        );
-        navigation.cancel_discard(cx);
-        assert!(navigation.awaiting_discard().is_none());
-    });
-    assert_eq!(active(&stores, cx), TabId::Nams);
-    assert!(stores.config.read_with(cx, |config, _| config.is_dirty()));
-
-    request(&stores, TabId::Mods, Some("kimono"), cx);
-    stores
-        .navigation
-        .update(cx, |navigation, cx| navigation.confirm_discard(cx));
     cx.run_until_parked();
 
     assert_eq!(active(&stores, cx), TabId::Mods);
-    assert!(!stores.config.read_with(cx, |config, _| config.is_dirty()));
-    assert!(!stores.config.read_with(cx, |config, _| {
-        nams::DISABLE_PLUGIN_LOADING.value_in(config.nams())
-    }));
+    assert!(!pending(&stores, cx));
+    assert_eq!(harness.cli.value(PLUGIN_LOADING_ID), Some(json!(true)));
     assert_eq!(
         stores
             .navigation
@@ -185,33 +171,22 @@ fn unsaved_changes_ask_before_switching(cx: &mut TestAppContext) {
 }
 
 #[gpui::test]
-fn overlay_settings_changes_also_guard_navigation(cx: &mut TestAppContext) {
+fn plugin_setting_changes_are_written_on_switch_too(cx: &mut TestAppContext) {
     let harness = Harness::new();
     let stores = harness.start(cx);
     request(&stores, TabId::YorhaProtocol, None, cx);
-    stores.nams_settings.update(cx, |settings, cx| {
-        settings.update_toggle("impeller", true, cx);
-    });
+    queue_config_write(&stores, FIRST_PLAYTHROUGH_ID, cx);
 
-    assert_eq!(
-        request(&stores, TabId::Launcher, None, cx),
-        TabRequestOutcome::ConfirmDiscard
-    );
-    stores
-        .navigation
-        .update(cx, |navigation, cx| navigation.confirm_discard(cx));
+    request(&stores, TabId::Launcher, None, cx);
     cx.run_until_parked();
 
     assert_eq!(active(&stores, cx), TabId::Launcher);
-    assert!(
-        !stores
-            .nams_settings
-            .read_with(cx, |settings, _| settings.is_dirty())
-    );
+    assert!(!pending(&stores, cx));
+    assert_eq!(harness.cli.value(FIRST_PLAYTHROUGH_ID), Some(json!(true)));
 }
 
 #[gpui::test]
-fn close_guard_prefers_busy_work_over_unsaved_changes(cx: &mut TestAppContext) {
+fn close_guard_only_waits_for_busy_work(cx: &mut TestAppContext) {
     let harness = Harness::new();
     let stores = harness.start(cx);
     let guard = |stores: &Stores, cx: &mut TestAppContext| {
@@ -221,8 +196,8 @@ fn close_guard_prefers_busy_work_over_unsaved_changes(cx: &mut TestAppContext) {
     };
     assert_eq!(guard(&stores, cx), CloseGuard::Clear);
 
-    make_config_dirty(&stores, cx);
-    assert_eq!(guard(&stores, cx), CloseGuard::UnsavedChanges);
+    queue_config_write(&stores, PLUGIN_LOADING_ID, cx);
+    assert_eq!(guard(&stores, cx), CloseGuard::Clear);
 
     let first = stores
         .busy
@@ -233,7 +208,8 @@ fn close_guard_prefers_busy_work_over_unsaved_changes(cx: &mut TestAppContext) {
     assert_eq!(guard(&stores, cx), CloseGuard::Busy { operations: 2 });
 
     drop((first, second));
-    assert_eq!(guard(&stores, cx), CloseGuard::UnsavedChanges);
+    super::settle(cx, WRITE_DELAY);
+    assert_eq!(guard(&stores, cx), CloseGuard::Clear);
 }
 
 #[gpui::test]

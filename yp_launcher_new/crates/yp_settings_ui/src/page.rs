@@ -20,7 +20,7 @@ pub fn set_cards_expanded(expanded: bool, cx: &mut App) {
     cx.refresh_windows();
 }
 
-pub fn card(id: &'static str, title: impl Into<SharedString>, cx: &App) -> CollapsibleCard {
+pub fn card(id: impl Into<ElementId>, title: impl Into<SharedString>, cx: &App) -> CollapsibleCard {
     let expanded = cx
         .try_global::<CardDefaults>()
         .is_some_and(|defaults| defaults.expanded);
@@ -107,21 +107,11 @@ pub fn banner(
     )
 }
 
-pub fn failure_banner(id: &'static str, text: impl Into<SharedString>) -> Callout {
+pub fn failure_banner(id: impl Into<ElementId>, text: impl Into<SharedString>) -> Callout {
     Callout::new()
         .id(id)
         .severity(Severity::Error)
         .description(text)
-}
-
-pub fn subheading(text: impl Into<SharedString>, window: &Window, cx: &App) -> gpui::Div {
-    let sizes = window.sizes(cx);
-    div().pt(sizes.spacing_md).pb(sizes.spacing_sm).child(
-        Label::new(text)
-            .size(LabelSize::Small)
-            .color(Color::Secondary)
-            .bold(),
-    )
 }
 
 pub fn note(

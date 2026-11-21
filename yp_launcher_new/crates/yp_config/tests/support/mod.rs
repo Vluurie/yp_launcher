@@ -1,15 +1,18 @@
 #![allow(dead_code)]
 
 use std::path::Path;
+use std::sync::Mutex;
 
+use indexmap::IndexMap;
+use serde_json::{Value as Json, json};
 use tempfile::TempDir;
-use yp_config::ensure_configs;
-use yp_core::{GamePaths, HostEnv, Os};
+use yp_config::Result;
+use yp_config::cli::{CliOutput, NamsCli};
+use yp_core::GamePaths;
 
 pub struct GameDir {
     pub dir: TempDir,
     pub game: GamePaths,
-    pub host: HostEnv,
 }
 
 impl GameDir {
@@ -17,69 +20,92 @@ impl GameDir {
         let dir = tempfile::tempdir().unwrap();
         let game = GamePaths::new(dir.path().join("game"));
         std::fs::create_dir_all(game.root()).unwrap();
-        let host = HostEnv::for_test(Os::Windows, &[], &dir.path().join("host"));
-        Self { dir, game, host }
-    }
-
-    pub fn with_nams(nams_toml: Option<&str>) -> Self {
-        let game_dir = Self::empty();
-        if let Some(text) = nams_toml {
-            game_dir.write_nams_file("nams.toml", text);
-        }
-        game_dir
+        Self { dir, game }
     }
 
     pub fn root(&self) -> &Path {
         self.game.root()
     }
+}
 
-    pub fn write_nams_file(&self, name: &str, text: &str) {
-        std::fs::create_dir_all(self.game.nams_dir()).unwrap();
-        std::fs::write(self.game.nams_dir().join(name), text).unwrap();
+#[derive(Default)]
+pub struct FakeCli {
+    pub values: Mutex<IndexMap<String, Json>>,
+    pub rejected: Vec<String>,
+    pub calls: Mutex<Vec<Vec<String>>>,
+}
+
+impl FakeCli {
+    pub fn with(values: &[(&str, Json)]) -> Self {
+        Self {
+            values: Mutex::new(
+                values
+                    .iter()
+                    .map(|(id, value)| ((*id).to_owned(), value.clone()))
+                    .collect(),
+            ),
+            ..Self::default()
+        }
     }
 
-    pub fn read_nams_file(&self, name: &str) -> String {
-        std::fs::read_to_string(self.game.nams_dir().join(name)).unwrap()
+    pub fn rejecting(mut self, ids: &[&str]) -> Self {
+        self.rejected = ids.iter().map(|id| (*id).to_owned()).collect();
+        self
     }
 
-    pub fn ensure(&self) {
-        ensure_configs(&self.game, &self.host).unwrap();
+    pub fn value(&self, id: &str) -> Option<Json> {
+        self.values.lock().unwrap().get(id).cloned()
     }
 
-    pub fn raw_nams(&self) -> String {
-        self.read_nams_file("nams.toml")
-    }
-
-    pub fn raw_naiom(&self) -> String {
-        self.read_nams_file("naiom.toml")
-    }
-
-    pub fn nams(&self) -> toml::Table {
-        parse(&self.raw_nams())
-    }
-
-    pub fn naiom(&self) -> toml::Table {
-        parse(&self.raw_naiom())
+    pub fn set_calls(&self) -> usize {
+        self.calls
+            .lock()
+            .unwrap()
+            .iter()
+            .filter(|args| args[0] == "set")
+            .count()
     }
 }
 
-pub fn parse(raw: &str) -> toml::Table {
-    toml::from_str(raw).unwrap_or_else(|err| panic!("invalid TOML ({err}):\n{raw}"))
+fn answer(document: Json) -> Result<CliOutput> {
+    Ok(CliOutput {
+        exit_code: Some(if document["ok"] == json!(false) { 65 } else { 0 }),
+        stdout: document.to_string(),
+        ..CliOutput::default()
+    })
 }
 
-pub fn table<'a>(values: &'a toml::Table, key: &str) -> &'a toml::Table {
-    values
-        .get(key)
-        .and_then(toml::Value::as_table)
-        .unwrap_or_else(|| panic!("[{key}] missing"))
-}
-
-pub fn index_of(haystack: &str, needle: &str) -> usize {
-    haystack
-        .find(needle)
-        .unwrap_or_else(|| panic!("{needle:?} not found in:\n{haystack}"))
-}
-
-pub fn index_of_opt(haystack: &str, needle: &str) -> Option<usize> {
-    haystack.find(needle)
+impl NamsCli for FakeCli {
+    fn run(&self, args: &[String], stdin: Option<&[u8]>) -> Result<CliOutput> {
+        self.calls.lock().unwrap().push(args.to_vec());
+        match args[0].as_str() {
+            "get" => {
+                let values = self.values.lock().unwrap().clone();
+                answer(json!({ "ok": true, "values": values }))
+            }
+            "set" => {
+                let input: IndexMap<String, Json> =
+                    serde_json::from_slice(stdin.unwrap_or_default()).unwrap();
+                let rejected: Vec<&String> = input
+                    .keys()
+                    .filter(|id| self.rejected.contains(id))
+                    .collect();
+                if !rejected.is_empty() {
+                    let problems: Vec<Json> = rejected
+                        .iter()
+                        .map(|id| json!({ "code": "invalid_value", "severity": "error", "message": "rejected", "id": id }))
+                        .collect();
+                    return answer(json!({ "ok": false, "code": "validation_failed", "error": "rejected", "problems": problems }));
+                }
+                let mut values = self.values.lock().unwrap();
+                let mut changed = Vec::new();
+                for (id, value) in input {
+                    let old = values.insert(id.clone(), value.clone()).unwrap_or(Json::Null);
+                    changed.push(json!({ "id": id, "old": old, "new": value }));
+                }
+                answer(json!({ "ok": true, "changed": changed }))
+            }
+            other => panic!("unexpected command {other}"),
+        }
+    }
 }

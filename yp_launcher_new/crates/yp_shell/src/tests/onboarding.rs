@@ -1,7 +1,7 @@
 use gpui::{Entity, TestAppContext, VisualTestContext};
 use yp_core::runtime::RuntimeStatus;
 use yp_state::prelude::*;
-use yp_state::{PlayState, Stores};
+use yp_state::PlayState;
 
 use super::{Harness, Opened, has_modal, open_shell};
 use crate::Stage;
@@ -26,13 +26,10 @@ fn step(wizard: &Entity<OnboardingWizard>, cx: &mut VisualTestContext) -> Step {
     wizard.read_with(cx, |wizard, _| wizard.step())
 }
 
-fn first_playthrough(stores: &Stores, cx: &mut VisualTestContext) -> Option<bool> {
-    stores.nams_settings.read_with(cx, |settings, _| {
-        settings
-            .settings()
-            .get("firstPlaythrough")
-            .and_then(|value| value.as_bool())
-    })
+const FIRST_PLAYTHROUGH_ID: &str = "plugins.yorha_protocol.firstPlaythrough";
+
+fn first_playthrough(harness: &Harness) -> Option<bool> {
+    harness.cli.value(FIRST_PLAYTHROUGH_ID).and_then(|value| value.as_bool())
 }
 
 #[gpui::test]
@@ -113,8 +110,8 @@ fn first_playthrough_choice_is_written_to_the_overlay_settings(cx: &mut TestAppC
     cx.run_until_parked();
     assert!(!saved);
     assert_eq!(step(&wizard, cx), Step::Migration);
-    assert_eq!(first_playthrough(&stores, cx), Some(false));
-    assert!(!stores.nams_settings.read_with(cx, |settings, _| settings.is_dirty()));
+    assert_eq!(first_playthrough(&harness), Some(false));
+    assert!(!stores.config.read_with(cx, |config, _| config.has_pending_writes()));
 }
 
 #[gpui::test]

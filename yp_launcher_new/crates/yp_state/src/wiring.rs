@@ -1,10 +1,11 @@
 use gpui::App;
-use yp_config::fields::nams;
 use yp_core::GamePaths;
 use yp_i18n::Msg;
+use yp_ui::I18n;
 
 use crate::Stores;
-use crate::config::ConfigEvent;
+use crate::config::{ConfigEvent, DEFAULT_OUTFITS_ID};
+use crate::launch_options::LaunchOptionsEvent;
 use crate::mods::{ModsEvent, ProfilesEvent};
 use crate::notifications::{Notice, NoticeKind, NoticeSeverity, NotificationsEvent};
 use crate::session::{DirectoryChange, SessionEvent};
@@ -15,7 +16,7 @@ pub(crate) fn bind_game(stores: &Stores, game: Option<GamePaths>, cx: &mut App) 
         .config
         .update(cx, |store, cx| store.bind_game(game.clone(), cx));
     stores
-        .nams_settings
+        .logs
         .update(cx, |store, cx| store.bind_game(game.clone(), cx));
     stores
         .profiles
@@ -65,11 +66,15 @@ fn third_party_notice(notice: &ThirdPartyNotice) -> Notice {
     }
 }
 
+const LAUNCH_WARNING_IDS: [&str; 3] = [
+    "nams.disable_plugin_loading",
+    "nams.disable_reshade_loading",
+    "nams.disable_texture_injection",
+];
+
 fn launch_needs_warning(stores: &Stores, cx: &App) -> bool {
-    let values = stores.config.read(cx).nams();
-    nams::DISABLE_PLUGIN_LOADING.value_in(values)
-        || nams::DISABLE_RESHADE_LOADING.value_in(values)
-        || nams::DISABLE_TEXTURE_INJECTION.value_in(values)
+    let config = stores.config.read(cx);
+    LAUNCH_WARNING_IDS.iter().any(|id| config.bool(id))
 }
 
 pub(crate) fn wire(stores: &Stores, cx: &mut App) {
@@ -86,18 +91,31 @@ pub(crate) fn wire(stores: &Stores, cx: &mut App) {
         }
         SessionEvent::CacheCleared(result) => {
             if result.nams_settings_deleted {
-                all.nams_settings
-                    .update(cx, |store, cx| store.reload_if_clean(cx));
+                all.config.update(cx, |store, cx| store.reload_if_clean(cx));
             }
             if result.logs_deleted > 0 && all.logs.read(cx).is_streaming() {
                 all.logs.update(cx, |store, cx| store.refresh(cx));
             }
         }
-        SessionEvent::LaunchRequested { .. } if launch_needs_warning(&all, cx) => {
-            all.launch_options
-                .update(cx, |store, cx| store.set_show_launch_warnings(true, cx));
+        SessionEvent::LaunchRequested { .. } => {
+            let code = I18n::locale(cx).code();
+            all.config
+                .update(cx, |store, cx| store.seed_overlay_language(code, cx));
+            if launch_needs_warning(&all, cx) {
+                all.launch_options
+                    .update(cx, |store, cx| store.set_show_launch_warnings(true, cx));
+            }
         }
         _ => {}
+    })
+    .detach();
+
+    let all = stores.clone();
+    cx.subscribe(&stores.launch_options, move |_, event, cx| {
+        if matches!(event, LaunchOptionsEvent::Changed) {
+            let dll_mode = all.launch_options.read(cx).nams_dll().is_some();
+            all.logs.update(cx, |store, cx| store.set_dll_mode(dll_mode, cx));
+        }
     })
     .detach();
 
@@ -112,8 +130,8 @@ pub(crate) fn wire(stores: &Stores, cx: &mut App) {
 
     let all = stores.clone();
     cx.subscribe(&stores.config, move |_, event, cx| {
-        if let ConfigEvent::Saved(report) = event
-            && report.default_outfits_changed
+        if let ConfigEvent::Written(report) = event
+            && report.changed.iter().any(|change| change.id == DEFAULT_OUTFITS_ID)
         {
             all.default_mods.update(cx, |store, cx| store.load(cx));
             all.detection.update(cx, |store, cx| store.invalidate(cx));

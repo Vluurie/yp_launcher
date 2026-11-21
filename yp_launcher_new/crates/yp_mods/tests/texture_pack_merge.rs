@@ -162,3 +162,27 @@ fn nothing_to_copy_reports_zero() {
     std::fs::create_dir_all(&empty).unwrap();
     assert_eq!(install(&[TextureSource::new(empty)], &fx.texture_dir), 0);
 }
+
+#[test]
+fn installing_an_installed_pack_onto_itself_keeps_its_textures() {
+    let root = temp("self-install");
+    let texture_dir = root.path().join("nams").join("inject").join("textures");
+    let pack = texture_dir.join("Pack A");
+    let body = b"DDS texture body";
+    for file in ["a.dds", "nested/b.dds"] {
+        let path = file.split('/').fold(pack.clone(), |path, part| path.join(part));
+        std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+        std::fs::write(path, body).unwrap();
+    }
+    let count = install(
+        &[TextureSource {
+            path: pack.clone(),
+            folder: Some("Pack A".to_owned()),
+        }],
+        &texture_dir,
+    );
+    assert_eq!(count, 2);
+    assert_eq!(std::fs::read(pack.join("a.dds")).unwrap(), body);
+    assert_eq!(std::fs::read(pack.join("nested").join("b.dds")).unwrap(), body);
+    assert_eq!(walk_files(&pack).len(), 2);
+}

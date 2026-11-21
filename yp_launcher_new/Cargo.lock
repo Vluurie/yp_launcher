@@ -6925,7 +6925,7 @@ dependencies = [
 
 [[package]]
 name = "yp_app"
-version = "3.1.0"
+version = "4.0.0"
 dependencies = [
  "embed-resource",
  "gpui",
@@ -6946,7 +6946,7 @@ dependencies = [
 
 [[package]]
 name = "yp_builders"
-version = "3.1.0"
+version = "4.0.0"
 dependencies = [
  "image 0.25.99",
  "log",
@@ -6964,23 +6964,19 @@ dependencies = [
 
 [[package]]
 name = "yp_config"
-version = "3.1.0"
+version = "4.0.0"
 dependencies = [
  "indexmap",
- "log",
  "serde",
  "serde_json",
  "tempfile",
  "thiserror 2.0.21",
- "toml 1.2.1+spec-1.1.0",
- "toml_edit 0.25.19+spec-1.1.0",
  "yp_core",
- "yp_i18n",
 ]
 
 [[package]]
 name = "yp_core"
-version = "3.1.0"
+version = "4.0.0"
 dependencies = [
  "dirs 7.0.0",
  "encoding_rs",
@@ -7005,7 +7001,7 @@ dependencies = [
 
 [[package]]
 name = "yp_cutscenes"
-version = "3.1.0"
+version = "4.0.0"
 dependencies = [
  "log",
  "serde",
@@ -7019,7 +7015,7 @@ dependencies = [
 
 [[package]]
 name = "yp_docs"
-version = "3.1.0"
+version = "4.0.0"
 dependencies = [
  "log",
  "pulldown-cmark",
@@ -7033,7 +7029,7 @@ dependencies = [
 
 [[package]]
 name = "yp_docs_ui"
-version = "3.1.0"
+version = "4.0.0"
 dependencies = [
  "futures",
  "gpui",
@@ -7055,7 +7051,7 @@ dependencies = [
 
 [[package]]
 name = "yp_formats"
-version = "3.1.0"
+version = "4.0.0"
 dependencies = [
  "image 0.25.99",
  "tempfile",
@@ -7066,7 +7062,7 @@ dependencies = [
 
 [[package]]
 name = "yp_health"
-version = "3.1.0"
+version = "4.0.0"
 dependencies = [
  "indexmap",
  "jiff",
@@ -7087,7 +7083,7 @@ dependencies = [
 
 [[package]]
 name = "yp_host"
-version = "3.1.0"
+version = "4.0.0"
 dependencies = [
  "dirs 7.0.0",
  "gilrs",
@@ -7103,12 +7099,13 @@ dependencies = [
  "thiserror 2.0.21",
  "windows 0.62.2",
  "windows-registry 0.100.0",
+ "yp_config",
  "yp_core",
 ]
 
 [[package]]
 name = "yp_i18n"
-version = "3.1.0"
+version = "4.0.0"
 dependencies = [
  "log",
  "serde",
@@ -7119,7 +7116,7 @@ dependencies = [
 
 [[package]]
 name = "yp_inspector"
-version = "3.1.0"
+version = "4.0.0"
 dependencies = [
  "image 0.25.99",
  "tempfile",
@@ -7129,7 +7126,7 @@ dependencies = [
 
 [[package]]
 name = "yp_mods"
-version = "3.1.0"
+version = "4.0.0"
 dependencies = [
  "indexmap",
  "jiff",
@@ -7146,13 +7143,14 @@ dependencies = [
 
 [[package]]
 name = "yp_mods_ui"
-version = "3.1.0"
+version = "4.0.0"
 dependencies = [
  "futures",
  "gpui",
  "gpui_platform",
  "log",
  "pulldown-cmark",
+ "serde_json",
  "tempfile",
  "yp_config",
  "yp_core",
@@ -7168,7 +7166,7 @@ dependencies = [
 
 [[package]]
 name = "yp_settings_ui"
-version = "3.1.0"
+version = "4.0.0"
 dependencies = [
  "futures",
  "gpui",
@@ -7193,13 +7191,14 @@ dependencies = [
 
 [[package]]
 name = "yp_shell"
-version = "3.1.0"
+version = "4.0.0"
 dependencies = [
  "futures",
  "gpui",
  "gpui_platform",
  "jiff",
  "log",
+ "serde_json",
  "tempfile",
  "toml 1.2.1+spec-1.1.0",
  "yp_config",
@@ -7216,11 +7215,12 @@ dependencies = [
 
 [[package]]
 name = "yp_state"
-version = "3.1.0"
+version = "4.0.0"
 dependencies = [
  "futures",
  "gpui",
  "image 0.25.99",
+ "indexmap",
  "log",
  "serde",
  "serde_json",
@@ -7241,7 +7241,7 @@ dependencies = [
 
 [[package]]
 name = "yp_thirdparty"
-version = "3.1.0"
+version = "4.0.0"
 dependencies = [
  "indexmap",
  "log",
@@ -7258,7 +7258,7 @@ dependencies = [
 
 [[package]]
 name = "yp_ui"
-version = "3.1.0"
+version = "4.0.0"
 dependencies = [
  "futures",
  "gpui",

@@ -933,6 +933,7 @@
   "selectTextureFiles": "Texturdateien oder Archive auswählen",
   "noTextureFilesFound": "Keine Texturdateien gefunden (.dds, .png, .tga)",
   "cheatsAppliedNote": "Wird einmal beim Spielstart angewendet.",
+  "cheatsNeedFirstPlaythroughOff": "Wird nur angewendet, solange der Modus für den ersten Durchlauf aus ist.",
   "wipLabel": "IN ARBEIT",
   "dropCutsceneHere": "Cutscene-Mod-Ordner oder Archiv hier ablegen",
   "cutsceneMovieHint": "Die Mod muss einen movie/-Ordner mit .usm-Dateien enthalten",

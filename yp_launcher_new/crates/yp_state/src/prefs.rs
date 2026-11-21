@@ -17,6 +17,7 @@ pub use yp_core::window_geometry::WINDOW;
 pub use yp_health::DETECTED_NOTIFICATIONS_DIR;
 pub use yp_host::gpu::PREFER_DEDICATED_GPU;
 pub use yp_host::launch::wrapper::LAUNCH_WRAPPER;
+pub use yp_host::launch::NAMS_DLL_PATH;
 pub use yp_host::session::NIER_DIRECTORY;
 pub use yp_host::win10_compat::WIN10_SETUP_DONE;
 pub use yp_i18n::APP_LOCALE;

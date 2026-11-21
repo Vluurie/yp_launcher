@@ -298,10 +298,11 @@ pub fn install(
     let target_movie = target.join(MOVIE_DIR);
     std::fs::create_dir_all(&target_movie).io(IoOp::Create, &target_movie)?;
 
-    let mut bytes_total = 0;
+    let mut sizes = Vec::with_capacity(files.len());
     for file in &files {
-        bytes_total += std::fs::metadata(file).io(IoOp::Metadata, file)?.len();
+        sizes.push(std::fs::metadata(file).io(IoOp::Metadata, file)?.len());
     }
+    let bytes_total = sizes.iter().sum();
     let mut state = CopyProgress {
         file_index: 0,
         file_count: files.len(),
@@ -309,7 +310,7 @@ pub fn install(
         bytes_done: 0,
         bytes_total,
     };
-    for (index, file) in files.iter().enumerate() {
+    for (index, (file, size)) in files.iter().zip(sizes).enumerate() {
         cancel.check()?;
         let relative = file
             .strip_prefix(prepared.movie_dir())
@@ -324,16 +325,24 @@ pub fn install(
             .map(|name| name.to_string_lossy().into_owned())
             .unwrap_or_default();
         progress.observe(&state);
-        if let Err(error) = copy_with_progress(file, &destination, &mut state, progress, cancel) {
-            let _ = std::fs::remove_file(&destination);
-            return Err(error);
+        if is_same_file(file, &destination) {
+            state.bytes_done += size;
+            continue;
         }
+        copy_with_progress(file, &destination, &mut state, progress, cancel)?;
     }
     Ok(InstallOutcome::Installed {
         name: name.to_string(),
         target,
         files: files.len(),
     })
+}
+
+fn is_same_file(source: &Path, destination: &Path) -> bool {
+    match (std::fs::canonicalize(source), std::fs::canonicalize(destination)) {
+        (Ok(source), Ok(destination)) => source == destination,
+        _ => false,
+    }
 }
 
 fn copy_with_progress(
@@ -343,8 +352,9 @@ fn copy_with_progress(
     progress: &dyn Observer<CopyProgress>,
     cancel: &CancelToken,
 ) -> Result<()> {
+    let parent = destination.parent().unwrap_or(Path::new("."));
     let mut input = File::open(source).io(IoOp::Read, source)?;
-    let mut output = File::create(destination).io(IoOp::Write, destination)?;
+    let mut output = tempfile::NamedTempFile::new_in(parent).io(IoOp::Create, parent)?;
     let mut buffer = vec![0u8; COPY_CHUNK];
     let mut last_report = state.bytes_done;
     loop {
@@ -362,7 +372,12 @@ fn copy_with_progress(
             progress.observe(state);
         }
     }
-    output.flush().io(IoOp::Write, destination)
+    output.flush().io(IoOp::Write, destination)?;
+    output
+        .persist(destination)
+        .map_err(|error| error.error)
+        .io(IoOp::Write, destination)?;
+    Ok(())
 }
 
 #[cfg(test)]

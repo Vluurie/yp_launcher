@@ -1,5 +1,6 @@
 use indexmap::IndexMap;
-use yp_config::{ConfigFile, templates};
+use serde_json::Value as Json;
+use yp_config::{Schema, ValidateReport, Values, values_equal};
 use yp_core::toml_io::{parse_values, same_value};
 
 use super::model::{ConfigDelta, ConfigReport};
@@ -7,71 +8,11 @@ use super::text::truncated;
 
 pub const DISPLAY_MAX_CHARS: usize = 160;
 pub const SIGNIFICANT_DIGITS: usize = 7;
+pub const UNKNOWN_KEY_CODE: &str = "unknown_key";
+pub const DEPRECATED_KEY_CODE: &str = "deprecated_key";
 const RELATIVE_TOLERANCE: f64 = 1e-6;
 const DECIMAL_NOTATION_FLOOR: f64 = 1e-6;
 const DECIMAL_NOTATION_CEILING: f64 = 1e21;
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum LegacyMatch {
-    Exact(&'static str),
-    Prefix(&'static str),
-}
-
-impl LegacyMatch {
-    fn matches(self, key: &str) -> bool {
-        match self {
-            LegacyMatch::Exact(exact) => key == exact,
-            LegacyMatch::Prefix(prefix) => key.starts_with(prefix),
-        }
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct LegacyKey {
-    pub file: ConfigFile,
-    pub key: LegacyMatch,
-    pub note: &'static str,
-}
-
-pub const LEGACY_KEYS: [LegacyKey; 6] = [
-    LegacyKey {
-        file: ConfigFile::Nams,
-        key: LegacyMatch::Prefix("mouse."),
-        note: "moved to naiom.toml, NAMS ignores it once naiom.toml exists",
-    },
-    LegacyKey {
-        file: ConfigFile::Nams,
-        key: LegacyMatch::Prefix("heap."),
-        note: "removed, the heaps grow on their own",
-    },
-    LegacyKey {
-        file: ConfigFile::Nams,
-        key: LegacyMatch::Exact("cutscene.hd_cutscenes"),
-        note: "removed",
-    },
-    LegacyKey {
-        file: ConfigFile::Nams,
-        key: LegacyMatch::Prefix("content_"),
-        note: "old content switch, only read while [content] is missing",
-    },
-    LegacyKey {
-        file: ConfigFile::LodMod,
-        key: LegacyMatch::Exact("disable_fake_hdr"),
-        note: "removed from NAMS",
-    },
-    LegacyKey {
-        file: ConfigFile::LodMod,
-        key: LegacyMatch::Exact("gi_min_light_extent"),
-        note: "removed from NAMS",
-    },
-];
-
-pub fn legacy_note(file: ConfigFile, key: &str) -> Option<&'static str> {
-    LEGACY_KEYS
-        .iter()
-        .find(|legacy| legacy.file == file && legacy.key.matches(key))
-        .map(|legacy| legacy.note)
-}
 
 pub fn flatten(table: &toml::Table) -> IndexMap<String, toml::Value> {
     fn walk(prefix: &str, node: &toml::Table, out: &mut IndexMap<String, toml::Value>) {
@@ -189,51 +130,82 @@ pub fn flattened_entries(raw: &str) -> Vec<String> {
         .collect()
 }
 
-pub fn collect_config(raws: &IndexMap<ConfigFile, String>) -> ConfigReport {
+pub fn json_plain(value: &Json) -> String {
+    match value {
+        Json::Null => "(unset)".to_owned(),
+        Json::String(text) => format!("\"{text}\""),
+        Json::Number(number) => match number.as_i64() {
+            Some(int) if !number.is_f64() => int.to_string(),
+            _ => float_text(number.as_f64().unwrap_or_default()),
+        },
+        Json::Bool(flag) => flag.to_string(),
+        Json::Array(items) => {
+            let items: Vec<String> = items.iter().map(json_plain).collect();
+            format!("[{}]", items.join(", "))
+        }
+        Json::Object(table) => {
+            let entries: Vec<String> = table
+                .iter()
+                .map(|(key, value)| format!("{key} = {}", json_plain(value)))
+                .collect();
+            format!("{{{}}}", entries.join(", "))
+        }
+    }
+}
+
+pub fn json_display(value: &Json) -> String {
+    let text = json_plain(value);
+    match truncated(&text, DISPLAY_MAX_CHARS) {
+        Some(head) => format!("{head}..."),
+        None => text,
+    }
+}
+
+pub fn collect_config(schema: &Schema, values: &Values, validate: Option<&ValidateReport>) -> ConfigReport {
     let mut report = ConfigReport::default();
-    for file in ConfigFile::ALL {
-        let raw = raws.get(&file).map(String::as_str).unwrap_or_default();
-        if raw.trim().is_empty() {
-            report.missing_files.push(file);
+    for (file, state) in &values.files {
+        match &state.error {
+            Some(error) => {
+                report.parse_errors.insert(file.clone(), error.clone());
+            }
+            None if !state.exists => report.missing_files.push(file.clone()),
+            None => {}
+        }
+    }
+    for setting in &schema.settings {
+        if report.parse_errors.contains_key(&setting.file) || values.not_in_file.contains(&setting.id) {
             continue;
         }
-        let parsed = match parse_values(raw) {
-            Ok(parsed) => parsed,
-            Err(error) => {
-                report.parse_errors.insert(file, error.to_string());
-                continue;
-            }
+        let Some(value) = values.get(&setting.id) else {
+            continue;
         };
-        let defaults = flatten(&parse_values(templates::template(file)).unwrap_or_default());
-        for (key, value) in flatten(&parsed) {
-            let default = defaults.get(&key);
-            if default.is_some_and(|default| same_setting(&value, default)) {
-                continue;
-            }
-            let note = if default.is_some() {
-                None
-            } else {
-                legacy_note(file, &key)
-            };
-            let delta = ConfigDelta {
-                file,
-                value: display(&value),
-                default_value: default.map(display).unwrap_or_default(),
-                note,
-                key,
-            };
-            if default.is_some() {
-                report.deltas.push(delta);
-            } else if note.is_some() {
-                report.legacy_keys.push(delta);
-            } else {
-                report.unknown_keys.push(delta);
-            }
+        if values_equal(value, &setting.default) {
+            continue;
+        }
+        report.deltas.push(ConfigDelta {
+            file: setting.file.clone(),
+            key: setting.key.clone(),
+            value: json_display(value),
+            default_value: json_display(&setting.default),
+            note: None,
+        });
+    }
+    for problem in validate.map(|report| report.problems.as_slice()).unwrap_or_default() {
+        let delta = ConfigDelta {
+            file: problem.file.clone().unwrap_or_default(),
+            key: problem.key.clone().or_else(|| problem.id.clone()).unwrap_or_default(),
+            value: String::new(),
+            default_value: String::new(),
+            note: Some(problem.message.clone()),
+        };
+        match problem.code.as_str() {
+            DEPRECATED_KEY_CODE => report.legacy_keys.push(delta),
+            UNKNOWN_KEY_CODE => report.unknown_keys.push(delta),
+            _ => {}
         }
     }
     report
 }
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -299,25 +271,12 @@ mod tests {
     }
 
     #[test]
-    fn legacy_notes_match_prefixes_and_exact_keys_per_file() {
-        assert!(
-            legacy_note(ConfigFile::Nams, "mouse.sensitivity")
-                .unwrap()
-                .contains("naiom.toml")
-        );
-        assert_eq!(
-            legacy_note(ConfigFile::Nams, "cutscene.hd_cutscenes"),
-            Some("removed")
-        );
-        assert_eq!(
-            legacy_note(ConfigFile::Nams, "cutscene.hd_cutscenes_extra"),
-            None
-        );
-        assert!(legacy_note(ConfigFile::Nams, "content_weapons").is_some());
-        assert_eq!(legacy_note(ConfigFile::LodMod, "mouse.sensitivity"), None);
-        assert_eq!(
-            legacy_note(ConfigFile::LodMod, "disable_fake_hdr"),
-            Some("removed from NAMS")
-        );
+    fn json_values_print_in_toml_like_form() {
+        let value: Json = serde_json::json!({ "a": "x", "b": [1, 2.5, true], "n": null });
+        assert_eq!(json_plain(&value["a"]), "\"x\"");
+        assert_eq!(json_plain(&value["b"]), "[1, 2.5, true]");
+        assert_eq!(json_plain(&value["n"]), "(unset)");
+        assert_eq!(json_plain(&serde_json::json!(3.0)), "3.0");
+        assert_eq!(json_display(&Json::String("x".repeat(200))).chars().count(), DISPLAY_MAX_CHARS + 3);
     }
 }

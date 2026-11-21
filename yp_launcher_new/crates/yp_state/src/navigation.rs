@@ -3,7 +3,6 @@ use yp_host::session::SessionFlags;
 
 use crate::busy::BusyTracker;
 use crate::config::ConfigStore;
-use crate::nams_settings::NamsSettingsStore;
 use crate::registry::OverlayRequest;
 use crate::tabs::{OverlayId, TabId};
 
@@ -24,13 +23,11 @@ pub enum TabRequestOutcome {
     AlreadyActive,
     OverlayOpened(OverlayId),
     Blocked(NavigationBlock),
-    ConfirmDiscard,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum CloseGuard {
     Busy { operations: usize },
-    UnsavedChanges,
     Clear,
 }
 
@@ -41,7 +38,6 @@ pub enum NavigationEvent {
     OverlayOpened(OverlayRequest),
     OverlayClosed(OverlayId),
     Blocked(NavigationBlock),
-    DiscardRequested(TabRequest),
     LogsToggled(bool),
 }
 
@@ -49,10 +45,8 @@ pub struct Navigation {
     flags: SessionFlags,
     overlays: Vec<OverlayRequest>,
     log_open: bool,
-    awaiting_discard: Option<TabRequest>,
     busy: Entity<BusyTracker>,
     config: Entity<ConfigStore>,
-    settings: Entity<NamsSettingsStore>,
 }
 
 impl EventEmitter<NavigationEvent> for Navigation {}
@@ -61,17 +55,14 @@ impl Navigation {
     pub fn new(
         busy: Entity<BusyTracker>,
         config: Entity<ConfigStore>,
-        settings: Entity<NamsSettingsStore>,
         _cx: &mut Context<Self>,
     ) -> Self {
         Self {
             flags: SessionFlags::default(),
             overlays: Vec::new(),
             log_open: false,
-            awaiting_discard: None,
             busy,
             config,
-            settings,
         }
     }
 
@@ -102,20 +93,10 @@ impl Navigation {
         self.log_open
     }
 
-    pub fn awaiting_discard(&self) -> Option<&TabRequest> {
-        self.awaiting_discard.as_ref()
-    }
-
-    pub fn has_unsaved_changes(&self, cx: &App) -> bool {
-        self.config.read(cx).is_dirty() || self.settings.read(cx).is_dirty()
-    }
-
     pub fn close_guard(&self, cx: &App) -> CloseGuard {
         let operations = self.busy.read(cx).count();
         if operations > 0 {
             CloseGuard::Busy { operations }
-        } else if self.has_unsaved_changes(cx) {
-            CloseGuard::UnsavedChanges
         } else {
             CloseGuard::Clear
         }
@@ -145,39 +126,19 @@ impl Navigation {
             return TabRequestOutcome::Blocked(block);
         }
         let request = TabRequest { tab, select };
-        if self.has_unsaved_changes(cx) {
-            self.awaiting_discard = Some(request.clone());
-            cx.emit(NavigationEvent::DiscardRequested(request));
-            cx.notify();
-            return TabRequestOutcome::ConfirmDiscard;
-        }
+        self.flush_settings(cx);
         self.switch(request, cx);
         TabRequestOutcome::Switched
     }
 
-    pub fn confirm_discard(&mut self, cx: &mut Context<Self>) {
-        let Some(request) = self.awaiting_discard.take() else {
-            return;
-        };
-        self.discard_changes(cx);
-        self.switch(request, cx);
-    }
-
-    pub fn cancel_discard(&mut self, cx: &mut Context<Self>) {
-        if self.awaiting_discard.take().is_some() {
-            cx.notify();
-        }
-    }
-
-    pub fn discard_changes(&mut self, cx: &mut Context<Self>) {
-        self.config.update(cx, |config, cx| config.discard(cx));
-        self.settings
-            .update(cx, |settings, cx| settings.discard(cx));
+    pub fn flush_settings(&mut self, cx: &mut Context<Self>) {
+        self.config
+            .update(cx, |config, cx| config.flush_pending(cx))
+            .detach();
     }
 
     fn switch(&mut self, request: TabRequest, cx: &mut Context<Self>) {
         let from = self.active();
-        self.awaiting_discard = None;
         match request.select {
             Some(key) => self.flags.request_tab_selection(request.tab.index(), key),
             None => self.flags.active_tab = request.tab.index(),

@@ -50,11 +50,17 @@ impl WineAdapter {
     }
 
     fn query(&self, program: &str) -> bool {
-        let spec = ProcessSpec::new(program).args(["-f", NAMS_EXE_NAME]);
-        self.runner
-            .output(&spec, Some(PROCESS_QUERY_TIMEOUT))
-            .map(|output| output.is_success())
-            .unwrap_or(false)
+        let found: Vec<bool> = [NAMS_EXE_NAME, GAME_EXE_NAME]
+            .into_iter()
+            .map(|name| {
+                let spec = ProcessSpec::new(program).args(["-f", name]);
+                self.runner
+                    .output(&spec, Some(PROCESS_QUERY_TIMEOUT))
+                    .map(|output| output.is_success())
+                    .unwrap_or(false)
+            })
+            .collect();
+        found.contains(&true)
     }
 }
 

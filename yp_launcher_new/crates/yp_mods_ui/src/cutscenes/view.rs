@@ -1,9 +1,7 @@
 use std::path::PathBuf;
 
 use gpui::{PathPromptOptions, ScrollHandle, Subscription};
-use yp_config::ConfigField;
-use yp_config::fields::nams;
-use yp_config::state::config_store::ENABLE_H264_KEY;
+use serde_json::Value as Json;
 use yp_cutscenes::CutsceneMod;
 use yp_state::Stores;
 use yp_state::prelude::*;
@@ -21,7 +19,11 @@ use crate::cutscenes::model::{
 use crate::layout::fill;
 use crate::notify::{brief_toast, reveal};
 
-const CUTSCENE_SECTION: &str = "cutscene";
+const H264_ID: &str = "nams.cutscene.enable_h264";
+const HIDE_SUBTITLE_OVERLAY_ID: &str = "nams.cutscene.hide_subtitle_overlay";
+const KEEP_SUBTITLE_TEXT_ID: &str = "nams.cutscene.keep_subtitle_text";
+const HIDE_SUBTITLE_IN_EVENTS_ID: &str = "nams.cutscene.hide_subtitle_in_events";
+const SOLID_LETTERBOX_BARS_ID: &str = "nams.cutscene.solid_letterbox_bars";
 
 struct TileModel {
     index: usize,
@@ -97,54 +99,34 @@ impl CutscenesView {
     }
 
     fn h264_enabled(&self, cx: &App) -> bool {
-        self.stores
-            .config
-            .read(cx)
-            .nams()
-            .get(CUTSCENE_SECTION)
-            .and_then(|section| section.as_table())
-            .and_then(|section| section.get(ENABLE_H264_KEY))
-            .and_then(|value| value.as_bool())
-            == Some(true)
+        self.stores.config.read(cx).bool(H264_ID)
     }
 
-    fn render_switch(
-        &self,
-        id: &'static str,
-        field: &'static ConfigField<bool>,
-        cx: &mut Context<Self>,
-    ) -> impl IntoElement + use<> {
-        let strings = cx.t();
-        let value = field.value_in(self.stores.config.read(cx).nams());
-        let switch = SettingSwitch::new(id, field.meta.label.text(strings), value).on_change(
-            cx.listener(move |this, value: &bool, _, cx| {
-                let value = *value;
-                this.stores.config.update(cx, |config, cx| {
-                    config.update_nams_now(field.key(), value.into(), field.section(), cx);
-                });
-            }),
-        );
-        match field.meta.tooltip {
-            Some(tooltip) => switch.description(tooltip.text(strings)),
-            None => switch,
-        }
+    fn render_switch(&self, id: &'static str, setting_id: &'static str, cx: &mut Context<Self>) -> Option<AnyElement> {
+        let config = self.stores.config.read(cx);
+        let setting = config.setting(setting_id)?;
+        let switch = SettingSwitch::new(id, setting.label.clone(), config.bool(setting_id))
+            .description(setting.description.clone())
+            .on_change(cx.listener(move |this, value: &bool, _, cx| {
+                let value = Json::Bool(*value);
+                this.stores
+                    .config
+                    .update(cx, |config, cx| config.set_now(setting_id, value, cx));
+            }));
+        Some(switch.into_any_element())
     }
 
     fn render_subtitle_card(&self, cx: &mut Context<Self>) -> impl IntoElement + use<> {
         let strings = cx.t();
-        let hide_overlay = nams::HIDE_SUBTITLE_OVERLAY.value_in(self.stores.config.read(cx).nams());
+        let hide_overlay = self.stores.config.read(cx).bool(HIDE_SUBTITLE_OVERLAY_ID);
         Card::new()
             .title(strings.cutscene_subtitle_card())
-            .child(self.render_switch("cutscene-hide-overlay", &nams::HIDE_SUBTITLE_OVERLAY, cx))
+            .children(self.render_switch("cutscene-hide-overlay", HIDE_SUBTITLE_OVERLAY_ID, cx))
             .when(hide_overlay, |this| {
-                this.child(self.render_switch("cutscene-keep-text", &nams::KEEP_SUBTITLE_TEXT, cx))
-                    .child(self.render_switch(
-                        "cutscene-hide-events",
-                        &nams::HIDE_SUBTITLE_IN_EVENTS,
-                        cx,
-                    ))
+                this.children(self.render_switch("cutscene-keep-text", KEEP_SUBTITLE_TEXT_ID, cx))
+                    .children(self.render_switch("cutscene-hide-events", HIDE_SUBTITLE_IN_EVENTS_ID, cx))
             })
-            .child(self.render_switch("cutscene-solid-bars", &nams::SOLID_LETTERBOX_BARS, cx))
+            .children(self.render_switch("cutscene-solid-bars", SOLID_LETTERBOX_BARS_ID, cx))
     }
 
     fn render_tile(&self, tile: TileModel, sizes: &Sizes, cx: &mut Context<Self>) -> AnyElement {

@@ -1,0 +1,72 @@
+[
+  {
+    "label": "Build and run: native (debug)",
+    "command": "cargo run --locked --package yp_app --bin YoRHa-Protocol-Launcher",
+    "cwd": "$ZED_WORKTREE_ROOT/yp_launcher_new",
+    "env": { "YP_ASSETS_DIR": "$ZED_WORKTREE_ROOT/yp_launcher_new/assets", "RUST_BACKTRACE": "1" },
+    "shell": { "program": "pwsh" }
+  },
+  {
+    "label": "Build and run: native (debug symbols)",
+    "command": "cargo run --locked --package yp_app --bin YoRHa-Protocol-Launcher --config profile.dev.debug=2",
+    "cwd": "$ZED_WORKTREE_ROOT/yp_launcher_new",
+    "env": { "YP_ASSETS_DIR": "$ZED_WORKTREE_ROOT/yp_launcher_new/assets", "RUST_BACKTRACE": "1" },
+    "shell": { "program": "pwsh" }
+  },
+  {
+    "label": "Build and run: native (small release)",
+    "command": "cargo run --locked --package yp_app --bin YoRHa-Protocol-Launcher --profile small --features embedded-assets",
+    "cwd": "$ZED_WORKTREE_ROOT/yp_launcher_new",
+    "env": { "YP_ASSETS_DIR": "$ZED_WORKTREE_ROOT/yp_launcher_new/assets", "RUST_BACKTRACE": "1" },
+    "shell": { "program": "pwsh" }
+  },
+  {
+    "label": "Build and run: Windows x64",
+    "command": "cargo run --locked --package yp_app --bin YoRHa-Protocol-Launcher --target x86_64-pc-windows-msvc",
+    "cwd": "$ZED_WORKTREE_ROOT/yp_launcher_new",
+    "env": { "YP_ASSETS_DIR": "$ZED_WORKTREE_ROOT/yp_launcher_new/assets", "RUST_BACKTRACE": "1" },
+    "shell": { "program": "pwsh" }
+  },
+  {
+    "label": "Build and run: Linux x64",
+    "command": "cargo run --locked --package yp_app --bin YoRHa-Protocol-Launcher --target x86_64-unknown-linux-gnu",
+    "cwd": "$ZED_WORKTREE_ROOT/yp_launcher_new",
+    "env": { "YP_ASSETS_DIR": "$ZED_WORKTREE_ROOT/yp_launcher_new/assets", "RUST_BACKTRACE": "1" },
+    "shell": { "program": "pwsh" }
+  },
+  {
+    "label": "Build and run: macOS Apple Silicon",
+    "command": "cargo run --locked --package yp_app --bin YoRHa-Protocol-Launcher --target aarch64-apple-darwin",
+    "cwd": "$ZED_WORKTREE_ROOT/yp_launcher_new",
+    "env": { "YP_ASSETS_DIR": "$ZED_WORKTREE_ROOT/yp_launcher_new/assets", "RUST_BACKTRACE": "1" },
+    "shell": { "program": "pwsh" }
+  },
+  {
+    "label": "Build and run: macOS Intel",
+    "command": "cargo run --locked --package yp_app --bin YoRHa-Protocol-Launcher --target x86_64-apple-darwin",
+    "cwd": "$ZED_WORKTREE_ROOT/yp_launcher_new",
+    "env": { "YP_ASSETS_DIR": "$ZED_WORKTREE_ROOT/yp_launcher_new/assets", "RUST_BACKTRACE": "1" },
+    "shell": { "program": "pwsh" }
+  },
+  {
+    "label": "Build and run: Windows UI preview",
+    "command": "cargo run --locked --package yp_app --bin YoRHa-Protocol-Launcher -- --sandbox \"$ZED_WORKTREE_ROOT/yp_launcher_new/target/previews/windows\" --simulate-windows",
+    "cwd": "$ZED_WORKTREE_ROOT/yp_launcher_new",
+    "env": { "YP_ASSETS_DIR": "$ZED_WORKTREE_ROOT/yp_launcher_new/assets", "RUST_BACKTRACE": "1" },
+    "shell": { "program": "pwsh" }
+  },
+  {
+    "label": "Build and run: Linux UI preview",
+    "command": "cargo run --locked --package yp_app --bin YoRHa-Protocol-Launcher -- --sandbox \"$ZED_WORKTREE_ROOT/yp_launcher_new/target/previews/linux\" --simulate-linux",
+    "cwd": "$ZED_WORKTREE_ROOT/yp_launcher_new",
+    "env": { "YP_ASSETS_DIR": "$ZED_WORKTREE_ROOT/yp_launcher_new/assets", "RUST_BACKTRACE": "1" },
+    "shell": { "program": "pwsh" }
+  },
+  {
+    "label": "Build and run: macOS UI preview",
+    "command": "cargo run --locked --package yp_app --bin YoRHa-Protocol-Launcher -- --sandbox \"$ZED_WORKTREE_ROOT/yp_launcher_new/target/previews/macos\" --simulate-macos",
+    "cwd": "$ZED_WORKTREE_ROOT/yp_launcher_new",
+    "env": { "YP_ASSETS_DIR": "$ZED_WORKTREE_ROOT/yp_launcher_new/assets", "RUST_BACKTRACE": "1" },
+    "shell": { "program": "pwsh" }
+  }
+]

@@ -5,7 +5,6 @@ use std::collections::BTreeSet;
 use indexmap::IndexMap;
 use jiff::Timestamp;
 use support::{Rig, bare_report};
-use yp_config::ConfigFile;
 use yp_core::Os;
 use yp_cutscenes::{CutsceneDetection, CutsceneFile, CutsceneMod};
 use yp_health::diagnostics::model::{
@@ -61,18 +60,18 @@ fn section<'a>(full: &'a str, title: &str) -> &'a str {
 }
 
 fn delta(
-    file: ConfigFile,
+    file: &str,
     key: &str,
     value: &str,
     default_value: &str,
-    note: Option<&'static str>,
+    note: Option<&str>,
 ) -> ConfigDelta {
     ConfigDelta {
-        file,
+        file: file.to_owned(),
         key: key.to_owned(),
         value: value.to_owned(),
         default_value: default_value.to_owned(),
-        note,
+        note: note.map(str::to_owned),
     }
 }
 
@@ -435,31 +434,31 @@ fn rich_report() -> DiagnosticsReport {
     report.wax_textures = strings(&["w"]);
     report.config = ConfigReport {
         deltas: vec![delta(
-            ConfigFile::Nams,
+            "nams.toml",
             "disable_splash_screen",
             "true",
             "false",
             None,
         )],
         unknown_keys: vec![
-            delta(ConfigFile::Nams, "typo_key", "1", "", None),
-            delta(ConfigFile::Naiom, "bindings.k1", "\"A\"", "", None),
-            delta(ConfigFile::Naiom, "bindings.k2", "\"A\"", "", None),
-            delta(ConfigFile::Naiom, "bindings.k3", "\"A\"", "", None),
-            delta(ConfigFile::Naiom, "bindings.k4", "\"A\"", "", None),
-            delta(ConfigFile::Naiom, "bindings.k5", "\"A\"", "", None),
-            delta(ConfigFile::Naiom, "other.x", "2", "", None),
+            delta("nams.toml", "typo_key", "1", "", None),
+            delta("naiom.toml", "bindings.k1", "\"A\"", "", None),
+            delta("naiom.toml", "bindings.k2", "\"A\"", "", None),
+            delta("naiom.toml", "bindings.k3", "\"A\"", "", None),
+            delta("naiom.toml", "bindings.k4", "\"A\"", "", None),
+            delta("naiom.toml", "bindings.k5", "\"A\"", "", None),
+            delta("naiom.toml", "other.x", "2", "", None),
         ],
         legacy_keys: vec![
             delta(
-                ConfigFile::Nams,
+                "nams.toml",
                 "mouse.sensitivity",
                 "3.0",
                 "",
                 Some("moved to naiom.toml, NAMS ignores it once naiom.toml exists"),
             ),
             delta(
-                ConfigFile::Nams,
+                "nams.toml",
                 "cutscene.hd_cutscenes",
                 "true",
                 "",
@@ -467,12 +466,12 @@ fn rich_report() -> DiagnosticsReport {
             ),
         ],
         parse_errors: IndexMap::from([(
-            ConfigFile::LodMod,
+            "lodmod.toml".to_owned(),
             "line 1, column 11: expected value".to_owned(),
         )]),
-        missing_files: vec![ConfigFile::TextureInjection],
+        missing_files: vec!["texture_injection.toml".to_owned()],
     };
-    report.config_raw = IndexMap::from([(ConfigFile::LodMod, "enabled = = true\n".to_owned())]);
+    report.config_raw = IndexMap::from([("lodmod.toml".to_owned(), "enabled = = true\n".to_owned())]);
     report.active_profile = Some("speedrun".to_owned());
     report.default_mods_entries = strings(&["outfit_bare = [\"mods/alpha\"]"]);
     report.mods = vec![

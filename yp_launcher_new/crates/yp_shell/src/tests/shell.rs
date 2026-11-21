@@ -1,5 +1,4 @@
 use gpui::TestAppContext;
-use yp_config::fields::nams;
 use yp_core::runtime::RuntimeStatus;
 use yp_i18n::Msg;
 use yp_state::prefs::SIDEBAR_SECTION_COLLAPSED;
@@ -14,18 +13,6 @@ use super::{Harness, has_modal, has_toast, open_main, open_shell};
 use crate::Stage;
 use crate::shell::overlay_key;
 use crate::sidebar;
-
-fn make_config_dirty(stores: &Stores, cx: &mut TestAppContext) {
-    stores.config.update(cx, |config, cx| {
-        config.update_nams(
-            nams::DISABLE_PLUGIN_LOADING.key(),
-            toml::Value::Boolean(true),
-            None,
-            cx,
-        );
-    });
-    cx.run_until_parked();
-}
 
 fn active(stores: &Stores, cx: &mut TestAppContext) -> TabId {
     stores
@@ -151,55 +138,6 @@ fn texture_installs_block_navigation_with_a_toast(cx: &mut TestAppContext) {
 }
 
 #[gpui::test]
-fn unsaved_changes_ask_before_leaving_and_discard_on_confirm(cx: &mut TestAppContext) {
-    let harness = Harness::new();
-    let stores = harness.start(cx);
-    let opened = open_main(cx);
-    make_config_dirty(&stores, opened.cx);
-    let cx = opened.cx;
-
-    cx.dispatch_action(OpenTab::new(TabId::LauncherSettings));
-    cx.run_until_parked();
-    assert!(has_modal(&opened.root, cx));
-    assert_eq!(active(&stores, cx), TabId::Launcher);
-    assert!(
-        stores
-            .navigation
-            .read_with(cx, |navigation, _| navigation.awaiting_discard().is_some())
-    );
-
-    cx.simulate_keystrokes("enter");
-    cx.run_until_parked();
-    assert!(!has_modal(&opened.root, cx));
-    assert_eq!(active(&stores, cx), TabId::LauncherSettings);
-    assert!(!stores.config.read_with(cx, |config, _| config.is_dirty()));
-}
-
-#[gpui::test]
-fn staying_keeps_the_tab_and_the_unsaved_changes(cx: &mut TestAppContext) {
-    let harness = Harness::new();
-    let stores = harness.start(cx);
-    let opened = open_main(cx);
-    make_config_dirty(&stores, opened.cx);
-    let cx = opened.cx;
-
-    cx.dispatch_action(OpenTab::new(TabId::LauncherSettings));
-    cx.run_until_parked();
-    assert!(has_modal(&opened.root, cx));
-    cx.simulate_keystrokes("escape");
-    cx.run_until_parked();
-
-    assert!(!has_modal(&opened.root, cx));
-    assert_eq!(active(&stores, cx), TabId::Launcher);
-    assert!(stores.config.read_with(cx, |config, _| config.is_dirty()));
-    assert!(
-        stores
-            .navigation
-            .read_with(cx, |navigation, _| navigation.awaiting_discard().is_none())
-    );
-}
-
-#[gpui::test]
 fn a_clean_window_closes_without_asking(cx: &mut TestAppContext) {
     let harness = Harness::new();
     harness.start(cx);
@@ -258,25 +196,6 @@ fn force_close_removes_the_window(cx: &mut TestAppContext) {
         .update_in(cx, |shell, window, cx| shell.should_close(window, cx));
     cx.run_until_parked();
     assert!(!allowed);
-    cx.simulate_keystrokes("enter");
-    cx.run_until_parked();
-    assert!(cx.windows().is_empty());
-}
-
-#[gpui::test]
-fn closing_with_unsaved_changes_asks_to_discard(cx: &mut TestAppContext) {
-    let harness = Harness::new();
-    let stores = harness.start(cx);
-    let opened = open_main(cx);
-    make_config_dirty(&stores, opened.cx);
-    let cx = opened.cx;
-
-    let allowed = opened
-        .shell
-        .update_in(cx, |shell, window, cx| shell.should_close(window, cx));
-    cx.run_until_parked();
-    assert!(!allowed);
-    assert!(has_modal(&opened.root, cx));
     cx.simulate_keystrokes("enter");
     cx.run_until_parked();
     assert!(cx.windows().is_empty());

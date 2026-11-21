@@ -10,7 +10,7 @@ mod scan;
 mod text;
 
 pub use collect::Collector;
-pub use config::{LEGACY_KEYS, LegacyKey, LegacyMatch, legacy_note};
+pub use config::{collect_config, json_display, json_plain};
 pub use findings::{build_findings, pack_disabled_by};
 pub use full_report::{format_full_report, report_file_name, write_full_report};
 pub use model::{

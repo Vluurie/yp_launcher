@@ -1,5 +1,6 @@
 pub mod command;
 pub mod failure;
+pub mod nams_dll;
 pub mod record;
 pub mod steam;
 pub mod wrapper;
@@ -10,17 +11,25 @@ use std::time::{Duration, Instant};
 
 use yp_core::consts::GAME_EXE_NAME;
 use yp_core::runtime::RuntimeSetup;
-use yp_core::{AppPaths, ChildProcess, LaunchUnavailable, NamsCommandRequest, NamsInvocation, Os, ProcessRunner, SettingsStore};
+use yp_core::wine_paths::NIER_STEAM_APP_ID;
+use yp_core::{
+    AppPaths, ChildProcess, HostEnv, LaunchUnavailable, NamsCommandRequest, NamsInvocation, Os, ProcessRunner,
+    SettingsStore,
+};
 
 use crate::gpu::{self, GpuProbe};
 use crate::platform::HostPlatform;
-use command::{format_script, LaunchCommand};
+use command::{format_script, LaunchCommand, LaunchEnv};
 use failure::{FailureKind, LaunchFailure};
+pub use nams_dll::NAMS_DLL_PATH;
 use record::{LaunchRecord, TAIL_CHARS};
 
 pub const GRACE_PERIOD: Duration = Duration::from_secs(10);
 pub const GRACE_POLL: Duration = Duration::from_millis(100);
 pub const CAPTURED_LOG_PREFIX: &str = "nams_";
+const STEAM_APP_ID_VARS: [&str; 2] = ["SteamAppId", "SteamGameId"];
+const DLL_OVERRIDES_VAR: &str = "WINEDLLOVERRIDES";
+const NATIVE_FIRST: &str = "n,b";
 const CAPTURE_CHARS: usize = 64 * 1024;
 const CAPTURED_LOG_RULE_WIDTH: usize = 60;
 
@@ -47,6 +56,27 @@ impl LaunchOutcome {
 pub struct ResolvedLaunch {
     pub command: LaunchCommand,
     pub prefer_gpu: bool,
+    pub exe: PathBuf,
+}
+
+fn dll_mode_env(env: Option<LaunchEnv>, host: &HostEnv, proxy: &Path) -> LaunchEnv {
+    let mut env = env.unwrap_or_default();
+    for var in STEAM_APP_ID_VARS {
+        env.insert(var.to_owned(), NIER_STEAM_APP_ID.to_owned());
+    }
+    if host.os() != Os::Windows {
+        let stem = proxy
+            .file_stem()
+            .map(|stem| stem.to_string_lossy().to_lowercase())
+            .unwrap_or_default();
+        let ours = format!("{stem}={NATIVE_FIRST}");
+        let overrides = match host.var(DLL_OVERRIDES_VAR).filter(|value| !value.is_empty()) {
+            Some(existing) => format!("{ours};{existing}"),
+            None => ours,
+        };
+        env.insert(DLL_OVERRIDES_VAR.to_owned(), overrides);
+    }
+    env
 }
 
 pub struct Launcher {
@@ -106,24 +136,48 @@ impl Launcher {
     }
 
     pub fn resolve(&self, game_dir: &Path, vanilla: bool) -> Result<ResolvedLaunch, LaunchUnavailable> {
-        let nams_exe = self.paths.nams_exe();
-        let request = NamsCommandRequest {
-            nams_exe: &nams_exe,
-            launcher_dir: &self.paths.runtime_dir,
-            game_dir,
-            invocation: NamsInvocation::Run { vanilla },
+        let dll = nams_dll::picked(&self.settings);
+        let exe = match dll {
+            Some(_) => game_dir.join(GAME_EXE_NAME),
+            None => self.paths.nams_exe(),
+        };
+        let request = if dll.is_some() {
+            NamsCommandRequest {
+                nams_exe: &exe,
+                launcher_dir: game_dir,
+                game_dir,
+                invocation: NamsInvocation::Game {
+                    vanilla,
+                    console: false,
+                },
+            }
+        } else {
+            NamsCommandRequest {
+                nams_exe: &exe,
+                launcher_dir: &self.paths.runtime_dir,
+                game_dir,
+                invocation: NamsInvocation::Run { vanilla },
+            }
         };
         let built = self.platform.build_launch_command(&request)?;
+        let env = match &dll {
+            Some(_) => Some(dll_mode_env(
+                built.env.clone(),
+                self.platform.host(),
+                &game_dir.join(nams_dll::PROXY_NAME),
+            )),
+            None => built.env.clone(),
+        };
         let prefer_gpu = gpu::prefer_dedicated(&self.settings);
         let probe = self.gpu_probe.unwrap_or_else(|| GpuProbe::detect(self.platform.host()));
         let mut command = LaunchCommand {
-            env: gpu::merged_launch_env(built.env.clone(), prefer_gpu, self.os(), &probe),
+            env: gpu::merged_launch_env(env, prefer_gpu, self.os(), &probe),
             ..built
         };
         if self.os() == Os::Linux {
             command = wrapper::wrap(self.os(), command, &wrapper::read(&self.settings));
         }
-        Ok(ResolvedLaunch { command, prefer_gpu })
+        Ok(ResolvedLaunch { command, prefer_gpu, exe })
     }
 
     pub fn preview(&self, game_dir: &Path) -> Option<String> {
@@ -190,7 +244,12 @@ impl Launcher {
         if let Some(failure) = self.preflight(game_dir) {
             return LaunchOutcome::Failed(failure);
         }
-        crate::nams_log::clear(&self.paths);
+        if let Some(dll) = nams_dll::picked(&self.settings)
+            && let Err(failure) = nams_dll::deploy(game_dir, &dll)
+        {
+            return LaunchOutcome::Failed(failure);
+        }
+        crate::nams_log::clear_file(&nams_dll::log_file(&self.paths, &self.settings, Some(game_dir)));
         let resolved = match self.resolve(game_dir, vanilla) {
             Ok(resolved) => resolved,
             Err(unavailable) => {
@@ -198,7 +257,7 @@ impl Launcher {
             }
         };
         if self.write_gpu_registry {
-            gpu::apply(&self.paths.nams_exe(), resolved.prefer_gpu);
+            gpu::apply(&resolved.exe, resolved.prefer_gpu);
         }
         let mut child = match self.runner.spawn(&resolved.command.to_process_spec()) {
             Ok(child) => child,

@@ -210,6 +210,13 @@ pub fn collect_texture_files(source: &Path, folder_name: &str, out: &mut Vec<(Pa
     }
 }
 
+fn is_same_file(source: &Path, target: &Path) -> bool {
+    match (std::fs::canonicalize(source), std::fs::canonicalize(target)) {
+        (Ok(source), Ok(target)) => source == target,
+        _ => false,
+    }
+}
+
 pub fn install_textures(
     staging: &DropStaging,
     sources: &[TextureSource],
@@ -265,11 +272,15 @@ pub fn install_textures(
         } else {
             texture_dir.join(relative_target)
         };
-        if let Some(parent) = target.parent() {
-            std::fs::create_dir_all(parent).io(IoOp::Create, parent)?;
+        let parent = target.parent().unwrap_or(texture_dir);
+        std::fs::create_dir_all(parent).io(IoOp::Create, parent)?;
+        if is_same_file(file, &target) {
+            copied += std::fs::metadata(file).io(IoOp::Metadata, file)?.len();
+            files_done += 1;
+            continue;
         }
         let mut input = std::fs::File::open(file).io(IoOp::Read, file)?;
-        let mut output = std::fs::File::create(&target).io(IoOp::Write, &target)?;
+        let mut output = tempfile::NamedTempFile::new_in(parent).io(IoOp::Create, parent)?;
         loop {
             cancel.check()?;
             let read = input.read(&mut buffer).io(IoOp::Read, file)?;
@@ -288,6 +299,11 @@ pub fn install_textures(
                 });
             }
         }
+        output.flush().io(IoOp::Write, &target)?;
+        output
+            .persist(&target)
+            .map_err(|error| error.error)
+            .io(IoOp::Write, &target)?;
         files_done += 1;
     }
 

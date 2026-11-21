@@ -362,33 +362,6 @@ fn controller_focus_stays_inside_the_top_overlay(cx: &mut TestAppContext) {
     assert_eq!(background_clicks.get(), 0);
 }
 
-#[gpui::test]
-fn controller_tab_changes_preserve_the_unsaved_changes_guard(cx: &mut TestAppContext) {
-    let harness = Harness::new();
-    let stores = harness.start(cx);
-    let opened = open_main(cx);
-    let cx = opened.cx;
-    cx.update(|window, _| window.activate_window());
-    stores.config.update(cx, |config, cx| {
-        config.update_nams(
-            yp_config::fields::nams::VALIDATE_SCRIPTS.key(),
-            toml::Value::Boolean(true),
-            None,
-            cx,
-        );
-    });
-    cx.run_until_parked();
-    send(ControllerAction::NextTab, cx);
-    assert!(has_modal(&opened.root, cx));
-    assert_eq!(
-        stores.navigation.read_with(cx, |navigation, _| navigation.active()),
-        TabId::Launcher
-    );
-    send(ControllerAction::Back, cx);
-    assert!(!has_modal(&opened.root, cx));
-    assert!(stores.config.read_with(cx, |config, _| config.is_dirty()));
-}
-
 struct SidebarControls {
     selected: Rc<Cell<usize>>,
     expanded: Rc<Cell<bool>>,

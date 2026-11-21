@@ -1,3 +1,4 @@
+use std::path::PathBuf;
 use std::sync::atomic::{AtomicU64, Ordering};
 
 use gpui::App;
@@ -26,6 +27,12 @@ pub fn push(
 
 pub fn success(prefix: &str, msg: impl Into<Msg>, cx: &mut App) {
     push(prefix, msg, NoticeKind::General, NoticeSeverity::Success, cx);
+}
+
+pub fn success_opening(prefix: &str, msg: impl Into<Msg>, dir: impl Into<PathBuf>, cx: &mut App) {
+    let notice = Notice::new(unique_id(prefix), msg, NoticeKind::General, NoticeSeverity::Success).opening(dir);
+    let notifications = cx.stores().notifications.clone();
+    notifications.update(cx, |store, cx| store.push(notice, cx));
 }
 
 pub fn error(prefix: &str, msg: impl Into<Msg>, cx: &mut App) {

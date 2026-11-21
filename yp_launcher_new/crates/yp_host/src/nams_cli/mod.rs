@@ -1,3 +1,4 @@
+pub mod config;
 pub mod verify;
 
 use std::path::Path;
@@ -8,6 +9,7 @@ use yp_core::consts::ARG_NIER_PATH;
 use yp_core::{AppPaths, NamsCommandRequest, NamsInvocation, ProcessRunner, ProcessSpec};
 
 use crate::platform::HostPlatform;
+pub use config::HostNamsCli;
 pub use verify::{VerifyCheck, VerifyOutcome, VerifyResult, VerifyStatus};
 
 pub const VERIFY_TIMEOUT: Duration = Duration::from_secs(30);

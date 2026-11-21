@@ -3,7 +3,6 @@ mod support;
 use indexmap::IndexMap;
 use jiff::{SignedDuration, Timestamp};
 use support::bare_report;
-use yp_config::ConfigFile;
 use yp_core::Os;
 use yp_health::diagnostics::build_findings;
 use yp_health::diagnostics::model::{
@@ -45,9 +44,9 @@ fn one(level: FindingLevel, message: &str) -> Vec<(FindingLevel, String)> {
     vec![(level, message.to_owned())]
 }
 
-fn delta(file: ConfigFile, key: &str, value: &str) -> ConfigDelta {
+fn delta(file: &str, key: &str, value: &str) -> ConfigDelta {
     ConfigDelta {
-        file,
+        file: file.to_owned(),
         key: key.to_owned(),
         value: value.to_owned(),
         default_value: String::new(),
@@ -261,8 +260,8 @@ fn launcher_runtime_problems_are_spelled_out() {
 fn switched_off_plugin_loading_and_texture_injection_are_called_out() {
     let mut report = with_game();
     report.config.deltas = vec![
-        delta(ConfigFile::Nams, "disable_plugin_loading", "true"),
-        delta(ConfigFile::Nams, "disable_texture_injection", "true"),
+        delta("nams.toml", "disable_plugin_loading", "true"),
+        delta("nams.toml", "disable_texture_injection", "true"),
     ];
     assert_eq!(
         found(&report),
@@ -282,8 +281,8 @@ fn switched_off_plugin_loading_and_texture_injection_are_called_out() {
     );
 
     report.config.deltas = vec![
-        delta(ConfigFile::Naiom, "disable_plugin_loading", "true"),
-        delta(ConfigFile::Nams, "disable_texture_injection", "\"true\""),
+        delta("naiom.toml", "disable_plugin_loading", "true"),
+        delta("nams.toml", "disable_texture_injection", "\"true\""),
     ];
     assert!(found(&report).is_empty());
 }
@@ -292,8 +291,8 @@ fn switched_off_plugin_loading_and_texture_injection_are_called_out() {
 fn few_unknown_settings_are_listed_without_a_remainder() {
     let mut report = with_game();
     report.config.unknown_keys = vec![
-        delta(ConfigFile::Nams, "a", "1"),
-        delta(ConfigFile::LodMod, "b.c", "2"),
+        delta("nams.toml", "a", "1"),
+        delta("lodmod.toml", "b.c", "2"),
     ];
     assert_eq!(
         found(&report),
@@ -303,7 +302,7 @@ fn few_unknown_settings_are_listed_without_a_remainder() {
         )
     );
     report.config.unknown_keys.clear();
-    report.config.legacy_keys = vec![delta(ConfigFile::Nams, "mouse.sensitivity", "3.0")];
+    report.config.legacy_keys = vec![delta("nams.toml", "mouse.sensitivity", "3.0")];
     assert!(found(&report).is_empty());
 }
 

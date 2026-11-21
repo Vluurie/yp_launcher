@@ -6,7 +6,7 @@ use futures::StreamExt;
 use futures::channel::mpsc;
 use gpui::{AsyncWindowContext, EventEmitter, Subscription, Task, WeakEntity};
 use indexmap::IndexMap;
-use yp_config::fields::texture_injection;
+use serde_json::Value as Json;
 use yp_core::{CancelToken, GamePaths, Progress};
 use yp_host::nams_cli::{self, NamsTexturePack};
 use yp_i18n::{Msg, MsgKey, Strings};
@@ -54,10 +54,12 @@ pub fn sanitize_pack_name(name: &str) -> Option<String> {
     (!cleaned.is_empty()).then_some(cleaned)
 }
 
-pub fn string_list(values: &toml::Table, key: &str) -> Vec<String> {
-    values
-        .get(key)
-        .and_then(toml::Value::as_array)
+pub const LOAD_ORDER_ID: &str = "texture_injection.load_order";
+pub const DISABLED_PACKS_ID: &str = "texture_injection.disabled_packs";
+
+pub fn string_list(value: &Json) -> Vec<String> {
+    value
+        .as_array()
         .map(|items| {
             items
                 .iter()
@@ -67,8 +69,8 @@ pub fn string_list(values: &toml::Table, key: &str) -> Vec<String> {
         .unwrap_or_default()
 }
 
-pub fn names_value(names: &[String]) -> toml::Value {
-    toml::Value::Array(names.iter().cloned().map(toml::Value::String).collect())
+pub fn names_value(names: &[String]) -> Json {
+    Json::Array(names.iter().cloned().map(Json::String).collect())
 }
 
 pub fn visible_order(load_order: &[String], disabled_packs: &[String]) -> Vec<String> {
@@ -439,19 +441,12 @@ impl TexturesModel {
         self.reload(cx);
     }
 
-    fn texture_values(&self, cx: &App) -> toml::Table {
-        self.stores.config.read(cx).texture_injection().clone()
-    }
-
     pub fn load_order(&self, cx: &App) -> Vec<String> {
-        string_list(&self.texture_values(cx), texture_injection::LOAD_ORDER.key())
+        string_list(&self.stores.config.read(cx).value(LOAD_ORDER_ID))
     }
 
     pub fn disabled_packs(&self, cx: &App) -> Vec<String> {
-        string_list(
-            &self.texture_values(cx),
-            texture_injection::DISABLED_PACKS.key(),
-        )
+        string_list(&self.stores.config.read(cx).value(DISABLED_PACKS_ID))
     }
 
     pub fn order(&self, cx: &App) -> Vec<String> {
@@ -467,18 +462,11 @@ impl TexturesModel {
     }
 
     fn save_load_order(&self, order: &[String], cx: &mut App) {
-        let value = names_value(order);
-        self.stores.config.update(cx, |store, cx| {
-            store.update_texture_injection_silent(texture_injection::LOAD_ORDER.key(), value, cx);
-            store.save(cx);
-        });
+        self.set_value(LOAD_ORDER_ID, names_value(order), cx);
     }
 
-    pub fn set_value(&self, key: &'static str, value: toml::Value, cx: &mut App) {
-        self.stores.config.update(cx, |store, cx| {
-            store.update_texture_injection_silent(key, value, cx);
-            store.save(cx);
-        });
+    pub fn set_value(&self, id: &str, value: Json, cx: &mut App) {
+        self.stores.config.update(cx, |store, cx| store.set_now(id, value, cx));
     }
 
     pub fn reorder(&mut self, from: usize, to: usize, cx: &mut Context<Self>) {
@@ -948,14 +936,10 @@ mod tests {
 
     #[test]
     fn string_lists_skip_values_that_are_not_text() {
-        let values: toml::Table = "load_order = [\"a\", 3, \"b\"]\nother = 1\n".parse().unwrap();
-        assert_eq!(string_list(&values, "load_order"), names(&["a", "b"]));
-        assert!(string_list(&values, "other").is_empty());
-        assert!(string_list(&values, "missing").is_empty());
-        assert_eq!(
-            names_value(&names(&["x"])),
-            toml::Value::Array(vec![toml::Value::String("x".into())])
-        );
+        assert_eq!(string_list(&serde_json::json!(["a", 3, "b"])), names(&["a", "b"]));
+        assert!(string_list(&serde_json::json!(1)).is_empty());
+        assert!(string_list(&Json::Null).is_empty());
+        assert_eq!(names_value(&names(&["x"])), serde_json::json!(["x"]));
     }
 
     #[test]

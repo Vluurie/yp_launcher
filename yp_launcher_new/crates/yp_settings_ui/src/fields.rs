@@ -1,196 +1,157 @@
 use std::rc::Rc;
 
-use serde_json::Value as JsonValue;
-use yp_config::{AnyField, FieldKind};
-use yp_i18n::Strings;
+use serde_json::Value as Json;
+use yp_config::{ItemType, Kind, Setting, TableField, values_equal};
 use yp_ui::prelude::*;
 use yp_ui::{
     ApplyKind, NumberKind, SelectItem, SettingNumber, SettingRow, SettingSelect, SettingSlider,
     SettingSwitch,
 };
 
-use crate::rules::{NameListEditor, RulesEditor, infer_columns};
+use crate::rules::{ColumnKind, NameListEditor, RuleColumn, RulesEditor, infer_columns};
 use crate::text_field::TextField;
 
-pub type FieldRef = &'static dyn AnyField;
-pub type ValueSink = Rc<dyn Fn(toml::Value, &mut Window, &mut App)>;
+pub type ValueSink = Rc<dyn Fn(Json, &mut Window, &mut App)>;
 
 const EQUAL_TOLERANCE: f64 = 1e-6;
 const SNAP_DECIMALS: i32 = 9;
+const DEFAULT_INT_STEP: f64 = 1.0;
+const DEFAULT_FLOAT_STEPS: f64 = 100.0;
+pub const ROOM_COLUMN: &str = "room";
+pub const RINGS_COLUMN: &str = "rings";
+pub const FROM_RINGS_COLUMN: &str = "from_rings";
+pub const RING_OPTIONS: [i64; 4] = [1, 2, 3, 4];
+pub const FROM_RING_OPTIONS: [i64; 3] = [2, 3, 4];
+pub const REQUIRED_HEX_FALLBACKS: [(&str, i64); 2] = [("grid", 0x1121), ("from", 0x1517)];
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum Control {
     Switch,
-    Slider { min: f64, max: f64, step: f64 },
-    Choice { options: Vec<f64> },
+    Select { options: Vec<(Json, SharedString)> },
+    Slider { min: f64, max: f64, step: f64, zero_below: Option<f64> },
     Number { min: Option<f64>, max: Option<f64> },
     Text,
-    Rules,
+    Numbers { length: usize, min: f64, max: f64, step: f64 },
+    Rules { columns: Vec<RuleColumn> },
     Names,
 }
 
-pub fn control_for(field: &dyn AnyField) -> Control {
-    let meta = field.meta();
-    match field.kind() {
-        FieldKind::Bool => Control::Switch,
-        FieldKind::Int | FieldKind::Float => {
-            if !meta.allowed.is_empty() {
-                return Control::Choice {
-                    options: meta.allowed.to_vec(),
-                };
-            }
-            match (meta.min, meta.max, meta.step) {
-                (Some(min), Some(max), Some(step)) if step > 0. && max > min => {
-                    Control::Slider { min, max, step }
-                }
+fn step_for(setting: &Setting, min: f64, max: f64) -> f64 {
+    setting.step().unwrap_or(match setting.kind {
+        Kind::Int => DEFAULT_INT_STEP,
+        _ => (max - min) / DEFAULT_FLOAT_STEPS,
+    })
+}
+
+fn hex_fallback(field: &TableField) -> i64 {
+    REQUIRED_HEX_FALLBACKS
+        .iter()
+        .find(|(key, _)| field.required && *key == field.key)
+        .map_or(0, |(_, fallback)| *fallback)
+}
+
+pub fn column_for(field: &TableField) -> RuleColumn {
+    let key: &str = &field.key;
+    let label = SharedString::from(field.key.clone());
+    match field.kind {
+        Kind::String | Kind::Enum => RuleColumn::text_owned(key, label),
+        _ if key == ROOM_COLUMN => RuleColumn::room_owned(key, label),
+        _ if key == RINGS_COLUMN => RuleColumn::choice_owned(key, label, RING_OPTIONS.to_vec(), RING_OPTIONS[0]),
+        _ if key == FROM_RINGS_COLUMN => {
+            RuleColumn::choice_owned(key, label, FROM_RING_OPTIONS.to_vec(), FROM_RING_OPTIONS[0])
+        }
+        _ => RuleColumn {
+            key: SharedString::from(field.key.clone()),
+            label,
+            kind: ColumnKind::Hex,
+            fallback: Json::from(hex_fallback(field)),
+        },
+    }
+}
+
+fn preset_options(setting: &Setting) -> Vec<(Json, SharedString)> {
+    setting
+        .presets()
+        .iter()
+        .map(|preset| (preset.value.clone(), SharedString::from(preset.label.clone())))
+        .collect()
+}
+
+fn choice_options(setting: &Setting) -> Vec<(Json, SharedString)> {
+    setting
+        .choices
+        .iter()
+        .map(|choice| (choice.value.clone(), SharedString::from(choice.display_label())))
+        .collect()
+}
+
+pub fn control_for(setting: &Setting) -> Control {
+    match setting.kind {
+        Kind::Bool => Control::Switch,
+        Kind::Enum => Control::Select {
+            options: choice_options(setting),
+        },
+        Kind::Int | Kind::Float if !setting.choices.is_empty() => Control::Select {
+            options: choice_options(setting),
+        },
+        Kind::Int | Kind::Float if !setting.presets().is_empty() && setting.step().is_none() => Control::Select {
+            options: preset_options(setting),
+        },
+        Kind::Int | Kind::Float => {
+            match (setting.ui_min(), setting.ui_max(), setting.step()) {
+                (Some(min), Some(max), Some(step)) if max > min && step > 0.0 => Control::Slider {
+                    min,
+                    max,
+                    step,
+                    zero_below: setting.zero_or_range.and_then(|range| range.min),
+                },
                 _ => Control::Number {
-                    min: meta.min,
-                    max: meta.max,
+                    min: setting.limit_min(),
+                    max: setting.limit_max(),
                 },
             }
         }
-        FieldKind::Text => Control::Text,
-        FieldKind::List => Control::Rules,
-        FieldKind::TextList => Control::Names,
+        Kind::String => Control::Text,
+        Kind::List => match setting.item_type() {
+            Some(ItemType::Scalar(Kind::Int | Kind::Float)) if setting.length.is_some() => {
+                let min = setting.ui_min().unwrap_or(0.0);
+                let max = setting.ui_max().unwrap_or(1.0);
+                Control::Numbers {
+                    length: setting.length.unwrap_or_default(),
+                    min,
+                    max,
+                    step: step_for(setting, min, max),
+                }
+            }
+            Some(item) => match item.table_fields() {
+                Some(fields) => Control::Rules {
+                    columns: fields.iter().map(column_for).collect(),
+                },
+                None => Control::Names,
+            },
+            None => Control::Names,
+        },
+        Kind::Other => Control::Text,
     }
 }
 
-pub fn coerce(kind: FieldKind, raw: &toml::Value) -> Option<toml::Value> {
-    match (kind, raw) {
-        (FieldKind::Bool, toml::Value::Boolean(_)) => Some(raw.clone()),
-        (FieldKind::Int, toml::Value::Integer(_)) => Some(raw.clone()),
-        (FieldKind::Int, toml::Value::Float(number)) => {
-            Some(toml::Value::Integer(number.trunc() as i64))
-        }
-        (FieldKind::Float, toml::Value::Float(_)) => Some(raw.clone()),
-        (FieldKind::Float, toml::Value::Integer(number)) => {
-            Some(toml::Value::Float(*number as f64))
-        }
-        (FieldKind::Text, toml::Value::String(_)) => Some(raw.clone()),
-        (FieldKind::List, toml::Value::Array(_)) => Some(raw.clone()),
-        (FieldKind::TextList, toml::Value::Array(items)) => {
-            items.iter().all(toml::Value::is_str).then(|| raw.clone())
-        }
-        _ => None,
-    }
+pub fn number_of(value: &Json) -> Option<f64> {
+    value.as_f64()
 }
 
-pub fn value_in(field: &dyn AnyField, values: &toml::Table) -> toml::Value {
-    field
-        .meta()
-        .raw_in(values)
-        .and_then(|raw| coerce(field.kind(), raw))
-        .unwrap_or_else(|| field.default_toml())
-}
-
-pub fn value_in_json(
-    field: &dyn AnyField,
-    values: &serde_json::Map<String, JsonValue>,
-) -> toml::Value {
-    field
-        .meta()
-        .raw_in_json(values)
-        .and_then(yp_config::values::json_to_toml)
-        .and_then(|raw| coerce(field.kind(), &raw))
-        .unwrap_or_else(|| field.default_toml())
-}
-
-pub fn to_json(value: &toml::Value) -> JsonValue {
-    match value {
-        toml::Value::Boolean(flag) => JsonValue::Bool(*flag),
-        toml::Value::Integer(number) => JsonValue::from(*number),
-        toml::Value::Float(number) => serde_json::Number::from_f64(*number)
-            .map(JsonValue::Number)
-            .unwrap_or(JsonValue::Null),
-        toml::Value::String(text) => JsonValue::String(text.clone()),
-        toml::Value::Datetime(datetime) => JsonValue::String(datetime.to_string()),
-        toml::Value::Array(items) => JsonValue::Array(items.iter().map(to_json).collect()),
-        toml::Value::Table(table) => JsonValue::Object(
-            table
-                .iter()
-                .map(|(key, value)| (key.clone(), to_json(value)))
-                .collect(),
-        ),
-    }
-}
-
-pub fn number_of(value: &toml::Value) -> Option<f64> {
-    match value {
-        toml::Value::Integer(number) => Some(*number as f64),
-        toml::Value::Float(number) => Some(*number),
-        _ => None,
-    }
-}
-
-pub fn bool_of(value: &toml::Value) -> bool {
+pub fn bool_of(value: &Json) -> bool {
     value.as_bool().unwrap_or(false)
 }
 
-pub fn text_of(value: &toml::Value) -> String {
+pub fn text_of(value: &Json) -> String {
     value.as_str().unwrap_or_default().to_owned()
 }
 
-pub fn values_equal(left: &toml::Value, right: &toml::Value) -> bool {
-    if let (Some(left), Some(right)) = (number_of(left), number_of(right)) {
-        return (left - right).abs() < EQUAL_TOLERANCE;
-    }
-    match (left, right) {
-        (toml::Value::Array(left), toml::Value::Array(right)) => {
-            left.len() == right.len()
-                && left
-                    .iter()
-                    .zip(right)
-                    .all(|(left, right)| values_equal(left, right))
-        }
-        (toml::Value::Table(left), toml::Value::Table(right)) => {
-            left.len() == right.len()
-                && left.iter().all(|(key, value)| {
-                    right
-                        .get(key)
-                        .is_some_and(|other| values_equal(value, other))
-                })
-        }
-        _ => left == right,
-    }
-}
-
-pub fn is_changed(field: &dyn AnyField, current: &toml::Value) -> bool {
-    !values_equal(current, &field.default_toml())
-}
-
-pub fn label_of(field: &dyn AnyField, strings: &'static Strings) -> SharedString {
-    SharedString::new_static(field.meta().label.text(strings))
-}
-
-pub fn tooltip_of(field: &dyn AnyField, strings: &'static Strings) -> Option<SharedString> {
-    field
-        .meta()
-        .tooltip
-        .map(|key| SharedString::new_static(key.text(strings)))
-}
-
-pub fn changed_in(
-    fields: &[FieldRef],
-    values: &toml::Table,
-    strings: &'static Strings,
-) -> Vec<SharedString> {
-    fields
-        .iter()
-        .filter(|field| is_changed(**field, &value_in(**field, values)))
-        .map(|field| label_of(*field, strings))
-        .collect()
-}
-
-pub fn changed_in_json(
-    fields: &[FieldRef],
-    values: &serde_json::Map<String, JsonValue>,
-    strings: &'static Strings,
-) -> Vec<SharedString> {
-    fields
-        .iter()
-        .filter(|field| is_changed(**field, &value_in_json(**field, values)))
-        .map(|field| label_of(*field, strings))
-        .collect()
+pub fn texts_of(value: &Json) -> Vec<String> {
+    value
+        .as_array()
+        .map(|items| items.iter().map(text_of).collect())
+        .unwrap_or_default()
 }
 
 pub fn snap_to_step(value: f64, min: f64, max: f64, step: f64) -> f64 {
@@ -202,31 +163,39 @@ pub fn snap_to_step(value: f64, min: f64, max: f64, step: f64) -> f64 {
     ((snapped * factor).round() / factor).clamp(min, max)
 }
 
-pub fn number_value(kind: FieldKind, value: f64) -> toml::Value {
+pub fn snap_zero_or_range(next: f64, current: f64, minimum: f64) -> f64 {
+    if next >= minimum || next <= 0.0 {
+        return next.max(0.0);
+    }
+    if current >= minimum { 0.0 } else { minimum }
+}
+
+pub fn number_value(kind: Kind, value: f64) -> Json {
     match kind {
-        FieldKind::Int => toml::Value::Integer(value.round() as i64),
-        _ => toml::Value::Float(value),
+        Kind::Int => Json::from(value.round() as i64),
+        _ => serde_json::Number::from_f64(value).map(Json::Number).unwrap_or(Json::Null),
     }
 }
 
-pub fn format_option(kind: FieldKind, value: f64) -> String {
+pub fn format_number(kind: Kind, value: f64) -> String {
     match kind {
-        FieldKind::Int => format!("{}", value.round() as i64),
-        _ => {
-            if value == value.round() {
-                format!("{value:.0}")
-            } else {
-                format!("{value}")
-            }
-        }
+        Kind::Int => format!("{}", value.round() as i64),
+        _ if value == value.round() => format!("{value:.0}"),
+        _ => format!("{value}"),
     }
 }
 
-pub fn field_id(scope: &str, field: &dyn AnyField) -> ElementId {
-    ElementId::Name(SharedString::from(format!(
-        "{scope}:{}",
-        field.meta().path().join(".")
-    )))
+pub fn decimals_for(setting: &Setting) -> usize {
+    if setting.kind == Kind::Int {
+        return 0;
+    }
+    let step = setting.step().unwrap_or(0.01);
+    let text = format!("{step}");
+    text.split_once('.').map_or(0, |(_, fraction)| fraction.len()).clamp(0, 4)
+}
+
+pub fn field_id(scope: &str, id: &str) -> ElementId {
+    ElementId::Name(SharedString::from(format!("{scope}:{id}")))
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
@@ -247,58 +216,52 @@ impl Marker {
     }
 }
 
-type OptionLabel = Rc<dyn Fn(f64) -> Option<SharedString>>;
 type Snap = Rc<dyn Fn(f64, f64) -> f64>;
 
 pub struct FieldRow {
     scope: &'static str,
-    field: FieldRef,
-    value: toml::Value,
+    setting: Setting,
+    value: Json,
     marker: Marker,
-    decimals: usize,
+    decimals: Option<usize>,
     disabled: bool,
-    options: Option<Vec<f64>>,
-    option_label: Option<OptionLabel>,
+    control: Option<Control>,
     value_label: Option<SharedString>,
     label: Option<SharedString>,
     description: Option<Option<SharedString>>,
+    add_label: Option<SharedString>,
+    empty_label: Option<SharedString>,
+    item_labels: Vec<SharedString>,
     snap: Option<Snap>,
-    id_suffix: Option<usize>,
     on_change: Option<ValueSink>,
 }
 
 yp_ui::impl_into_element!(FieldRow);
 
 impl FieldRow {
-    pub fn new(scope: &'static str, field: FieldRef, value: toml::Value) -> Self {
+    pub fn new(scope: &'static str, setting: &Setting, value: Json) -> Self {
         Self {
             scope,
-            field,
+            setting: setting.clone(),
             value,
-            marker: Marker::None,
-            decimals: 2,
+            marker: Marker::RestartOnly,
+            decimals: None,
             disabled: false,
-            options: None,
-            option_label: None,
+            control: None,
             value_label: None,
             label: None,
             description: None,
+            add_label: None,
+            empty_label: None,
+            item_labels: Vec::new(),
             snap: None,
-            id_suffix: None,
             on_change: None,
         }
     }
 
-    pub fn toml(scope: &'static str, field: FieldRef, values: &toml::Table) -> Self {
-        Self::new(scope, field, value_in(field, values))
-    }
-
-    pub fn json(
-        scope: &'static str,
-        field: FieldRef,
-        values: &serde_json::Map<String, JsonValue>,
-    ) -> Self {
-        Self::new(scope, field, value_in_json(field, values))
+    pub fn item_labels(mut self, labels: Vec<SharedString>) -> Self {
+        self.item_labels = labels;
+        self
     }
 
     pub fn marker(mut self, marker: Marker) -> Self {
@@ -307,7 +270,7 @@ impl FieldRow {
     }
 
     pub fn decimals(mut self, decimals: usize) -> Self {
-        self.decimals = decimals;
+        self.decimals = Some(decimals);
         self
     }
 
@@ -316,13 +279,8 @@ impl FieldRow {
         self
     }
 
-    pub fn options(mut self, options: Vec<f64>) -> Self {
-        self.options = Some(options);
-        self
-    }
-
-    pub fn option_label(mut self, label: impl Fn(f64) -> Option<SharedString> + 'static) -> Self {
-        self.option_label = Some(Rc::new(label));
+    pub fn control_override(mut self, control: Control) -> Self {
+        self.control = Some(control);
         self
     }
 
@@ -341,20 +299,22 @@ impl FieldRow {
         self
     }
 
+    pub fn add_label(mut self, label: impl Into<SharedString>) -> Self {
+        self.add_label = Some(label.into());
+        self
+    }
+
+    pub fn empty_label(mut self, label: impl Into<SharedString>) -> Self {
+        self.empty_label = Some(label.into());
+        self
+    }
+
     pub fn snap(mut self, snap: impl Fn(f64, f64) -> f64 + 'static) -> Self {
         self.snap = Some(Rc::new(snap));
         self
     }
 
-    pub fn id_suffix(mut self, suffix: usize) -> Self {
-        self.id_suffix = Some(suffix);
-        self
-    }
-
-    pub fn on_change(
-        mut self,
-        handler: impl Fn(toml::Value, &mut Window, &mut App) + 'static,
-    ) -> Self {
+    pub fn on_change(mut self, handler: impl Fn(Json, &mut Window, &mut App) + 'static) -> Self {
         self.on_change = Some(Rc::new(handler));
         self
     }
@@ -365,69 +325,59 @@ impl FieldRow {
     }
 
     pub fn control(&self) -> Control {
-        match &self.options {
-            Some(options) => Control::Choice {
-                options: options.clone(),
-            },
-            None => control_for(self.field),
-        }
+        self.control.clone().unwrap_or_else(|| control_for(&self.setting))
     }
 }
 
 impl RenderOnce for FieldRow {
-    fn render(self, window: &mut Window, cx: &mut App) -> impl IntoElement {
-        let strings = cx.t();
-        let sizes = window.sizes(cx);
+    fn render(self, window: &mut Window, _cx: &mut App) -> impl IntoElement {
+        let sizes = window.sizes(_cx);
         let control = self.control();
-        let field = self.field;
-        let meta = field.meta();
-        let kind = field.kind();
-        let base_id = field_id(self.scope, field);
-        let id = match self.id_suffix {
-            Some(suffix) => ElementId::from((base_id, suffix.to_string())),
-            None => base_id,
-        };
-        let label = self.label.unwrap_or_else(|| label_of(field, strings));
+        let setting = self.setting;
+        let kind = setting.kind;
+        let id = field_id(self.scope, &setting.id);
+        let label = self
+            .label
+            .unwrap_or_else(|| SharedString::from(setting.label.clone()));
         let description = match self.description {
             Some(description) => description,
-            None => tooltip_of(field, strings),
+            None => Some(SharedString::from(setting.description.clone())).filter(|text| !text.is_empty()),
         };
-        let apply = self.marker.kind(meta.restart_required);
+        let apply = self.marker.kind(setting.restart_required);
+        let decimals = self.decimals.unwrap_or_else(|| decimals_for(&setting));
         let disabled = self.disabled;
         let sink = self.on_change;
         match control {
             Control::Switch => SettingSwitch::new(id, label, bool_of(&self.value))
                 .apply_marker(apply)
                 .disabled(disabled)
-                .when_some(description, |this, description| {
-                    this.description(description)
-                })
+                .when_some(description, |this, description| this.description(description))
                 .when_some(sink, |this, sink| {
-                    this.on_change(move |value, window, cx| {
-                        sink(toml::Value::Boolean(*value), window, cx)
-                    })
+                    this.on_change(move |value, window, cx| sink(Json::Bool(*value), window, cx))
                 })
                 .into_any_element(),
-            Control::Slider { min, max, step } => {
+            Control::Slider { min, max, step, zero_below } => {
                 let current = number_of(&self.value).unwrap_or(min);
                 let snap = self.snap;
                 SettingSlider::new(id, label, current as f32)
                     .min(min as f32)
                     .max(max as f32)
                     .step(step as f32)
-                    .decimals(self.decimals)
+                    .decimals(decimals)
                     .apply_marker(apply)
                     .disabled(disabled)
                     .when_some(self.value_label, |this, label| this.value_label(label))
-                    .when_some(description, |this, description| {
-                        this.description(description)
-                    })
+                    .when_some(description, |this, description| this.description(description))
                     .when_some(sink, |this, sink| {
                         this.on_change(move |value, window, cx| {
                             let snapped = snap_to_step(f64::from(*value), min, max, step);
-                            let next = match &snap {
-                                Some(snap) => snap(snapped, current),
+                            let zeroed = match zero_below {
+                                Some(minimum) => snap_zero_or_range(snapped, current, minimum),
                                 None => snapped,
+                            };
+                            let next = match &snap {
+                                Some(snap) => snap(zeroed, current),
+                                None => zeroed,
                             };
                             if (next - current).abs() < EQUAL_TOLERANCE {
                                 return;
@@ -437,49 +387,37 @@ impl RenderOnce for FieldRow {
                     })
                     .into_any_element()
             }
-            Control::Choice { options } => {
-                let current = number_of(&self.value);
-                let option_label = self.option_label;
-                let label_for = move |option: f64| -> SharedString {
-                    option_label
-                        .as_ref()
-                        .and_then(|label| label(option))
-                        .unwrap_or_else(|| SharedString::from(format_option(kind, option)))
-                };
-                let selected_index = current.and_then(|current| {
-                    options
-                        .iter()
-                        .position(|option| (option - current).abs() < EQUAL_TOLERANCE)
-                });
-                let selected_label = match (selected_index, current) {
-                    (Some(index), _) => label_for(options[index]),
-                    (None, Some(current)) => SharedString::from(format_option(kind, current)),
-                    (None, None) => SharedString::default(),
-                };
-                let items: Vec<SelectItem<f64>> = options
+            Control::Select { options } => {
+                let selected_index = options
                     .iter()
-                    .map(|option| SelectItem::new(label_for(*option), *option))
+                    .position(|(value, _)| values_equal(value, &self.value));
+                let selected_label = match selected_index {
+                    Some(index) => options[index].1.clone(),
+                    None => match number_of(&self.value) {
+                        Some(number) => SharedString::from(format_number(kind, number)),
+                        None => SharedString::from(text_of(&self.value)),
+                    },
+                };
+                let items: Vec<SelectItem<Json>> = options
+                    .iter()
+                    .map(|(value, label)| SelectItem::new(label.clone(), value.clone()))
                     .collect();
                 SettingSelect::new(id, label, selected_label)
                     .items(items)
                     .selected_index(selected_index)
                     .apply_marker(apply)
                     .disabled(disabled)
-                    .when_some(description, |this, description| {
-                        this.description(description)
-                    })
+                    .when_some(description, |this, description| this.description(description))
                     .when_some(sink, |this, sink| {
-                        this.on_select(move |option: &f64, window, cx| {
-                            sink(number_value(kind, *option), window, cx)
-                        })
+                        this.on_select(move |value: &Json, window, cx| sink(value.clone(), window, cx))
                     })
                     .into_any_element()
             }
             Control::Number { min, max } => {
                 let number_kind = match kind {
-                    FieldKind::Int => NumberKind::Int,
+                    Kind::Int => NumberKind::Int,
                     _ => NumberKind::Float {
-                        decimals: self.decimals.max(1),
+                        decimals: decimals.max(1),
                     },
                 };
                 SettingNumber::new(id, label, number_of(&self.value).unwrap_or_default())
@@ -488,54 +426,88 @@ impl RenderOnce for FieldRow {
                     .max(max)
                     .apply_marker(apply)
                     .disabled(disabled)
-                    .when_some(description, |this, description| {
-                        this.description(description)
-                    })
+                    .when_some(description, |this, description| this.description(description))
                     .when_some(sink, |this, sink| {
-                        this.on_change(move |value, window, cx| {
-                            sink(number_value(kind, *value), window, cx)
-                        })
+                        this.on_change(move |value, window, cx| sink(number_value(kind, *value), window, cx))
                     })
                     .into_any_element()
             }
             Control::Text => {
-                let field_id = ElementId::from((id.clone(), "text"));
+                let text_id = ElementId::from((id.clone(), "text"));
                 SettingRow::new(id, label)
                     .description_opt(description)
                     .apply_marker(apply)
                     .disabled(disabled)
                     .control(
                         div().w(sizes.config_input_width * 2.).child(
-                            TextField::new(field_id, text_of(&self.value))
+                            TextField::new(text_id, text_of(&self.value))
                                 .disabled(disabled)
                                 .when_some(sink, |this, sink| {
                                     this.on_change(move |text, window, cx| {
-                                        sink(toml::Value::String(text.to_owned()), window, cx)
+                                        sink(Json::String(text.to_owned()), window, cx)
                                     })
                                 }),
                         ),
                     )
                     .into_any_element()
             }
-            Control::Rules => {
+            Control::Numbers { length, min, max, step } => {
+                let current: Vec<f64> = (0..length)
+                    .map(|index| {
+                        self.value
+                            .as_array()
+                            .and_then(|items| items.get(index))
+                            .and_then(Json::as_f64)
+                            .unwrap_or(1.0)
+                    })
+                    .collect();
+                let items = (0..length).map(|index| {
+                    let current = current.clone();
+                    let sink = sink.clone();
+                    let item_id = ElementId::from((id.clone(), index.to_string()));
+                    let item_label = self
+                        .item_labels
+                        .get(index)
+                        .cloned()
+                        .unwrap_or_else(|| SharedString::from(format!("{label} {}", index + 1)));
+                    let item_description = (index == 0).then(|| description.clone()).flatten();
+                    SettingSlider::new(item_id, item_label, current[index] as f32)
+                        .min(min as f32)
+                        .max(max as f32)
+                        .step(step as f32)
+                        .decimals(decimals)
+                        .apply_marker(apply)
+                        .disabled(disabled)
+                        .when_some(item_description, |this, description| this.description(description))
+                        .when_some(sink, |this, sink| {
+                            this.on_change(move |value, window, cx| {
+                                let mut next = current.clone();
+                                next[index] = snap_to_step(f64::from(*value), min, max, step);
+                                let list = next.into_iter().map(|value| number_value(Kind::Float, value)).collect();
+                                sink(Json::Array(list), window, cx)
+                            })
+                        })
+                        .into_any_element()
+                });
+                div().flex().flex_col().w_full().children(items).into_any_element()
+            }
+            Control::Rules { columns } => {
                 let rows = self.value.as_array().cloned().unwrap_or_default();
-                let columns = infer_columns(&rows);
+                let columns = if columns.is_empty() { infer_columns(&rows) } else { columns };
                 RulesEditor::new(id, label, rows)
                     .columns(columns)
                     .description(description)
-                    .apply_marker(Marker::Always.kind(meta.restart_required))
+                    .apply_marker(apply)
                     .when_some(sink, |this, sink| this.sink(sink))
                     .into_any_element()
             }
             Control::Names => {
-                let names = self
-                    .value
-                    .as_array()
-                    .map(|items| items.iter().map(text_of).collect())
-                    .unwrap_or_default();
+                let names = texts_of(&self.value);
                 NameListEditor::new(id, label, names)
                     .description(description)
-                    .apply_marker(Marker::Always.kind(meta.restart_required))
+                    .apply_marker(apply)
+                    .when_some(self.add_label, |this, label| this.add_label(label))
+                    .when_some(self.empty_label, |this, label| this.empty_label(label))
                     .when_some(sink, |this, sink| this.sink(sink))
                     .into_any_element()
             }
@@ -545,202 +517,60 @@ impl RenderOnce for FieldRow {
 
 #[cfg(test)]
 mod tests {
-    use yp_config::fields::{bindings, content, lodmod, nams, overlay, texture_injection};
-    use yp_i18n::Locale;
+    use serde_json::json;
 
     use super::*;
 
-    fn table(text: &str) -> toml::Table {
-        text.parse::<toml::Table>().unwrap()
+    fn setting(json: Json) -> Setting {
+        serde_json::from_value(json).unwrap()
     }
 
-    #[test]
-    fn every_registry_field_maps_to_a_control_that_matches_its_kind() {
-        let mut seen = std::collections::HashSet::new();
-        for field in yp_config::fields::all() {
-            let control = control_for(field);
-            let meta = field.meta();
-            match field.kind() {
-                FieldKind::Bool => assert_eq!(control, Control::Switch, "{}", meta.key),
-                FieldKind::Int | FieldKind::Float => match &control {
-                    Control::Choice { options } => assert_eq!(options, meta.allowed),
-                    Control::Slider { min, max, step } => {
-                        assert_eq!(Some(*min), meta.min);
-                        assert_eq!(Some(*max), meta.max);
-                        assert_eq!(Some(*step), meta.step);
-                        assert!(meta.allowed.is_empty());
-                    }
-                    Control::Number { min, max } => {
-                        assert_eq!((*min, *max), (meta.min, meta.max));
-                        assert!(meta.step.is_none());
-                    }
-                    other => panic!("{} got {other:?}", meta.key),
-                },
-                FieldKind::Text => assert_eq!(control, Control::Text),
-                FieldKind::List => assert_eq!(control, Control::Rules),
-                FieldKind::TextList => assert_eq!(control, Control::Names),
-            }
-            seen.insert(std::mem::discriminant(&control));
+    fn values(control: &Control) -> Vec<Json> {
+        match control {
+            Control::Select { options } => options.iter().map(|(value, _)| value.clone()).collect(),
+            other => panic!("expected a dropdown, got {other:?}"),
         }
-        assert_eq!(seen.len(), 7);
     }
 
     #[test]
-    fn representative_fields_get_the_expected_controls() {
-        assert_eq!(control_for(&nams::VALIDATE_SCRIPTS), Control::Switch);
-        assert_eq!(
-            control_for(&nams::SENSITIVITY),
-            Control::Slider {
-                min: 0.25,
-                max: 10.,
-                step: 0.25
-            }
-        );
-        assert_eq!(
-            control_for(&lodmod::SHADOW_RESOLUTION),
-            Control::Choice {
-                options: vec![512., 1024., 2048., 4096., 8192.]
-            }
-        );
-        assert_eq!(
-            control_for(&lodmod::FPS_LIMIT),
-            Control::Number {
-                min: Some(0.),
-                max: Some(1000.)
-            }
-        );
-        assert_eq!(
-            control_for(&overlay::cheats::DAMAGE_MULTIPLIER),
-            Control::Number {
-                min: None,
-                max: None
-            }
-        );
-        assert_eq!(control_for(&bindings::STANDARD_JUMP), Control::Text);
-        assert_eq!(control_for(&lodmod::HIGH_GRIDS_ROOM_RINGS), Control::Rules);
-        assert_eq!(control_for(&texture_injection::LOAD_ORDER), Control::Names);
+    fn presets_without_a_step_are_dropdowns() {
+        let lod = setting(json!({ "id": "lodmod.lod_multiplier", "type": "float", "default": 0.0, "range": { "min": 0.0, "max": 10.0 }, "ui": { "presets": [{ "label": "Best quality", "value": 0.0 }, { "label": "Performance", "value": 0.75 }, { "label": "Vanilla", "value": 1.0 }, { "label": "Far", "value": 10.0 }] } }));
+        assert_eq!(values(&control_for(&lod)), vec![json!(0.0), json!(0.75), json!(1.0), json!(10.0)]);
+        let rings = setting(json!({ "id": "lodmod.high_grids.rings", "type": "int", "default": 4, "absent_value": 1, "range": { "min": 1, "max": 4 }, "type_range": { "min": 0, "max": 18446744073709551615u64 }, "ui": { "presets": [{ "label": "7 grids (vanilla)", "value": 1 }, { "label": "19 grids", "value": 2 }, { "label": "37 grids", "value": 3 }, { "label": "61 grids", "value": 4 }] } }));
+        assert_eq!(values(&control_for(&rings)), vec![json!(1), json!(2), json!(3), json!(4)]);
+        let drop = setting(json!({ "id": "lodmod.bloom_drop_coarse_levels", "type": "int", "default": 0, "range": { "min": 0, "max": 2 }, "ui": { "presets": [{ "label": "Vanilla", "value": 0 }, { "label": "Drop the widest", "value": 1 }, { "label": "Drop the two widest", "value": 2 }] } }));
+        assert_eq!(values(&control_for(&drop)).len(), 3);
+        let gi = setting(json!({ "id": "lodmod.gi_workgroup_size", "type": "int", "default": 128, "ui": { "presets": [{ "label": "16", "value": 16 }, { "label": "128 (vanilla)", "value": 128 }] } }));
+        assert_eq!(values(&control_for(&gi)), vec![json!(16), json!(128)]);
     }
 
     #[test]
-    fn values_come_from_the_file_or_fall_back_to_the_default() {
-        let values = table(
-            "validate_scripts = true\n[mouse]\nsensitivity = 3\n[content]\ncustom_items = \"x\"\n",
-        );
-        assert_eq!(
-            value_in(&nams::VALIDATE_SCRIPTS, &values),
-            toml::Value::Boolean(true)
-        );
-        assert_eq!(
-            value_in(&nams::SENSITIVITY, &values),
-            toml::Value::Float(3.)
-        );
-        assert_eq!(
-            value_in(&content::CUSTOM_ITEMS, &values),
-            toml::Value::Boolean(true)
-        );
-        assert_eq!(
-            value_in(&nams::FIX_WIND_TIMER_BUG, &values),
-            toml::Value::Boolean(true)
-        );
-        let lod = table("bloom_reference_height = 900.7\n");
-        assert_eq!(
-            value_in(&lodmod::BLOOM_REFERENCE_HEIGHT, &lod),
-            toml::Value::Integer(900)
-        );
+    fn a_range_without_a_step_is_a_number_field() {
+        let fps = setting(json!({ "id": "lodmod.fps_limit", "type": "int", "default": 0, "range": { "min": 0, "max": 1000 }, "type_range": { "min": 0, "max": 4294967295u64 } }));
+        assert_eq!(control_for(&fps), Control::Number { min: Some(0.0), max: Some(1000.0) });
     }
 
     #[test]
-    fn json_sources_follow_the_section_path() {
-        let settings: serde_json::Map<String, JsonValue> = serde_json::from_str(
-            r#"{"main":{"yorha_protocol":"F2"},"yorha_protocol":{"free_cam":"K"},"damageMultiplier":2}"#,
-        )
-        .unwrap();
+    fn a_stepped_range_is_a_slider_even_with_presets() {
+        let bloom = setting(json!({ "id": "lodmod.bloom_reference_height", "type": "int", "default": 0, "type_range": { "min": 0, "max": 4294967295u64 }, "zero_or_range": { "min": 360, "max": 4320 }, "ui": { "step": 20, "presets": [{ "label": "Vanilla", "value": 0 }, { "label": "2017 footprint", "value": 900 }] } }));
         assert_eq!(
-            text_of(&value_in_json(&overlay::keybinds::OPEN_WORKSPACE, &settings)),
-            "F2"
+            control_for(&bloom),
+            Control::Slider { min: 0.0, max: 4320.0, step: 20.0, zero_below: Some(360.0) }
         );
-        assert_eq!(
-            text_of(&value_in_json(&overlay::keybinds::FREE_CAM, &settings)),
-            "K"
-        );
-        assert_eq!(
-            text_of(&value_in_json(&overlay::keybinds::DEV_MODE, &settings)),
-            "Insert"
-        );
-        assert_eq!(
-            value_in_json(&overlay::cheats::DAMAGE_MULTIPLIER, &settings),
-            toml::Value::Float(2.)
-        );
-        assert_eq!(to_json(&toml::Value::Float(2.5)), serde_json::json!(2.5));
-        assert_eq!(to_json(&toml::Value::Boolean(true)), JsonValue::Bool(true));
+        let scale = setting(json!({ "id": "lodmod.render_scale", "type": "float", "default": 1.0, "range": { "min": 0.5, "max": 4.0 }, "ui": { "step": 0.25 } }));
+        assert_eq!(control_for(&scale), Control::Slider { min: 0.5, max: 4.0, step: 0.25, zero_below: None });
     }
 
     #[test]
-    fn changed_labels_list_only_fields_that_left_their_default() {
-        let strings = Strings::for_locale(Locale::En);
-        let values = table("validate_scripts = true\nfix_wind_timer_bug = true\n");
-        let fields: [FieldRef; 3] = [
-            &nams::VALIDATE_SCRIPTS,
-            &nams::FIX_WIND_TIMER_BUG,
-            &nams::VALIDATE_MODEL_DATA,
-        ];
-        let labels = changed_in(&fields, &values, strings);
-        assert_eq!(labels, vec![label_of(&nams::VALIDATE_SCRIPTS, strings)]);
-        assert!(values_equal(
-            &toml::Value::Float(1.0),
-            &toml::Value::Integer(1)
-        ));
-        assert!(values_equal(
-            &toml::Value::Float(0.1 + 0.2),
-            &toml::Value::Float(0.3)
-        ));
-        assert!(!values_equal(
-            &toml::Value::Array(vec![toml::Value::Integer(1)]),
-            &toml::Value::Array(Vec::new())
-        ));
-    }
-
-    #[test]
-    fn slider_values_snap_cleanly_and_keep_the_field_type() {
-        assert_eq!(snap_to_step(0.30000001192, 0., 1., 0.05), 0.3);
-        assert_eq!(snap_to_step(12.2, 0.25, 10., 0.25), 10.);
-        assert_eq!(snap_to_step(0.0004999, 0.0002, 0.01, 0.0001), 0.0005);
-        assert_eq!(
-            number_value(FieldKind::Int, 899.6),
-            toml::Value::Integer(900)
-        );
-        assert_eq!(
-            number_value(FieldKind::Float, 0.75),
-            toml::Value::Float(0.75)
-        );
-        assert_eq!(format_option(FieldKind::Int, 4096.), "4096");
-        assert_eq!(format_option(FieldKind::Float, 0.75), "0.75");
-        assert_eq!(format_option(FieldKind::Float, 10.), "10");
-    }
-
-    #[test]
-    fn markers_follow_the_page_policy() {
-        assert_eq!(Marker::None.kind(true), None);
-        assert_eq!(Marker::Always.kind(false), Some(ApplyKind::Live));
-        assert_eq!(Marker::Always.kind(true), Some(ApplyKind::Restart));
-        assert_eq!(Marker::RestartOnly.kind(false), None);
-        assert_eq!(Marker::RestartOnly.kind(true), Some(ApplyKind::Restart));
-    }
-
-    #[test]
-    fn choice_override_replaces_the_registry_control() {
-        let row = FieldRow::new(
-            "t",
-            &texture_injection::VRAM_BUDGET_MB,
-            toml::Value::Integer(0),
-        );
-        assert!(matches!(row.control(), Control::Number { .. }));
-        let row = row.options(vec![0., 1024.]);
-        assert_eq!(
-            row.control(),
-            Control::Choice {
-                options: vec![0., 1024.]
-            }
-        );
+    fn grid_rule_columns_start_from_usable_values() {
+        let blocked = setting(json!({ "id": "lodmod.high_grids.blocked_from_grid", "type": "list", "default": [], "items": { "type": "table", "fields": [{ "key": "from", "required": true, "type": "int" }, { "key": "grid", "required": true, "type": "int" }] } }));
+        let Control::Rules { columns } = control_for(&blocked) else { panic!("expected rules") };
+        assert_eq!(columns[0].fallback, json!(0x1517));
+        assert_eq!(columns[1].fallback, json!(0x1121));
+        let hidden = setting(json!({ "id": "lodmod.high_grids.hidden_meshes", "type": "list", "default": [], "items": { "type": "table", "fields": [{ "key": "mesh", "required": false, "type": "string" }, { "key": "from_rings", "required": false, "type": "int" }, { "key": "grid", "required": false, "type": "int" }] } }));
+        let Control::Rules { columns } = control_for(&hidden) else { panic!("expected rules") };
+        assert_eq!(columns[1].kind, ColumnKind::Choice { options: vec![2, 3, 4], hex: false });
+        assert_eq!(columns[1].fallback, json!(2));
+        assert_eq!(columns[2].fallback, json!(0));
     }
 }

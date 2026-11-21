@@ -1,8 +1,9 @@
 mod support;
 
-use support::GameDir;
+use serde_json::json;
+use support::{FakeCli, GameDir};
 use yp_config::legacy::lodmod_ini::parse_ini_value;
-use yp_config::legacy::{detect_lodmod_ini, migrate_lodmod_ini, parse_lodmod_ini};
+use yp_config::legacy::{detect_lodmod_ini, import_lodmod_ini, parse_lodmod_ini};
 
 const LODMOD_INI: &str = "[LodMod]
 ; Automata-LodMod settings
@@ -34,22 +35,22 @@ fn only_known_keys_are_parsed_and_typed() {
             "ShadowFilterStrengthBias",
         ]
     );
-    assert_eq!(values["LODMultiplier"], toml::Value::Integer(0));
-    assert_eq!(values["ShadowResolution"], toml::Value::Integer(8192));
-    assert_eq!(values["ShadowDistanceMultiplier"], toml::Value::Float(2.5));
-    assert_eq!(values["ShadowModelHQ"], toml::Value::Boolean(true));
-    assert_eq!(values["DisableVignette"], toml::Value::Boolean(false));
-    assert_eq!(values["ShadowFilterStrengthBias"], toml::Value::Float(-0.5));
+    assert_eq!(values["LODMultiplier"], json!(0));
+    assert_eq!(values["ShadowResolution"], json!(8192));
+    assert_eq!(values["ShadowDistanceMultiplier"], json!(2.5));
+    assert_eq!(values["ShadowModelHQ"], json!(true));
+    assert_eq!(values["DisableVignette"], json!(false));
+    assert_eq!(values["ShadowFilterStrengthBias"], json!(-0.5));
 }
 
 #[test]
 fn ini_values_follow_dart_number_rules() {
-    assert_eq!(parse_ini_value("0x10"), toml::Value::Integer(16));
-    assert_eq!(parse_ini_value("-7"), toml::Value::Integer(-7));
-    assert_eq!(parse_ini_value("1.0"), toml::Value::Float(1.0));
-    assert_eq!(parse_ini_value("1e3"), toml::Value::Float(1000.0));
-    assert_eq!(parse_ini_value("high"), toml::Value::String("high".into()));
-    assert_eq!(parse_ini_value("TRUE"), toml::Value::Boolean(true));
+    assert_eq!(parse_ini_value("0x10"), json!(16));
+    assert_eq!(parse_ini_value("-7"), json!(-7));
+    assert_eq!(parse_ini_value("1.0"), json!(1.0));
+    assert_eq!(parse_ini_value("1e3"), json!(1000.0));
+    assert_eq!(parse_ini_value("high"), json!("high"));
+    assert_eq!(parse_ini_value("TRUE"), json!(true));
 }
 
 #[test]
@@ -63,32 +64,29 @@ fn detection_needs_a_file_with_known_keys() {
 }
 
 #[test]
-fn migration_enables_lodmod_and_copies_mapped_values() {
+fn import_enables_lodmod_and_sets_the_mapped_settings() {
     let game = GameDir::empty();
     std::fs::write(game.root().join("LodMod.ini"), LODMOD_INI).unwrap();
     let values = detect_lodmod_ini(&game.game).unwrap().unwrap();
-    assert!(
-        !migrate_lodmod_ini(&game.game, &values).unwrap(),
-        "no lodmod.toml yet"
-    );
+    let cli = FakeCli::with(&[("lodmod.enabled", json!(false))]);
 
-    game.ensure();
-    assert!(migrate_lodmod_ini(&game.game, &values).unwrap());
-    let raw = game.read_nams_file("lodmod.toml");
-    let config = support::parse(&raw);
-    assert_eq!(config["enabled"].as_bool(), Some(true));
-    assert_eq!(config["lod_multiplier"].as_integer(), Some(0));
-    assert_eq!(config["shadow_resolution"].as_integer(), Some(8192));
-    assert_eq!(config["shadow_distance_multiplier"].as_float(), Some(2.5));
-    assert_eq!(config["shadow_model_hq"].as_bool(), Some(true));
-    assert_eq!(config["shadow_filter_strength_bias"].as_float(), Some(-0.5));
-    assert!(
-        raw.contains("# Shadow texture size."),
-        "comments survive the import"
-    );
+    assert!(import_lodmod_ini(&cli, &values).unwrap());
+    assert_eq!(cli.value("lodmod.enabled"), Some(json!(true)));
+    assert_eq!(cli.value("lodmod.lod_multiplier"), Some(json!(0)));
+    assert_eq!(cli.value("lodmod.shadow_resolution"), Some(json!(8192)));
+    assert_eq!(cli.value("lodmod.shadow_distance_multiplier"), Some(json!(2.5)));
+    assert_eq!(cli.value("lodmod.shadow_model_hq"), Some(json!(true)));
+    assert_eq!(cli.value("lodmod.shadow_filter_strength_bias"), Some(json!(-0.5)));
 
-    assert!(
-        !migrate_lodmod_ini(&game.game, &values).unwrap(),
-        "an enabled LodMod is left alone"
-    );
+    assert!(!import_lodmod_ini(&cli, &values).unwrap(), "an enabled LodMod is left alone");
+    assert_eq!(cli.set_calls(), 1);
+}
+
+#[test]
+fn a_value_nams_rejects_is_left_out_and_the_rest_is_imported() {
+    let values = parse_lodmod_ini(LODMOD_INI);
+    let cli = FakeCli::default().rejecting(&["lodmod.shadow_resolution"]);
+    assert!(import_lodmod_ini(&cli, &values).unwrap());
+    assert_eq!(cli.value("lodmod.shadow_resolution"), None);
+    assert_eq!(cli.value("lodmod.shadow_model_hq"), Some(json!(true)));
 }

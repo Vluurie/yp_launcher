@@ -4,6 +4,7 @@ use yp_core::{CancelToken, GamePaths, Os};
 use yp_cutscenes::CutsceneDetection;
 use yp_health::notifications::{self, DetectionEnv, NotificationCategory, NotificationKind};
 use yp_host::game_probe::{self, ExeVariant};
+use yp_host::nams_cli::HostNamsCli;
 use yp_i18n::{Locale, Msg};
 use yp_thirdparty::ReShadeStatus;
 
@@ -100,10 +101,17 @@ pub(crate) fn notice_for(found: NotificationKind) -> Notice {
 }
 
 pub(crate) fn detect_notices(env: &AppEnv, game: &GamePaths, force: bool) -> Option<Vec<Notice>> {
+    let cli = HostNamsCli {
+        platform: env.platform_adapter(),
+        runner: env.runner.clone(),
+        paths: env.paths.clone(),
+        game: game.clone(),
+    };
     let detection = DetectionEnv {
         settings: &env.settings,
         paths: &env.paths,
         host: &env.host,
+        cli: Some(&cli),
     };
     let found = if force {
         Some(notifications::refresh_detections(&detection, game))
@@ -117,12 +125,15 @@ pub(crate) fn platform_notice(env: &AppEnv) -> Option<Notice> {
     notifications::platform_support_notice(env.platform.as_ref()).map(notice_for)
 }
 
+const LODMOD_ENABLED_KEY: &str = "enabled";
+
 fn lodmod_enabled(game: &GamePaths) -> bool {
     yp_core::fs::read_text_opt(&game.lodmod_toml())
         .ok()
         .flatten()
         .and_then(|raw| yp_core::toml_io::parse_values(&raw).ok())
-        .is_some_and(|values| yp_config::fields::lodmod::ENABLED.value_in(&values))
+        .and_then(|values| values.get(LODMOD_ENABLED_KEY).and_then(toml::Value::as_bool))
+        .unwrap_or(false)
 }
 
 fn entry_names(dir: &Path) -> Vec<(String, bool)> {

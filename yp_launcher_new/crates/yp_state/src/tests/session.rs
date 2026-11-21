@@ -207,11 +207,10 @@ fn launching_moves_through_loading_running_and_stopped(cx: &mut TestAppContext) 
             .args_lossy()
             .contains(&yp_core::consts::ARG_VANILLA.to_owned())
     );
-    let overlay: serde_json::Value = serde_json::from_str(
-        &std::fs::read_to_string(yp_config::overlay::settings_path(&harness.game)).unwrap(),
-    )
-    .unwrap();
-    assert_eq!(overlay["overlayLanguage"], "de");
+    assert_eq!(
+        harness.cli.value(crate::config::OVERLAY_LANGUAGE_ID),
+        Some(serde_json::json!("de"))
+    );
 }
 
 #[gpui::test]
@@ -367,13 +366,13 @@ fn launch_warnings_show_when_loading_is_switched_off(cx: &mut TestAppContext) {
     ));
     let stores = harness.start(cx);
     stores.config.update(cx, |config, cx| {
-        config.update_nams(
-            yp_config::fields::nams::DISABLE_PLUGIN_LOADING.key(),
-            toml::Value::Boolean(true),
-            None,
+        config.set_now(
+            "nams.disable_plugin_loading",
+            serde_json::json!(true),
             cx,
         );
     });
+    cx.run_until_parked();
     assert!(
         !stores
             .launch_options

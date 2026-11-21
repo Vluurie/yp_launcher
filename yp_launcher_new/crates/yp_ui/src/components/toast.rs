@@ -1,4 +1,5 @@
 use std::collections::VecDeque;
+use std::rc::Rc;
 
 use gpui::{
     Anchor, Animation, AnimationExt, App, Context, DismissEvent, ElementId, Entity, EventEmitter,
@@ -51,12 +52,28 @@ impl From<u64> for ToastId {
     }
 }
 
+#[derive(Clone)]
+pub struct ToastAction(Rc<dyn Fn(&mut Window, &mut App)>);
+
+impl std::fmt::Debug for ToastAction {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str("ToastAction")
+    }
+}
+
+impl PartialEq for ToastAction {
+    fn eq(&self, other: &Self) -> bool {
+        Rc::ptr_eq(&self.0, &other.0)
+    }
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub struct Toast {
     pub id: Option<ToastId>,
     pub message: SharedString,
     pub severity: Severity,
     pub icon: Option<IconName>,
+    pub on_click: Option<ToastAction>,
 }
 
 impl Toast {
@@ -66,7 +83,13 @@ impl Toast {
             message: message.into(),
             severity: Severity::Accent,
             icon: None,
+            on_click: None,
         }
+    }
+
+    pub fn on_click(mut self, handler: impl Fn(&mut Window, &mut App) + 'static) -> Self {
+        self.on_click = Some(ToastAction(Rc::new(handler)));
+        self
     }
 
     pub fn info(message: impl Into<SharedString>) -> Self {
@@ -307,6 +330,7 @@ impl Render for ToastStack {
                 let leaving = entry.leaving;
                 let hover_id = entry.id.clone();
                 let click_id = entry.id.clone();
+                let action = entry.toast.on_click.clone();
                 let hover_border = status.fg.opacity(theme.alpha.vignette);
                 let phase = if leaving { "out" } else { "in" };
                 h_flex()
@@ -327,8 +351,11 @@ impl Render for ToastStack {
                     .on_hover(cx.listener(move |this, hovered: &bool, _, cx| {
                         this.set_hovered(&hover_id, *hovered, cx);
                     }))
-                    .on_click(cx.listener(move |this, _, _, cx| {
+                    .on_click(cx.listener(move |this, _, window, cx| {
                         cx.stop_propagation();
+                        if let Some(action) = &action {
+                            (action.0)(window, cx);
+                        }
                         this.dismiss(&click_id, cx);
                     }))
                     .child(

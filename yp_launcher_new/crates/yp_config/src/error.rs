@@ -1,15 +1,49 @@
-use std::path::PathBuf;
+use crate::reports::Problem;
 
-use yp_core::toml_io::TomlError;
-
-#[derive(Debug, thiserror::Error)]
+#[derive(Debug, Clone, PartialEq, thiserror::Error)]
 pub enum ConfigError {
+    #[error("NAMS cannot be started: {0}")]
+    Unavailable(String),
+    #[error("NAMS did not answer in time")]
+    TimedOut,
+    #[error("NAMS gave no readable answer (exit code {exit_code:?}): {detail}")]
+    Output { exit_code: Option<i32>, detail: String },
+    #[error("{message}")]
+    Nams {
+        code: String,
+        message: String,
+        exit_code: Option<i32>,
+        problems: Vec<Problem>,
+    },
     #[error(transparent)]
-    Core(#[from] yp_core::Error),
-    #[error("{} is not valid TOML: {error}", path.display())]
-    Toml { path: PathBuf, error: TomlError },
-    #[error("{} does not hold a JSON object", path.display())]
-    SettingsNotObject { path: PathBuf },
+    Io(#[from] IoFailure),
+}
+
+#[derive(Debug, Clone, PartialEq, thiserror::Error)]
+#[error("{0}")]
+pub struct IoFailure(pub String);
+
+impl From<yp_core::Error> for ConfigError {
+    fn from(error: yp_core::Error) -> Self {
+        ConfigError::Io(IoFailure(error.to_string()))
+    }
+}
+
+impl ConfigError {
+    pub fn problems(&self) -> &[Problem] {
+        match self {
+            ConfigError::Nams { problems, .. } => problems,
+            _ => &[],
+        }
+    }
+
+    pub fn rejected_ids(&self) -> Vec<String> {
+        self.problems()
+            .iter()
+            .filter(|problem| problem.is_error())
+            .filter_map(|problem| problem.id.clone())
+            .collect()
+    }
 }
 
 pub type Result<T, E = ConfigError> = std::result::Result<T, E>;

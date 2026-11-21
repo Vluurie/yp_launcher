@@ -19,6 +19,8 @@ pub enum FailureKind {
     LauncherDirNotWritable { dir: PathBuf },
     ExeNotFound { game_dir: PathBuf, exe: PathBuf },
     GameDirNotWritable { game_dir: PathBuf, nams_dir: PathBuf },
+    NamsDllMissing { dll: PathBuf },
+    NamsDllCopyFailed { dll: PathBuf, target: PathBuf, detail: String },
     Unavailable(LaunchUnavailable),
     Reported(NamsReport),
     Exited { code: i32 },

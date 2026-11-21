@@ -11,7 +11,8 @@ use gpui::{
     WindowOptions, div, point, prelude::*, px, size,
 };
 use testing::Sandbox;
-use yp_config::fields::bindings;
+use serde_json::{Value as Json, json};
+use yp_config::cli::NamsCli;
 use yp_core::ProcessOutput;
 use yp_core::testing::FakeRunner;
 use yp_i18n::Locale;
@@ -332,64 +333,55 @@ fn apply_state(
     let stores = cx.stores().clone();
     if options.dirty {
         stores.config.update(cx, |store, cx| {
-            store.update_nams("validate_scripts", toml::Value::Boolean(true), None, cx)
+            store.set("nams.validate_scripts", json!(true), cx)
         });
     }
     if options.lodmod_on {
         stores.config.update(cx, |store, cx| {
-            store.update_lodmod_live("enabled", toml::Value::Boolean(true), None, cx);
-            store.update_lodmod_live(
-                "enabled",
-                toml::Value::Boolean(true),
-                Some("high_grids"),
+            store.set_many(
+                vec![
+                    ("lodmod.enabled".to_owned(), json!(true)),
+                    ("lodmod.high_grids.enabled".to_owned(), json!(true)),
+                    ("lodmod.msaa_per_pixel".to_owned(), json!(true)),
+                ],
                 cx,
             );
-            store.update_lodmod_live("msaa_per_pixel", toml::Value::Boolean(true), None, cx);
-            store.update_lodmod_live("shadow_cascades", toml::Value::Integer(8), None, cx);
         });
     }
     if options.bindings {
         stores.config.update(cx, |store, cx| {
-            let section = bindings::SECTION;
-            for (key, value) in [
+            let mut assignments: Vec<(String, Json)> = [
                 ("standard_jump", "SPACE"),
                 ("standard_fire", "SPACE"),
                 ("standard_light_attack", "CONTROLLER_X"),
                 ("standard_heavy_attack", "SHIFT+MOUSE2"),
                 ("standard_move_forward", "W"),
-            ] {
-                store.update_naiom(key, toml::Value::String(value.to_owned()), section, cx);
-            }
-            store.update_naiom(
-                "misc_custom_cursor_menu",
-                toml::Value::String(SAMPLE_CURSOR.to_owned()),
-                "mouse",
-                cx,
-            );
-            store.update_naiom("misc_open_debug_menu", toml::Value::Integer(0x70), "mouse", cx);
-            store.update_naiom(
-                "movement_disable_tap_evade",
-                toml::Value::Boolean(true),
-                "mouse",
-                cx,
-            );
+            ]
+            .into_iter()
+            .map(|(key, value)| (format!("naiom.bindings.{key}"), json!(value)))
+            .collect();
+            assignments.push(("naiom.misc_custom_cursor_menu".to_owned(), json!(SAMPLE_CURSOR)));
+            assignments.push(("naiom.misc_open_debug_menu".to_owned(), json!(0x70)));
+            assignments.push(("naiom.movement_disable_tap_evade".to_owned(), json!(true)));
+            store.set_many(assignments, cx);
         });
     }
     if options.input_off {
         stores.config.update(cx, |store, cx| {
-            store.update_nams_now("disable_input_features", toml::Value::Boolean(true), None, cx)
+            store.set_now("nams.disable_input_features", json!(true), cx)
         });
     }
     if let Some(key) = options.capture.as_deref()
         && let Ok(tab) = view.clone().downcast::<NaiomTab>()
     {
-        let known = bindings::ALL
-            .iter()
-            .map(|field| field.key())
-            .chain([yp_config::fields::nams::MISC_OPEN_DEBUG_MENU.key()])
-            .find(|candidate| *candidate == key);
-        if let Some(key) = known {
-            tab.update(cx, |tab, cx| tab.start_capture(key, window, cx));
+        let known = stores
+            .config
+            .read(cx)
+            .setting(key)
+            .filter(|setting| setting.is_key_binding() || setting.is_virtual_key())
+            .map(|setting| SharedString::from(setting.id.clone()));
+        if let Some(id) = known {
+            tab.update(cx, |tab, cx| tab.start_capture(id, window, cx));
         }
     }
     if options.reset {
@@ -442,6 +434,10 @@ fn main() {
     gpui_platform::application().with_assets(assets).run(move |cx| {
         yp_ui::init(cx);
         yp_state::init_with(sandbox.env.clone(), cx);
+        let cli = sandbox.cli.clone();
+        let factory: yp_state::CliFactory = std::sync::Arc::new(move |_| cli.clone() as std::sync::Arc<dyn NamsCli>);
+        let config = cx.stores().config.clone();
+        config.update(cx, |config, cx| config.set_cli_factory(factory, cx));
         yp_state::register_default_handlers(cx);
         yp_settings_ui::init(cx);
         yp_ui::theme::set_theme(options.theme, cx);

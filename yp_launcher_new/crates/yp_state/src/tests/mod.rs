@@ -12,6 +12,8 @@ use std::time::Duration;
 
 use gpui::TestAppContext;
 use tempfile::TempDir;
+use yp_config::NamsCli;
+use yp_config::testing::FakeNamsCli;
 use yp_core::testing::FakeRunner;
 use yp_core::{
     AppPaths, CancelToken, GamePaths, HostEnv, LaunchUnavailable, NamsCommandRequest,
@@ -20,7 +22,7 @@ use yp_core::{
 use yp_host::HostPlatform;
 use yp_host::launch::command::{LaunchCommand, build_native};
 
-use crate::{AppEnv, StateExt, Stores};
+use crate::{AppEnv, CliFactory, StateExt, Stores};
 
 pub(crate) struct TestPlatform {
     host: HostEnv,
@@ -125,6 +127,7 @@ pub(crate) struct Harness {
     pub env: AppEnv,
     pub runner: FakeRunner,
     pub platform: Arc<TestPlatform>,
+    pub cli: Arc<FakeNamsCli>,
 }
 
 impl Harness {
@@ -133,6 +136,14 @@ impl Harness {
     }
 
     pub fn with_runner(runner: FakeRunner) -> Self {
+        Self::with(runner, FakeNamsCli::default())
+    }
+
+    pub fn with_cli(cli: FakeNamsCli) -> Self {
+        Self::with(FakeRunner::new(), cli)
+    }
+
+    pub fn with(runner: FakeRunner, cli: FakeNamsCli) -> Self {
         let root = tempfile::tempdir().unwrap();
         let host = HostEnv::for_test(Os::Windows, &[], root.path());
         let paths = AppPaths::for_test(root.path());
@@ -144,6 +155,7 @@ impl Harness {
         let game = GamePaths::new(root.path().join("game"));
         std::fs::create_dir_all(game.root()).unwrap();
         std::fs::write(game.exe(), b"exe").unwrap();
+        write_starting_files(&game);
         let platform = Arc::new(TestPlatform::new(host.clone()));
         let env = AppEnv::new(
             host,
@@ -161,14 +173,25 @@ impl Harness {
             env,
             runner,
             platform,
+            cli: Arc::new(cli),
         }
+    }
+
+    pub fn cli_factory(&self) -> CliFactory {
+        let cli = self.cli.clone();
+        Arc::new(move |_: &GamePaths| cli.clone() as Arc<dyn NamsCli>)
     }
 
     pub fn init(&self, cx: &mut TestAppContext) -> Stores {
         let env = self.env.clone();
+        let factory = self.cli_factory();
         cx.update(|cx| {
             crate::init_with(env, cx);
-            cx.stores().clone()
+            let stores = cx.stores().clone();
+            stores
+                .config
+                .update(cx, |config, cx| config.set_cli_factory(factory, cx));
+            stores
         })
     }
 
@@ -199,4 +222,16 @@ impl Harness {
 pub(crate) fn settle(cx: &mut TestAppContext, delay: Duration) {
     cx.executor().advance_clock(delay);
     cx.run_until_parked();
+}
+
+fn write_starting_files(game: &GamePaths) {
+    std::fs::create_dir_all(game.nams_dir()).unwrap();
+    std::fs::write(game.nams_toml(), "disable_plugin_loading = false
+disable_3dmigoto_loading = false
+disable_reshade_loading = false
+").unwrap();
+    std::fs::write(game.lodmod_toml(), "enabled = false
+").unwrap();
+    std::fs::write(game.texture_injection_toml(), "load_order = []
+").unwrap();
 }

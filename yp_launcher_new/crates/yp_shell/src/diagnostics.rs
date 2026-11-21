@@ -195,11 +195,12 @@ impl DiagnosticsDialog {
             this.update(cx, |this, cx| {
                 this.saving = false;
                 match written {
-                    Ok(path) => notify::success(
+                    Ok(path) => notify::success_opening(
                         "diag_saved",
                         Msg::DiagnosticsSavedAt {
                             path: path.to_string_lossy().into_owned(),
                         },
+                        path.parent().map(std::path::Path::to_path_buf).unwrap_or_default(),
                         cx,
                     ),
                     Err(err) => notify::error(

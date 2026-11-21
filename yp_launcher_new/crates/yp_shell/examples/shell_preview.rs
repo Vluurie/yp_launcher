@@ -4,7 +4,8 @@ use std::time::Duration;
 
 use futures::channel::oneshot;
 use gpui::{App, AsyncApp};
-use yp_config::fields::nams;
+use yp_config::cli::NamsCli;
+use yp_config::testing::FakeNamsCli;
 use yp_core::consts::{GAME_EXE_NAME, NAMS_EXE_NAME, NAMS_LOG_NAME, YORHA_DLL_NAME};
 use yp_core::{GamePaths, NierInstallation, SettingKey};
 use yp_host::launch::failure::{FailureKind, LaunchFailure, NamsReport};
@@ -166,8 +167,8 @@ fn seed(env: &AppEnv, args: &PreviewArgs) -> GamePaths {
     exe.extend_from_slice(b"PRJ_028");
     write(&game.exe(), &exe);
     write(&game.data_dir().join("data000.cpk"), b"cpk");
-    if let Err(error) = yp_config::ensure_configs(&game, &env.host) {
-        eprintln!("could not write the preview configs: {error}");
+    if let Err(error) = std::fs::create_dir_all(game.nams_dir()) {
+        eprintln!("could not create the preview nams folder: {error}");
     }
     for name in ["2b_kimono", "9s_casual_wear", "virtuous_contract_gold"] {
         write(
@@ -257,12 +258,13 @@ fn drive(screen: Screen, cx: &mut App) {
         Screen::Warnings => {
             let stores = cx.stores().clone();
             stores.config.update(cx, |config, cx| {
-                for key in [
-                    nams::DISABLE_PLUGIN_LOADING.key(),
-                    nams::DISABLE_RESHADE_LOADING.key(),
-                ] {
-                    config.update_nams(key, toml::Value::Boolean(true), None, cx);
-                }
+                config.set_many(
+                    vec![
+                        ("nams.disable_plugin_loading".to_owned(), serde_json::Value::Bool(true)),
+                        ("nams.disable_reshade_loading".to_owned(), serde_json::Value::Bool(true)),
+                    ],
+                    cx,
+                );
             });
             stores.launch_options.update(cx, |options, cx| {
                 options.set_show_launch_warnings(true, cx);
@@ -371,6 +373,11 @@ fn main() {
                 let _ = env.settings.set(&APP_LOCALE, &locale.code().to_owned());
             }
             yp_state::init_with(env, cx);
+            let fake: Arc<dyn NamsCli> = Arc::new(FakeNamsCli::default());
+            let config = cx.stores().config.clone();
+            config.update(cx, |config, cx| {
+                config.set_cli_factory(Arc::new(move |_| fake.clone()), cx);
+            });
             yp_shell::init_with(
                 ShellOptions {
                     focus_window: args.show,

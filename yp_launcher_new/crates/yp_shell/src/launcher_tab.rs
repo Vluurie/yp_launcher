@@ -1,7 +1,6 @@
 use gpui::{
     AnyElement, App, Context, Anchor, Entity, IntoElement, Render, SharedString, Task, Window,
 };
-use yp_config::fields::nams;
 use yp_core::consts::{
     CLI_DOCS_URL, DISCORD_URL, GITHUB_URL, GUIDE_URL, NAMS_GITLAB_URL, NAO_LAUNCHER_URL,
 };
@@ -90,15 +89,19 @@ impl StatusLine {
     }
 }
 
-pub fn launch_warnings(values: &toml::Table, strings: &Strings) -> Vec<&'static str> {
+pub const DISABLE_PLUGIN_LOADING_ID: &str = "nams.disable_plugin_loading";
+pub const DISABLE_RESHADE_LOADING_ID: &str = "nams.disable_reshade_loading";
+pub const DISABLE_TEXTURE_INJECTION_ID: &str = "nams.disable_texture_injection";
+
+pub fn launch_warnings(is_on: impl Fn(&str) -> bool, strings: &Strings) -> Vec<&'static str> {
     let mut warnings = Vec::new();
-    if nams::DISABLE_PLUGIN_LOADING.value_in(values) {
+    if is_on(DISABLE_PLUGIN_LOADING_ID) {
         warnings.push(strings.warning_plugin_loading_disabled());
     }
-    if nams::DISABLE_RESHADE_LOADING.value_in(values) {
+    if is_on(DISABLE_RESHADE_LOADING_ID) {
         warnings.push(strings.warning_re_shade_disabled());
     }
-    if nams::DISABLE_TEXTURE_INJECTION.value_in(values) {
+    if is_on(DISABLE_TEXTURE_INJECTION_ID) {
         warnings.push(strings.warning_texture_injection_disabled());
     }
     warnings
@@ -211,6 +214,21 @@ impl LauncherTab {
                     .line_height(1.4)
                     .centered(),
             )
+    }
+
+    fn nams_dll_line(cx: &App) -> Option<impl IntoElement + use<>> {
+        let stores = cx.stores();
+        let dll = stores.launch_options.read(cx).nams_dll()?;
+        let file = dll
+            .file_name()
+            .map(|name| name.to_string_lossy().into_owned())
+            .unwrap_or_default();
+        Some(
+            Label::new(cx.t().shell_play_with_nams_dll(&file))
+                .size(LabelSize::Small)
+                .color(Color::Secondary)
+                .centered(),
+        )
     }
 
     fn launch_options(ui_os: Os, window: &Window, cx: &App) -> Option<AnyElement> {
@@ -399,7 +417,8 @@ impl LauncherTab {
         }
         let strings = cx.t();
         let sizes = window.sizes(cx);
-        let warnings = launch_warnings(stores.config.read(cx).nams(), strings);
+        let config = stores.config.read(cx);
+        let warnings = launch_warnings(|id| config.bool(id), strings);
         if warnings.is_empty() {
             let options = stores.launch_options.clone();
             cx.defer(move |cx| {
@@ -459,7 +478,8 @@ impl Render for LauncherTab {
             .gap(sizes.spacing_md)
             .px(sizes.padding_xl)
             .child(PlayButton::hero())
-            .child(self.status_line(window, cx));
+            .child(self.status_line(window, cx))
+            .children(Self::nams_dll_line(cx));
 
         let strip = h_flex()
             .absolute()
@@ -574,14 +594,9 @@ mod tests {
 
     #[test]
     fn warnings_list_only_the_disabled_loaders() {
-        let mut values = toml::Table::new();
-        assert!(launch_warnings(&values, strings()).is_empty());
-        values.insert(
-            nams::DISABLE_RESHADE_LOADING.key().to_owned(),
-            toml::Value::Boolean(true),
-        );
+        assert!(launch_warnings(|_| false, strings()).is_empty());
         assert_eq!(
-            launch_warnings(&values, strings()),
+            launch_warnings(|id| id == DISABLE_RESHADE_LOADING_ID, strings()),
             vec![strings().warning_re_shade_disabled()]
         );
     }

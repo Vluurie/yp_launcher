@@ -933,6 +933,7 @@
   "selectTextureFiles": "选择纹理文件或压缩包",
   "noTextureFilesFound": "未找到纹理文件（.dds、.png、.tga）",
   "cheatsAppliedNote": "在游戏启动时应用一次。",
+  "cheatsNeedFirstPlaythroughOff": "仅在关闭首次通关模式时生效。",
   "wipLabel": "开发中",
   "dropCutsceneHere": "将过场动画模组文件夹或压缩包拖放到此处",
   "cutsceneMovieHint": "模组必须包含带有 .usm 文件的 movie/ 文件夹",

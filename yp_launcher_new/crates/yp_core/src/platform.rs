@@ -14,9 +14,11 @@ pub struct NierInstallation {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum NamsInvocation {
+pub enum NamsInvocation<'a> {
     Run { vanilla: bool },
+    Game { vanilla: bool, console: bool },
     Verify,
+    Config(&'a [String]),
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -24,7 +26,7 @@ pub struct NamsCommandRequest<'a> {
     pub nams_exe: &'a Path,
     pub launcher_dir: &'a Path,
     pub game_dir: &'a Path,
-    pub invocation: NamsInvocation,
+    pub invocation: NamsInvocation<'a>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]

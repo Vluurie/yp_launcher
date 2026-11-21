@@ -4,10 +4,21 @@ use indexmap::IndexMap;
 use yp_core::GamePaths;
 use yp_core::ini::{IniDoc, IniSyntax};
 
+use serde_json::Value as Json;
+
+use crate::cli::{self, NamsCli};
 use crate::error::Result;
-use crate::fields::nams;
-use crate::migrate::naiom::BINDINGS_SECTION;
 use crate::naiom_keys;
+use crate::reports::{Problem, Values};
+
+pub const NAIOM_PREFIX: &str = "naiom.";
+pub const BINDINGS_PREFIX: &str = "naiom.bindings.";
+const THIRD_PERSON_MODE: &str = "naiom.third_person_mode";
+const THIRD_PERSON_CHAR_FOLLOW: &str = "naiom.third_person_char_follow";
+const AIM_MODE: &str = "naiom.aim_mode";
+const AIM_CROSSHAIR: &str = "naiom.aim_crosshair";
+const MISC_DISABLE_DEFAULT_CURSOR: &str = "naiom.misc_disable_default_cursor";
+const MISC_OPEN_DEBUG_MENU: &str = "naiom.misc_open_debug_menu";
 
 pub const NAIOM_INI_FILES: [&str; 2] = ["NAIOM.ini", "NAIOM.cfg"];
 const UNBOUND: &str = "<unbound>";
@@ -150,72 +161,53 @@ fn is_unbound(value: &str) -> bool {
     value.is_empty() || value.to_lowercase() == UNBOUND
 }
 
-fn already_configured(mouse: &toml::Table) -> bool {
-    let flag = |key: &str| mouse.get(key).and_then(toml::Value::as_bool) == Some(true);
-    let any_binding = mouse
-        .get(BINDINGS_SECTION)
-        .and_then(toml::Value::as_table)
-        .is_some_and(|bindings| {
-            bindings
-                .values()
-                .any(|value| value.as_str().is_some_and(|binding| !binding.is_empty()))
-        });
-    flag(nams::THIRD_PERSON_MODE.key()) || flag(nams::AIM_MODE.key()) || any_binding
+pub fn already_configured(current: &Values) -> bool {
+    let flag = |id: &str| current.get(id).and_then(Json::as_bool) == Some(true);
+    let any_binding = current.values.iter().any(|(id, value)| {
+        id.starts_with(BINDINGS_PREFIX) && value.as_str().is_some_and(|binding| !binding.is_empty())
+    });
+    flag(THIRD_PERSON_MODE) || flag(AIM_MODE) || any_binding
 }
 
 #[derive(Default)]
 struct NaiomUpdates {
-    mouse: toml::Table,
-    bindings: toml::Table,
+    assignments: Vec<(String, Json)>,
     skipped: Vec<SkippedNaiomEntry>,
 }
 
 impl NaiomUpdates {
-    fn set(&mut self, key: &str, value: toml::Value) {
-        self.mouse.insert(key.to_owned(), value);
+    fn set(&mut self, id: &str, value: Json) {
+        self.assignments.push((id.to_owned(), value));
     }
 
     fn apply(&mut self, key: &str, value: &str) {
         if let Some(float_key) = lookup(&FLOAT_MAP, key) {
-            if let Ok(number) = value.parse::<f64>() {
-                self.set(float_key, toml::Value::Float(number));
+            if let Ok(number) = value.parse::<f64>()
+                && let Some(number) = serde_json::Number::from_f64(number)
+            {
+                self.set(&format!("{NAIOM_PREFIX}{float_key}"), Json::Number(number));
             }
             return;
         }
         if let Some(bool_key) = lookup(&BOOL_MAP, key) {
-            self.set(bool_key, toml::Value::Boolean(bool_of(value)));
+            self.set(&format!("{NAIOM_PREFIX}{bool_key}"), Json::Bool(bool_of(value)));
             return;
         }
         match key {
             "thirdpersonmode" => {
                 let mode = value.to_lowercase();
-                self.set(
-                    nams::THIRD_PERSON_MODE.key(),
-                    toml::Value::Boolean(mode != "disabled"),
-                );
-                self.set(
-                    nams::THIRD_PERSON_CHAR_FOLLOW.key(),
-                    toml::Value::Boolean(mode == "rawinputcharfollow"),
-                );
+                self.set(THIRD_PERSON_MODE, Json::Bool(mode != "disabled"));
+                self.set(THIRD_PERSON_CHAR_FOLLOW, Json::Bool(mode == "rawinputcharfollow"));
                 return;
             }
             "aimmode" => {
                 let mode = value.to_lowercase();
-                self.set(
-                    nams::AIM_MODE.key(),
-                    toml::Value::Boolean(mode != "disabled"),
-                );
-                self.set(
-                    nams::AIM_CROSSHAIR.key(),
-                    toml::Value::Boolean(mode == "crosshair"),
-                );
+                self.set(AIM_MODE, Json::Bool(mode != "disabled"));
+                self.set(AIM_CROSSHAIR, Json::Bool(mode == "crosshair"));
                 return;
             }
             "miscenablecustomcursors" => {
-                self.set(
-                    nams::MISC_DISABLE_DEFAULT_CURSOR.key(),
-                    toml::Value::Boolean(!bool_of(value)),
-                );
+                self.set(MISC_DISABLE_DEFAULT_CURSOR, Json::Bool(!bool_of(value)));
                 return;
             }
             "miscopendebugmenu" => {
@@ -223,10 +215,7 @@ impl NaiomUpdates {
                     return;
                 }
                 match naiom_keys::key_name_to_vk(value) {
-                    Some(vk) => self.set(
-                        nams::MISC_OPEN_DEBUG_MENU.key(),
-                        toml::Value::Integer(i64::from(vk)),
-                    ),
+                    Some(vk) => self.set(MISC_OPEN_DEBUG_MENU, Json::from(vk)),
                     None => self.skipped.push(SkippedNaiomEntry {
                         setting: SkippedNaiomSetting::DebugMenuKey,
                         value: value.to_owned(),
@@ -254,44 +243,43 @@ impl NaiomUpdates {
             });
             return;
         }
-        self.bindings
-            .insert(binding_key.to_owned(), toml::Value::String(normalized));
+        self.set(&format!("{BINDINGS_PREFIX}{binding_key}"), Json::String(normalized));
     }
 }
 
-pub fn migrate_naiom_ini(game: &GamePaths, ini_values: &NaiomIniValues) -> Result<NaiomMigration> {
-    let path = game.naiom_toml();
-    let raw = yp_core::fs::read_text_opt(&path)?.unwrap_or_default();
-    if raw.is_empty() {
-        return Ok(NaiomMigration::default());
-    }
-    let current = yp_core::toml_io::parse_values(&raw).unwrap_or_default();
-    if already_configured(&current) {
-        return Ok(NaiomMigration::default());
-    }
-
+pub fn naiom_ini_assignments(ini_values: &NaiomIniValues) -> (Vec<(String, Json)>, Vec<SkippedNaiomEntry>) {
     let mut updates = NaiomUpdates::default();
     for (key, value) in ini_values {
         updates.apply(key, value);
     }
-    if updates.mouse.is_empty() && updates.bindings.is_empty() {
+    (updates.assignments, updates.skipped)
+}
+
+fn skipped_of(problem: &Problem, values: &NaiomIniValues) -> Option<SkippedNaiomEntry> {
+    let binding_key = problem.id.as_deref()?.strip_prefix(BINDINGS_PREFIX)?;
+    let (ini_key, key) = BINDING_MAP.iter().find(|(_, key)| *key == binding_key)?;
+    Some(SkippedNaiomEntry {
+        setting: SkippedNaiomSetting::Binding(key),
+        value: values.get(*ini_key)?.clone(),
+    })
+}
+
+pub fn import_naiom_ini(cli: &dyn NamsCli, ini_values: &NaiomIniValues) -> Result<NaiomMigration> {
+    let current = cli::get(cli)?;
+    if already_configured(&current) {
+        return Ok(NaiomMigration::default());
+    }
+    let (assignments, mut skipped) = naiom_ini_assignments(ini_values);
+    if assignments.is_empty() {
         return Ok(NaiomMigration {
             migrated: false,
-            skipped: updates.skipped,
+            skipped,
         });
     }
-
-    let mut merged = updates.mouse;
-    if !updates.bindings.is_empty() {
-        merged.insert(
-            BINDINGS_SECTION.to_owned(),
-            toml::Value::Table(updates.bindings),
-        );
-    }
-    let updated = yp_core::toml_io::update_toml(&raw, &merged)?;
-    yp_core::fs::write_text_atomic(&path, &updated)?;
+    let (report, rejected) = cli::set_accepted(cli, &assignments)?;
+    skipped.extend(rejected.iter().filter_map(|problem| skipped_of(problem, ini_values)));
     Ok(NaiomMigration {
-        migrated: true,
-        skipped: updates.skipped,
+        migrated: !report.changed.is_empty(),
+        skipped,
     })
 }

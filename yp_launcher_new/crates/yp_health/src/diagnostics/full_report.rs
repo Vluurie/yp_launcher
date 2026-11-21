@@ -658,9 +658,9 @@ fn write_key_groups(out: &mut Lines, keys: &[ConfigDelta]) {
     let mut groups: IndexMap<(&str, &str, &str), Vec<&ConfigDelta>> = IndexMap::new();
     for delta in keys {
         let group = (
-            delta.file.file_name(),
+            delta.file.as_str(),
             key_section(&delta.key).unwrap_or_default(),
-            delta.note.unwrap_or_default(),
+            delta.note.as_deref().unwrap_or_default(),
         );
         groups.entry(group).or_default().push(delta);
     }
@@ -675,7 +675,10 @@ fn write_key_groups(out: &mut Lines, keys: &[ConfigDelta]) {
             continue;
         }
         for delta in group {
-            out.line(format!("  [{file}] {} = {}{note}", delta.key, delta.value));
+            match delta.value.is_empty() {
+                true => out.line(format!("  [{file}] {}{note}", delta.key)),
+                false => out.line(format!("  [{file}] {} = {}{note}", delta.key, delta.value)),
+            }
         }
     }
 }
@@ -684,15 +687,11 @@ fn write_settings(out: &mut Lines, report: &DiagnosticsReport) {
     section(out, "Settings");
     let config = &report.config;
     if !config.missing_files.is_empty() {
-        let names: Vec<&str> = config
-            .missing_files
-            .iter()
-            .map(|file| file.file_name())
-            .collect();
+        let names: Vec<&str> = config.missing_files.iter().map(String::as_str).collect();
         out.line(format!("missing or empty: {}", names.join(", ")));
     }
     for (file, error) in &config.parse_errors {
-        out.line(format!("!! {} does not parse: {error}", file.file_name()));
+        out.line(format!("!! {file} does not parse: {error}"));
     }
     out.blank();
     out.line(format!("Non-default ({}):", config.deltas.len()));
@@ -702,7 +701,7 @@ fn write_settings(out: &mut Lines, report: &DiagnosticsReport) {
     for delta in &config.deltas {
         out.line(format!(
             "  [{}] {} = {}  (default {})",
-            delta.file.file_name(),
+            delta.file,
             delta.key,
             delta.value,
             delta.default_value
@@ -984,7 +983,7 @@ fn write_other_folders(out: &mut Lines, report: &DiagnosticsReport) {
 
 fn write_unparsed_configs(out: &mut Lines, report: &DiagnosticsReport) {
     for file in report.config.parse_errors.keys() {
-        section(out, format!("nams/{} (does not parse)", file.file_name()));
+        section(out, format!("nams/{file} (does not parse)"));
         out.line(
             report
                 .config_raw

@@ -948,6 +948,7 @@
   "selectTextureFiles": "Select Texture Files or Archives",
   "noTextureFilesFound": "No texture files found (.dds, .png, .tga)",
   "cheatsAppliedNote": "Applied once on game start.",
+  "cheatsNeedFirstPlaythroughOff": "Only applied while First Playthrough Mode is off.",
   "wipLabel": "WIP",
   "dropCutsceneHere": "Drop cutscene mod folder or archive here",
   "cutsceneMovieHint": "Mod must contain a movie/ folder with .usm files",

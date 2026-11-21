@@ -84,7 +84,8 @@ fn parses_plain_lines_and_rejects_malformed_ones() {
     assert_eq!(parse_line("2026-02-14T12:46:29.398602Z  NOTICE nams: x"), None);
     assert_eq!(parse_line("2026-02-14T12:46:29Z  INFO nams: x"), None);
     assert_eq!(parse_line("2026-02-14 12:46:29.1Z  INFO nams: x"), None);
-    assert_eq!(parse_line("2026-02-14T12:46:29.1Z INFO module without colon"), None);
+    let bare = parse_line("2026-02-14T12:46:29.1Z INFO LodMod shadow resolution: live recreate").unwrap();
+    assert_eq!((bare.module.as_str(), bare.message.as_str()), ("", "LodMod shadow resolution: live recreate"));
     assert_eq!(parse_line("2026-02-14T12:46:29.1ZINFO nams: x"), None);
     assert_eq!(parse_line("   at some stack frame"), None);
     let empty = parse_line("2026-02-14T12:46:29.1Z TRACE nams:").unwrap();

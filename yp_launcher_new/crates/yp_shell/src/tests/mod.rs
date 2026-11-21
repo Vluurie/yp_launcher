@@ -4,6 +4,9 @@ mod onboarding;
 mod shell;
 mod window;
 
+use yp_config::cli::NamsCli;
+use yp_config::testing::FakeNamsCli;
+use yp_state::CliFactory;
 use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex};
 use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
@@ -109,6 +112,7 @@ pub(crate) struct Harness {
     pub game: GamePaths,
     pub env: AppEnv,
     pub platform: Arc<TestPlatform>,
+    pub cli: Arc<FakeNamsCli>,
 }
 
 impl Harness {
@@ -156,6 +160,7 @@ impl Harness {
             game,
             env,
             platform,
+            cli: Arc::new(FakeNamsCli::default()),
         }
     }
 
@@ -164,6 +169,10 @@ impl Harness {
         cx.update(|cx| {
             yp_ui::init_for_tests(cx);
             yp_state::init_with(env, cx);
+            let cli = self.cli.clone();
+            let factory: CliFactory = Arc::new(move |_: &GamePaths| cli.clone() as Arc<dyn NamsCli>);
+            let config = cx.stores().config.clone();
+            config.update(cx, |config, cx| config.set_cli_factory(factory, cx));
             crate::init_with(
                 ShellOptions {
                     auto_search: false,

@@ -1,10 +1,9 @@
 use std::path::Path;
 
 use jiff::SignedDuration;
-use yp_config::fields::nams::{DISABLE_PLUGIN_LOADING, DISABLE_TEXTURE_INJECTION};
-use yp_config::{AnyField, ConfigFile};
 use yp_core::{GamePaths, Os};
 use yp_host::game_probe::{ExeBuildStatus, GameBuild, KNOWN_BUILDS};
+use yp_host::launch::nams_dll;
 use yp_host::nams_cli::NamsTexturePack;
 use yp_thirdparty::GameModSettings;
 
@@ -84,13 +83,11 @@ fn base_name(path: &str) -> String {
     yp_core::fs::file_name_lossy(Path::new(path))
 }
 
-fn delta_is(
-    report: &DiagnosticsReport,
-    file: ConfigFile,
-    field: &dyn AnyField,
-    value: &str,
-) -> bool {
-    let key = field.meta().path().join(".");
+const NAMS_FILE: &str = "nams.toml";
+const DISABLE_PLUGIN_LOADING_KEY: &str = "disable_plugin_loading";
+const DISABLE_TEXTURE_INJECTION_KEY: &str = "disable_texture_injection";
+
+fn delta_is(report: &DiagnosticsReport, file: &str, key: &str, value: &str) -> bool {
     report
         .config
         .deltas
@@ -201,14 +198,14 @@ fn runtime_findings(report: &DiagnosticsReport, findings: &mut Findings) {
 
 fn config_findings(report: &DiagnosticsReport, findings: &mut Findings) {
     for (file, error) in &report.config.parse_errors {
-        findings.error(format!("{} does not parse: {error}", file.file_name()));
+        findings.error(format!("{file} does not parse: {error}"));
     }
     let unknown = &report.config.unknown_keys;
     if !unknown.is_empty() {
         let keys: Vec<String> = unknown
             .iter()
             .take(UNKNOWN_KEYS_SHOWN)
-            .map(|delta| format!("{}: {}", delta.file.file_name(), delta.key))
+            .map(|delta| format!("{}: {}", delta.file, delta.key))
             .collect();
         let more = if unknown.len() > UNKNOWN_KEYS_SHOWN {
             format!(" and {} more", unknown.len() - UNKNOWN_KEYS_SHOWN)
@@ -220,12 +217,12 @@ fn config_findings(report: &DiagnosticsReport, findings: &mut Findings) {
             keys.join(", ")
         ));
     }
-    if delta_is(report, ConfigFile::Nams, &DISABLE_PLUGIN_LOADING, "true") {
+    if delta_is(report, NAMS_FILE, DISABLE_PLUGIN_LOADING_KEY, "true") {
         findings.warning(
             "Plugin loading is disabled (disable_plugin_loading): YoRHa Protocol and all plugins are off.",
         );
     }
-    if delta_is(report, ConfigFile::Nams, &DISABLE_TEXTURE_INJECTION, "true")
+    if delta_is(report, NAMS_FILE, DISABLE_TEXTURE_INJECTION_KEY, "true")
         && (!report.nams_textures.is_empty() || !report.texture_packs.is_empty())
     {
         findings.info("Texture packs are installed but texture injection is disabled.");
@@ -335,6 +332,7 @@ fn game_folder_findings(report: &DiagnosticsReport, findings: &mut Findings) {
         .iter()
         .map(String::as_str)
         .filter(|name| PROXY_DLL_NAMES.contains(&name.to_lowercase().as_str()))
+        .filter(|name| !(report.nams_dll_picked && name.eq_ignore_ascii_case(nams_dll::PROXY_NAME)))
         .collect();
     let is_special_k_dll = |name: &str| name.to_lowercase() == SPECIAL_K_DLL;
     let special_k = report

@@ -17,7 +17,7 @@ pub use yp_host::session::{LaunchStatus, PlayButtonState as PlayState, SessionEr
 
 use crate::cell::CancelOnDrop;
 use crate::env::AppEnv;
-use crate::prefs::{NIER_DIRECTORY, Prefs, save_setting};
+use crate::prefs::{NIER_DIRECTORY, save_setting};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub struct LaunchRequest {
@@ -190,9 +190,6 @@ impl GameSession {
         let env = self.env.clone();
         let target = game.clone();
         let job = cx.background_spawn(async move {
-            if let Err(err) = yp_config::ensure_configs(&target, &env.host) {
-                log::warn!("could not prepare the config files: {err}");
-            }
             if change == DirectoryChange::Selected {
                 win10_compat::ensure_ran_for_directory(
                     &env.host,
@@ -256,13 +253,7 @@ impl GameSession {
         self.set_play(PlayState::Loading, Some(LaunchStatus::Launching), cx);
 
         let env = self.env.clone();
-        let locale = match cx.try_global::<Prefs>() {
-            Some(prefs) => prefs.locale(&env.host),
-            None => yp_i18n::locale::startup_locale(&env.settings, &env.host),
-        };
         let job = cx.background_spawn(async move {
-            let game = GamePaths::new(&dir);
-            yp_config::overlay::seed_overlay_language_quiet(Some(&game), locale.code());
             let (stopped, on_stopped) = oneshot::channel::<LaunchRecord>();
             let outcome = env.launcher().start(&dir, request.vanilla, move |record| {
                 let _ = stopped.send(record);

@@ -1,27 +1,15 @@
 use std::path::Path;
 
-use yp_config::{ConfigError, ConfigFile};
-use yp_core::toml_io::TomlError;
+use yp_config::ConfigError;
 use yp_formats::{FileOp, FormatError};
 use yp_i18n::Strings;
 use yp_state::inspector::{ArchiveSide, InspectorError, ProbeWarning};
-use yp_state::{ConfigFailure, ConfigOp, NamsSettingsFailure, NamsSettingsOp, archive_failure_key};
+use yp_state::{ConfigFailure, ConfigOp, archive_failure_key};
 
 fn file_label(path: &Path) -> String {
     path.file_name()
         .map(|name| name.to_string_lossy().into_owned())
         .unwrap_or_else(|| path.display().to_string())
-}
-
-pub fn toml_error_text(error: &TomlError, strings: &Strings) -> String {
-    match (error.line, error.column) {
-        (Some(line), Some(column)) => strings.settings_toml_error_at(
-            i64::try_from(line).unwrap_or(i64::MAX),
-            i64::try_from(column).unwrap_or(i64::MAX),
-            &error.message,
-        ),
-        _ => error.message.clone(),
-    }
 }
 
 pub fn core_error_text(error: &yp_core::Error, strings: &Strings) -> String {
@@ -45,43 +33,32 @@ pub fn core_error_text(error: &yp_core::Error, strings: &Strings) -> String {
     }
 }
 
-pub fn config_error_text(error: &ConfigError, strings: &Strings) -> String {
+pub fn config_error_text(error: &ConfigError) -> String {
     match error {
-        ConfigError::Core(error) => core_error_text(error, strings),
-        ConfigError::Toml { path, error } => {
-            strings.settings_config_not_toml(&file_label(path), &toml_error_text(error, strings))
+        ConfigError::Nams { message, problems, .. } => {
+            let mut lines: Vec<&str> = Vec::new();
+            if !message.is_empty() {
+                lines.push(message);
+            }
+            lines.extend(
+                problems
+                    .iter()
+                    .map(|problem| problem.message.as_str())
+                    .filter(|text| !text.is_empty() && *text != message),
+            );
+            lines.join("
+")
         }
-        ConfigError::SettingsNotObject { path } => {
-            strings.settings_settings_not_object(&file_label(path))
-        }
+        other => other.to_string(),
     }
 }
 
 pub fn config_failure_text(failure: &ConfigFailure, strings: &Strings) -> String {
-    let detail = config_error_text(&failure.error, strings);
+    let detail = config_error_text(&failure.error);
     match failure.op {
-        ConfigOp::Load | ConfigOp::Discard => strings.settings_config_load_failed(&detail),
-        ConfigOp::Save | ConfigOp::WriteNow | ConfigOp::CutsceneFlags => {
-            strings.settings_config_save_failed(&detail)
-        }
-        ConfigOp::Autosave(file) => {
-            strings.settings_config_autosave_failed(file.file_name(), &detail)
-        }
-        ConfigOp::LodModPreset | ConfigOp::LodModReset => {
-            strings.settings_config_autosave_failed(ConfigFile::LodMod.file_name(), &detail)
-        }
+        ConfigOp::Load => strings.settings_config_load_failed(&detail),
+        ConfigOp::Write | ConfigOp::CutsceneFlags => strings.settings_config_save_failed(&detail),
         ConfigOp::ExternalReload => strings.settings_config_reload_failed(&detail),
-    }
-}
-
-pub fn settings_failure_text(failure: &NamsSettingsFailure, strings: &Strings) -> String {
-    let detail = config_error_text(&failure.error, strings);
-    match failure.op {
-        NamsSettingsOp::Load | NamsSettingsOp::Discard => {
-            strings.settings_config_load_failed(&detail)
-        }
-        NamsSettingsOp::Save => strings.settings_config_save_failed(&detail),
-        NamsSettingsOp::Reload => strings.settings_config_reload_failed(&detail),
     }
 }
 
@@ -165,6 +142,7 @@ mod tests {
     use std::path::PathBuf;
     use std::sync::Arc;
 
+    use yp_config::Problem;
     use yp_formats::{DatFault, ModelFault};
     use yp_i18n::Locale;
 
@@ -183,46 +161,40 @@ mod tests {
     }
 
     #[test]
-    fn toml_errors_carry_their_position_when_known() {
-        let located = TomlError {
-            message: "expected `=`".into(),
-            line: Some(3),
-            column: Some(7),
-        };
-        let text = toml_error_text(&located, en());
-        assert!(text.contains('3') && text.contains('7') && text.contains("expected `=`"));
-        let bare = TomlError {
-            message: "broken".into(),
-            line: None,
-            column: None,
-        };
-        assert_eq!(toml_error_text(&bare, en()), "broken");
-    }
-
-    #[test]
-    fn config_failures_name_the_operation_and_the_file() {
+    fn config_failures_name_the_operation_and_carry_the_nams_problems() {
         let failure = ConfigFailure {
-            op: ConfigOp::Autosave(ConfigFile::Naiom),
-            error: Arc::new(ConfigError::SettingsNotObject {
-                path: PathBuf::from("C:/game/nams/settings.json"),
+            op: ConfigOp::Write,
+            error: Arc::new(ConfigError::Nams {
+                code: "validation_failed".into(),
+                message: "rejected".into(),
+                exit_code: Some(65),
+                problems: vec![Problem {
+                    code: "invalid_value".into(),
+                    severity: "error".into(),
+                    message: "lodmod.fps_limit is out of range".into(),
+                    id: Some("lodmod.fps_limit".into()),
+                    file: None,
+                    key: None,
+                }],
             }),
         };
         let text = config_failure_text(&failure, en());
-        assert!(text.contains("naiom.toml"));
-        assert!(text.contains("settings.json"));
+        assert!(text.contains("rejected") && text.contains("lodmod.fps_limit is out of range"));
+        assert_eq!(text, en().settings_config_save_failed("rejected
+lodmod.fps_limit is out of range"));
         let load = ConfigFailure {
             op: ConfigOp::Load,
-            error: Arc::new(ConfigError::Toml {
-                path: PathBuf::from("C:/game/nams/lodmod.toml"),
-                error: TomlError {
-                    message: "bad".into(),
-                    line: Some(1),
-                    column: Some(2),
-                },
-            }),
+            error: Arc::new(ConfigError::TimedOut),
         };
-        let text = config_failure_text(&load, en());
-        assert!(text.contains("lodmod.toml") && text.contains("bad"));
+        assert_eq!(
+            config_failure_text(&load, en()),
+            en().settings_config_load_failed(&ConfigError::TimedOut.to_string())
+        );
+        let reload = ConfigFailure {
+            op: ConfigOp::ExternalReload,
+            error: Arc::new(ConfigError::Unavailable("missing".into())),
+        };
+        assert!(config_failure_text(&reload, en()).contains("missing"));
     }
 
     #[test]
