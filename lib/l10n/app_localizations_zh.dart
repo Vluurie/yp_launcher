@@ -719,8 +719,7 @@ class AppLocalizationsZh extends AppLocalizations {
       '编辑 nams\\_internal\\cache\\settings.json';
 
   @override
-  String get tooltipEditsNaiom =>
-      '编辑 nams/naiom.toml。更改会立即保存，大多数设置无需重启游戏即可生效，少数设置需要重启。';
+  String get tooltipEditsNaiom => '编辑 nams/naiom.toml。更改会立即保存，并在游戏中即时生效，无需重启。';
 
   @override
   String get tooltipCutscenesLocation =>
@@ -3751,7 +3750,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get tooltipDisableInputFeatures =>
-      '关闭整个鼠标与键盘层。游戏将保持原版输入处理方式，下方所有设置都会被忽略。需重启生效。';
+      '关闭整个鼠标与键盘层。游戏将保持原版输入处理方式，下方所有设置都会被忽略。立即生效。';
 
   @override
   String get tooltipValidateModelDataSettings => '以对话框显示模型验证错误，而不是静默失败。';
@@ -4344,6 +4343,13 @@ class AppLocalizationsZh extends AppLocalizations {
       '立即使用所选快捷物品。此操作会在后台静默完成，不会在游戏中显示物品菜单，这是预期行为。';
 
   @override
+  String get labelBindPodPet => '抚摸辅助机';
+
+  @override
+  String get tooltipBindPodPet =>
+      '按住时抚摸辅助机，效果与用鼠标画圈相同。也可绑定手柄按键。仅在游戏允许抚摸时生效：站立或行走时，不在对话、事件或攻击中。';
+
+  @override
   String get labelBindThirdPersonToggle => '镜头修复开关';
 
   @override
@@ -4452,9 +4458,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get naiomRestartBadge => '需重启';
 
   @override
-  String get naiomRestartTooltip => '重启游戏后生效。';
-
-  @override
   String get naiomNeedsCameraFix => '请开启“修复镜头加速度”以使用此功能';
 
   @override
@@ -4465,9 +4468,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get naiomCrosshairOverrides => '准星模式开启时不使用此项，准星有独立速度设置';
-
-  @override
-  String get naiomThirdPersonRestartNote => '开启此功能需要重启游戏；关闭可在游玩过程中即时生效。';
 
   @override
   String get naiomTapEvadeWarning =>

@@ -300,7 +300,7 @@ disable_debug_hotkeys = true
 ingame_settings = true
 
 # Master switch for the mouse and keyboard layer. When true, all mouse and
-# keybind settings are ignored and the game keeps stock input. Requires restart.
+# keybind settings are ignored and the game keeps stock input. Live toggle.
 disable_input_features = false
 
 ${_contentSectionSync(const {})}
@@ -452,6 +452,8 @@ non_standard_auto_fire = ""
 non_standard_next_item = ""
 non_standard_previous_item = ""
 non_standard_use_item = ""
+# Pets the pod while held, where moving the mouse in circles would.
+non_standard_pod_pet = ""
 # Toggle the camera raw-input fix on/off while playing.
 third_person_mode_toggle = ""
 # Toggle the aim fix on/off while playing.
@@ -821,7 +823,7 @@ solid_letterbox_bars = false
           'ingame_settings = true\n',
       NamsFields.disableInputFeatures.key:
           '# Master switch for the mouse and keyboard layer. When true, all mouse\n'
-          '# and keybind settings are ignored and the game keeps stock input. Restart.\n'
+          '# and keybind settings are ignored and the game keeps stock input. Live.\n'
           'disable_input_features = false\n',
       NamsFields.skipStartupLogos.key:
           '# Skip the Platinum Games / Square Enix logo movies played while the\n'

@@ -12,13 +12,14 @@ have to touch any config files or command lines yourself.
 Grab the latest build for your system from the
 [**Releases page**](https://github.com/Vluurie/yp_launcher/releases):
 
-- **Windows**: `YoRHa Protocol Launcher.zip`. Unzip it anywhere and run
-  `YoRHa Protocol Launcher.exe`. It's portable, no installer needed.
-- **macOS**: `YP-Launcher.dmg`. Open it and drag the app to Applications.
+- **Windows**: the `-windows-x86_64.zip`. Unzip it anywhere and run
+  `YoRHa-Protocol-Launcher.exe`. It's portable. If you'd rather have a Start
+  menu entry, take the `-setup.exe` installer instead.
+- **macOS**: the `.dmg`. Open it and drag the app to Applications.
   The first time, **right-click the app and choose Open** (it isn't notarized, so
   a plain double-click will be blocked by Gatekeeper).
 - **Linux**: the `.AppImage` (make it executable and run it) or the `.tar.gz`
-  (unpack and run `yp_launcher`).
+  (unpack and run `YoRHa-Protocol-Launcher`).
 
 ## Getting started
 
@@ -65,6 +66,27 @@ scattered across your system, so your setup stays with the game folder.
 ## Building from source
 
 Most people should just download a release above. This section is for developers.
+
+The launcher is written in Rust and lives in `yp_launcher_new/`. With the stable
+Rust toolchain installed:
+
+```bash
+cd yp_launcher_new
+cargo run -p yp_app                                              # run it
+cargo build --profile small -p yp_app --features embedded-assets # release build
+```
+
+The release build lands in `yp_launcher_new/target/small/`. It expects the
+`assets/bins/` folder (`NAMS.exe` and the `yorha_protocol.dll` plugin, both
+committed) in an `assets/` folder next to the executable. Packaging for all three
+systems, including the Windows installer, is done by
+`.github/workflows/release.yml`.
+
+### Old Flutter launcher
+
+Everything outside `yp_launcher_new/` is the previous Flutter launcher. It is no
+longer released and stays in the repository only until the Rust launcher has
+fully replaced it.
 
 You'll need the Flutter SDK (Dart `^3.9.2`) and the Rust toolchain. Then:
 

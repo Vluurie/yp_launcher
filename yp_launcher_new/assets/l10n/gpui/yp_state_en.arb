@@ -1,0 +1,10 @@
+{
+  "platformNameWindows": "Windows",
+  "platformNameLinux": "Linux",
+  "platformNameMacos": "macOS",
+  "archivePasswordProtected": "This archive is password-protected. Unpack it yourself and drop the unpacked folder.",
+  "archiveDamaged": "This archive is damaged or incomplete. Download it again.",
+  "archiveUnsupportedMethod": "This archive uses a compression method the launcher can't read. Unpack it with another tool and drop the unpacked folder.",
+  "archivePartMissing": "This archive is split into several parts and one of them is missing. Keep all parts in the same folder and drop the first part.",
+  "archiveHoldsNoFiles": "This archive contains no files."
+}

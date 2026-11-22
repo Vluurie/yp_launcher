@@ -931,6 +931,12 @@ class NamsBindingFields {
     (l) => l.tooltipBindUseItem,
   );
 
+  static final nonStandardPodPet = _binding(
+    'non_standard_pod_pet',
+    (l) => l.labelBindPodPet,
+    (l) => l.tooltipBindPodPet,
+  );
+
   static final thirdPersonModeToggle = _binding(
     'third_person_mode_toggle',
     (l) => l.labelBindThirdPersonToggle,
@@ -976,6 +982,7 @@ class NamsBindingFields {
     nonStandardNextItem,
     nonStandardPreviousItem,
     nonStandardUseItem,
+    nonStandardPodPet,
     thirdPersonModeToggle,
     aimModeToggle,
   ];

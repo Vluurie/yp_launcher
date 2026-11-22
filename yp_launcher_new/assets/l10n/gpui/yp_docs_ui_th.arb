@@ -1,0 +1,14 @@
+{
+  "docsUnavailable": "ไม่พบเอกสารในการติดตั้งนี้",
+  "docsPageFailed": "เปิดหน้านี้ไม่ได้: {detail}",
+  "docsSaveFailed": "บันทึกหน้านี้ไม่ได้: {detail}",
+  "docsSaveShortcut": "Ctrl+S",
+  "docsLinkBroken": "ลิงก์นี้ชี้ไปยังหน้าที่ไม่มีอยู่: {target}",
+  "errWeaponStemUnreadable": "ชื่อไฟล์นี้ไม่ใช่อาวุธ ควรเป็นรูปแบบเช่น wp0003",
+  "errWeaponStemLengthMismatch": "ชื่ออาวุธใหม่ยาวไม่เท่ากับชื่อเดิม จึงเปลี่ยนชื่อไฟล์ไม่ได้",
+  "errWeaponSameStem": "อาวุธนี้อยู่ในช่องนั้นอยู่แล้ว",
+  "outfitBuilderPreviewFailed": "แสดงโมเดลนี้ที่นี่ไม่ได้ {detail}",
+  "weaponConvertSlot": "ช่องว่าง",
+  "toolsWeaponConvertNextStep": "โมเดลพร้อมแล้ว หากต้องการให้เป็นอาวุธของตัวเอง ให้สร้างอาวุธด้วย obj_id {objId} ในตัวสร้างอาวุธ",
+  "toolsOpenWeaponBuilder": "เปิดตัวสร้างอาวุธ"
+}

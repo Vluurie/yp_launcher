@@ -474,6 +474,15 @@ void main() {
     ));
     expect(told2026.map((f) => f.message).join(),
         isNot(contains('celestial.dll')));
+
+    final signed = DiagnosticsService.buildFindings(_bareReport(
+      gameIdentity: const GameIdentity(
+        buildStatus: ExeBuildStatus.known,
+        buildLabel: 'Steam 2026-11 (signed)',
+      ),
+      thirdParty: withMod(const GameModSettings()),
+    ));
+    expect(signed.map((f) => f.message).join(), contains('celestial.dll'));
   });
 
   test('launch record survives a json round trip', () {

@@ -1,0 +1,196 @@
+{
+  "shellTitleShort": "YP",
+  "shellSandboxBadge": "SANDBOX",
+  "shellSandboxTooltip": "Sandbox-Modus. Einstellungen, Daten und Laufzeitdateien liegen in {dir}. Deine echte Installation wird nicht angefasst.",
+  "@shellSandboxTooltip": {
+    "placeholders": {
+      "dir": {
+        "type": "String"
+      }
+    }
+  },
+  "shellNamsExitedWithCode": "NAMS wurde mit Code {code} beendet",
+  "@shellNamsExitedWithCode": {
+    "placeholders": {
+      "code": {
+        "type": "int"
+      }
+    }
+  },
+  "shellInternalLauncherError": "Interner Launcher-Fehler",
+  "shellMissingFilesDetail": "Fehlende Dateien in {dir}:\n{files}",
+  "@shellMissingFilesDetail": {
+    "placeholders": {
+      "dir": {
+        "type": "String"
+      },
+      "files": {
+        "type": "String"
+      }
+    }
+  },
+  "shellExeNotFoundDetail": "NieRAutomata.exe wurde hier nicht gefunden:\n{path}\n\nDer im Launcher gespeicherte Spielpfad ist möglicherweise falsch oder der Laufwerksbuchstabe hat sich geändert.",
+  "@shellExeNotFoundDetail": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "shellTabUnavailableTitle": "Nicht in diesem Build enthalten",
+  "shellTabUnavailableBody": "Dieser Bereich wurde in diesen Launcher-Build nicht einkompiliert.",
+  "shellOverlayUnavailable": "Diese Funktion ist in diesem Build nicht enthalten.",
+  "shellRuntimeSetupFailed": "Die mitgelieferte Laufzeit konnte nicht vorbereitet werden: {reason}",
+  "@shellRuntimeSetupFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "shellSettingsRecovered": "Die Einstellungsdatei des Launchers war beschädigt und wurde zurückgesetzt. Die alte Datei liegt unter {path}.",
+  "@shellSettingsRecovered": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "shellDataFolderUnavailable": "Der Datenordner des Launchers konnte nicht geöffnet werden ({reason}). Einstellungen werden in dieser Sitzung nicht gespeichert.",
+  "@shellDataFolderUnavailable": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "shellDiagnosticsFailed": "Diagnose konnte nicht erstellt werden: {reason}",
+  "@shellDiagnosticsFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "shellDiagDedicatedGpu": "dGPU",
+  "shellDiagGameBin": "game.bin",
+  "shellDiagSteam": "Steam",
+  "shellDiagSteamBuild": "Steam {build}",
+  "@shellDiagSteamBuild": {
+    "placeholders": {
+      "build": {
+        "type": "String"
+      }
+    }
+  },
+  "shellDiagDisabledPrefixes": "{count, plural, =1{1 deaktiviertes Präfix in disabled_mods.toml} other{{count} deaktivierte Präfixe in disabled_mods.toml}}",
+  "@shellDiagDisabledPrefixes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellDiagPresets": "Presets: {count}",
+  "@shellDiagPresets": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellDiagShaders": "Shader: {count}",
+  "@shellDiagShaders": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellDiagLoader": "Loader",
+  "shellDiagNamsList": "NAMS-Liste: {count}",
+  "@shellDiagNamsList": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellDiagNamsInject": "nams/inject: {count}",
+  "@shellDiagNamsInject": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellDiagSkRes": "SK_Res: {count}",
+  "@shellDiagSkRes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellDiagWax": "WAX: {count}",
+  "@shellDiagWax": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellDiagHd": "HD",
+  "shellDiagH264": "H264",
+  "shellDiagMovieOverrides": "data/movie-Overrides: {count}",
+  "@shellDiagMovieOverrides": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellDiagWaxMods": "wax/mods/",
+  "shellDiagSkResPacks": "SK_Res-Pakete",
+  "shellDiagReshadeDir": "reshade/",
+  "shellDiagDirEntry": "{name}/",
+  "@shellDiagDirEntry": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "shellDiagBullet": "• {name}",
+  "@shellDiagBullet": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "shellDiagHeaderLine": "{version}  ·  {time}",
+  "@shellDiagHeaderLine": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "shellSummaryLabel": "{label}:",
+  "@shellSummaryLabel": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "shellNamsDllMissing": "NAMS-DLL nicht gefunden",
+  "shellNamsDllMissingDetail": "Die auf der NAMS-Seite gewählte NAMS-DLL ist nicht mehr da:\n{path}\n\nWähle sie dort neu aus oder wechsle dort zurück zu NAMS.exe.",
+  "shellNamsDllCopyFailed": "NAMS-DLL konnte nicht in den Spielordner kopiert werden",
+  "shellNamsDllCopyFailedDetail": "{from}\nkonnte nicht kopiert werden nach\n{to}\n\n{error}\n\nWenn das Spiel noch läuft, schließe es und versuche es erneut.",
+  "shellPlayWithNamsDll": "Startet mit der NAMS-DLL ({file})"
+}

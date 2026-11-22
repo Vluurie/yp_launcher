@@ -1,0 +1,173 @@
+{
+  "modsUiCatPlayer": "โมเดลผู้เล่น",
+  "modsUiCatWeapon": "อาวุธ (wp)",
+  "modsUiCatEnemy": "ศัตรู (em)",
+  "modsUiCatAccessory": "เครื่องประดับ / ไอเทม (et)",
+  "modsUiCatItem": "ไอเทม (it)",
+  "modsUiCatWorldProp": "วัตถุในฉาก ({dir})",
+  "@modsUiCatWorldProp": {
+    "placeholders": {
+      "dir": {
+        "type": "String"
+      }
+    }
+  },
+  "modsUiCatModelVariant": "โมเดลรูปแบบอื่น (um)",
+  "modsUiCatMap": "แผนที่ ({dir})",
+  "@modsUiCatMap": {
+    "placeholders": {
+      "dir": {
+        "type": "String"
+      }
+    }
+  },
+  "modsUiCatScripting": "สคริปต์ ({dir})",
+  "@modsUiCatScripting": {
+    "placeholders": {
+      "dir": {
+        "type": "String"
+      }
+    }
+  },
+  "modsUiCatLocalization": "การแปลภาษา ({dir})",
+  "@modsUiCatLocalization": {
+    "placeholders": {
+      "dir": {
+        "type": "String"
+      }
+    }
+  },
+  "modsUiCatEffects": "เอฟเฟกต์ ({dir})",
+  "@modsUiCatEffects": {
+    "placeholders": {
+      "dir": {
+        "type": "String"
+      }
+    }
+  },
+  "modsUiCatUi": "UI ({dir})",
+  "@modsUiCatUi": {
+    "placeholders": {
+      "dir": {
+        "type": "String"
+      }
+    }
+  },
+  "modsUiCatMisc": "เท็กซ์เจอร์อื่น ๆ (misctex)",
+  "modsUiCatCutscenes": "คัตซีน (movie)",
+  "modsUiCatAudio": "เสียง (sound)",
+  "modsUiCatArchive": "ไฟล์ CPK",
+  "modsUiCatOther": "อื่น ๆ ({dir})",
+  "@modsUiCatOther": {
+    "placeholders": {
+      "dir": {
+        "type": "String"
+      }
+    }
+  },
+  "modsUiCodecMpeg": "MPEG-2",
+  "modsUiResolution": "{width}x{height}",
+  "@modsUiResolution": {
+    "placeholders": {
+      "width": {
+        "type": "int"
+      },
+      "height": {
+        "type": "int"
+      }
+    }
+  },
+  "modsUiScanProgress": "{scanned} / {total} USM",
+  "@modsUiScanProgress": {
+    "placeholders": {
+      "scanned": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "modsUiCutsceneNameInvalid": "ใช้ชื่อนี้เป็นชื่อโฟลเดอร์ไม่ได้ ห้ามมี < > : \" / \\ | ? * และห้ามลงท้ายด้วยจุด",
+  "modsUiCutsceneScanFailed": "อ่านโฟลเดอร์คัตซีนไม่ได้",
+  "modsUiCutsceneWriteFailed": "เขียนไฟล์คัตซีนไม่ได้ ตรวจสอบพื้นที่ว่างในดิสก์และปิดเกมก่อน",
+  "modsUiDotJoin": "{first} · {second}",
+  "@modsUiDotJoin": {
+    "placeholders": {
+      "first": {
+        "type": "String"
+      },
+      "second": {
+        "type": "String"
+      }
+    }
+  },
+  "modsUiLabelValue": "{label}: {value}",
+  "@modsUiLabelValue": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "modsUiTwoSentences": "{first} {second}",
+  "@modsUiTwoSentences": {
+    "placeholders": {
+      "first": {
+        "type": "String"
+      },
+      "second": {
+        "type": "String"
+      }
+    }
+  },
+  "modsUiWithNote": "{text} ({note})",
+  "@modsUiWithNote": {
+    "placeholders": {
+      "text": {
+        "type": "String"
+      },
+      "note": {
+        "type": "String"
+      }
+    }
+  },
+  "modsUiNone": "—",
+  "modsUiInstalling": "กำลังติดตั้ง…",
+  "modsUiLodmodTitle": "พบ LodMod",
+  "modsUiLodmodImported": "นำเข้าการตั้งค่า LodMod ไปยังแท็บ LodMod Ext แล้ว",
+  "modsUiLodmodNotImported": "LodMod Ext เปิดใช้งานอยู่แล้ว จึงไม่ได้เปลี่ยนการตั้งค่า",
+  "modsUiModsLoadFailed": "อ่าน nams/mods ไม่ได้ ตรวจสอบว่าเข้าถึงโฟลเดอร์เกมได้",
+  "modsUiNameMigoto": "3DMigoto",
+  "modsUiNameReshade": "ReShade",
+  "modsUiOutfitFallback": "ชุด {id}",
+  "@modsUiOutfitFallback": {
+    "placeholders": {
+      "id": {
+        "type": "int"
+      }
+    }
+  },
+  "modsUiReasonCancelled": "การติดตั้งถูกยกเลิก",
+  "modsUiReasonIo": "อ่านหรือเขียน {path} ไม่ได้",
+  "@modsUiReasonIo": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "modsUiReasonVariantMissing": "ตัวเลือกที่เลือกไม่มีอยู่ในไฟล์บีบอัดแล้ว",
+  "modsUiThirdPartyFailed": "ทำรายการไม่สำเร็จ ถ้าเกมเปิดอยู่ให้ปิดเกมแล้วลองอีกครั้ง",
+  "modsUiUninstallFailed": "ลบ \"{id}\" ไม่ได้ ถ้าเกมเปิดอยู่ให้ปิดเกมแล้วลองอีกครั้ง",
+  "@modsUiUninstallFailed": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  }
+}

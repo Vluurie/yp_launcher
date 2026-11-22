@@ -1,0 +1,173 @@
+{
+  "modsUiCatPlayer": "Spielermodelle",
+  "modsUiCatWeapon": "Waffen (wp)",
+  "modsUiCatEnemy": "Gegner (em)",
+  "modsUiCatAccessory": "Accessoires / Gegenstände (et)",
+  "modsUiCatItem": "Gegenstände (it)",
+  "modsUiCatWorldProp": "Weltobjekte ({dir})",
+  "@modsUiCatWorldProp": {
+    "placeholders": {
+      "dir": {
+        "type": "String"
+      }
+    }
+  },
+  "modsUiCatModelVariant": "Modellvarianten (um)",
+  "modsUiCatMap": "Karte ({dir})",
+  "@modsUiCatMap": {
+    "placeholders": {
+      "dir": {
+        "type": "String"
+      }
+    }
+  },
+  "modsUiCatScripting": "Skripte ({dir})",
+  "@modsUiCatScripting": {
+    "placeholders": {
+      "dir": {
+        "type": "String"
+      }
+    }
+  },
+  "modsUiCatLocalization": "Lokalisierung ({dir})",
+  "@modsUiCatLocalization": {
+    "placeholders": {
+      "dir": {
+        "type": "String"
+      }
+    }
+  },
+  "modsUiCatEffects": "Effekte ({dir})",
+  "@modsUiCatEffects": {
+    "placeholders": {
+      "dir": {
+        "type": "String"
+      }
+    }
+  },
+  "modsUiCatUi": "UI ({dir})",
+  "@modsUiCatUi": {
+    "placeholders": {
+      "dir": {
+        "type": "String"
+      }
+    }
+  },
+  "modsUiCatMisc": "Sonstige Texturen (misctex)",
+  "modsUiCatCutscenes": "Zwischensequenzen (movie)",
+  "modsUiCatAudio": "Audio (sound)",
+  "modsUiCatArchive": "CPK-Archive",
+  "modsUiCatOther": "Sonstiges ({dir})",
+  "@modsUiCatOther": {
+    "placeholders": {
+      "dir": {
+        "type": "String"
+      }
+    }
+  },
+  "modsUiCodecMpeg": "MPEG-2",
+  "modsUiResolution": "{width}x{height}",
+  "@modsUiResolution": {
+    "placeholders": {
+      "width": {
+        "type": "int"
+      },
+      "height": {
+        "type": "int"
+      }
+    }
+  },
+  "modsUiScanProgress": "{scanned} / {total} USM",
+  "@modsUiScanProgress": {
+    "placeholders": {
+      "scanned": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "modsUiCutsceneNameInvalid": "Dieser Name geht nicht als Ordnername. Nicht erlaubt sind < > : \" / \\ | ? * und ein Punkt am Ende.",
+  "modsUiCutsceneScanFailed": "Die Zwischensequenz-Ordner konnten nicht gelesen werden.",
+  "modsUiCutsceneWriteFailed": "Die Zwischensequenz-Dateien konnten nicht geschrieben werden. Prüfe den freien Speicherplatz und ob das Spiel geschlossen ist.",
+  "modsUiDotJoin": "{first} · {second}",
+  "@modsUiDotJoin": {
+    "placeholders": {
+      "first": {
+        "type": "String"
+      },
+      "second": {
+        "type": "String"
+      }
+    }
+  },
+  "modsUiLabelValue": "{label}: {value}",
+  "@modsUiLabelValue": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "modsUiTwoSentences": "{first} {second}",
+  "@modsUiTwoSentences": {
+    "placeholders": {
+      "first": {
+        "type": "String"
+      },
+      "second": {
+        "type": "String"
+      }
+    }
+  },
+  "modsUiWithNote": "{text} ({note})",
+  "@modsUiWithNote": {
+    "placeholders": {
+      "text": {
+        "type": "String"
+      },
+      "note": {
+        "type": "String"
+      }
+    }
+  },
+  "modsUiNone": "—",
+  "modsUiInstalling": "Wird installiert…",
+  "modsUiLodmodTitle": "LodMod erkannt",
+  "modsUiLodmodImported": "LodMod-Einstellungen wurden in den Tab LodMod Ext übernommen.",
+  "modsUiLodmodNotImported": "LodMod Ext ist bereits aktiv, die Einstellungen wurden nicht verändert.",
+  "modsUiModsLoadFailed": "nams/mods konnte nicht gelesen werden. Prüfe, ob der Spielordner erreichbar ist.",
+  "modsUiNameMigoto": "3DMigoto",
+  "modsUiNameReshade": "ReShade",
+  "modsUiOutfitFallback": "Outfit {id}",
+  "@modsUiOutfitFallback": {
+    "placeholders": {
+      "id": {
+        "type": "int"
+      }
+    }
+  },
+  "modsUiReasonCancelled": "Die Installation wurde abgebrochen.",
+  "modsUiReasonIo": "{path} konnte nicht gelesen oder geschrieben werden.",
+  "@modsUiReasonIo": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "modsUiReasonVariantMissing": "Die gewählte Option ist im Archiv nicht mehr vorhanden.",
+  "modsUiThirdPartyFailed": "Das hat nicht geklappt. Schließe das Spiel, falls es läuft, und versuche es erneut.",
+  "modsUiUninstallFailed": "„{id}“ konnte nicht entfernt werden. Schließe das Spiel, falls es läuft, und versuche es erneut.",
+  "@modsUiUninstallFailed": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  }
+}

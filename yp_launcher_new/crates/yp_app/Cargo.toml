@@ -1,0 +1,43 @@
+[package]
+name = "yp_app"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "YoRHa-Protocol-Launcher"
+path = "src/main.rs"
+
+[features]
+default = ["settings", "mods"]
+settings = ["dep:yp_settings_ui"]
+mods = ["dep:yp_mods_ui", "dep:yp_docs_ui"]
+docs = ["dep:yp_docs_ui", "yp_docs_ui/library", "yp_ui/docs-library"]
+tools = ["dep:yp_docs_ui", "yp_docs_ui/tools"]
+embedded-images = ["yp_ui/embedded-images"]
+embedded-docs = ["yp_ui/embedded-docs"]
+embedded-assets = ["embedded-images", "embedded-docs"]
+
+[dependencies]
+gpui.workspace = true
+gpui_platform.workspace = true
+yp_ui.workspace = true
+yp_state.workspace = true
+yp_shell.workspace = true
+yp_settings_ui = { workspace = true, optional = true }
+yp_mods_ui = { workspace = true, optional = true }
+yp_docs_ui = { workspace = true, optional = true }
+yp_i18n.workspace = true
+yp_core.workspace = true
+yp_host.workspace = true
+yp_config.workspace = true
+log.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true
+
+[build-dependencies]
+embed-resource.workspace = true
+
+[lints]
+workspace = true

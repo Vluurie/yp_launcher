@@ -754,7 +754,7 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get tooltipEditsNaiom =>
-      'แก้ไข nams/naiom.toml การเปลี่ยนแปลงจะบันทึกทันที การตั้งค่าส่วนใหญ่มีผลโดยไม่ต้องรีสตาร์ตเกม แต่บางรายการต้องรีสตาร์ต';
+      'แก้ไข nams/naiom.toml การเปลี่ยนแปลงจะบันทึกทันทีและมีผลในเกมโดยไม่ต้องรีสตาร์ต';
 
   @override
   String get tooltipCutscenesLocation =>
@@ -3907,7 +3907,7 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get tooltipDisableInputFeatures =>
-      'ปิดชั้นเมาส์และคีย์บอร์ดทั้งหมด เกมจะใช้การจัดการอินพุตแบบเดิม และทุกอย่างด้านล่างจะถูกละเว้น ต้องรีสตาร์ต';
+      'ปิดชั้นเมาส์และคีย์บอร์ดทั้งหมด เกมจะใช้การจัดการอินพุตแบบเดิม และทุกอย่างด้านล่างจะถูกละเว้น มีผลทันที';
 
   @override
   String get tooltipValidateModelDataSettings =>
@@ -4529,6 +4529,13 @@ class AppLocalizationsTh extends AppLocalizations {
       'ใช้ไอเท็มด่วนที่เลือกทันที ทำงานเบื้องหลังโดยไม่แสดงเมนูไอเท็มในเกม ซึ่งเป็นพฤติกรรมที่ตั้งใจไว้';
 
   @override
+  String get labelBindPodPet => 'ลูบพ็อด';
+
+  @override
+  String get tooltipBindPodPet =>
+      'ลูบพ็อดขณะกดค้าง เหมือนกับการหมุนเมาส์เป็นวงกลม ใช้กับปุ่มคอนโทรลเลอร์ได้ด้วย ทำงานเฉพาะเมื่อเกมอนุญาตให้ลูบ: ขณะยืนหรือเดิน ไม่ใช่ระหว่างบทสนทนา อีเวนต์ หรือการโจมตี';
+
+  @override
   String get labelBindThirdPersonToggle => 'เปิด/ปิดการแก้กล้อง';
 
   @override
@@ -4642,9 +4649,6 @@ class AppLocalizationsTh extends AppLocalizations {
   String get naiomRestartBadge => 'รีสตาร์ต';
 
   @override
-  String get naiomRestartTooltip => 'มีผลหลังรีสตาร์ตเกม';
-
-  @override
   String get naiomNeedsCameraFix =>
       'เปิด Fix Camera Acceleration เพื่อใช้ตัวเลือกนี้';
 
@@ -4658,10 +4662,6 @@ class AppLocalizationsTh extends AppLocalizations {
   @override
   String get naiomCrosshairOverrides =>
       'ไม่ใช้ขณะเปิด Crosshair Mode เพราะเป้าเล็งมีความเร็วของตัวเอง';
-
-  @override
-  String get naiomThirdPersonRestartNote =>
-      'การเปิดตัวเลือกนี้ต้องรีสตาร์ตเกม แต่การปิดทำได้ระหว่างเล่น';
 
   @override
   String get naiomTapEvadeWarning =>

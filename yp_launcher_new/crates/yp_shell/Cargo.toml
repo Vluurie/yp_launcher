@@ -1,0 +1,33 @@
+[package]
+name = "yp_shell"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+serde_json.workspace = true
+gpui.workspace = true
+yp_ui.workspace = true
+yp_state.workspace = true
+yp_i18n.workspace = true
+yp_core.workspace = true
+yp_host.workspace = true
+yp_config.workspace = true
+yp_health.workspace = true
+yp_mods.workspace = true
+yp_thirdparty.workspace = true
+yp_cutscenes.workspace = true
+futures.workspace = true
+log.workspace = true
+jiff.workspace = true
+toml.workspace = true
+
+[dev-dependencies]
+yp_config = { workspace = true, features = ["test-support"] }
+gpui_platform.workspace = true
+gpui = { workspace = true, features = ["test-support"] }
+yp_core = { workspace = true, features = ["test-support"] }
+tempfile.workspace = true
+
+[lints]
+workspace = true

@@ -1,0 +1,10 @@
+{
+  "platformNameWindows": "Windows",
+  "platformNameLinux": "Linux",
+  "platformNameMacos": "macOS",
+  "archivePasswordProtected": "此压缩包受密码保护。请自行解压，然后拖入解压后的文件夹。",
+  "archiveDamaged": "此压缩包已损坏或不完整。请重新下载。",
+  "archiveUnsupportedMethod": "此压缩包使用了启动器无法读取的压缩方式。请用其他工具解压，然后拖入解压后的文件夹。",
+  "archivePartMissing": "此压缩包被分成多个分卷，其中一个缺失。请将所有分卷放在同一文件夹中，然后拖入第一个分卷。",
+  "archiveHoldsNoFiles": "此压缩包中没有文件。"
+}

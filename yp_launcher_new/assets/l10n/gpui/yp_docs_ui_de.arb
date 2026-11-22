@@ -1,0 +1,14 @@
+{
+  "docsUnavailable": "Die Dokumentation fehlt in dieser Installation.",
+  "docsPageFailed": "Diese Seite konnte nicht geöffnet werden: {detail}",
+  "docsSaveFailed": "Die Seite konnte nicht gespeichert werden: {detail}",
+  "docsSaveShortcut": "Strg+S",
+  "docsLinkBroken": "Dieser Link zeigt auf eine Seite, die es nicht gibt: {target}",
+  "errWeaponStemUnreadable": "Dieser Dateiname gehört zu keiner Waffe. Erwartet wird etwas wie wp0003.",
+  "errWeaponStemLengthMismatch": "Der neue Waffenname ist anders lang als der alte, deshalb lassen sich die Dateien nicht umbenennen.",
+  "errWeaponSameStem": "Die Waffe liegt bereits auf diesem Platz.",
+  "outfitBuilderPreviewFailed": "Dieses Modell kann hier nicht angezeigt werden. {detail}",
+  "weaponConvertSlot": "Freier Platz",
+  "toolsWeaponConvertNextStep": "Das Modell ist an seinem Platz. Um daraus eine eigene Waffe zu machen, erstelle im Waffen-Builder eine mit der obj_id {objId}.",
+  "toolsOpenWeaponBuilder": "Waffen-Builder öffnen"
+}

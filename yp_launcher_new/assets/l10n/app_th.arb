@@ -1,0 +1,2894 @@
+{
+  "@@locale": "th",
+  "toastHistoryTitle": "ข้อความล่าสุด",
+  "toastHistoryCopy": "คัดลอกข้อความ",
+  "controllerNavigationTitle": "การนำทางด้วยคอนโทรลเลอร์",
+  "controllerRequiresKeyboard": "ใช้เมาส์หรือแป้นพิมพ์สำหรับตัวควบคุมนี้",
+  "controllerNavigationDescription": "ปุ่มทิศทาง / สติกซ้าย: นำทาง A / กากบาท: ยืนยัน B / วงกลม: ย้อนกลับ LB / RB (L1 / R1): เปลี่ยนแท็บ สติกขวา: เลื่อน ใช้งานเฉพาะเมื่อหน้าต่างตัวเรียกใช้งานอยู่ในโฟกัส",
+  "appTitle": "ตัวเรียกใช้งาน YoRHa Protocol",
+  "tooltipLauncherSource": "ซอร์สโค้ดของตัวเรียกใช้งาน",
+  "tooltipNamsSource": "ซอร์สของโปรเจกต์ NAMS",
+  "tooltipGuide": "คู่มือ",
+  "tooltipDiscord": "Discord",
+  "themeToggleToNier": "สลับไปธีม NieR",
+  "themeToggleToDark": "สลับไปธีมมืด",
+  "tooltipLanguage": "ภาษา",
+  "languageSupportNotice": "คำแปลจัดทำโดยชุมชนหรือสร้างขึ้นโดยอัตโนมัติและอาจไม่ถูกต้อง ผู้ดูแลสื่อสารภาษาอังกฤษเท่านั้น โปรดขอความช่วยเหลือเป็นภาษาอังกฤษ",
+  "tooltipCopyCommand": "คัดลอกคำสั่ง NAMS ไปยังคลิปบอร์ด เพื่อให้คุณนำไปวางในเทอร์มินัลและเริ่มเกมด้วยตนเอง",
+  "notificationCommandCopied": "คัดลอกคำสั่งเริ่มเกมแล้ว ให้นำไปวางในเทอร์มินัลเพื่อเริ่มเกมด้วยตนเอง",
+  "notificationCommandNotReady": "ไม่สามารถสร้างคำสั่งเริ่มเกมได้ ไบนารีของตัวเรียกใช้งานยังไม่พร้อม",
+  "notificationSteamOptionCopied": "คัดลอกตัวเลือกการเริ่มเกมของ Steam แล้ว ให้นำไปวางในตัวเลือกการเริ่มเกมของ NieR:Automata ใน Steam",
+  "textureAutoRecommended": "อัตโนมัติ (แนะนำ)",
+  "detectionDlcPresent": "DLC: มีอยู่",
+  "detectionDlcNotDetected": "DLC: ตรวจไม่พบ",
+  "detectionDlcPresentTooltip": "พบ DLC data100.cpk ม็อดที่มีไฟล์ชุดเฉพาะ DLC (pl000d, pl010d, pl020d) จะถูกติดตั้งตามเดิม",
+  "detectionDlcNotDetectedTooltip": "ตรวจไม่พบ DLC ม็อดที่มีไฟล์ชุดเฉพาะ DLC (pl000d, pl010d, pl020d) จะถูกติดตั้งด้วยชื่อแบบไม่มี DLC (pl0000, pl0100, pl0200) เพื่อให้แสดงในเกม",
+  "detectionExeWolfLimitBreak": "EXE: Wolf Limit Break",
+  "detectionExeOriginal": "EXE: ต้นฉบับ",
+  "detectionExeMissing": "EXE: ไม่พบ",
+  "detectionExeUnrecognised": "EXE: ไม่รู้จัก",
+  "detectionExeUnrecognisedTooltip": "มี NieRAutomata.exe อยู่ แต่แฮชของไฟล์ไม่อยู่ในรายการที่เรารู้จัก NAMS ยังทำงานได้ ข้อความนี้เป็นเพียงการแจ้งเตือนว่าเรายังไม่เคยพบเวอร์ชันนี้โดยตรง",
+  "detectionExeWolfLimitBreakTooltip": "ตรวจพบ NieRAutomata.exe ของ Wolf Limit Break NAMS ไม่ต้องใช้แพตช์นี้และไม่เคยผ่านการทดสอบร่วมกัน เกมอาจยังเปิดได้ แต่อาจเกิดปัญหาประสิทธิภาพ เกมล่มจากหน่วยความจำ หรือม็อดไม่เข้ากัน เพื่อรับการรองรับเต็มรูปแบบ โปรดคืนค่าไฟล์ปฏิบัติการ Steam ต้นฉบับ (ตรวจสอบไฟล์เกมใน Steam)",
+  "detectionExeLegacyWin7": "EXE: เวอร์ชัน Windows 7",
+  "detectionExeLegacyWin7Tooltip": "นี่คือ NieRAutomata.exe รุ่นเก่าสำหรับ Windows 7/8 NAMS ต้องใช้เวอร์ชัน Steam สำหรับ Windows 10/11 และไม่สามารถเปิดไฟล์นี้ได้ ปัญหานี้พบบ่อยบน Proton/Linux ซึ่งบางครั้ง Steam ดาวน์โหลดไฟล์ปฏิบัติการ Windows 7 มาให้\n\nวิธีแก้ไข:\n1. ลบไฟล์ .exe ทุกไฟล์ในโฟลเดอร์เกม NieRAutomata\n2. ใน Steam ตั้งค่า Proton เป็น 'Proton Experimental' (คลิกขวาที่เกม > Properties > Compatibility)\n3. ใน Steam คลิกขวาที่เกม > Properties > Installed Files > Verify integrity of game files\n4. เปิดเกมผ่าน Steam หนึ่งครั้งเพื่อให้ระบบเก็บไฟล์ปฏิบัติการที่ถูกต้องไว้ จากนั้นจึงใช้ตัวเรียกใช้งานอีกครั้ง",
+  "launchOptionsTitle": "ตัวเลือกการเริ่มเกม",
+  "launchWrapperTitle": "ตัวครอบคำสั่งเริ่มเกม (LINUX)",
+  "launchWrapperDesc": "เพิ่มคำสั่งไว้หน้าคำสั่งเริ่มเกม เช่น gamescope หรือ mangohud ตัวเรียกใช้งานเปิดเกมผ่าน Proton เอง ดังนั้นให้ใส่ตัวครอบคำสั่งไว้ที่นี่แทนตัวเลือกการเริ่มเกมของ Steam เว้นว่างไว้เพื่อเริ่มเกมตามปกติ การตั้งค่านี้จะมีผลในการเริ่มเกมครั้งถัดไป",
+  "launchWrapperHint": "gamescope -w 2560 -h 1440 -f --",
+  "launchWrapperExample": "ตัวอย่าง:\ngamescope -w 2560 -h 1440 -f --\nmangohud\ngamemoderun",
+  "steamOverlayTitle": "STEAM OVERLAY และเวลาเล่น (LINUX)",
+  "steamOverlayDesc": "Steam จะแสดงโอเวอร์เลย์และนับเวลาเล่นเฉพาะเกมที่ Steam เปิดเองเท่านั้น หากต้องการทั้งสองอย่าง ให้ Steam เปิดตัวเรียกใช้งานนี้: คัดลอกบรรทัดด้านล่างไปใส่ใน Steam → NieR:Automata → คุณสมบัติ → ตัวเลือกการเริ่มเกม แล้วเริ่ม NieR:Automata จาก Steam จากนั้น Steam จะเปิดตัวเรียกใช้งาน และเกมที่คุณเริ่มจากที่นี่จะทำงานพร้อมโอเวอร์เลย์ของ Steam",
+  "steamOverlayCopy": "คัดลอกตัวเลือกการเริ่มเกม",
+  "steamOverlayActive": "เปิดผ่าน Steam แล้ว – โอเวอร์เลย์ทำงานอยู่",
+  "tabLauncherSettings": "การแก้ไขปัญหา",
+  "troubleWrongExeTitle": "เวอร์ชันเกมไม่ถูกต้อง",
+  "troubleWrongExeSummary": "นี่คือ NieRAutomata.exe รุ่นเก่าสำหรับ Windows 7/8 NAMS ไม่สามารถเปิดได้",
+  "troubleMissingFilesTitle": "ไฟล์ตัวเรียกใช้งานหายไป",
+  "troubleMissingFilesSummary": "หายไป: {files}",
+  "@troubleMissingFilesSummary": { "placeholders": { "files": { "type": "String" } } },
+  "troubleMissingFilesDesc": "ไฟล์เหล่านี้เป็นส่วนหนึ่งของตัวเรียกใช้งานแบบพกพา แต่หายไป มีความเป็นไปได้สูงว่าโปรแกรมป้องกันไวรัส (มักเป็น Windows Defender) กักกันไว้ กรุณายกเว้นโฟลเดอร์ตัวเรียกใช้งานในโปรแกรมป้องกันไวรัสและกู้คืนไฟล์ หรือดาวน์โหลดตัวเรียกใช้งานใหม่",
+  "troubleRecentErrorsTitle": "ข้อผิดพลาด NAMS ล่าสุด",
+  "troubleFoldersTitle": "เปิดโฟลเดอร์",
+  "troubleFoldersDesc": "เข้าถึงโฟลเดอร์ที่ผู้ดูแลอาจขอให้คุณเปิดอย่างรวดเร็ว",
+  "troubleOpenGame": "โฟลเดอร์เกม",
+  "troubleOpenNamsConfig": "การตั้งค่า NAMS",
+  "troubleOpenLogs": "บันทึก",
+  "troubleOpenBins": "โฟลเดอร์ตัวเรียกใช้งาน",
+  "troubleClearCacheTitle": "ล้างแคช",
+  "troubleClearCacheDesc": "ลบสถานะแคชที่อาจล้าสมัย: ไฟล์บันทึก แคชการตรวจจับ ไฟล์ settings.json ของม็อด และเครื่องหมายการแตกไฟล์รันไทม์ ม็อดและไฟล์เกมของคุณจะไม่ถูกแตะต้อง",
+  "troubleClearCacheButton": "ล้างแคช",
+  "troubleClearCacheConfirm": "การดำเนินการนี้จะลบบันทึก แคชการตรวจจับ ไฟล์ settings.json ในเกมของม็อด และบังคับให้แตกไฟล์รันไทม์ใหม่เมื่อเริ่มครั้งถัดไป ม็อดและไฟล์เกมจะไม่ถูกแตะต้อง ดำเนินการต่อหรือไม่?",
+  "troubleClearCacheDone": "ล้างแคชแล้ว (ลบไฟล์บันทึก {count} ไฟล์)",
+  "@troubleClearCacheDone": { "placeholders": { "count": { "type": "int" } } },
+  "verifyInstallTitle": "การวินิจฉัยการติดตั้ง",
+  "verifyInstallDesc": "เรียกใช้การตรวจสอบในตัวของ NAMS เพื่อวิเคราะห์สาเหตุที่เกมอาจเปิดไม่ได้ (เวอร์ชัน Windows ไม่ถูกต้อง ไฟล์ Steam ขาดหาย หรือสิทธิ์การเข้าถึง)",
+  "verifyInstallButton": "ตรวจสอบการติดตั้ง",
+  "verifyInstallRunning": "กำลังตรวจสอบ...",
+  "verifyInstallOk": "ผ่านการตรวจสอบทั้งหมด",
+  "verifyInstallFailed": "การตรวจสอบบางรายการล้มเหลว ดูรายละเอียดด้านล่าง",
+  "verifyNoRuntime": "ไม่สามารถตรวจสอบได้: ไม่พบรันไทม์ Proton/Wine สำหรับการติดตั้งนี้",
+  "verifySteamNotRunning": "ไม่สามารถตรวจสอบได้: Steam ต้องกำลังทำงานและบัญชีต้องเป็นเจ้าของเกม",
+  "verifyTimedOut": "ไม่สามารถตรวจสอบได้: NAMS ไม่ตอบสนองภายใน 30 วินาที",
+  "verifyTimedOutLinux": "ไม่สามารถตรวจสอบได้: NAMS ไม่ตอบสนองภายใน 30 วินาที น่าจะเป็นเพราะ Proton ค้าง ซึ่งมักเกิดจากเกมอยู่บนไดรฟ์ NTFS การย้ายเกมไปยังไดรฟ์ที่ฟอร์แมตสำหรับ Linux มักจะแก้ปัญหาได้",
+  "verifyInstallError": "ไม่สามารถเรียกใช้การตรวจสอบได้ โปรดตรวจสอบว่าได้เลือกโฟลเดอร์เกมแล้ว",
+  "verifyInstallNoGameDir": "โปรดเลือกโฟลเดอร์เกมก่อน",
+  "verifyCheckSteamInstall": "การติดตั้ง Steam",
+  "verifyCheckNierExe": "ไฟล์ปฏิบัติการของเกม",
+  "verifyCheckSteamApi64": "ไลบรารี Steam API",
+  "verifyCheckRuntimeWritable": "รันไทม์สามารถเขียนได้",
+  "verifyCheckRuntimeCached": "แคชไลบรารีรันไทม์แล้ว",
+  "launchOptionMinimizeOnLaunch": "ย่อตัวเรียกใช้งานขณะเล่นเกม",
+  "launchOptionPreferDedicatedGpu": "เลือกใช้ GPU แยกเป็นหลัก",
+  "launchOptionPreferDedicatedGpuTooltip": "แจ้งระบบให้เปิดเกมด้วยการ์ดจอแยกแทนการ์ดจอประหยัดพลังงาน มีผลเฉพาะคอมพิวเตอร์ที่มี GPU สองตัว เช่น โน้ตบุ๊กเกมมิ่ง",
+  "launchOptionVanilla": "เริ่มแบบวานิลลา (ไม่มีม็อด สำหรับดีบัก)",
+  "launchOptionVanillaTooltip": "เริ่ม NieR ผ่าน NAMS โดยไม่โหลดตัวโหลดม็อด: ไม่มีม็อด ปลั๊กอิน เท็กซ์เจอร์ หรือโอเวอร์เลย์ ใช้ตรวจว่าปัญหาเกิดในเกมที่ไม่ได้ดัดแปลงด้วยหรือไม่ จะปิดเองเมื่อเปิดลันเชอร์ใหม่",
+  "failTitlePanic": "NAMS ขัดข้อง",
+  "failTitleUnknown": "เริ่มเกมไม่สำเร็จ",
+  "failExplanationPanic": "NAMS พบข้อผิดพลาดที่ไม่สามารถกู้คืนได้ก่อนเกมเริ่มทำงาน โดยทั่วไปมักเป็นบั๊ก โปรดส่งรายงานด้านล่างให้ผู้ดูแล",
+  "failHintPanicShare": "คัดลอกรายงานฉบับเต็มด้านล่างแล้วส่งให้ผู้ดูแล",
+  "failHintPanicReboot": "ลองอีกครั้งหลังรีบูต บางครั้งแฮนเดิลเก่าจะถูกล้างออก",
+  "failTitleNamsFailure": "NAMS รายงานความล้มเหลว",
+  "failExplanationNamsFailure": "การตรวจสอบของ NAMS ล้มเหลวก่อนที่เกมจะทำงาน ดูรายละเอียดในรายงานด้านล่าง",
+  "failHintShareReport": "คัดลอกรายงานฉบับเต็มด้านล่างและแชร์เพื่อใช้วิเคราะห์ปัญหา",
+  "failTitleInstallNotFound": "ไม่พบการติดตั้ง NieR:Automata",
+  "failExplanationInstallNotFound": "NAMS ไม่สามารถระบุตำแหน่งการติดตั้ง NieR:Automata ได้ พาธที่บันทึกไว้อาจผิด หรือการตรวจหา Steam อัตโนมัติล้มเหลว",
+  "failHintRepickDirectory": "เลือกโฟลเดอร์เกมใหม่ในตัวเรียกใช้งานเพื่ออัปเดตพาธที่บันทึกไว้",
+  "failHintVerifyFiles": "ตรวจสอบไฟล์เกมใน Steam (Library → NieR:Automata → Properties → Local Files → Verify)",
+  "failTitleFolderCreate": "ไม่สามารถสร้างโฟลเดอร์ที่จำเป็นได้",
+  "failExplanationFolderCreate": "NAMS ไม่สามารถสร้างไดเรกทอรีถัดจาก NAMS.exe ได้ โฟลเดอร์ติดตั้งอาจเป็นแบบอ่านอย่างเดียว",
+  "failHintWritableFolder": "ตรวจสอบว่าโฟลเดอร์ติดตั้งตัวเรียกใช้งาน (ตำแหน่งที่มี NAMS.exe) สามารถเขียนได้",
+  "failHintProgramFiles": "หากอยู่ใน Program Files หรือโฟลเดอร์ที่ซิงก์กับ OneDrive ให้ย้ายตัวเรียกใช้งานไปยังโฟลเดอร์ปกติ หรือคลิกขวา → 'Always keep on this device'",
+  "failTitleRuntimePrep": "การเตรียมรันไทม์ล้มเหลว",
+  "failExplanationRuntimePrep": "NAMS ไม่สามารถเตรียมรันไทม์ (game.bin / steam_api64.dll) ได้ โดยทั่วไปเกิดจากสิทธิ์การเขียนหรือโปรแกรมป้องกันไวรัส",
+  "failHintAntivirusExclusions": "เพิ่มทั้งโฟลเดอร์ติดตั้งตัวเรียกใช้งานและโฟลเดอร์เกมลงในรายการยกเว้นของโปรแกรมป้องกันไวรัส แล้วลองใหม่",
+  "failHintWritableCache": "ตรวจสอบว่าโฟลเดอร์ติดตั้งสามารถเขียนได้ เพื่อให้สร้างแคชรันไทม์ได้",
+  "failTitleHostFailure": "โฮสต์ NAMS ล้มเหลว",
+  "failExplanationHostFailure": "NAMS ไม่สามารถโหลดและเริ่มโฮสต์เกม (game.bin) ได้ โดยทั่วไปเกิดจากสภาพแวดล้อมหรือไฟล์เสียหาย",
+  "failHintReboot": "รีบูตแล้วลองใหม่ บางครั้งแฮนเดิลเก่าจะถูกล้างออก",
+  "failHintPersistShare": "หากปัญหายังคงอยู่ ให้คัดลอกรายงานฉบับเต็มและส่งให้ผู้ดูแล",
+  "failTitleSteamNotRunning": "Steam ไม่ทำงาน / ยังไม่ได้เข้าสู่ระบบ",
+  "failExplanationSteamNotRunning": "NAMS ไม่สามารถเชื่อมต่อกับเซสชัน Steam ที่เข้าสู่ระบบแล้วได้ Steam ต้องกำลังทำงานและเข้าสู่ระบบอยู่",
+  "failHintStartSteam": "เปิด Steam และเข้าสู่ระบบ จากนั้นลองเริ่มเกมอีกครั้ง",
+  "failTitleSteamNotOwned": "บัญชี Steam ไม่ได้เป็นเจ้าของ NieR:Automata",
+  "failExplanationSteamNotOwned": "บัญชี Steam ที่เข้าสู่ระบบอยู่ไม่ได้เป็นเจ้าของ NieR:Automata",
+  "failHintSignInOwner": "เข้าสู่ระบบด้วยบัญชี Steam ที่เป็นเจ้าของ NieR:Automata",
+  "failTitleSteamCheckFailed": "การตรวจสอบ Steam ล้มเหลว",
+  "failExplanationSteamCheckFailed": "NAMS พบข้อผิดพลาดภายในขณะตรวจสอบความเป็นเจ้าของเกมบน Steam",
+  "failHintRestartSteam": "รีสตาร์ต Steam และตัวเรียกใช้งาน แล้วลองใหม่",
+  "failTitleInvalidArgs": "อาร์กิวเมนต์เริ่มเกมไม่ถูกต้อง",
+  "failExplanationInvalidArgs": "ตัวเรียกใช้งานส่งอาร์กิวเมนต์ที่ NAMS ไม่สามารถแยกวิเคราะห์ได้ นี่เป็นบั๊กของตัวเรียกใช้งาน",
+  "failTitleExitedUnexpectedly": "เกมปิดโดยไม่คาดคิด",
+  "failExplanationExitedUnexpectedly": "NAMS เริ่มเกมแล้ว แต่เกมปิดด้วยรหัสที่ไม่ใช่ศูนย์ เกมอาจขัดข้อง",
+  "failHintCheckLogViewer": "ตรวจสอบตัวดูบันทึกภายในแอป (nams.log) เพื่อดูรายละเอียดการขัดข้อง",
+  "failHeadlinePanicked": "NAMS เกิด panic",
+  "failSectionWhatHappened": "เกิดอะไรขึ้น",
+  "failSectionReportedByNams": "รายงานโดย NAMS",
+  "failSectionTryThis": "ลองทำดังนี้",
+  "failSectionDiagnosticDetail": "รายละเอียดการวินิจฉัย",
+  "failSectionLaunchManually": "เริ่มเกมด้วยตนเองจากเทอร์มินัล",
+  "failSectionRawOutput": "ผลลัพธ์ดิบ",
+  "failManualCommandHint": "หาก UI ของตัวเรียกใช้งานยังคงทำงานล้มเหลว ให้วางข้อความนี้ในเทอร์มินัลเพื่อเริ่มเกมด้วยตนเอง นี่คือคำสั่งเดียวกับที่ปุ่ม Play ใช้งาน",
+  "failDetailOs": "ระบบปฏิบัติการ",
+  "failDetailCause": "สาเหตุ",
+  "failDetailSuggested": "คำแนะนำ",
+  "failActionCopyReport": "คัดลอกรายงาน",
+  "failActionOpenLogFile": "เปิดไฟล์บันทึก",
+  "logDetailOs": "ระบบปฏิบัติการ",
+  "logDetailLocale": "ภาษา/ภูมิภาค",
+  "logNoModsInstalled": "ยังไม่ได้ติดตั้งม็อด",
+  "logSectionSystem": "ระบบ",
+  "logSectionModsNams": "ม็อด (NAMS)",
+  "logSectionCutscenes": "คัตซีน",
+  "logSectionTextures": "เท็กซ์เจอร์",
+  "tooltipOpenInModManager": "เปิดในตัวจัดการม็อด",
+  "tooltipOpenInCutscenesTab": "เปิดในแท็บคัตซีน",
+  "tooltipOpenInTexturesTab": "{name}\n\nเปิดในแท็บเท็กซ์เจอร์",
+  "@tooltipOpenInTexturesTab": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "actionCancel": "ยกเลิก",
+  "tooltipMinimize": "ย่อหน้าต่าง",
+  "tooltipMaximize": "ขยายเต็มหน้าต่าง",
+  "tooltipRestore": "คืนค่าหน้าต่าง",
+  "tooltipClose": "ปิด",
+  "infoText": "เลือกเกม กดเล่น เท่านี้ก็เสร็จ",
+  "helpPrefix": "ตัวเรียกใช้งานไม่ทำงาน? ลองใช้ ",
+  "helpNaoLauncher": "NAO Launcher",
+  "helpOr": " หรือ ",
+  "helpCommandLine": "บรรทัดคำสั่ง",
+  "helpJoinDiscord": ". เข้าร่วม ",
+  "helpDiscord": "Discord",
+  "helpSuffix": " เพื่อขอความช่วยเหลือ",
+  "noFileSelected": "ยังไม่ได้เลือกไฟล์",
+  "selectButton": "เลือก",
+  "filePickerTitle": "เลือกไฟล์ปฏิบัติการของเกม",
+  "playButton": "เล่น",
+  "stopButton": "หยุด",
+  "statusReady": "พร้อมเริ่มเกม!",
+  "statusSelectGame": "เลือกไฟล์ปฏิบัติการของเกมเพื่อเริ่มต้น",
+  "statusPreparing": "กำลังเตรียมไฟล์ตัวเรียกใช้งาน...",
+  "statusLaunching": "กำลังเริ่มเกม...",
+  "statusRunning": "เกมกำลังทำงาน",
+  "statusStopped": "เกมหยุดแล้ว",
+  "statusStopping": "กำลังหยุดเกม...",
+  "errorInvalidExe": "ดูเหมือนว่าไฟล์นี้ไม่ใช่ NieR:Automata โปรดตรวจสอบว่าเป็น Steam เวอร์ชันล่าสุด",
+  "errorFileNotExist": "ไม่มีไฟล์ที่เลือก",
+  "errorSelectFailed": "เลือกไฟล์ไม่สำเร็จ",
+  "errorStartFailed": "เริ่มเกมไม่สำเร็จ",
+  "errorStopFailed": "หยุดเกมไม่สำเร็จ",
+  "errorFilesQuarantined": "ไฟล์ตัวเรียกใช้งานหายไป: {files} ปัญหานี้มักเกิดจากโปรแกรมป้องกันไวรัส เราโหลดม็อดขณะรันเกม ซึ่งเป็นวิธีปกติสำหรับการม็อดเกม แต่อาจทำให้เกิดการตรวจจับผิดพลาด โปรดกู้คืนไฟล์จากพื้นที่กักกันหรือดาวน์โหลดตัวเรียกใช้งานใหม่ แล้วเพิ่มโฟลเดอร์ติดตั้งตัวเรียกใช้งาน (โฟลเดอร์ที่มี NAMS.exe) ลงในรายการยกเว้น",
+  "@errorFilesQuarantined": {
+    "placeholders": {
+      "files": {
+        "type": "String"
+      }
+    }
+  },
+  "notifyFilesQuarantined": "ตรวจพบไฟล์ตัวเรียกใช้งานหายไป ปัญหานี้มักเกิดจากโปรแกรมป้องกันไวรัส เราโหลดม็อดขณะรันเกม ซึ่งเป็นเรื่องปกติสำหรับการม็อดเกม แต่อาจทำให้เกิดการตรวจจับผิดพลาด โปรดกู้คืนไฟล์จากพื้นที่กักกันหรือดาวน์โหลดตัวเรียกใช้งานใหม่ แล้วเพิ่มโฟลเดอร์ติดตั้งตัวเรียกใช้งาน (โฟลเดอร์ที่มี NAMS.exe) ลงในรายการยกเว้น",
+  "featureReshade": "ReShade - ติดตั้งไว้แล้วหรือไม่? YP จะตรวจพบให้อัตโนมัติ",
+  "featureTextures": "HD Textures - วางเท็กซ์เจอร์ไว้ใน nams/inject/textures/ หรือระบบจะตรวจพบจาก SK_Res/",
+  "featureLodMod": "LOD Mod Ext - การปรับภาพในตัว เช่น เงา รายละเอียด และอาการวัตถุโผล่ ตั้งค่าเริ่มต้นเป็นปิด",
+  "tooltipEditConfigs": "เปลี่ยนการตั้งค่าภาพโดยไม่ต้องแก้ไขไฟล์",
+  "tooltipOpenLogs": "เปิดโฟลเดอร์บันทึกใน Explorer",
+  "tooltipCreateShortcut": "สร้างทางลัดบนเดสก์ท็อปเพื่อเริ่มเกมด้วย YoRHa Protocol",
+  "shortcutName": "NieR Automata (YoRHa Protocol)",
+  "shortcutDescription": "เริ่ม NieR:Automata ด้วย YoRHa Protocol",
+  "notifyShortcutCreated": "สร้างทางลัดบนเดสก์ท็อปแล้ว!",
+  "notifyShortcutFailed": "สร้างทางลัดบนเดสก์ท็อปไม่สำเร็จ",
+  "notifyLodModMigrated": "พบการตั้งค่า LodMod.ini เดิมของคุณ นำเข้าไปยัง lodmod.toml และเปิดใช้งาน LodMod Ext แล้ว",
+  "notifyReShadeDetected": "ตรวจพบ ReShade และปิดไว้เป็นค่าเริ่มต้น NAMS มี Depth of Field แบบเนทีฟที่แพตช์แล้ว ดังนั้น ReShade จึงเป็นตัวเลือกเสริม คุณสามารถเปิดใช้งานอีกครั้งได้ทุกเมื่อในแท็บตั้งค่า NAMS (Disable ReShade Loading → ปิด)",
+  "notifyNaiomMigrated": "พบการตั้งค่า NAIOM เดิมของคุณและนำเข้าไปยัง naiom.toml แล้ว โปรดตรวจสอบแท็บ NAIOM คุณสามารถลบไฟล์ NAIOM เก่า (dinput8.dll, NAIOM.ini) ออกจากโฟลเดอร์เกมได้",
+  "notifyNaiomSkipped": "ปุ่มบางรายการของ NAIOM ใช้คีย์ที่ NAMS ไม่รองรับ จึงไม่ได้นำเข้า: {entries} โปรดตั้งปุ่มใหม่ในแท็บ NAIOM",
+  "@notifyNaiomSkipped": {
+    "placeholders": {
+      "entries": {
+        "type": "String"
+      }
+    }
+  },
+  "notifyThirdPartyMigrated": "ย้ายม็อดของบุคคลที่สามไปที่ {path} แล้ว การอัปเดตตัวเรียกใช้งานจะไม่ลบม็อดเหล่านี้อีก",
+  "@notifyThirdPartyMigrated": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "notifyThirdPartyMigrationIncomplete": "ไฟล์ของบุคคลที่สามบางไฟล์ย้ายไม่ได้และยังอยู่ใน {oldPath} โปรดย้ายไปไว้ใน {newPath} ด้วยตนเอง เพราะการอัปเดตตัวเรียกใช้งานจะลบโฟลเดอร์เดิม",
+  "@notifyThirdPartyMigrationIncomplete": {
+    "placeholders": {
+      "oldPath": {
+        "type": "String"
+      },
+      "newPath": {
+        "type": "String"
+      }
+    }
+  },
+  "notifyPlatformUnsupported": "ไม่พบชั้นความเข้ากันได้ของ Windows บน {platform} จึงไม่สามารถเริ่มเกมจากที่นี่ได้ อย่างไรก็ตาม ม็อด เท็กซ์เจอร์ และการตั้งค่าทั้งหมดยังใช้งานได้ โปรดติดตั้ง CrossOver และติดตั้ง NieR:Automata ใน bottle เพื่อเปิดใช้งานการเริ่มเกม",
+  "@notifyPlatformUnsupported": {
+    "placeholders": {
+      "platform": {
+        "type": "String"
+      }
+    }
+  },
+  "notifyReShadeIncompatible": "ตรวจพบ ReShade ที่รองรับ addon/ImGui ซึ่งไม่เข้ากัน โปรดใช้ ReShade มาตรฐานที่ไม่รองรับ addon",
+  "notifyTexturesDetected": "พบเท็กซ์เจอร์ HD ใน {folder} และจะโหลดเมื่อเริ่มเกม",
+  "@notifyTexturesDetected": {
+    "placeholders": {
+      "folder": {
+        "type": "String"
+      }
+    }
+  },
+  "errorAppDataNotFound": "ไม่พบตัวแปรสภาพแวดล้อม APPDATA",
+  "errorWinePrefixNotFound": "ไม่พบ Wine prefix โปรดตั้งค่าตัวแปรสภาพแวดล้อม WINEPREFIX",
+  "errorHomeNotFound": "ไม่พบตัวแปรสภาพแวดล้อม HOME",
+  "errorNoWineUser": "ไม่พบไดเรกทอรีผู้ใช้ใน Wine prefix",
+  "errorWineUsersNotFound": "ไม่พบไดเรกทอรี drive_c/users ของ Wine ใน {prefix}",
+  "@errorWineUsersNotFound": {
+    "placeholders": {
+      "prefix": {
+        "type": "String"
+      }
+    }
+  },
+  "errorPlatformNotSupported": "ไม่รองรับแพลตฟอร์ม {os}",
+  "@errorPlatformNotSupported": {
+    "placeholders": {
+      "os": {
+        "type": "String"
+      }
+    }
+  },
+  "errorExeNotFound": "ไม่พบ NieRAutomata.exe ใน {dir}",
+  "@errorExeNotFound": {
+    "placeholders": {
+      "dir": {
+        "type": "String"
+      }
+    }
+  },
+  "errorDirNotWritable": "โฟลเดอร์ตัวเรียกใช้งานเป็นแบบอ่านอย่างเดียว",
+  "errorDirNotWritableBody": "ไม่สามารถเขียนลงในโฟลเดอร์ YP Launcher ได้:\n{dir}\n\nNAMS เขียนแคชรันไทม์ ปลั๊กอิน และบันทึกไว้ข้าง NAMS.exe ดังนั้นโฟลเดอร์ตัวเรียกใช้งานต้องสามารถเขียนได้\n\nวิธีแก้ไข:\n1. ปิดตัวเรียกใช้งาน\n2. ย้ายโฟลเดอร์ YP Launcher ที่แตกไฟล์แล้วทั้งหมดออกจาก Program Files (หรือที่ตั้งที่มีการป้องกัน) ไปยังโฟลเดอร์ปกติที่คุณเป็นเจ้าของ เช่น Desktop, Documents หรือ D:\\Games\\YP Launcher\n3. เปิดตัวเรียกใช้งานอีกครั้งจากตำแหน่งใหม่\n\nทางเลือก: คลิกขวาที่ไฟล์ .exe ของตัวเรียกใช้งานแล้วเลือก \"Run as administrator\" เพื่ออนุญาตให้เขียนในตำแหน่งปัจจุบัน",
+  "@errorDirNotWritableBody": {
+    "placeholders": {
+      "dir": {
+        "type": "String"
+      }
+    }
+  },
+  "errorGameDirNotWritable": "โฟลเดอร์เกมเป็นแบบอ่านอย่างเดียว",
+  "errorGameDirNotWritableBody": "ไม่สามารถเขียนลงในโฟลเดอร์เกมได้:\n{gameDir}\n\nNAMS เขียนม็อดและการตั้งค่าลงใน:\n{namsDir}\nแต่ไม่สามารถสร้างไฟล์ที่นั่นได้ NieR อาจติดตั้งอยู่ใต้ C:\\Program Files (x86)\\Steam ซึ่ง Windows ป้องกันไว้\n\nวิธีแก้ไข (แนะนำ - ย้ายคลัง Steam ออกจาก Program Files):\n1. เปิด Steam > Settings > Storage\n2. คลิกเมนูไดรฟ์ > \"Add Drive\" แล้วเลือกโฟลเดอร์บนไดรฟ์อื่น เช่น D:\\SteamLibrary\n3. ไปที่ Library คลิกขวา NieR:Automata > Properties > Installed Files > \"Move install folder\" แล้วค่อยย้ายไปยังคลังใหม่\n4. เลือกเกมใหม่ในตัวเรียกใช้งานนี้แล้วกด Play อีกครั้ง\n\nทางเลือกแบบรวดเร็ว: คลิกขวาที่ไฟล์ .exe ของตัวเรียกใช้งานแล้วเลือก \"Run as administrator\" เพื่อให้สามารถเขียนใน Program Files ได้ การย้ายคลังเป็นวิธีแก้ระยะยาวที่สะอาดกว่า",
+  "@errorGameDirNotWritableBody": {
+    "placeholders": {
+      "gameDir": {
+        "type": "String"
+      },
+      "namsDir": {
+        "type": "String"
+      }
+    }
+  },
+  "errorNoCompatLayer": "ไม่พบ CrossOver",
+  "errorNoCompatLayerBody": "การใช้งาน NieR:Automata บนระบบนี้ต้องใช้ CrossOver ซึ่งใช้รันโปรแกรม Windows บน macOS แต่ไม่พบใน /Applications\n\nหากไม่มี CrossOver ตัวเรียกใช้งานยังสามารถจัดการม็อด เท็กซ์เจอร์ และการตั้งค่าได้ เพียงแต่ไม่สามารถเริ่มเกมได้\n\nวิธีแก้ไข:\n1. ติดตั้ง CrossOver จาก codeweavers.com\n2. ติดตั้ง Steam และ NieR:Automata ภายใน CrossOver bottle\n3. เลือก NieRAutomata.exe จากภายใน bottle นั้นในตัวเรียกใช้งานนี้",
+  "errorNoCompatLayerLinux": "ไม่พบ Proton หรือ Wine",
+  "errorNoCompatLayerLinuxBody": "การใช้งาน NieR:Automata บน Linux ต้องใช้ Proton (แนะนำ) หรือ Wine แต่ไม่พบทั้งสองอย่าง\n\nหากไม่มี ตัวเรียกใช้งานยังสามารถจัดการม็อด เท็กซ์เจอร์ และการตั้งค่าได้ เพียงแต่ไม่สามารถเริ่มเกมได้\n\nวิธีแก้ไข:\n1. ใน Steam ติดตั้ง Proton เวอร์ชันหนึ่ง (Proton Experimental ใช้งานได้ดี) หากอยู่บนไดรฟ์อื่น ตัวเรียกใช้งานจะตรวจสอบทุกคลัง Steam\n2. ตรวจสอบว่าเลือก NieRAutomata.exe จากภายในคลัง Steam ของคุณ (พาธที่มี steamapps/common)\n3. หรือกำหนด YP_PROTON_PATH ไปยังไบนารี proton ก่อนเปิดตัวเรียกใช้งาน เช่น YP_PROTON_PATH=\"$HOME/.steam/steam/steamapps/common/Proton - Experimental/proton\"",
+  "errorProtonMissing": "ไม่พบ Proton",
+  "errorProtonMissingBody": "ไม่พบรันไทม์ Proton ที่กำหนดค่าไว้ที่:\n{path}\n\nโปรดติดตั้ง Proton ใหม่ผ่าน Steam หรือตั้งค่า YP_PROTON_PATH ไปยังไบนารี proton ที่ใช้งานได้ก่อนเปิดตัวเรียกใช้งาน",
+  "@errorProtonMissingBody": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "errorNoZDrive": "Wine prefix ไม่มีไดรฟ์ Z:",
+  "errorNoZDriveBody": "Wine แมป Z: ไปยังระบบไฟล์ของเครื่องโฮสต์ ซึ่งเป็นวิธีที่ตัวเรียกใช้งานส่ง NAMS.exe ให้เกม แต่ prefix นี้ไม่มี dosdevices/z::\n{prefix}\n\nนี่เป็นค่าเริ่มต้นของ CrossOver ดังนั้น bottle อาจถูกแก้ไข การสร้าง bottle ใหม่และติดตั้งเกมใหม่ภายในนั้นเป็นวิธีแก้ที่รวดเร็วที่สุด",
+  "@errorNoZDriveBody": {
+    "placeholders": {
+      "prefix": {
+        "type": "String"
+      }
+    }
+  },
+  "errorExeOutsidePrefix": "ไฟล์ปฏิบัติการนั้นไม่ได้อยู่ภายใน bottle",
+  "errorExeOutsidePrefixBody": "ตัวเรียกใช้งานเริ่มเกมผ่าน CrossOver ดังนั้น {exeName} ต้องอยู่ภายใน CrossOver bottle:\n{path}\n\nติดตั้งเกมลงใน bottle แล้วเลือกไฟล์ปฏิบัติการจากที่นั่น",
+  "@errorExeOutsidePrefixBody": {
+    "placeholders": {
+      "exeName": {
+        "type": "String"
+      },
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "headerNams": "NAMS",
+  "headerLodMod": "LOD MOD EXT",
+  "headerTextures": "เท็กซ์เจอร์",
+  "headerYorhaProtocol": "YORHA PROTOCOL",
+  "headerNaiom": "NAIOM",
+  "headerCutscenes": "คัตซีน",
+  "tooltipEditsNamsToml": "แก้ไข nams/nams.toml",
+  "tooltipEditsLodmodToml": "แก้ไข nams/lodmod.toml",
+  "tooltipEditsTextureInjectionToml": "แก้ไข nams/texture_injection.toml",
+  "tooltipEditsSettingsJson": "แก้ไข nams\\_internal\\cache\\settings.json",
+  "tooltipEditsNaiom": "แก้ไข nams/naiom.toml การเปลี่ยนแปลงจะบันทึกทันทีและมีผลในเกมโดยไม่ต้องรีสตาร์ต",
+  "tooltipCutscenesLocation": "ม็อด: nams/cutscenes/<mod_name>/movie/*.usm",
+  "cardGeneral": "ทั่วไป",
+  "cardLoading": "การโหลด",
+  "cardPerformance": "ประสิทธิภาพ",
+  "performanceCardNote": "สองตัวเลือกแรกช่วยได้เฉพาะเมื่อ CPU เป็นคอขวด หาก CPU ของคุณช้ากว่า GPU การเปิดทั้งคู่อาจเพิ่มประสิทธิภาพได้สูงสุด 20% ส่วนบนระบบที่ GPU เป็นคอขวดจะไม่มีอะไรเปลี่ยนแปลง ตัวเลือกที่สามเกี่ยวกับอาการกระตุกขณะโหลดแผนที่ ไม่ใช่อัตราเฟรม",
+  "cardLevelOfDetail": "ระดับรายละเอียด",
+  "cardAmbientOcclusion": "Ambient Occlusion",
+  "cardPostProcessing": "โพสต์โปรเซสซิง",
+  "cardShadows": "เงา",
+  "cardGlobalIllumination": "Global Illumination",
+  "cardPreloading": "การโหลดล่วงหน้า",
+  "cardTextureConfig": "การตั้งค่า",
+  "cardInstallTextures": "ติดตั้งเท็กซ์เจอร์",
+  "cardKeybinds": "การกำหนดปุ่ม",
+  "cardWorkspace": "เวิร์กสเปซ",
+  "cardCheats": "สูตรโกง",
+  "cardRandomizer": "สุ่มศัตรู",
+  "cardThirdPersonCamera": "กล้องบุคคลที่สาม",
+  "cardPodAiming": "Pod / การเล็ง",
+  "cardMisc": "เบ็ดเตล็ด",
+  "cardMovementBindings": "ปุ่มการเคลื่อนไหว",
+  "cardCombatBindings": "ปุ่มการต่อสู้",
+  "cardNonStandardBindings": "ปุ่มที่ไม่ใช่มาตรฐาน",
+  "cardMenuNavigation": "การนำทางเมนู",
+  "buttonSave": "บันทึก",
+  "buttonDiscard": "ละทิ้ง",
+  "buttonCancel": "ยกเลิก",
+  "buttonInstall": "ติดตั้ง",
+  "buttonDelete": "ลบ",
+  "buttonYes": "ใช่",
+  "buttonNo": "ไม่",
+  "buttonContinue": "ดำเนินการต่อ",
+  "buttonBack": "ย้อนกลับ",
+  "buttonGetStarted": "เริ่มต้นใช้งาน",
+  "buttonAutoDetect": "ตรวจหาอัตโนมัติ",
+  "buttonSelectManually": "เลือกด้วยตนเอง",
+  "buttonGoToLauncher": "ไปยังตัวเรียกใช้งาน",
+  "unsavedChangesTitle": "การเปลี่ยนแปลงที่ยังไม่ได้บันทึก",
+  "unsavedChangesMessage": "คุณมีการเปลี่ยนแปลงที่ยังไม่ได้บันทึก ต้องการละทิ้งหรือไม่?",
+  "stay": "อยู่ต่อ",
+  "discard": "ละทิ้ง",
+  "enterValidNumber": "กรอกตัวเลขที่ถูกต้อง",
+  "pressKey": "กดปุ่ม...",
+  "tabLauncher": "ตัวเรียกใช้งาน",
+  "tabYorhaProtocol": "YP Devkit",
+  "tabNams": "NAMS",
+  "cardChangedCount": "เปลี่ยน {count} รายการ",
+  "cardChangedTooltipHeader": "ต่างจากค่าเริ่มต้น:",
+  "tabLodMod": "LOD Mod Ext",
+  "tabNaiom": "NAIOM",
+  "tabTextures": "เท็กซ์เจอร์",
+  "tabMods": "ตัวจัดการม็อด",
+  "tabCutscenes": "คัตซีน",
+  "tabThirdParty": "บุคคลที่สาม",
+  "tabDocs": "สร้างม็อด",
+  "tabTools": "เครื่องมือ",
+  "toolsIconsTitle": "ไอคอน",
+  "toolsIconsDesc": "ไอคอน misctex ทั้งหมดที่ม็อดของคุณมี เปลี่ยนอันใดอันหนึ่งเพื่อสลับรูปหรือปรับขนาด เกมอ่านจากชื่อ ดังนั้นชื่อต้องคงเดิม",
+  "toolsIconsHotReload": "ไม่ต้องรีสตาร์ท: เปลี่ยนไอคอนขณะเกมกำลังทำงาน แล้วออกจากกระเป๋าและเปิดใหม่ รูปใหม่จะแสดงทันที",
+  "toolsIconsEmpty": "ยังไม่มีไอคอน ใช้ตัวสร้างไอเทมหรืออาวุธในหน้า \"สร้างม็อด\" หรือเพิ่มด้านล่าง",
+  "toolsIconsAdd": "เพิ่มไอคอนจากรูปภาพ",
+  "toolsIconsConvert": "แปลงรูปภาพ",
+  "toolsIconsAdjust": "ปรับแต่งไอคอน",
+  "toolsIconsNotMisctex": "นี่ไม่ใช่ไฟล์ไอคอน กรุณาเลือก misctex_*.dat",
+  "toolsIconsPick": "เลือกไอคอนที่มีอยู่",
+  "toolsIconsNewTitle": "ไอคอนใหม่",
+  "toolsIconsNewMod": "โฟลเดอร์ม็อด",
+  "toolsIconsNewNoMods": "ยังไม่มีโฟลเดอร์ม็อด กรุณาสร้างม็อดก่อน",
+  "toolsIconsNewName": "ชื่อไอคอน",
+  "toolsIconsNewNameHint": "เช่น wp0100",
+  "toolsIconsNewHint": "เกมค้นหาไอคอนจากชื่อนี้",
+  "toolsIconsNewCreate": "ต่อไป",
+  "toolsIconsNew": "ไอคอนใหม่",
+  "toolsIconsNewName": "ชื่อเท็กซ์เจอร์",
+  "toolsIconsNewNameHint": "item_thumb_8500",
+  "toolsIconsNewMod": "โฟลเดอร์ม็อด",
+  "toolsIconsReplace": "แทนที่",
+  "toolsIconsDelete": "ลบ",
+  "toolsIconsDeleteConfirm": "ลบ {name} หรือไม่? ไฟล์ .dat และ .dtt จะถูกลบ ไอเทมที่อ้างถึงจะกลับไปใช้รูปตัวแทน",
+  "@toolsIconsDeleteConfirm": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "toolsIconsCount": "{count, plural, other{{count} ไอคอน}}",
+  "@toolsIconsCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "toolsNeedsGameDir": "กรุณาเลือกโฟลเดอร์เกมในตัวเรียกใช้งานก่อน",
+  "docsSearchHint": "ค้นหาเอกสาร",
+  "docsNoResults": "ไม่พบข้อมูล",
+  "docsResultCount": "{count, plural, other{{count} ผลลัพธ์}}",
+  "@docsResultCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "docsCategoryNative": "คู่มือการทำม็อด",
+  "docsCategoryScripting": "การเขียนสคริปต์",
+  "docsCategoryResources": "ตารางอ้างอิง",
+  "docsCategoryAuthoring": "การพัฒนาเครื่องมือ",
+  "docsOnThisPage": "ในหน้านี้",
+  "docsHome": "เริ่มที่นี่",
+  "docsHeroTitle": "สร้างม็อดของคุณเอง",
+  "docsHeroBody": "ไอเทม อาวุธ ชุด เควสต์ ไปจนถึงฉากที่กำกับได้ทั้งฉาก เริ่มต้นได้โดยไม่ต้องเขียนโค้ด และทุกอย่างที่ต้องใช้อยู่ในหน้านี้แล้ว",
+  "docsHeroCta": "ม็อดแรกของคุณใน 5 นาที",
+  "docsHeroTime": "5 นาที",
+  "docsPathBeginner": "ไม่เคยทำม็อดมาก่อน",
+  "docsPathBeginnerBody": "เริ่มจากไอเทมใหม่ชิ้นเดียว แล้วค่อยเรียนรู้โครงสร้างโฟลเดอร์ม็อด",
+  "docsPathContent": "เพิ่มเนื้อหาลงในเกม",
+  "docsPathContentBody": "ไอเทม อาวุธ ชุด เครื่องประดับ เควสต์ จดหมาย เพลง และอื่น ๆ",
+  "docsPathScripting": "เขียนสคริปต์ให้โลกในเกม",
+  "docsPathScriptingBody": "ทำให้สิ่งต่าง ๆ เกิดขึ้นในจังหวะที่ใช่: การเกิด ทริกเกอร์ กล้อง คัตซีน",
+  "docsSectionGuides": "คู่มือ",
+  "docsEnglishOnly": "ขณะนี้เอกสารมีให้อ่านเป็นภาษาอังกฤษเท่านั้น",
+  "docsBackToLauncher": "กลับไปที่ตัวเรียกใช้งาน",
+  "docsEdit": "แก้ไขหน้านี้",
+  "docsLinkCopied": "เปิดเบราว์เซอร์ไม่ได้ คัดลอกลิงก์แล้ว: {url}",
+  "@docsLinkCopied": {
+    "placeholders": {
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "docsReload": "โหลดใหม่จากดิสก์",
+  "docsSaveFile": "บันทึกลงไฟล์",
+  "docsPreview": "รีเฟรชตัวอย่าง",
+  "thumbnailTitle": "ไอคอน",
+  "thumbnailDrop": "ลากรูปภาพมาวางที่นี่",
+  "thumbnailDropHint": "PNG, JPEG, WebP, BMP หรือ TGA ตัวเรียกใช้งานจะแปลงให้เอง",
+  "thumbnailSize": "ขนาด",
+  "thumbnailSizeHint": "ลากมุมเพื่อปรับขนาด DXT5 ต้องเป็นจำนวนเท่าของ 4",
+  "thumbnailSizeFixed": "ขนาดคงที่สำหรับภาพประเภทนี้ ขนาดอื่นจะล้นกรอบในเกม",
+  "thumbnailScaled": "แสดงตัวอย่างที่ {percent}% แต่ไอคอนจะถูกบันทึกในขนาดเต็ม",
+  "@thumbnailScaled": {
+    "placeholders": {
+      "percent": { "type": "int" }
+    }
+  },
+  "thumbnailCreate": "สร้างไอคอน",
+  "thumbnailUse": "ใช้รูปนี้",
+  "thumbnailPending": "พร้อมแล้ว จะถูกเขียนเมื่อคุณสร้างไอเทม",
+  "thumbnailHotReload": "เปิดกระเป๋าในเกมอีกครั้งเพื่อดูไอคอนที่เปลี่ยนแล้ว ไม่ต้องรีสตาร์ท",
+  "thumbnailOpen": "กำหนดไอคอน",
+  "thumbnailChange": "เปลี่ยนไอคอน",
+  "thumbnailReplace": "แทนที่",
+  "thumbnailRemove": "ลบออก",
+  "thumbnailDone": "บันทึกไอคอนไว้ข้างไอเทมของคุณแล้ว",
+  "thumbnailWorking": "กำลังแปลง...",
+  "thumbnailNoItem": "สร้างไอเทมก่อน แล้วจึงกำหนดไอคอนให้",
+  "errTextureUnreadable": "อ่านไอคอนนี้ไม่ได้ อาจเสียหายหรืออยู่ในรูปแบบที่ไม่รองรับ",
+  "errImageUnreadable": "ไม่สามารถอ่านไฟล์นี้เป็นรูปภาพได้ กรุณาใช้ PNG, JPEG, WebP, BMP หรือ TGA",
+  "errImageSizeOutOfRange": "ขนาดต้องอยู่ระหว่าง 4 ถึง 4096 พิกเซล",
+  "errImageSizeNotMultipleOfFour": "ความกว้างและความสูงต้องเป็นจำนวนเท่าของ 4",
+  "errArchiveEmpty": "ไม่มีอะไรให้แพ็ก",
+  "errArchiveExtensionTooLong": "นามสกุลไฟล์ของ {name} ยาวเกินสามตัวอักษร",
+  "@errArchiveExtensionTooLong": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "errWeaponNothingToConvert": "ม็อดนี้ไม่มีโมเดลหรือเท็กซ์เจอร์ให้แปลง ต้องมี .dat ที่มี wta และ .dtt ที่มี wmb",
+  "errWeaponClassMismatch": "อาวุธแทนที่ได้เฉพาะอาวุธประเภทเดียวกัน หอกกลายเป็นดาบไม่ได้ เพราะท่าทางจะยังเป็นของอาวุธที่ถูกแทนที่",
+  "errFileReadFailed": "อ่านไฟล์ไม่สำเร็จ: {detail}",
+  "@errFileReadFailed": {
+    "placeholders": {
+      "detail": { "type": "String" }
+    }
+  },
+  "errFileWriteFailed": "เขียนไฟล์ไม่สำเร็จ: {detail}",
+  "@errFileWriteFailed": {
+    "placeholders": {
+      "detail": { "type": "String" }
+    }
+  },
+  "errDirectoryCreateFailed": "สร้างโฟลเดอร์ไม่สำเร็จ: {detail}",
+  "@errDirectoryCreateFailed": {
+    "placeholders": {
+      "detail": { "type": "String" }
+    }
+  },
+  "errUnknownCode": "เกิดข้อผิดพลาด (รหัส {code}) {detail}",
+  "@errUnknownCode": {
+    "placeholders": {
+      "code": { "type": "int" },
+      "detail": { "type": "String" }
+    }
+  },
+  "itemBuilderTitle": "ลองทำสักชิ้นเลย",
+  "itemBuilderBody": "กรอกข้อมูลนี้แล้วตัวเรียกใช้งานจะเขียนไฟล์ให้คุณ คุณดูผลลัพธ์ได้ด้านล่าง และแก้ไขเองภายหลังได้",
+  "itemBuilderName": "ชื่อที่แสดงในเมนู",
+  "itemBuilderNameHint": "สลักเกลียวขึ้นสนิม",
+  "itemBuilderDescription": "คำอธิบาย",
+  "itemBuilderDescriptionHint": "สลักเกลียวตัวหนึ่ง เคยผ่านวันที่ดีกว่านี้มาแล้ว",
+  "itemBuilderModId": "โฟลเดอร์ม็อด",
+  "itemBuilderCarry": "จำนวนที่ผู้เล่นพกได้",
+  "itemBuilderSellable": "ขายได้",
+  "itemBuilderSellPrice": "ราคาขาย",
+  "itemBuilderAutoGive": "มอบให้ผู้เล่นอัตโนมัติ",
+  "itemBuilderAutoGiveHint": "มิฉะนั้นคุณต้องใช้ร้านค้าหรือรางวัลเควสต์เพื่อมอบไอเทมนี้",
+  "itemBuilderIdLabel": "รหัสไอเทม",
+  "itemBuilderIdHint": "เลือกให้คุณแล้ว ไอเทมทุกชิ้นต้องมีรหัสที่ไม่ซ้ำกับใคร",
+  "itemBuilderPreview": "นี่คือไฟล์ที่จะถูกเขียน",
+  "itemBuilderCreate": "สร้างไอเทม",
+  "itemBuilderCreated": "เขียนไปที่ {path}",
+  "@itemBuilderCreated": {
+    "placeholders": {
+      "path": { "type": "String" }
+    }
+  },
+  "itemBuilderNeedsName": "ตั้งชื่อให้มันก่อน",
+  "itemBuilderNeedsGameDir": "กรุณาเลือกโฟลเดอร์เกมในตัวเรียกใช้งานก่อน",
+  "itemBuilderExists": "รหัสนี้ถูกใช้ไปแล้ว กรุณาเลือกรหัสอื่น",
+  "itemBuilderOpenFolder": "แสดงไฟล์",
+  "firstModTitle": "ลงมือทำไปพร้อมกับอ่าน",
+  "firstModBody": "แต่ละขั้นจะเขียนไฟล์จริงลงในโฟลเดอร์เกมของคุณ เมื่อจบแล้วคุณจะได้ม็อดที่ใช้งานได้",
+  "firstModStep1": "สร้างโฟลเดอร์ม็อด",
+  "firstModStep1Detail": "nams\\mods\\my_first_mod\\entities\\",
+  "firstModEdit": "เปิดตัวแก้ไข",
+  "firstModExplainManifest": "นี่คือไฟล์ระบุตัวตนของม็อด NAMS จะอ่านไฟล์นี้ก่อนเพื่อรู้ว่ามีม็อดอยู่ คุณเปลี่ยน display_name และ author ได้ตามใจ แต่ id ต้องเป็นตัวพิมพ์เล็กและไม่มีช่องว่าง เพราะม็อดอื่นใช้ค่านี้อ้างถึงม็อดของคุณ",
+  "firstModExplainItem": "ชื่อไฟล์เป็นตัวกำหนดว่านี่คืออะไร: item_9999.toml หมายถึงไอเทม id 9999 ถ้าเปลี่ยนชื่อไฟล์ก็เท่ากับเปลี่ยน id ภายในไฟล์ [text.name] คือชื่อที่แสดงในเมนู ส่วน [text.help] คือคำอธิบาย ลองเปลี่ยนชื่อดูก่อนเขียนไฟล์ได้เลย",
+  "tomlEditorValid": "TOML ถูกต้อง NAMS จะอ่านสิ่งเหล่านี้:",
+  "tomlEditorInvalid": "ยังไม่ใช่ TOML ที่ถูกต้อง NAMS จะข้ามไฟล์นี้",
+  "tomlEditorReset": "กลับไปใช้ตัวอย่าง",
+  "tomlEditorWrite": "เขียนไฟล์",
+  "firstModStep2": "เขียน mod.toml",
+  "firstModStep2Detail": "ไฟล์ระบุตัวตนที่ NAMS อ่านเป็นอันดับแรก",
+  "firstModStep3": "เพิ่ม Test Pebble",
+  "firstModStep3Detail": "entities\\item_9999.toml",
+  "firstModStep4": "ตรวจว่า NAMS พบม็อดหรือไม่",
+  "firstModStep4Detail": "รัน NAMS verify กับการติดตั้งของคุณ",
+  "firstModDo": "ทำเลย",
+  "firstModDone": "เสร็จแล้ว",
+  "firstModRedo": "เขียนใหม่",
+  "firstModVerify": "ตรวจสอบ",
+  "firstModOpenFolder": "เปิดโฟลเดอร์",
+  "firstModReset": "ลบม็อดนี้ออก",
+  "firstModNoGameDir": "กรุณาเลือกโฟลเดอร์เกมในตัวเรียกใช้งานก่อน",
+  "firstModFinished": "ม็อดของคุณพร้อมแล้ว รีสตาร์ทเกมแล้วจะพบ Test Pebble ในกระเป๋าของคุณ",
+  "firstModFailed": "เขียนไฟล์ไม่สำเร็จ: {error}",
+  "@firstModFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "docsCopy": "คัดลอก",
+  "docsCopied": "คัดลอกแล้ว",
+  "docsNativeBlurb": "อธิบายสิ่งที่คุณต้องการในไฟล์ข้อความ แล้ว NAMS จะโหลดให้ ม็อดส่วนใหญ่เริ่มต้นจากตรงนี้",
+  "docsScriptingBlurb": "สำหรับสิ่งที่ต้องเกิดขึ้นตามจังหวะ: การเกิด ทริกเกอร์ กล้อง ไปจนถึงฉากที่กำกับทั้งฉาก",
+  "docsSectionReference": "ตารางอ้างอิง",
+  "docsReferenceBody": "ทุก id ที่ค้นหาได้: ไอเทม อาวุธ ชิป เอฟเฟกต์ เมช",
+  "docsBrowseAll": "ดูทุกหน้า",
+  "docsPagesCount": "{count, plural, other{{count} หน้า}}",
+  "@docsPagesCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "thirdPartyTitle": "รันไทม์ของบุคคลที่สาม",
+  "thirdPartySubtitle": "ReShade และ 3DMigoto ซึ่ง NAMS โหลดจากโฟลเดอร์ที่จัดการไว้ ไม่ต้องเปลี่ยนชื่อและไม่มี DLL ชนกัน",
+  "thirdPartyReShadeHeader": "RESHADE",
+  "thirdPartyMigotoHeader": "3DMIGOTO",
+  "thirdPartyReShadeHowto": "ติดตั้ง ReShade ตามปกติลงในโฟลเดอร์ NieRAutomata (เลือก dxgi เป็น API) ตัวเรียกใช้งานจะย้ายไฟล์เข้า NAMS และตั้งค่าพาธให้คุณ",
+  "thirdPartyMigotoHowto": "ไฟล์บีบอัดม็อดเชเดอร์ 3DMigoto ติดตั้งผ่านโซนวางไฟล์ด้านบน ตัวเรียกใช้งานจะตั้งค่าเป้าหมายโหลดเดอร์ให้ NAMS เกี่ยวเกี่ยวมัน",
+  "thirdPartyGameModsHeader": "ม็อดเกม",
+  "thirdPartyGameModsHowto": "DLL ม็อดที่สร้างสำหรับเกมต้นฉบับ เช่น ตัวจับเวลาสปีดรัน เทรนเนอร์ ติดตั้งผ่านโซนวางไฟล์ด้านบน ตัวเรียกใช้งานจะตั้งค่าให้ทำงานใต้ NAMS แต่ตรวจไม่ได้ว่าม็อดทำอะไรจริง ทุกตัวอาจทำให้เกมคราช เพิ่มเฉพาะไฟล์ที่ไว้ใจ และปิดตัวที่มีปัญหาด้านล่าง",
+  "thirdPartyGameModsNone": "ยังไม่ได้ติดตั้งม็อดเกม",
+  "thirdPartyGameModsCount": "{count, plural, =0{ไม่มี DLL} other{{count} DLL}}",
+  "@thirdPartyGameModsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "thirdPartyGameModsDisabledChip": "ปิดใช้งาน",
+  "thirdPartyGameModsToggleHint": "ปิดม็อดนี้โดยไม่ต้องลบ",
+  "thirdPartyGameModsRemoveOne": "ลบม็อดนี้",
+  "thirdPartyGraphicModsHeader": "พร็อกซีกราฟิก",
+  "thirdPartyGraphicModsHowto": "DLL พร็อกซี Direct3D (d3d11.dll, dxgi.dll) ที่ครอบการเรนเดอร์ของเกม NAMS โหลดจาก nams/thirdparty/graphic และส่งการเรียก Direct3D ของเกมผ่านไฟล์เหล่านี้ ไฟล์ที่วางไว้ในโฟลเดอร์เกมจะไม่ถูกโหลดเลย ReShade และ 3DMigoto มีการ์ดของตัวเอง ติดตั้งผ่านช่องวางไฟล์ด้านบน",
+  "thirdPartyMoveToGraphic": "ย้ายไปที่พร็อกซีกราฟิก (สำหรับตัวครอบ Direct3D)",
+  "thirdPartyMoveToGame": "ย้ายไปที่ม็อดเกม (สำหรับม็อดที่อ่านหน่วยความจำของเกม)",
+  "thirdPartyGameModSettings": "การตั้งค่าตัวโหลดสำหรับ DLL นี้ (game.toml)",
+  "thirdPartyGameModFakeHandle": "แสดง game.bin เป็นโมดูลหลัก",
+  "thirdPartyGameModFakeHandleHint": "ตอบ GetModuleHandle(NULL) ด้วย game.bin เพื่อให้ม็อดที่อ่านหน่วยความจำเกมที่ออฟเซ็ตคงที่หาเกมเจอ ปิดเฉพาะเมื่อม็อดตั้งใจฮุก NAMS.exe",
+  "thirdPartyGameModFakeExePath": "แสดง NieRAutomata.exe เป็น exe หลัก",
+  "thirdPartyGameModFakeExePathHint": "ตอบ GetModuleFileName(NULL) ด้วย NieRAutomata.exe ของเกมที่ติดตั้งไว้ ม็อดที่ตรวจชื่อ exe หรือแฮช exe เพื่อดูเวอร์ชันเกม เช่น WAX ต้องใช้ตัวเลือกนี้",
+  "thirdPartyGameModSizeOfImage": "เวอร์ชันเกมที่ม็อดเห็น",
+  "thirdPartyGameModSizeOfImageHint": "ม็อดบางตัวตรวจเวอร์ชันเกมจากขนาดอิมเมจของโมดูลหลัก ให้เลือกบิลด์ที่ม็อดสร้างมา ม็อดที่ทำสำหรับเวอร์ชัน 2021 จะอ่านหน่วยความจำผิดบนอัปเดต 2026 เว้นแต่ม็อดจะรองรับ",
+  "thirdPartyGameModSize2021": "Steam 2021 (ค่าเริ่มต้น)",
+  "thirdPartyGameModSize2026": "Steam 2026-11",
+  "thirdPartyGameModSizeReal": "ขนาดจริงของ game.bin",
+  "thirdPartyGameModSizeCustom": "กำหนดเอง ({value})",
+  "thirdPartyGameModReportPatches": "บันทึกโค้ดเกมที่ม็อดนี้แก้ไข",
+  "thirdPartyGameModReportPatchesHint": "เขียนทุกตำแหน่งในโค้ดเกมที่ม็อดนี้เขียนทับลงใน nams.log สำหรับการแก้ปัญหา",
+  "thirdPartyGameModWaitPatch": "รอจนม็อดแพตช์เกมเสร็จ",
+  "thirdPartyGameModWaitPatchHint": "หยุดการเริ่มเกมไว้จนกว่าม็อดจะแจ้งว่าเขียนโค้ดเกมเสร็จแล้ว (ม็อดจะขอพาธ exe เมื่อเสร็จ) เพื่อให้ฮุกของ NAMS ติดตั้งหลังแพตช์ของม็อด ต้องเปิด \"แสดง NieRAutomata.exe เป็น exe หลัก\" ซึ่งจะเปิดไปพร้อมกัน",
+  "thirdPartyGameModPatchTimeout": "เวลารอนานสุด",
+  "thirdPartyGameModPatchTimeoutHint": "หากม็อดไม่ตอบกลับ เกมจะเริ่มหลังเวลานี้อยู่ดี และ NAMS จะเขียนคำเตือนลงใน nams.log",
+  "thirdPartyGameModSeconds": "{seconds} วินาที",
+  "thirdPartyStatusInstalled": "ติดตั้งแล้ว",
+  "thirdPartyStatusNotInstalled": "ยังไม่ได้ติดตั้ง",
+  "thirdPartyStatusFoundInGame": "พบในโฟลเดอร์เกมของคุณ คลิก นำเข้า เพื่อตั้งค่าให้ใช้กับ NAMS",
+  "thirdPartyEnable": "เปิดใช้งาน",
+  "thirdPartyImport": "นำเข้าไปยัง NAMS",
+  "thirdPartyRepair": "ซ่อมแซม",
+  "thirdPartyRemove": "นำออก",
+  "thirdPartyGetReShade": "ดาวน์โหลด ReShade",
+  "thirdPartyShadersMissing": "ยังไม่มีเอฟเฟกต์ติดตั้งอยู่ โปรดเพิ่มพรีเซ็ตหรือชุด shader มิฉะนั้นจะไม่มีผลใด ๆ",
+  "thirdPartyOpenFolder": "เปิดโฟลเดอร์",
+  "thirdPartyPresetsCount": "{count, plural, =0{ไม่มีพรีเซ็ต} =1{1 พรีเซ็ต} other{{count} พรีเซ็ต}}",
+  "@thirdPartyPresetsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "thirdPartyInstallCard": "ติดตั้ง",
+  "thirdPartyDropHere": "วางพรีเซต ReShade, ม็อด 3DMigoto หรือ DLL ม็อดเกมที่นี่",
+  "thirdPartyImported": "นำเข้าไปยัง NAMS แล้ว",
+  "thirdPartyInstalled": "ติดตั้งแล้ว",
+  "thirdPartyInstallFailed": "ไม่สามารถติดตั้งไฟล์นี้ได้",
+  "thirdPartyRedirectMods": "นี่เป็นม็อดข้อมูลเกม โปรดใช้แท็บตัวจัดการม็อด",
+  "thirdPartyRedirectTextures": "นี่เป็นแพ็กเท็กซ์เจอร์ โปรดใช้แท็บเท็กซ์เจอร์",
+  "thirdPartyUnsupported": "ไม่รองรับไฟล์ประเภทนี้ที่นี่",
+  "thirdPartyLodModPrompt": "นี่คือ LodMod โดย NAMS มี LodMod Ext ในตัวอยู่แล้ว ต้องการนำเข้าการตั้งค่าไปยังแท็บ LodMod Ext หรือไม่?",
+  "thirdPartyStatusActive": "ทำงานอยู่",
+  "thirdPartyStatusInactive": "ติดตั้งแล้ว แต่ปิดใช้งานในแท็บ NAMS",
+  "thirdPartyVersion": "เวอร์ชัน",
+  "thirdPartyAddonBuild": "เวอร์ชัน Addon",
+  "thirdPartyPresets": "พรีเซ็ต",
+  "thirdPartyNonePresets": "ยังไม่มีพรีเซ็ตติดตั้งอยู่",
+  "thirdPartyShaderRepos": "SHADERS",
+  "thirdPartyNoneShaders": "ไม่มี shader เอฟเฟกต์จะคอมไพล์ไม่ได้",
+  "thirdPartyShaderCount": "{count, plural, =1{1 เอฟเฟกต์} other{{count} เอฟเฟกต์}}",
+  "@thirdPartyShaderCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "thirdPartyAddons": "ADDONS",
+  "thirdPartyFiles": "ไฟล์",
+  "thirdPartyShaderFixes": "ShaderFixes",
+  "thirdPartyShaderFixCount": "{count, plural, =0{ไม่มี} =1{1 รายการแก้ไข} other{{count} รายการแก้ไข}}",
+  "@thirdPartyShaderFixCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "thirdPartyLoaderTarget": "เป้าหมายตัวโหลด",
+  "thirdPartyHunting": "โหมดค้นหา shader",
+  "thirdPartyHuntingOn": "เปิด",
+  "thirdPartyUpdateTitle": "แทนที่ {name} ที่ติดตั้งอยู่หรือไม่?",
+  "@thirdPartyUpdateTitle": { "placeholders": { "name": { "type": "String" } } },
+  "thirdPartyUpdateBody": "ติดตั้ง {name} อยู่แล้ว แต่ไฟล์ที่คุณวางเป็นบิลด์คนละตัว ต้องการแทนที่ตัวที่ติดตั้งอยู่ด้วยไฟล์นี้หรือไม่?",
+  "@thirdPartyUpdateBody": { "placeholders": { "name": { "type": "String" } } },
+  "thirdPartyUpdateInstalledLabel": "ติดตั้งอยู่ตอนนี้",
+  "thirdPartyUpdateIncomingLabel": "ไฟล์ที่คุณวาง",
+  "thirdPartyUpdateReplace": "แทนที่",
+  "thirdPartyUpdateKeep": "เก็บเวอร์ชันปัจจุบัน",
+  "thirdPartyUpdateSkipped": "เก็บเวอร์ชันที่ติดตั้งไว้แล้ว",
+  "thirdPartyD3dCompilerMissing": "ไม่พบ d3dcompiler_47.dll ที่นี่ บน Wine, ReShade จะถอยไปใช้ stub ของ Wine และเอฟเฟกต์จะคอมไพล์ไม่ได้ โปรดติดตั้ง ReShade เวอร์ชันที่มีไฟล์นี้ใหม่ หรือวาง d3dcompiler_47.dll แบบเนทีฟลงในโฟลเดอร์นี้",
+  "thirdPartyBannerTitle": "ReShade, 3DMigoto และแอดออนสร้างโดยผู้พัฒนาอื่น",
+  "thirdPartyReadDoc": "วิธีที่ NAMS โหลด ReShade, 3DMigoto และม็อด DLL",
+  "thirdPartyBanner": "ทีม NAMS และ YoRHa Protocol ไม่สามารถทดสอบหรือแก้ไขสิ่งเหล่านี้ได้ หากตัวใดมีปัญหา โปรดติดต่อผู้พัฒนา ReShade, 3DMigoto หรือแอดออนนั้น หากเกมแครช โปรดลองใหม่โดยไม่มีสิ่งใดจากแท็บนี้ และไม่มีไฟล์ DLL ที่คุณคัดลอกไปไว้ในโฟลเดอร์ลอนเชอร์เอง ก่อนรายงานให้เรา\n\nใช้ได้ในเกมเวอร์ชันปกติ แต่ใช้ไม่ได้กับ NAMS? เป็นเรื่องที่เกิดขึ้นได้ เมื่อใช้ NAMS เกมจะทำงานอยู่ใน NAMS.exe ไม่ใช่ NieRAutomata.exe ดังนั้น ReShade, 3DMigoto หรือแอดออนนั้นต้องรองรับ NAMS เอง ซึ่งมีเพียงผู้พัฒนาของสิ่งเหล่านั้นที่แก้ไขได้ ไม่ใช่ทีม NAMS",
+  "thirdPartyConfigSection": "การตั้งค่า",
+  "thirdPartyRestartRequired": "จะมีผลเมื่อเริ่มเกมครั้งถัดไป",
+  "thirdPartyReShadePerformanceMode": "โหมดประสิทธิภาพ",
+  "thirdPartyReShadePerformanceModeHint": "ข้ามการคอมไพล์เอฟเฟกต์ใหม่ตอนเริ่มเกม ปิดตัวเลือกนี้ระหว่างปรับแต่งเอฟเฟกต์",
+  "thirdPartyReShadeShowFps": "แสดง FPS",
+  "thirdPartyReShadeShowFpsHint": "แสดงอัตราเฟรมที่มุมของโอเวอร์เลย์ ReShade",
+  "thirdPartyReShadeShowClock": "แสดงนาฬิกา",
+  "thirdPartyReShadeShowClockHint": "แสดงเวลาปัจจุบันที่มุมของโอเวอร์เลย์ ReShade",
+  "thirdPartyReShadeActivePreset": "พรีเซ็ตที่ใช้งานอยู่",
+  "thirdPartyReShadeOverlayKey": "ปุ่มเปิดโอเวอร์เลย์",
+  "thirdPartyReShadeNoKey": "ยังไม่ได้ตั้งค่า",
+  "thirdPartyMigotoHunting": "โหมดค้นหา shader",
+  "thirdPartyMigotoHuntingOff": "ปิด",
+  "thirdPartyMigotoHuntingOn": "เปิด",
+  "thirdPartyMigotoHuntingNoMarking": "เปิดโดยไม่ทำเครื่องหมาย",
+  "thirdPartyMigotoHuntingHint": "โหมดนักพัฒนา: วนดู shader เพื่อค้นหาและ dump ไฟล์ ควรปิดไว้สำหรับการเล่นปกติ",
+  "thirdPartyMigotoMarkingMode": "โหมดทำเครื่องหมาย",
+  "thirdPartyMigotoMarkingModeHint": "วิธีไฮไลต์ shader ที่กำลังค้นหาในเกม: ข้าม (ไม่เปลี่ยนแปลง), ต้นฉบับ, สีชมพู หรือขาวดำ",
+  "thirdPartyMigotoMarkingSkip": "ข้าม",
+  "thirdPartyMigotoMarkingOriginal": "ต้นฉบับ",
+  "thirdPartyMigotoMarkingPink": "สีชมพู",
+  "thirdPartyMigotoMarkingMono": "ขาวดำ",
+  "thirdPartyMigotoVerboseOverlay": "โอเวอร์เลย์แบบละเอียด",
+  "thirdPartyMigotoVerboseOverlayHint": "แสดงข้อความสถานะ 3DMigoto แบบละเอียดบนหน้าจอ มีประโยชน์ระหว่างดีบัก แต่รบกวนสายตาในการใช้งานปกติ",
+  "thirdPartyMigotoCacheShaders": "แคช shader",
+  "thirdPartyMigotoCacheShadersHint": "นำ shader ที่คอมไพล์แล้วกลับมาใช้ในการเริ่มเกมครั้งถัดไป ปิดเฉพาะเมื่อต้องดีบักการแก้ไข",
+  "thirdPartyMigotoCheckForegroundWindow": "hook เฉพาะเมื่ออยู่เบื้องหน้า",
+  "thirdPartyMigotoCheckForegroundWindowHint": "ใช้งานโอเวอร์เลย์และปุ่มลัดเฉพาะเมื่อหน้าต่างเกมอยู่ในโฟกัส",
+  "thirdPartyConfigApplied": "บันทึกการตั้งค่าแล้ว",
+  "thirdPartyConfigNoIni": "ยังไม่มีไฟล์การตั้งค่า การติดตั้งจะสร้างให้",
+  "tabSectionGeneral": "ทั่วไป",
+  "tabSectionConfig": "การตั้งค่า",
+  "tabSectionMods": "ม็อด",
+  "tabDividerConfig": "การตั้งค่า",
+  "tabDividerMods": "ม็อด",
+  "infoBarVersionPrefix": "YP Launcher ",
+  "infoBarLogs": "บันทึก",
+  "infoBarFaq": "คำถามที่พบบ่อย",
+  "infoBarWhatsNew": "มีอะไรใหม่",
+  "infoBarShortcut": "ทางลัด",
+  "tooltipFaq": "ยังต้องใช้ม็อดอื่นอีกหรือไม่?",
+  "chipLodModOn": "เปิด LOD MOD EXT",
+  "chipLodModOff": "ปิด LOD MOD EXT",
+  "chipReShade": "ReShade",
+  "chipNoTextures": "ไม่มีเท็กซ์เจอร์",
+  "chipNoMods": "ไม่มีม็อด",
+  "chipNoCutsceneMod": "ไม่มีม็อดคัตซีน",
+  "chipTexturesCount": "เท็กซ์เจอร์ ({details})",
+  "@chipTexturesCount": {
+    "placeholders": {
+      "details": {
+        "type": "String"
+      }
+    }
+  },
+  "chipModsCount": "{count} {count, plural, =1{ม็อด} other{ม็อด}}",
+  "@chipModsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chipInjectedCount": "ฉีดแล้ว {count} รายการ",
+  "@chipInjectedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chipSkRes": "SK_Res",
+  "chipCutsceneMod": "ม็อดคัตซีน ({width}x{height} {codec})",
+  "@chipCutsceneMod": {
+    "placeholders": {
+      "width": {
+        "type": "int"
+      },
+      "height": {
+        "type": "int"
+      },
+      "codec": {
+        "type": "String"
+      }
+    }
+  },
+  "warningPluginLoadingDisabled": "ปิดการโหลดปลั๊กอินอยู่ เวิร์กสเปซ YoRHa Protocol จะไม่โหลด",
+  "warningReShadeDisabled": "ปิดการโหลด ReShade อัตโนมัติอยู่",
+  "warningTextureInjectionDisabled": "ปิดการฉีดเท็กซ์เจอร์อยู่",
+  "lodModDescription": "แพตช์คุณภาพภาพที่รวมอยู่ใน NAMS โดยได้รับแรงบันดาลใจจาก Automata-LodMod ของ emoose และขยายต่อไปไกลกว่ามาก จึงเป็นที่มาของคำว่า Ext ช่วยลดอาการ LOD โผล่ เพิ่มความคมของเงาและ Ambient Occlusion บังคับให้วัตถุทุกชนิดรวมถึงพืชสร้างเงา ปิดการ culling แบบกำหนดเองเพื่อไม่ให้วัตถุโผล่เข้าออก และลบ vignette นอกจากนี้ยังเพิ่ม shadow cascade พร้อมการเบลอแยกต่อ cascade, การเขียน bloom ขึ้นใหม่, global illumination, การปลดล็อก FPS พร้อมการป้องกันในคัตซีน, FXAA, การปรับสเกลการเรนเดอร์ และกริดแผนที่ความละเอียดสูง",
+  "comparisonResolutionNote": "ภาพเปรียบเทียบทั้งหมดในแท็บนี้ถ่ายที่ความละเอียด 2560x1440",
+  "namsDescription": "NAMS คือ mod loader ที่โฮสต์ NieR:Automata โดยจะเปิดเกมภายในโปรเซสของตัวเอง โหลดม็อดของคุณขณะรันไทม์ และใช้การตั้งค่าเอนจินเหล่านี้ ตัวเลือกเหล่านี้ควบคุมการตรวจสอบ ฟีเจอร์เนื้อหา และการโหลดปลั๊กอิน/ReShade/3DMigoto",
+  "yorhaProtocolDescription": "YP Devkit (YorHa Protocol) คือปลั๊กอินสำหรับมอดและนักพัฒนาที่โหลดโดย NAMS ชุดเครื่องมือทั้งหมด — ตัวแสดงฮิตบ็อกซ์/แสง/กระดูก, กล้องอิสระและโหมดถ่ายภาพ, การสร้างเอนทิตี, ต้นไม้สคริปต์ HAP, ตัวสร้างไอเทม และอื่น ๆ — อยู่ในโอเวอร์เลย์ในเกมที่เปิดด้วยปุ่ม F1 แท็บนี้เป็นที่สะดวกสำหรับปรับปุ่มลัด สวิตช์พื้นที่ทำงาน สูตรโกง และตัวสุ่มศัตรูจากตัวเรียกใช้งาน ซึ่งทั้งหมดนี้ยังเปลี่ยนได้ในเกมด้วย",
+  "dropModelModHere": "วางโฟลเดอร์หรือไฟล์เก็บถาวรม็อดโมเดลที่นี่",
+  "dropToInstall": "วางเพื่อทำการติดตั้ง",
+  "orClickToBrowse": "หรือคลิกเพื่อเลือกไฟล์",
+  "mixedModDetected": "ตรวจพบม็อดแบบผสม",
+  "noOutfitsInstalled": "ยังไม่ได้ติดตั้งชุดใด ๆ",
+  "defaultNoMod": "ค่าเริ่มต้น (ไม่มีม็อด)",
+  "clearAllStartupOutfits": "ล้างชุดเริ่มต้นทั้งหมด",
+  "removeOutfitTitle": "นำชุดออกหรือไม่?",
+  "noModelFoundError": "ไม่พบโมเดล ต้องมี pl000d.dat/.dtt (2B), pl010d.dat/.dtt (A2) หรือ pl020d.dat/.dtt (9S)",
+  "unsupportedArchiveFormat": "รูปแบบไฟล์เก็บถาวรไม่รองรับ",
+  "extractingArchive": "กำลังแตกไฟล์เก็บถาวร...",
+  "extractingArchivePercent": "กำลังแตกไฟล์ - {percent}%",
+  "@extractingArchivePercent": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "extractingArchivePercentFile": "กำลังแตกไฟล์ {percent}% - {file}",
+  "@extractingArchivePercentFile": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      },
+      "file": {
+        "type": "String"
+      }
+    }
+  },
+  "cutsceneScanningArchive": "กำลังสแกนไฟล์เก็บถาวรหาโฟลเดอร์ movie...",
+  "cutsceneCopyingFile": "กำลังคัดลอก {current}/{total} - {name}",
+  "@cutsceneCopyingFile": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "cutsceneCopyingFileBytes": "กำลังคัดลอก {current}/{total} - {name} ({mbDone} / {mbTotal} MB)",
+  "@cutsceneCopyingFileBytes": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      },
+      "mbDone": {
+        "type": "String"
+      },
+      "mbTotal": {
+        "type": "String"
+      }
+    }
+  },
+  "failedToExtractArchive": "แตกไฟล์เก็บถาวรไม่สำเร็จ",
+  "extractFailedDiskFull": "แตกไฟล์ไม่สำเร็จ: พื้นที่ว่างบนไดรฟ์ชั่วคราวไม่เพียงพอ โปรดเพิ่มพื้นที่ว่างแล้วลองใหม่",
+  "textureDeleteConfirmTitle": "ลบแพ็กเท็กซ์เจอร์หรือไม่?",
+  "textureDeleteConfirmBody": "ลบ {name} ออกจาก nams/inject/textures/ อย่างถาวรหรือไม่? ไม่สามารถย้อนกลับได้",
+  "@textureDeleteConfirmBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "textureDeleteLabel": "ลบ",
+  "busyDeletingTexture": "กำลังลบแพ็กเท็กซ์เจอร์...",
+  "busyDeletingCutscene": "กำลังลบม็อดคัตซีน...",
+  "busyCloseTitle": "กำลังดำเนินการ",
+  "busyCloseBody": "ตัวเรียกใช้งานกำลังติดตั้ง ลบ หรือแตกไฟล์อยู่ การปิดตอนนี้อาจทำให้มีไฟล์เสียหรือไม่ครบอยู่บนดิสก์ โปรดรอให้การดำเนินการปัจจุบันเสร็จ หรือบังคับปิดต่อไป",
+  "busyCloseForce": "บังคับปิด",
+  "extractFailedDetail": "แตกไฟล์ไม่สำเร็จ: {detail}",
+  "@extractFailedDetail": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "noOutfitsInstalledNotif": "ยังไม่ได้ติดตั้งชุด",
+  "dialogSelectModFolder": "เลือกโฟลเดอร์ม็อดโมเดล",
+  "dialogNameOutfitShown": "ชื่อนี้จะแสดงในเกมเมื่อสลับชุด",
+  "dropTextureHere": "วางโฟลเดอร์หรือไฟล์เก็บถาวรเท็กซ์เจอร์ที่นี่",
+  "installedToTextures": "ติดตั้งไปยัง: nams/inject/textures/",
+  "texturesPackNameTitle": "ตั้งชื่อแพ็ก",
+  "installingTextures": "กำลังติดตั้งเท็กซ์เจอร์...",
+  "textureDropAnalyzing": "กำลังวิเคราะห์ไฟล์ที่วาง...",
+  "textureDropNoDds": "ไม่พบเท็กซ์เจอร์ .dds ในไฟล์ที่วาง รองรับเฉพาะไฟล์ .dds",
+  "cutsceneDropAnalyzing": "กำลังวิเคราะห์ไฟล์ที่วาง...",
+  "cutsceneDropNoUsm": "ไม่พบไฟล์คัตซีน .usm ในไฟล์ที่วาง",
+  "modDropAnalyzing": "กำลังวิเคราะห์ไฟล์ที่วาง...",
+  "modDropNotAMod": "ดูเหมือนไม่ใช่ม็อด NAMS โปรดวางโฟลเดอร์/ไฟล์เก็บถาวรที่มี entities/, wax/, data/ หรือ mod.toml",
+  "modDropMisroutedCutscenes": "ดูเหมือนเป็นม็อดคัตซีนแบบเดี่ยว โปรดวางในแท็บคัตซีนแทน คัตซีนที่รวมมากับม็อดควรอยู่ภายในม็อดที่มี entities/ หรือ mod.toml อยู่แล้ว",
+  "modSideInstalledTextures": "ติดตั้งแพ็กเท็กซ์เจอร์ที่รวมมาด้วยไปยัง nams/inject/textures/ ด้วย: {names}",
+  "@modSideInstalledTextures": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "modLooseUnpairedWarning": "ติดตั้งแล้ว แต่บางไฟล์ไม่มีคู่ไฟล์แบบวานิลลา (.dat/.dtt): {names} ม็อดอาจทำงานไม่สมบูรณ์",
+  "@modLooseUnpairedWarning": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "modBundledTexturesLabel": "เท็กซ์เจอร์ที่รวมมาด้วย",
+  "modBundledCutscenesLabel": "คัตซีนที่รวมมาด้วย",
+  "textureBundledWithMod": "รวมมากับม็อด: {modId}",
+  "@textureBundledWithMod": {
+    "placeholders": {
+      "modId": {
+        "type": "String"
+      }
+    }
+  },
+  "modUninstallAlsoTexturesLabel": "ลบแพ็กเท็กซ์เจอร์ที่รวมมาด้วยด้วย: {names}",
+  "@modUninstallAlsoTexturesLabel": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "noTextures": "ไม่มีเท็กซ์เจอร์",
+  "noTexturesInstalled": "ยังไม่ได้ติดตั้งเท็กซ์เจอร์",
+  "textureConflictHint": "ม็อดทั้งสองถูกโหลดและแก้ไขบางสิ่งเดียวกัน ให้วางม็อดที่คุณให้ความสำคัญมากกว่าไว้ด้านบน",
+  "noConflictsFound": "ไม่พบความขัดแย้ง ม็อดทั้งหมดโหลดแยกจากกัน",
+  "selectTextureFiles": "เลือกไฟล์หรือไฟล์เก็บถาวรเท็กซ์เจอร์",
+  "noTextureFilesFound": "ไม่พบไฟล์เท็กซ์เจอร์ (.dds, .png, .tga)",
+  "cheatsAppliedNote": "นำไปใช้หนึ่งครั้งเมื่อเริ่มเกม",
+  "cheatsNeedFirstPlaythroughOff": "จะมีผลเฉพาะเมื่อปิดโหมดเล่นครั้งแรกเท่านั้น",
+  "wipLabel": "กำลังพัฒนา",
+  "dropCutsceneHere": "วางโฟลเดอร์หรือไฟล์เก็บถาวรม็อดคัตซีนที่นี่",
+  "cutsceneMovieHint": "ม็อดต้องมีโฟลเดอร์ movie/ ที่มีไฟล์ .usm",
+  "cutsceneNamingTitle": "ตั้งชื่อม็อดคัตซีนนี้",
+  "removeCutsceneModTitle": "นำม็อดคัตซีนออกหรือไม่?",
+  "noCutsceneModsInstalled": "ยังไม่ได้ติดตั้งม็อดคัตซีน",
+  "cutsceneHowItWorks1": "คัตซีนแบบกำหนดเองโหลดจาก nams/cutscenes/ แทน data/movie/",
+  "cutsceneHowItWorks2": "หากไฟล์แบบกำหนดเองหายหรือเสียหาย ระบบจะเล่นไฟล์ต้นฉบับแทน",
+  "cutsceneBannerTitle": "ม็อดคัตซีนไม่แก้ไขไฟล์เกมของคุณ",
+  "cutsceneStructurePath": "nams/cutscenes/<mod_name>/movie/<filename>.usm",
+  "cutsceneFolderNameLimit": "ชื่อโฟลเดอร์จำกัดความยาวไม่เกิน 27 ตัวอักษร",
+  "cutsceneMigrationTitle": "ตรวจพบไฟล์คัตซีนแบบกำหนดเองใน data/movie/",
+  "cutsceneMigrationBody": "พบไฟล์คัตซีนแบบกำหนดเอง {count} {count, plural, =1{ไฟล์} other{ไฟล์}} อยู่โดยตรงใน data/movie/ ไฟล์เหล่านี้จะแทนที่ต้นฉบับอย่างถาวร ครั้งถัดไปให้ติดตั้งม็อดคัตซีนที่นี่แทน หากไฟล์แบบกำหนดเองโหลดไม่สำเร็จ ระบบจะเล่นไฟล์ต้นฉบับเป็นตัวสำรอง",
+  "@cutsceneMigrationBody": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noMovieFolderFound": "ไม่พบโฟลเดอร์ movie/ ที่มีไฟล์ .usm",
+  "noUsmFilesFound": "ไม่พบไฟล์ .usm ในม็อด",
+  "onboardingWelcomeTitle": "ยินดีต้อนรับสู่ YoRHa Protocol",
+  "onboardingWelcomeSubtitle": "ตัวเรียกใช้งานเดียว ม็อดทั้งหมดของคุณ และเนื้อหา NieR แบบใหม่\n\nลากแล้ววางม็อด สลับชุดระหว่างเล่น เควสต์ใหม่ และ Devkit ในตัว โดยไม่ต้องเจอกับฝันร้ายในการตั้งค่า",
+  "onboardingSelectTitle": "เลือกการติดตั้ง NieR:Automata ของคุณ",
+  "onboardingSearchingDrives": "กำลังสแกนทุกไดรฟ์...",
+  "onboardingSearchingNier": "กำลังค้นหา NieR:Automata...",
+  "onboardingSelectInstallation": "เลือกการติดตั้ง",
+  "onboardingFirstPlaythroughTitle": "นี่เป็นการเล่นครั้งแรกของคุณหรือไม่?",
+  "onboardingFirstPlaythroughHint": "หากใช่ เราจะซ่อนเนื้อหาสปอยล์",
+  "onboardingFirstYes": "ใช่ - ซ่อนฟีเจอร์ที่มีสปอยล์",
+  "onboardingFirstNo": "ไม่ - แสดงทุกอย่าง",
+  "onboardingMigrationAskTitle": "เคยม็อด NieR มาก่อนหรือไม่?",
+  "onboardingMigrationAskBody": "เราจะตรวจพบการตั้งค่าเดิมของคุณโดยอัตโนมัติ",
+  "onboardingMigrationYes": "ใช่",
+  "onboardingMigrationNo": "ไม่",
+  "onboardingMigrationResultsTitle": "สิ่งที่ตรวจพบ",
+  "onboardingMigrationResultsBody": "",
+  "onboardingMigrationNothingFound": "ไม่พบอะไร การติดตั้งของคุณสะอาด",
+  "onboardingMigrationActionReshadeKept": "ปิดใช้งานแล้ว - NAMS มี DoF แบบเนทีฟ เปิดอีกครั้งได้ในตั้งค่า NAMS หากต้องการ",
+  "onboardingMigrationActionReshadeIncompatible": "เวอร์ชัน Addon/ImGui - โปรดแทนที่หรือนำออก",
+  "onboardingMigrationActionTextures": "จะโหลดโดยอัตโนมัติ",
+  "onboardingMigrationActionLodMod": "นำเข้า LodMod.ini แล้ว",
+  "onboardingMigrationActionSkRes": "ตรวจพบโดยอัตโนมัติ",
+  "onboardingMigrationActionNaiom": "การตั้งค่า NAIOM ของคุณจะถูกนำเข้าไปยัง NAMS โดยอัตโนมัติ หลังจากนั้นคุณสามารถลบไฟล์ NAIOM เดิม (dinput8.dll, NAIOM.ini) ได้",
+  "onboardingMigrationActionCutscenes": "รวมอยู่ในระบบแล้ว",
+  "onboardingMigrationActionExistingMods": "ติดตั้งอยู่แล้ว - เก็บไว้ตามเดิม",
+  "onboardingMigrationLabelExistingMods": "{count, plural, one{1 ม็อดใน nams/mods/} other{{count} ม็อดใน nams/mods/}}",
+  "@onboardingMigrationLabelExistingMods": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "onboardingModInstallAskTitle": "ต้องการติดตั้งม็อดก่อนเริ่มเกมหรือไม่?",
+  "onboardingModInstallAskBody": "มีไฟล์ .zip หรือโฟลเดอร์หรือไม่? เราจัดการให้ได้ รวมถึงแพ็กเท็กซ์เจอร์ด้วย\n(คัตซีนมีแท็บแยกของตัวเอง สามารถติดตั้งภายหลังได้)",
+  "onboardingModInstallYes": "ใช่ ติดตั้งม็อดตอนนี้",
+  "onboardingModInstallSkip": "ไม่ ข้ามไปก่อน",
+  "onboardingModInstallTitle": "เพิ่มม็อดแรกของคุณ",
+  "onboardingModInstallBody": "รองรับ .zip, .7z และโฟลเดอร์",
+  "onboardingModInstallSubBody": "ไฟล์เกมยังคงปลอดภัย",
+  "onboardingModInstallBusy": "กำลังติดตั้ง…",
+  "onboardingModInstallInspecting": "กำลังตรวจสอบม็อด…",
+  "onboardingModInstallExtractingPercent": "กำลังแตกไฟล์… {percent}%",
+  "@onboardingModInstallExtractingPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "onboardingModInstallExtractingFile": "กำลังแตกไฟล์ {percent}% - {file}",
+  "@onboardingModInstallExtractingFile": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      },
+      "file": {
+        "type": "String"
+      }
+    }
+  },
+  "onboardingModInstallNotAMod": "ดูเหมือนไม่ใช่ม็อด NAMS ที่ถูกต้อง โปรดตรวจสอบว่าเป็นไฟล์ .zip / .7z ที่มี mod.toml หรือโครงสร้างข้อมูลที่รองรับ",
+  "onboardingTexturePackChip": "{name} (แพ็กเท็กซ์เจอร์)",
+  "onboardingModInstallFailed": "ติดตั้งไม่สำเร็จ: {reason}",
+  "outfitGuideTitle": "วิธีสวมชุดใหม่ของคุณ",
+  "outfitGuideIntro": "ติดตั้ง \"{name}\" แล้ว คุณสวมชุดนี้ได้สามวิธี:",
+  "outfitGuideWardrobeTitle": "ตู้เสื้อผ้า YoRHa Protocol",
+  "outfitGuideWardrobeBody": "ในเกม กด {key} เพื่อเปิด YoRHa Protocol คลิกไอคอนตู้เสื้อผ้าที่มุมซ้ายบน แล้วเลือกชุด",
+  "outfitGuideNpcTitle": "Multi-Outfit NPC",
+  "outfitGuideNpcBody": "คุยกับ Multi-Outfit NPC ที่ค่าย Resistance Camp แล้วเลือกชุด",
+  "outfitGuideNpcLink": "ดาวน์โหลด Multi-Outfit NPC",
+  "outfitGuideDefaultTitle": "สวมตั้งแต่เริ่มเกม",
+  "outfitGuideDefaultBody": "ในตัวจัดการม็อด เลือกม็อดแล้วคลิกดาวข้างตัวละคร ชุดนี้จะถูกสวมทุกครั้งที่เริ่มเกม ต้องเปิด \"ชุดเริ่มต้น\" ในแท็บ NAMS",
+  "outfitGuideCompatNote": "ม็อดนี้ยังเพิ่มชุดเป็นไอเทมด้วย คุณจึงซื้อได้ในร้านค้าหรือสวมจากช่องเก็บของ",
+  "outfitGuideDone": "เข้าใจแล้ว",
+  "@onboardingModInstallFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "onboardingModInstallNoGameDir": "ยังไม่ได้เลือกไดเรกทอรีเกม โปรดย้อนกลับและเลือกการติดตั้งก่อน",
+  "onboardingModInstallInstalledHeader": "ติดตั้งแล้ว:",
+  "onboardingModInstallSkipButton": "ข้าม",
+  "onboardingModInstallDoneButton": "เสร็จสิ้น",
+  "onboardingModInstallPickerTitle": "เลือกม็อด (.zip, .7z) หรือเปิดโฟลเดอร์",
+  "onboardingModInstallFolderPickerTitle": "เลือกโฟลเดอร์ม็อด",
+  "onboardingReadyTitle": "พร้อมใช้งานแล้ว!",
+  "onboardingCreateShortcut": "สร้างทางลัดบนเดสก์ท็อป",
+  "onboardingFirstPlaythroughSpoilerFree": "การเล่นครั้งแรก (ไม่มีสปอยล์)",
+  "onboardingFullAccess": "เข้าถึงทั้งหมด",
+  "detectionReShade": "ReShade",
+  "detectionHDTextures": "เท็กซ์เจอร์ HD",
+  "detectionLodMod": "LOD Mod (Automata-LodMod)",
+  "detectionSkRes": "เท็กซ์เจอร์ Special K (SK_Res)",
+  "detectionNaiom": "NAIOM",
+  "detectionCutscenes": "ม็อดคัตซีน (nams/cutscenes)",
+  "detectionCustomMovie": "คัตซีนแบบกำหนดเองใน data/movie/",
+  "detectionDetected": "ตรวจพบ",
+  "detectionReShadeIncompatible": "ไม่เข้ากัน (addon/ImGui)",
+  "detectionNotFound": "ไม่พบ",
+  "detectionNoneFound": "ไม่พบรายการใด",
+  "detectionLodModMigrated": "พบแล้ว - ย้ายเข้าสู่ NAMS แล้ว",
+  "detectionSkResAuto": "พบแล้ว - โหลดอัตโนมัติ",
+  "detectionNaiomPending": "พบแล้ว - นำเข้าการตั้งค่าอัตโนมัติ",
+  "detectionNoneInstalled": "ยังไม่ได้ติดตั้ง",
+  "detectionCustomMovieHint": "พบแล้ว - แนะนำให้ใช้ nams/cutscenes/ แทน เพื่อให้มีไฟล์ต้นฉบับเป็นตัวสำรองอย่างปลอดภัย",
+  "detectionInstalled": "ติดตั้งแล้ว",
+  "detectionCustomFilesDetected": "ตรวจพบไฟล์แบบกำหนดเอง",
+  "detectionMigratedIntoNams": "ย้ายเข้าสู่ NAMS แล้ว",
+  "detectionLoadedAutomatically": "โหลดอัตโนมัติ",
+  "detectionMigrationComingSoon": "นำเข้าการตั้งค่าอัตโนมัติ",
+  "detectionNotSet": "ยังไม่ได้ตั้งค่า",
+  "labelGame": "เกม",
+  "labelMode": "โหมด",
+  "labelDlc": "DLC",
+  "labelNoDlc": "ไม่มี DLC",
+  "searchingForNier": "กำลังค้นหา NieR:Automata...",
+  "autoButton": "อัตโนมัติ",
+  "nierFound": "พบ NieR:Automata",
+  "selectInstallation": "เลือกการติดตั้งของคุณ:",
+  "notYourGame": "ไม่ใช่เกมของคุณหรือ?",
+  "searchAllDrives": "ค้นหาทุกไดรฟ์",
+  "selectManually": "เลือกด้วยตนเอง",
+  "notFoundTitle": "ไม่พบ",
+  "notFoundMessage": "ไม่พบ NieR:Automata ผ่าน Steam ต้องการสแกนทุกไดรฟ์หรือไม่? อาจใช้เวลาสูงสุด 30 วินาที",
+  "scanDrives": "สแกนไดรฟ์",
+  "confirmInstallation": "นี่คือการติดตั้งที่ถูกต้องหรือไม่?",
+  "cancelButton": "ยกเลิก",
+  "noSelectManually": "ไม่ เลือกด้วยตนเอง",
+  "yesButton": "ใช่",
+  "installationsFoundTitle": "พบการติดตั้ง NieR:Automata",
+  "validInstallations": "การติดตั้งที่ถูกต้อง (มีโฟลเดอร์ data):",
+  "withoutDataFolder": "ไม่มีโฟลเดอร์ data:",
+  "noLogEntries": "ไม่พบรายการบันทึก",
+  "noLogMatches": "ไม่มีรายการบันทึกที่ตรงกับการค้นหา",
+  "logViewerTitle": "ตัวดูบันทึก",
+  "logSearchPlaceholder": "ค้นหาระดับ / โมดูล / ข้อความ...",
+  "logLiveBadge": "สด",
+  "logAutoScroll": "เลื่อนไปยังรายการล่าสุดอัตโนมัติ",
+  "entriesSuffix": "รายการ",
+  "scrollToBottom": "เลื่อนไปด้านล่าง",
+  "openLogsFolder": "เปิดโฟลเดอร์บันทึก",
+  "diagnosticsButton": "สร้างข้อมูลวินิจฉัย",
+  "diagnosticsSubtitle": "รวบรวมรายงานการติดตั้งทั้งหมด (ไฟล์เกม ม็อด ReShade/3DMigoto การตั้งค่า) เพื่อแชร์เมื่อขอความช่วยเหลือ",
+  "copyCommandTitle": "คำสั่งเริ่มเกมด้วยตนเอง",
+  "copyCommandDesc": "หากเกมไม่เริ่มทำงานจากตัวเรียกใช้งาน ให้คัดลอกคำสั่ง NAMS แล้วรันในเทอร์มินัล NAMS จะแสดงสาเหตุที่ล้มเหลวที่นั่น ซึ่งเป็นวิธีที่เร็วที่สุดในการหาสาเหตุ",
+  "copyCommandButton": "คัดลอกคำสั่ง",
+  "diagnosticsTitle": "สรุปการวินิจฉัย",
+  "diagnosticsCollecting": "กำลังรวบรวมข้อมูลวินิจฉัย...",
+  "diagnosticsCopy": "คัดลอกสรุป",
+  "diagnosticsCopied": "คัดลอกสรุปไปยังคลิปบอร์ดแล้ว",
+  "diagnosticsSaveFull": "บันทึกรายงานฉบับเต็ม",
+  "diagnosticsSavedAt": "บันทึกรายงานฉบับเต็มไปยัง {path} แล้ว",
+  "@diagnosticsSavedAt": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "modsTutorialBack": "ย้อนกลับ",
+  "modsTutorialNext": "ถัดไป",
+  "modsTutorialFinish": "เข้าใจแล้ว",
+  "modsTutorialSkip": "ข้าม",
+  "modsTutorialMenuEcosystem": "NAMS และตัวเรียกใช้งาน",
+  "modsTutorialMenuInstall": "วิธีติดตั้งม็อด",
+  "modsTutorialMenuProfiles": "การทำงานของโปรไฟล์",
+  "modsTutorialMenuSupporting": "การสนับสนุนระบบนิเวศ",
+  "modsTutorialSupportingStep1Title": "ระบบนิเวศ ไม่ใช่แค่ตัวจัดการม็อด",
+  "modsTutorialSupportingStep1Body": "**NAMS เป็นโปรเจกต์ที่พัฒนามานานกว่า 3 ปี** สิ่งที่เริ่มต้นจากตัวโหลดม็อดเพียงตัวเดียว ได้เติบโตเป็นแพลตฟอร์มเต็มรูปแบบที่รองรับ **ม็อด**, **ปลั๊กอิน** และเครื่องมือต่าง ๆ:\n\n- **ม็อด** คือเนื้อหาที่เพิ่มเข้ามา เช่น ชุด เควสต์แบบกำหนดเอง อาวุธใหม่ และเท็กซ์เจอร์ ม็อดใช้ระบบเนื้อหาของ NAMS แต่ไม่ได้รันโค้ดของตัวเอง\n- **ปลั๊กอิน** คือโปรแกรมที่ทำงานร่วมกับเกมและสามารถขยายตัวโหลดม็อดได้ เช่น ม็อดผู้เล่นหลายคน โอเวอร์เลย์ดีบัก หรือระบบเกมใหม่ ๆ ปลั๊กอินเขียนด้วยโค้ดและถูก NAMS โหลดตอนเริ่มเกม\n- ตัวเรียกใช้งานที่คุณใช้อยู่ตอนนี้ **ไม่ใช่ปลั๊กอิน** แต่เป็นแอปแยกที่เตรียมม็อดและการตั้งค่าก่อนเริ่มเกม\n\nม็อดที่คุณเห็นในวันนี้ไม่ได้ทำงานทั้งที่ต้องฝ่าด่านอุปสรรค แต่มันทำงานอยู่บนพื้นฐานที่ใช้เวลาสร้างมาหลายปี เพื่อให้คุณไม่ต้องทำทุกอย่างซ้ำเอง\n\nส่วนนี้อธิบายว่า **แพลตฟอร์มนี้ดำรงอยู่ได้อย่างไร** และมีความหมายต่อคุณอย่างไร ไม่ว่าคุณจะเป็นผู้เล่นทั่วไป เริ่มลองสร้างม็อด หรือกำลังคิดจะช่วยพัฒนา\n\nหน้าถัดไปจะเริ่มจากสิ่งที่ใช้ได้กับ **ทุกคน** แล้วจึงเข้าสู่เนื้อหาทางเทคนิคมากขึ้นในช่วงท้าย คุณสามารถข้ามได้ทุกเมื่อ ไม่มีส่วนใดเป็นสิ่งที่ต้องอ่าน",
+  "modsTutorialSupportingStep2Title": "สร้างเนื้อหาโดยไม่ต้องเขียนโค้ด",
+  "modsTutorialSupportingStep2Body": "**คุณไม่จำเป็นต้องเป็นโปรแกรมเมอร์เพื่อช่วยเพิ่มสิ่งใหม่ให้ระบบนิเวศนี้**\n\nNAMS มีระบบเนื้อหาที่รองรับอยู่แล้ว และกำลังขยายเพื่อรองรับเนื้อหาแบบประกาศกำหนดค่ามากขึ้นเรื่อย ๆ:\n\n- **เควสต์แบบกำหนดเอง** ที่เพิ่มต่อจากเนื้อเรื่องวานิลลา\n- **อาวุธและไอเท็มใหม่** ที่มีพฤติกรรมของตัวเองโดยไม่แทนที่ของเดิม\n- **เครื่องประดับ** ใน **ช่องใหม่** โดยไม่แทนที่ช่องเดิม\n- **คัตซีนแบบกำหนดเอง** ที่อยู่ใน `nams/cutscenes/` หรือรวมมากับม็อด เช่น เควสต์แบบกำหนดเองที่มีฉากภาพยนตร์ของตัวเอง คัตซีนต้นฉบับจะ **ไม่ถูกแทนที่** แต่คัตซีนใหม่จะโหลดควบคู่กัน\n\nหลักสำคัญคือ **เพิ่มเข้าไป ไม่ใช่แทนที่** เนื้อหาวานิลลายังคงอยู่ และเนื้อหาจากม็อดจะถูกซ้อนเพิ่มด้านบน ดังนั้นผู้สร้างโมเดลที่ไม่มีประสบการณ์เขียนโปรแกรมก็สามารถสร้างเครื่องประดับ อาวุธ ตัวละคร และเผยแพร่เป็นเนื้อหาใหม่ได้ โดยไม่เขียนทับอะไร ไม่ทำให้เซฟเสีย และไม่ขัดแย้งกับม็อดอื่นที่ทำแบบเดียวกัน\n\nพื้นที่นี้จะ **ขยายต่อไป** ในอนาคต ทุกเวอร์ชันจะเพิ่มจุดเชื่อมต่อแบบกำหนดค่ามากขึ้น เพื่อให้ผู้ที่ไม่เขียนโปรแกรมทำสิ่งต่าง ๆ ได้มากกว่าเดิม",
+  "modsTutorialSupportingStep3Title": "วิธีมีส่วนร่วม ไม่ได้มีแค่การเขียนโค้ด",
+  "modsTutorialSupportingStep3Body": "การสร้างเนื้อหา (หน้าก่อนหน้า) เป็นเพียงหนึ่งวิธีในการตอบแทนระบบนิเวศ ยังมีอีกหลายวิธี และหลายสิ่งที่ทำให้ระบบนิเวศแข็งแรงไม่ได้เกี่ยวกับการสร้างม็อดเลย สิ่งที่ช่วยได้จริงมีดังนี้:\n\n- **เขียนคู่มือ** เช่น \"ฉันสร้าง X ด้วย NAMS อย่างไร\", \"ฉันดีบัก Y อย่างไร\", \"ห้าสิ่งที่อยากรู้ตั้งแต่แรก\" ช่องว่างในการเริ่มต้นใช้งานส่วนใหญ่ตอนนี้คือช่องว่างด้านเอกสาร\n- **รายงานบั๊กจริงอย่างมีคุณภาพ** มีขั้นตอนทำซ้ำได้ มีบันทึก และรายงานวินิจฉัยจากแผง Logs สิ่งนี้มีค่ามากกว่าตั๋ว \"มันไม่ทำงาน\" สิบรายการ\n- **สร้างโมเดล** เครื่องประดับ อาวุธ ตัวละคร และอุปกรณ์ประกอบฉาก ระบบเนื้อหาของ NAMS โหลดสิ่งเหล่านี้เป็น **เนื้อหาเพิ่มเติม** ในช่องใหม่โดยไม่แทนที่ของเดิม ผู้สร้างโมเดลที่ไม่เขียนโปรแกรมจึงสามารถเผยแพร่ผลงานที่เข้าไปอยู่ในชุดม็อดของทุกคนได้โดยไม่เกิดความขัดแย้ง\n- **แปลภาษา** ตัวเรียกใช้งานรองรับหลายภาษา หากยังไม่มีภาษาของคุณและคุณต้องการใช้ สตริงอยู่ใน `lib/l10n/` และยินดีรับ PR\n- **ทดสอบบนฮาร์ดแวร์ที่ไม่ปกติ** Steam Deck, GPU AMD, จอ ultrawide, หลายจอ หรือคอนโทรลเลอร์ที่แทบไม่มีใครใช้ บั๊กที่เกิดเฉพาะกับการตั้งค่าหายากจะไม่ถูกพบจนกว่าจะมีคนรายงาน\n- **ช่วยตอบคำถามใน Discord** การช่วยผู้ใช้ใหม่คนถัดไปก็คือการมีส่วนร่วม สิ่งที่อยู่รอดในระบบนิเวศระยะยาวส่วนใหญ่คือวัฒนธรรมของผู้ที่เข้ามาช่วยกันตั้งแต่แรก\n- **ทำ reverse-engineer ฟังก์ชันเกมหนึ่งรายการและคืน API ให้ชุมชน** *(มีรายละเอียดในหน้าถัดไปหากสนใจ)* สำหรับผู้มีความรู้ด้านเทคนิค นี่คือการมีส่วนร่วมที่สร้างผลกระทบสูงที่สุด\n\n### ข้อคิดส่งท้าย (จนถึงตอนนี้)\n\nเวลาว่าง เงินลงทุนส่วนตัว และความดื้อดึงจำนวนมากถูกใช้เพื่อทำให้แพลตฟอร์มนี้เกิดขึ้น โดยมีเป้าหมายเสมอว่า **ช่วยให้คนอื่นเริ่มทำบางสิ่งได้** หากมีข้อใดด้านบนที่คุณคิดว่าทำได้ คุณก็มาไกลเกือบถึงจุดเริ่มแล้ว Discord (**YoRHa Continuum**) คือสถานที่สำหรับสอบถาม\n\nสองหน้าถัดไปจะเป็นเนื้อหาทางเทคนิคมากขึ้น อ่านต่อหากอยากรู้ว่าปลั๊กอินอยู่ร่วมกันอย่างไรและ API ใหม่ของเกมเข้ามาอยู่ใน NAMS ได้อย่างไร หรือหยุดตรงนี้ได้หากข้อมูลเพียงพอแล้ว",
+  "modsTutorialSupportingStep4Title": "ปลั๊กอินอยู่ร่วมกันได้โดยการออกแบบ",
+  "modsTutorialSupportingStep4Body": "*สองหน้าถัดไปเป็นเนื้อหาทางเทคนิคมากขึ้นและเหมาะสำหรับผู้ที่กำลังคิดจะสร้างปลั๊กอิน ข้ามได้หากไม่ใช่สิ่งที่คุณสนใจ*\n\nคุณสมบัติสำคัญของแพลตฟอร์ม NAMS คือ **ปลั๊กอินหลายตัวสามารถทำงานพร้อมกันได้** ในเซสชันเกมเดียว โดยไม่แย่งหรือทำลายกัน\n\n**Multiplayer Mod โดย Jasper** เป็นหนึ่งในสิ่งที่ใหญ่ที่สุดที่เกิดขึ้นในระบบนิเวศ NAMS และยังคงได้รับการดูแลอย่างต่อเนื่อง ขอแสดงความชื่นชมอย่างมากต่อผลงานนี้ YP Devkit และปลั๊กอิน MP **โหลดพร้อมกันได้** ทั้งคู่ทำงานและวาด UI ของตนเองทับบนเกม สิ่งนี้ไม่ใช่ความบังเอิญ แต่เป็นสิ่งที่โฮสต์ปลั๊กอินของ NAMS ถูกสร้างมาเพื่อรองรับ\n\nดังนั้น หากคุณเผยแพร่ปลั๊กอินที่ทำตามข้อกำหนดของแพลตฟอร์ม **ปลั๊กอินนั้นสามารถอยู่ร่วมกับทุกสิ่งที่กำลังทำงานอยู่ได้** ไม่ว่าจะเป็นปลั๊กอินของคุณ ปลั๊กอิน MP, YP Devkit หรือปลั๊กอินในอนาคตจากคนที่คุณไม่เคยพบ คุณไม่ต้องแย่ง hook หรือสู้กับลำดับการโหลด เพราะแพลตฟอร์มเป็นผู้ประสานงาน\n\nยังมีการปรับโครงสร้างเกิดขึ้นทุกเดือน เพื่อลดจุดที่ปลั๊กอินหนึ่งอาจทำให้อีกปลั๊กอินเสียโดยไม่ตั้งใจ เป้าหมายยังเคลื่อนไหวอยู่ แต่ทิศทางชัดเจนและงานกำลังดำเนินต่อไป",
+  "modsTutorialSupportingStep5Title": "คุณกำลังต่อยอดจากงาน reverse-engineering ที่เปิดให้ใช้ฟรี",
+  "modsTutorialSupportingStep5Body": "API ของเอนจินส่วนใหญ่ที่จำเป็นสำหรับการสร้างปลั๊กอินจริงจังมีอยู่ใน NAMS แล้ว และ **มันมีอยู่เพราะมีคนทำ reverse-engineer เกม** เพื่อแก้ปัญหาของตนเองและนำผลลัพธ์กลับมาแบ่งปัน\n\nเกมเป็นซอฟต์แวร์ปิด ทุก API ใน NAMS ที่ให้คุณอ่านหรือเขียนสถานะของเกมเกิดจากการติดตามฟังก์ชัน ค้นหา offset และตรวจสอบพฤติกรรม นี่คืองานจำนวนมากที่ทำให้ฟรี และถูกเก็บไว้ใน NAMS โดยเฉพาะเพื่อให้ผู้สร้างปลั๊กอิน **คนถัดไป** ไม่ต้องทำซ้ำ\n\nเมื่อคุณสร้างบน NAMS คุณได้รับงานทั้งหมดนั้นต่อยอดทันที คุณไม่ได้เริ่มจาก `LoadLibrary` แต่เริ่มจาก API ที่มีคนต่อสู้จนสร้างขึ้นมาได้แล้ว และคนถัดไปที่ต้องใช้ API ที่คุณ reverse-engineer ก็จะได้รับของขวัญแบบเดียวกัน\n\n### เหตุใดนี่จึงเป็นการมีส่วนร่วมที่สร้างผลกระทบสูงที่สุด\n\nหากคุณทำสิ่งนี้แม้เพียงครั้งเดียว คุณจะช่วยประหยัดงานเดียวกันให้ผู้สร้างปลั๊กอินทุกคนในอนาคตอย่างถาวร นี่คือความไม่สมมาตร คู่มือช่วยคนที่มาอ่านได้จำนวนหนึ่ง แต่ API ใน NAMS ช่วยทุกคนที่ต้องใช้ความสามารถนั้นตลอดไป ระบบนิเวศเติบโตจากผู้ที่ reverse-engineer สิ่งหนึ่งเพื่อตัวเอง แล้วทิ้งผลลัพธ์ไว้ให้ทุกคน",
+  "modsTutorialEcosystemStep1Title": "เหตุผลที่ทั้งหมดนี้มีอยู่",
+  "modsTutorialEcosystemStep1Body": "การม็อด NieR ในอดีตเป็นเรื่องเจ็บปวด ม็อดที่ทำงานได้ดีเมื่อใช้เดี่ยว ๆ เริ่มขัดแย้งทันทีเมื่อซ้อนหลายตัว hook DLL ต่าง ๆ (`dxgi`, `d3d11`, `dinput8`) แย่งช่องเดียวกัน wrapper ที่ไม่ถูกต้องชนะลำดับการโหลด และเกมปิดเงียบตั้งแต่เริ่ม ผู้ที่มีม็อด 5–10 ตัวใช้เวลาแยกหาสาเหตุมากกว่าเวลาเล่น\n\nเป็นเวลานาน คำตอบเดียวคือ *ติดตั้งด้วยตนเองเท่านั้น* วางไฟล์ `.dat`/`.dtt` ลงใน `data/` แก้การตั้งค่าด้วยมือ และห้ามใช้ตัวจัดการม็อด วิธีนี้ใช้ได้กับหนึ่งหรือสองม็อด แต่เขียนทับไฟล์เกมจริงและไม่ทิ้งบันทึกว่าอะไรถูกเปลี่ยน เครื่องมืออย่าง Vortex ก็ช่วยไม่ได้ เพราะไม่เข้าใจลักษณะเฉพาะของ NieR\n\n**NAMS มีอยู่เพื่อแก้ปัญหานี้ในระดับตัวโหลดม็อด** และ **ตัวเรียกใช้งานนี้มีอยู่เพื่อมอบหน้าตาที่ใช้งานง่ายให้ NAMS**",
+  "modsTutorialEcosystemStep2Title": "สิ่งที่ NAMS ทำ",
+  "modsTutorialEcosystemStep2Body": "**NAMS คือตัวโหลดม็อด** ไม่ใช่ proxy DLL ที่ยึด `dxgi.dll` หรือ `d3d11.dll` แบบเครื่องมือรุ่นเก่า เพราะกลไกนั้นเองคือสาเหตุของความขัดแย้งตั้งแต่แรก\n\nNAMS ทำงานเป็นกระบวนการโฮสต์ของตัวเอง โดยโหลด NieR:Automata เป็นไลบรารีภายในกระบวนการนั้น (แปลง exe ของเกมเป็น `game.bin` ที่โหลดได้) และเริ่มต้นตัวโหลดม็อดก่อนเกม ไม่มีสิ่งใดถูกฉีดเข้าไปในกระบวนการอื่น NAMS *คือ* กระบวนการที่เกมทำงานอยู่ และควบคุมสิ่งที่จะโหลดได้เต็มรูปแบบ\n\nจากนั้น NAMS ทำสองสิ่งหลัก:\n\n**1. สร้างความสามารถเดิมของเครื่องมืออื่นขึ้นใหม่แบบเนทีฟ** เช่น LodMod, Limit Break, การฉีดเท็กซ์เจอร์ และการโหลดเร็ว ทั้งหมดอยู่ในชั้นเดียวที่ทำงานประสานกัน ม็อดเชื่อมต่อกับ API ของ NAMS แทนการแย่งกันว่า hook DLL ใดจะถูกเรียกก่อน\n\n**2. มีระบบไฟล์เสมือน (VFS):**\n\n- ม็อดทุกตัวอยู่ในโฟลเดอร์ของตนเองใต้ `nams/mods/<modId>/` โดยไม่เขียนทับไฟล์เกมจริง\n- ขณะรันเกม NAMS จะซ้อนม็อดที่เปิดใช้งานเข้าไปในมุมมอง `data/` ของเอนจิน\n- `data/*.cpk` และ `NieRAutomata.exe` แบบวานิลลาของคุณ **ไม่เคยถูกแก้ไข** ดังนั้นการเปิดเกมแบบไม่มีม็อดผ่าน Steam ยังทำงานเหมือนเดิม\n\nม็อดประกาศสิ่งที่แก้ไขไว้ใน manifest NAMS ตรวจสอบและโหลดตามลำดับที่กำหนด คุณจึงสามารถ **เปิด/ปิดแต่ละม็อดได้อย่างสะอาด** และ **ตรวจพบความขัดแย้งที่รู้สาเหตุได้** ซึ่งไม่สามารถทำได้ด้วยวิธีวางไฟล์ลง `data` แบบเดิม\n\n### ทุกส่วนทำงานร่วมกันอย่างไร\n\nตัวเรียกใช้งานนี้ **ไม่ได้** สร้างบน NieR:Automata โดยตรง มันไม่ทำ reverse-engineer เกม ไม่ hook ฟังก์ชันเอนจิน และไม่จำเป็นต้องรู้รูปแบบ `.dat`/`.dtt` ด้วยตัวเอง ลำดับคือ:\n\n1. **NieR:Automata** - ตัวเกมที่ไม่ถูกแก้ไข\n2. **NAMS** - ตัวโหลดม็อดที่ถูกออกแบบก่อน เพื่อทำให้การม็อดในระดับใหญ่เป็นไปได้ (การสร้างระบบเอนจินใหม่, VFS, โฮสต์ปลั๊กอิน, เฟรมเวิร์กเนื้อหา)\n3. **ตัวเรียกใช้งานนี้** - ผู้ช่วยที่สร้างบน NAMS อ่านการตั้งค่า TOML ของ NAMS เขียนลงโครงสร้างโฟลเดอร์ NAMS และสื่อสารกับ API ของ NAMS เท่านั้น\n\nผลที่เกิดขึ้นจริงคือ NAMS เป็นชั้นหลักที่รับน้ำหนัก ตัวเรียกใช้งานเป็นเพียง UI ที่ใช้งานง่ายด้านหน้า และสามารถแทนด้วย UI อื่นหรือบรรทัดคำสั่งได้โดยไม่กระทบม็อด\n\n### และมีตัวอย่างแล้ว\n\nนี่ไม่ใช่ทฤษฎี **NAO Launcher โดย Rustukun** เป็นตัวเรียกใช้งานแยกที่สร้างบนพื้นฐานเดียวกัน มี UI และแนวคิดการออกแบบต่างกัน แต่สื่อสารกับ NAMS เดียวกันด้านล่าง ม็อดของคุณ โฟลเดอร์ `nams/mods/<modId>/` และ `disabled_mods.toml` ทั้งหมดทำงานเหมือนกันไม่ว่าคุณใช้ตัวเรียกใช้งานใด\n\nนี่คือหลักฐานว่า NAMS คือแพลตฟอร์ม และตัวเรียกใช้งานใด ๆ (ตัวนี้, NAO หรือของอนาคตที่ยังไม่มีใครเขียน) เป็นเพียงตัวเลือก frontend เลือกสิ่งที่เข้ากับวิธีทำงานของคุณ โดยไม่ต้องย้ายคลังม็อด",
+  "modsTutorialEcosystemStep3Title": "สิ่งที่ตัวเรียกใช้งานเพิ่ม และสิ่งที่แตกต่าง",
+  "modsTutorialEcosystemStep3Body": "NAMS จัดการการโหลด ส่วนตัวเรียกใช้งานจัดการ **ทุกอย่างรอบ ๆ** ได้แก่ การติดตั้ง การจัดระเบียบ และการแก้ปัญหา:\n\n- **ตัวจัดการม็อด** - ติดตั้งม็อดรูปแบบ NAMS ด้วยการลากวาง ปรับโครงสร้างอัตโนมัติ (wrapper wax/SK_Res และทรัพยากรที่รวมมา) ตรวจสอบ manifest และเตือนความขัดแย้ง\n- **เท็กซ์เจอร์** - จัดการแพ็กเท็กซ์เจอร์แยกและลำดับความสำคัญ `load_order` โดยไม่ต้องแก้ TOML ด้วยมือ\n- **คัตซีน** - ติดตั้งม็อดคัตซีน HD ตรวจหา codec อัตโนมัติ (H264 หรือ MPEG-2) และตั้งค่า NAMS ที่ถูกต้อง\n- **โปรไฟล์** - เก็บชุดม็อดหลายแบบไว้ข้างกัน สลับได้ด้วยคลิกเดียวโดยไม่ต้องคัดลอกหรือสูญเสียสถานะ\n- **การวินิจฉัย** - รายงานเต็มว่าอะไรติดตั้งที่ไหน อะไรเหลือจากการติดตั้งเก่า และสิ่งที่ NAMS เห็นเทียบกับสิ่งที่อยู่บนดิสก์จริง\n\n### เหตุใดเราจึงสร้างสิ่งนี้\n\n**เราไม่ได้ต่อต้านการติดตั้งด้วยตนเอง** การวางไฟล์ `.dat`/`.dtt` ของชุดหนึ่งลงในโฟลเดอร์ย่อย `data/` ที่ถูกต้องใช้ได้ดีกับหนึ่งหรือสองม็อด ตัวเรียกใช้งานนี้ถูกสร้างสำหรับระดับที่ใหญ่กว่านั้น\n\nระบบนิเวศ NAMS รองรับสิ่งต่าง ๆ เช่น:\n\n- **ม็อดชุดมากกว่า 30 ชุด** พร้อมสลับหลายชุดต่อหนึ่งตัวละคร\n- **เควสต์แบบกำหนดเองมากกว่า 20 รายการ** ที่เพิ่มต่อจากเนื้อเรื่องวานิลลา\n- **อาวุธใหม่มากกว่า 10 ชิ้น** ที่มีพฤติกรรมของตัวเอง\n- รวมถึงเท็กซ์เจอร์ คัตซีน ปลั๊กอิน การปรับสมดุล และอื่น ๆ\n\nการจัดการสิ่งนี้ด้วยมือไม่ใช่แค่เรื่องความชอบ แต่ **เป็นไปไม่ได้ในทางปฏิบัติ** คุณไม่สามารถติดตามว่าไฟล์มาจากม็อดใด เปิดหรือปิดม็อดเดียวอย่างสะอาด หรือรู้ว่าอะไรเสีย เมื่อถึงระดับใหญ่ การม็อดด้วยมือจะชนกำแพง และระบบนิเวศ NAMS ผ่านกำแพงนั้นมานานแล้ว\n\n### ความแตกต่างจาก NAMH และ Vortex\n\nหากคุณอยู่ในชุมชน NieR มานาน คุณอาจจำได้ว่าตัวจัดการม็อดก่อนหน้าจบอย่างไร:\n\n- **NAMH** (NieR Automata Mod Helper) หยุดพัฒนา ทำให้เกมเสียในแบบที่กู้คืนไม่ได้ เจอปัญหาไฟล์ \"program in use\" และวิธีกู้คืนมาตรฐานคือ *ถอนการติดตั้งเกม ติดตั้งใหม่ แล้วทำด้วยมือ* มันทำงานโดย **แทนที่ไฟล์ใน `data/` โดยตรง** เมื่อการติดตั้ง NAMH ผิดพลาด จึงไม่มีทางย้อนกลับอย่างสะอาด\n- **Vortex** ไม่เคยเข้าใจโครงสร้างไฟล์ของ NieR อย่างถูกต้อง ระบบไฟล์เสมือนของมันใช้สมมติฐานที่ไม่ตรงกับวิธีโหลดเนื้อหาของเกม ทำให้ไฟล์ถูกวางผิดตำแหน่งโดยไม่แจ้งเตือน\n\nตัวเรียกใช้งานนี้สร้างต่างออกไป โดยมีหลักการสำคัญดังนี้:\n\n1. **ไม่แทนที่ไฟล์เด็ดขาด** ม็อดอยู่ใน `nams/mods/<modId>/` และถูกซ้อนเข้าในมุมมองเอนจินขณะรันผ่าน VFS ของ NAMS `data/` วานิลลาไม่ถูกแตะ จึงไม่มี \"สถานะที่กู้ไม่ได้\" เพราะไม่มีอะไรในเกมจริงถูกเปลี่ยน\n2. **ทุกการกระทำย้อนกลับได้** ถอนการติดตั้งม็อด → โฟลเดอร์และทรัพยากรที่รวมมาถูกลบอย่างสะอาด ปิดม็อด → เพิ่มรายการใน `disabled_mods.toml` และ NAMS ข้ามม็อดนั้น ไม่มีสถานะซ่อนหรือการเขียนที่ย้อนกลับไม่ได้\n3. **ใช้โปรไฟล์แทนสถานะส่วนกลางเดียว** ตัวจัดการเดิมผูกทุกอย่างไว้กับการตั้งค่าเดียว โปรไฟล์ช่วยเก็บชุดม็อดหลายชุดข้างกันและสลับแบบอะตอม ไม่มีอะไรเสียหายหรือสูญหาย\n4. **สร้างบนตัวโหลดม็อดที่ยังได้รับการดูแล** NAMH สิ้นสุดเพราะฐานตัวโหลดม็อดไม่แน่นอน NAMS คือรากฐานของทุกอย่างที่นี่ และตัวเรียกใช้งานติดตามการอัปเดตของมัน\n\nแม้ตัวเรียกใช้งานนี้จะหยุดดูแล ม็อดของคุณก็ยังเป็นไฟล์บนดิสก์ที่ NAMS อ่านได้ คุณจะไม่ถูกล็อกออกจากการติดตั้งของตัวเอง",
+  "modsTutorialEcosystemStep4Title": "ไปที่ใดต่อ",
+  "modsTutorialEcosystemStep4Body": "หากคุณยังไม่เคยติดตั้งม็อดที่นี่:\n\n- **วิธีติดตั้งม็อด** - อธิบายขั้นตอนการติดตั้งทีละแท็บ\n- **การทำงานของโปรไฟล์** - อธิบายชุดม็อดแยกและควรใช้เมื่อใด\n\nทั้งสองหัวข้ออยู่ในเมนูช่วยเหลือเดียวกันนี้ (ไอคอน **?** ที่คุณใช้เปิดหน้านี้)\n\n**ฉบับสั้น:** วางไฟล์เก็บถาวรลงในแท็บที่ถูกต้อง (Mod Manager สำหรับม็อดตัวละคร/ข้อมูล, Textures สำหรับแพ็กเท็กซ์เจอร์แยก, Cutscenes สำหรับคัตซีน HD) กด Play และดู Logs หากเกิดปัญหา ตัวเรียกใช้งานจะพยายามเลือกสิ่งที่ถูกต้องโดยอัตโนมัติ และหากคุณไม่เห็นด้วยกับการตัดสินใจใด ทุกการกระทำสามารถย้อนกลับได้จาก UI",
+  "modsTutorialHelpTooltip": "บทช่วยสอนและความช่วยเหลือ",
+  "modsTutorialInstallStep1Title": "วางม็อดของคุณที่นี่",
+  "modsTutorialInstallStep1Body": "นี่คือแท็บ **ตัวจัดการม็อด** ใช้สำหรับติดตั้งม็อดตัวละคร ชุด และม็อดเกมเพลย์อื่น ๆ\n\nลากไฟล์ `.zip`, `.7z` หรือ `.rar` จาก Nexus มาวางในพื้นที่นี้ (หรือคลิกเพื่อเลือกไฟล์) ตัวเรียกใช้งานจะแตกไฟล์ ตรวจสอบโครงสร้าง และวางไว้ในตำแหน่งที่ถูกต้อง คุณไม่ต้องแตกไฟล์เอง\n\n**ควรรู้:** ไฟล์เกมวานิลลาของคุณจะไม่ถูกแตะ ม็อดอยู่ในโฟลเดอร์ `nams/` แยกต่างหาก ดังนั้นคุณยังสามารถเปิดเกมแบบไม่มีม็อดผ่าน Steam ได้ทุกเมื่อ",
+  "modsTutorialInstallStep2Title": "กำลังติดตั้งม็อด WAX หรือไม่? โปรดอ่านก่อน",
+  "modsTutorialInstallStep2Body": "**ม็อด WAX ใช้งานที่นี่ได้** NAMS สร้างความสามารถของ WAX ใหม่จนถึงเวอร์ชันที่ผ่านการทดสอบ ม็อดส่วนใหญ่บน Nexus ที่รองรับเวอร์ชันนั้นหรือเก่ากว่าจะติดตั้งและทำงานตามปกติ\n\n### ความเข้ากันได้ทำงานอย่างไร\n\nNAMS ผ่านการตรวจสอบกับ WAX เวอร์ชันเฉพาะ ทุกสิ่งที่ WAX มีจนถึงและรวมเวอร์ชันนั้น: รองรับ ทุกสิ่งที่ WAX เพิ่มในเวอร์ชัน **ใหม่กว่า** หลังจากนั้น: ไม่รองรับโดยอัตโนมัติ เพราะเป็นฟีเจอร์ใหม่ฝั่ง WAX ที่ต้องสร้างใหม่ตั้งแต่ต้นฝั่ง NAMS\n\n### เกิดอะไรขึ้นเมื่อ WAX เพิ่มฟีเจอร์ใหม่\n\nเมื่อ WAX เพิ่มฟีเจอร์ในเวอร์ชันอนาคต จะมีการประเมินเทียบกับแผนงานของ NAMS:\n\n- **อยู่ในขอบเขต** - หากฟีเจอร์สอดคล้องกับทิศทางของ NAMS จะถูกพัฒนา และ NAMS เวอร์ชันอนาคตจะรองรับม็อดที่ใช้มัน\n- **นอกขอบเขต** - NAMS มีส่วนขยายเนื้อหาของตัวเองที่ต้องให้ความสำคัญ (เควสต์แบบกำหนดเอง แผนที่โลกแบบกำหนดเอง plugin chips แบบกำหนดเอง API ม็อดที่ขยายขึ้น และอื่น ๆ) การสร้างฟีเจอร์ WAX ทุกอย่างใหม่ไม่ใช่เป้าหมายหลัก ฟีเจอร์เฉพาะบางอย่างของ WAX อาจไม่มีสิ่งเทียบเท่าใน NAMS\n\n**นี่ไม่ใช่การดูถูก WAX** ทั้งสองเป็นโปรเจกต์แยกที่มีเป้าหมายต่างกัน NAMS ไม่ได้พยายามเป็นตัวแทน WAX แบบวางแล้วใช้ได้ทันที แต่เป็นแพลตฟอร์มของตัวเองที่ **เข้ากันได้ในวงกว้าง** กับ WAX เพราะผู้ใช้ส่วนใหญ่ต้องการให้คลังม็อดเดิมยังใช้งานได้\n\n### รูปแบบนี้เป็นเรื่องปกติ\n\nการแยกแบบนี้คือ **วิธีที่ระบบนิเวศม็อดทุกเกมพัฒนา** ไม่ใช่ความแปลกเฉพาะ NieR ตัวอย่างชัดเจนคือ **Skyrim Legendary Edition (LE)** และ **Skyrim Special Edition (SE)** ซึ่งแยกมาจากเอนจินเดียวกัน SE เข้ากันได้กับม็อด LE ในวงกว้างแต่ไม่ 100% ม็อด LE บางตัวต้องแปลง และบางตัวไม่เคยถูกพอร์ตเพราะอาศัยพฤติกรรมเอนจินที่ SE เปลี่ยน ชุมชน Skyrim ไม่ถือว่านี่เป็นข้อบกพร่อง แต่เป็นส่วนหนึ่งของระบบนิเวศ เช่นเดียวกับ **OpenMW เทียบกับ Morrowind วานิลลา**, **Minecraft Java เทียบกับ Bedrock**, **ม็อด KSP1 เทียบกับ KSP2** เป็นต้น\n\nเมื่อแพลตฟอร์มหนึ่งสร้างพฤติกรรมของอีกแพลตฟอร์มใหม่ จะเกิดขอบเขตความเข้ากันได้ ส่วนใหญ่ทำงาน แต่บางขอบไม่ทำ นี่คือความจริงของชุมชนม็อดที่มีอายุมากพอจนแตกแขนง\n\n### แนวทางที่ดีที่สุดหากไม่แน่ใจ\n\n1. **สร้างโปรไฟล์ว่างใหม่** (ดู *การทำงานของโปรไฟล์* ในเมนูช่วยเหลือ) แล้วสลับไปยังโปรไฟล์นั้น\n2. **วางม็อด WAX เพียงตัวเดียว** ลงในโปรไฟล์นั้น ไม่ต้องใส่อะไรอื่น\n3. **กด Play** หากทำงาน ให้ติดตั้งในโปรไฟล์จริงของคุณ\n4. **หากไม่ทำงาน** ม็อดอาจใช้ฟีเจอร์หลังเวอร์ชัน WAX ที่ NAMS ทดสอบ หรือเป็นฟีเจอร์ที่ NAMS เลือกไม่สร้างใหม่\n\n### สิ่งที่ควรคาดหวัง\n\n- หากฟีเจอร์ X, Y และ Z ทำงานใน NAMS แต่ม็อด WAX ที่คุณต้องการใช้ฟีเจอร์ W ที่ไม่รองรับ และคุณอยู่ได้โดยไม่มี W คุณยังใช้ X, Y, Z ร่วมกับม็อดนั้นได้\n- หาก W จำเป็นต่อม็อดและ NAMS ไม่มี คุณต้องเลือกระหว่าง WAX (ได้ W แต่เสียประโยชน์อื่นของ NAMS) หรือ NAMS (ได้ทุกอย่างอื่นแต่ไม่มี W)\n\n**อย่าลืมอีกด้านของข้อแลกเปลี่ยน:** การอยู่กับ WAX หมายถึงพลาด **ม็อดเฉพาะ NAMS** ที่ไม่ทำงานบน WAX เช่น การสลับหลายชุดต่อหนึ่งตัวละคร เควสต์แบบกำหนดเอง และระบบปลั๊กอินที่กว้างกว่า (Multiplayer Mod, YP Devkit และปลั๊กอินในอนาคต) สิ่งเหล่านี้ใช้ API ของ NAMS ที่ WAX ไม่มี ดังนั้นตัวเลือกไม่ใช่ \"NAMS ลบ W\" เทียบกับ \"WAX ที่มี W\" แต่คือ \"ระบบนิเวศ NAMS ที่ไม่มี W\" เทียบกับ \"WAX ที่มี W แต่ไม่มีทุกสิ่งเฉพาะ NAMS\"\n\nนี่เป็นข้อแลกเปลี่ยนจริงและเป็นการตัดสินใจของคุณ เราไม่ใช่ผู้ที่ควรถามว่าฟีเจอร์เฉพาะ WAX รายการหนึ่งจะได้รับการรองรับใน NAMS หรือไม่ นั่นเป็นคำถามเกี่ยวกับแผนงานระบบนิเวศ ซึ่งควรถามใน Discord ของ YoRHa Continuum",
+  "modsTutorialInstallStep3Title": "ม็อดที่ติดตั้งของคุณ",
+  "modsTutorialInstallStep3Body": "ม็อดทุกตัวที่คุณติดตั้งจะแสดงที่นี่\n\n**สวิตช์ทางขวา** - เปิดหรือปิดม็อด การปิดจะยังคงติดตั้งม็อดไว้ แต่บอกตัวโหลดม็อดให้ข้ามในการเริ่มเกมครั้งถัดไป\n\n**เกมล่มตอนเริ่มหรือไม่?** ปิดม็อดครึ่งหนึ่ง เริ่มเกม แล้วทำซ้ำ สวิตช์ช่วยให้คุณแยกหาสาเหตุได้อย่างรวดเร็ว\n\n**ป้ายเตือน** ระบุม็อดที่ขัดแย้งกัน (เช่น สองม็อดแทนที่ชุดเดียวกัน) ซึ่งเป็นสาเหตุทั่วไปที่เกมไม่ถึงหน้าจอชื่อเรื่อง",
+  "modsTutorialInstallStep4Title": "รายละเอียดม็อด",
+  "modsTutorialInstallStep4Body": "คลิกม็อดใด ๆ ในรายการเพื่อดูรายละเอียดที่นี่: ผู้สร้าง เวอร์ชัน สิ่งที่เปลี่ยน ความขัดแย้งกับม็อดอื่น และ **แพ็กเท็กซ์เจอร์หรือคัตซีนที่รวมมา**\n\nหากม็อดไม่ทำงาน สาเหตุที่พบบ่อยจะแสดงที่นี่ เช่น *ต้องใช้ NAMS เวอร์ชันใหม่กว่า* หรือ *ขัดแย้งกับม็อดอื่น* ทั้งสองอย่างมองเห็นได้ **ก่อน** กด Play\n\nปุ่ม **ถอนการติดตั้ง** จะล้างม็อดอย่างถูกต้อง รวมถึงส่วนเสริมที่รวมมาด้วย",
+  "modsTutorialInstallStep5Title": "ม็อดเท็กซ์เจอร์แบบแยก → แท็บเท็กซ์เจอร์",
+  "modsTutorialInstallStep5Body": "**ม็อดที่มีแต่เท็กซ์เจอร์** (แพ็ก upscale HD หรือเปลี่ยนสี) จะไม่ติดตั้งที่นี่ แต่มีแท็บของตัวเอง\n\nคลิก **Textures** ในแถบด้านข้างเพื่อติดตั้ง ลากไฟล์ `.zip` ในแบบเดียวกัน ตัวเรียกใช้งานรู้ว่ากำลังดูไฟล์ชนิดใด\n\n**หมายเหตุ:** หากม็อดตัวละคร *รวม* เท็กซ์เจอร์ของตัวเอง มันจะติดตั้งอัตโนมัติพร้อมม็อด คุณใช้แท็บ Textures เฉพาะแพ็กเท็กซ์เจอร์ **แบบแยก** เท่านั้น",
+  "modsTutorialInstallStep6Title": "ม็อดคัตซีน → แท็บคัตซีน",
+  "modsTutorialInstallStep6Body": "**ม็อดคัตซีน** (คัตซีน HD หรือวิดีโอแทนที่) มีแท็บของตัวเองเช่นกัน\n\nคลิก **Cutscenes** ในแถบด้านข้างเพื่อติดตั้ง\n\n**กฎเดียวกับเท็กซ์เจอร์:** หากม็อดตัวละครรวมคัตซีน มันจะติดตั้งอัตโนมัติ คุณใช้แท็บ Cutscenes เฉพาะแพ็กคัตซีน **แบบแยก** เท่านั้น",
+  "modsTutorialInstallStep7Title": "กด Play",
+  "modsTutorialInstallStep7Body": "กลับไปที่แท็บ **Launcher** แล้วกด **PLAY** ตัวโหลดม็อดจะอ่านม็อดใหม่ทุกครั้งที่เริ่มเกม คุณจึงไม่ต้องรีสตาร์ตตัวเรียกใช้งานนี้\n\n### หากเกมล่ม\n\nเปิด **Logs** (มุมล่างขวา) ผลลัพธ์ของตัวโหลดม็อดมักระบุชื่อม็อดที่เสีย กลับมาที่นี่แล้วปิดม็อดนั้น\n\n### ยังเสียแม้ปิดทุกม็อดหรือไม่?\n\nหากคุณหรือตัวจัดการม็อดเก่าเคยวางไฟล์ `.dat` / `.dtt` โดยตรงใน `<gameDir>/data/` เอนจินยังคงโหลดไฟล์เหล่านั้น และตัวโหลดม็อดมองไม่เห็นหรือปิดไม่ได้ นี่คือความยุ่งเหยิงที่ตัวเรียกใช้งานนี้หลีกเลี่ยงโดยเฉพาะ ม็อดทุกตัวอยู่แยกใน `nams/mods/<modId>/` แทนการเขียนทับไฟล์เกมจริง\n\nเปิด **Logs → Diagnostics** แล้วตรวจสอบส่วน *Vanilla data/ overlay* รายการใด ๆ ที่อยู่ตรงนั้นคือของเหลือจากการติดตั้งเก่า ย้ายโฟลเดอร์เหล่านั้นออกจาก `data/` แล้วเกมจะกลับสู่สถานะสะอาด",
+  "modsTutorialProfilesStep1Title": "โปรไฟล์มีไว้ทำอะไร",
+  "modsTutorialProfilesStep1Body": "โปรไฟล์ช่วยให้คุณเก็บชุดม็อดแยกหลายชุดไว้ข้างกัน\n\nตัวอย่าง:\n\n- โปรไฟล์ **main** ที่มีม็อดที่คุณใช้เล่นจริง\n- โปรไฟล์ **test** สำหรับลองสิ่งใหม่\n\nหากม็อดใหม่ที่ไม่น่าไว้ใจทำให้เกมเสีย เพียงสลับกลับไป **main** แล้วเล่นต่อ ชุดม็อดจะไม่ปะปนกัน\n\n**สำคัญ:** ม็อดที่คุณไม่ได้ใช้อยู่จะไม่ถูกลบ แต่ถูกพักไว้ พร้อมกลับมาเมื่อสลับโปรไฟล์",
+  "modsTutorialProfilesStep2Title": "สร้างโปรไฟล์",
+  "modsTutorialProfilesStep2Body": "คลิก **NEW** ในแถบโปรไฟล์ พิมพ์ชื่อ แล้วกดยืนยัน\n\nตัวเรียกใช้งานจะสร้างโปรไฟล์ว่างใหม่และสลับไปใช้ ม็อดของโปรไฟล์ก่อนหน้ายังคงปลอดภัยบนดิสก์ ไม่ได้หายไป เพียงถูกพักไว้\n\nตอนนี้คุณสามารถติดตั้งสิ่งใดก็ได้ในโปรไฟล์ใหม่โดยไม่แตะชุดม็อดอื่น",
+  "modsTutorialProfilesStep3Title": "สลับ เปลี่ยนชื่อ ลบ",
+  "modsTutorialProfilesStep3Body": "**สลับ** - เลือกโปรไฟล์จากเมนูดรอปดาวน์ รายการม็อดจะเปลี่ยนทันที\n\n**เปลี่ยนชื่อ** - เปลี่ยนชื่อโปรไฟล์โดยไม่สูญเสียข้อมูล\n\n**ลบ** - ลบโปรไฟล์ที่ไม่ได้ใช้งานอย่างถาวร (ไม่สามารถลบโปรไฟล์ที่กำลังใช้งานหรือโปรไฟล์สุดท้ายได้)\n\nการสลับทั้งหมดเกิดขึ้นในขั้นตอนเดียว หากมีสิ่งผิดพลาด ระบบจะย้อนกลับอัตโนมัติ จึงไม่ทำให้คุณติดอยู่ในสถานะเสีย",
+  "modsTutorialProfilesStep4Title": "สิ่งใดติดตามโปรไฟล์ และสิ่งใดไม่ติดตาม",
+  "modsTutorialProfilesStep4Body": "**เฉพาะโปรไฟล์** (เปลี่ยนเมื่อสลับ):\n\n- ม็อดที่ติดตั้ง\n- ม็อดใดเปิดหรือปิด\n- เท็กซ์เจอร์ที่รวมมากับม็อด\n\n**ใช้ร่วมกันทุกโปรไฟล์** (ไม่เปลี่ยน):\n\n- แพ็กเท็กซ์เจอร์แบบแยกที่ติดตั้งผ่านแท็บ Textures\n- ม็อดคัตซีน\n- ปลั๊กอิน\n- การตั้งค่าตัวเรียกใช้งานทั้งหมด\n\nดังนั้นโปรไฟล์จะเปลี่ยนเฉพาะสิ่งที่เป็นของม็อดจริง ๆ การตั้งค่าระดับระบบจะติดตามคุณไปทุกที่",
+  "platformUnsupportedTitle": "ไม่สามารถเริ่มเกมบนแพลตฟอร์มนี้ได้",
+  "platformUnsupportedLinux": "NieR:Automata เป็นเกม Windows จึงต้องมีชั้นความเข้ากันได้เพื่อทำงานบน Linux\n\nติดตั้ง Steam พร้อม Proton (เกมทำงานได้ดีบน Proton) หรือติดตั้ง CrossOver/Wine เมื่อมีรันไทม์ ตัวเรียกใช้งานจะสามารถเริ่มเกมได้\n\nLinux แบบเนทีฟที่ไม่มีชั้นแปลคำสั่งไม่สามารถรันเกมได้",
+  "platformUnsupportedMacos": "NieR:Automata เป็นเกม Windows โปรดรันตัวเรียกใช้งานผ่าน CrossOver/Wine วิธีนี้เคยใช้งานได้ในอดีต แต่ยังไม่ได้ทดสอบซ้ำเมื่อไม่นานนี้ macOS แบบเนทีฟที่ไม่มีชั้นแปลคำสั่งไม่สามารถรันเกมได้\n\nหากคุณทำให้ใช้งานได้ด้วยวิธีใด โปรดใช้บรรทัดคำสั่งโดยตรงแทนตัวเรียกใช้งานนี้",
+  "playDisabledTooltip": "ไม่สามารถเริ่มเกมบนแพลตฟอร์มนี้",
+  "diagnosticsClose": "ปิด",
+  "diagnosticsSectionDataOverlay": "ไฟล์ซ้อนทับใน data/ วานิลลา (วางด้วยมือ)",
+  "diagnosticsSectionExternalLegacy": "ภายนอก / รุ่นเก่า",
+  "diagnosticsSectionGameRootExtras": "ไฟล์เพิ่มเติมในโฟลเดอร์รากเกม (ไม่ใช่วานิลลา)",
+  "diagnosticsSectionGameIdentity": "ข้อมูลเกม",
+  "diagnosticsSectionNamsHealth": "สถานะ NAMS",
+  "diagnosticsSectionReshade": "ReShade",
+  "diagnosticsSectionMigoto": "3DMigoto",
+  "diagnosticsSectionTexturePacks": "แพ็กพื้นผิว",
+  "diagnosticsSectionVanillaDrops": "ไฟล์ที่วางในโฟลเดอร์ data/ ของวานิลลา",
+  "diagnosticsSectionNonDefault": "การตั้งค่าที่ไม่ใช่ค่าเริ่มต้น",
+  "diagnosticsSectionRecentIssues": "ปัญหา NAMS ล่าสุด",
+  "diagnosticsSectionFindings": "สิ่งที่พบ",
+  "diagnosticsNoFindings": "ไม่พบปัญหา",
+  "diagnosticsExeVariant": "exe: {variant}",
+  "@diagnosticsExeVariant": { "placeholders": { "variant": { "type": "String" } } },
+  "diagnosticsExeUnsupported": "เวอร์ชันที่ไม่รองรับ",
+  "diagnosticsDlcPresent": "DLC",
+  "diagnosticsGameRunning": "กำลังทำงาน",
+  "diagnosticsNamsPresent": "NAMS.exe",
+  "diagnosticsMissingFiles": "{count, plural, other{ไฟล์หายไป {count} ไฟล์}}",
+  "@diagnosticsMissingFiles": { "placeholders": { "count": { "type": "int" } } },
+  "diagnosticsInstalled": "ติดตั้งแล้ว",
+  "diagnosticsEnabled": "เปิดใช้งาน",
+  "diagnosticsShadersMissing": "ไม่มีเชดเดอร์",
+  "diagnosticsTexturePacksUnavailable": "ไม่สามารถสอบถามพื้นผิว NAMS ได้",
+  "diagnosticsExtraFile": "เพิ่มเติม",
+  "diagnosticsFileCount": "{count, plural, =1{1 ไฟล์} other{{count} ไฟล์}}",
+  "@diagnosticsFileCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "diagnosticsMoreItems": "... อีก {count} รายการ",
+  "@diagnosticsMoreItems": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "refreshButton": "รีเฟรช",
+  "tabModloaderLabel": "ตัวโหลดม็อด",
+  "tabYorhaLabel": "YoRHa Protocol",
+  "configEditorTitle": "ตัวแก้ไขการตั้งค่า",
+  "changelogTitle": "มีอะไรใหม่",
+  "tipDragTextures": "ลากม็อดเท็กซ์เจอร์ลงในแท็บ Textures โดยตรง",
+  "tipHdCutscenes": "ระบบตรวจพบและตั้งค่าม็อดคัตซีน HD อัตโนมัติ",
+  "tipLodModPreviews": "การตั้งค่า LOD Mod Ext มีภาพตัวอย่างก่อน/หลัง",
+  "tipFaqButton": "ใช้ปุ่ม FAQ เพื่อดูว่า YoRHa Protocol แทนที่ม็อดใดบ้าง",
+  "tipReShadeAuto": "ระบบตรวจพบ ReShade อัตโนมัติ ไม่ต้องตั้งค่าด้วยมือ",
+  "tipFreecam": "YoRHa Protocol มี freecam ในตัวพร้อมช่องบันทึก",
+  "tipCustomQuests": "เควสต์แบบกำหนดเองกำลังจะมา โปรดติดตาม",
+  "sectionNams": "NAMS",
+  "sectionTextureInjection": "การฉีดเท็กซ์เจอร์",
+  "sectionLodMod": "LOD MOD EXT",
+  "sectionLevelOfDetail": "ระดับรายละเอียด",
+  "sectionAmbientOcclusion": "Ambient Occlusion",
+  "sectionShadows": "เงา",
+  "sectionPostProcessing": "โพสต์โปรเซสซิง",
+  "labelValidateModelData": "ตรวจสอบข้อมูลโมเดล",
+  "tooltipValidateModelData": "เกมจะตรวจสอบข้อมูลโมเดลเมื่อโหลด ปกติหากล้มเหลวจะเงียบและดำเนินต่อด้วยข้อมูลที่เสีย ซึ่งอาจทำให้โมเดลมองไม่เห็นหรือเกิดข้อผิดพลาด เมื่อเปิดใช้งาน NAMS จะแสดงผลการตรวจสอบเป็นกล่องข้อความ เพื่อให้เห็นว่าโมเดลใดล้มเหลวและเพราะเหตุใด",
+  "labelPreloadMaxDimension": "ขนาดสูงสุดสำหรับการโหลดล่วงหน้า",
+  "tooltipPreloadMaxDimension": "ขนาดเท็กซ์เจอร์สูงสุดที่จะโหลดล่วงหน้าเข้า RAM ตอนเริ่มเกม 2048 = ค่าเริ่มต้น, 4096 = โหลดล่วงหน้าถึงเท็กซ์เจอร์ 4K, 16384 = โหลดทุกอย่าง ค่าสูงขึ้นทำให้โหลดนานขึ้นแต่ลดอาการกระตุกในเกม",
+  "labelPreloadAllTextures": "โหลดเท็กซ์เจอร์ทั้งหมดล่วงหน้า",
+  "tooltipPreloadAllTextures": "โหลดเท็กซ์เจอร์ทั้งหมดเข้า RAM โดยไม่คำนึงถึงขนาด ช่วยกำจัดอาการกระตุกจากเท็กซ์เจอร์โผล่ทั้งหมด แต่ต้องใช้ RAM 32GB ขึ้นไปและทำให้เริ่มเกมช้าลงมาก",
+  "labelEnableLodMod": "เปิดใช้งาน LodMod Ext",
+  "tooltipEnableLodMod": "สวิตช์หลักสำหรับแพตช์/การสร้างระบบภาพใหม่ทั้งหมดของ LodMod",
+  "labelLodMultiplier": "ตัวคูณ LOD",
+  "tooltipLodMultiplier": "ควบคุมว่าโมเดลจะสลับไปใช้ระดับรายละเอียดต่ำเมื่อใด 0 = ปิด LOD (คุณภาพดีที่สุด ไม่มีอาการโผล่), 0.75 = ระดับรายละเอียดต่ำทำงานใกล้กล้องขึ้น ใช้ GPU น้อยลง ระยะที่โมเดลหายไปยังคงเท่าวานิลลา, 1 = วานิลลา, 10 = รายละเอียดสูงในระยะไกล ช่วยลด AO bleed",
+  "lodMultiplierOptionQuality": "0 - คุณภาพดีที่สุด",
+  "lodMultiplierOptionPerformance": "0.75 - ประสิทธิภาพ",
+  "lodMultiplierOptionVanilla": "1 - วานิลลา",
+  "lodMultiplierOptionFar": "10 - รายละเอียดระยะไกล",
+  "labelDisableManualCulling": "ปิด Manual Culling",
+  "tooltipDisableManualCulling": "ป้องกันโมเดล/เรขาคณิตหายแบบสุ่มที่ระยะหรือมุมกล้องบางแบบ แก้ปัญหาเช่น ภายในห้างหายหลังข้ามสะพาน อาคารนอกค่ายหาย เป็นต้น โมเดล LOD ที่ดูแย่และพบไม่บ่อยจะถูกกรองออก",
+  "labelDisableCameraCulling": "ปิด Camera Culling",
+  "tooltipDisableCameraCulling": "ป้องกันไม่ให้หญ้า พุ่มไม้ และวัตถุขนาดเล็กหายไปแล้วโผล่กลับมาขณะที่คุณขยับกล้อง แผนที่จะซ่อนวัตถุบางส่วนเมื่อกล้องอยู่ในบางตำแหน่ง เพราะถือว่าจากตรงนั้นมองไม่เห็น เมื่อระยะการมองไกลขึ้น เช่น เปิดกริดแผนที่ความละเอียดสูงหรือเพิ่มระยะการเกิดวัตถุ วัตถุเหล่านั้นจะมองเห็นได้ คุณจึงเห็นมันโผล่ขึ้นและหายไป อาจลดเฟรมเรตในพื้นที่ที่มีหญ้ามาก มีผลทันที",
+  "labelLayoutSpawnRange": "ระยะการเกิดวัตถุ",
+  "tooltipLayoutSpawnRange": "ระยะห่างจากตัวคุณที่หญ้า พุ่มไม้ เศษซาก และวัตถุขนาดเล็กอื่น ๆ บนแผนที่จะปรากฏ 100 ม. = วานิลลา ค่าที่ต่ำลงช่วยประหยัดเฟรมเรต แต่วัตถุเหล่านี้จะปรากฏเมื่ออยู่ใกล้คุณมากขึ้น ค่าที่สูงขึ้นจะเติมภูมิประเทศให้เต็มในระยะที่ไกลขึ้น แต่จะลดเฟรมเรตในพื้นที่ที่มีหญ้ามาก มีผลกับวัตถุที่ยังไม่ปรากฏเท่านั้น วัตถุที่ปรากฏแล้วจะยังคงอยู่จนกว่าส่วนนั้นของแผนที่จะถูกยกเลิกการโหลด",
+  "labelLayoutSpawnEverything": "วางวัตถุบนแผนที่ทั้งหมด",
+  "tooltipLayoutSpawnEverything": "วางหญ้า พุ่มไม้ และวัตถุขนาดเล็กบนแผนที่ทุกชิ้นทันทีที่ส่วนนั้นของแผนที่โหลดเสร็จ ไม่ว่าคุณจะอยู่ไกลแค่ไหน ไม่สนใจระยะการเกิดวัตถุ วัตถุยังคงปรากฏทีละชิ้น พื้นที่ที่เพิ่งโหลดจึงค่อย ๆ เต็ม ลดเฟรมเรตในพื้นที่ที่มีหญ้ามาก",
+  "labelAoFullResolution": "AO ความละเอียดเต็ม",
+  "tooltipAoFullResolution": "คำนวณ Ambient Occlusion (AO) ที่ความละเอียดเต็มแทนครึ่งหนึ่ง จึงตามวัตถุบางและขอบละเอียดได้แม่นขึ้น ใช้เวลา GPU มากขึ้น ต้องเปิด Ambient Occlusion ในการตั้งค่ากราฟิกของเกม มีผลทันที",
+  "labelShadowResolution": "ความละเอียดเงา",
+  "tooltipShadowResolution": "ขนาดเท็กซ์เจอร์ shadow map ค่าสูงขึ้นทำให้เงาคมขึ้นแต่ใช้ GPU มากขึ้น 2048 = วานิลลา, 4096 = อัปเกรดที่ดี, 8192 = คมมาก ต้องเป็นเลขยกกำลังของ 2 ความคมขึ้นอยู่กับทั้งความละเอียดและระยะ (ระยะไกลขึ้นหมายถึงต้องครอบคลุมพื้นที่มากขึ้น คุณภาพจึงลดลง)",
+  "labelDistanceMultiplier": "ตัวคูณระยะ",
+  "tooltipDistanceMultiplier": "คูณระยะวาดเงาของแต่ละฉาก 2.0 = มองเห็นเงาไกลเป็นสองเท่า วานิลลา: 1.0 ปิด Min/Max ด้านล่างเพื่อให้ทำงานถูกต้อง หรือใช้เพื่อจำกัดช่วงที่ตัวคูณนี้กำหนด",
+  "labelDistanceMinimum": "ระยะขั้นต่ำ",
+  "tooltipDistanceMinimum": "ค่าจำกัดระยะวาดเงาขั้นต่ำ 0 = ปิด (ไม่มีขั้นต่ำ) การตั้งประมาณ 70 พร้อมความละเอียด 8192 ให้คุณภาพใกล้วานิลลาแต่เพิ่มระยะเงาอย่างมาก",
+  "labelDistanceMaximum": "ระยะสูงสุด",
+  "tooltipDistanceMaximum": "ค่าจำกัดระยะวาดเงาสูงสุด 0 = ปิด (ไม่มีค่าสูงสุด) ควรตั้งเฉพาะเมื่อระยะเริ่มต้นของเกมทำให้เกิดปัญหาประสิทธิภาพ",
+  "labelDistancePss": "ระยะ PSS",
+  "tooltipDistancePss": "เปิดใช้การกระจายเงาแบบ PSS เพื่อให้คุณภาพเงาสม่ำเสมอขึ้น 0 = ปิด ดูดีมากในบางพื้นที่ แต่อาจดูเบลอในบางพื้นที่ ควรตั้งให้สูงกว่าค่าระยะอื่นมาก (~1500 สำหรับพื้นที่เปิดขนาดใหญ่)",
+  "labelFilterStrengthBias": "อคติความแรงของฟิลเตอร์",
+  "tooltipFilterStrengthBias": "ปรับความแรงของฟิลเตอร์เบลอเงาในแต่ละฉาก 0 = ปิด, -1 = เงาคมขึ้น, ค่าบวก = นุ่มขึ้น แต่ละพื้นที่ใช้ความแรงต่างกัน (ป่า = นุ่มกว่า) สามารถใช้ร่วมกับ Min/Max เพื่อจำกัดช่วง",
+  "labelFilterStrengthMin": "ความแรงฟิลเตอร์ขั้นต่ำ",
+  "tooltipFilterStrengthMin": "บังคับค่าความแรงฟิลเตอร์เงาขั้นต่ำในทุกพื้นที่ 0 = ปิด ค่าเริ่มต้นของเกมแตกต่างตามฉาก (โดยทั่วไปประมาณ 4) ใช้เพื่อป้องกันไม่ให้เงาคมเกินไปในบางพื้นที่",
+  "labelFilterStrengthMax": "ความแรงฟิลเตอร์สูงสุด",
+  "tooltipFilterStrengthMax": "บังคับค่าความแรงฟิลเตอร์เงาสูงสุดในทุกพื้นที่ 0 = ปิด ค่าเริ่มต้นของเกมแตกต่างตามฉาก (โดยทั่วไปประมาณ 4) ใช้เพื่อป้องกันไม่ให้เงาเบลอเกินไปในบางพื้นที่",
+  "labelHqShadowModels": "โมเดลเงาคุณภาพสูง",
+  "tooltipHqShadowModels": "ใช้โมเดล HQ แบบเรียลไทม์สำหรับเงาแทนโมเดล LQ แบบคงที่ เงาต้นไม้จะไหวตามลมแทนที่จะหยุดนิ่ง อยู่ในขั้นทดลอง ใช้งานได้ดีในซากเมือง แต่อาจมีปัญหาในบางพื้นที่ที่พบไม่บ่อย",
+  "labelForceAllShadowModels": "บังคับใช้โมเดลเงาทั้งหมด",
+  "tooltipForceAllShadowModels": "บังคับให้โมเดลทั้งหมดสร้างเงา รวมถึงวัตถุขนาดเล็กอย่างก้อนหิน หญ้าต้องเปิด “เงาหญ้า” อยู่ในขั้นทดลอง อาจมีบางกรณีที่โมเดลมองไม่เห็นแต่ยังสร้างเงา ยังไม่พบปัญหาในการทดสอบปัจจุบัน",
+  "labelShadowForceAllFilters": "เมชที่ยกเว้น",
+  "tooltipShadowForceAllFilters": "โมเดลที่มีเมชชื่อตรงกับรายการนี้จะคงการตั้งค่าเงาเดิมไว้เมื่อเปิด “บังคับใช้โมเดลเงาทั้งหมด” ชื่อต้องตรงกันทุกตัวอักษร ไม่สนตัวพิมพ์เล็กหรือใหญ่ มีผลทันที",
+  "shadowForceAllFiltersAdd": "เพิ่มเมช",
+  "shadowForceAllFiltersEmpty": "ไม่มีข้อยกเว้น - “บังคับใช้โมเดลเงาทั้งหมด” มีผลกับทุกโมเดล",
+  "labelGrassShadows": "เงาหญ้า",
+  "tooltipGrassShadows": "หญ้าและวัตถุอื่นที่ไม่มีเงาตามการตั้งค่าวัตถุจะสร้างเงาด้วย มีผลทันที",
+  "labelDisableVignette": "ปิด Vignette",
+  "tooltipDisableVignette": "ลบเอฟเฟกต์ขอบจอมืด คัตซีนหรือหน้าจอโหลดบางส่วนอาจยังมีเอฟเฟกต์นี้ฝังอยู่ในเท็กซ์เจอร์",
+  "configAppliesOnRestart": "มีผลหลังรีสตาร์ต",
+  "configAppliesLive": "มีผลทันที",
+  "dropZoneBrowseFolder": "หรือเลือกโฟลเดอร์",
+  "labelGiEnabled": "เปิดใช้งาน Global Illumination",
+  "tooltipGiEnabled": "สิ่งที่ FAR เรียกว่า Global Illumination: ทุกเฟรมมีการคำนวณต่อพิกเซลที่ไล่ดู reflection cubemap ที่โหลดไว้ทั้งหมดเพื่อหาอันที่ใกล้ที่สุด เมื่อเปิด จะเหลือเฉพาะ cubemap ที่ใกล้กล้องในการไล่ดู ที่เหลือถูกข้าม แบบของ FAR ตัดรายการตามลำดับการโหลด cubemap รอบตัวคุณจึงอาจหายไปและพื้นผิวใกล้ๆ จะทึบและมืด แบบนี้เก็บอันที่ใกล้คุณที่สุด สิ่งที่เห็นใกล้ๆ ยังคงแสงและเงาสะท้อน และการคำนวณยังประหยัดขึ้น มีเพียงเงาสะท้อนไกลๆ ที่ใช้ cubemap หยาบกว่า มีผลทันที",
+  "labelGiWorkgroupSize": "reflection cubemap ที่เก็บไว้",
+  "tooltipGiWorkgroupSize": "จำนวน reflection cubemap ที่ใกล้กล้องที่สุดซึ่งยังอยู่ในการไล่ดูต่อพิกเซล 128 = ทั้งหมดที่วานิลลาเก็บ, 64/32/16 = ประหยัดขึ้นตามลำดับ เงาสะท้อนไกลๆ หยาบขึ้น",
+  "labelGiMinLightExtent": "ขนาดแสงขั้นต่ำของ GI",
+  "tooltipGiMinLightExtent": "ตัดแสงขนาดเล็กที่อยู่ไกลออกจาก GI 0.0 = ไม่ตัด (แสงทั้งหมดมีผล), 0.5 = ตัดอย่างเข้ม ช่วง 0.0-1.0",
+  "cardExperimental": "ทดลอง",
+  "cardBloom": "Bloom",
+  "configParseErrorTitle": "ไม่สามารถอ่าน {file} ได้",
+  "@configParseErrorTitle": {
+    "placeholders": {
+      "file": {
+        "type": "String"
+      }
+    }
+  },
+  "configParseErrorBody": "ไฟล์นี้ไม่ใช่ TOML ที่ถูกต้อง ตัวเรียกใช้จะแสดงค่าเริ่มต้นและจะไม่เขียนลงไฟล์นี้จนกว่าจะแยกวิเคราะห์ได้อีกครั้ง แก้ไขในโปรแกรมแก้ไขข้อความแล้วบันทึก ตัวเรียกใช้จะอ่านใหม่ให้เอง",
+  "subheadingHighGrids": "กริดแผนที่ความละเอียดสูง",
+  "highGridsWipTitle": "อยู่ระหว่างการพัฒนา",
+  "highGridsWipBody": "ฟีเจอร์นี้ยังไม่เสร็จสมบูรณ์ กฎการ cull สำหรับจำนวนวงที่สูงขึ้นยังต้องเขียนเพิ่ม กริดที่อยู่ไกลจึงอาจแสดงส่วนของแผนที่ที่ควรอยู่ที่อื่น",
+  "highGridsWipContribute": "ยินดีรับการมีส่วนร่วม: รายการกฎด้านล่างคือส่วนที่ต้องเติมให้ครบ สามารถเลือก mesh และ grid id ได้โดยตรงในเกมด้วย YP Devkit (Map Manager -> Mesh Picker) แล้วเขียนลงในกฎได้ทันที",
+  "subheadingFrameRate": "อัตราเฟรม",
+  "subheadingRendering": "การเรนเดอร์",
+  "bloomReferenceVanilla": "ต้นฉบับ",
+  "bloom2017Button": "ตั้งเป็นบลูมแบบ 2017",
+  "bloom2017Tooltip": "ตั้งค่าความสูงอ้างอิงของบลูมเป็น 900 ซึ่งเป็นขนาดบลูมของเวอร์ชันปี 2017 บลูมจะคงขนาดนั้นไว้ในทุกความละเอียด แทนที่จะปรับตามความละเอียดและกะพริบเมื่อความละเอียดสูง ไม่แตะความกว้างการเบลอ มีผลทันที",
+  "labelBloomReferenceHeight": "ความสูงอ้างอิงของ Bloom",
+  "tooltipBloomReferenceHeight": "แก้อาการ Bloom กะพริบที่ความละเอียดสูง 0 = ต้นฉบับ 2021 (พีระมิด Bloom ปรับตามความละเอียด ทำให้ขอบสว่างกะพริบ) 900 = ขนาด Bloom แบบปี 2017 ที่ทุกความละเอียด ช่วง 360-4320",
+  "labelBloomKernelReferenceHeight": "ความกว้างการเบลอของ Bloom",
+  "tooltipBloomKernelReferenceHeight": "ความสูงอ้างอิงที่ใช้ปรับความกว้างการเบลอ 0 = ต้นฉบับ (การเบลอจะเล็กลงเมื่อเทียบกับหน้าจอที่ความละเอียดสูง) ค่าอื่นจะตรึงความกว้างการเบลอไว้ที่ความสูงนั้นในทุกความละเอียด คงขนาด render target ไว้เต็มขนาด จึงใช้แทนความสูงอ้างอิงของ Bloom ได้ ช่วง 360-4320",
+  "labelBloomExtraBlur": "การเบลอ Bloom เพิ่มเติม",
+  "tooltipBloomExtraBlur": "รอบการเบลอเพิ่มเติมที่ทำให้แสงเรืองกว้างและสว่างขึ้น ทีละ 0.1 0 = ต้นฉบับ",
+  "bloomDropLevelsOff": "ปิด",
+  "bloomDropLevelsWidest": "ชั้นที่กว้างที่สุด",
+  "bloomDropLevelsTwoWidest": "สองชั้นที่กว้างที่สุด",
+  "labelBloomDropCoarseLevels": "ลบชั้น Bloom ที่กว้าง",
+  "tooltipBloomDropCoarseLevels": "ลบชั้น Bloom ที่สั่นไหวและกะพริบ โดยยังคงแสงเรืองเล็ก ๆ รอบแหล่งกำเนิดแสงไว้ 0 = ต้นฉบับ, 1 = ลบชั้นที่กว้างที่สุด, 2 = ลบสองชั้นที่กว้างที่สุด อิงจาก Bloom Fix ของ Void",
+  "labelHighGridsEnabled": "เปิดใช้งานกริดแผนที่ความละเอียดสูง",
+  "tooltipHighGridsEnabled": "โหลดแผนที่รอบตัวคุณด้วยความละเอียดสูงมากขึ้น ต้นฉบับโหลดเพียง 7 กริดและแสดงส่วนที่เหลือเป็นภูมิประเทศความละเอียดต่ำ ใช้หน่วยความจำ เวลาโหลด และเฟรมเรตเพิ่มขึ้น เพราะกริดที่เพิ่มมาก็ต้องถูกเรนเดอร์ด้วย อยู่ระหว่างการพัฒนา: กฎการ cull ยังไม่ครบ เมื่อเปิดตัวเลือกนี้จะเปิด \"ปิด Manual Culling\" ให้ด้วย และเมื่อปิดก็จะปิดตามกลับไป นอกจากนี้ยังจะเปิด \"ปิด Camera Culling\" ให้ด้วยหากยังไม่ได้เปิด",
+  "labelHighGridsRings": "วงกริด",
+  "tooltipHighGridsRings": "จำนวนวงหกเหลี่ยมของกริดความละเอียดสูงที่โหลดไว้รอบตัวคุณ 1 = ต้นฉบับ (7 กริด), 2 = 19, 3 = 37, 4 = 61 แต่ละกริดใช้ heap ราว 100 MB ค่าที่สูงขึ้นจึงต้องใช้หน่วยความจำมากขึ้นและโหลดนานขึ้น อีกทั้งยังลดเฟรมเรตด้วย เพราะเรขาคณิตทั้งหมดนั้นต้องถูกวาด 4 คือค่าที่ผ่านการทดสอบ",
+  "labelHighGridsRoomRings": "กำหนดวงเฉพาะห้อง",
+  "tooltipHighGridsRoomRings": "ใช้จำนวนวงน้อยลงในห้องที่ระบุ พื้นที่ปิดอย่างเมืองจมน้ำจะแสดงส่วนของแผนที่จากที่อื่นเมื่อโหลดรอบตัวมากเกินไป ไม่สามารถเกินจำนวนวงหลักได้",
+  "labelHighGridsBlockedInRoom": "กริดที่บล็อกในห้อง",
+  "tooltipHighGridsBlockedInRoom": "กริดที่จะไม่ถูกโหลดขณะคุณอยู่ในห้องนั้น ใช้เมื่อมีกริดที่มองเห็นได้จากตำแหน่งที่ไม่ควรมองเห็น รหัสกริดคือเลขฐานสิบหก 4 หลักท้ายของหมายเลขกริด จึงตรงกันในทุกช่วงเนื้อเรื่อง",
+  "labelHighGridsBlockedFromGrid": "กริดที่บล็อกจากกริด",
+  "tooltipHighGridsBlockedFromGrid": "กริดที่จะไม่ถูกโหลดขณะคุณยืนอยู่บนกริดที่ระบุ ใช้เมื่อการบล็อกทั้งห้องกว้างเกินไป",
+  "labelSkipStartupLogos": "ข้ามโลโก้เริ่มเกม",
+  "tooltipSkipStartupLogos": "ข้ามโลโก้ Platinum Games / Square Enix ระหว่างโหลดเกม การโหลดไม่ถูกกระทบ",
+  "labelShadowCascades": "เงาแบบลำดับชั้น",
+  "tooltipShadowCascades": "4 = ดั้งเดิม, 8 เพิ่มอีกสี่ชั้นไกล (ทดลอง) ที่ 8 แอตลาสถูกแบ่ง 4x4 แต่ละชั้นได้ความละเอียดหนึ่งในสี่ ควรเพิ่มความละเอียดเงาชดเชย",
+  "labelShadowCascadeRange": "ระยะชั้นเงา",
+  "tooltipShadowCascadeRange": "สี่ชั้นพิเศษยื่นเกินระยะเงาปกติได้ไกลเพียงใด",
+  "labelShadowBlurScale": "ความเบลอเงาต่อชั้น",
+  "tooltipShadowBlurScale": "ตัวคูณกับความเบลอของเกม จากใกลไปไกล 1.0 = เดิม, 0.5 = ครึ่งเดียว มีผลทันที",  "labelDisableHdr": "ปิด HDR",
+  "tooltipDisableHdr": "เล่นแบบ SDR แม้จอรองรับ HDR เหมือน HideHDRSupport ของ Special K เปิดหาก HDR ดูซีด มีผลทันที แต่การสร้าง swapchain ใหม่อาจใช้เวลาสักครู่และเฟรมเรตอาจตกจนกว่าจะเสร็จ หากไม่มีผล ให้รีสตาร์ทเกม",
+  "labelRenderScale": "สเกลการเรนเดอร์",
+  "tooltipRenderScale": "ความละเอียดภายใน (ทดลอง) 2.0 เรนเดอร์สองเท่าของความละเอียดจอแล้วย่อกลับ ลดขอบหยักและภาพสั่นได้มาก 0.5 เรนเดอร์ครึ่งหนึ่งของความละเอียดจอแล้วขยายขึ้น ภาพนุ่มลง GPU ทำงานแค่หนึ่งในสี่ เหมาะกับการ์ดจอที่อ่อน โหลด GPU เป็นกำลังสองของค่าตัวคูณ ใช้ได้ทุกโหมดการแสดงผล มีผลทันที แต่การสร้าง swapchain ใหม่อาจใช้เวลาสักครู่และเฟรมเรตอาจตกจนกว่าจะเสร็จ หากไม่มีผล ให้รีสตาร์ทเกม",
+  "labelFxaa": "FXAA",
+  "tooltipFxaa": "ลบขอบหยักแบบประหยัด ใช้โดยปิด AA ในเกม มีผลทันที",
+  "labelMsaaPrepassFix": "แก้จุดดำ MSAA",
+  "tooltipMsaaPrepassFix": "แก้จุดดำบนใบไม้ หญ้า และเส้นผมเมื่อเปิดแอนตี้เอเลียสของเกม (MSAA) ไม่มีค่าใช้จ่ายด้านประสิทธิภาพ มีผลทันที",
+  "labelMsaaShadowMaskFix": "แก้ขอบสว่าง MSAA",
+  "tooltipMsaaShadowMaskFix": "ลบขอบสว่างรอบตัวละครและวัตถุที่อยู่ในเงาเมื่อเปิดแอนตี้เอเลียสของเกม (MSAA) ไม่มีค่าใช้จ่ายด้านประสิทธิภาพ มีผลทันที",
+  "subheadingMsaaPerformance": "แก้ประสิทธิภาพ MSAA (ทดลอง)",
+  "labelMsaaPerPixel": "เชดวัสดุต่อพิกเซล",
+  "tooltipMsaaPerPixel": "เมื่อเปิดแอนตี้เอเลียสของเกม (MSAA) เกมจะเชดวัสดุแต่ละชิ้นหนึ่งครั้งต่อแซมเปิล ที่ 8x MSAA จึงเชดทุกโมเดลแปดครั้ง เปิดตัวเลือกนี้แล้ววัสดุจะเชดหนึ่งครั้งต่อพิกเซล และ MSAA จะทำหน้าที่ลบรอยหยักที่ขอบเท่านั้น ต้องเปิดแก้ขอบสว่าง MSAA มีผลทันที",
+  "labelMsaaPerPixelTerrain": "รวมวัสดุพื้นดินด้วย",
+  "tooltipMsaaPerPixelTerrain": "ส่วนที่ได้ประสิทธิภาพมากที่สุด พื้นเปียกอาจกะพริบสว่างชั่วครู่ แรงกว่าปกติ ถ้าไม่รบกวน นี่คือประสิทธิภาพ MSAA ที่ได้มากที่สุด มีผลทันที",
+  "labelConstantBufferDedup": "ข้ามพารามิเตอร์เชเดอร์ที่ไม่เปลี่ยนแปลง",
+  "tooltipConstantBufferDedup": "เพิ่มประสิทธิภาพ ทุกการวาดจะอ่านบล็อกพารามิเตอร์ขนาดเล็ก เช่น การแปลงตำแหน่ง ค่าวัสดุ และค่าแสง เกมต้นฉบับส่งทั้งหมดไปยังการ์ดจอใหม่ทุกเฟรม หลายพันครั้ง แม้เนื้อหาจะไม่เปลี่ยนเลย เกมต้นฉบับมีการเปรียบเทียบที่จะข้ามบล็อกที่ไม่เปลี่ยนแปลงอยู่แล้ว แต่ไม่เคยทำงานจริง ประมาณครึ่งหนึ่งของการอัปโหลดจึงไม่จำเป็น มีผลทันที",
+  "labelConstantBufferUploadOnBind": "อัปโหลดพารามิเตอร์เชเดอร์เฉพาะตอนวาด",
+  "tooltipConstantBufferUploadOnBind": "เพิ่มประสิทธิภาพ เกมต้นฉบับส่งบล็อกพารามิเตอร์เชเดอร์ทุกบล็อกไปยังการ์ดจอทุกเฟรม รวมถึงบล็อกที่ไม่มีอะไรบนหน้าจอใช้ ซึ่งมีประมาณสี่ในห้า เมื่อเปิดใช้งาน บล็อกจะถูกส่งเฉพาะเมื่อการวาดผูกใช้งานจริง มีผลทันที",
+  "labelDecreaseStutterDuringGridLoading": "ลดอาการกระตุกขณะโหลดแผนที่",
+  "tooltipDecreaseStutterDuringGridLoading": "ทำให้การโหลดแผนที่ลื่นขึ้น เมื่อส่วนใหม่ของแผนที่โหลดรอบตัวคุณ เกมต้นฉบับจะสร้างทุกอย่างของส่วนนั้นในคราวเดียว ทำให้กระตุกทุกครั้ง เมื่อเปิดใช้งาน งานนั้นจะถูกกระจายไปหลายเฟรมและเตรียมไว้ล่วงหน้าในพื้นหลัง อาการกระตุกส่วนใหญ่จึงหายไป อยู่ระหว่างพัฒนา จะมีการปรับปรุงเพิ่มเติมในอัปเดตถัดไป คุณจะยังรู้สึกกระตุกเล็กน้อยเป็นครั้งคราวขณะแผนที่โหลด เช่น ตอนที่เอฟเฟกต์หรือวัตถุใหม่ปรากฏ อย่าคาดหวังอัตราเฟรมที่สูงขึ้น การโหลดที่เร็วขึ้น หรือการโหลดที่ไม่กระตุกเลยเมื่อใช้แพ็กเท็กซ์เจอร์ 4K มีผลทันที",
+  "labelAoFadeFix": "แก้ AO ทะลุกำแพง",
+  "tooltipAoFadeFix": "ป้องกันไม่ให้ Ambient Occlusion (AO) ทะลุกำแพงและกระโดดเมื่อโมเดลสลับ LOD ระหว่างการเฟด LOD เกมจะวาดทั้งสองเวอร์ชันแบบทึบลงในความลึกของ AO ทำให้เกิด AO บนสิ่งที่แทบมองไม่เห็น ตัวแก้นี้ข้ามการวาดเพิ่มนั้น การตั้งตัวคูณ LOD เป็น 0 ก็ซ่อนบั๊กได้เพราะไม่มีการสลับ LOD เลย ตัวแก้นี้แก้ที่ต้นเหตุและคง LOD ไว้ ไม่มีค่าใช้จ่าย มีผลทันที",
+  "labelHighGridsHiddenMeshes": "เมชที่ซ่อน",
+  "tooltipHighGridsHiddenMeshes": "เมชตัวแทนความละเอียดต่ำที่จะซ่อนเมื่อโหลดครบจำนวนวง หาชื่อได้ด้วย Mesh Picker ใน YP Devkit Grid 0x0 ใช้กับทุกกริด",
+  "labelTextureHotReload": "โหลดซ้ำอัตโนมัติ",
+  "tooltipTextureHotReload": "เฝ้าโฟลเดอร์เท็กเจอร์และใช้ .dds ที่แก้ขณะเกมทำงาน ขนาดเท่าเดิมมีผลทันที",
+  "gridRuleMesh": "เมช",
+  "gridRuleFromRings": "ตั้งแต่วง",
+  "shadowBlurCascade": "ชั้น {n}",
+  "@shadowBlurCascade": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "gridRuleRoom": "ห้อง",
+  "gridRuleRings": "วง",
+  "gridRuleGrid": "กริด",
+  "gridRuleFromGrid": "ยืนอยู่บน",
+  "gridRuleAdd": "เพิ่มกฎ",
+  "gridRuleEmpty": "ไม่มีกฎ - ทุกกริดโหลดตามปกติ",
+  "highGridsCellCount": "{rings, plural, =1{1 วง - 7 กริด (ต้นฉบับ)} other{{rings} วง - {cells} กริด}}",
+  "@highGridsCellCount": {
+    "placeholders": {
+      "rings": { "type": "int" },
+      "cells": { "type": "int" }
+    }
+  },
+  "lodModResetButton": "รีเซ็ตเป็นค่าเริ่มต้น",
+  "lodModResetConfirmTitle": "รีเซ็ตการตั้งค่า LodMod Ext หรือไม่?",
+  "lodModResetConfirmBody": "การดำเนินการนี้จะรีเซ็ตทุกช่องของ LodMod Ext ในแท็บนี้กลับเป็นค่าเริ่มต้น ค่าปัจจุบันจะถูกเขียนทับ ต้องการดำเนินการต่อหรือไม่?",
+  "lodModResetConfirmAction": "รีเซ็ต",
+  "lodModResetToast": "รีเซ็ตการตั้งค่า LodMod Ext เป็นค่าเริ่มต้นแล้ว",
+  "experimentalWarningBody": "ตัวเลือกเหล่านี้อยู่ในขั้นทดลอง ควรคิดให้ดีก่อนใช้ในการเล่นรอบแรก เพื่อไม่ให้กระทบประสบการณ์ของคุณ",
+  "labelFpsUncapInMenus": "ปลดล็อก FPS ในเมนู / หน้าจอโหลด",
+  "tooltipFpsUncapInMenus": "ปลดล็อกขีดจำกัด 60 FPS ระหว่างเมนูและหน้าจอโหลด ทำให้การโหลดรู้สึกเร็วขึ้นและแอนิเมชันเมนูลื่นขึ้น ปลอดภัย: เกมเพลย์ไม่ได้รับผลกระทบ มีผลทันที",
+  "labelFpsUncapInGameplay": "ปลดล็อก FPS ระหว่างเกมเพลย์",
+  "tooltipFpsUncapInGameplay": "ปลดล็อกขีดจำกัด 60 FPS ระหว่างเกมเพลย์ คำเตือน: ฟิสิกส์ แอนิเมชัน และจังหวะคัตซีนของ NieR:Automata ผูกกับขีดจำกัด 60 FPS การปลดล็อกอาจทำให้ฟิสิกส์ผิดปกติ (ความสูงการกระโดด, i-frame การหลบ), ความเร็วแอนิเมชันเปลี่ยน, เสียงคัตซีนไม่ตรง และเกิด softlock ในลำดับเหตุการณ์แบบสคริปต์ ใช้เฉพาะเมื่อคุณเข้าใจข้อแลกเปลี่ยนอย่างชัดเจน มีผลทันที",
+  "labelFpsLimit": "จำกัด FPS",
+  "labelFpsCapInHacking": "จำกัดเดิมขณะแฮ็ก",
+  "tooltipFpsCapInHacking": "กลับไปใช้ขีดจำกัด 60 FPS เดิมระหว่างมินิเกมแฮ็ก แม้เปิดปลดล็อกในเกมเพลย์ จังหวะของมินิเกมอิง 60 FPS มีผลทันที",
+  "labelFpsCapInEvents": "จำกัดเดิมในอีเวนต์",
+  "tooltipFpsCapInEvents": "กลับไปใช้ขีดจำกัด 60 FPS เดิมระหว่างคัตซีน อีเวนต์ ภาพยนตร์ หรือคำบรรยาย สคริปต์อีเวนต์อิง 60 FPS ไม่งั้นอาจค้าง มีผลทันที",
+  "tooltipFpsLimit": "ขีดจำกัด FPS ที่ใช้เมื่อเปิดการปลดล็อก 0 = ไม่จำกัด มิฉะนั้น 1-1000 (NAMS จะปรับค่าที่อยู่นอกช่วง) 30 ให้ frametime เดียวกับโหมด 30 FPS ของเกมเอง เมื่อเปิดการปลดล็อก การรอเป็นแบบ busy-wait ยิ่งตั้งค่าต่ำ ซีพียูหนึ่งคอร์ก็ยิ่งหมุนรอนานขึ้นในแต่ละเฟรม เคล็ดลับ: จำกัดที่ครึ่งหนึ่งของรีเฟรชเรตจอจะให้การเคลื่อนไหวลื่นกว่าวานิลลา 60 เช่น 72 บน 144Hz, 82 บน 165Hz, 120 บน 240Hz",
+  "tutorialValidateModel": "แจ้งให้คุณทราบเมื่อโมเดลของม็อดเสีย แทนที่จะล้มเหลวแบบเงียบ",
+  "labelValidateScripts": "ตรวจสอบสคริปต์",
+  "tooltipValidateScripts": "แสดงข้อผิดพลาดของสคริปต์เป็นกล่องข้อความ แทนที่จะทำให้เกมล่มแบบเงียบ",
+  "labelLoadingStallHints": "คำแนะนำเมื่อการโหลดค้าง",
+  "tooltipLoadingStallHints": "แสดงคำแนะนำเพิ่มขึ้นตามระยะเวลาเมื่อหน้าจอโหลดใช้เวลานานเกินไป ช่วยระบุไฟล์ม็อดที่หายหรือถูกลบ",
+  "labelFixWindTimerBug": "แก้บั๊กตัวจับเวลาลม",
+  "tooltipFixWindTimerBug": "แก้บั๊กวานิลลาที่แอนิเมชันลมหยุดหลังเวลาเล่นสูงสุด โดยใช้ตัวคูณความเร็วของเกมแทน",
+  "labelDisablePluginLoading": "ปิดการโหลดปลั๊กอิน",
+  "tooltipDisablePluginLoading": "ข้ามการโหลด DLL ปลั๊กอินทั้งหมด (เช่น เวิร์กสเปซ YoRHa Protocol) ฟีเจอร์เอนจินทั้งหมดของ NAMS ยังทำงานตามปกติ",
+  "labelDisableMainOverlay": "ปิดโอเวอร์เลย์ม็อด",
+  "tooltipDisableMainOverlay": "ไม่เริ่มโอเวอร์เลย์ม็อดในเกม ซึ่งเป็นที่อยู่ของ UI ของ YoRHa Protocol ด้วย ปลั๊กอินและฟีเจอร์ทั้งหมดของ NAMS ยังทำงานตามปกติ มีเพียงโอเวอร์เลย์และแผงต่าง ๆ รวมถึง UI ของ YoRHa Protocol ที่หายไป พร้อมกับหน่วยความจำที่ใช้อยู่ ปลั๊กอินที่มี UI ของตัวเองยังแสดง UI นั้นได้ ต้องรีสตาร์ทเกม",
+  "labelDisableContentFeatures": "ปิดฟีเจอร์เนื้อหา",
+  "tooltipDisableContentFeatures": "สวิตช์หลักสำหรับฟีเจอร์เนื้อหาทั้งหมด เมื่อเปิดตัวเลือกนี้ NAMS จะถือว่าทุกสวิตช์ในฟีเจอร์เนื้อหา (ตาราง [content] ใน nams.toml) ปิดอยู่ และทำงานเป็นชั้นเอนจินล้วน (แก้เมาส์, ตรวจสอบข้อมูล, ปรับฮีป, แก้การล่ม) โดยไม่โหลดเนื้อหาจากม็อด เหมาะสำหรับวัดประสิทธิภาพหรือแยกปัญหาเอนจินออกจากปัญหาเนื้อหา ต้องรีสตาร์ตเกม",
+  "cardContentFeatures": "ฟีเจอร์เนื้อหา",
+  "contentFeaturesDescription": "เปิด/ปิดฟีเจอร์เนื้อหาแต่ละอย่างแยกกัน ค่าเริ่มต้นเปิดทั้งหมด เมื่อปิดฟีเจอร์ใด รายการม็อดทั้งหมดของฟีเจอร์นั้นจะถูกข้าม รวมถึงรายการม็อดที่ต้องใช้ฟีเจอร์นั้นด้วย \"ปิดฟีเจอร์เนื้อหา\" จะปิดทั้งหมดในครั้งเดียว ต้องรีสตาร์ตเกม",
+  "contentGroupItems": "ไอเท็มและอุปกรณ์",
+  "contentGroupStory": "เนื้อเรื่องและโลก",
+  "contentGroupScripts": "สคริปต์",
+  "contentGroupAudio": "เสียง",
+  "contentGroupVisuals": "ภาพ",
+  "labelContentCustomItems": "ไอเท็มใหม่",
+  "tooltipContentCustomItems": "ไอเท็มใหม่ (ของใช้สิ้นเปลือง วัตถุดิบ ไอเท็มสำคัญ) พร้อมไอคอนและข้อความ รวมถึงไอเท็มที่ม็อดแจกให้อัตโนมัติ ต้องรีสตาร์ตเกม",
+  "labelContentCustomWeapons": "อาวุธใหม่",
+  "tooltipContentCustomWeapons": "อาวุธใหม่พร้อมค่าสถานะ การอัปเกรด ข้อความ และภาพเนื้อเรื่อง ต้องรีสตาร์ตเกม",
+  "labelContentWeaponPatches": "การแก้ไขอาวุธ",
+  "tooltipContentWeaponPatches": "การเปลี่ยนแปลงจากม็อดกับอาวุธที่มีอยู่ ต้องรีสตาร์ตเกม",
+  "labelContentCustomOutfits": "ชุดใหม่",
+  "tooltipContentCustomOutfits": "ชุดใหม่ ม็อดชุดแบบ WAX และไอเท็ม \"Default Outfit\" ที่ใช้ถอดชุดจากม็อดออก ต้องรีสตาร์ตเกม",
+  "labelContentCustomHairsprays": "สเปรย์ผมใหม่",
+  "tooltipContentCustomHairsprays": "สเปรย์ผมใหม่ ต้องรีสตาร์ตเกม",
+  "labelContentAccessories": "เครื่องประดับ",
+  "tooltipContentAccessories": "เครื่องประดับใหม่ และการสวมเครื่องประดับหลายชิ้นพร้อมกัน ต้องรีสตาร์ตเกม",
+  "labelContentPlayerMeshSwaps": "ชิ้นส่วนโมเดลผู้เล่น",
+  "tooltipContentPlayerMeshSwaps": "NAMS ประกอบโมเดล 2B, 9S และ A2 เอง เพื่อให้ม็อดชุดและเครื่องประดับสลับ ซ่อน หรือเพิ่มชิ้นส่วนโมเดลได้ ปิด = ใช้การประกอบโมเดลของเกมเอง ต้องรีสตาร์ตเกม",
+  "labelContentMeshVisibility": "ซ่อน / แสดงชิ้นส่วนโมเดล",
+  "tooltipContentMeshVisibility": "ม็อดที่ซ่อนหรือแสดงชิ้นส่วนเดี่ยวของโมเดล ต้องรีสตาร์ตเกม",
+  "labelContentShopItems": "ไอเท็มในร้านค้า",
+  "tooltipContentShopItems": "ไอเท็มที่ม็อดเพิ่มเข้าไปในร้านค้า ต้องรีสตาร์ตเกม",
+  "labelContentItemShortcutMenu": "เมนูไอเท็มด่วน",
+  "tooltipContentItemShortcutMenu": "ไอเท็มฟื้นฟูจากม็อดที่คุณมีจะแสดงในเมนูไอเท็มด่วน ต้องรีสตาร์ตเกม",
+  "labelContentEffectRules": "กฎเอฟเฟกต์",
+  "tooltipContentEffectRules": "ผลที่อาวุธ ชุด เครื่องประดับ และไอเท็มจากม็อดมีต่อผู้เล่น (ความเสียหาย การหลบ ภูมิคุ้มกัน พลังงานไฟฉาย) ต้องรีสตาร์ตเกม",
+  "labelContentOutfitSelectorNpc": "NPC เลือกชุด",
+  "tooltipContentOutfitSelectorNpc": "NPC เลือกชุดที่เสนอชุดจากม็อด ต้องรีสตาร์ตเกม",
+  "labelContentBuddyOutfitMenu": "เมนูชุดคู่หู (ทดลอง)",
+  "tooltipContentBuddyOutfitMenu": "ทดลอง ตัวเลือก \"เปลี่ยนชุด\" เมื่อคุยกับคู่หู ปิดหากขัดแย้งกับม็อดสคริปต์อื่น ต้องรีสตาร์ตเกม",
+  "labelContentCustomQuests": "เควสต์ใหม่",
+  "tooltipContentCustomQuests": "เควสต์ใหม่พร้อมข้อความ รางวัล และเงื่อนไข ต้องรีสตาร์ตเกม",
+  "labelContentCustomMails": "เมลใหม่",
+  "tooltipContentCustomMails": "เมลใหม่ ต้องรีสตาร์ตเกม",
+  "labelContentCustomVoiceLines": "เสียงพากย์ใหม่",
+  "tooltipContentCustomVoiceLines": "เสียงพากย์ใหม่ ต้องรีสตาร์ตเกม",
+  "labelContentCustomMaps": "แผนที่และช่วงเนื้อเรื่องใหม่",
+  "tooltipContentCustomMaps": "ห้องแผนที่และช่วงเนื้อเรื่องใหม่ พร้อมรายการใน Chapter Select และชื่อช่องเซฟ ต้องรีสตาร์ตเกม",
+  "labelContentMapLayouts": "กฎวัตถุบนแผนที่",
+  "tooltipContentMapLayouts": "กฎจากม็อดสำหรับวัตถุที่วางบนแผนที่ (การลบออก ระยะที่วัตถุปรากฏ) ต้องรีสตาร์ตเกม",
+  "labelContentNovels": "นิยาย",
+  "tooltipContentNovels": "นิยายใหม่ในเมนู Data ต้องรีสตาร์ตเกม",
+  "labelContentArchives": "อาร์ไคฟ์",
+  "tooltipContentArchives": "อาร์ไคฟ์ใหม่ในเมนู Data ต้องรีสตาร์ตเกม",
+  "labelContentCutsceneReplacements": "การแทนที่คัตซีน",
+  "tooltipContentCutsceneReplacements": "วิดีโอคัตซีนที่ม็อดแทนที่ และคัตซีนในเกมที่ม็อดย้ายตำแหน่ง ต้องรีสตาร์ตเกม",
+  "labelContentCameraSettings": "การตั้งค่ากล้อง",
+  "tooltipContentCameraSettings": "การตั้งค่ากล้องผู้เล่นจากม็อด ต้องรีสตาร์ตเกม",
+  "labelContentScriptOverlays": "การเปลี่ยนแปลงสคริปต์",
+  "tooltipContentScriptOverlays": "สิ่งที่ม็อดเพิ่มและเปลี่ยนในสคริปต์ของเกม ต้องรีสตาร์ตเกม",
+  "labelContentScriptGroups": "กลุ่มสคริปต์",
+  "tooltipContentScriptGroups": "กฎจากม็อดที่เปิดหรือปิดกลุ่มสคริปต์ของเกมตามช่วงเนื้อเรื่อง ต้องรีสตาร์ตเกม",
+  "labelContentRubyPatches": "การแก้ไขสคริปต์ Ruby",
+  "tooltipContentRubyPatches": "การแก้ไขสคริปต์ Ruby ของเกมจากม็อด ต้องรีสตาร์ตเกม",
+  "labelContentCustomMusic": "เพลงใหม่",
+  "tooltipContentCustomMusic": "เพลงประกอบใหม่ ต้องรีสตาร์ตเกม",
+  "labelContentAmbientSounds": "เสียงบรรยากาศ",
+  "tooltipContentAmbientSounds": "เสียงบรรยากาศและเสียงฝูงชนที่ม็อดเพิ่มหรือปิด ต้องรีสตาร์ตเกม",
+  "labelContentCustomSounds": "เอฟเฟกต์เสียงใหม่",
+  "tooltipContentCustomSounds": "เอฟเฟกต์เสียงใหม่ ต้องรีสตาร์ตเกม",
+  "labelContentEffectAreas": "พื้นที่เอฟเฟกต์",
+  "tooltipContentEffectAreas": "เอฟเฟกต์ที่ม็อดวางในห้องหรือลบออกจากห้อง ต้องรีสตาร์ตเกม",
+  "labelContentEffectTypeMute": "ปิดเอฟเฟกต์ตามประเภท",
+  "tooltipContentEffectTypeMute": "ม็อดที่ปิดเอฟเฟกต์ทั้งประเภทในห้องหรือช่วงเนื้อเรื่อง ต้องรีสตาร์ตเกม",
+  "labelContentGlobalEffects": "เอฟเฟกต์ทั้งพื้นที่",
+  "tooltipContentGlobalEffects": "เอฟเฟกต์ที่ม็อดเปิดใช้ทั่วทั้งห้องหรือช่วงเนื้อเรื่อง ต้องรีสตาร์ตเกม",
+  "labelContentLightingFilters": "ฟิลเตอร์แสง",
+  "tooltipContentLightingFilters": "ฟิลเตอร์สีและแสงจากม็อดสำหรับห้อง ต้องรีสตาร์ตเกม",
+  "labelContentClothPhysics": "ฟิสิกส์ผ้า",
+  "tooltipContentClothPhysics": "ชิ้นส่วนฟิสิกส์ผ้าเพิ่มเติมบนโมเดลจากม็อด ต้องรีสตาร์ตเกม",
+  "labelContentCustomTexts": "ข้อความจากม็อด",
+  "tooltipContentCustomTexts": "ข้อความจากม็อดในเมนู (ชื่อไอเท็ม คำอธิบาย) ปิด = ใช้ข้อความของเกมเอง ต้องรีสตาร์ตเกม",
+  "labelContentUiOverrides": "เลย์เอาต์ UI จากม็อด",
+  "tooltipContentUiOverrides": "เลย์เอาต์เมนูและ HUD ที่ม็อดแทนที่ ปิด = ใช้เลย์เอาต์ที่มาพร้อมกัน ต้องรีสตาร์ต",
+  "labelDisableReShadeLoading": "ปิดการโหลด ReShade",
+  "tooltipDisableReShadeLoading": "ข้ามการตรวจหา DLL ของ ReShade อัตโนมัติจากโฟลเดอร์ reshade/ และจะไม่โหลดอีก",
+  "labelDisable3dmigotoLoading": "ปิดการโหลด 3DMigoto",
+  "tooltipDisable3dmigotoLoading": "ข้ามการโหลดรันไทม์ 3DMigoto จาก nams/thirdparty/3dmigoto/ ปิดเพื่อหยุดโหลดม็อด shader",
+  "labelDisableGraphicModsLoading": "ปิดการโหลดพร็อกซีกราฟิก",
+  "tooltipDisableGraphicModsLoading": "ข้ามการโหลด DLL พร็อกซี Direct3D จาก nams/thirdparty/graphic/ คือ DLL ที่ตั้งชื่อเหมือน DLL ของระบบ (d3d11.dll, dxgi.dll, ...) ซึ่งคำสั่งกราฟิกของเกมต้องผ่าน เปิดตัวเลือกนี้เพื่อเล่นโดยไม่ใช้ DLL เหล่านั้นโดยไม่ต้องลบไฟล์ มีผลเมื่อเริ่มเกมครั้งถัดไป",
+  "labelDisableTextureInjection": "ปิดการฉีดเท็กซ์เจอร์",
+  "tooltipDisableTextureInjection": "ข้ามการฉีดเท็กซ์เจอร์จากโฟลเดอร์ม็อด มีประโยชน์สำหรับแยกปัญหา หรือเมื่อไม่ต้องการใช้ม็อดเท็กซ์เจอร์แม้จะติดตั้งไว้",
+  "labelDisableGameModsLoading": "ปิดการโหลดม็อดเกม",
+  "tooltipDisableGameModsLoading": "หยุดโหลดม็อดที่อยู่ในแท็บบุคคลที่สามหัวข้อ “ม็อดเกม” เช่น ตัวจับเวลา speedrun และเครื่องมือโกง เปิดตัวเลือกนี้เพื่อเล่นโดยไม่ใช้ม็อดเหล่านั้นโดยไม่ต้องลบไฟล์",
+  "labelHideSubtitleOverlay": "ซ่อนโอเวอร์เลย์คำบรรยาย",
+  "tooltipHideSubtitleOverlay": "ซ่อนแถบสีดำและโอเวอร์เลย์คำบรรยายระหว่างคัตซีน มีผลกับคัตซีนเท่านั้น เมนู คำอธิบายไอเทม และบทสนทนาปกติจะไม่เปลี่ยนแปลง",
+  "labelKeepSubtitleText": "คงข้อความคำบรรยายไว้",
+  "tooltipKeepSubtitleText": "ลบเฉพาะพื้นหลังสีเข้มด้านหลังคำบรรยาย และคงตัวข้อความให้อ่านได้ ต้องเปิด “ซ่อนโอเวอร์เลย์คำบรรยาย” ก่อน",
+  "labelHideSubtitleInEvents": "ซ่อนในฉากอีเวนต์ด้วย",
+  "tooltipHideSubtitleInEvents": "ใช้กับฉากอีเวนต์ในเอนจินด้วย ไม่ใช่แค่วิดีโอที่เรนเดอร์ไว้ล่วงหน้า ต้องเปิด “ซ่อนโอเวอร์เลย์คำบรรยาย” ก่อน",
+  "labelOutfitSwapVisualEffects": "เอฟเฟกต์ภาพตอนสลับชุด",
+  "tooltipOutfitSwapVisualEffects": "เล่นเอฟเฟกต์ภาพระหว่าง hot-swap ชุด: แอนิเมชัน blinder ตอน Pod ปรากฏ ม่าน และฟิลเตอร์ glitch ของหน้าจอแฮ็ก ปิดเพื่อสลับทันทีโดยไม่มีเอฟเฟกต์ โมเดลยังคงโหลดใหม่ มีผลทันที ไม่ต้องรีสตาร์ต",
+  "labelExperimentalDefaultOutfits": "ชุดเริ่มต้น",
+  "tooltipExperimentalDefaultOutfits": "ให้คุณกำหนดม็อดชุดที่ติดตั้งให้ทำงานตั้งแต่เกมเริ่ม ราวกับวางไฟล์ไว้ในโฟลเดอร์ data ของเกม เมื่อเปิด แผงรายละเอียดม็อดจะแสดงปุ่มดาวสำหรับโมเดลผู้เล่นแต่ละตัวเพื่อกำหนดเป็นค่าเริ่มต้นตอนบูต ต้องรีสตาร์ตเกม",
+  "labelSolidLetterboxBars": "แถบเลตเตอร์บ็อกซ์ทึบ",
+  "tooltipSolidLetterboxBars": "วาดแถบเลตเตอร์บ็อกซ์ของคัตซีนเป็นแถบสีดำทึบที่มีความสูงเท่ากัน แทนแบบต้นฉบับที่โปร่งแสงและสูงไม่เท่ากัน (บน 76 ล่าง 154) ใช้งานได้ด้วยตัวเอง และจะมีผลเหนือ “ซ่อนโอเวอร์เลย์คำบรรยาย” เมื่อเปิดทั้งสองอย่าง",
+  "labelDisableSplashScreen": "ปิด Splash Screen",
+  "tooltipDisableSplashScreen": "ข้ามหน้าต่าง splash ตอนเริ่มเกมที่แสดงระหว่างโหลด เกมต้นฉบับเปิดหน้าต่างก่อนพร้อมใช้งาน ทำให้เกิดอาการปรับขนาดและกระพริบ NAMS ทำ splash ให้สมบูรณ์เพื่อให้หน้าต่างแสดงเมื่อพร้อมเท่านั้น การเปิดตัวเลือกนี้จะนำอาการเริ่มเกมแบบวานิลลากลับมา",
+  "labelIngameSettings": "การตั้งค่า NAMS ในเกม",
+  "tooltipIngameSettings": "เพิ่มแท็บ NAMS และรายการตั้งค่าของ NAMS ลงในเมนูตัวเลือกในเกม เปิดใช้งานโดยค่าเริ่มต้น ปิดเพื่อใช้เมนูตัวเลือกแบบวานิลลา ต้องรีสตาร์ต",
+  "labelDisableDebugHotkeys": "ไม่สนใจปุ่มลัดของนักพัฒนา",
+  "tooltipDisableDebugHotkeys": "ตัวเกมเวอร์ชันขายจริงยังมีปุ่มลัดของนักพัฒนา Shift+3, Shift+6, Shift+K และ Shift+L อยู่ ปุ่มเหล่านี้จะรีเซ็ตสเกลการเรนเดอร์และบังคับให้เรนเดอร์ทาร์เก็ตทั้งหมดเป็น 1600x900 แทนความละเอียดจอของคุณ ทำให้ระบบ post-processing ถูกสร้างใหม่ทั้งชุดและภาพจะผิดเพี้ยนจนกว่าจะรีสตาร์ต เปิดใช้งานโดยค่าเริ่มต้น ปิดเพื่อให้ปุ่มดีบักแบบวานิลลากลับมา",
+  "labelDisableInputFeatures": "ปิดฟีเจอร์อินพุต",
+  "tooltipDisableInputFeatures": "ปิดชั้นเมาส์และคีย์บอร์ดทั้งหมด เกมจะใช้การจัดการอินพุตแบบเดิม และทุกอย่างด้านล่างจะถูกละเว้น มีผลทันที",
+  "tooltipValidateModelDataSettings": "แสดงข้อผิดพลาดตรวจสอบโมเดลเป็นกล่องข้อความ แทนการล้มเหลวแบบเงียบ",
+  "tutorialLodModEnable": "เปิดตัวเลือกนี้เพื่อภาพที่ดีขึ้น นี่เป็นการตั้งค่าที่มีผลมากที่สุด",
+  "tutorialLodModShadowRes": "ค่าสูงขึ้นหมายถึงเงาคมขึ้น แนะนำ 8192",
+  "tutorialLodModComparison": "คลิกภาพเปรียบเทียบเพื่อดูความแตกต่างแบบเต็มหน้าจอ",
+  "comparisonVanilla": "วานิลลา",
+  "comparisonDefaultEnabled": "ค่าเริ่มต้น (เปิดใช้งาน)",
+  "comparisonVignetteOn": "เปิด VIGNETTE",
+  "comparisonVignetteOff": "ปิด VIGNETTE",
+  "comparison2048": "2048",
+  "comparison8192": "8192",
+  "comparisonCubemaps16": "16 cubemaps",
+  "comparisonCubemaps128": "128 cubemaps",
+  "comparisonDefault": "ค่าเริ่มต้น",
+  "comparison20x": "2.0x",
+  "comparisonPssMinus5": "PSS -5.0",
+  "comparisonBiasMinus5": "BIAS -5.0",
+  "comparisonOff": "ปิด",
+  "comparisonOn": "เปิด",
+  "comparisonBloom2021": "2021",
+  "comparisonBloom2017": "2017",
+  "comparisonHighGrids7": "7 กริด (ต้นฉบับ)",
+  "comparisonHighGrids61": "61 กริด (4 วง)",
+  "comparisonCascades4": "4 cascade (ต้นฉบับ)",
+  "comparisonCascades8": "8 cascade",
+  "comparison30": "3.0",
+  "comparisonHqForceAll": "HQ + บังคับทั้งหมด",
+  "tutorialKeybind": "คลิกเพื่อเปลี่ยนปุ่มลัด จากนั้นกดปุ่มใดก็ได้เพื่อกำหนด",
+  "tutorialDamageMultiplier": "ปรับแต่งเกมเพลย์ เพิ่มความเสียหาย เปิดพลังชีวิตไม่จำกัด และอื่น ๆ",
+  "labelOpenWorkspace": "เปิดเวิร์กสเปซ",
+  "tooltipOpenWorkspace": "เปิดเวิร์กสเปซ YoRHa Protocol ภายในเกม",
+  "labelFreezeGame": "หยุดเกมชั่วคราว",
+  "tooltipFreezeGame": "หยุด/เล่นเกมต่อ เหมาะสำหรับภาพหน้าจอและการเลื่อนทีละเฟรม",
+  "labelMaxSpeed": "ความเร็วสูงสุด",
+  "tooltipMaxSpeed": "เปิด/ปิดความเร็วเกมสูงสุดสำหรับเดินทางเร็วหรือทดสอบ",
+  "labelFreeCam": "กล้องอิสระ",
+  "tooltipFreeCam": "เปิด/ปิดกล้องอิสระ รองรับคีย์บอร์ด/เมาส์และคอนโทรลเลอร์เต็มรูปแบบ",
+  "labelPhaseJump": "Phase Jump",
+  "tooltipPhaseJump": "กระโดดไปยังเฟส/ฉากเกมที่เลือกไว้ กำหนดเป้าหมายภายในเกม",
+  "labelToggleInput": "เปิด/ปิดอินพุต",
+  "tooltipToggleInput": "เปิดหรือปิดอินพุตของเกมขณะเวิร์กสเปซเปิดอยู่",
+  "labelAdvanceFrame": "เลื่อนไปหนึ่งเฟรม",
+  "tooltipAdvanceFrame": "เลื่อนไปข้างหน้าหนึ่งเฟรมขณะเกมหยุด กดค้างเพื่อเลื่อนเร็วขึ้น",
+  "labelDevMode": "โหมดนักพัฒนา",
+  "tooltipDevMode": "เปิด/ปิดโหมดนักพัฒนา เปิดใช้งานปุ่มทดสอบ penetration/stress และเครื่องมือดีบัก",
+  "labelWarpSave1": "บันทึก Warp 1",
+  "tooltipWarpSave1": "บันทึกตำแหน่งและการหมุนปัจจุบันลงช่อง Warp 1",
+  "labelWarpGoto1": "Warp ไปยัง 1",
+  "tooltipWarpGoto1": "เทเลพอร์ตไปยังตำแหน่งที่บันทึกในช่อง Warp 1",
+  "labelWarpSave2": "บันทึก Warp 2",
+  "tooltipWarpSave2": "บันทึกตำแหน่งและการหมุนปัจจุบันลงช่อง Warp 2",
+  "labelWarpGoto2": "Warp ไปยัง 2",
+  "tooltipWarpGoto2": "เทเลพอร์ตไปยังตำแหน่งที่บันทึกในช่อง Warp 2",
+  "labelGlobalKeybinds": "ปุ่มลัดส่วนกลาง",
+  "tooltipGlobalKeybinds": "ปุ่มลัดยังทำงานเมื่อปิดเวิร์กสเปซ",
+  "labelLoadingSpeedup": "เร่งความเร็วการโหลด",
+  "tooltipLoadingSpeedup": "ทำให้หน้าจอโหลดเร็วขึ้น",
+  "labelShaders": "Shaders",
+  "tooltipShaders": "Shader ของเวิร์กสเปซ ปิดเพื่อเพิ่มประสิทธิภาพ",
+  "labelSound": "เสียง",
+  "tooltipSound": "เสียงตอบสนองของ UI เวิร์กสเปซ",
+  "labelEditorMcp": "เซิร์ฟเวอร์ MCP ของเอดิเตอร์",
+  "tooltipEditorMcp": "เปิดเซิร์ฟเวอร์ MCP ของเอดิเตอร์ YoRHa Protocol ที่ http://127.0.0.1:47820/mcp เพื่อให้เอเจนต์ AI และไคลเอนต์ MCP อื่นอ่านและควบคุมเอดิเตอร์ได้ขณะเกมทำงาน ปิดไว้โดยค่าเริ่มต้น",
+  "labelImpeller": "ตัวเรนเดอร์ Impeller",
+  "tooltipImpeller": "เรนเดอร์โอเวอร์เลย์ด้วยตัวเรนเดอร์ Impeller ของ Flutter ผ่าน Vulkan แทน Skia ปิดไว้โดยค่าเริ่มต้น หากระบบของคุณใช้ Vulkan ได้ การเปิดใช้อาจทำให้โอเวอร์เลย์เร็วขึ้น หากระบบของคุณใช้ได้เฉพาะ OpenGL แต่ใช้ Vulkan ไม่ได้ ให้ปิดไว้ มีผลเมื่อเริ่มเกมครั้งถัดไป",
+  "labelDamageMultiplier": "ตัวคูณความเสียหาย",
+  "tooltipDamageMultiplier": "2.0 = ความเสียหายสองเท่า",
+  "labelSyncEnemyLevels": "ปรับระดับศัตรูตามผู้เล่น",
+  "tooltipSyncEnemyLevels": "ทำให้ระดับศัตรูเท่ากับระดับของคุณ",
+  "labelInfiniteHealth": "พลังชีวิตไม่จำกัด",
+  "tooltipInfiniteHealth": "ไม่ได้รับความเสียหาย",
+  "labelInfiniteJump": "กระโดดไม่จำกัด",
+  "tooltipInfiniteJump": "กระโดดกลางอากาศได้ไม่จำกัด",
+  "labelNoPodCooldown": "Pod ไม่มีคูลดาวน์",
+  "tooltipNoPodCooldown": "โปรแกรม Pod ไม่มีเวลาคูลดาวน์",
+  "labelInfiniteAirDash": "แดชกลางอากาศไม่จำกัด",
+  "tooltipInfiniteAirDash": "แดชกลางอากาศได้ไม่จำกัด",
+  "labelAutoStart": "เริ่มอัตโนมัติ",
+  "tooltipAutoStart": "เริ่มระบบสุ่มอัตโนมัติเมื่อเปิดเกม",
+  "labelGroundEnemies": "ศัตรูภาคพื้นดิน",
+  "tooltipGroundEnemies": "สุ่มจุดเกิดของศัตรูภาคพื้นดิน",
+  "labelFlyingEnemies": "ศัตรูบิน",
+  "tooltipFlyingEnemies": "สุ่มจุดเกิดของศัตรูบิน",
+  "labelAllowBigEnemies": "อนุญาตศัตรูขนาดใหญ่",
+  "tooltipAllowBigEnemies": "อนุญาตศัตรูขนาดใหญ่",
+  "labelIncludeDlcEnemies": "รวมศัตรู DLC",
+  "tooltipIncludeDlcEnemies": "รวมศัตรูจาก DLC",
+  "tutorialCameraAccel": "ลบการเร่งเมาส์เพื่อให้อินพุตแบบ 1:1",
+  "tutorialWipBanner": "ฟีเจอร์เหล่านี้จะมาในอัปเดต NAMS ในอนาคต",
+  "labelFixCameraAcceleration": "แก้การเร่งกล้อง",
+  "tooltipFixCameraAcceleration": "การเคลื่อนไหวเมาส์แบบเส้นตรง 1:1 ลบ deadzone และเส้นโค้งเร่งจากการหมุนกล้อง",
+  "labelSensitivity": "ความไว",
+  "tooltipSensitivity": "ตัวคูณความไวกล้อง ค่าสูงขึ้นทำให้หมุนเร็วขึ้น 2.0 เป็นค่าเริ่มต้นที่ดี",
+  "labelAimSensitivity": "ความไวการเล็ง",
+  "tooltipAimSensitivity": "ความไวการเล็งสำหรับมุมมองบนลงล่าง/ด้านข้าง 0.001 สำหรับประมาณ 3500 DPI, 0.003 สำหรับประมาณ 800 DPI",
+  "labelAimOutputMultiplier": "ตัวคูณเอาต์พุตการเล็ง",
+  "tooltipAimOutputMultiplier": "ตัวคูณตรงสำหรับความเร็วการเคลื่อนเป้าเล็งหลัง normalization ค่าสูงขึ้นทำให้เป้าเล็งเร็วขึ้น ผู้ใช้ส่วนใหญ่ไม่จำเป็นต้องเปลี่ยน",
+  "labelDisablePodPet": "ปิดการลูบ Pod",
+  "tooltipDisablePodPet": "ปิดแอนิเมชันลูบ Pod ที่ถูกเรียกจากการเคลื่อนไหวเมาส์ แนะนำ",
+  "labelDebugMenuKey": "ปุ่มเมนูดีบัก",
+  "tooltipDebugMenuKey": "เปิดเมนูดีบักที่เข้าถึงได้หลังจบเกม ปกติต้องใช้คอนโทรลเลอร์ การกำหนดปุ่มนี้ทำให้ใช้คีย์บอร์ดได้",
+  "labelThirdPersonMode": "แก้กล้องบุคคลที่สาม",
+  "tooltipThirdPersonMode": "ใช้อินพุตเมาส์ดิบสำหรับกล้องบุคคลที่สาม ให้การควบคุมกล้องที่ลื่นและตรง โดยไม่สนการตั้งค่าเมาส์ในเกม",
+  "labelThirdPersonCharFollow": "กล้องติดตามตัวละคร",
+  "tooltipThirdPersonCharFollow": "คงการติดตามกล้องอัตโนมัติของเกมระหว่างเคลื่อนไหว เหมือนใช้คอนโทรลเลอร์",
+  "labelThirdPersonSmoothing": "ความนุ่มนวลของกล้อง",
+  "tooltipThirdPersonSmoothing": "ระดับที่กล้องค่อยๆ ตามเมาส์ 0 = ตามทันที 1 = ความนุ่มนวลของเกมเอง",
+  "labelThirdPersonSensX": "ความไวแนวนอน",
+  "tooltipThirdPersonSensX": "ความเร็วกล้องซ้าย/ขวา ค่าติดลบจะกลับทิศทาง",
+  "labelThirdPersonSensY": "ความไวแนวตั้ง",
+  "tooltipThirdPersonSensY": "ความเร็วกล้องขึ้น/ลง ค่าติดลบจะกลับทิศทาง",
+  "labelAimMode": "แก้การเล็งของ Pod",
+  "tooltipAimMode": "ลบ clamp และ deadzone จากการเล็ง Pod/หุ่นในมุมมองบนลงล่างและด้านข้าง",
+  "labelAimCrosshair": "โหมดเป้าเล็ง",
+  "tooltipAimCrosshair": "เล็งด้วยการชี้: Pod จะเล็งไปยังเป้าเล็งที่ตามเมาส์ คล้ายเกม twin-stick shooter เป้าเล็งสร้างจากองค์ประกอบ UI เดิมของเกม จึงดูและรู้สึกเหมือนเป็นส่วนหนึ่งของ NieR:Automata ตั้งแต่แรก แนะนำ",
+  "labelAimCrosshairAlways": "แสดงเป้าเล็งตลอดเวลา",
+  "tooltipAimCrosshairAlways": "คงเป้าเล็งไว้แม้ไม่ได้ยิง ปิด = แสดงเฉพาะขณะยิง",
+  "naiomNeedsCrosshair": "เปิดโหมดเป้าเล็งเพื่อใช้ตัวเลือกนี้",
+  "labelAimSensX": "ความไวการเล็งแนวนอน",
+  "tooltipAimSensX": "ตัวคูณความเร็วการเล็งซ้าย/ขวา ค่าติดลบจะกลับทิศทาง",
+  "labelAimSensY": "ความไวการเล็งแนวตั้ง",
+  "tooltipAimSensY": "ตัวคูณความเร็วการเล็งขึ้น/ลง ค่าติดลบจะกลับทิศทาง",
+  "labelDisableTapEvade": "ปิดการหลบด้วยการแตะสองครั้ง",
+  "tooltipDisableTapEvade": "หยุดการหลบจากการแตะปุ่มเคลื่อนไหวสองครั้ง ใช้เมื่อกำหนดปุ่ม Evade แยกไว้เท่านั้น",
+  "labelCustomCursorMenu": "เคอร์เซอร์เมนู",
+  "tooltipCustomCursorMenu": "เคอร์เซอร์เมาส์แบบกำหนดเองสำหรับเมนู (ไฟล์ .cur หรือ .ani) เว้นว่าง = ใช้เคอร์เซอร์เริ่มต้นที่รวมมา",
+  "labelCustomCursorHacking": "เคอร์เซอร์มินิเกมแฮ็ก",
+  "tooltipCustomCursorHacking": "เคอร์เซอร์แบบกำหนดเองสำหรับมินิเกมแฮ็ก เว้นว่าง = ใช้เคอร์เซอร์เดียวกับเมนู",
+  "labelDisableDefaultCursor": "ใช้เคอร์เซอร์ระบบต่อไป",
+  "tooltipDisableDefaultCursor": "ไม่ใช้เคอร์เซอร์ที่รวมมา ให้ใช้เคอร์เซอร์ Windows ปกติ เว้นแต่คุณเลือกไฟล์ของตนเองด้านบน",
+  "labelBindMoveForward": "เดินหน้า",
+  "tooltipBindMoveForward": "เหมือนกับปุ่มที่ตั้งไว้ในเกม",
+  "labelBindMoveBackward": "ถอยหลัง",
+  "tooltipBindMoveBackward": "เหมือนกับปุ่มที่ตั้งไว้ในเกม",
+  "labelBindMoveLeft": "ไปทางซ้าย",
+  "tooltipBindMoveLeft": "เหมือนกับปุ่มที่ตั้งไว้ในเกม",
+  "labelBindMoveRight": "ไปทางขวา",
+  "tooltipBindMoveRight": "เหมือนกับปุ่มที่ตั้งไว้ในเกม",
+  "labelBindJump": "กระโดด",
+  "tooltipBindJump": "เหมือนกับปุ่มที่ตั้งไว้ในเกม",
+  "labelBindWalk": "เดิน",
+  "tooltipBindWalk": "กดค้างเพื่อเดินช้า",
+  "labelBindAutoRun": "วิ่งอัตโนมัติ",
+  "tooltipBindAutoRun": "วิ่งต่อโดยไม่ต้องกดปุ่มเคลื่อนไหวค้าง",
+  "labelBindLightAttack": "โจมตีเบา",
+  "tooltipBindLightAttack": "เหมือนกับปุ่มที่ตั้งไว้ในเกม",
+  "labelBindHeavyAttack": "โจมตีหนัก",
+  "tooltipBindHeavyAttack": "เหมือนกับปุ่มที่ตั้งไว้ในเกม",
+  "labelBindFire": "ยิง / Pod Dash",
+  "tooltipBindFire": "ยิงด้วย Pod เมื่อใช้ร่วมกับ Jump จะทำ Pod Dash ได้ แม้เปิด Auto-Fire อยู่",
+  "labelBindProgram": "ใช้โปรแกรม",
+  "tooltipBindProgram": "ใช้โปรแกรมของ Pod / ยูนิตบิน",
+  "labelBindLockOn": "ล็อกเป้าหมาย",
+  "tooltipBindLockOn": "ล็อกเป้าหมายปัจจุบัน",
+  "labelBindUse": "ใช้ / โต้ตอบ",
+  "tooltipBindUse": "เหมือนกับปุ่มที่ตั้งไว้ในเกม",
+  "labelBindSelfDestruct": "ทำลายตัวเอง",
+  "tooltipBindSelfDestruct": "เหมือนกับปุ่มที่ตั้งไว้ในเกม",
+  "labelBindLight": "เปิด/ปิดไฟ",
+  "tooltipBindLight": "เหมือนกับปุ่มที่ตั้งไว้ในเกม",
+  "labelBindResetCamera": "รีเซ็ตกล้อง",
+  "tooltipBindResetCamera": "เหมือนกับปุ่มที่ตั้งไว้ในเกม",
+  "labelBindSwitchWeapon": "สลับชุดอาวุธ",
+  "tooltipBindSwitchWeapon": "วนเปลี่ยนชุดอาวุธที่สวมใส่",
+  "labelBindNextProgram": "โปรแกรมถัดไป",
+  "tooltipBindNextProgram": "เลือกโปรแกรม Pod ถัดไป",
+  "labelBindPreviousProgram": "โปรแกรมก่อนหน้า",
+  "tooltipBindPreviousProgram": "เลือกโปรแกรม Pod ก่อนหน้า",
+  "labelBindMenuUp": "เมนูขึ้น",
+  "tooltipBindMenuUp": "เลื่อนขึ้นในเมนู",
+  "labelBindMenuDown": "เมนูลง",
+  "tooltipBindMenuDown": "เลื่อนลงในเมนู",
+  "labelBindMenuLeft": "เมนูซ้าย",
+  "tooltipBindMenuLeft": "เลื่อนไปทางซ้ายในเมนู",
+  "labelBindMenuRight": "เมนูขวา",
+  "tooltipBindMenuRight": "เลื่อนไปทางขวาในเมนู",
+  "labelBindMenuOpen": "เปิดเมนู",
+  "tooltipBindMenuOpen": "เปิดเมนูระบบ",
+  "labelBindMenuBack": "ย้อนกลับ / ปิดเมนู",
+  "tooltipBindMenuBack": "ย้อนกลับในเมนู หรือปิดเมื่ออยู่ระดับบนสุด",
+  "labelBindMenuEnter": "ยืนยันเมนู / ข้ามบทสนทนา",
+  "tooltipBindMenuEnter": "เข้าสู่เมนูย่อยที่เลือกหรือข้ามบทสนทนา",
+  "labelBindShortcutMenu": "เมนูทางลัด",
+  "tooltipBindShortcutMenu": "เปิดเมนูทางลัด",
+  "labelBindEvade": "หลบ (ปุ่มเฉพาะ)",
+  "tooltipBindEvade": "หลบไปตามทิศทางการเคลื่อนไหวปัจจุบันด้วยปุ่มเดียว ไม่ต้องแตะสองครั้ง",
+  "labelBindAutoFire": "เปิด/ปิดยิงอัตโนมัติ",
+  "tooltipBindAutoFire": "เปิดหรือปิดการยิง Pod ต่อเนื่อง เพื่อไม่ต้องกดปุ่มยิงค้าง",
+  "labelBindNextItem": "ไอเท็มถัดไป",
+  "tooltipBindNextItem": "สลับไปยังไอเท็มด่วนถัดไปทันที ทำงานเบื้องหลังโดยไม่แสดงเมนูไอเท็มในเกม ซึ่งเป็นพฤติกรรมที่ตั้งใจไว้",
+  "labelBindPreviousItem": "ไอเท็มก่อนหน้า",
+  "tooltipBindPreviousItem": "สลับไปยังไอเท็มด่วนก่อนหน้าทันที ทำงานเบื้องหลังโดยไม่แสดงเมนูไอเท็มในเกม ซึ่งเป็นพฤติกรรมที่ตั้งใจไว้",
+  "labelBindUseItem": "ใช้ไอเท็ม",
+  "tooltipBindUseItem": "ใช้ไอเท็มด่วนที่เลือกทันที ทำงานเบื้องหลังโดยไม่แสดงเมนูไอเท็มในเกม ซึ่งเป็นพฤติกรรมที่ตั้งใจไว้",
+  "labelBindPodPet": "ลูบพ็อด",
+  "tooltipBindPodPet": "ลูบพ็อดขณะกดค้าง เหมือนกับการหมุนเมาส์เป็นวงกลม ใช้กับปุ่มคอนโทรลเลอร์ได้ด้วย ทำงานเฉพาะเมื่อเกมอนุญาตให้ลูบ: ขณะยืนหรือเดิน ไม่ใช่ระหว่างบทสนทนา อีเวนต์ หรือการโจมตี",
+  "labelBindThirdPersonToggle": "เปิด/ปิดการแก้กล้อง",
+  "tooltipBindThirdPersonToggle": "เปิดหรือปิดการแก้กล้องบุคคลที่สามระหว่างเล่น",
+  "labelBindAimToggle": "เปิด/ปิดการแก้การเล็ง",
+  "tooltipBindAimToggle": "เปิดหรือปิดการแก้การเล็งของ Pod ระหว่างเล่น",
+  "keybindUnbound": "ไม่ได้กำหนดปุ่ม",
+  "keybindConflict": "ใช้งานโดย: {other} เช่นกัน",
+  "@keybindConflict": {
+    "placeholders": {
+      "other": {
+        "type": "String"
+      }
+    }
+  },
+  "keybindMouseNotSupported": "ใช้ได้เฉพาะปุ่มคีย์บอร์ด",
+  "keybindPickController": "เลือกปุ่มคอนโทรลเลอร์",
+  "controllerA": "A / กากบาท",
+  "controllerB": "B / วงกลม",
+  "controllerX": "X / สี่เหลี่ยม",
+  "controllerY": "Y / สามเหลี่ยม",
+  "controllerLB": "LB / L1",
+  "controllerRB": "RB / R1",
+  "controllerLT": "LT / L2",
+  "controllerRT": "RT / R2",
+  "controllerLThumb": "กดสติ๊กซ้าย / L3",
+  "controllerRThumb": "กดสติ๊กขวา / R3",
+  "controllerDUp": "D-pad ขึ้น",
+  "controllerDDown": "D-pad ลง",
+  "controllerDLeft": "D-pad ซ้าย",
+  "controllerDRight": "D-pad ขวา",
+  "controllerBack": "Back / Share",
+  "controllerStart": "Start / Options",
+  "naiomResetConfirmTitle": "รีเซ็ตการตั้งค่า NAIOM หรือไม่?",
+  "naiomResetConfirmBody": "การดำเนินการนี้จะรีเซ็ตการตั้งค่ากล้อง การเล็ง เคอร์เซอร์ และปุ่มทั้งหมดในแท็บนี้กลับเป็นค่าเริ่มต้น ต้องการดำเนินการต่อหรือไม่?",
+  "naiomControllerNote": "เล่นด้วยคอนโทรลเลอร์หรือไม่? การตั้งค่าเหล่านี้ออกแบบสำหรับเมาส์และคีย์บอร์ด แต่บางรายการ โดยเฉพาะการแก้กล้องและการเล็ง จะมีผลกับคอนโทรลเลอร์ด้วย หากกลับไปเล่นด้วยคอนโทรลเลอร์ ให้ปิดการตั้งค่าเหล่านั้นก่อนเพื่อคืนความรู้สึกแบบเดิมของเกมแพด",
+  "cardCheatEngine": "CHEAT ENGINE",
+  "cheatTableConvertDesc": "มีตาราง Cheat Engine (.CT) ที่ใช้กับ NAMS ไม่ได้หรือไม่? แก้ไขได้ที่นี่ สำเนาที่แก้แล้วจะถูกบันทึกไว้ข้างไฟล์ต้นฉบับ",
+  "cheatTableConvertButton": "แก้ไขตารางโกง...",
+  "cheatTableConvertSuccess": "แก้ไขแล้ว! บันทึกเป็น {file}",
+  "@cheatTableConvertSuccess": {
+    "placeholders": {
+      "file": {
+        "type": "String"
+      }
+    }
+  },
+  "cheatTableConvertNone": "ตารางนี้ใช้กับ NAMS ได้อยู่แล้ว ไม่ต้องแก้ไข",
+  "cheatTableConvertError": "ไม่สามารถแก้ไขตารางนี้ได้ โปรดตรวจสอบว่าเป็นไฟล์ .CT ที่ถูกต้อง",
+  "naiomRestartBadge": "รีสตาร์ต",
+  "naiomNeedsCameraFix": "เปิด Fix Camera Acceleration เพื่อใช้ตัวเลือกนี้",
+  "naiomNeedsThirdPerson": "เปิด Third-Person Camera Fix เพื่อใช้ตัวเลือกนี้",
+  "naiomNeedsAimMode": "เปิด Fix Pod Aiming เพื่อใช้ตัวเลือกนี้",
+  "naiomCrosshairOverrides": "ไม่ใช้ขณะเปิด Crosshair Mode เพราะเป้าเล็งมีความเร็วของตัวเอง",
+  "naiomTapEvadeWarning": "ยังไม่ได้กำหนดปุ่ม Evade! หากปิด Tap Evade และไม่มีปุ่ม Evade เฉพาะ คุณจะหลบไม่ได้เลย โปรดกำหนดปุ่ม Evade ใต้ Non-Standard Actions",
+  "naiomCrosshairNote": "เป้าเล็งจะแสดงเฉพาะเกมเพลย์มุมมองบนลงล่าง / ด้านข้างแบบปกติเมื่อใช้เมาส์ หากบางจุดไม่แสดง โดยทั่วไปเป็นพฤติกรรมปกติ ไม่ใช่บั๊ก",
+  "naiomBindingsIntro": "ปุ่มเพิ่มเติมจากการควบคุมเดิมของเกม ปุ่มเดิมยังทำงาน การเปลี่ยนแปลงมีผลทันที ไม่ต้องรีสตาร์ต",
+  "naiomCrosshairPreviewLabel": "Crosshair Mode ในเกม",
+  "naiomCursorPick": "เลือกไฟล์...",
+  "naiomCursorClear": "นำออก",
+  "naiomCursorInvalid": "ไฟล์เคอร์เซอร์ไม่ถูกต้อง ต้องเป็นไฟล์ .cur หรือ .ani จริง",
+  "naiomLiveBadge": "สด",
+  "naiomLiveTooltip": "มีผลหลังบันทึก ไม่ต้องรีสตาร์ตเกม",
+  "labelPreloadMaxDimensionShort": "ขนาดสูงสุดสำหรับการโหลดล่วงหน้า",
+  "tooltipPreloadMaxDimensionShort": "0 = ปิดใช้งาน (สตรีมอย่างเดียว), 2048 = ค่าเริ่มต้น, 4096 = เท็กซ์เจอร์ 4K, 16384 = ทุกอย่าง",
+  "labelPreloadAllTexturesShort": "โหลดเท็กซ์เจอร์ทั้งหมดล่วงหน้า",
+  "tooltipPreloadAllTexturesShort": "โหลดเท็กซ์เจอร์ทั้งหมดล่วงหน้า ไม่มีอาการกระตุกแต่ต้องใช้ RAM 32GB ขึ้นไป",
+  "labelVramBudget": "งบ VRAM (MB)",
+  "tooltipVramBudget": "จำนวนหน่วยความจำ GPU ที่ระบบม็อดเท็กซ์เจอร์สามารถใช้ได้ เลือกค่าเพื่อกำหนดขีดจำกัดตายตัว เช่น 8192 หมายถึง \"ห้ามใช้เกิน 8 GB สำหรับเท็กซ์เจอร์ม็อด\" และ 16384 หมายถึง \"ห้ามใช้เกิน 16 GB\" อัตโนมัติ (แนะนำ) จะไม่กำหนดขีดจำกัดและใช้ตามหน่วยความจำที่ GPU ของคุณมีจริง",
+  "labelStreamingEnabled": "การโหลดเบื้องหลัง",
+  "tooltipStreamingEnabled": "โหลดเท็กซ์เจอร์เบื้องหลังระหว่างเล่น ช่วยป้องกันเกมค้างและกระตุกเมื่อโหลดพื้นที่ใหม่ ปิดเฉพาะเมื่อมีปัญหา หากปิด เกมอาจค้างชั่วครู่เมื่อโหลดเท็กซ์เจอร์ใหม่",
+  "labelLoadOnlyRelevant": "โหลดเฉพาะที่เกี่ยวข้อง",
+  "tooltipLoadOnlyRelevant": "สำหรับแพ็กขนาดใหญ่มาก (400+ ไฟล์) โหลดเฉพาะเท็กซ์เจอร์ที่ตรงกับรายการลำดับความสำคัญที่คัดไว้ ช่วยประหยัด VRAM และเวลาโหลด แพ็กขนาดเล็ก (เสื้อผ้า อาวุธ) จะโหลดเต็มเสมอ เปิดหากใช้แพ็กขนาดใหญ่และต้องการประหยัดหน่วยความจำ",
+  "labelPinPriorityTextures": "คงเท็กซ์เจอร์สำคัญไว้ใน VRAM",
+  "tooltipPinPriorityTextures": "โหลดเท็กซ์เจอร์ในรายการลำดับความสำคัญในตัว (GPUnity HD Pack) ตอนเริ่มเกมและเก็บไว้ใน VRAM ตลอดเซสชัน เพื่อไม่ให้โผล่ขึ้นมาช้า ปิดตัวเลือกนี้หากการ์ดจอมี VRAM 4 GB หรือน้อยกว่า เท็กซ์เจอร์เหล่านั้นจะใช้งบ VRAM เหมือนเท็กซ์เจอร์อื่น และถูกปล่อยออกเมื่อเกมต้องการหน่วยความจำ มีผลเมื่อเริ่มเกมครั้งถัดไป",
+  "tutorialDropTextures": "ลากม็อดเท็กซ์เจอร์มาวางที่นี่เพื่อติดตั้ง ไฟล์ Zip จะถูกแตกโดยอัตโนมัติ",
+  "tutorialLoadOrder": "หากม็อดทับกัน ให้ลากเพื่อจัดลำดับ ด้านบน = ความสำคัญสูงสุด",
+  "textureOverlapLabel": "ทับซ้อน",
+  "tooltipTextureOverlap": "เปลี่ยนเท็กซ์เจอร์เดียวกับ: {mods} ม็อดที่อยู่สูงกว่าในรายการ (ใกล้ HIGHEST) คือสิ่งที่จะแสดงในเกม",
+  "@tooltipTextureOverlap": {
+    "placeholders": {
+      "mods": {
+        "type": "String"
+      }
+    }
+  },
+  "tooltipFolderNotFound": "ไม่พบโฟลเดอร์ใน nams/inject/textures/",
+  "priorityHighest": "สูงสุด",
+  "priorityMedium": "ปานกลาง",
+  "priorityLowest": "ต่ำสุด",
+  "nameOutfitTitle": "ตั้งชื่อชุดนี้ ({character})",
+  "@nameOutfitTitle": {
+    "placeholders": {
+      "character": {
+        "type": "String"
+      }
+    }
+  },
+  "outfitNameHint": "ชื่อชุด",
+  "installedTextureCount": "ติดตั้งเท็กซ์เจอร์ {count} {count, plural, =1{ไฟล์} other{ไฟล์}}",
+  "@installedTextureCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "installationFailed": "ติดตั้งไม่สำเร็จ: {error}",
+  "@installationFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "removedItem": "นำ \"{name}\" ออกแล้ว",
+  "@removedItem": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "tutorialStarIcon": "คลิกดาวเพื่อกำหนดชุดเริ่มต้นที่จะโหลดเมื่อเกมเริ่ม",
+  "installedOutfitsCount": "ชุดที่ติดตั้ง ({count})",
+  "@installedOutfitsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "tooltipDlcDetected": "ตรวจพบ DLC (data100.cpk) ไฟล์โมเดลใช้การตั้งชื่อแบบ DLC (pl000d)",
+  "tooltipNoDlcDetected": "ตรวจไม่พบ DLC ไฟล์โมเดลจะถูกเปลี่ยนชื่อเป็นแบบไม่มี DLC (pl0000)",
+  "installConfirmMod": "ติดตั้ง \"{name}\" ({character}) หรือไม่?",
+  "@installConfirmMod": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "character": {
+        "type": "String"
+      }
+    }
+  },
+  "installedOutfit": "ติดตั้ง \"{name}\" ({character}) แล้ว",
+  "@installedOutfit": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "character": {
+        "type": "String"
+      }
+    }
+  },
+  "crossInstallTextures": "ม็อดนี้มีไฟล์เท็กซ์เจอร์ด้วย ต้องการติดตั้งไปยัง nams/inject/textures/ หรือไม่?",
+  "alsoInstalledTextures": "ติดตั้งเท็กซ์เจอร์เพิ่มเติม {count} {count, plural, =1{ไฟล์} other{ไฟล์}}",
+  "@alsoInstalledTextures": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "clearedAllStartupOutfits": "ล้างชุดเริ่มต้นทั้งหมดแล้ว",
+  "clearedStartupOutfit": "ล้างชุดเริ่มต้นแล้ว",
+  "setStartupOutfit": "ตั้ง \"{name}\" เป็นชุดเริ่มต้นแล้ว",
+  "@setStartupOutfit": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "tutorialDropCutscenes": "วางไฟล์เก็บถาวรม็อดคัตซีนที่นี่ รองรับ .zip, .7z และ .rar",
+  "tutorialInstalledCutscenes": "ม็อดคัตซีนที่ติดตั้ง คัตซีนแบบกำหนดเองจะโหลดจากที่นี่แทน data/movie/",
+  "selectCutsceneModFolder": "เลือกโฟลเดอร์ม็อดคัตซีน",
+  "cutsceneNamingHint": "สูงสุด {max} ตัวอักษร ชื่อนี้จะกลายเป็นชื่อโฟลเดอร์ใน nams/cutscenes/",
+  "@cutsceneNamingHint": {
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "cutsceneNameTooLong": "ชื่อต้องมีความยาวไม่เกิน {max} ตัวอักษร",
+  "@cutsceneNameTooLong": {
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "preparingInstall": "กำลังเตรียม...",
+  "installedCutsceneMod": "ติดตั้ง \"{name}\" แล้ว ({count} USM {count, plural, =1{ไฟล์} other{ไฟล์}})",
+  "@installedCutsceneMod": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "deleteCutsceneConfirm": "ลบ \"{name}\" และไฟล์ทั้งหมดหรือไม่?",
+  "@deleteCutsceneConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "installedCutsceneModsCount": "ม็อดคัตซีนที่ติดตั้ง ({count})",
+  "@installedCutsceneModsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cutsceneUsmCount": "{count} {count, plural, =1{ไฟล์ USM} other{ไฟล์ USM}}",
+  "@cutsceneUsmCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cutsceneMatchCount": "{matching}/{total} ตรงกับไฟล์ต้นฉบับ",
+  "@cutsceneMatchCount": {
+    "placeholders": {
+      "matching": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "tooltipMissingOriginals": "ไฟล์ที่ไม่ตรงกับต้นฉบับ: {files}",
+  "@tooltipMissingOriginals": {
+    "placeholders": {
+      "files": {
+        "type": "String"
+      }
+    }
+  },
+  "cutsceneMismatchHint": "บางไฟล์ไม่ตรงกับชื่อคัตซีนต้นฉบับ ไฟล์ที่หายจะกลับไปใช้คัตซีนต้นฉบับ",
+  "cutsceneMigrationBannerBody": "พบไฟล์คัตซีนแบบกำหนดเอง {count} {count, plural, =1{ไฟล์} other{ไฟล์}} อยู่โดยตรงใน data/movie/ ไฟล์เหล่านี้จะแทนที่ต้นฉบับอย่างถาวร ครั้งถัดไปให้ติดตั้งม็อดคัตซีนที่นี่แทน หากไฟล์แบบกำหนดเองโหลดไม่สำเร็จ ระบบจะเล่นไฟล์ต้นฉบับเป็นตัวสำรอง",
+  "@cutsceneMigrationBannerBody": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "hardwareInfoLabel": "RAM {ram}GB | {gpu}",
+  "@hardwareInfoLabel": {
+    "placeholders": {
+      "ram": {
+        "type": "int"
+      },
+      "gpu": {
+        "type": "String"
+      }
+    }
+  },
+  "hardwareInfoRamOnly": "RAM {ram}GB",
+  "@hardwareInfoRamOnly": {
+    "placeholders": {
+      "ram": {
+        "type": "int"
+      }
+    }
+  },
+  "texturesScanResult": "เท็กซ์เจอร์ {count} ไฟล์ รวม {sizeMB}MB สูงสุด {maxDim}px",
+  "@texturesScanResult": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "sizeMB": {
+        "type": "int"
+      },
+      "maxDim": {
+        "type": "int"
+      }
+    }
+  },
+  "recommendedSettings": "แนะนำ: โหลดล่วงหน้า {dim}, โหลดทั้งหมด {allLabel}",
+  "@recommendedSettings": {
+    "placeholders": {
+      "dim": {
+        "type": "int"
+      },
+      "allLabel": {
+        "type": "String"
+      }
+    }
+  },
+  "applyRecommended": "นำไปใช้",
+  "settingsMatchRecommended": "การตั้งค่าของคุณตรงกับคำแนะนำ",
+  "reasonNoTextures": "ยังไม่ได้ติดตั้งเท็กซ์เจอร์",
+  "reasonFitsInMemory": "RAM {ramGB}GB, เท็กซ์เจอร์ {textureSizeMB}MB - พอดีกับหน่วยความจำ โหลดทั้งหมดล่วงหน้าเพื่อไม่มีอาการกระตุก",
+  "@reasonFitsInMemory": {
+    "placeholders": {
+      "ramGB": {
+        "type": "int"
+      },
+      "textureSizeMB": {
+        "type": "int"
+      }
+    }
+  },
+  "reasonExceedsRam": "RAM {ramGB}GB, ประมาณ {estimatedGB}GB สำหรับหน่วยความจำเท็กซ์เจอร์ - การโหลดทั้งหมดล่วงหน้าจะทำให้ระบบค้างหรือล่ม โปรดใช้ขนาดโหลดล่วงหน้าต่ำหรือนำแพ็กเท็กซ์เจอร์บางส่วนออก",
+  "@reasonExceedsRam": {
+    "placeholders": {
+      "ramGB": {
+        "type": "int"
+      },
+      "estimatedGB": {
+        "type": "int"
+      }
+    }
+  },
+  "reasonTooLargeForAll": "RAM {ramGB}GB, เท็กซ์เจอร์ {textureSizeMB}MB - ใหญ่เกินกว่าจะโหลดทั้งหมดล่วงหน้า ให้โหลดถึง 4K ตามต้องการ",
+  "@reasonTooLargeForAll": {
+    "placeholders": {
+      "ramGB": {
+        "type": "int"
+      },
+      "textureSizeMB": {
+        "type": "int"
+      }
+    }
+  },
+  "reasonMediumRam": "RAM {ramGB}GB - โหลดล่วงหน้าถึง 4K เท็กซ์เจอร์ขนาดใหญ่กว่าจะโหลดตามต้องการ",
+  "@reasonMediumRam": {
+    "placeholders": {
+      "ramGB": {
+        "type": "int"
+      }
+    }
+  },
+  "reasonLowRam": "RAM {ramGB}GB - โหลดเท็กซ์เจอร์ขนาดเล็กล่วงหน้าเท่านั้นเพื่อประหยัดหน่วยความจำ",
+  "@reasonLowRam": {
+    "placeholders": {
+      "ramGB": {
+        "type": "int"
+      }
+    }
+  },
+  "analyzingHardware": "กำลังวิเคราะห์ฮาร์ดแวร์และเท็กซ์เจอร์...",
+  "texturesBloatWarning": "ม็อดนี้มีเท็กซ์เจอร์ {total} รายการ แต่มีเพียง {relevant} รายการที่เกี่ยวข้องกับภาพจริง (ตามชุดอ้างอิงที่ GPUnity คัดไว้) อีก {excess} รายการเพิ่มเวลาโหลดและการใช้ RAM โดยไม่มีประโยชน์ต่อภาพ",
+  "@texturesBloatWarning": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      },
+      "relevant": {
+        "type": "int"
+      },
+      "excess": {
+        "type": "int"
+      }
+    }
+  },
+  "cleanUnneededTextures": "นำสิ่งที่ไม่จำเป็นออก {count} รายการ",
+  "@cleanUnneededTextures": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cleanedTextures": "นำเท็กซ์เจอร์ที่ไม่จำเป็นออก {deleted} รายการ เก็บไว้ {kept} รายการ",
+  "@cleanedTextures": {
+    "placeholders": {
+      "deleted": {
+        "type": "int"
+      },
+      "kept": {
+        "type": "int"
+      }
+    }
+  },
+  "confirmCleanTextures": "นำเท็กซ์เจอร์ที่ไม่จำเป็นออกหรือไม่?",
+  "confirmCleanTexturesBody": "การดำเนินการนี้จะลบเท็กซ์เจอร์ {count} ไฟล์ ({sizeMB} MB) ออกจากโฟลเดอร์ม็อดนี้อย่างถาวร",
+  "@confirmCleanTexturesBody": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "sizeMB": {
+        "type": "String"
+      }
+    }
+  },
+  "confirmCleanTexturesDetail1": "จะเก็บเฉพาะเท็กซ์เจอร์ที่ตรงกับชุดอ้างอิงที่ GPUnity คัดไว้",
+  "confirmCleanTexturesDetail2": "มีผลเฉพาะโฟลเดอร์ม็อดที่เลือก ไม่กระทบม็อดอื่นที่ติดตั้ง",
+  "confirmCleanTexturesDetail3": "ไม่สามารถย้อนกลับได้ ให้วางม็อดอีกครั้งเพื่อคืนไฟล์ที่นำออก",
+  "texturesBloatDialogTitle": "ตรวจพบเท็กซ์เจอร์ที่ไม่จำเป็น",
+  "texturesBloatDialogBody": "แพ็กเท็กซ์เจอร์นี้มี {total} ไฟล์ แต่มีเพียง {relevant} ไฟล์ที่ตรงกับชุดอ้างอิง GPUnity ที่คัดไว้ อีก {excess} ไฟล์มีแนวโน้มว่าไม่จำเป็น",
+  "@texturesBloatDialogBody": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      },
+      "relevant": {
+        "type": "int"
+      },
+      "excess": {
+        "type": "int"
+      }
+    }
+  },
+  "texturesBloatPoint1": "เริ่มเกมช้าลงมาก เพราะเอนจินโหลดทุกเท็กซ์เจอร์ตอนเริ่ม",
+  "texturesBloatPoint2": "เกิดการกระตุกและเฟรมตกแบบสุ่ม เพราะเกมสตรีมเท็กซ์เจอร์ที่ไม่เพิ่มประโยชน์ด้านภาพ",
+  "texturesBloatPoint3": "ใช้ RAM สูง อาจสิ้นเปลืองหลาย GB กับเท็กซ์เจอร์ที่คุณมองไม่เห็น",
+  "texturesBloatPoint4": "เท็กซ์เจอร์ที่อัปสเกลด้วย AI บางรายการอาจมีสิ่งผิดเพี้ยนหรือไฟล์เสีย",
+  "texturesBloatPoint5": "แทบไม่เห็นความแตกต่าง เพราะส่วนใหญ่เป็นองค์ประกอบ UI ขนาดเล็ก เอฟเฟกต์อนุภาค เป็นต้น",
+  "texturesBloatRecommendation": "การนำออกปลอดภัยและแนะนำเพื่อประสิทธิภาพที่ดีขึ้น",
+  "texturesBloatKeepAll": "เก็บทั้งหมด",
+  "texturesBloatRemoveUnneeded": "นำสิ่งที่ไม่จำเป็นออก ({count})",
+  "@texturesBloatRemoveUnneeded": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "texturesProgressExtracting": "กำลังแตกไฟล์เก็บถาวร...",
+  "texturesProgressCopying": "กำลังคัดลอกไฟล์...",
+  "texturesProgressAnalyzing": "กำลังวิเคราะห์เท็กซ์เจอร์...",
+  "texturesAnalyzingSetup": "กำลังวิเคราะห์การตั้งค่าเท็กซ์เจอร์ของคุณ...",
+  "texturesBusyMessage": "โปรดรอ กำลังติดตั้งเท็กซ์เจอร์",
+  "texturesInstallProgress": "กำลังติดตั้ง: {files}/{totalFiles} ไฟล์ - {mb}/{totalMb} MB",
+  "@texturesInstallProgress": {
+    "placeholders": {
+      "files": {
+        "type": "int"
+      },
+      "totalFiles": {
+        "type": "int"
+      },
+      "mb": {
+        "type": "int"
+      },
+      "totalMb": {
+        "type": "int"
+      }
+    }
+  },
+  "texturesAnalyzeProgress": "กำลังวิเคราะห์: {scanned}/{total} เท็กซ์เจอร์",
+  "@texturesAnalyzeProgress": {
+    "placeholders": {
+      "scanned": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "cleaningTextures": "กำลังนำเท็กซ์เจอร์ที่ไม่จำเป็นออก...",
+  "textureMergeTitle": "เพิ่มไปยังม็อดเดิมหรือติดตั้งใหม่?",
+  "textureMergeDescription": "คุณมีม็อดเท็กซ์เจอร์ติดตั้งอยู่แล้ว ต้องการเพิ่มไฟล์เหล่านี้ไปยังม็อดเดิมหรือติดตั้งเป็นม็อดใหม่?",
+  "textureMergeNewMod": "ติดตั้งเป็นม็อดใหม่",
+  "textureMergeAddTo": "เพิ่มไปยัง: {name}",
+  "@textureMergeAddTo": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "cutsceneMergeTitle": "เพิ่มไปยังม็อดเดิมหรือติดตั้งใหม่?",
+  "cutsceneMergeDescription": "คุณมีม็อดคัตซีนติดตั้งอยู่แล้ว แพ็กคัตซีนหลายส่วนควรถูกรวมไว้ในม็อดเดียวกัน",
+  "cutsceneMergeNewMod": "ติดตั้งเป็นม็อดใหม่",
+  "cutsceneMergeAddTo": "เพิ่มไปยัง: {name}",
+  "@cutsceneMergeAddTo": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "headerMods": "ม็อด",
+  "cutsceneBundledWith": "รวมมากับ {modId}",
+  "@cutsceneBundledWith": {
+    "placeholders": {
+      "modId": {
+        "type": "String"
+      }
+    }
+  },
+  "cutsceneSubtitleCard": "คำบรรยายและแถบสีดำ",
+  "cutsceneStatusH264": "H264",
+  "cutsceneStatusH264Tooltip": "[cutscene] enable_h264 ใน nams.toml ต้องเป็น true เพื่อเล่นคัตซีนที่เข้ารหัส H264",
+  "modIntroTitle": "ขับเคลื่อนโดย NAMS โฟลเดอร์ data/ ของคุณจะไม่ถูกแตะ",
+  "modIntroBody": "NAMS โหลดม็อดจาก nams/mods/ ผ่านระบบไฟล์เสมือนที่ซ้อนอยู่บนข้อมูลเกมต้นฉบับ จึงไม่มีสิ่งใดถูกคัดลอกหรือเขียนทับใน data/ ม็อดสามารถเปิดหรือปิดได้ทุกเมื่อโดยไม่ต้องติดตั้งใหม่ ชุดหลายชุดสามารถอยู่ร่วมกันสำหรับตัวละครเดียว และการถอนการติดตั้งม็อดเพียงลบโฟลเดอร์ของมัน เกมวานิลลายังคงสมบูรณ์อยู่ด้านล่างเสมอ",
+  "modListEmpty": "ยังไม่ได้ติดตั้งม็อด",
+  "modListEmptyHint": "วางโฟลเดอร์หรือไฟล์เก็บถาวรม็อดลงในกล่องด้านบนเพื่อติดตั้ง",
+  "modSearchPlaceholder": "ค้นหาม็อด…",
+  "modFilterAll": "ทั้งหมด",
+  "modCollapseAll": "ยุบทุกกลุ่ม",
+  "modExpandAll": "ขยายทุกกลุ่ม",
+  "modBulkInstall": "ติดตั้งหลายรายการจากโฟลเดอร์",
+  "modBulkInstallBusy": "กำลังติดตั้ง {done} จาก {total}: {name}",
+  "@modBulkInstallBusy": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "modBulkInstallScanning": "กำลังสแกนโฟลเดอร์หาไฟล์เก็บถาวรม็อด…",
+  "modBulkInstallNone": "ไม่พบไฟล์เก็บถาวรม็อด (.zip / .7z / .rar) ในโฟลเดอร์นั้น",
+  "modBulkInstallDone": "ติดตั้งม็อด {installed} จาก {total} รายการแล้ว",
+  "@modBulkInstallDone": {
+    "placeholders": {
+      "installed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "modLooseInstall": "ติดตั้งไฟล์แบบแยกจากโฟลเดอร์",
+  "modLooseInstallScanning": "กำลังสแกนโฟลเดอร์หาไฟล์เกมแบบแยก…",
+  "modLooseInstallNone": "ไม่พบไฟล์เกมแบบแยก (.dat / .dtt) ในโฟลเดอร์นั้น",
+  "modLooseInstallBusy": "กำลังติดตั้งไฟล์แบบแยก {count} ไฟล์…",
+  "@modLooseInstallBusy": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "modLooseInstallProgress": "กำลังคัดลอก {done} จาก {total} ไฟล์…",
+  "@modLooseInstallProgress": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "modLooseInstallFinalizing": "กำลังวางไฟล์ลงในม็อด…",
+  "modLooseInstallDone": "ติดตั้งไฟล์แบบแยก {count} ไฟล์ลงใน {id} แล้ว",
+  "@modLooseInstallDone": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "modGroup2b": "ชุดของ 2B",
+  "modGroup9s": "ชุดของ 9S",
+  "modGroupA2": "ชุดของ A2",
+  "modGroupOtherOutfits": "ชุดอื่น ๆ",
+  "modGroupWeapons": "อาวุธ",
+  "modGroupAccessories": "เครื่องประดับ",
+  "modGroupItems": "ไอเท็ม",
+  "modGroupEnemies": "ศัตรู",
+  "modGroupWorldProps": "วัตถุประกอบฉากในโลก",
+  "modGroupModelVariants": "รูปแบบโมเดล",
+  "modGroupMaps": "แผนที่ / ด่าน",
+  "modGroupUi": "UI / ฟอนต์",
+  "modGroupMisc": "เท็กซ์เจอร์เบ็ดเตล็ด",
+  "modGroupArchives": "ไฟล์เก็บถาวร CPK",
+  "modGroupEffects": "เอฟเฟกต์",
+  "modGroupScripting": "สคริปต์",
+  "modGroupLocalization": "ข้อความและภาษา",
+  "modGroupCutscenes": "คัตซีน",
+  "modGroupAudio": "เสียง",
+  "modGroupTextures": "เท็กซ์เจอร์",
+  "modGroupNative": "ม็อดเนทีฟ",
+  "modGroupOther": "อื่น ๆ",
+  "modGroupMixed": "เนื้อหาแบบผสม",
+  "modGroupWax": "WAX แบบกะทัดรัด",
+  "modGroupMultiHint": "ม็อดนี้แทนที่โมเดลของหลายตัวละคร จึงถูกแสดงอยู่ในแต่ละหมวดที่เกี่ยวข้อง",
+  "modGroupMixedHint": "ม็อดนี้เปลี่ยนเนื้อหาหลายประเภทพร้อมกัน คลิกเพื่อดูสิ่งที่รวมอยู่ทั้งหมดและหมวดหมู่ที่ได้รับผลกระทบ",
+  "modRename": "เปลี่ยนชื่อ",
+  "modRenameDialogTitle": "เปลี่ยนชื่อม็อด",
+  "modRenameReset": "คืนชื่อเดิม",
+  "dropModHere": "วางม็อดที่นี่",
+  "dropModHereHint": "หรือคลิกเพื่อเลือกไฟล์",
+  "modKindNative": "เนทีฟ",
+  "modKindNativeTooltip": "ม็อด NAMS ที่มีโฟลเดอร์ entities/ กำหนดไอเท็ม อาวุธ ชุด เครื่องประดับ เควสต์ และอื่น ๆ ผ่านชุดไฟล์ TOML",
+  "modKindData": "ข้อมูล",
+  "modKindDataTooltip": "รูปแบบม็อดแบบดั้งเดิม ไฟล์เดียวกับที่ปกติจะถูกวางใน NieRAutomata/data/ แต่ถูกจัดการภายใต้ nams/mods/ แทน เพื่อรักษาโฟลเดอร์ data ต้นฉบับให้สะอาด",
+  "textureOutfitLinkedTitle": "เท็กซ์เจอร์ที่เชื่อมกับชุด",
+  "textureOutfitLinkedSubtitle": "เท็กซ์เจอร์เหล่านี้อยู่ภายในโฟลเดอร์ม็อดและโหลดเฉพาะเมื่อสวมชุดนั้น NAMS จะ hot-swap เมื่อคุณเปลี่ยนชุดในเกม",
+  "textureOutfitLinkedEntry": "{count} เท็กซ์เจอร์ - ทำงานเฉพาะกับชุดนี้",
+  "@textureOutfitLinkedEntry": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "modKindTexture": "เท็กซ์เจอร์",
+  "modKindTextureTooltip": "แพ็กเท็กซ์เจอร์ ไฟล์ .dds ถูกติดตั้งไปยัง nams/inject/textures/ และจัดการจากแท็บ Textures",
+  "modKindUnknown": "ไม่ทราบ",
+  "modKindUnknownTooltip": "ตัวเรียกใช้งานไม่สามารถระบุโฟลเดอร์นี้ว่าเป็นม็อดที่ถูกต้องได้",
+  "modCompatChip": "รองรับ wax",
+  "modCompatChipTooltip": " NAMS อ่านไฟล์เหล่านี้ด้วยเพื่อให้เข้ากันได้กับม็อด wax ที่มีอยู่",
+  "modDataChip": "+data",
+  "modDataChipTooltip": "มี data/ overlay มาพร้อมกับ metadata โมเดล เท็กซ์เจอร์ เสียง และอื่น ๆ อยู่ที่นี่",
+  "modDetailNoSelection": "เลือกม็อดเพื่อดูรายละเอียด",
+  "modAuthor": "ผู้สร้าง",
+  "modVersion": "เวอร์ชัน",
+  "modRootPath": "พาธ",
+  "modNativeBundles": "ชุดเนทีฟ",
+  "modDataContent": "เนื้อหา data",
+  "modDataPlayerModels": "โมเดลผู้เล่น",
+  "modCameraSettings": "กล้อง",
+  "modCameraSettingsHint": "การเปลี่ยนแปลงจะถูกบันทึกลงในม็อดและมีผลในเกมทันทีขณะที่เกมทำงาน",
+  "modCameraSideOffset": "ระยะเลื่อนด้านข้าง",
+  "modCameraSideOffsetHint": "หน่วยเมตร ค่าบวกเลื่อนกล้องไปทางขวา ค่าลบไปทางซ้าย",
+  "modCameraHeightOffset": "ระยะเลื่อนความสูง",
+  "modCameraHeightOffsetHint": "หน่วยเมตร ค่าบวกเลื่อนกล้องขึ้น ค่าลบเลื่อนลง",
+  "modCameraDistanceOffset": "ระยะเลื่อนระยะห่าง",
+  "modCameraDistanceOffsetHint": "หน่วยเมตร ค่าบวกเลื่อนกล้องออกห่างจากผู้เล่น ค่าลบเข้าใกล้",
+  "modCameraFovOffset": "ระยะเลื่อนมุมมองภาพ",
+  "modCameraFovOffsetHint": "หน่วยองศา ค่าบวกขยายมุมมอง ค่าลบซูมเข้า",
+  "modCameraPitchUpLimit": "ขีดจำกัดการเงยกล้อง",
+  "modCameraPitchUpLimitHint": "หน่วยองศาเหนือแนวระดับที่หมุนกล้องขึ้นได้ ค่าเดิมของเกมคือ 72",
+  "modCameraPitchDownLimit": "ขีดจำกัดการก้มกล้อง",
+  "modCameraPitchDownLimitHint": "หน่วยองศาใต้แนวระดับที่หมุนกล้องลงได้ ค่าเดิมของเกมคือ 72",
+  "threeDInspectorOpen": "เปิดตัวตรวจสอบ 3 มิติ",
+  "threeDInspectorClose": "ปิดตัวตรวจสอบ 3 มิติ",
+  "threeDInspectorResetCamera": "รีเซ็ตกล้อง",
+  "threeDInspectorControls": "ลากซ้าย: หมุน · ลากขวา: เลื่อน · ล้อเมาส์: ซูม · Esc: ปิด",
+  "threeDInspectorVertices": "จุดยอด",
+  "threeDInspectorTriangles": "สามเหลี่ยม",
+  "threeDInspectorLod": "ระดับรายละเอียด",
+  "threeDInspectorMeshes": "เมช",
+  "threeDInspectorExpand": "ขยายตัวตรวจสอบ 3 มิติ",
+  "threeDInspectorOutfit": "ชุด",
+  "threeDInspectorVariant": "รูปแบบโมเดล",
+  "threeDInspectorVariantNormal": "ปกติ",
+  "threeDInspectorVariantDamaged": "เสียหาย",
+  "threeDInspectorVariantBase": "พื้นฐาน",
+  "threeDInspectorVariantSelfDestruct": "ทำลายตัวเอง",
+  "threeDInspectorVariantDamagedLeft": "เสียหายด้านซ้าย",
+  "threeDInspectorVariantDamagedRight": "เสียหายด้านขวา",
+  "threeDInspectorVariantDamagedHoles": "เสียหายเป็นรู",
+  "threeDInspectorVariantDamaged2bHand": "เสียหายที่มือ 2B",
+  "threeDInspectorVariantArmor": "ชุดเกราะ",
+  "threeDInspectorVariantDlc": "DLC",
+  "threeDInspectorVariantDlcDamaged": "DLC เสียหาย",
+  "threeDInspectorVariantDlcDamagedLeft": "DLC เสียหายด้านซ้าย",
+  "threeDInspectorVariantDlcDamagedRight": "DLC เสียหายด้านขวา",
+  "threeDInspectorVariantDlcDamagedHoles": "DLC เสียหายเป็นรู",
+  "threeDInspectorVariantDlcDamaged2bHand": "DLC เสียหายที่มือ 2B",
+  "threeDInspectorVariantBerserk": "คลั่ง",
+  "threeDInspectorOutfitNumber": "ชุด {id}",
+  "@threeDInspectorOutfitNumber": {
+    "placeholders": {
+      "id": {
+        "type": "int"
+      }
+    }
+  },
+  "threeDInspectorStates": "สถานะ",
+  "threeDInspectorStateSelfDestructed": "ทำลายตัวเอง / เสียหาย",
+  "threeDInspectorStateEyemask": "ผ้าปิดตา",
+  "threeDInspectorStateCombat": "การต่อสู้",
+  "threeDInspectorStatePrologue": "บทนำ",
+  "threeDInspectorStateHoly": "ศักดิ์สิทธิ์",
+  "threeDInspectorStateNoRight": "สูญเสียด้านขวา",
+  "threeDInspectorStateTower": "หอคอย",
+  "threeDInspectorStateWig": "วิกแทนที่เส้นผมของร่างกาย",
+  "threeDInspectorMissingMeshes": "ไม่พบเมชที่กำหนดค่าไว้ {count} รายการ",
+  "@threeDInspectorMissingMeshes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "modRequiresLabel": "ต้องใช้",
+  "modRequiresPluginsLabel": "ต้องใช้ปลั๊กอิน",
+  "modRequiresMissing": "หายไป",
+  "modConflictsLabel": "ความขัดแย้ง",
+  "modLoadOrderHint": "ม็อดเหล่านี้แทนที่ไฟล์เดียวกัน ลากเพื่อจัดลำดับ โดยม็อดด้านบนชนะ",
+  "modConflictKeep": "เก็บม็อดนี้",
+  "modConflictResolve": "แก้ไข",
+  "modConflictDialogTitle": "ม็อดใดควรมีลำดับเหนือกว่า?",
+  "modConflictKeepTooltip": "เก็บ {id} และปิดม็อดอื่น",
+  "@modConflictKeepTooltip": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "modConflictPickBody": "ม็อดที่เปิดอยู่ {mods} รายการแทนที่ {files, plural, =1{ไฟล์เดียวกัน 1 ไฟล์} other{ไฟล์เดียวกัน {files} ไฟล์}} เลือกม็อดที่จะเก็บไว้ ม็อดอื่นจะถูกปิด",
+  "@modConflictPickBody": {
+    "placeholders": {
+      "mods": {
+        "type": "int"
+      },
+      "files": {
+        "type": "int"
+      }
+    }
+  },
+  "modConflictOverlapFile": "{otherId} มีไฟล์ {file} เช่นกัน",
+  "@modConflictOverlapFile": {
+    "placeholders": {
+      "otherId": {
+        "type": "String"
+      },
+      "file": {
+        "type": "String"
+      }
+    }
+  },
+  "modOpenFolder": "เปิดโฟลเดอร์",
+  "modEnable": "เปิดใช้งาน",
+  "modDisable": "ปิดใช้งาน",
+  "modDisabled": "ปิดใช้งานแล้ว",
+  "modDisabledTooltip": "ม็อดนี้ถูกปิดอยู่ NAMS จะไม่โหลดในการเริ่มเกมครั้งถัดไป เปิดใช้งานอีกครั้งเพื่อโหลด ไม่ต้องลบและติดตั้งใหม่",
+  "modEnableTooltip": "NAMS กำลังโหลดม็อดนี้ คลิกเพื่อปิดโดยไม่ลบไฟล์",
+  "modDefaultTooltip": "ทำงานตั้งแต่เกมเริ่ม ราวกับไฟล์อยู่ใน NieRAutomata/data คลิกเพื่อปิด",
+  "modSetDefaultTooltip": "ทำให้ม็อดนี้ทำงานตั้งแต่เกมเริ่ม โดยไม่คัดลอกอะไรไปยัง NieRAutomata/data",
+  "modSetDefaultOutfitTooltip": "สวมชุดนี้ตั้งแต่เกมเริ่ม โดยไม่คัดลอกอะไรไปยัง NieRAutomata/data จะแทนที่ชุดที่เป็นค่าเริ่มต้นอยู่ และมีได้เพียงหนึ่งชุด",
+  "modDefaultChip": "ค่าเริ่มต้น",
+  "modDefaultKindOutfitBare": "ชุด",
+  "modDefaultKindOutfitConfig": "ชุด + การตั้งค่า",
+  "modDefaultKindOutfitAnimation": "แอนิเมชัน",
+  "modDefaultKindOutfitBareTooltip": "แทนที่ไฟล์โมเดลโดยตรง สามารถมีชุดเริ่มต้นได้เพียงชุดเดียวในแต่ละครั้ง",
+  "modDefaultKindOutfitConfigTooltip": "ม็อดนี้มีการตั้งค่าชุดมาด้วย ดังนั้นกฎ mesh และเอฟเฟกต์จะโหลดพร้อมกัน สามารถมีชุดเริ่มต้นได้เพียงชุดเดียวในแต่ละครั้ง",
+  "modDefaultKindOutfitAnimationTooltip": "ข้อมูลแอนิเมชัน ไม่ใช่ชุด จะยังทำงานอยู่ใต้ชุดใดก็ตามที่คุณสวม",
+  "modDefaultReplaceTitle": "แทนที่ค่าเริ่มต้นหรือไม่?",
+  "modDefaultReplaceBody": "ขณะนี้ {model} สวม \"{current}\" ตั้งแต่เริ่มเกม\n\nการกำหนด \"{next}\" เป็นค่าเริ่มต้นจะนำชุดเดิมออก เพราะตัวละครหนึ่งตัวสวมม็อดได้เพียงชุดเดียวในเวลาเดียวกัน",
+  "@modDefaultReplaceBody": {
+    "placeholders": {
+      "model": {
+        "type": "String"
+      },
+      "current": {
+        "type": "String"
+      },
+      "next": {
+        "type": "String"
+      }
+    }
+  },
+  "modDefaultReplaceConfirm": "แทนที่",
+  "modDefaultOutfitAuto": "ชุดเริ่มต้น",
+  "modDefaultOutfitPickTooltip": "ม็อดนี้มีหลายชุด เลือกชุดที่ต้องการสวมตั้งแต่เกมเริ่ม \"ชุดเริ่มต้น\" คือชุดที่สวมโดยไม่ต้องใช้ไอเท็ม",
+  "modDefaultRowTooltip": "ทำงานตั้งแต่เกมเริ่ม: {files}",
+  "@modDefaultRowTooltip": {
+    "placeholders": {
+      "files": {
+        "type": "String"
+      }
+    }
+  },
+  "modDisableNotice": "ปิดใช้งานแล้ว มีผลในการเริ่มเกมครั้งถัดไป",
+  "modEnableNotice": "เปิดใช้งานแล้ว มีผลในการเริ่มเกมครั้งถัดไป",
+  "modUninstall": "ถอนการติดตั้ง",
+  "modUninstallConfirmTitle": "ถอนการติดตั้งม็อดหรือไม่?",
+  "modUninstallConfirmBody": "การดำเนินการนี้จะลบโฟลเดอร์ม็อด \"{id}\" อย่างถาวร",
+  "@modUninstallConfirmBody": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "modProfileLabel": "โปรไฟล์",
+  "modProfileNewButton": "ใหม่",
+  "modProfileRenameButton": "เปลี่ยนชื่อ",
+  "modProfileDeleteButton": "ลบ",
+  "modProfileNewDialogTitle": "โปรไฟล์ใหม่",
+  "modProfileNewDialogHint": "ชื่อโปรไฟล์ (ตัวอักษร ตัวเลข _ -)",
+  "modProfileRenameDialogTitle": "เปลี่ยนชื่อโปรไฟล์",
+  "modProfileDeleteDialogTitle": "ลบโปรไฟล์หรือไม่?",
+  "modProfileDeleteDialogBody": "ลบโฟลเดอร์ mods_profile_{name}/ และแพ็กเท็กซ์เจอร์ที่รวมมากับม็อดในโปรไฟล์นี้อย่างถาวร ไม่สามารถย้อนกลับได้",
+  "@modProfileDeleteDialogBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "modProfileDeleteConfirm": "ลบ",
+  "modProfileErrorNameEmpty": "ต้องระบุชื่อ",
+  "modProfileErrorNameInvalid": "ใช้ได้เฉพาะตัวอักษร ตัวเลข _ หรือ -",
+  "modProfileErrorNameCollision": "มีโปรไฟล์ชื่อนี้อยู่แล้ว",
+  "modProfileErrorDeleteActive": "สลับไปยังโปรไฟล์อื่นก่อนลบโปรไฟล์นี้",
+  "modProfileErrorDeleteLast": "ไม่สามารถลบโปรไฟล์สุดท้ายที่เหลืออยู่ได้",
+  "modProfileErrorTargetMissing": "ไม่พบโฟลเดอร์โปรไฟล์บนดิสก์",
+  "modProfileErrorFsBusy": "ระบบไฟล์กำลังถูกใช้งาน โปรดปิดเกมแล้วลองใหม่",
+  "modProfileLockedRunning": "หยุดเกมก่อนเปลี่ยนโปรไฟล์",
+  "modProfileEmptyHint": "โปรไฟล์ว่าง วางม็อดเพื่อเริ่มต้น",
+  "modProfileSwitchedToast": "สลับไปยังโปรไฟล์ {name} แล้ว",
+  "@modProfileSwitchedToast": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "modProfileCreatedToast": "สร้างและสลับไปยังโปรไฟล์ {name} แล้ว",
+  "@modProfileCreatedToast": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "modProfileDeletedToast": "ลบโปรไฟล์ {name} แล้ว",
+  "@modProfileDeletedToast": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "modProfileRenamedToast": "เปลี่ยนชื่อโปรไฟล์เป็น {name} แล้ว",
+  "@modProfileRenamedToast": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "modInstallNeedsName": "ตั้งชื่อม็อดนี้",
+  "modInstallExistsPickAnother": "มีม็อดชื่อ \"{id}\" อยู่แล้ว โปรดเลือกชื่ออื่น",
+  "@modInstallExistsPickAnother": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "modInspectBusy": "กำลังตรวจสอบม็อด…",
+  "modInstallBusy": "กำลังติดตั้งม็อด…",
+  "modVariantDialogTitle": "เลือกสิ่งที่ต้องการติดตั้ง",
+  "modVariantDialogSubtitle": "ไฟล์เก็บถาวรนี้มีหลายตัวเลือก โปรดเลือกรายการที่ต้องการ",
+  "modOutfitChoiceDialogTitle": "เลือกสิ่งที่ต้องการติดตั้ง",
+  "modOutfitChoiceDialogSubtitle": "ทำเครื่องหมายทุกรายการที่ต้องการ แต่ละรายการจะติดตั้งเป็นม็อดแยก หากชุดมีเท็กซ์เจอร์มาด้วย เท็กซ์เจอร์จะติดตั้งพร้อมกัน และคุณสามารถปรับชุดที่ใช้ภายหลังในแท็บ Textures",
+  "variantCatPlayer": "ชุด",
+  "variantCatWeapon": "อาวุธ",
+  "variantCatAccessory": "เครื่องประดับ",
+  "variantCatEnemy": "ศัตรู",
+  "variantCatModelVariant": "รูปแบบโมเดล",
+  "variantCatItem": "ไอเท็ม",
+  "variantCatWorldProp": "วัตถุประกอบฉากในโลก",
+  "variantCatMap": "แผนที่",
+  "variantCatEffects": "เอฟเฟกต์",
+  "variantCatScripting": "สคริปต์",
+  "variantCatLocalization": "ภาษา",
+  "variantCatUi": "UI",
+  "variantCatCutscenes": "คัตซีน",
+  "variantCatAudio": "เสียง",
+  "variantCatMisc": "เบ็ดเตล็ด",
+  "variantCatOther": "อื่น ๆ",
+  "variantPickOneSuffix": "เลือกหนึ่งรายการ",
+  "modVariantSelectAll": "เลือกทั้งหมด",
+  "modVariantSelectNone": "ไม่เลือก",
+  "modVariantInstall": "ติดตั้ง",
+  "modVariantInstallSelected": "ติดตั้ง {count} รายการ",
+  "@modVariantInstallSelected": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "modVariantTexture": "เท็กซ์เจอร์",
+  "modVariantInstalledToast": "ติดตั้งตัวเลือก {count} รายการแล้ว",
+  "@modVariantInstalledToast": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "modUninstallBusy": "กำลังถอนการติดตั้งม็อด…",
+  "modInstalled": "ติดตั้งแล้ว: {id}",
+  "@modInstalled": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "modInstallFailed": "ติดตั้งไม่สำเร็จ: {reason}",
+  "@modInstallFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "modInstallReasonUnknownDrop": "ไม่รู้จักไฟล์ที่วาง โฟลเดอร์ไม่ตรงกับโครงสร้างม็อดที่รองรับ",
+  "modInstallReasonUnsupportedNasa": "นี่คือม็อด NASA (มี sadfutago.cpk) ซึ่งตัวเรียกใช้งานนี้ไม่รองรับ",
+  "modInstallReasonInvalidMixed": "โครงสร้างไม่ถูกต้อง ม็อดไม่สามารถรวม entities และการตั้งค่าแบบ wax ไว้ด้วยกัน",
+  "modInstallReasonNativeEmpty": "ไม่พบไฟล์ entity ใน entities/",
+  "modInstallReasonDataEmpty": "ไม่พบเนื้อหาที่รู้จัก",
+  "modInstallReasonArchiveExtractFailed": "ไม่สามารถแตกไฟล์เก็บถาวรได้",
+  "modInstallReasonMoveFailed": "ไม่สามารถย้ายไฟล์ไปยัง nams/mods/ ได้",
+  "modInstallReasonTextureOnly": "นี่คือแพ็กเท็กซ์เจอร์ (มีเฉพาะไฟล์ .dds) โปรดติดตั้งจากแท็บ Textures แทน",
+  "modUninstalled": "นำออกแล้ว: {id}",
+  "@modUninstalled": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "modCountFiles": "{count, plural, =1{1 ไฟล์} other{{count} ไฟล์}}",
+  "@modCountFiles": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "weaponConvertTitle": "ตัวแปลงอาวุธ",
+  "weaponConvertDesc": "ลากม็อดอาวุธที่ดาวน์โหลดมาวาง โดยปกติมันจะเขียนทับอาวุธต้นฉบับ แต่ตัวเปิดเกมจะย้ายไปช่องว่างแทน จึงไม่มีอะไรถูกแทนที่",
+  "weaponConvertDropTitle": "ลากม็อดอาวุธมาวาง",
+  "weaponConvertDropHint": "ลาก .dat หรือ .dtt มาที่นี่ หรือคลิกเพื่อเลือก ทั้งสองไฟล์ต้องอยู่โฟลเดอร์เดียวกัน",
+  "weaponConvertDropInvalid": "นี่ไม่ใช่ไฟล์อาวุธ ต้องเป็นแบบ wp0003.dat",
+  "weaponConvertNeedsBothFiles": "ไฟล์ .dat และ .dtt ต้องอยู่ในโฟลเดอร์เดียวกัน",
+  "weaponConvertDetected": "อ่านประเภทอาวุธจากชื่อไฟล์แล้ว ช่องใหม่จะคงประเภทเดิมไว้ เพราะท่าทางมาพร้อมกัน",
+  "weaponConvertNextSlot": "ช่องอื่น",
+  "weaponConvertRun": "ย้ายไปช่องว่าง",
+  "weaponConvertDone": "เขียนเป็น {stem} แล้ว",
+  "@weaponConvertDone": {
+    "placeholders": {
+      "stem": {
+        "type": "String"
+      }
+    }
+  },
+  "weaponConvertNextStep": "โมเดลพร้อมแล้ว หากต้องการให้เป็นอาวุธของตัวเอง ให้สร้างอาวุธที่มี obj_id {objId} ด้วยตัวสร้างด้านบน",
+  "@weaponConvertNextStep": {
+    "placeholders": {
+      "objId": {
+        "type": "String"
+      }
+    }
+  },
+  "weaponPreviewFailed": "ไม่สามารถแสดงโมเดลนี้ที่นี่ได้ แต่การแปลงยังทำงานได้ตามปกติ",
+  "weaponBuilderTitle": "ตัวสร้างอาวุธ",
+  "weaponBuilderDesc": "กรอกชื่อและค่าความเสียหาย ตัวเปิดเกมจะเลือกช่องอาวุธที่ว่างและเขียนไฟล์ให้",
+  "weaponBuilderDropTitle": "ลากโมเดลอาวุธของคุณมาวาง",
+  "weaponBuilderDropHint": "ไฟล์ .dat / .dtt คู่ของอาวุธคุณ",
+  "weaponBuilderNeedsModel": "ลากโมเดลอาวุธของคุณเข้ามาก่อน",
+  "weaponBuilderModelReady": "จะกลายเป็นอาวุธของตัวเอง จึงไม่เขียนทับอะไร",
+  "weaponBuilderName": "ชื่ออาวุธ",
+  "weaponBuilderNameHint": "แสดงในกระเป๋า เช่น ดาบแห่งคุณธรรม",
+  "weaponBuilderDescription": "คำอธิบาย",
+  "weaponBuilderDescriptionHint": "แสดงตอนผู้เล่นดูอาวุธ",
+  "weaponBuilderType": "ประเภทอาวุธ",
+  "weaponTypeSmallSword": "ดาบสั้น",
+  "weaponTypeLargeSword": "ดาบใหญ่",
+  "weaponTypeSpear": "หอก",
+  "weaponTypeCombatBracer": "อาวุธประชิด",
+  "weaponBuilderLevels": "ระดับการอัปเกรด",
+  "weaponBuilderAddLevel": "เพิ่มระดับ",
+  "weaponBuilderLevelNumber": "ระดับ {n}",
+  "@weaponBuilderLevelNumber": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "weaponBuilderDamage": "ความเสียหาย",
+  "weaponBuilderItemId": "หมายเลขในกระเป๋า",
+  "weaponBuilderObjId": "หมายเลขอาวุธ",
+  "weaponBuilderObjIdHint": "ตัวเลขทั้งสองมาจากชื่อโฟลเดอร์ม็อด ชื่อต่างกันจะได้หมายเลขอาวุธต่างกัน ม็อดที่คุณปล่อยจึงไม่ชนกับของคนอื่น หากต้องการหมายเลขอื่นให้เปลี่ยนชื่อโฟลเดอร์",
+  "weaponBuilderNeedsGameDir": "เลือกโฟลเดอร์ NieR:Automata ของคุณก่อน",
+  "weaponBuilderNeedsName": "ตั้งชื่อให้อาวุธก่อน",
+  "weaponBuilderNoFreeSlot": "ไม่มีช่องโมเดลว่างสำหรับอาวุธประเภทนี้แล้ว",
+  "weaponBuilderCreate": "สร้างอาวุธ",
+  "weaponBuilderEffects": "เอฟเฟกต์พิเศษ",
+  "weaponBuilderAddEffect": "เพิ่มเอฟเฟกต์",
+  "weaponBuilderEffectsHint": "ไม่บังคับ เอฟเฟกต์จะเปลี่ยนการเล่นขณะสวมอาวุธนี้ - ความเสียหาย ความเร็ว การหลบ ภูมิคุ้มกัน",
+  "weaponBuilderTrailNormal": "รอยโจมตี",
+  "weaponBuilderTrailBerserk": "รอยโจมตี (Berserk)",
+  "weaponBuilderTrailHint": "เอฟเฟกต์ใดก็ได้ตั้งแต่ 0 ถึง 665 ช่วง 590-641 คือรอยของอาวุธ ค่าอื่นให้เอฟเฟกต์อื่นในเกม ส่วน 435 และ 436 ทำให้เกมค้างจึงถูกข้าม",
+  "weaponBuilderEffectWhen": "เฉพาะ",
+  "weaponBuilderEffectWhenAny": "ทุกคน",
+  "weaponBuilderEffectOn": "เปิดใช้งาน",
+  "weaponBuilderIcon": "ไอคอนในคลังไอเทม",
+  "weaponBuilderIconHint": "แสดงในคลังไอเทมและในร้านค้า",
+  "weaponBuilderStoryIcon": "ภาพประกอบเรื่องราว",
+  "weaponBuilderStoryIconHint": "แสดงข้างข้อความเรื่องราวของอาวุธ",
+  "weaponBuilderDetails": "ข้อความในเมนู",
+  "weaponBuilderHelpShort": "คำอธิบายสั้น",
+  "weaponBuilderHelpShortHint": "หนึ่งบรรทัด สำหรับพื้นที่เมนูที่จำกัด",
+  "weaponBuilderStory": "เรื่องราวของอาวุธ",
+  "weaponBuilderStoryHint": "ข้อความเรื่องราวที่แสดงในหน้าอาวุธ",
+  "weaponBuilderSkillName": "ชื่อสกิล {n}",
+  "@weaponBuilderSkillName": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "weaponBuilderSkillDesc": "ผลของสกิล {n}",
+  "@weaponBuilderSkillDesc": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "weaponBuilderSkillNameHint": "เว้นว่างไว้หากอาวุธไม่มีสกิล",
+  "weaponBuilderSkillDescHint": "สกิลนี้ทำอะไร",
+  "weaponBuilderTraitId": "คุณลักษณะ",
+  "weaponBuilderTraitNone": "ไม่มี",
+  "weaponBuilderUpgrades": "ค่าอัปเกรด",
+  "weaponBuilderAddUpgrade": "เพิ่มการอัปเกรด",
+  "weaponBuilderUpgradeLevel": "เป็นระดับ {n}",
+  "@weaponBuilderUpgradeLevel": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "weaponBuilderUpgradeCost": "ค่าใช้จ่าย",
+  "weaponBuilderUpgradeHint": "หากไม่มีรายการอัปเกรด อาวุธจะอัปเกรดที่ช่างตีเหล็กไม่ได้",
+  "outfitBuilderTitle": "ตัวสร้างชุด",
+  "outfitBuilderDesc": "ลากโมเดลตัวละครเข้ามา เลือกว่าเมชไหนแสดงในสถานะไหน แล้วตัวเปิดเกมจะเขียนไฟล์ชุดและไอเทมให้",
+  "outfitBuilderDropTitle": "ลากโมเดลตัวละครมาวาง",
+  "outfitBuilderDropHint": "ลากไฟล์ .dat หรือ .dtt มาวางที่นี่ หรือคลิกเพื่อเลือก",
+  "outfitBuilderDropInvalid": "นี่ไม่ใช่ไฟล์ .dat หรือ .dtt",
+  "outfitBuilderDropUnknownModel": "นี่ไม่ใช่โมเดลตัวละครที่รู้จัก ต้องเป็น pl0000, pl000d (2B), pl0200, pl020d (9S), pl0100 หรือ pl010d (A2)",
+  "outfitBuilderCharacterDetected": "อ่านตัวละครจากไฟล์โมเดลแล้ว ถ้าต้องการเปลี่ยน ให้ลากโมเดลอื่นเข้ามา",
+  "outfitBuilderNoModelInArchive": "ไม่พบโมเดลในไฟล์นี้",
+  "outfitBuilderMeshesInModel": "{count, plural, other{{count} เมชในโมเดลนี้}}",
+  "@outfitBuilderMeshesInModel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "outfitBuilderAcquisitionTitle": "ผู้เล่นจะได้มาอย่างไร",
+  "outfitBuilderAutoGive": "ใส่เข้ากระเป๋าเลย",
+  "outfitBuilderAutoGiveHint": "เพิ่มให้ตอนโหลดเซฟ จึงมีอยู่แล้วโดยไม่ต้องตามหา",
+  "outfitBuilderInShop": "ขายในร้านค้า",
+  "outfitBuilderInShopHint": "เขียนรายการร้านค้าเพื่อให้ผู้เล่นซื้อได้",
+  "outfitBuilderShopName": "ร้านค้า",
+  "shopStateRouteABeforeRuinsCollapse": "เส้นทาง A ก่อนเมืองร้างถล่ม",
+  "shopStateRouteAAfterRuinsCollapse": "เส้นทาง A หลังเมืองร้างถล่ม",
+  "shopStateRouteBBeforeRuinsCollapse": "เส้นทาง B ก่อนเมืองร้างถล่ม",
+  "shopStateRouteBAfterRuinsCollapse": "เส้นทาง B หลังเมืองร้างถล่ม",
+  "shopStateRouteC": "เส้นทาง C/D หรือผ่านตอนจบ A และ B แล้ว",
+  "shopStateEndingCOrD": "ผ่านตอนจบ C หรือ D แล้ว",
+  "shopStateEndingCAndD": "ผ่านตอนจบทั้ง C และ D แล้ว",
+  "outfitBuilderShopStateAll": "ทั้งหมด",
+  "outfitBuilderShopState": "ช่วงเนื้อเรื่อง",
+  "outfitBuilderShopStateHint": "ร้านเริ่มขายตั้งแต่ช่วงไหนของเนื้อเรื่อง 0 คือตอนเริ่ม",
+  "outfitBuilderBuyPrice": "ราคา",
+  "outfitMeshMore": "ตัวเลือก",
+  "outfitMeshPreviewToggle": "ซ่อนหรือแสดงเมชนี้เฉพาะในภาพตัวอย่าง",
+  "logWrapOn": "ตัดขึ้นบรรทัดใหม่",
+  "logWrapOff": "ตัดบรรทัดยาวทิ้ง",
+  "outfitMeshAlways": "แสดงตลอด",
+  "outfitMeshCombatOnly": "เฉพาะตอนต่อสู้",
+  "outfitMeshOutOfCombatOnly": "เฉพาะตอนไม่ได้ต่อสู้",
+  "outfitMeshEyemaskOnly": "เฉพาะตอนใส่ผ้าปิดตา",
+  "outfitMeshNoEyemaskOnly": "เฉพาะตอนไม่ใส่ผ้าปิดตา",
+  "outfitMeshFeatherOnly": "เฉพาะตอนยังไม่เสียหาย",
+  "outfitMeshBrokenOnly": "เฉพาะตอนเสียหาย",
+  "outfitMeshNever": "ไม่แสดงเลย",
+  "outfitMeshHideOnSelfDestruct": "หายไปหลังทำลายตัวเอง",
+  "outfitMeshHairsprayTint": "ถูกสเปรย์ผมย้อมสี",
+  "outfitMeshReplacedByWig": "ถูกแทนที่ด้วยวิก",
+  "outfitBuilderName": "ชื่อชุด",
+  "outfitBuilderNameHint": "แสดงในตู้เสื้อผ้า เช่น ชุดดำ",
+  "outfitBuilderDescription": "คำอธิบายไอเทม",
+  "outfitBuilderDescriptionHint": "แสดงตอนผู้เล่นดูไอเทม",
+  "outfitBuilderModId": "โฟลเดอร์ม็อด",
+  "outfitBuilderOutfitId": "ไอดีชุด",
+  "outfitBuilderItemId": "ไอดีไอเทม",
+  "outfitBuilderIdHint": "ไอดีทั้งสองถูกเลือกให้อัตโนมัติ เปลี่ยนเฉพาะเมื่อคุณต้องการเลขที่เจาะจง",
+  "outfitBuilderIdTaken": "ไอดีชุดนี้ถูกใช้กับตัวละครนี้ไปแล้ว",
+  "outfitBuilderCopyModel": "คัดลอกโมเดลเข้าไปในม็อด",
+  "outfitBuilderCopyModelHint": "วางไฟล์ .dat และ .dtt ไว้ใน data/pl/ เพื่อให้ม็อดทำงานได้ด้วยตัวเอง",
+  "outfitBuilderNeedsGameDir": "เลือกโฟลเดอร์ NieR:Automata ของคุณก่อน",
+  "outfitBuilderNeedsName": "ตั้งชื่อให้ชุดก่อน",
+  "outfitBuilderNeedsModel": "ลากโมเดลตัวละครเข้ามาก่อน",
+  "outfitBuilderCreate": "สร้างชุด",
+  "outfitBuilderCreated": "สร้างแล้ว: {path}",
+  "@outfitBuilderCreated": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "outfitBuilderOpenFolder": "เปิดโฟลเดอร์",
+  "outfitBuilderPreview": "จะถูกเขียนเป็น",
+  "outfitStateBase": "พื้นฐาน",
+  "outfitStateBaseHint": "เมชที่แสดงในสถานะปกติ เมื่อคุณติ๊กอะไรก็ตาม ทุกอย่างจะถูกซ่อนก่อน แล้วแสดงเฉพาะที่คุณเลือก",
+  "outfitStateCombat": "ระหว่างต่อสู้",
+  "outfitStateCombatHint": "แสดงตอนต่อสู้ เพิ่มจากชุดพื้นฐาน ต้นฉบับใส่หน้าตอนต่อสู้ไว้ตรงนี้",
+  "outfitStateNonCombat": "นอกการต่อสู้",
+  "outfitStateNonCombatHint": "แสดงตอนไม่ได้ต่อสู้ ต้นฉบับใส่หน้าปกติไว้ตรงนี้",
+  "outfitStateEyemask": "ใส่ผ้าปิดตา",
+  "outfitStateEyemaskHint": "แสดงตอนใส่ผ้าปิดตา ต้นฉบับใส่เมช Eyemask ไว้ตรงนี้",
+  "outfitStateNonEyemask": "ถอดผ้าปิดตา",
+  "outfitStateNonEyemaskHint": "แสดงตอนถอดผ้าปิดตา เช่น ตอนใส่แว่นพราง ต้นฉบับใส่ขนตาไว้ตรงนี้",
+  "outfitStateSelfDestructShow": "ทำลายตัวเองแล้วแสดง",
+  "outfitStateSelfDestructShowHint": "แสดงหลังตัวละครทำลายตัวเอง",
+  "outfitStateSelfDestructHide": "ทำลายตัวเองแล้วซ่อน",
+  "outfitStateSelfDestructHideHint": "ซ่อนหลังตัวละครทำลายตัวเอง ต้นฉบับซ่อนกระโปรงไว้ตรงนี้",
+  "outfitStateBroken": "ซ่อนขนนก",
+  "outfitStateBrokenHint": "แสดงตอนที่ขนนกไม่ถูกวาด นี่เป็นคนละสถานะกับการทำลายตัวเอง",
+  "outfitStateNonBroken": "แสดงขนนก",
+  "outfitStateNonBrokenHint": "แสดงตอนที่ขนนกถูกวาด ซึ่งเป็นกรณีปกติ",
+  "outfitStateWig": "วิก",
+  "outfitStateWigHint": "เมชที่วิกวาดแทนตัว จะถูกซ่อนตอนใส่วิก ต้นฉบับใส่ Hair ไว้ตรงนี้",
+  "outfitStateHairspray": "สีจากสเปรย์ผม",
+  "outfitStateHairsprayHint": "เมชที่สเปรย์ผมย้อมสี จะถูกเปลี่ยนสีเท่านั้น ไม่ได้ซ่อนหรือแสดง ปล่อยว่างเพื่อใช้ Hair",
+  "outfitStatePrologue": "บทนำ",
+  "outfitStatePrologueHint": "แทนที่ชุดพื้นฐานในบทนำ ตอน 9S เสียหายหนัก",
+  "outfitStateHoly": "เต็มไปด้วยรู",
+  "outfitStateHolyHint": "แทนที่ชุดพื้นฐานตอน 9S เต็มไปด้วยรู",
+  "outfitStateNoRight": "ไม่มีแขนขวา",
+  "outfitStateNoRightHint": "แทนที่ชุดพื้นฐานหลัง 9S เสียแขนขวา",
+  "outfitStateTower": "หอคอย",
+  "outfitStateTowerHint": "แทนที่ชุดพื้นฐานในหอคอย"
+}

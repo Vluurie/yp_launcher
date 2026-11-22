@@ -1,0 +1,196 @@
+{
+  "shellTitleShort": "YP",
+  "shellSandboxBadge": "แซนด์บ็อกซ์",
+  "shellSandboxTooltip": "โหมดแซนด์บ็อกซ์ การตั้งค่า ข้อมูล และไฟล์รันไทม์ถูกเก็บไว้ใน {dir} การติดตั้งจริงของคุณจะไม่ถูกแตะต้อง",
+  "@shellSandboxTooltip": {
+    "placeholders": {
+      "dir": {
+        "type": "String"
+      }
+    }
+  },
+  "shellNamsExitedWithCode": "NAMS ปิดตัวลงด้วยรหัส {code}",
+  "@shellNamsExitedWithCode": {
+    "placeholders": {
+      "code": {
+        "type": "int"
+      }
+    }
+  },
+  "shellInternalLauncherError": "ข้อผิดพลาดภายในของตัวเรียกใช้งาน",
+  "shellMissingFilesDetail": "ไฟล์ที่จำเป็นหายไปใน {dir}:\n{files}",
+  "@shellMissingFilesDetail": {
+    "placeholders": {
+      "dir": {
+        "type": "String"
+      },
+      "files": {
+        "type": "String"
+      }
+    }
+  },
+  "shellExeNotFoundDetail": "ไม่พบ NieRAutomata.exe ที่:\n{path}\n\nเส้นทางเกมที่บันทึกไว้ในตัวเรียกใช้งานอาจไม่ถูกต้อง หรืออักษรไดรฟ์เปลี่ยนไป",
+  "@shellExeNotFoundDetail": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "shellTabUnavailableTitle": "ไม่ได้รวมอยู่ในบิลด์นี้",
+  "shellTabUnavailableBody": "หน้านี้ไม่ได้ถูกคอมไพล์รวมในบิลด์ของตัวเรียกใช้งานนี้",
+  "shellOverlayUnavailable": "ฟีเจอร์นี้ไม่ได้รวมอยู่ในบิลด์นี้",
+  "shellRuntimeSetupFailed": "ไม่สามารถเตรียมรันไทม์ที่มาพร้อมกันได้: {reason}",
+  "@shellRuntimeSetupFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "shellSettingsRecovered": "ไฟล์การตั้งค่าของตัวเรียกใช้งานเสียหายและถูกรีเซ็ตแล้ว ไฟล์เดิมถูกเก็บไว้ที่ {path}",
+  "@shellSettingsRecovered": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "shellDataFolderUnavailable": "ไม่สามารถเปิดโฟลเดอร์ข้อมูลของตัวเรียกใช้งานได้ ({reason}) การตั้งค่าจะไม่ถูกบันทึกในเซสชันนี้",
+  "@shellDataFolderUnavailable": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "shellDiagnosticsFailed": "ไม่สามารถรวบรวมข้อมูลวินิจฉัยได้: {reason}",
+  "@shellDiagnosticsFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "shellDiagDedicatedGpu": "dGPU",
+  "shellDiagGameBin": "game.bin",
+  "shellDiagSteam": "Steam",
+  "shellDiagSteamBuild": "Steam {build}",
+  "@shellDiagSteamBuild": {
+    "placeholders": {
+      "build": {
+        "type": "String"
+      }
+    }
+  },
+  "shellDiagDisabledPrefixes": "{count, plural, =1{1 คำนำหน้าที่ปิดใช้งานใน disabled_mods.toml} other{{count} คำนำหน้าที่ปิดใช้งานใน disabled_mods.toml}}",
+  "@shellDiagDisabledPrefixes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellDiagPresets": "พรีเซ็ต: {count}",
+  "@shellDiagPresets": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellDiagShaders": "เชเดอร์: {count}",
+  "@shellDiagShaders": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellDiagLoader": "ตัวโหลด",
+  "shellDiagNamsList": "รายการ NAMS: {count}",
+  "@shellDiagNamsList": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellDiagNamsInject": "nams/inject: {count}",
+  "@shellDiagNamsInject": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellDiagSkRes": "SK_Res: {count}",
+  "@shellDiagSkRes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellDiagWax": "WAX: {count}",
+  "@shellDiagWax": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellDiagHd": "HD",
+  "shellDiagH264": "H264",
+  "shellDiagMovieOverrides": "ไฟล์ทับ data/movie: {count}",
+  "@shellDiagMovieOverrides": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellDiagWaxMods": "wax/mods/",
+  "shellDiagSkResPacks": "แพ็ก SK_Res",
+  "shellDiagReshadeDir": "reshade/",
+  "shellDiagDirEntry": "{name}/",
+  "@shellDiagDirEntry": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "shellDiagBullet": "• {name}",
+  "@shellDiagBullet": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "shellDiagHeaderLine": "{version}  ·  {time}",
+  "@shellDiagHeaderLine": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "shellSummaryLabel": "{label}:",
+  "@shellSummaryLabel": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "shellNamsDllMissing": "ไม่พบ NAMS DLL",
+  "shellNamsDllMissingDetail": "ไม่พบ NAMS DLL ที่เลือกไว้ในหน้า NAMS แล้ว:\n{path}\n\nเลือกใหม่อีกครั้งในหน้า NAMS หรือกลับไปใช้ NAMS.exe ที่นั่น",
+  "shellNamsDllCopyFailed": "คัดลอก NAMS DLL ไปยังโฟลเดอร์เกมไม่ได้",
+  "shellNamsDllCopyFailedDetail": "คัดลอก\n{from}\nไปยัง\n{to}\nไม่ได้\n\n{error}\n\nหากเกมยังทำงานอยู่ ให้ปิดเกมแล้วลองอีกครั้ง",
+  "shellPlayWithNamsDll": "เริ่มด้วย NAMS DLL ({file})"
+}

@@ -1,0 +1,6 @@
+/target
+/plan
+/crates/*/tests/fixtures
+/assets/bins/logs/*
+/assets/bins/runtime/*
+/assets/bins/thirdparty/*

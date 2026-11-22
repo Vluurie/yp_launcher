@@ -1,0 +1,216 @@
+{
+  "settingsTomlErrorAt": "Line {line}, column {column}: {message}",
+  "@settingsTomlErrorAt": {
+    "placeholders": {
+      "line": {
+        "type": "int"
+      },
+      "column": {
+        "type": "int"
+      },
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsConfigNotToml": "{file} is not valid TOML. {detail}",
+  "@settingsConfigNotToml": {
+    "placeholders": {
+      "file": {
+        "type": "String"
+      },
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsSettingsNotObject": "{file} does not contain a settings object.",
+  "@settingsSettingsNotObject": {
+    "placeholders": {
+      "file": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsConfigLoadFailed": "Could not read the settings. {detail}",
+  "@settingsConfigLoadFailed": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsConfigSaveFailed": "Could not save your changes. {detail}",
+  "@settingsConfigSaveFailed": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsConfigAutosaveFailed": "Could not save {file}. {detail}",
+  "@settingsConfigAutosaveFailed": {
+    "placeholders": {
+      "file": {
+        "type": "String"
+      },
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsConfigReloadFailed": "The settings changed on disk but could not be reloaded. {detail}",
+  "@settingsConfigReloadFailed": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsRemoveEntry": "Remove",
+  "naiomKeyDisabled": "Disabled",
+  "lodmodUiCascadeLabel": "{label} - {cascade}",
+  "@lodmodUiCascadeLabel": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "cascade": {
+        "type": "String"
+      }
+    }
+  },
+  "texturesUiFolderCount": "{folder} ({count})",
+  "@texturesUiFolderCount": {
+    "placeholders": {
+      "folder": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "texturesUiNameWithOwner": "{name} ({owner})",
+  "@texturesUiNameWithOwner": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "owner": {
+        "type": "String"
+      }
+    }
+  },
+  "modelViewLodOption": "LOD: {name}",
+  "@modelViewLodOption": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "modelViewStats": "{vertices} vertices · {triangles} triangles",
+  "@modelViewStats": {
+    "placeholders": {
+      "vertices": {
+        "type": "int"
+      },
+      "triangles": {
+        "type": "int"
+      }
+    }
+  },
+  "modelViewErrNoArchives": "There is no model in these files.",
+  "modelViewErrNoReadableArchive": "None of the model files could be read.",
+  "modelViewErrMissingArchive": "The {side} file of this model is missing.",
+  "@modelViewErrMissingArchive": {
+    "placeholders": {
+      "side": {
+        "type": "String"
+      }
+    }
+  },
+  "modelViewErrEntryMissing": "The model is no longer in the {side} file. The file changed on disk; close the viewer and open it again.",
+  "@modelViewErrEntryMissing": {
+    "placeholders": {
+      "side": {
+        "type": "String"
+      }
+    }
+  },
+  "modelViewErrMeshMissing": "Mesh {id} does not exist in this model.",
+  "@modelViewErrMeshMissing": {
+    "placeholders": {
+      "id": {
+        "type": "int"
+      }
+    }
+  },
+  "modelViewErrLodMissing": "Detail level {id} does not exist in this model.",
+  "@modelViewErrLodMissing": {
+    "placeholders": {
+      "id": {
+        "type": "int"
+      }
+    }
+  },
+  "modelViewErrRenderSize": "The preview cannot be drawn at {width}x{height}. Resize the window.",
+  "@modelViewErrRenderSize": {
+    "placeholders": {
+      "width": {
+        "type": "int"
+      },
+      "height": {
+        "type": "int"
+      }
+    }
+  },
+  "modelViewErrModelUnreadable": "This model could not be read: {detail}",
+  "@modelViewErrModelUnreadable": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "modelViewErrArchiveUnreadable": "The model file is damaged or in an unexpected format: {detail}",
+  "@modelViewErrArchiveUnreadable": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "modelViewWarningsTitle": "Some files could not be read",
+  "modelViewWarnFileUnreadable": "{file}: {detail}",
+  "@modelViewWarnFileUnreadable": {
+    "placeholders": {
+      "file": {
+        "type": "String"
+      },
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "graphicsBackendD3d12Experimental": "Direct3D 12 (experimental)",
+  "graphicsBackendD3d12Warning": "Direct3D 12 is experimental. If something renders wrong or the game does not start, switch back to Direct3D 11.",
+  "namsDllTitle": "NAMS DLL",
+  "namsDllDescription": "Only for the Steam 2026 version of the game. Start the game with nams.dll instead of NAMS.exe. On every start the launcher copies it into the game folder as dinput8.dll and starts NieRAutomata.exe. nams.dll is an optional download on Nexus Mods and GitHub. You can also copy it into the game folder yourself, renamed to dinput8.dll, dxgi.dll or d3d11.dll, and start the game from Steam. Conflicts with other proxy DLLs in the game folder are yours to sort out. NAMS.exe keeps the modded runtime apart from the vanilla game and is the preferred way.",
+  "namsDllPick": "Select nams.dll…",
+  "namsDllChange": "Change…",
+  "namsDllRemove": "Use NAMS.exe again",
+  "namsDllNotADll": "Select the file named nams.dll.",
+  "namsDllUsedInPlace": "Used directly from the game folder.",
+  "namsDllCopiedAs": "Copied into the game folder as {file} on every start.",
+  "@namsDllCopiedAs": {
+    "placeholders": {
+      "file": {
+        "type": "String"
+      }
+    }
+  },
+  "namsDllConsole": "Open console",
+  "namsDllConsoleDescription": "Opens a console window with the NAMS output next to the game."
+}

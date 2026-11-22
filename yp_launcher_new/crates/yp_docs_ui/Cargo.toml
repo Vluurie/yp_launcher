@@ -1,0 +1,40 @@
+[package]
+name = "yp_docs_ui"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[features]
+default = ["library", "tools"]
+library = []
+tools = ["dep:yp_builders", "dep:yp_formats"]
+
+[dependencies]
+gpui.workspace = true
+yp_ui.workspace = true
+yp_state.workspace = true
+yp_i18n.workspace = true
+yp_core.workspace = true
+yp_host.workspace = true
+yp_docs.workspace = true
+yp_builders = { workspace = true, optional = true }
+yp_formats = { workspace = true, optional = true }
+pulldown-cmark.workspace = true
+futures.workspace = true
+log.workspace = true
+image.workspace = true
+
+[dev-dependencies]
+gpui_platform.workspace = true
+gpui = { workspace = true, features = ["test-support"] }
+yp_core = { workspace = true, features = ["test-support"] }
+yp_formats = { workspace = true, features = ["test-support"] }
+yp_config.workspace = true
+tempfile.workspace = true
+
+[lints]
+workspace = true
+
+[[example]]
+name = "docs_preview"
+required-features = ["library", "tools"]
