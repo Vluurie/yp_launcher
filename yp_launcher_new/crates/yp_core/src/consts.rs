@@ -18,6 +18,7 @@ pub const GAME_EXE_NAME: &str = "NieRAutomata.exe";
 pub const GAME_SIGNATURE: &str = "PRJ_028";
 
 pub const NAMS_EXE_NAME: &str = "NAMS.exe";
+pub const NAMS_DLL_IDENTITY: &[u8] = b"NamsIdentity\0";
 pub const YORHA_DLL_NAME: &str = "yorha_protocol.dll";
 pub const PLUGINS_DIR_NAME: &str = "plugins";
 pub const PLUGINS_DISABLED_DIR_NAME: &str = "plugins_disabled";
@@ -48,3 +49,7 @@ pub const SHORTCUT_DESCRIPTION: &str = "Launch NieR:Automata with YoRHa Protocol
 
 pub const TAB_MODLOADER_ID: &str = "modloader";
 pub const TAB_YORHA_ID: &str = "yorha";
+
+pub fn is_nams_dll(bytes: &[u8]) -> bool {
+    bytes.windows(NAMS_DLL_IDENTITY.len()).any(|window| window == NAMS_DLL_IDENTITY)
+}

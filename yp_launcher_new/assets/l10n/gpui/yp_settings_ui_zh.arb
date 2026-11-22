@@ -201,7 +201,7 @@
   "namsDllPick": "选择 nams.dll…",
   "namsDllChange": "更改…",
   "namsDllRemove": "改回使用 NAMS.exe",
-  "namsDllNotADll": "请选择名为 nams.dll 的文件。",
+  "namsDllNotADll": "该文件不是 NAMS DLL。",
   "namsDllUsedInPlace": "直接从游戏文件夹使用。",
   "namsDllCopiedAs": "每次启动时会以 {file} 的名称复制到游戏文件夹。",
   "namsDllConsole": "打开控制台",

@@ -201,7 +201,7 @@
   "namsDllPick": "Select nams.dll…",
   "namsDllChange": "Change…",
   "namsDllRemove": "Use NAMS.exe again",
-  "namsDllNotADll": "Select the file named nams.dll.",
+  "namsDllNotADll": "That file is not a NAMS DLL.",
   "namsDllUsedInPlace": "Used directly from the game folder.",
   "namsDllCopiedAs": "Copied into the game folder as {file} on every start.",
   "@namsDllCopiedAs": {

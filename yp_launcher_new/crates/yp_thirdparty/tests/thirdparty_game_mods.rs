@@ -87,6 +87,16 @@ mod classification {
     }
 
     #[test]
+    fn a_nams_dll_is_never_installed_as_a_mod_whatever_its_name() {
+        for name in ["nams.dll", "dinput8.dll", "d3d11.dll", "dxgi.dll"] {
+            let drop = temp("yp_gm_nams_");
+            write_marked_dll(&drop.path().join(name), "NamsIdentity\0 3DMigoto");
+            assert_eq!(classify(drop.path()).kind, ThirdPartyKind::NamsDll, "{name}");
+            assert!(!ThirdPartyKind::NamsDll.is_installable());
+        }
+    }
+
+    #[test]
     fn special_k_is_still_recognised_by_its_own_marker() {
         let drop = temp("yp_gm_sk_");
         write_marked_dll(&drop.path().join("dinput8.dll"), "SpecialK64");

@@ -5,7 +5,6 @@ use yp_core::{SettingKey, SettingsStore};
 use super::failure::{FailureKind, LaunchFailure};
 
 pub const NAMS_DLL_PATH: SettingKey<String> = SettingKey::new("nams_dll_path", String::new);
-pub const NAMS_DLL_NAME: &str = "nams.dll";
 pub const PROXY_NAME: &str = "dinput8.dll";
 
 pub fn picked(settings: &SettingsStore) -> Option<PathBuf> {
@@ -15,9 +14,7 @@ pub fn picked(settings: &SettingsStore) -> Option<PathBuf> {
 }
 
 pub fn is_nams_dll(path: &Path) -> bool {
-    path.file_name()
-        .and_then(|name| name.to_str())
-        .is_some_and(|name| name.eq_ignore_ascii_case(NAMS_DLL_NAME))
+    std::fs::read(path).is_ok_and(|bytes| yp_core::consts::is_nams_dll(&bytes))
 }
 
 pub fn deploy(game_dir: &Path, dll: &Path) -> Result<(), LaunchFailure> {
@@ -28,6 +25,13 @@ pub fn deploy(game_dir: &Path, dll: &Path) -> Result<(), LaunchFailure> {
         ));
     }
     let target = game_dir.join(PROXY_NAME);
+    let same_file = match (std::fs::canonicalize(dll), std::fs::canonicalize(&target)) {
+        (Ok(dll), Ok(target)) => dll == target,
+        _ => false,
+    };
+    if same_file {
+        return Ok(());
+    }
     std::fs::copy(dll, &target).map(|_| ()).map_err(|error| {
         LaunchFailure::new(
             FailureKind::NamsDllCopyFailed {
