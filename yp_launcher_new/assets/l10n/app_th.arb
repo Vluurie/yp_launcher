@@ -669,6 +669,7 @@
   "thirdPartyRedirectMods": "นี่เป็นม็อดข้อมูลเกม โปรดใช้แท็บตัวจัดการม็อด",
   "thirdPartyRedirectTextures": "นี่เป็นแพ็กเท็กซ์เจอร์ โปรดใช้แท็บเท็กซ์เจอร์",
   "thirdPartyUnsupported": "ไม่รองรับไฟล์ประเภทนี้ที่นี่",
+  "thirdPartyNamsDll": "นี่คือ NAMS DLL ไม่ใช่ม็อดภายนอก ให้เลือกในหน้า NAMS ที่ส่วน NAMS DLL",
   "thirdPartyLodModPrompt": "นี่คือ LodMod โดย NAMS มี LodMod Ext ในตัวอยู่แล้ว ต้องการนำเข้าการตั้งค่าไปยังแท็บ LodMod Ext หรือไม่?",
   "thirdPartyStatusActive": "ทำงานอยู่",
   "thirdPartyStatusInactive": "ติดตั้งแล้ว แต่ปิดใช้งานในแท็บ NAMS",

@@ -24,26 +24,39 @@ jobs:
             wrap: false
             name: YoRHa Protocol Launcher (Windows)
             category: main
+            description: Read the changelogs for everything
             file_id: NEXUSMODS_FILE_ID_WINDOWS
             changelog: true
           - asset: '*.dmg'
             wrap: true
             name: YoRHa Protocol Launcher (macOS)
-            category: main
+            category: optional
+            description: MacOS Version DMG File - you need Crossover for it
             file_id: NEXUSMODS_FILE_ID_MACOS
           - asset: '*.tar.gz'
             wrap: true
             name: YoRHa Protocol Launcher (Linux tar.gz)
-            category: main
+            category: optional
             file_id: NEXUSMODS_FILE_ID_LINUX_TARBALL
           - asset: '*.AppImage'
             wrap: true
             name: YoRHa Protocol Launcher (Linux AppImage)
-            category: main
+            category: optional
+            description: |-
+              Linux App Image Version
+              Note: This Version was tested on Linux Ubuntu with no special configurations and run by multiple people - if there any issues with an specific linux OS please report them in the discord
             file_id: NEXUSMODS_FILE_ID_LINUX_APPIMAGE
           - standalone: true
-            name: NAMS - Standalone
-            category: main
+            name: NAMS - Standalone exe
+            category: optional
+            description: |-
+              All lives in NieRAutomata/nams:
+              - mods/<mod_folder> = mods
+              - inject/textures/<pack> = texture packs
+              - cutscenes/<mod>/movie/
+              - configs: nams.toml, lodmod.toml, texture_injection.toml
+              Start: `nams.exe run` creates configs
+              Commands: `nams.exe help-full`
             file_id: NEXUSMODS_FILE_ID_STANDALONE
     env:
       TAG: ${{ github.event.release.tag_name || inputs.tag }}
@@ -102,6 +115,7 @@ jobs:
           version: ${{ steps.prep.outputs.version }}
           display_name: ${{ matrix.name }}
           category: ${{ matrix.category }}
+          description: ${{ matrix.description }}
           archive_existing_version: true
           update_mod_version: true
           changelog: ${{ matrix.changelog && steps.prep.outputs.notes || '' }}

@@ -25,6 +25,9 @@ pub fn drop_next(classification: &Classification) -> DropNext {
     {
         return DropNext::OfferLodModImport(ini.clone());
     }
+    if classification.kind == ThirdPartyKind::NamsDll {
+        return DropNext::Tell(Msg::ThirdPartyNamsDll, Severity::Accent);
+    }
     match classification.kind.drop_route() {
         DropRoute::Install => DropNext::Install,
         DropRoute::ModsTab => DropNext::Tell(Msg::ThirdPartyRedirectMods, Severity::Accent),
@@ -204,6 +207,10 @@ mod tests {
         assert_eq!(
             drop_next(&classified(ThirdPartyKind::Textures)),
             DropNext::Tell(Msg::ThirdPartyRedirectTextures, Severity::Accent)
+        );
+        assert_eq!(
+            drop_next(&classified(ThirdPartyKind::NamsDll)),
+            DropNext::Tell(Msg::ThirdPartyNamsDll, Severity::Accent)
         );
         for kind in [
             ThirdPartyKind::SpecialK,

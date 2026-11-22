@@ -678,6 +678,7 @@
   "thirdPartyRedirectMods": "This is a game-data mod — use the Mod Manager tab.",
   "thirdPartyRedirectTextures": "This is a texture pack — use the Textures tab.",
   "thirdPartyUnsupported": "This file type is not supported here.",
+  "thirdPartyNamsDll": "This is the NAMS DLL, not a third-party mod. Select it on the NAMS page under NAMS DLL.",
   "thirdPartyLodModPrompt": "This is a LodMod. NAMS has LodMod Ext built in — import its settings into the LodMod Ext tab?",
   "thirdPartyStatusActive": "Active",
   "thirdPartyStatusInactive": "Installed, disabled in NAMS tab",

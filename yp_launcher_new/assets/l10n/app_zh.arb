@@ -663,6 +663,7 @@
   "thirdPartyRedirectMods": "这是游戏数据模组 — 请使用模组管理器标签页。",
   "thirdPartyRedirectTextures": "这是纹理包 — 请使用纹理标签页。",
   "thirdPartyUnsupported": "此处不支持该文件类型。",
+  "thirdPartyNamsDll": "这是 NAMS DLL，不是第三方模组。请在 NAMS 页面的 NAMS DLL 中选择它。",
   "thirdPartyLodModPrompt": "这是 LodMod。NAMS 已内置 LodMod Ext — 是否将其设置导入到 LodMod Ext 标签页？",
   "thirdPartyStatusActive": "已启用",
   "thirdPartyStatusInactive": "已安装，在 NAMS 标签页中已禁用",
