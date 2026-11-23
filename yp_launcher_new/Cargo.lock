@@ -6925,7 +6925,7 @@ dependencies = [
 
 [[package]]
 name = "yp_app"
-version = "4.0.0"
+version = "4.0.1"
 dependencies = [
  "embed-resource",
  "gpui",
@@ -6946,7 +6946,7 @@ dependencies = [
 
 [[package]]
 name = "yp_builders"
-version = "4.0.0"
+version = "4.0.1"
 dependencies = [
  "image 0.25.99",
  "log",
@@ -6964,7 +6964,7 @@ dependencies = [
 
 [[package]]
 name = "yp_config"
-version = "4.0.0"
+version = "4.0.1"
 dependencies = [
  "indexmap",
  "serde",
@@ -6976,7 +6976,7 @@ dependencies = [
 
 [[package]]
 name = "yp_core"
-version = "4.0.0"
+version = "4.0.1"
 dependencies = [
  "dirs 7.0.0",
  "encoding_rs",
@@ -7001,7 +7001,7 @@ dependencies = [
 
 [[package]]
 name = "yp_cutscenes"
-version = "4.0.0"
+version = "4.0.1"
 dependencies = [
  "log",
  "serde",
@@ -7015,7 +7015,7 @@ dependencies = [
 
 [[package]]
 name = "yp_docs"
-version = "4.0.0"
+version = "4.0.1"
 dependencies = [
  "log",
  "pulldown-cmark",
@@ -7029,7 +7029,7 @@ dependencies = [
 
 [[package]]
 name = "yp_docs_ui"
-version = "4.0.0"
+version = "4.0.1"
 dependencies = [
  "futures",
  "gpui",
@@ -7051,7 +7051,7 @@ dependencies = [
 
 [[package]]
 name = "yp_formats"
-version = "4.0.0"
+version = "4.0.1"
 dependencies = [
  "image 0.25.99",
  "tempfile",
@@ -7062,7 +7062,7 @@ dependencies = [
 
 [[package]]
 name = "yp_health"
-version = "4.0.0"
+version = "4.0.1"
 dependencies = [
  "indexmap",
  "jiff",
@@ -7083,7 +7083,7 @@ dependencies = [
 
 [[package]]
 name = "yp_host"
-version = "4.0.0"
+version = "4.0.1"
 dependencies = [
  "dirs 7.0.0",
  "gilrs",
@@ -7105,7 +7105,7 @@ dependencies = [
 
 [[package]]
 name = "yp_i18n"
-version = "4.0.0"
+version = "4.0.1"
 dependencies = [
  "log",
  "serde",
@@ -7116,7 +7116,7 @@ dependencies = [
 
 [[package]]
 name = "yp_inspector"
-version = "4.0.0"
+version = "4.0.1"
 dependencies = [
  "image 0.25.99",
  "tempfile",
@@ -7126,7 +7126,7 @@ dependencies = [
 
 [[package]]
 name = "yp_mods"
-version = "4.0.0"
+version = "4.0.1"
 dependencies = [
  "indexmap",
  "jiff",
@@ -7143,7 +7143,7 @@ dependencies = [
 
 [[package]]
 name = "yp_mods_ui"
-version = "4.0.0"
+version = "4.0.1"
 dependencies = [
  "futures",
  "gpui",
@@ -7166,7 +7166,7 @@ dependencies = [
 
 [[package]]
 name = "yp_settings_ui"
-version = "4.0.0"
+version = "4.0.1"
 dependencies = [
  "futures",
  "gpui",
@@ -7191,7 +7191,7 @@ dependencies = [
 
 [[package]]
 name = "yp_shell"
-version = "4.0.0"
+version = "4.0.1"
 dependencies = [
  "futures",
  "gpui",
@@ -7215,7 +7215,7 @@ dependencies = [
 
 [[package]]
 name = "yp_state"
-version = "4.0.0"
+version = "4.0.1"
 dependencies = [
  "futures",
  "gpui",
@@ -7241,7 +7241,7 @@ dependencies = [
 
 [[package]]
 name = "yp_thirdparty"
-version = "4.0.0"
+version = "4.0.1"
 dependencies = [
  "indexmap",
  "log",
@@ -7258,7 +7258,7 @@ dependencies = [
 
 [[package]]
 name = "yp_ui"
-version = "4.0.0"
+version = "4.0.1"
 dependencies = [
  "futures",
  "gpui",
