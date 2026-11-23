@@ -201,7 +201,7 @@
   "namsDllPick": "nams.dll auswählen…",
   "namsDllChange": "Ändern…",
   "namsDllRemove": "Wieder NAMS.exe verwenden",
-  "namsDllNotADll": "Bitte die Datei nams.dll auswählen.",
+  "namsDllNotADll": "Diese Datei ist keine NAMS-DLL.",
   "namsDllUsedInPlace": "Wird direkt aus dem Spielordner verwendet.",
   "namsDllCopiedAs": "Wird bei jedem Start als {file} in den Spielordner kopiert.",
   "namsDllConsole": "Konsole öffnen",

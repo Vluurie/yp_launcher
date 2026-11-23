@@ -201,7 +201,7 @@
   "namsDllPick": "เลือก nams.dll…",
   "namsDllChange": "เปลี่ยน…",
   "namsDllRemove": "กลับไปใช้ NAMS.exe",
-  "namsDllNotADll": "โปรดเลือกไฟล์ชื่อ nams.dll",
+  "namsDllNotADll": "ไฟล์นี้ไม่ใช่ NAMS DLL",
   "namsDllUsedInPlace": "ใช้จากโฟลเดอร์เกมโดยตรง",
   "namsDllCopiedAs": "จะถูกคัดลอกไปยังโฟลเดอร์เกมเป็น {file} ทุกครั้งที่เริ่ม",
   "namsDllConsole": "เปิดคอนโซล",

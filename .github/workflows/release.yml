@@ -120,6 +120,7 @@ jobs:
           mkdir -p "$root/assets" dist
           cp "target/small/$BINARY.exe" "$root/"
           cp -R assets/bins "$root/assets/"
+          rm -f "$root/assets/bins/nams.dll"
           cp ../LICENSE "$root/LICENSE.txt"
       - name: stage linux
         if: runner.os == 'Linux'
@@ -138,6 +139,7 @@ jobs:
           cp "stage/$BINARY" "stage/$root/"
           cp -R stage/lib "stage/$root/"
           cp -R assets/bins "stage/$root/assets/"
+          rm -f "stage/$root/assets/bins/nams.dll"
           cp ../LICENSE "stage/$root/LICENSE.txt"
 
           appdir=stage/AppDir
@@ -145,6 +147,7 @@ jobs:
           cp "stage/$BINARY" "$appdir/usr/bin/"
           cp -R stage/lib "$appdir/usr/bin/"
           cp -R assets/bins "$appdir/usr/bin/assets/"
+          rm -f "$appdir/usr/bin/assets/bins/nams.dll"
           cp ../LICENSE "$appdir/usr/bin/LICENSE.txt"
           cp assets/icon/app_icon.png "$appdir/yp-launcher.png"
           cat > "$appdir/yp-launcher.desktop" <<EOF
@@ -168,6 +171,7 @@ jobs:
           mkdir -p "$app/Contents/MacOS" "$app/Contents/Resources/assets" dist
           cp "target/small/$BINARY" "$app/Contents/MacOS/"
           cp -R assets/bins "$app/Contents/Resources/assets/"
+          rm -f "$app/Contents/Resources/assets/bins/nams.dll"
           cp ../LICENSE "$app/Contents/Resources/LICENSE.txt"
 
           iconset=stage/AppIcon.iconset

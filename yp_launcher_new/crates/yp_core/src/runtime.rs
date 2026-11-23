@@ -95,7 +95,9 @@ pub fn bundled_assets(bins_dir: &Path) -> Result<Vec<String>> {
         if !entry.file_type().is_file() || entry.file_name().to_string_lossy().starts_with('.') {
             continue;
         }
-        if let Some(relative) = crate::fs::rel_slash(bins_dir, entry.path()) {
+        if let Some(relative) = crate::fs::rel_slash(bins_dir, entry.path())
+            && relative != consts::NAMS_DLL_NAME
+        {
             assets.push(relative);
         }
     }

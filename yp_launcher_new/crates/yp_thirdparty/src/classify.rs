@@ -17,6 +17,10 @@ pub fn classify(extracted_root: &Path) -> Classification {
         };
     }
 
+    if paths::find_graphics_dll(&root, GraphicsDll::Nams).is_some() {
+        return found(ThirdPartyKind::NamsDll);
+    }
+
     if let Some(lodmod_ini) = tree::first_file_where(&root, |rel, _| rel == "lodmod.ini" || rel.ends_with("/lodmod.ini")) {
         return Classification {
             lodmod_ini: Some(lodmod_ini),

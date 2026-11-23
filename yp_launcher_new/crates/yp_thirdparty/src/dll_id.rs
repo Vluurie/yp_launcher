@@ -5,6 +5,7 @@ pub enum GraphicsDll {
     Other,
     ReShade,
     Migoto,
+    Nams,
 }
 
 const RESHADE_MARKERS: [&[u8]; 2] = [b"reshade.me", b"crosire"];
@@ -12,7 +13,9 @@ const RESHADE_MARKERS: [&[u8]; 2] = [b"reshade.me", b"crosire"];
 const MIGOTO_MARKERS: [&[u8]; 3] = [b"HackerDevice", b"HackerContext", b"3DMigoto"];
 
 pub fn identify_bytes(bytes: &[u8]) -> GraphicsDll {
-    if any_marker(bytes, &MIGOTO_MARKERS) {
+    if yp_core::consts::is_nams_dll(bytes) {
+        GraphicsDll::Nams
+    } else if any_marker(bytes, &MIGOTO_MARKERS) {
         GraphicsDll::Migoto
     } else if any_marker(bytes, &RESHADE_MARKERS) {
         GraphicsDll::ReShade

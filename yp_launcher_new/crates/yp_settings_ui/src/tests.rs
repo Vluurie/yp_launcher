@@ -313,11 +313,14 @@ fn the_nams_page_takes_only_dll_files_and_can_go_back_to_nams_exe(cx: &mut TestA
             .launch_options
             .read_with(cx, |options, _| options.nams_dll().map(std::path::Path::to_path_buf))
     };
-    tab.update(cx, |tab, cx| tab.use_nams_dll("D:/builds/readme.txt".into(), cx));
+    let other = sandbox.game.root().join("nams.dll");
+    std::fs::write(&other, b"MZ some other dll").unwrap();
+    tab.update(cx, |tab, cx| tab.use_nams_dll(other.clone(), cx));
     assert!(tab.read_with(cx, |tab, _| tab.dll_rejected()));
     assert_eq!(picked(&stores, cx), None);
 
-    let dll = std::path::PathBuf::from("D:/builds/nams.dll");
+    let dll = sandbox.game.root().join("renamed.dll");
+    std::fs::write(&dll, [b"MZ exports ".as_slice(), yp_core::consts::NAMS_DLL_IDENTITY].concat()).unwrap();
     tab.update(cx, |tab, cx| tab.use_nams_dll(dll.clone(), cx));
     settle(cx);
     assert!(!tab.read_with(cx, |tab, _| tab.dll_rejected()));

@@ -40,6 +40,7 @@ pub enum ThirdPartyKind {
     GameData,
     SpecialK,
     SkShaderEdit,
+    NamsDll,
     BrokenLegacy,
     MultiBundle,
     Unknown,
@@ -69,6 +70,7 @@ impl ThirdPartyKind {
             ThirdPartyKind::LodMod
             | ThirdPartyKind::SpecialK
             | ThirdPartyKind::SkShaderEdit
+            | ThirdPartyKind::NamsDll
             | ThirdPartyKind::BrokenLegacy
             | ThirdPartyKind::MultiBundle
             | ThirdPartyKind::Unknown => DropRoute::Unsupported,
