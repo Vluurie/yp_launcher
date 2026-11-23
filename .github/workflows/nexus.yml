@@ -58,15 +58,25 @@ jobs:
               Start: `nams.exe run` creates configs
               Commands: `nams.exe help-full`
             file_id: NEXUSMODS_FILE_ID_STANDALONE
+          - dylib: true
+            name: NAMS Standalone Dylib
+            category: optional
+            description: |-
+              Warning: Optional - manual, can conflict with other installs.
+              You should know what your are doing.
+
+              DO NOT INSTALL WITH LAUNCHER IN THIRD PARTY - Only via Nams tab -> nams.dll and pick the nams.dll or just rename it manually and drop it.
+            file_id: NEXUSMODS_FILE_ID_DYLIB
     env:
       TAG: ${{ github.event.release.tag_name || inputs.tag }}
     steps:
       - uses: actions/checkout@v4
-        if: matrix.standalone && vars[matrix.file_id] != ''
+        if: (matrix.standalone || matrix.dylib) && vars[matrix.file_id] != ''
         with:
           ref: ${{ env.TAG }}
           sparse-checkout: |
             yp_launcher_new/assets/bins/NAMS.exe
+            yp_launcher_new/assets/bins/nams.dll
             yp_launcher_new/assets/bins/plugins/yorha_protocol.dll
           sparse-checkout-cone-mode: false
       - name: prepare file
@@ -77,9 +87,13 @@ jobs:
           ASSET: ${{ matrix.asset }}
           WRAP: ${{ matrix.wrap }}
           STANDALONE: ${{ matrix.standalone }}
+          DYLIB: ${{ matrix.dylib }}
         run: |
           mkdir dl
-          if [ "$STANDALONE" = true ]; then
+          if [ "$DYLIB" = true ]; then
+            zip -j "dl/NAMS.Dylib.$TAG.zip" yp_launcher_new/assets/bins/nams.dll
+            file="dl/NAMS.Dylib.$TAG.zip"
+          elif [ "$STANDALONE" = true ]; then
             dir="NAMS - Standalone $TAG"
             mkdir -p "dl/$dir/plugins"
             cp yp_launcher_new/assets/bins/NAMS.exe "dl/$dir/"
