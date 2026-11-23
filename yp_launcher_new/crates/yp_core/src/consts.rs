@@ -18,6 +18,7 @@ pub const GAME_EXE_NAME: &str = "NieRAutomata.exe";
 pub const GAME_SIGNATURE: &str = "PRJ_028";
 
 pub const NAMS_EXE_NAME: &str = "NAMS.exe";
+pub const NAMS_DLL_NAME: &str = "nams.dll";
 pub const NAMS_DLL_IDENTITY: &[u8] = b"NamsIdentity\0";
 pub const YORHA_DLL_NAME: &str = "yorha_protocol.dll";
 pub const PLUGINS_DIR_NAME: &str = "plugins";
