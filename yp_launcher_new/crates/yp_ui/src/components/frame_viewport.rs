@@ -55,6 +55,7 @@ pub struct FrameViewport {
     id: ElementId,
     frame: Option<Arc<RenderImage>>,
     loading: bool,
+    transparent: bool,
     loading_label: Option<SharedString>,
     fit: ObjectFit,
     on_orbit: Option<ValueHandler<Point<Pixels>>>,
@@ -72,6 +73,7 @@ impl FrameViewport {
             id: id.into(),
             frame: None,
             loading: false,
+            transparent: false,
             loading_label: None,
             fit: ObjectFit::Contain,
             on_orbit: None,
@@ -84,6 +86,11 @@ impl FrameViewport {
 
     pub fn frame(mut self, frame: Option<Arc<RenderImage>>) -> Self {
         self.frame = frame;
+        self
+    }
+
+    pub fn transparent(mut self) -> Self {
+        self.transparent = true;
         self
     }
 
@@ -206,7 +213,7 @@ impl RenderOnce for FrameViewport {
             .relative()
             .size_full()
             .overflow_hidden()
-            .bg(theme.colors.scrim)
+            .when(!self.transparent, |el| el.bg(theme.colors.scrim))
             .when(interactive, |this| {
                 this.cursor(if drag.is_some() {
                     CursorStyle::ClosedHand

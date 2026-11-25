@@ -7,6 +7,7 @@ license.workspace = true
 [dependencies]
 gpui.workspace = true
 yp_ui.workspace = true
+yp_nier_ui.workspace = true
 yp_state.workspace = true
 yp_i18n.workspace = true
 yp_core.workspace = true

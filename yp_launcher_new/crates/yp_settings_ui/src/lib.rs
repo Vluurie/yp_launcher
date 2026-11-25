@@ -30,6 +30,7 @@ pub use errors::{
 pub use fields::{Control, FieldRow, Marker, control_for};
 pub use schema_page::{TabScope, categories_under, settings_of};
 pub use inspector::{InspectorPage, ModelPreview};
+pub use yp_nier_ui::Theme as MenuTheme;
 pub use lodmod::LodModTab;
 pub use naiom::NaiomTab;
 pub use nams::NamsTab;

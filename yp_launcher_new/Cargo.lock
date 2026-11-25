@@ -2201,6 +2201,7 @@ dependencies = [
  "gpui_linux",
  "gpui_macos",
  "gpui_web",
+ "gpui_wgpu",
  "gpui_windows",
 ]
 
@@ -2265,6 +2266,7 @@ dependencies = [
  "etagere",
  "gpui",
  "gpui_util",
+ "image 0.25.99",
  "itertools 0.14.0",
  "log",
  "parking_lot",
@@ -7165,6 +7167,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "yp_nier_ui"
+version = "4.0.1"
+dependencies = [
+ "gpui",
+ "gpui_platform",
+ "image 0.25.99",
+ "serde",
+ "serde_json",
+ "unicode-segmentation",
+]
+
+[[package]]
 name = "yp_settings_ui"
 version = "4.0.1"
 dependencies = [
@@ -7185,6 +7199,7 @@ dependencies = [
  "yp_i18n",
  "yp_inspector",
  "yp_mods",
+ "yp_nier_ui",
  "yp_state",
  "yp_ui",
 ]

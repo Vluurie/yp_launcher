@@ -21,7 +21,10 @@ fn init_features(cx: &mut App) {
 fn main() {
     let args = args::Args::from_process();
     let boot = boot::boot(&args);
-    gpui_platform::application()
+    let platform = gpui_platform::current_platform(false);
+    #[cfg(feature = "settings")]
+    yp_settings_ui::MenuTheme::with_text_system(platform.text_system());
+    gpui::Application::with_platform(platform)
         .with_assets(yp_ui::Assets::with_folder(&boot.env.paths.assets_dir))
         .run(move |cx: &mut App| {
             yp_ui::init(cx);

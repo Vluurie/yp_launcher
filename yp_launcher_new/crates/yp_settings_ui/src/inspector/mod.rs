@@ -1,4 +1,5 @@
 pub mod model;
+mod unit_data;
 
 use std::collections::HashMap;
 
@@ -192,6 +193,8 @@ pub struct InspectorPage {
     mesh_scroll: ScrollHandle,
     state_scroll: ScrollHandle,
     focus_requested: bool,
+    unit_view: Option<bool>,
+    unit_scroll: gpui::UniformListScrollHandle,
     _subscriptions: Vec<Subscription>,
 }
 
@@ -206,6 +209,8 @@ impl InspectorPage {
             mesh_scroll: ScrollHandle::new(),
             state_scroll: ScrollHandle::new(),
             focus_requested: false,
+            unit_view: None,
+            unit_scroll: Default::default(),
             _subscriptions: subscriptions,
         }
     }
@@ -290,6 +295,18 @@ impl InspectorPage {
                 Some(select) => h_flex().child(select).into_any_element(),
                 None => Label::new(title).semibold().truncate().into_any_element(),
             }))
+            .when(!state.candidates().is_empty(), |bar| {
+                bar.child(
+                    IconButton::new("inspector-unit-data", IconName::OpenInFull)
+                        .icon_size(IconSize::Small)
+                        .icon_color(Color::Accent)
+                        .bordered(true)
+                        .tooltip(Tooltip::text(strings.three_d_inspector_expand()))
+                        .on_click(cx.listener(|this, _, w, cx| {
+                            this.set_unit_view(Some(false), w, cx);
+                        })),
+                )
+            })
             .children(lod_select)
             .when(!warnings.is_empty(), |this| {
                 this.child(
@@ -462,6 +479,9 @@ impl Render for InspectorPage {
             self.focus_requested = true;
             window.focus(&self.focus_handle, cx);
         }
+        if let Some(expanded) = self.unit_view {
+            return self.unit_data(expanded, cx);
+        }
         let state = self.model.read(cx);
         let session = state.session().cloned();
         let error = state.error_text(cx);
@@ -523,6 +543,7 @@ impl Render for InspectorPage {
                             .color(Color::Secondary),
                     ),
             )
+            .into_any_element()
     }
 }
 

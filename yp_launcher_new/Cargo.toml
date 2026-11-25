@@ -26,6 +26,7 @@ yp_inspector = { path = "crates/yp_inspector" }
 yp_cutscenes = { path = "crates/yp_cutscenes" }
 yp_health = { path = "crates/yp_health" }
 yp_ui = { path = "crates/yp_ui" }
+yp_nier_ui = { path = "crates/yp_nier_ui" }
 yp_state = { path = "crates/yp_state" }
 yp_shell = { path = "crates/yp_shell" }
 yp_settings_ui = { path = "crates/yp_settings_ui" }

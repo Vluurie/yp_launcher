@@ -230,6 +230,7 @@ pub enum InspectorModelEvent {
 
 pub struct InspectorModel {
     mode: ViewMode,
+    style: yp_inspector::RenderStyle,
     archives: ArchivePaths,
     pair: DataArchivePair,
     service: Entity<InspectorService>,
@@ -261,6 +262,7 @@ impl InspectorModel {
         let pair = archive_pair(&archives, stores.mods.read(cx).mods());
         let mut this = Self {
             mode,
+            style: Default::default(),
             archives,
             pair,
             service: stores.inspector.clone(),
@@ -418,6 +420,13 @@ impl InspectorModel {
         }
     }
 
+    pub fn set_style(&mut self, style: yp_inspector::RenderStyle, cx: &mut Context<Self>) {
+        self.style = style;
+        if let Some(session) = &self.session {
+            session.update(cx, |session, cx| session.set_style(style, cx));
+        }
+    }
+
     pub fn open_candidate(&mut self, candidate: ModelCandidate, cx: &mut Context<Self>) {
         let archives = self.archives.clone();
         let id = candidate.id;
@@ -425,7 +434,10 @@ impl InspectorModel {
             .service
             .update(cx, |service, cx| service.open_session(archives, id, cx));
         let camera = self.mode.camera();
-        session.update(cx, |session, cx| session.set_camera(camera, cx));
+        session.update(cx, |session, cx| {
+            session.set_style(self.style, cx);
+            session.set_camera(camera, cx);
+        });
         self.session_subscription =
             Some(cx.subscribe(&session, |this, _, event: &ModelEvent, cx| match event {
                 ModelEvent::Ready => this.session_ready(cx),
