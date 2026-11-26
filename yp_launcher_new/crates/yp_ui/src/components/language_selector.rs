@@ -1,15 +1,15 @@
 use gpui::{App, Anchor, ElementId, IntoElement, RenderOnce, Window, prelude::*, px, relative};
 use yp_i18n::{Locale, Strings};
 
-use super::button::{ButtonSize, IconButton};
+use super::button::{Button, ButtonSize, ButtonStyle, IconButton};
 use super::icon::{Icon, IconName, IconSize};
 use super::menu::{ContextMenu, ContextMenuEntry, PopoverMenu};
 use super::tooltip::Tooltip;
-use crate::actions::{SetLocale, ToggleTheme};
+use crate::actions::SetLocale;
 use crate::i18n::ActiveStrings;
 use crate::styled_ext::{h_flex, v_flex};
 use crate::theme::{ActiveTheme, Color, ResponsiveExt, ThemeId};
-use crate::traits::{ButtonCommon, Clickable, Toggleable};
+use crate::traits::{ButtonCommon, Toggleable};
 
 pub struct LanguageSelector {
     id: ElementId,
@@ -62,9 +62,17 @@ impl RenderOnce for LanguageSelector {
         let tooltip = cx.t().tooltip_language();
         let icon_size = self.icon_size;
         PopoverMenu::<ContextMenu>::new(self.id)
+            .accessible_label(tooltip)
             .anchor(self.anchor)
             .attach(self.attach)
-            .trigger_with(move |open, _, _| {
+            .trigger_with(move |open, _, cx| {
+                if cx.theme().id == ThemeId::NierNew {
+                    return Button::new("yp-language-trigger", cx.active_locale().display_name())
+                        .style(ButtonStyle::Link)
+                        .start_icon(IconName::Language)
+                        .end_icon(IconName::KeyboardArrowDown)
+                        .into_any_element();
+                }
                 IconButton::new("yp-language-trigger", IconName::Language)
                     .icon_size(icon_size)
                     .icon_color(Color::Accent)
@@ -176,15 +184,66 @@ impl ThemeToggle {
 impl RenderOnce for ThemeToggle {
     fn render(self, _window: &mut Window, cx: &mut App) -> impl IntoElement {
         let strings = cx.t();
-        let (icon, tooltip) = match cx.theme().id {
-            ThemeId::Dark => (IconName::WbSunnyOutlined, strings.theme_toggle_to_nier()),
-            ThemeId::Nier => (IconName::DarkModeOutlined, strings.theme_toggle_to_dark()),
-        };
-        IconButton::new(self.id, icon)
-            .icon_size(self.icon_size)
-            .icon_color(Color::Accent)
-            .size(ButtonSize::Compact)
-            .tooltip(Tooltip::text(tooltip))
-            .on_click(|_, window, cx| window.dispatch_action(Box::new(ToggleTheme), cx))
+        let active = cx.theme().id;
+        let label = strings.menu_appearance();
+        PopoverMenu::<ContextMenu>::new(self.id)
+            .accessible_label(label)
+            .anchor(Anchor::TopRight)
+            .attach(Anchor::BottomRight)
+            .trigger(if active == ThemeId::NierNew {
+                Button::new("appearance-trigger", label)
+                    .style(ButtonStyle::Link)
+                    .end_icon(IconName::KeyboardArrowDown)
+                    .into_any_element()
+            } else {
+                IconButton::new("appearance-trigger", IconName::WbSunnyOutlined)
+                    .icon_size(self.icon_size)
+                    .tooltip(Tooltip::text(label))
+                    .into_any_element()
+            })
+            .menu(move |window, cx| {
+                Some(ContextMenu::build(window, cx, move |menu, _, cx| {
+                    let menu = [
+                        (ThemeId::Dark, strings.theme_toggle_to_dark()),
+                        (ThemeId::Nier, strings.theme_toggle_to_nier()),
+                        (ThemeId::NierNew, strings.theme_toggle_to_nier_new()),
+                    ]
+                    .into_iter()
+                    .fold(menu.header(label), |menu, (id, title)| {
+                        menu.item(
+                            ContextMenuEntry::new(title)
+                                .selected(active == id)
+                                .handler(move |_, cx| crate::theme::set_theme(id, cx)),
+                        )
+                    });
+                    if active == ThemeId::NierNew {
+                        let reduced = yp_nier_ui::ReducedMotion::enabled(cx);
+                        let menu = menu.separator().item(
+                            ContextMenuEntry::new(strings.menu_reduce_motion())
+                                .toggle(reduced)
+                                .handler(move |_, cx| {
+                                    cx.set_global(yp_nier_ui::ReducedMotion(!reduced));
+                                    cx.refresh_windows();
+                                }),
+                        );
+                        let percent = crate::theme::MenuTextSize::percent(cx);
+                        crate::theme::MenuTextSize::OPTIONS.into_iter().fold(
+                            menu.header(strings.menu_text_size()),
+                            |menu, size| {
+                                menu.item(
+                                    ContextMenuEntry::new(format!("{size}%"))
+                                        .selected(size == percent)
+                                        .handler(move |_, cx| {
+                                            cx.set_global(crate::theme::MenuTextSize::new(size));
+                                            cx.refresh_windows();
+                                        }),
+                                )
+                            },
+                        )
+                    } else {
+                        menu
+                    }
+                }))
+            })
     }
 }

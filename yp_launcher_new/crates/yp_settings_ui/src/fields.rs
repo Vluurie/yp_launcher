@@ -360,6 +360,7 @@ impl RenderOnce for FieldRow {
                 let current = number_of(&self.value).unwrap_or(min);
                 let snap = self.snap;
                 SettingSlider::new(id, label, current as f32)
+                    .when_some(number_of(&setting.default), |slider, value| slider.default_mark(value as f32))
                     .min(min as f32)
                     .max(max as f32)
                     .step(step as f32)
@@ -472,6 +473,7 @@ impl RenderOnce for FieldRow {
                         .unwrap_or_else(|| SharedString::from(format!("{label} {}", index + 1)));
                     let item_description = (index == 0).then(|| description.clone()).flatten();
                     SettingSlider::new(item_id, item_label, current[index] as f32)
+                        .when_some(setting.default.get(index).and_then(number_of), |slider, value| slider.default_mark(value as f32))
                         .min(min as f32)
                         .max(max as f32)
                         .step(step as f32)

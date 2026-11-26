@@ -20,20 +20,51 @@ pub use sizes::{
 };
 pub use style::{ButtonHover, Elevation, NavHover, ThemeElevation, ThemeStyle};
 
+#[derive(Clone, Copy)]
+pub struct MenuTextSize(u16);
+
+impl Global for MenuTextSize {}
+
+impl MenuTextSize {
+    pub const OPTIONS: [u16; 4] = [100, 125, 150, 200];
+
+    pub fn new(percent: u16) -> Self {
+        Self(if Self::OPTIONS.contains(&percent) {
+            percent
+        } else {
+            100
+        })
+    }
+
+    pub fn percent(cx: &App) -> u16 {
+        cx.try_global::<Self>().map_or(100, |scale| scale.0)
+    }
+
+    pub fn factor(cx: &App) -> f32 {
+        if cx.theme().id == ThemeId::NierNew {
+            f32::from(Self::percent(cx)) / 100.
+        } else {
+            1.
+        }
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, Default)]
 pub enum ThemeId {
     #[default]
     Dark,
     Nier,
+    NierNew,
 }
 
 impl ThemeId {
-    pub const ALL: [ThemeId; 2] = [ThemeId::Dark, ThemeId::Nier];
+    pub const ALL: [ThemeId; 3] = [ThemeId::Dark, ThemeId::Nier, ThemeId::NierNew];
 
     pub fn code(self) -> &'static str {
         match self {
             ThemeId::Dark => "dark",
             ThemeId::Nier => "nier",
+            ThemeId::NierNew => "nier-new",
         }
     }
 
@@ -44,14 +75,14 @@ impl ThemeId {
     pub fn toggled(self) -> ThemeId {
         match self {
             ThemeId::Dark => ThemeId::Nier,
-            ThemeId::Nier => ThemeId::Dark,
+            ThemeId::Nier | ThemeId::NierNew => ThemeId::Dark,
         }
     }
 
     pub fn appearance(self) -> Appearance {
         match self {
             ThemeId::Dark => Appearance::Dark,
-            ThemeId::Nier => Appearance::Light,
+            ThemeId::Nier | ThemeId::NierNew => Appearance::Light,
         }
     }
 }
@@ -95,9 +126,27 @@ impl Theme {
             elevation: ThemeElevation::from_colors(&colors, &alpha),
             colors,
             alpha,
-            sizes: ThemeSizes::default(),
+            sizes: if id == ThemeId::NierNew {
+                ThemeSizes {
+                    font_xs: Scaled::new(13., 14., 15.),
+                    font_sm: Scaled::new(14., 15., 16.),
+                    font_md: Scaled::new(15., 16., 17.),
+                    font_lg: Scaled::new(17., 19., 21.),
+                    border_radius: Scaled::new(0., 0., 0.),
+                    ..ThemeSizes::default()
+                }
+            } else {
+                ThemeSizes::default()
+            },
             motion: Motion::default(),
-            fonts: ThemeFonts::default(),
+            fonts: if id == ThemeId::NierNew {
+                ThemeFonts {
+                    ui: ".SystemUIFont".into(),
+                    ..ThemeFonts::default()
+                }
+            } else {
+                ThemeFonts::default()
+            },
         }
     }
 
@@ -197,8 +246,10 @@ mod tests {
     fn theme_ids_round_trip_through_their_codes() {
         for id in ThemeId::ALL {
             assert_eq!(ThemeId::from_code(id.code()), Some(id));
-            assert_eq!(id.toggled().toggled(), id);
         }
+        assert_eq!(ThemeId::Nier.toggled(), ThemeId::Dark);
+        assert_eq!(ThemeId::Dark.toggled(), ThemeId::Nier);
+        assert_eq!(ThemeId::NierNew.toggled(), ThemeId::Dark);
         assert_eq!(ThemeId::from_code("light"), None);
         assert!(ThemeId::Nier.appearance().is_light());
         assert!(!ThemeId::Dark.appearance().is_light());

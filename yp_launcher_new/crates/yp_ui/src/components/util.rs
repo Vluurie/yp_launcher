@@ -72,6 +72,8 @@ pub fn open_link(url: &str, cx: &mut App) {
 pub struct HoverState {
     hovered: bool,
     changes: usize,
+    change_started: Option<std::time::Instant>,
+    from: f32,
 }
 
 impl HoverState {
@@ -83,8 +85,19 @@ impl HoverState {
         self.changes
     }
 
+    fn fill_fraction(&self) -> f32 {
+        let target = u8::from(self.hovered) as f32;
+        let Some(start) = self.change_started else {
+            return target;
+        };
+        let t = (start.elapsed().as_secs_f32() / 0.19).min(1.);
+        target + (self.from - target) * (1. - t).powi(3)
+    }
+
     fn set(&mut self, hovered: bool, cx: &mut Context<Self>) {
         if self.hovered != hovered {
+            self.from = self.fill_fraction();
+            self.change_started = Some(std::time::Instant::now());
             self.hovered = hovered;
             self.changes += 1;
             cx.notify();
@@ -98,6 +111,36 @@ pub fn use_hover_state(
     cx: &mut App,
 ) -> Entity<HoverState> {
     window.use_keyed_state(id.into(), cx, |_, _| HoverState::default())
+}
+
+pub fn menu_hover_fill(
+    id: ElementId,
+    color: gpui::Hsla,
+    foreground: Option<gpui::AnyElement>,
+    window: &mut Window,
+    cx: &mut App,
+) -> impl IntoElement + use<> {
+    let state = use_hover_state((id, "menu-fill"), window, cx);
+    let target = u8::from(state.read(cx).hovered) as f32;
+    let progress = if yp_nier_ui::ReducedMotion::enabled(cx) {
+        target
+    } else {
+        state.read(cx).fill_fraction()
+    };
+    if (progress - target).abs() > 0.001 {
+        window.request_animation_frame();
+    }
+    gpui::div().absolute().inset_0()
+        .when(progress > 0.001, |layer| {
+            let fill = gpui::div().absolute().left_0().top_0().bottom_0()
+                .w(gpui::relative(progress)).bg(color).overflow_hidden()
+                .when_some(foreground, |band, content| band.child(
+                    gpui::div().absolute().left_0().top_0().bottom_0()
+                        .w(gpui::relative(1. / progress)).child(content)
+                ));
+            layer.child(super::root::layer("hover-colors", true, fill))
+        })
+        .child(hover_probe(&state))
 }
 
 pub fn hover_probe(state: &Entity<HoverState>) -> impl IntoElement {
@@ -236,10 +279,16 @@ pub(crate) fn focus_ring_shadow(cx: &App) -> Vec<BoxShadow> {
     }]
 }
 
-pub(crate) trait KeyboardFocus: Sized {
+pub trait KeyboardFocus: Sized {
     fn keyboard_focus(self, cx: &App) -> Self;
 
     fn keyboard_activate(self, cx: &App) -> Self;
+
+    fn on_disclosure_toggle(
+        self,
+        open: bool,
+        handler: impl Fn(&gpui::ClickEvent, &mut Window, &mut App) + 'static,
+    ) -> Self;
 }
 
 impl KeyboardFocus for Stateful<Div> {
@@ -249,6 +298,18 @@ impl KeyboardFocus for Stateful<Div> {
         self.tab_index(0).when(visible, move |this| {
             this.focus(move |style| style.shadow(ring))
         })
+    }
+
+    fn on_disclosure_toggle(
+        self,
+        open: bool,
+        handler: impl Fn(&gpui::ClickEvent, &mut Window, &mut App) + 'static,
+    ) -> Self {
+        let action = if open { gpui::AccessibleAction::Collapse } else { gpui::AccessibleAction::Expand };
+        let handler = Rc::new(handler);
+        let accessible = handler.clone();
+        self.on_a11y_action(action, move |_, w, cx| accessible(&gpui::ClickEvent::default(), w, cx))
+            .on_click(move |event, w, cx| handler(event, w, cx))
     }
 
     fn keyboard_activate(self, cx: &App) -> Self {

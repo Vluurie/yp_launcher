@@ -139,18 +139,36 @@ impl RenderOnce for HelpBar {
             .enumerate()
             .filter_map(|(i, (p, r))| {
                 let action = p.action?;
+                let activate = action.clone();
                 Some(
                     div()
                         .id(("help-prompt", i))
+                        .role(gpui::Role::Button)
+                        .aria_label(p.label)
+                        .tab_index(0)
+                        .focus(|s| s.border_2().border_color(gpui::rgb(0x48463d)))
                         .absolute()
                         .left(relative(r.x / 1600.))
                         .top(relative(r.y / 100.))
                         .w(relative(r.w / 1600.))
                         .h(relative(r.h / 100.))
                         .cursor_pointer()
+                        .on_key_down(move |event: &gpui::KeyDownEvent, w, cx| {
+                            if matches!(event.keystroke.key.as_str(), "enter" | "space") {
+                                activate(w, cx);
+                                cx.stop_propagation();
+                            }
+                        })
                         .on_click(move |_, w, cx| action(w, cx)),
                 )
             });
-        div().relative().size_full().child(s).children(hits)
+        div()
+            .id("menu-help")
+            .role(gpui::Role::Group)
+            .aria_label(self.text)
+            .relative()
+            .size_full()
+            .child(s)
+            .children(hits)
     }
 }

@@ -172,7 +172,12 @@ impl Focusable for VariantDialog {
     }
 }
 
-impl ModalView for VariantDialog {}
+impl ModalView for VariantDialog {
+    fn on_before_dismiss(&mut self, _: &mut Window, _: &mut Context<Self>) -> bool {
+        self.sender.take();
+        true
+    }
+}
 
 impl Render for VariantDialog {
     fn render(&mut self, window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {

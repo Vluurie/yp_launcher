@@ -430,6 +430,42 @@ fn logs_load_stream_and_filter(cx: &mut TestAppContext) {
 }
 
 #[gpui::test]
+fn log_tabs_follow_their_files_when_the_plugin_starts_and_stops(cx: &mut TestAppContext) {
+    let harness = Harness::new();
+    let stores = harness.init(cx);
+    let nams = harness.env.paths.nams_log();
+    let yorha = nams.with_file_name(yp_core::consts::YORHA_LOG_NAME);
+    let raw = "2026-11-25T07:39:51.321337Z ERROR [Native] Invalid outfit/mod.toml: TOML parse error\n";
+    std::fs::write(&nams, raw).unwrap();
+    stores.logs.update(cx, |logs, cx| logs.load(cx));
+    cx.run_until_parked();
+    let counts = |cx: &mut TestAppContext| stores.logs.read_with(cx, |logs, _| {
+        (logs.entries(LogTab::Modloader).len(), logs.entries(LogTab::Yorha).len())
+    });
+    assert_eq!(counts(cx), (1, 0));
+    std::fs::write(&yorha, "2026-11-25T07:39:52.123Z INFO overlay started\n").unwrap();
+    settle(cx, LOG_POLL_INTERVAL);
+    assert_eq!(counts(cx), (1, 1));
+    let mut loader = std::fs::OpenOptions::new().append(true).open(&nams).unwrap();
+    let mut plugin = std::fs::OpenOptions::new().append(true).open(&yorha).unwrap();
+    std::io::Write::write_all(&mut loader, b"2026-11-25T07:39:53.001Z INFO [NAMS] Loading yorha_protocol.dll\n").unwrap();
+    std::io::Write::write_all(&mut plugin, b"2026-11-25T07:39:53.002Z WARN [Native] plugin warning\n").unwrap();
+    drop((loader, plugin));
+    settle(cx, LOG_POLL_INTERVAL);
+    assert_eq!(counts(cx), (2, 2));
+    stores.logs.read_with(cx, |logs, _| {
+        assert!(logs.entries(LogTab::Modloader)[0].message.starts_with("[Native] Invalid"));
+        assert_eq!(logs.entries(LogTab::Yorha)[1].message, "[Native] plugin warning");
+    });
+    std::fs::remove_file(&nams).unwrap();
+    settle(cx, LOG_POLL_INTERVAL);
+    assert_eq!(counts(cx), (0, 2));
+    std::fs::remove_file(&yorha).unwrap();
+    settle(cx, LOG_POLL_INTERVAL);
+    assert_eq!(counts(cx), (0, 0));
+}
+
+#[gpui::test]
 fn prefs_read_their_own_writes_and_persist_in_order(cx: &mut TestAppContext) {
     let harness = Harness::new();
     harness.init(cx);
@@ -468,6 +504,14 @@ fn prefs_read_their_own_writes_and_persist_in_order(cx: &mut TestAppContext) {
         Some(&true)
     );
     assert!(!harness.env.settings.contains(&MINIMIZE_ON_LAUNCH));
+}
+
+#[gpui::test]
+fn launcher_uses_new_nier_theme_without_a_saved_choice(cx: &mut TestAppContext) {
+    let harness = Harness::new();
+    harness.init(cx);
+    assert_eq!(cx.update(|cx| yp_ui::theme::active_theme_id(cx)), ThemeId::NierNew);
+    assert!(!harness.env.settings.contains(&APP_THEME));
 }
 
 #[gpui::test]
@@ -629,10 +673,12 @@ fn registry_hands_out_what_features_registered(cx: &mut TestAppContext) {
 
 fn triangle(id: u32, name: &str, lod_index: u32) -> Mesh {
     Mesh {
+        blend: Default::default(),
         id,
         name: name.to_owned(),
         lod_name: format!("LOD{lod_index}"),
         lod_index,
+        weights: Vec::new(),
         positions: vec![[-1.0, -1.0, 0.0], [1.0, -1.0, 0.0], [0.0, 1.0, 0.0]],
         normals: vec![[0.0, 0.0, 1.0]; 3],
         tangents: vec![[1.0, 0.0, 0.0, 1.0]; 3],
@@ -645,6 +691,7 @@ fn triangle(id: u32, name: &str, lod_index: u32) -> Mesh {
 
 fn model() -> Model {
     Model {
+        skeleton: Default::default(),
         meshes: vec![
             triangle(0, "Body", 0),
             triangle(1, "Hair", 0),

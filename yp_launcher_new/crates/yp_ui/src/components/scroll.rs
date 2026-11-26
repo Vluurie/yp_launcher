@@ -154,6 +154,7 @@ pub struct Scrollbar {
     source: ScrollSource,
     axis: ScrollbarAxis,
     always_visible: bool,
+    both_axes: bool,
 }
 
 crate::impl_into_element!(Scrollbar);
@@ -165,6 +166,7 @@ impl Scrollbar {
             source,
             axis,
             always_visible: false,
+            both_axes: false,
         }
     }
 
@@ -218,7 +220,9 @@ impl RenderOnce for Scrollbar {
         let state = window.use_keyed_state(self.id.clone(), cx, |_, _| ScrollbarState::default());
         let axis = self.axis;
         let source = self.source;
+        let menu = theme.id == crate::ThemeId::NierNew;
         let always_visible = self.always_visible;
+        let corner = if self.both_axes { Sizes::SCROLLBAR_WIDTH } else { px(0.) };
         let prepaint_source = source.clone();
         let prepaint_active = {
             let state = state.read(cx);
@@ -231,14 +235,18 @@ impl RenderOnce for Scrollbar {
                     return None;
                 }
                 let width = Sizes::SCROLLBAR_WIDTH;
+                let right = match &prepaint_source {
+                    ScrollSource::Div(_) => viewport.right() - width,
+                    ScrollSource::List(_) | ScrollSource::Uniform(_) => viewport.right(),
+                };
                 let track = match axis {
                     ScrollbarAxis::Vertical => Bounds::new(
-                        point(viewport.right() - width, viewport.top()),
-                        size(width, viewport.size.height),
+                        point(right, viewport.top()),
+                        size(width, (viewport.size.height - corner).max(px(0.))),
                     ),
                     ScrollbarAxis::Horizontal => Bounds::new(
                         point(viewport.left(), viewport.bottom() - width),
-                        size(viewport.size.width, width),
+                        size((viewport.size.width - corner).max(px(0.)), width),
                     ),
                 };
                 let max_offset = length(axis, prepaint_source.max_offset());
@@ -290,7 +298,7 @@ impl RenderOnce for Scrollbar {
                     let state = state.read(cx);
                     (state.grab.is_some(), state.hovered)
                 };
-                if always_visible || dragging {
+                if always_visible || dragging || menu {
                     window.paint_quad(fill(
                         layout.track,
                         theme.colors.border_light.opacity(theme.alpha.line),
@@ -304,7 +312,13 @@ impl RenderOnce for Scrollbar {
                     } else {
                         theme.colors.text_muted.opacity(theme.alpha.accent_border)
                     };
-                    window.paint_quad(fill(thumb, color).corner_radii(Sizes::SCROLLBAR_THUMB_IDLE));
+                    if menu {
+                        window.paint_quad(fill(thumb, theme.colors.accent_primary));
+                    } else {
+                        window.paint_quad(
+                            fill(thumb, color).corner_radii(Sizes::SCROLLBAR_THUMB_IDLE),
+                        );
+                    }
                 }
                 let Some(metrics) = layout.metrics else {
                     return;
@@ -419,21 +433,24 @@ pub trait ScrollableElement: Sized {
 impl ScrollableElement for Stateful<Div> {
     fn overflow_y_scrollbar(self, handle: &ScrollHandle) -> Self {
         self.overflow_y_scroll()
+            .scrollbar_width(Sizes::SCROLLBAR_WIDTH)
             .track_scroll(handle)
             .child(Scrollbar::vertical(handle))
     }
 
     fn overflow_x_scrollbar(self, handle: &ScrollHandle) -> Self {
         self.overflow_x_scroll()
+            .scrollbar_width(Sizes::SCROLLBAR_WIDTH)
             .track_scroll(handle)
             .child(Scrollbar::horizontal(handle))
     }
 
     fn overflow_scrollbar(self, handle: &ScrollHandle) -> Self {
         self.overflow_scroll()
+            .scrollbar_width(Sizes::SCROLLBAR_WIDTH)
             .track_scroll(handle)
-            .child(Scrollbar::vertical(handle))
-            .child(Scrollbar::horizontal(handle))
+            .child(Scrollbar { both_axes: true, ..Scrollbar::vertical(handle) })
+            .child(Scrollbar { both_axes: true, ..Scrollbar::horizontal(handle) })
     }
 }
 
@@ -451,6 +468,7 @@ impl VirtualList {
             .relative()
             .size_full()
             .min_h_0()
+            .pr(Sizes::SCROLLBAR_WIDTH)
             .child(
                 uniform_list(id.clone(), item_count, render)
                     .track_scroll(handle)
@@ -469,6 +487,7 @@ impl VirtualList {
             .relative()
             .size_full()
             .min_h_0()
+            .pr(Sizes::SCROLLBAR_WIDTH)
             .child(
                 list(state.clone(), render)
                     .with_sizing_behavior(ListSizingBehavior::Auto)

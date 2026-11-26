@@ -109,6 +109,7 @@ fn extended_layout(flags: u32) -> Option<(usize, usize)> {
         1 | 4 => Some((8, 0)),
         5 => Some((12, 0)),
         7 => Some((12, 4)),
+        8 => Some((16, 4)),
         10 => Some((16, 8)),
         14 => Some((16, 0)),
         11 => Some((20, 8)),

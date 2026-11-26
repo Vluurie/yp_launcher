@@ -615,7 +615,9 @@ impl Render for LauncherSettingsTab {
 
         v_flex()
             .size_full()
-            .bg(theme.colors.background_primary)
+            .when(theme.id != ThemeId::NierNew, |el| {
+                el.bg(theme.colors.background_primary)
+            })
             .child(PageHeader::new(strings.tab_launcher_settings()))
             .child(content)
     }

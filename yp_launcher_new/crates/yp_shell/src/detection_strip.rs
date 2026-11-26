@@ -161,7 +161,7 @@ pub fn chip_for(
         ),
         DetectionKind::ReShade => (
             DetectionState::detected(snapshot.reshade_detected()),
-            fixed(strings.chip_re_shade()),
+            fixed(if snapshot.reshade_detected() { strings.status_re_shade_detected() } else { strings.status_re_shade_absent() }),
             None,
         ),
         DetectionKind::Textures => {
@@ -302,6 +302,35 @@ impl RenderOnce for DetectionStrip {
             .unwrap_or_default();
         if chips.is_empty() {
             return div().into_any_element();
+        }
+        if theme.id == ThemeId::NierNew {
+            return v_flex()
+                .w_full()
+                .min_w_0()
+                .children(chips.into_iter().map(|chip| {
+                    let tip = chip.detail.unwrap_or_else(|| chip.label.clone());
+                    h_flex()
+                        .id(chip.kind.element_id())
+                        .w_full()
+                        .min_w_0()
+                        .gap(px(10.))
+                        .py(px(5.))
+                        .border_b_1()
+                        .border_color(theme.colors.border_light)
+                        .tooltip(Tooltip::text(tip))
+                        .child(
+                            Icon::new(chip.kind.icon())
+                                .size(IconSize::Small)
+                                .color(chip.state.tint().color()),
+                        )
+                        .child(
+                            div()
+                                .flex_1()
+                                .min_w_0()
+                                .child(Label::new(chip.label).size(LabelSize::Small)),
+                        )
+                }))
+                .into_any_element();
         }
         let mut strip = v_flex()
             .flex_none()

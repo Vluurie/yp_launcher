@@ -6,14 +6,10 @@ use yp_mods::grouping::{MOD_GROUP_ORDER, ModGroupKind, groups_for_mod};
 use yp_mods::{DataSummary, InstalledMod, ModKind};
 
 const MODS_PREFIX: &str = "mods";
-const PLAYER_DIR: &str = "pl";
+pub use yp_mods::defaults::stem_rel_path;
 
 pub fn mod_rel_path(mod_id: &str) -> String {
     format!("{MODS_PREFIX}/{mod_id}")
-}
-
-pub fn stem_rel_path(mod_id: &str, stem: &str) -> String {
-    format!("{MODS_PREFIX}/{mod_id}/{PLAYER_DIR}/{stem}")
 }
 
 pub fn mod_id_of_entry(entry_path: &str) -> &str {
@@ -47,7 +43,7 @@ pub fn filter_and_sort<'a>(
     filter: &str,
     custom_name: &dyn Fn(&str) -> Option<String>,
 ) -> Vec<&'a InstalledMod> {
-    let needle = filter.to_lowercase();
+    let needle = filter.trim().to_lowercase();
     let mut shown: Vec<(&InstalledMod, String)> = mods
         .iter()
         .map(|installed| {
@@ -60,6 +56,21 @@ pub fn filter_and_sort<'a>(
                 || installed.id.to_lowercase().contains(&needle)
                 || installed.display_name.to_lowercase().contains(&needle)
                 || name.contains(&needle)
+                || installed.data.as_ref().is_some_and(|data| {
+                    data.outfits_by_stem.values().flatten().any(|outfit| {
+                        outfit
+                            .name
+                            .as_ref()
+                            .is_some_and(|name| name.to_lowercase().contains(&needle))
+                            || outfit.outfit_id.to_string() == needle
+                    }) || data.players.iter().any(|player| {
+                        player.file_name.to_lowercase().contains(&needle)
+                            || player.label.to_lowercase().contains(&needle)
+                    }) || data
+                        .archives
+                        .iter()
+                        .any(|archive| archive.stem.to_lowercase().contains(&needle))
+                })
         })
         .collect();
     shown.sort_by(|(a, a_name), (b, b_name)| {
@@ -234,6 +245,25 @@ mod tests {
             });
         }
         installed
+    }
+
+    #[test]
+    fn search_finds_a_later_outfit_by_name_and_id() {
+        let mut wardrobe = outfit("wardrobe", "pl000d.dat");
+        wardrobe.data.as_mut().unwrap().outfits_by_stem.insert(
+            "pl000d".into(),
+            [(7, "Uniform"), (15, "Evening Dress")]
+                .map(|(id, label)| yp_mods::OutfitChoice {
+                    outfit_id: id,
+                    name: Some(label.to_owned()),
+                    needs_item: false,
+                })
+                .to_vec(),
+        );
+        let mods = [wardrobe, native("other")];
+        for query in [" EVENING dress ", "15"] {
+            assert_eq!(ids(&filter_and_sort(&mods, query, &|_| None)), ["wardrobe"]);
+        }
     }
 
     fn native(id: &str) -> InstalledMod {

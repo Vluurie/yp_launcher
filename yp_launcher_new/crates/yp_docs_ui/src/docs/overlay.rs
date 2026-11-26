@@ -1,7 +1,7 @@
 #[cfg(feature = "tools")]
 use std::collections::HashMap;
 use std::rc::Rc;
-use std::time::Duration;
+use std::time::{Duration, Instant};
 
 use gpui::{
     Animation, AnimationExt, AnyElement, App, Context, Entity, FocusHandle, Focusable, FontWeight,
@@ -146,7 +146,23 @@ pub fn anchor_scroll_target(
     wanted.max(-max_offset).min(px(0.))
 }
 
+#[derive(Clone, Copy, PartialEq)]
+enum CompactPanel {
+    Pages,
+    Outline,
+}
+
+fn reveal_docs_text(child: impl IntoElement, start: Option<Instant>) -> AnyElement {
+    match start {
+        Some(start) => yp_ui::nier::page_text_scope(child, start).into_any_element(),
+        None => child.into_any_element(),
+    }
+}
+
 pub struct DocsOverlay {
+    compact_panel: Option<CompactPanel>,
+    opened_at: Option<Instant>,
+    page_started: Option<(u64, Instant)>,
     model: Entity<DocsModel>,
     search: Entity<InputState>,
     focus_handle: FocusHandle,
@@ -187,6 +203,9 @@ impl DocsOverlay {
         ];
         Self {
             model,
+            compact_panel: None,
+            opened_at: None,
+            page_started: None,
             search,
             focus_handle: cx.focus_handle(),
             nav_scroll: ScrollHandle::new(),
@@ -258,6 +277,7 @@ impl DocsOverlay {
     ) {
         match event {
             DocsEvent::PageOpened { anchor } => {
+                self.compact_panel = None;
                 self.scroll_task = None;
                 self.anchors.borrow_mut().clear();
                 #[cfg(feature = "tools")]
@@ -268,6 +288,7 @@ impl DocsOverlay {
             }
             DocsEvent::PageReloaded => self.anchors.borrow_mut().clear(),
             DocsEvent::WentHome => {
+                self.compact_panel = None;
                 self.scroll_task = None;
                 #[cfg(feature = "tools")]
                 self.tools.clear();
@@ -463,6 +484,11 @@ impl DocsOverlay {
             })
     }
 
+    fn compact(&self, window: &Window, cx: &App) -> bool {
+        cx.theme().id == ThemeId::NierNew
+            && window.viewport_size().width < px(900.) * yp_ui::theme::MenuTextSize::factor(cx)
+    }
+
     fn nav_panel(&self, window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement + use<> {
         let colors = cx.theme().colors;
         let sizes = window.sizes(cx);
@@ -481,7 +507,12 @@ impl DocsOverlay {
             SharedString::new_static(strings.docs_category_native()),
             SharedString::new_static(strings.docs_category_scripting()),
         ];
-        let available = sizes.docs_nav_width - sizes.padding_md * 2. - px(1.);
+        let width = if self.compact(window, cx) {
+            window.viewport_size().width
+        } else {
+            sizes.docs_nav_width
+        };
+        let available = width - sizes.padding_md * 2. - px(1.);
         let fitting = switch_fit(&labels, available, window, cx);
         let [native, scripting] = labels;
         let options = match fitting {
@@ -523,7 +554,13 @@ impl DocsOverlay {
             });
         v_flex()
             .flex_none()
-            .w(sizes.docs_nav_width)
+            .map(|el| {
+                if self.compact(window, cx) {
+                    el.w_full()
+                } else {
+                    el.w(sizes.docs_nav_width)
+                }
+            })
             .bg(colors.surface_medium)
             .border_r_1()
             .border_color(colors.border_light)
@@ -775,6 +812,23 @@ impl DocsOverlay {
         };
         let blocks = render_document(&open.document, &context, window, cx);
         let header = (!single_page).then(|| self.content_header(open, window, cx));
+        let article = v_flex()
+            .max_w(px(CONTENT_MAX_WIDTH))
+            .mx_auto()
+            .gap(sizes.spacing_lg)
+            .pb(sizes.padding_xl)
+            .children(blocks);
+        let article = if cx.theme().id == ThemeId::NierNew {
+            article.into_any_element()
+        } else {
+            article
+                .with_animation(
+                    ("docs-page-fade", generation),
+                    Animation::new(PAGE_FADE).with_easing(easing::nier_fade),
+                    |this, delta| this.opacity(delta),
+                )
+                .into_any_element()
+        };
         v_flex()
             .flex_1()
             .min_w_0()
@@ -785,19 +839,7 @@ impl DocsOverlay {
                         .id("docs-content")
                         .size_full()
                         .p(sizes.content_padding)
-                        .child(
-                            v_flex()
-                                .max_w(px(CONTENT_MAX_WIDTH))
-                                .mx_auto()
-                                .gap(sizes.spacing_lg)
-                                .pb(sizes.padding_xl)
-                                .children(blocks)
-                                .with_animation(
-                                    ("docs-page-fade", generation),
-                                    Animation::new(PAGE_FADE).with_easing(easing::nier_fade),
-                                    |this, delta| this.opacity(delta),
-                                ),
-                        )
+                        .child(article)
                         .overflow_y_scrollbar(&self.content_scroll),
                 ),
             )
@@ -806,6 +848,7 @@ impl DocsOverlay {
     fn outline_panel(
         &self,
         outline: &[DocHeading],
+        page_start: Option<Instant>,
         window: &mut Window,
         cx: &mut Context<Self>,
     ) -> impl IntoElement + use<> {
@@ -818,7 +861,12 @@ impl DocsOverlay {
                 .spacing(ListItemSpacing::ExtraDense)
                 .indent_level(usize::from(heading.level >= 3))
                 .on_click(cx.listener(move |this, _, _, cx| {
-                    this.scroll_to_anchor(&anchor, true, cx);
+                    if this.compact_panel.take().is_some() {
+                        this.pending_anchor = Some((anchor.clone(), ANCHOR_RETRIES));
+                        cx.notify();
+                    } else {
+                        this.scroll_to_anchor(&anchor, true, cx);
+                    }
                 }))
                 .child(
                     v_flex().flex_1().min_w_0().child(
@@ -829,9 +877,15 @@ impl DocsOverlay {
                     ),
                 )
         });
-        v_flex()
+        let panel = v_flex()
             .flex_none()
-            .w(sizes.docs_outline_width)
+            .map(|el| {
+                if self.compact(window, cx) {
+                    el.w_full()
+                } else {
+                    el.w(sizes.docs_outline_width)
+                }
+            })
             .bg(colors.surface_medium)
             .border_l_1()
             .border_color(colors.border_light)
@@ -846,7 +900,8 @@ impl DocsOverlay {
                     ))
                     .children(rows)
                     .overflow_y_scrollbar(&self.outline_scroll),
-            ))
+            ));
+        reveal_docs_text(panel, page_start)
     }
 
     fn empty_state(&self, cx: &mut Context<Self>) -> impl IntoElement + use<> {
@@ -873,7 +928,7 @@ impl Render for DocsOverlay {
         if self.pending_anchor.is_some() {
             cx.defer_in(window, |this, _, cx| this.resolve_pending_anchor(cx));
         }
-        let (loading, single_page, has_pages, shows_home, current) = {
+        let (loading, single_page, has_pages, shows_home, current, generation) = {
             let model = self.model.read(cx);
             (
                 model.is_loading(),
@@ -881,8 +936,26 @@ impl Render for DocsOverlay {
                 !model.pages().is_empty(),
                 model.shows_home(),
                 model.current().cloned(),
+                model.generation(),
             )
         };
+        let menu = cx.theme().id == ThemeId::NierNew;
+        let page_start = if menu && !loading {
+            let now = Instant::now();
+            self.opened_at.get_or_insert(now);
+            let page = self.page_started.get_or_insert((generation, now));
+            if page.0 != generation {
+                *page = (generation, now);
+            }
+            Some(page.1)
+        } else {
+            None
+        };
+        let compact = self.compact(window, cx);
+        let outline = current
+            .as_ref()
+            .filter(|open| !shows_home && shows_outline(&open.outline))
+            .map(|open| &open.outline);
         let body = if loading {
             div()
                 .size_full()
@@ -891,18 +964,25 @@ impl Render for DocsOverlay {
                 .justify_center()
                 .child(Spinner::new().size(IconSize::Large))
                 .into_any_element()
+        } else if compact && self.compact_panel == Some(CompactPanel::Pages) && !single_page {
+            self.nav_panel(window, cx).into_any_element()
+        } else if compact
+            && self.compact_panel == Some(CompactPanel::Outline)
+            && let Some(outline) = outline
+        {
+            self.outline_panel(outline, page_start, window, cx).into_any_element()
         } else if single_page {
             match &current {
                 Some(open) => {
                     let outline =
-                        shows_outline(&open.outline).then(|| open.outline.clone());
+                        (!compact && shows_outline(&open.outline)).then(|| open.outline.clone());
                     div()
                         .flex()
                         .flex_row()
                         .size_full()
-                        .child(self.content_panel(open, window, cx))
+                        .child(reveal_docs_text(self.content_panel(open, window, cx), page_start))
                         .children(
-                            outline.map(|outline| self.outline_panel(&outline, window, cx)),
+                            outline.map(|outline| self.outline_panel(&outline, page_start, window, cx)),
                         )
                         .into_any_element()
                 }
@@ -911,53 +991,107 @@ impl Render for DocsOverlay {
         } else if !has_pages {
             self.empty_state(cx).into_any_element()
         } else {
-            let nav = self.nav_panel(window, cx).into_any_element();
+            let nav = (!compact).then(|| self.nav_panel(window, cx).into_any_element());
             let main = match &current {
                 Some(open) if !shows_home => {
                     self.content_panel(open, window, cx).into_any_element()
                 }
                 _ => {
                     let pages = self.model.read(cx).pages().to_vec();
-                    let width = sizes.window_width - sizes.docs_nav_width - sizes.content_padding * 2.;
+                    let width = sizes.window_width
+                        - if compact {
+                            px(0.)
+                        } else {
+                            sizes.docs_nav_width
+                        }
+                        - sizes.content_padding * 2.;
                     let model = self.model.clone();
                     let open_file: OpenFile = Rc::new(move |file_name, _, cx| {
                         model.update(cx, |model, cx| model.open_file_name(file_name, cx));
                     });
                     let search = self.search.clone();
-                    let browse_all: BrowseAll =
-                        Rc::new(move |window, cx| window.focus(&search.focus_handle(cx), cx));
+                    let view = cx.weak_entity();
+                    let browse_all: BrowseAll = Rc::new(move |window, cx| {
+                        if compact {
+                            view.update(cx, |v, cx| {
+                                v.compact_panel = Some(CompactPanel::Pages);
+                                cx.notify();
+                            })
+                            .ok();
+                        }
+                        window.focus(&search.focus_handle(cx), cx);
+                    });
                     fill_parent(render_home(
-                            &pages,
-                            width,
-                            &self.home_scroll,
-                            open_file,
-                            browse_all,
-                            window,
-                            cx,
-                        ))
-                        .into_any_element()
+                        &pages,
+                        width,
+                        &self.home_scroll,
+                        open_file,
+                        browse_all,
+                        window,
+                        cx,
+                    ))
+                    .into_any_element()
                 }
             };
             let outline = current
                 .as_ref()
-                .filter(|open| !shows_home && shows_outline(&open.outline))
+                .filter(|open| !compact && !shows_home && shows_outline(&open.outline))
                 .map(|open| open.outline.clone());
             div()
                 .flex()
                 .flex_row()
                 .size_full()
-                .child(nav)
-                .child(main)
-                .children(outline.map(|outline| self.outline_panel(&outline, window, cx)))
+                .children(nav)
+                .child(reveal_docs_text(main, page_start))
+                .children(outline.map(|outline| self.outline_panel(&outline, page_start, window, cx)))
                 .into_any_element()
         };
-        v_flex()
+        let overlay = v_flex()
             .id("docs-overlay")
             .track_focus(&self.focus_handle)
             .size_full()
             .bg(colors.background_primary)
             .child(self.top_bar(window, cx))
-            .child(fill_parent(body))
+            .when(compact && has_pages, |el| {
+                let mut bar = h_flex().min_w_0().flex_wrap().px(sizes.content_padding);
+                for (panel, label, available) in [
+                    (CompactPanel::Pages, cx.t().docs_browse_all(), !single_page),
+                    (
+                        CompactPanel::Outline,
+                        cx.t().docs_on_this_page(),
+                        outline.is_some(),
+                    ),
+                ] {
+                    if available {
+                        let selected = self.compact_panel == Some(panel);
+                        bar = bar.child(
+                            Button::new(
+                                ("docs-panel", panel as usize),
+                                if selected {
+                                    cx.t().button_back()
+                                } else {
+                                    label
+                                },
+                            )
+                            .style(ButtonStyle::Link)
+                            .start_icon(if selected {
+                                IconName::ArrowBack
+                            } else {
+                                IconName::MenuBookOutlined
+                            })
+                            .on_click(cx.listener(
+                                move |v, _, _, cx| {
+                                    v.compact_panel = (!selected).then_some(panel);
+                                    cx.notify();
+                                },
+                            )),
+                        );
+                    }
+                }
+                el.child(bar)
+            })
+            .child(fill_parent(body));
+        reveal_docs_text(overlay, self.opened_at.filter(|_| menu))
     }
 }
 
@@ -1001,6 +1135,33 @@ mod tests {
         assert!(!shows_outline(&two));
         let three = vec![heading("One"), heading("Two"), heading("Three")];
         assert!(shows_outline(&three));
+    }
+
+    #[gpui::test]
+    fn docs_starts_typing_on_navigation_and_keeps_its_clock_during_search(cx: &mut gpui::TestAppContext) {
+        cx.update(|cx| {
+            yp_ui::init_for_tests(cx);
+            yp_ui::theme::set_theme(ThemeId::NierNew, cx);
+            cx.set_global(DocsConfig {
+                docs_dir: crate::markdown::tests::docs_dir(),
+                editable: false,
+            });
+        });
+        let (overlay, cx) = cx.add_window_view(|window, cx| DocsOverlay::new(None, false, window, cx));
+        cx.run_until_parked();
+        let (model, home) = overlay.read_with(cx, |overlay, _| {
+            (overlay.model.clone(), overlay.page_started.expect("Docs home started"))
+        });
+        model.update(cx, |model, cx| model.open_file_name("35_third_party.md", cx));
+        cx.run_until_parked();
+        let article = overlay.read_with(cx, |overlay, _| overlay.page_started.unwrap());
+        assert!(article.0 > home.0 && article.1 > home.1);
+        model.update(cx, |model, cx| model.set_query("weapon", cx));
+        cx.run_until_parked();
+        overlay.read_with(cx, |overlay, _| {
+            assert_eq!(overlay.page_started, Some(article));
+            assert_eq!(overlay.opened_at, Some(home.1));
+        });
     }
 
     #[test]

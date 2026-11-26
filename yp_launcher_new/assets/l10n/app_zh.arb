@@ -7,9 +7,63 @@
   "controllerNavigationDescription": "方向键 / 左摇杆：导航。A / 叉键：确认。B / 圆圈键：返回。LB / RB（L1 / R1）：切换标签页。右摇杆：滚动。仅在启动器获得焦点时生效。",
   "appTitle": "YoRHa Protocol 启动器",
   "tooltipLauncherSource": "启动器源代码",
-  "tooltipNamsSource": "NAMS 项目源代码",
   "tooltipGuide": "指南",
   "tooltipDiscord": "Discord",
+  "themeToggleToNierNew": "切换到全新 Nier 主题",
+  "motionClip": "动画",
+  "motionPlay": "播放动画",
+  "motionPause": "暂停动画",
+  "clothPlay": "播放布料模拟",
+  "clothPause": "暂停布料模拟",
+  "menuModelControls": "模型控制",
+  "menuReduceMotion": "减少动态效果",
+  "menuAppearance": "外观",
+  "menuInstalledMods": "已安装的模组",
+  "menuInstallMod": "安装模组",
+  "menuInstallHelp": "安装指南",
+  "menuInstallArchive": "从模组压缩包安装…",
+  "menuInstallFolder": "从模组文件夹安装…",
+  "menuOpenModsDirectory": "打开已安装模组的文件夹",
+  "menuDropHint": "将模组压缩包或文件夹拖入此处，或选择“安装模组”。",
+  "menuModActions": "模组操作",
+  "menuSupport": "支持",
+  "menuGameInstallation": "游戏安装位置",
+  "menuGameStatus": "游戏状态",
+  "menuFilteredModCount": "{shown} / {total}",
+  "@menuFilteredModCount": {
+    "placeholders": {
+      "shown": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "statusReShadeDetected": "已检测到 ReShade",
+  "statusReShadeAbsent": "未检测到 ReShade",
+  "menuGameSettings": "游戏设置",
+  "menuGraphics": "图形",
+  "menuBrowseSections": "浏览分区",
+  "menuResources": "资源",
+  "menuTextSize": "文字大小",
+  "menuIconActions": "图标操作",
+  "menuModelArchive": "模型档案",
+  "menuModels": "模型",
+  "menuChooseModel": "选择要查看的模型。",
+  "menuSelect": "选择",
+  "menuRotate": "旋转",
+  "menuEquipment": "更换装备",
+  "menuEnabled": "已启用",
+  "menuChangeInstallation": "更改安装位置",
+  "menuLibrary": "模组库",
+  "lodSearchSettings": "搜索图形设置…",
+  "lodCategories": "所有类别",
+  "lodNoSettings": "没有找到匹配的设置。",
+  "lodSettingsCount": "{count, plural, other{{count} 项设置}}",
+  "@lodSettingsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "themeToggleToNier": "切换到 NieR 主题",
   "themeToggleToDark": "切换到深色主题",
   "tooltipLanguage": "语言",
@@ -156,17 +210,13 @@
   "tooltipRestore": "还原",
   "tooltipClose": "关闭",
   "infoText": "选择游戏，点击开始，就这么简单。",
-  "helpPrefix": "启动器无法使用？请尝试 ",
-  "helpNaoLauncher": "NAO 启动器",
-  "helpOr": " 或 ",
-  "helpCommandLine": "命令行",
-  "helpJoinDiscord": "。加入我们的 ",
   "helpDiscord": "Discord",
-  "helpSuffix": " 获取帮助。",
+  "helpOnDiscord": "在 Discord 获取帮助",
   "noFileSelected": "未选择文件",
   "selectButton": "选择",
   "filePickerTitle": "选择游戏可执行文件",
   "playButton": "开始",
+  "stopGameConfirmation": "确定要结束游戏吗？未保存的更改将会丢失。",
   "stopButton": "停止",
   "statusReady": "已准备好启动！",
   "statusSelectGame": "请选择游戏可执行文件以开始。",
@@ -214,17 +264,6 @@
   "@notifyThirdPartyMigrated": {
     "placeholders": {
       "path": {
-        "type": "String"
-      }
-    }
-  },
-  "notifyThirdPartyMigrationIncomplete": "部分第三方文件无法移动，仍在 {oldPath} 中。请自行将它们移动到 {newPath}，因为启动器更新会删除旧文件夹。",
-  "@notifyThirdPartyMigrationIncomplete": {
-    "placeholders": {
-      "oldPath": {
-        "type": "String"
-      },
-      "newPath": {
         "type": "String"
       }
     }
@@ -790,6 +829,7 @@
   "namsDescription": "NAMS 是托管《尼尔：机械纪元》的模组加载器。它在自己的进程中启动游戏，在运行时加载你的模组，并应用这些引擎设置。这些选项控制校验、内容功能以及插件/ReShade/3DMigoto 的加载。",
   "yorhaProtocolDescription": "YP Devkit（YorHa Protocol）是由 NAMS 加载的模组与开发者插件。其完整工具集——判定框/光源/骨骼可视化、自由镜头与拍照模式、实体生成、HAP 脚本树、物品生成器等等——位于游戏内的叠加界面中，按 F1 打开。此标签页可让你从启动器方便地调整其按键绑定、工作区开关、作弊和敌人随机化器；这些也都可以在游戏内更改。",
   "dropModelModHere": "将模型模组文件夹或压缩包拖放到此处",
+  "dropReleaseHint": "松开以放入文件",
   "dropToInstall": "拖放以安装",
   "orClickToBrowse": "或点击浏览",
   "mixedModDetected": "检测到混合模组",
@@ -957,8 +997,8 @@
   },
   "noMovieFolderFound": "未找到包含 .usm 文件的 movie/ 文件夹。",
   "noUsmFilesFound": "模组中未找到 .usm 文件。",
-  "onboardingWelcomeTitle": "欢迎使用 YoRHa Protocol",
-  "onboardingWelcomeSubtitle": "一个启动器，管理所有模组，体验全新的 NieR 内容。\n\n支持拖放安装模组、游戏中途切换服装、新任务以及内置开发工具包，不再受复杂配置困扰。",
+  "onboardingWelcomeTitle": "NAMS 与 YoRHa Protocol",
+  "onboardingWelcomeSubtitle": "NAMS 可将模组和插件载入《尼尔：机械纪元》。你可以在启动器中管理模组配置、预览 3D 服装，以及配置纹理和过场动画。\n\n使用 YoRHa Protocol 开发工具包，你可以检查游戏对象、生成实体并制作自己的内容。首先连接你的游戏安装目录。",
   "onboardingSelectTitle": "选择你的 NieR:Automata 安装位置",
   "onboardingSearchingDrives": "正在扫描所有驱动器...",
   "onboardingSearchingNier": "正在搜索 NieR:Automata...",
@@ -1140,7 +1180,7 @@
   "modsTutorialEcosystemStep1Title": "这一切为何存在",
   "modsTutorialEcosystemStep1Body": "过去，为 NieR 安装模组一直很痛苦。单独运行正常的模组，只要叠加几个就会开始互相冲突——不同的 DLL Hook（`dxgi`、`d3d11`、`dinput8`）争夺同一个位置，错误的包装器赢得加载顺序，游戏随后在启动时悄无声息地崩溃。装了 5–10 个模组的人，排查冲突花的时间往往比真正游玩的时间还多。\n\n很长一段时间里，唯一的答案都是*只能手动安装*：把零散的 `.dat`/`.dtt` 文件放进 `data/`，手动编辑配置，绝不要使用模组管理器。这对一两个模组还能凑合，但它会覆盖真实的游戏文件，而且不会留下任何修改记录。Vortex 之类的工具也帮不上忙——它们不了解 NieR 的特殊机制。\n\n**NAMS 的存在，是为了在模组加载器层面解决这个问题**；而**这个启动器的存在，是为了给 NAMS 提供一个友好的界面。**",
   "modsTutorialEcosystemStep2Title": "NAMS 的作用",
-  "modsTutorialEcosystemStep2Body": "**NAMS 是模组加载器。** 它不像旧工具那样，通过代理 DLL 劫持 `dxgi.dll` 或 `d3d11.dll`——这种机制本来就是冲突产生的根源。\n\nNAMS 会作为独立宿主进程运行：它在该进程中把 NieR:Automata 作为库加载（将游戏 exe 转换为可加载的 `game.bin`），并在游戏启动前初始化模组加载器。它不会向另一个进程注入任何东西——NAMS *本身就是*游戏运行所在的进程，因此可以完全控制即将加载的内容。\n\n在此基础上，NAMS 主要完成两件事：\n\n**1. 原生重新实现旧工具提供的功能**——LodMod、Limit Break、纹理注入、快速加载——并把它们统一到同一个协调层中。模组接入 NAMS API，而不是争夺哪个 DLL Hook 最先执行。\n\n**2. 提供虚拟文件系统（VFS）：**\n\n- 每个模组都位于 `nams/mods/<modId>/` 下自己的文件夹中，绝不会覆盖真实游戏文件。\n- 运行时，NAMS 会把启用的模组叠加到引擎所看到的 `data/` 上。\n- 原版 `data/*.cpk` 和 `NieRAutomata.exe` **绝不会被修改**，因此仍可像以前一样通过 Steam 启动未安装模组的游戏。\n\n模组会在清单中声明自己修改的内容。NAMS 会按明确顺序验证并加载它们，于是你终于可以**干净地按模组启用/禁用**，并获得**可明确判断的冲突检测**——旧式把文件直接丢进 `data` 的方法无法做到这些。\n\n### 各部分如何协作\n\n这个启动器**并不是**直接建立在 NieR:Automata 之上的。它不会自行逆向游戏、Hook 引擎函数，也不了解 `.dat`/`.dtt` 格式。整体层级如下：\n\n1. **NieR:Automata**——游戏本体，不做修改。\n2. **NAMS**——模组加载器，首先解决大规模模组化是否可行的问题（引擎功能重实现、VFS、插件宿主、内容框架）。\n3. **这个启动器**——建立在 NAMS 之上的辅助工具。它读取 NAMS 的 TOML 配置、按 NAMS 的文件夹结构写入内容，并调用 NAMS API。仅此而已。\n\n实际结果是：NAMS 才是承重层。启动器只是它前面的友好 UI，即使换成其他 UI（或命令行），你的模组也不会受到影响。\n\n### 而且这已经得到验证\n\n这并非理论。**Rustukun 的 NAO Launcher** 就是建立在同一基础上的独立启动器——使用不同 UI、不同设计选择，但底层仍与同一个 NAMS 通信。无论使用哪个启动器，你的模组、`nams/mods/<modId>/` 文件夹以及 `disabled_mods.toml` 都以完全相同的方式工作。\n\n这证明 NAMS 才是平台，而任何启动器（这个、NAO，或未来尚未出现的其他启动器）都只是前端选择。请选择最适合自己工作流程的工具，你不需要迁移模组库。",
+  "modsTutorialEcosystemStep2Body": "**NAMS 是模组加载器。** 它不像旧工具那样，通过代理 DLL 劫持 `dxgi.dll` 或 `d3d11.dll`——这种机制本来就是冲突产生的根源。\n\nNAMS 会作为独立宿主进程运行：它在该进程中把 NieR:Automata 作为库加载（将游戏 exe 转换为可加载的 `game.bin`），并在游戏启动前初始化模组加载器。它不会向另一个进程注入任何东西——NAMS *本身就是*游戏运行所在的进程，因此可以完全控制即将加载的内容。\n\n在此基础上，NAMS 主要完成两件事：\n\n**1. 原生重新实现旧工具提供的功能**——LodMod、Limit Break、纹理注入、快速加载——并把它们统一到同一个协调层中。模组接入 NAMS API，而不是争夺哪个 DLL Hook 最先执行。\n\n**2. 提供虚拟文件系统（VFS）：**\n\n- 每个模组都位于 `nams/mods/<modId>/` 下自己的文件夹中，绝不会覆盖真实游戏文件。\n- 运行时，NAMS 会把启用的模组叠加到引擎所看到的 `data/` 上。\n- 原版 `data/*.cpk` 和 `NieRAutomata.exe` **绝不会被修改**，因此仍可像以前一样通过 Steam 启动未安装模组的游戏。\n\n模组会在清单中声明自己修改的内容。NAMS 会按明确顺序验证并加载它们，于是你终于可以**干净地按模组启用/禁用**，并获得**可明确判断的冲突检测**——旧式把文件直接丢进 `data` 的方法无法做到这些。\n\n### 各部分如何协作\n\n这个启动器**并不是**直接建立在 NieR:Automata 之上的。它不会自行逆向游戏、Hook 引擎函数，也不了解 `.dat`/`.dtt` 格式。整体层级如下：\n\n1. **NieR:Automata**——游戏本体，不做修改。\n2. **NAMS**——模组加载器，首先解决大规模模组化是否可行的问题（引擎功能重实现、VFS、插件宿主、内容框架）。\n3. **这个启动器**——建立在 NAMS 之上的辅助工具。它读取 NAMS 的 TOML 配置、按 NAMS 的文件夹结构写入内容，并调用 NAMS API。仅此而已。\n\n实际结果是：NAMS 才是承重层。启动器只是它前面的友好 UI，即使换成其他 UI（或命令行），你的模组也不会受到影响。",
   "modsTutorialEcosystemStep3Title": "这个启动器增加了什么，以及它有何不同",
   "modsTutorialEcosystemStep3Body": "NAMS 负责加载。启动器则负责**围绕加载的一切工作**——安装、整理和故障排查：\n\n- **模组管理器**——拖放安装 NAMS 格式模组，自动规范目录结构（wax/SK_Res 包装层、捆绑资源），检查清单并提示冲突。\n- **纹理**——无需手动编辑 TOML，即可管理独立纹理包和 `load_order` 优先级。\n- **过场动画**——安装高清过场动画模组，自动检测编码（H264 或 MPEG-2），并配置正确的 NAMS 设置。\n- **配置档案**——并排保存多套模组组合，一键切换，无需复制内容，也不会丢失状态。\n- **诊断**——完整报告哪些内容安装在何处、旧安装留下了什么、NAMS 识别到的内容与磁盘实际内容有何差异。\n\n### 我们为什么制作它\n\n**我们并不反对手动安装。** 对于一两个模组，把某套服装的 `.dat`/`.dtt` 文件放进正确的 `data/` 子文件夹完全可行。这个启动器是为更大的规模而设计的。\n\n如今 NAMS 生态已经支持：\n\n- 每个角色可进行多服装切换的 **30 多个服装模组**。\n- 叠加在原版剧情之上的 **20 多个自定义任务**。\n- 拥有独立行为的 **10 多把新武器**。\n- 此外还有纹理、过场动画、插件、平衡性修改……\n\n手动管理这些内容不是理念选择的问题，而是**根本做不到**。你无法追踪每个文件来自哪个模组，无法干净地启用或禁用单个模组，也无法判断某处为什么损坏。规模一大，手动模组管理就会撞上硬墙——而 NAMS 生态早已跨过这道墙。\n\n### 与 NAMH 和 Vortex 的区别\n\n如果你在 NieR 模组圈待过一段时间，应该记得以前的模组管理器最后都变成了什么样：\n\n- **NAMH**（NieR Automata Mod Helper）后来停止维护，曾以无法恢复的方式破坏游戏，遭遇“程序正在使用”锁定问题，而标准恢复方法竟然是*卸载游戏、重新安装、再改成手动操作。* 它通过**直接替换 `data/` 中的文件**工作——一旦 NAMH 安装出问题，就没有干净的回退路径。\n- **Vortex** 从未真正理解 NieR 的文件结构。它的虚拟文件系统依赖的假设与游戏实际加载内容的方式不匹配，因此安装内容会悄无声息地被放错位置。\n\n这个启动器采用了不同设计。关键选择包括：\n\n1. **绝不替换文件。** 模组位于 `nams/mods/<modId>/`，并在运行时通过 NAMS 的 VFS 叠加到引擎视图中。原版 `data/` 从不被修改。不存在所谓“无法恢复的状态”，因为真实游戏内容从未发生改变。\n2. **每个操作都可撤销。** 卸载模组 → 干净移除其文件夹和捆绑资源。禁用模组 → 在 `disabled_mods.toml` 中写入条目，由 NAMS 跳过它。没有隐藏状态，也没有不可逆写入。\n3. **使用配置档案，而不是单一全局状态。** 过去的管理器把所有内容都塞进一个配置。配置档案可以并排保存多套组合，并以原子方式切换——不会损坏，也不会丢失。\n4. **建立在持续维护的模组加载器之上。** NAMH 的消亡，部分源于模组加载器本身的未来不确定。NAMS 是这里一切内容的基础，而启动器会跟随它的更新。\n\n即使这个启动器有一天停止维护，你的模组仍只是磁盘上由 NAMS 读取的文件——你不会因此失去对自己安装内容的访问权。",
   "modsTutorialEcosystemStep4Title": "下一步该做什么",
@@ -1216,7 +1256,7 @@
     }
   },
   "refreshButton": "刷新",
-  "tabModloaderLabel": "模组加载器",
+  "tabModloaderLabel": "NAMS",
   "tabYorhaLabel": "YoRHa Protocol",
   "configEditorTitle": "配置编辑器",
   "changelogTitle": "新增内容",

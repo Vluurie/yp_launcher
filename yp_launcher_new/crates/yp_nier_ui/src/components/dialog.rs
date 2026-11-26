@@ -9,6 +9,8 @@ pub struct ConfirmDialog {
     id: ElementId,
     title: SharedString,
     prompt: SharedString,
+    labels: [SharedString; 2],
+    modal_focus: Option<FocusHandle>,
     yes: Option<bool>,
     scale: f32,
     answer: Answer,
@@ -24,6 +26,8 @@ impl ConfirmDialog {
             id: "confirm-dialog".into(),
             title: "SYSTEM MESSAGE".into(),
             prompt: prompt.into(),
+            labels: ["Yes".into(), "No".into()],
+            modal_focus: None,
             yes: None,
             scale: 1.,
             answer: Rc::new(answer),
@@ -31,6 +35,16 @@ impl ConfirmDialog {
             dismissal: None,
         }
     }
+    pub fn labels(mut self, yes: impl Into<SharedString>, no: impl Into<SharedString>) -> Self {
+        self.labels = [yes.into(), no.into()];
+        self
+    }
+
+    pub fn in_modal(mut self, focus: FocusHandle) -> Self {
+        self.modal_focus = Some(focus);
+        self
+    }
+
     pub fn title(mut self, title: impl Into<SharedString>) -> Self {
         self.title = title.into();
         self
@@ -101,10 +115,14 @@ impl Playback {
 
 impl RenderOnce for ConfirmDialog {
     fn render(self, window: &mut Window, cx: &mut App) -> impl IntoElement {
+        let hosted = self.modal_focus.is_some();
         let state = window.use_keyed_state(self.id.clone(), cx, |w, cx| {
             let previous = w.focused(cx);
-            let focus = cx.focus_handle();
-            focus.focus(w, cx);
+            let focus = self.modal_focus.unwrap_or_else(|| {
+                let handle = cx.focus_handle();
+                handle.focus(w, cx);
+                handle
+            });
             Playback {
                 opened: Instant::now(),
                 dismiss: None,
@@ -139,7 +157,8 @@ impl RenderOnce for ConfirmDialog {
             )
         });
         let duration = if clip == 2 { 10. / 60. } else { 20. / 60. };
-        if age < duration {
+        let reduced = crate::ReducedMotion::enabled(cx);
+        if age < duration && !(hosted && reduced) {
             window.request_animation_frame();
         } else if clip == 2 && !state.read(cx).completed {
             state.update(cx, |st, _| st.completed = true);
@@ -152,7 +171,11 @@ impl RenderOnce for ConfirmDialog {
                 answer(yes, w, cx);
             });
         }
-        let t = (age / duration).clamp(0., 1.);
+        let t = if hosted && reduced {
+            1.
+        } else {
+            (age / duration).clamp(0., 1.)
+        };
         let opacity = if clip == 2 {
             (1. - t).powf(2.2)
         } else {
@@ -174,31 +197,50 @@ impl RenderOnce for ConfirmDialog {
         panel.fill(Rect::new(20., 19., 19., 19.), LIGHT, 255);
         panel.text(&self.title, 1, 0.68, 50., 29., LIGHT);
         panel.fill(Rect::new(19., 218., 635., 2.), PANEL, 255);
-        let buttons = [("Yes", true), ("No", false)]
-            .into_iter()
-            .map(move |(label, choice)| {
-                let hovered = state.clone();
-                let click = state.clone();
-                let selection = self.selection.clone();
-                let button =
-                    DialogButton::new(if choice { "dialog-yes" } else { "dialog-no" }, label)
-                        .scale(scale)
-                        .selected(yes == choice)
-                        .on_hover(move |over, w, cx| {
-                            if over {
-                                Playback::select(&hovered, choice, &selection, w, cx);
+        let answer: Answer = if hosted {
+            self.answer
+        } else {
+            let state = state.clone();
+            Rc::new(move |yes, _, cx| Playback::close(&state, yes, cx))
+        };
+        let keyboard_answer = answer.clone();
+        let [yes_label, no_label] = self.labels;
+        let buttons =
+            [(yes_label, true), (no_label, false)]
+                .into_iter()
+                .map(move |(label, choice)| {
+                    let hovered = state.clone();
+                    let click = answer.clone();
+                    let selection = self.selection.clone();
+                    let button =
+                        DialogButton::new(if choice { "dialog-yes" } else { "dialog-no" }, label)
+                            .scale(scale)
+                            .selected(yes == choice)
+                            .on_hover(move |over, w, cx| {
+                                if over {
+                                    Playback::select(&hovered, choice, &selection, w, cx);
+                                }
+                            })
+                            .on_click(move |_, w, cx| click(choice, w, cx));
+                    div()
+                        .debug_selector(move || {
+                            if choice {
+                                "system-dialog-yes"
+                            } else {
+                                "system-dialog-no"
                             }
+                            .into()
                         })
-                        .on_click(move |_, _, cx| Playback::close(&click, choice, cx));
-                div()
-                    .absolute()
-                    .left(px(if choice { 62. } else { 342. } * scale))
-                    .top(px(230. * scale))
-                    .opacity(button_opacity)
-                    .child(button)
-            });
+                        .absolute()
+                        .left(px(if choice { 62. } else { 342. } * scale))
+                        .top(px(230. * scale))
+                        .opacity(button_opacity)
+                        .child(button)
+                });
         div()
             .id(self.id)
+            .role(gpui::Role::Dialog)
+            .aria_label(self.prompt.clone())
             .track_focus(&focus)
             .on_key_down(move |event: &KeyDownEvent, w, cx| {
                 let yes = keys.read(cx).selected;
@@ -206,20 +248,23 @@ impl RenderOnce for ConfirmDialog {
                     "left" | "right" | "a" | "d" => {
                         Playback::select(&keys, !yes, &key_selection, w, cx)
                     }
-                    "enter" | "space" => Playback::close(&keys, yes, cx),
+                    "enter" | "space" if !event.is_held => keyboard_answer(yes, w, cx),
+                    "escape" if hosted => keyboard_answer(false, w, cx),
                     "escape" if yes => Playback::select(&keys, false, &key_selection, w, cx),
                     "escape" => Playback::close(&keys, false, cx),
                     _ => {}
                 }
                 cx.stop_propagation();
             })
-            .size_full()
+            .when(!hosted, |el| el.size_full())
             .relative()
             .flex()
             .items_center()
             .justify_center()
             .occlude()
-            .child(div().absolute().inset_0().child(scrim))
+            .when(!hosted, |el| {
+                el.child(div().absolute().inset_0().child(scrim))
+            })
             .child(
                 div()
                     .relative()

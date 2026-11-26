@@ -4,9 +4,63 @@
   "toastHistoryCopy": "Copy messages",
   "appTitle": "YoRHa Protocol Launcher",
   "tooltipLauncherSource": "Launcher Source Code",
-  "tooltipNamsSource": "NAMS Project Source",
   "tooltipGuide": "Guide",
   "tooltipDiscord": "Discord",
+  "themeToggleToNierNew": "Switch to Nier Theme NEW",
+  "motionClip": "Animation",
+  "motionPlay": "Play animation",
+  "motionPause": "Pause animation",
+  "clothPlay": "Play cloth simulation",
+  "clothPause": "Pause cloth simulation",
+  "menuModelControls": "Model controls",
+  "menuReduceMotion": "Reduce motion",
+  "menuAppearance": "Appearance",
+  "menuInstalledMods": "Installed mods",
+  "menuInstallMod": "Install mod",
+  "menuInstallHelp": "Installation guide",
+  "menuInstallArchive": "From mod archive…",
+  "menuInstallFolder": "From mod folder…",
+  "menuOpenModsDirectory": "Open installed mods folder",
+  "menuDropHint": "Drop a mod archive or folder here, or choose Install mod.",
+  "menuModActions": "Mod actions",
+  "menuSupport": "Support",
+  "menuGameInstallation": "Game installation",
+  "menuGameStatus": "Game status",
+  "menuFilteredModCount": "{shown} of {total}",
+  "@menuFilteredModCount": {
+    "placeholders": {
+      "shown": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "statusReShadeDetected": "ReShade detected",
+  "statusReShadeAbsent": "No ReShade",
+  "menuGameSettings": "Game settings",
+  "menuGraphics": "Graphics",
+  "menuBrowseSections": "Browse sections",
+  "menuResources": "Resources",
+  "menuTextSize": "Text size",
+  "menuIconActions": "Icon actions",
+  "menuModelArchive": "Model archive",
+  "menuModels": "Models",
+  "menuChooseModel": "Choose a model to inspect.",
+  "menuSelect": "Select",
+  "menuRotate": "Rotate",
+  "menuEquipment": "Change equipment",
+  "menuEnabled": "Enabled",
+  "menuChangeInstallation": "Change installation",
+  "menuLibrary": "Library",
+  "lodSearchSettings": "Search graphics settings…",
+  "lodCategories": "All categories",
+  "lodNoSettings": "No settings match this search.",
+  "lodSettingsCount": "{count, plural, =1{1 setting} other{{count} settings}}",
+  "@lodSettingsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "themeToggleToNier": "Switch to NieR theme",
   "themeToggleToDark": "Switch to dark theme",
   "tooltipLanguage": "Language",
@@ -156,17 +210,13 @@
   "tooltipRestore": "Restore",
   "tooltipClose": "Close",
   "infoText": "Select your game, press play - done.",
-  "helpPrefix": "Launcher not working? Try ",
-  "helpNaoLauncher": "NAO Launcher",
-  "helpOr": " or ",
-  "helpCommandLine": "Command Line",
-  "helpJoinDiscord": ". Join our ",
   "helpDiscord": "Discord",
-  "helpSuffix": " for help.",
+  "helpOnDiscord": "Get help on Discord",
   "noFileSelected": "No file selected",
   "selectButton": "SELECT",
   "filePickerTitle": "Select Game Executable",
   "playButton": "PLAY",
+  "stopGameConfirmation": "Are you sure you want to stop the game? Unsaved changes will be lost.",
   "stopButton": "STOP",
   "statusReady": "Ready to launch!",
   "statusSelectGame": "Select your game executable to get started.",
@@ -214,17 +264,6 @@
   "@notifyThirdPartyMigrated": {
     "placeholders": {
       "path": {
-        "type": "String"
-      }
-    }
-  },
-  "notifyThirdPartyMigrationIncomplete": "Some third-party files could not be moved and are still in {oldPath}. Move them into {newPath} yourself, because a launcher update removes the old folder.",
-  "@notifyThirdPartyMigrationIncomplete": {
-    "placeholders": {
-      "oldPath": {
-        "type": "String"
-      },
-      "newPath": {
         "type": "String"
       }
     }
@@ -805,6 +844,7 @@
   "namsDescription": "NAMS is the mod loader that hosts NieR:Automata. It launches the game inside its own process, loads your mods at runtime, and applies these engine settings. These options control validation, content features, and plugin/ReShade/3DMigoto loading.",
   "yorhaProtocolDescription": "YP Devkit (YorHa Protocol) is a modding and developer plugin loaded by NAMS. Its full toolkit — hitbox/light/bone visualizers, a freecam and Photo Mode, entity spawning, the HAP script tree, an item spawner, and more — lives in an in-game overlay you open with F1. This tab is a convenient place to adjust its keybinds, workspace toggles, cheats, and enemy randomizer from the launcher; all of it can also be changed in-game.",
   "dropModelModHere": "Drop model mod folder or archive here",
+  "dropReleaseHint": "Release to drop",
   "dropToInstall": "Drop to install",
   "orClickToBrowse": "or click to browse",
   "mixedModDetected": "Mixed Mod Detected",
@@ -972,8 +1012,8 @@
   },
   "noMovieFolderFound": "No movie/ folder with .usm files found.",
   "noUsmFilesFound": "No .usm files found in the mod.",
-  "onboardingWelcomeTitle": "Welcome to YoRHa Protocol",
-  "onboardingWelcomeSubtitle": "One launcher. All your mods. New NieR content.\n\nDrag-and-drop mods, mid-game outfit switching, new quests, and a built-in devkit - without configuration nightmares.",
+  "onboardingWelcomeTitle": "NAMS & YoRHa Protocol",
+  "onboardingWelcomeSubtitle": "NAMS loads mods and plugins into NieR:Automata. Use the launcher to manage mod profiles, preview outfits in 3D, and configure textures and cutscenes.\n\nWith the YoRHa Protocol devkit you can inspect game objects, spawn entities, and build your own content. Start by connecting your game installation.",
   "onboardingSelectTitle": "Select your NieR:Automata installation",
   "onboardingSearchingDrives": "Scanning all drives...",
   "onboardingSearchingNier": "Searching for NieR:Automata...",
@@ -1166,7 +1206,7 @@
   "modsTutorialEcosystemStep1Title": "Why this all exists",
   "modsTutorialEcosystemStep1Body": "Modding NieR has historically been painful. Mods that work fine on their own start fighting the moment you stack a few of them - different DLL hooks (`dxgi`, `d3d11`, `dinput8`) compete for the same slot, the wrong wrapper wins the load order, and the game silently crashes on boot. People with 5–10 mods spend more time bisecting than playing.\n\nFor a long time the only answer was *manual installs only*: drop loose `.dat`/`.dtt` files into `data/`, hand-edit configs, never use a mod manager. That works for one or two mods, but it overwrites real game files and leaves no record of what changed. Tools like Vortex didn't help - they don't understand NieR's quirks.\n\n**NAMS exists to fix this at the modloader level**, and **this launcher exists to give NAMS a friendly face on top.**",
   "modsTutorialEcosystemStep2Title": "What NAMS does",
-  "modsTutorialEcosystemStep2Body": "**NAMS is the modloader.** It's not a proxy DLL hijacking `dxgi.dll` or `d3d11.dll` like older tools did - that's the very mechanism that caused the conflicts in the first place.\n\nInstead, NAMS runs as its own host process: it loads NieR:Automata as a library inside that process (the game's exe transformed into a loadable `game.bin`) and initializes the modloader before the game starts. Nothing is injected into another process - NAMS *is* the process the game runs in, with full control over what's about to load.\n\nFrom there, NAMS does two big things:\n\n**1. Reimplements the features other tools used to provide** - LodMod, Limit Break, texture injection, fast loading - natively, in one coordinated layer. Mods plug into NAMS APIs instead of fighting over which DLL hook gets called first.\n\n**2. Provides a virtual file system (VFS):**\n\n- Every mod lives in its own folder under `nams/mods/<modId>/` - never overwriting real game files.\n- At runtime NAMS overlays active mods into the engine's view of `data/`.\n- Your vanilla `data/*.cpk` and `NieRAutomata.exe` are **never modified**, so launching unmodded through Steam still works exactly as before.\n\nMods declare what they change in a manifest. NAMS validates and loads them in a defined order, so you finally get **clean enable/disable per mod** and **knowable conflict detection** - neither was possible with the old drop-files-into-`data` approach.\n\n### How this fits together\n\nThis launcher is **not** built directly on top of NieR:Automata. It doesn't reverse-engineer the game, hook engine functions, or know anything about `.dat`/`.dtt` formats on its own. The order is:\n\n1. **NieR:Automata** - the game, untouched.\n2. **NAMS** - the modloader, designed first to make scalable modding possible at all (engine reimplementation, VFS, plugin host, content framework).\n3. **This launcher** - built on top of NAMS as the helper. It reads NAMS's TOML configs, writes into NAMS's folder layout, and talks to NAMS's APIs. That's it.\n\nThe practical consequence: NAMS is the load-bearing layer. The launcher is just a friendly UI in front of it, and could be replaced by a different UI (or the command line) without your mods caring.\n\n### And it has been\n\nThis isn't theoretical. **The NAO Launcher by Rustukun** is a separate launcher built on the same foundation - a different UI, different design choices, talks to the same NAMS underneath. Your mods, your `nams/mods/<modId>/` folders, your `disabled_mods.toml` - all of it works the same regardless of which launcher you're using.\n\nThat's the proof that NAMS is the platform and any launcher (this one, NAO, a future one nobody's written yet) is just a frontend choice. Pick whichever fits your workflow; your mod library doesn't have to move.",
+  "modsTutorialEcosystemStep2Body": "**NAMS is the modloader.** It's not a proxy DLL hijacking `dxgi.dll` or `d3d11.dll` like older tools did - that's the very mechanism that caused the conflicts in the first place.\n\nInstead, NAMS runs as its own host process: it loads NieR:Automata as a library inside that process (the game's exe transformed into a loadable `game.bin`) and initializes the modloader before the game starts. Nothing is injected into another process - NAMS *is* the process the game runs in, with full control over what's about to load.\n\nFrom there, NAMS does two big things:\n\n**1. Reimplements the features other tools used to provide** - LodMod, Limit Break, texture injection, fast loading - natively, in one coordinated layer. Mods plug into NAMS APIs instead of fighting over which DLL hook gets called first.\n\n**2. Provides a virtual file system (VFS):**\n\n- Every mod lives in its own folder under `nams/mods/<modId>/` - never overwriting real game files.\n- At runtime NAMS overlays active mods into the engine's view of `data/`.\n- Your vanilla `data/*.cpk` and `NieRAutomata.exe` are **never modified**, so launching unmodded through Steam still works exactly as before.\n\nMods declare what they change in a manifest. NAMS validates and loads them in a defined order, so you finally get **clean enable/disable per mod** and **knowable conflict detection** - neither was possible with the old drop-files-into-`data` approach.\n\n### How this fits together\n\nThis launcher is **not** built directly on top of NieR:Automata. It doesn't reverse-engineer the game, hook engine functions, or know anything about `.dat`/`.dtt` formats on its own. The order is:\n\n1. **NieR:Automata** - the game, untouched.\n2. **NAMS** - the modloader, designed first to make scalable modding possible at all (engine reimplementation, VFS, plugin host, content framework).\n3. **This launcher** - built on top of NAMS as the helper. It reads NAMS's TOML configs, writes into NAMS's folder layout, and talks to NAMS's APIs. That's it.\n\nThe practical consequence: NAMS is the load-bearing layer. The launcher is just a friendly UI in front of it, and could be replaced by a different UI (or the command line) without your mods caring.",
   "modsTutorialEcosystemStep3Title": "What this launcher adds - and what's different",
   "modsTutorialEcosystemStep3Body": "NAMS handles loading. The launcher handles **everything around it** - install, organisation, troubleshooting:\n\n- **Mod Manager** - drag-and-drop install of NAMS-format mods, automatic layout normalization (wax/SK_Res wrappers, bundled assets), manifest inspection, conflict warnings.\n- **Textures** - manage standalone texture packs and `load_order` priority without hand-editing TOML.\n- **Cutscenes** - install HD cutscene mods, auto-detect codec (H264 vs MPEG-2), wire up the right NAMS settings.\n- **Profiles** - keep multiple mod loadouts side-by-side, switch with one click, without copying or losing state.\n- **Diagnostics** - full report of what's installed where, what's leftover from old installs, what NAMS sees vs what's actually on disk.\n\n### Why we built this\n\n**Nothing against manual installs.** Dropping one outfit's `.dat`/`.dtt` files into the right `data/` subfolder works fine for one or two mods. The launcher is built for the scale beyond that.\n\nThe NAMS ecosystem now supports things like:\n\n- **30+ outfit mods** with multi-outfit swapping per character.\n- **20+ custom quests** added on top of the vanilla story.\n- **10+ new weapons** with their own behaviour.\n- Plus textures, cutscenes, plugins, balance changes…\n\nManaging that by hand isn't a philosophical preference - it's **just not possible**. You can't track which file came from which mod, you can't enable or disable a single mod cleanly, you can't tell why something broke. At scale, manual modding hits a hard wall - and the NAMS ecosystem has been past that wall for a while.\n\n### How this differs from NAMH and Vortex\n\nIf you've been around the NieR scene a while, you remember how previous mod managers ended:\n\n- **NAMH** (NieR Automata Mod Helper) became unmaintained, broke games in unrecoverable ways, hit \"program in use\" lock issues, and the standard recovery was *uninstall the game, reinstall, do it manually.* It worked by **directly replacing files in `data/`** - once a NAMH install went sideways, there was no clean way back.\n- **Vortex** never properly understood NieR's file structure. Its virtual file system makes assumptions that don't match how the game actually loads content, so installs would silently misplace files.\n\nThis launcher is built differently. The defining choices:\n\n1. **No file replacement, ever.** Mods live in `nams/mods/<modId>/` and get overlaid into the engine's view at runtime via NAMS's VFS. Vanilla `data/` is never touched. There's no \"unrecoverable state\" because nothing in the real game ever changed.\n2. **Every action is reversible.** Uninstall a mod → its folder and bundled assets are removed cleanly. Disable a mod → an entry in `disabled_mods.toml` and NAMS skips it. No hidden state, no irreversible writes.\n3. **Profiles instead of one global state.** Past managers committed everything to a single configuration. Profiles let you keep multiple loadouts side-by-side and switch atomically - nothing to corrupt, nothing to lose.\n4. **Built on a maintained modloader.** NAMH's death came from the modloader story being uncertain. NAMS is the foundation everything here is built on, and the launcher follows its updates.\n\nIf this launcher ever stops being maintained, your mods are still just files on disk that NAMS reads - you don't end up locked out of your own install.",
   "modsTutorialEcosystemStep4Title": "Where to go next",
@@ -1246,7 +1286,7 @@
     }
   },
   "refreshButton": "Refresh",
-  "tabModloaderLabel": "Modloader",
+  "tabModloaderLabel": "NAMS",
   "tabYorhaLabel": "YoRHa Protocol",
   "configEditorTitle": "CONFIG EDITOR",
   "changelogTitle": "WHAT'S NEW",

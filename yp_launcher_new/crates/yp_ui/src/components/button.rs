@@ -47,6 +47,7 @@ impl TintColor {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
 pub enum ButtonStyle {
     Filled,
+    Solid(TintColor),
     Tinted(TintColor),
     Outlined,
     #[default]
@@ -85,6 +86,15 @@ impl ButtonStyle {
                 background: colors.button_background,
                 hover_background: colors.accent_highlight,
                 active_background: colors.accent_secondary,
+                border: clear,
+                hover_border: clear,
+            },
+            ButtonStyle::Solid(tint) => ButtonColors {
+                fg: Color::OnAccent,
+                hover_fg: Color::OnAccent,
+                background: tint.color().color(cx),
+                hover_background: colors.accent_primary,
+                active_background: colors.border_medium,
                 border: clear,
                 hover_border: clear,
             },
@@ -219,6 +229,7 @@ enum ButtonRounding {
 
 pub struct ButtonLike {
     id: ElementId,
+    accessible_label: Option<SharedString>,
     style: ButtonStyle,
     selected_style: Option<ButtonStyle>,
     size: ButtonSize,
@@ -242,9 +253,15 @@ pub struct ButtonLike {
 crate::impl_into_element!(ButtonLike);
 
 impl ButtonLike {
+    pub fn accessible_label(mut self, label: impl Into<SharedString>) -> Self {
+        self.accessible_label = Some(label.into());
+        self
+    }
+
     pub fn new(id: impl Into<ElementId>) -> Self {
         Self {
             id: id.into(),
+            accessible_label: None,
             style: ButtonStyle::default(),
             selected_style: None,
             size: ButtonSize::default(),
@@ -415,7 +432,10 @@ impl RenderOnce for ButtonLike {
         let theme = cx.theme().clone();
         let colors = resolved_button_colors(self.style, self.selected_style, self.selected, cx);
         let (padding_h, padding_v) = self.padding.unwrap_or_else(|| self.size.padding(&sizes));
-        let radius = self.radius.unwrap_or(Sizes::CONTROL_RADIUS);
+        let menu = theme.id == crate::ThemeId::NierNew;
+        let radius = self
+            .radius
+            .unwrap_or(if menu { px(0.) } else { Sizes::CONTROL_RADIUS });
         let corners = match self.rounding {
             ButtonRounding::All => Corners::all(radius),
             ButtonRounding::Left => Corners {
@@ -443,10 +463,28 @@ impl RenderOnce for ButtonLike {
             .group
             .unwrap_or_else(|| ButtonLike::hover_group(&self.id));
 
+        let sweeps = menu
+            && matches!(self.style, ButtonStyle::Filled | ButtonStyle::Solid(_))
+            && !disabled
+            && !yp_nier_ui::ReducedMotion::enabled(cx);
+        let fill = sweeps
+            .then(|| super::util::menu_hover_fill(self.id.clone(), colors.hover_background, None, window, cx));
         h_flex()
             .id(self.id)
+            .relative()
+            .when(disabled || on_click.is_some(), |el| {
+                el.role(gpui::Role::Button)
+                    .when_some(self.accessible_label, |el, label| el.aria_label(label))
+                    .when(disabled, |el| el.aria_description(cx.t().mod_disabled()))
+            })
             .group(group)
-            .flex_none()
+            .map(|el| {
+                if menu {
+                    el.min_w_0().max_w_full()
+                } else {
+                    el.flex_none()
+                }
+            })
             .justify_center()
             .gap(sizes.spacing_md)
             .px(padding_h)
@@ -461,7 +499,11 @@ impl RenderOnce for ButtonLike {
             .text_color(fg)
             .text_size(self.size.label_size().pixels(&sizes))
             .line_height(relative(LINE_HEIGHT_TIGHT))
-            .font_weight(FontWeight::BOLD)
+            .font_weight(if menu {
+                FontWeight::SEMIBOLD
+            } else {
+                FontWeight::BOLD
+            })
             .when(is_hero, |this| {
                 this.w(sizes.play_button_width).h(sizes.play_button_height)
             })
@@ -477,7 +519,11 @@ impl RenderOnce for ButtonLike {
                 this.cursor(self.cursor_style)
                     .hover(move |style| {
                         let style = style
-                            .bg(colors.hover_background)
+                            .bg(if sweeps {
+                                colors.background
+                            } else {
+                                colors.hover_background
+                            })
                             .border_color(colors.hover_border)
                             .text_color(hover_fg);
                         if is_link {
@@ -502,6 +548,7 @@ impl RenderOnce for ButtonLike {
             .when(controller_blocked, |this| {
                 this.tooltip(Tooltip::text(cx.t().controller_requires_keyboard()))
             })
+            .children(fill)
             .children(self.children)
     }
 }
@@ -706,6 +753,7 @@ impl RenderOnce for Button {
         };
 
         self.base
+            .accessible_label(label.clone())
             .disabled(disabled)
             .group_name(group.clone())
             .when(loading, |this| {
@@ -716,6 +764,7 @@ impl RenderOnce for Button {
             })
             .child(
                 v_flex()
+                    .min_w_0()
                     .when_some(label_color, |this, color| this.text_color(color))
                     .when_some(label_size, |this, size| this.text_size(size))
                     .when_some(self.weight, |this, weight| this.font_weight(weight))
@@ -750,6 +799,11 @@ pub struct IconButton {
 crate::impl_into_element!(IconButton);
 
 impl IconButton {
+    pub fn accessible_label(mut self, label: impl Into<SharedString>) -> Self {
+        self.base = self.base.accessible_label(label);
+        self
+    }
+
     pub fn new(id: impl Into<ElementId>, icon: IconName) -> Self {
         Self {
             base: ButtonLike::new(id),

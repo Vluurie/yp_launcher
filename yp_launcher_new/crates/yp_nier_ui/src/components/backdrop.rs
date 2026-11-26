@@ -47,9 +47,14 @@ impl RenderOnce for MenuBackdrop {
                 CornerDrift::new(seed),
             )
         });
+        let reduced = crate::ReducedMotion::enabled(cx);
         let mut s = Surface::new(1600., 900.);
         state.update(cx, |(start, drift), _| {
-            let seconds = self.start.unwrap_or(*start).elapsed().as_secs_f32();
+            let seconds = if reduced {
+                2.
+            } else {
+                self.start.unwrap_or(*start).elapsed().as_secs_f32()
+            };
             let frame = seconds * 60.;
             art::opening(&mut s, frame);
             let corners = drift.origins(seconds, [s.width, s.height]);
@@ -72,7 +77,12 @@ impl RenderOnce for MenuBackdrop {
                 }
             }
         });
-        window.request_animation_frame();
+        if !reduced
+            && (window.is_window_active()
+                || self.start.is_some_and(|t| t.elapsed().as_secs_f32() < 1.4))
+        {
+            window.request_animation_frame();
+        }
         s
     }
 }

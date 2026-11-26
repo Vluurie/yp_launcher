@@ -398,7 +398,7 @@ fn load_wax(root: &Path, character: Character) -> Vec<InspectorOutfitPreset> {
         let Some(outfits) = decoded.get(list_key).and_then(serde_json::Value::as_array) else {
             continue;
         };
-        for raw in outfits {
+        for (entry_index, raw) in outfits.iter().enumerate() {
             let Some(values) = raw.as_object() else {
                 continue;
             };
@@ -406,7 +406,7 @@ fn load_wax(root: &Path, character: Character) -> Vec<InspectorOutfitPreset> {
                 continue;
             };
             presets.push(InspectorOutfitPreset {
-                id: format!("{}|{outfit_id}", file.to_string_lossy()),
+                id: format!("{}|{outfit_id}|{entry_index}", file.to_string_lossy()),
                 outfit_id,
                 name: values.string("outfit_name").unwrap_or_default().to_owned(),
                 custom_assembly: has_any_mesh_list(values),
@@ -423,7 +423,10 @@ pub fn load(archive: &DataArchivePair) -> Vec<InspectorOutfitPreset> {
     let Some(character) = Character::for_stem(&archive.stem) else {
         return Vec::new();
     };
-    let root = &archive.config_root;
+    load_character(&archive.config_root, character)
+}
+
+pub fn load_character(root: &Path, character: Character) -> Vec<InspectorOutfitPreset> {
     if !root.is_dir() {
         return Vec::new();
     }

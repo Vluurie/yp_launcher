@@ -9,8 +9,8 @@ use yp_state::prelude::*;
 use yp_state::{ModInstallReport, ModInstallRequest, Registry};
 use yp_ui::prelude::*;
 use yp_ui::{
-    ButtonSize, ButtonStyle, Callout, Card, Checkbox, Chip, ChipTone, ChoiceCard, DropProgress,
-    DropZone, Headline, HeadlineSize, IconSize, LabelSize, LanguageSelector, NierBackground,
+    ButtonSize, ButtonStyle, Callout, Card, Checkbox, Chip, ChipTone, DropProgress, DropZone,
+    Headline, HeadlineSize, IconSize, LabelSize, LanguageSelector, NierBackground,
     ScrollableElement, SelectableText, Severity, Sizes, Spinner, StepDots, ToggleState, easing,
 };
 
@@ -324,12 +324,11 @@ impl OnboardingWizard {
     fn welcome(&self, window: &Window, cx: &mut Context<Self>) -> Div {
         let strings = cx.t();
         Self::column(window, cx)
-            .child(
-                Headline::new(strings.onboarding_welcome_title())
-                    .size(HeadlineSize::Hero)
-                    .color(Color::Accent)
-                    .centered(),
-            )
+            .child(super::menu::heading(
+                strings.onboarding_welcome_title(),
+                window,
+                cx,
+            ))
             .child(
                 Label::new(strings.onboarding_welcome_subtitle())
                     .size(LabelSize::Large)
@@ -338,10 +337,20 @@ impl OnboardingWizard {
                     .centered(),
             )
             .child(
-                Self::actions(window, cx).child(
+                Self::actions(window, cx).child(if cx.theme().id == ThemeId::NierNew {
+                    yp_ui::nier::DialogButton::new(
+                        "shell-onboarding-start",
+                        strings.button_get_started(),
+                    )
+                    .width(175.)
+                    .scale(0.85)
+                    .on_click(cx.listener(|this, _, _, cx| this.advance(cx)))
+                    .into_any_element()
+                } else {
                     Self::primary("shell-onboarding-start", strings.button_get_started())
-                        .on_click(cx.listener(|this, _, _, cx| this.advance(cx))),
-                ),
+                        .on_click(cx.listener(|this, _, _, cx| this.advance(cx)))
+                        .into_any_element()
+                }),
             )
     }
 
@@ -436,22 +445,26 @@ impl OnboardingWizard {
                     .color(Color::Muted)
                     .centered(),
             )
-            .child(
-                ChoiceCard::new("shell-onboarding-first-yes", strings.onboarding_first_yes())
-                    .selected(first)
-                    .compact()
-                    .on_click(cx.listener(|this, _, _, cx| {
-                        this.choose_first_playthrough(true, cx);
-                    })),
-            )
-            .child(
-                ChoiceCard::new("shell-onboarding-first-no", strings.onboarding_first_no())
-                    .selected(!first)
-                    .compact()
-                    .on_click(cx.listener(|this, _, _, cx| {
-                        this.choose_first_playthrough(false, cx);
-                    })),
-            )
+            .child(super::menu::choice(
+                "shell-onboarding-first-yes",
+                strings.onboarding_first_yes(),
+                first,
+                window,
+                cx,
+                cx.listener(|this, _, _, cx| {
+                    this.choose_first_playthrough(true, cx);
+                }),
+            ))
+            .child(super::menu::choice(
+                "shell-onboarding-first-no",
+                strings.onboarding_first_no(),
+                !first,
+                window,
+                cx,
+                cx.listener(|this, _, _, cx| {
+                    this.choose_first_playthrough(false, cx);
+                }),
+            ))
             .child(
                 Self::actions(window, cx)
                     .child(self.back_button(true, cx))
@@ -477,22 +490,22 @@ impl OnboardingWizard {
                         .color(Color::Secondary)
                         .centered(),
                 )
-                .child(
-                    ChoiceCard::new(
-                        "shell-onboarding-migration-yes",
-                        strings.onboarding_migration_yes(),
-                    )
-                    .compact()
-                    .on_click(cx.listener(|this, _, _, cx| this.answer_had_mods(true, cx))),
-                )
-                .child(
-                    ChoiceCard::new(
-                        "shell-onboarding-migration-no",
-                        strings.onboarding_migration_no(),
-                    )
-                    .compact()
-                    .on_click(cx.listener(|this, _, _, cx| this.answer_had_mods(false, cx))),
-                )
+                .child(super::menu::choice(
+                    "shell-onboarding-migration-yes",
+                    strings.onboarding_migration_yes(),
+                    false,
+                    window,
+                    cx,
+                    cx.listener(|this, _, _, cx| this.answer_had_mods(true, cx)),
+                ))
+                .child(super::menu::choice(
+                    "shell-onboarding-migration-no",
+                    strings.onboarding_migration_no(),
+                    false,
+                    window,
+                    cx,
+                    cx.listener(|this, _, _, cx| this.answer_had_mods(false, cx)),
+                ))
                 .child(Self::actions(window, cx).child(self.back_button(true, cx)));
         }
         let panel = v_flex()
@@ -584,26 +597,26 @@ impl OnboardingWizard {
                         .color(Color::Secondary)
                         .centered(),
                 )
-                .child(
-                    ChoiceCard::new(
-                        "shell-onboarding-mods-yes",
-                        strings.onboarding_mod_install_yes(),
-                    )
-                    .compact()
-                    .on_click(cx.listener(|this, _, _, cx| {
+                .child(super::menu::choice(
+                    "shell-onboarding-mods-yes",
+                    strings.onboarding_mod_install_yes(),
+                    false,
+                    window,
+                    cx,
+                    cx.listener(|this, _, _, cx| {
                         this.answer_wants_mod_install(true, cx);
-                    })),
-                )
-                .child(
-                    ChoiceCard::new(
-                        "shell-onboarding-mods-skip",
-                        strings.onboarding_mod_install_skip(),
-                    )
-                    .compact()
-                    .on_click(cx.listener(|this, _, _, cx| {
+                    }),
+                ))
+                .child(super::menu::choice(
+                    "shell-onboarding-mods-skip",
+                    strings.onboarding_mod_install_skip(),
+                    false,
+                    window,
+                    cx,
+                    cx.listener(|this, _, _, cx| {
                         this.answer_wants_mod_install(false, cx);
-                    })),
-                )
+                    }),
+                ))
                 .child(Self::actions(window, cx).child(self.back_button(true, cx)));
         }
         let busy = self.installing;
@@ -744,9 +757,10 @@ impl OnboardingWizard {
                                     .color(Color::Muted),
                             )
                             .child(
-                                div().flex_1().min_w_0().child(
-                                    Label::new(row.value).size(LabelSize::Small).truncate(),
-                                ),
+                                div()
+                                    .flex_1()
+                                    .min_w_0()
+                                    .child(Label::new(row.value).size(LabelSize::Small).truncate()),
                             )
                     })),
             )
@@ -768,11 +782,14 @@ impl OnboardingWizard {
                     .on_click(cx.listener(|this, _, _, cx| this.finish(true, cx))),
             )
             .child(
-                Button::new("shell-onboarding-skip-play", strings.button_go_to_launcher())
-                    .style(ButtonStyle::Link)
-                    .size(ButtonSize::Medium)
-                    .color(Color::Muted)
-                    .on_click(cx.listener(|this, _, _, cx| this.finish(false, cx))),
+                Button::new(
+                    "shell-onboarding-skip-play",
+                    strings.button_go_to_launcher(),
+                )
+                .style(ButtonStyle::Link)
+                .size(ButtonSize::Medium)
+                .color(Color::Muted)
+                .on_click(cx.listener(|this, _, _, cx| this.finish(false, cx))),
             )
     }
 

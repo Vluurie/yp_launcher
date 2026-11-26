@@ -1,13 +1,16 @@
 mod list_row;
 
 use crate::motion::next_random;
-use gpui::{App, ElementId, Global, SharedString, Window};
+use gpui::{App, ElementId, Global, IntoElement, SharedString, Window};
 pub(crate) use list_row::ListRowText;
 use list_row::Playback;
-use std::time::Instant;
+use std::time::{Duration, Instant};
 use unicode_segmentation::UnicodeSegmentation;
 
 const UPDATES_PER_LETTER: u64 = 7;
+const TYPING_RATE: f64 = 0.76;
+const PAGE_LETTER_MS: usize = 28;
+pub(crate) const PAGE_TEXT_LIMIT: Duration = Duration::from_millis(380);
 
 #[derive(Clone, Copy)]
 pub(crate) enum Cadence {
@@ -89,6 +92,82 @@ impl Reveal {
     }
 }
 
+pub fn page_text_scope(child: impl IntoElement, start: Instant) -> impl IntoElement {
+    ListRowText::new(child.into_any_element(), Some(start))
+}
+
+pub(crate) fn page_start(cx: &App) -> Option<Instant> {
+    match Playback::current(cx) {
+        Playback::Opening(start) => Some(start),
+        _ => None,
+    }
+}
+
+pub struct PageTextFrame<'a> {
+    pub prefix_len: usize,
+    pub glyph: &'a str,
+}
+
+fn frame_at(text: &str, elapsed: Duration) -> Option<PageTextFrame<'_>> {
+    if elapsed >= PAGE_TEXT_LIMIT {
+        return None;
+    }
+    let age = elapsed.as_millis() as usize;
+    let count = text.graphemes(true).count();
+    let duration = count
+        .saturating_mul(PAGE_LETTER_MS)
+        .min(PAGE_TEXT_LIMIT.as_millis() as usize);
+    if count < 2 || age >= duration {
+        return None;
+    }
+    let visible = ((age as u128 * count as u128) / duration as u128) as usize;
+    let (prefix_len, _) = text.grapheme_indices(true).nth(visible)?;
+    let glyph = text
+        .graphemes(true)
+        .nth((age / PAGE_LETTER_MS + visible) % count)?;
+    Some(PageTextFrame { prefix_len, glyph })
+}
+
+pub fn page_text_frame<'a>(
+    text: &'a str,
+    window: &mut Window,
+    cx: &App,
+) -> Option<PageTextFrame<'a>> {
+    let start = page_start(cx)?;
+    if crate::ReducedMotion::enabled(cx) {
+        return None;
+    }
+    let frame = frame_at(text, start.elapsed())?;
+    window.request_animation_frame();
+    Some(frame)
+}
+
+pub fn page_text(text: &str, window: &mut Window, cx: &App) -> Option<SharedString> {
+    let start = page_start(cx)?;
+    if crate::ReducedMotion::enabled(cx) {
+        return None;
+    }
+    reveal_since(text, start.elapsed(), window)
+}
+
+pub(super) fn reveal_since(
+    text: &str,
+    elapsed: Duration,
+    window: &mut Window,
+) -> Option<SharedString> {
+    if elapsed >= PAGE_TEXT_LIMIT
+        || (text.len() > 192 && text.graphemes(true).nth(192).is_some())
+        || text.contains(['\n', '\r'])
+    {
+        return None;
+    }
+    let frame = frame_at(text, elapsed)?;
+    let mut shown = String::from(&text[..frame.prefix_len]);
+    shown.push_str(frame.glyph);
+    window.request_animation_frame();
+    Some(shown.into())
+}
+
 pub(crate) fn display(
     text: &SharedString,
     key: impl Into<ElementId>,
@@ -98,7 +177,7 @@ pub(crate) fn display(
     cx: &mut App,
 ) -> SharedString {
     let playback = Playback::current(cx);
-    if matches!(playback, Playback::Complete) {
+    if crate::ReducedMotion::enabled(cx) || matches!(playback, Playback::Complete) {
         return text.clone();
     }
     let state = w.use_keyed_state(key, cx, |_, cx| {
@@ -118,8 +197,9 @@ pub(crate) fn display(
             Playback::Opening(started) => started,
             _ => state.started,
         };
-        let tick = (started.elapsed().as_secs_f64() * 60.) as u32;
-        state.at(tick.saturating_sub(delay), cadence)
+        let elapsed_frames = started.elapsed().as_secs_f64() * 60.;
+        let typing_frames = (elapsed_frames - f64::from(delay)).max(0.) * TYPING_RATE;
+        state.at(typing_frames as u32, cadence)
     });
     if active {
         w.request_animation_frame();
@@ -130,6 +210,33 @@ pub(crate) fn display(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[gpui::test]
+    fn page_labels_keep_typing_after_the_wipe_and_finish_within_the_limit(
+        cx: &mut gpui::TestAppContext,
+    ) {
+        struct Page;
+        impl gpui::Render for Page {
+            fn render(
+                &mut self,
+                window: &mut Window,
+                _: &mut gpui::Context<Self>,
+            ) -> impl gpui::IntoElement {
+                let title = "MOD MANAGER";
+                let midway = reveal_since(title, Duration::from_millis(200), window).unwrap();
+                assert_eq!(midway.len(), 8);
+                assert!(midway.starts_with("MOD MAN"));
+                assert!(reveal_since(title, Duration::from_millis(308), window).is_none());
+
+                let label = "Create a desktop shortcut to launch with YoRHa Protocol";
+                assert!(reveal_since(label, Duration::from_millis(350), window).is_some());
+                assert!(reveal_since(label, PAGE_TEXT_LIMIT, window).is_none());
+                gpui::div()
+            }
+        }
+        let (_, window) = cx.add_window_view(|_, _| Page);
+        window.run_until_parked();
+    }
 
     #[test]
     fn only_the_leading_glyph_changes_between_steps() {
@@ -153,5 +260,14 @@ mod tests {
         assert_eq!(r.at(10, Cadence::Row).0.graphemes(true).count(), 4);
         assert_eq!(r.at(14, Cadence::Row).0.as_ref(), "Aé e\u{301}界");
         assert!(!Reveal::new("".into(), 1).at(0, Cadence::Row).1);
+    }
+
+    #[test]
+    fn a_long_multiline_paragraph_reveals_whole_graphemes_within_the_page_timing() {
+        let text = "界e\u{301}\n".repeat(200);
+        let frame = frame_at(&text, PAGE_TEXT_LIMIT / 2).unwrap();
+        assert_eq!(text[..frame.prefix_len].graphemes(true).count(), 300);
+        assert!(["界", "e\u{301}", "\n"].contains(&frame.glyph));
+        assert!(frame_at(&text, PAGE_TEXT_LIMIT).is_none());
     }
 }

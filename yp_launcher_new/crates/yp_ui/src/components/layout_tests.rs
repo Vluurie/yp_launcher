@@ -58,6 +58,153 @@ fn mouse_down_is_prevented(cx: &mut VisualTestContext, position: gpui::Point<Pix
 }
 
 #[gpui::test]
+fn menu_slider_previews_hover_commits_on_second_click_and_cancels_on_escape(
+    cx: &mut TestAppContext,
+) {
+    let saved = Rc::new(Cell::new(0.125));
+    let commits = Rc::new(Cell::new(0usize));
+    let render_value = saved.clone();
+    let render_commits = commits.clone();
+    let (_, cx) = open(cx, move |_, _| {
+        let value = render_value.clone();
+        let count = render_commits.clone();
+        tagged("menu-scale")
+            .w(px(300.))
+            .child(
+                Slider::new("test-slider")
+                    .min(0.)
+                    .max(1.)
+                    .step(0.001)
+                    .value(value.get())
+                    .on_commit(move |n, w, _| {
+                        value.set(*n);
+                        count.set(count.get() + 1);
+                        w.refresh();
+                    }),
+            )
+            .into_any_element()
+    });
+    cx.update(|w, cx| {
+        set_theme(ThemeId::NierNew, cx);
+        cx.set_global(yp_nier_ui::ReducedMotion(true));
+        w.refresh();
+    });
+    cx.run_until_parked();
+    let track = bounds(cx, "menu-scale");
+    let start = point(track.left() + px(10.), track.center().y);
+    let hover = point(track.left() + px(214.), track.center().y);
+    cx.simulate_click(start, Modifiers::default());
+    cx.simulate_mouse_move(hover, None, Modifiers::default());
+    cx.run_until_parked();
+    assert_eq!(commits.get(), 0);
+    cx.simulate_keystrokes("escape");
+    assert_eq!(saved.get(), 0.125);
+    cx.simulate_click(start, Modifiers::default());
+    cx.simulate_mouse_move(hover, None, Modifiers::default());
+    cx.simulate_click(hover, Modifiers::default());
+    assert_eq!(commits.get(), 1);
+    let picked = saved.get();
+    assert!((0.65..0.99).contains(&picked), "hover picked {picked}");
+    cx.simulate_keystrokes("right");
+    assert!((saved.get() - picked - 0.001).abs() < 0.00001);
+    cx.simulate_keystrokes("enter end enter");
+    assert_eq!(saved.get(), 1.);
+
+    let before = commits.get();
+    let outside = point(track.left() + px(50.), track.bottom() + px(24.));
+    cx.simulate_mouse_down(outside, MouseButton::Left, Modifiers::none());
+    cx.simulate_mouse_move(hover, Some(MouseButton::Left), Modifiers::none());
+    cx.simulate_mouse_up(hover, MouseButton::Left, Modifiers::none());
+    assert_eq!(commits.get(), before);
+    cx.simulate_mouse_down(start, MouseButton::Left, Modifiers::none());
+    cx.simulate_mouse_move(hover, Some(MouseButton::Left), Modifiers::none());
+    assert_eq!(commits.get(), before);
+    cx.simulate_mouse_up(hover, MouseButton::Left, Modifiers::none());
+    assert_eq!(commits.get(), before + 1);
+    assert!((0.65..0.99).contains(&saved.get()));
+}
+
+#[gpui::test]
+fn labelled_menu_slider_accepts_single_clicks_across_its_full_width(cx: &mut TestAppContext) {
+    let saved = Rc::new(Cell::new(0.75));
+    let width = Rc::new(Cell::new(600.));
+    let render_width = width.clone();
+    let render_value = saved.clone();
+    let (_, cx) = open(cx, move |_, _| {
+        let value = render_value.clone();
+        tagged("camera-setting")
+            .w(px(render_width.get()))
+            .child(
+                SettingSlider::new("camera-side", "Camera side offset", value.get())
+                    .min(-3.).max(3.).step(0.05).default_mark(0.)
+                    .on_commit(move |next, w, _| {
+                        value.set(*next);
+                        w.refresh();
+                    }),
+            )
+            .into_any_element()
+    });
+    cx.update(|w, cx| {
+        set_theme(ThemeId::NierNew, cx);
+        cx.set_global(yp_nier_ui::ReducedMotion(true));
+        w.refresh();
+    });
+    cx.run_until_parked();
+    let face = bounds(cx, "nier-setting-slider-face");
+    let left = point(face.left() + px(1.), face.center().y);
+    let right = point(face.right() - px(1.), face.center().y);
+    cx.simulate_click(left, Modifiers::default());
+    assert_eq!(saved.get(), -3.);
+    cx.simulate_click(right, Modifiers::default());
+    assert_eq!(saved.get(), 3.);
+    cx.simulate_keystrokes("left");
+    assert!((saved.get() - 2.95).abs() < 0.0001);
+    cx.simulate_click(face.center(), Modifiers::default());
+    assert_eq!(saved.get(), 0.);
+    let outside = point(face.left() - px(15.), face.bottom() + px(8.));
+    cx.simulate_mouse_down(right, MouseButton::Left, Modifiers::default());
+    cx.simulate_mouse_move(outside, Some(MouseButton::Left), Modifiers::default());
+    cx.simulate_mouse_up(outside, MouseButton::Left, Modifiers::default());
+    assert_eq!(saved.get(), -3.);
+
+    assert!(face.size.width <= px(364.));
+    cx.simulate_keystrokes("tab ctrl-a");
+    cx.simulate_input("-1.25");
+    cx.simulate_keystrokes("enter");
+    assert_eq!(saved.get(), -1.25);
+
+    width.set(225.);
+    cx.update(|w, _| w.refresh());
+    cx.run_until_parked();
+    let container = bounds(cx, "camera-setting");
+    let compact = bounds(cx, "nier-setting-slider-face");
+    assert!(compact.left() >= container.left() && compact.right() <= container.right());
+    assert!(compact.top() > container.top(), "the full label should wrap above the scale");
+}
+
+#[gpui::test]
+fn slider_number_fits_signed_limits_beside_the_live_marker(cx: &mut TestAppContext) {
+    let (_, cx) = open(cx, |_, _| {
+        tagged("small-slider-panel").w(px(180.)).child(
+            SettingSlider::new("percentage", "Scale", 100.)
+                .min(-100.).max(100.).step(0.1).decimals(1).apply_marker(ApplyKind::Live)
+        ).into_any_element()
+    });
+    cx.update(|w, cx| { set_theme(ThemeId::NierNew, cx); w.refresh(); });
+    cx.run_until_parked();
+    let field = bounds(cx, "nier-setting-slider-number");
+    let panel = bounds(cx, "small-slider-panel");
+    let text_width = cx.update(|w, cx| {
+        use crate::theme::ResponsiveExt;
+        let run = w.text_style().to_run(6);
+        w.text_system().shape_line("-100.0".into(), w.sizes(cx).font_md, &[run], None).width
+    });
+    assert!(field.size.width >= text_width + px(22.));
+    assert!(field.right() <= panel.right());
+    assert!(bounds(cx, "nier-setting-slider-face").right() <= field.left());
+}
+
+#[gpui::test]
 fn a_mouse_down_on_the_title_bar_is_left_to_the_platform(cx: &mut TestAppContext) {
     let (root, cx) = open(cx, |_, _| {
         v_flex()
@@ -353,6 +500,60 @@ fn narrow_groups_and_links_stay_on_one_line(cx: &mut TestAppContext) {
 }
 
 #[gpui::test]
+fn scrollbars_reserve_space_outside_full_width_and_full_height_content(cx: &mut TestAppContext) {
+    let vertical = gpui::ScrollHandle::new();
+    let horizontal = gpui::ScrollHandle::new();
+    let y = vertical.clone();
+    let x = horizontal.clone();
+    let (_, cx) = open(cx, move |_, _| {
+        v_flex().size_full()
+            .child(div().id("vertical-pane").w(px(200.)).h(px(80.))
+                .child(tagged("wide-row").w_full().h(px(200.)))
+                .overflow_y_scrollbar(&y))
+            .child(div().id("horizontal-pane").w(px(200.)).h(px(80.))
+                .child(tagged("tall-row").w(px(400.)).h_full())
+                .overflow_x_scrollbar(&x))
+            .into_any_element()
+    });
+    assert!(vertical.max_offset().y > px(0.));
+    assert!(horizontal.max_offset().x > px(0.));
+    assert!(bounds(cx, "wide-row").right() <= vertical.bounds().right() - Sizes::SCROLLBAR_WIDTH);
+    assert!(bounds(cx, "tall-row").bottom() <= horizontal.bounds().bottom() - Sizes::SCROLLBAR_WIDTH);
+}
+
+#[gpui::test]
+fn virtual_list_scrollbars_can_be_dragged_outside_the_rows(cx: &mut TestAppContext) {
+    let uniform = gpui::UniformListScrollHandle::new();
+    let list = gpui::ListState::new(80, gpui::ListAlignment::Top, px(60.));
+    let uniform_handle = uniform.clone();
+    let list_state = list.clone();
+    let (_, cx) = open(cx, move |_, _| {
+        v_flex().w(px(220.))
+            .child(tagged("uniform-pane").w_full().h(px(100.)).child(VirtualList::uniform(
+                "uniform", 80, &uniform_handle, |range, _, _| range.map(|_| {
+                    div().h(px(25.)).w_full()
+                }).collect(),
+            )))
+            .child(tagged("variable-pane").w_full().h(px(100.)).child(VirtualList::list(
+                "variable", &list_state, |_, _, _| div().h(px(25.)).w_full().into_any_element(),
+            )))
+            .into_any_element()
+    });
+    let uniform_bounds = uniform.0.borrow().base_handle.bounds();
+    for (tag, content) in [("uniform-pane", uniform_bounds), ("variable-pane", list.viewport_bounds())] {
+        let pane = bounds(cx, tag);
+        assert!(content.right() <= pane.right() - Sizes::SCROLLBAR_WIDTH);
+        let start = point(pane.right() - Sizes::SCROLLBAR_WIDTH / 2., pane.top() + px(5.));
+        let end = point(start.x, pane.bottom() - px(5.));
+        cx.simulate_mouse_down(start, MouseButton::Left, Modifiers::none());
+        cx.simulate_mouse_move(end, Some(MouseButton::Left), Modifiers::none());
+        cx.simulate_mouse_up(end, MouseButton::Left, Modifiers::none());
+    }
+    assert!(uniform.0.borrow().base_handle.offset().y < px(0.));
+    assert!(list.scroll_px_offset_for_scrollbar().y < px(0.));
+}
+
+#[gpui::test]
 fn padding_on_a_scroll_container_does_not_extend_its_scroll_range(cx: &mut TestAppContext) {
     let fits_y = gpui::ScrollHandle::new();
     let fits_x = gpui::ScrollHandle::new();
@@ -477,6 +678,108 @@ fn labels_in_content_sized_controls_are_never_cut(cx: &mut TestAppContext) {
         assert!(label.shown.ends_with('\u{2026}'), "{}", label.shown);
         assert!(label.bounds.size.width > px(40.), "{:?}", label.bounds);
     }
+}
+
+#[gpui::test]
+fn nier_spinner_draws_the_loading_icon_with_reduced_motion(cx: &mut TestAppContext) {
+    let (_, cx) = open(cx, |_, _| {
+        tagged("activity-icon")
+            .size(px(48.))
+            .child(Spinner::new().size(IconSize::Custom(px(48.))))
+            .into_any_element()
+    });
+    cx.update(|w, cx| {
+        set_theme(ThemeId::NierNew, cx);
+        cx.set_global(yp_nier_ui::ReducedMotion(true));
+        w.refresh();
+    });
+    cx.run_until_parked();
+    let squares = cx.update(|window, _| {
+        let scale = window.scale_factor();
+        window
+            .painted_quads()
+            .iter()
+            .filter(|quad| {
+                let size = quad.bounds.size;
+                (size.width.0 - size.height.0).abs() <= 1.
+                    && (3.0..=6.0).contains(&(size.width.0 / scale))
+            })
+            .count()
+    });
+    assert_eq!(squares, 12);
+}
+
+#[gpui::test]
+fn external_file_drag_highlights_only_an_accepting_target(cx: &mut TestAppContext) {
+    use gpui::{ExternalPaths, FileDropEvent};
+    let drops = Rc::new(Cell::new(0));
+    let browses = Rc::new(Cell::new(0));
+    let busy = Rc::new(Cell::new(false));
+    let render_busy = busy.clone();
+    let render_browses = browses.clone();
+    let render_drops = drops.clone();
+    let (_, cx) = open(cx, move |_, _| {
+        let drops = render_drops.clone();
+        let browses = render_browses.clone();
+        tagged("file-drop-target")
+            .w(px(360.))
+            .child(
+                DropZone::new("textures")
+                    .title("Textures")
+                    .accept(|path| path.extension().is_some_and(|ext| ext == "dds"))
+                    .busy(render_busy.get().then(|| DropProgress::new("Installing")))
+                    .on_browse_files(move |_, _| browses.set(browses.get() + 1))
+                    .on_drop_paths(move |paths, _, _| drops.set(drops.get() + paths.len())),
+            )
+            .into_any_element()
+    });
+    cx.update(|w, cx| {
+        set_theme(ThemeId::NierNew, cx);
+        cx.set_global(yp_nier_ui::ReducedMotion(true));
+        w.refresh();
+    });
+    cx.run_until_parked();
+    let zone = bounds(cx, "file-drop-target");
+    let inside = zone.center();
+    let outside = point(zone.right() + px(20.), inside.y);
+    let enter = |path: &str| FileDropEvent::Entered {
+        position: inside,
+        paths: ExternalPaths([std::path::PathBuf::from(path)].into_iter().collect()),
+    };
+    let highlighted = |cx: &mut VisualTestContext| {
+        cx.update(|w, _| {
+            w.painted_quads().iter().any(|q| {
+                q.border_color.a > 0.8
+                    && q.border_widths.left.0 >= 4.
+                    && q.bounds.size.width.0 / w.scale_factor() >= f32::from(zone.size.width) - 4.
+            })
+        })
+    };
+    assert!(!highlighted(cx));
+    cx.simulate_event(enter("mesh.wmb"));
+    assert!(!highlighted(cx));
+    cx.simulate_event(FileDropEvent::Exited);
+    cx.simulate_event(enter("cloth.dds"));
+    assert!(
+        highlighted(cx),
+        "accepted file should outline the entire target"
+    );
+    cx.simulate_event(FileDropEvent::Pending { position: outside });
+    assert!(!highlighted(cx));
+    cx.simulate_event(FileDropEvent::Pending { position: inside });
+    assert!(highlighted(cx));
+    cx.simulate_event(FileDropEvent::Submit { position: inside });
+    assert_eq!(drops.get(), 1);
+    assert!(!highlighted(cx));
+    assert_eq!(browses.get(), 0);
+    cx.simulate_click(inside, Modifiers::default());
+    assert_eq!(browses.get(), 1);
+    busy.set(true);
+    cx.update(|w, _| w.refresh());
+    cx.run_until_parked();
+    cx.simulate_event(enter("cloth.dds"));
+    assert!(!highlighted(cx));
+    cx.simulate_event(FileDropEvent::Exited);
 }
 
 #[gpui::test]

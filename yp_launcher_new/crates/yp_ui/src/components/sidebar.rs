@@ -241,6 +241,7 @@ fn render_item(
     let bar = px(3.);
     let base = div()
         .id(item.id.clone())
+        .role(gpui::Role::Link).aria_label(label.clone())
         .relative()
         .w_full()
         .h(sizes.sidebar_row_height)
@@ -426,6 +427,9 @@ impl RenderOnce for Sidebar {
                 let on_toggle = group.on_toggle.clone();
                 let header = h_flex()
                     .id(("yp-sidebar-group", index))
+                    .role(if group.collapsible { gpui::Role::Button } else { gpui::Role::Heading })
+                    .aria_label(group.title.clone())
+                    .when(group.collapsible, |el| el.aria_expanded(open))
                     .flex_none()
                     .w_full()
                     .gap(px(6.))
@@ -457,7 +461,7 @@ impl RenderOnce for Sidebar {
                             })
                             .child(chevron(open, 0, IconSize::Small, Color::Muted, window, cx))
                             .when_some(on_toggle, |this, handler| {
-                                this.keyboard_activate(cx).on_click(move |event, window, cx| {
+                                this.keyboard_activate(cx).on_disclosure_toggle(open, move |event, window, cx| {
                                     cx.stop_propagation();
                                     handler(event, window, cx);
                                 })
@@ -480,6 +484,7 @@ impl RenderOnce for Sidebar {
                     body = body.child(
                         h_flex()
                             .id(("yp-sidebar-group-toggle", index))
+                            .role(gpui::Role::Button).aria_label(group.title.clone()).aria_expanded(open)
                             .flex_none()
                             .w_full()
                             .justify_center()
@@ -489,7 +494,7 @@ impl RenderOnce for Sidebar {
                             .child(chevron(open, 0, IconSize::Small, Color::Muted, window, cx))
                             .tooltip(Tooltip::text(group.title.clone()))
                             .when_some(on_toggle, |this, handler| {
-                                this.keyboard_activate(cx).on_click(move |event, window, cx| {
+                                this.keyboard_activate(cx).on_disclosure_toggle(open, move |event, window, cx| {
                                     cx.stop_propagation();
                                     handler(event, window, cx);
                                 })

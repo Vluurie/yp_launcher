@@ -1,8 +1,6 @@
-use gpui::{
-    App, Entity, FontWeight, HitboxBehavior, IntoElement, RenderOnce, Window, canvas,
-};
+use gpui::{App, Entity, FontWeight, HitboxBehavior, IntoElement, RenderOnce, Window, canvas};
 use yp_state::prelude::*;
-use yp_state::{PlayState, Play, Stop};
+use yp_state::{Play, PlayState, Stop};
 use yp_ui::prelude::*;
 use yp_ui::{ButtonLike, ButtonSize, ButtonStyle, IconSize, Sizes, Spinner, TintColor, Tooltip};
 
@@ -100,6 +98,111 @@ impl RenderOnce for PlayButton {
         } else {
             ("shell-play", "shell-play-hover")
         };
+        if theme.id == ThemeId::NierNew {
+            let compact = self.compact;
+            let loading = model.is_loading();
+            let status = if loading {
+                strings.status_launching()
+            } else {
+                label
+            };
+            let tint = if model.enabled {
+                model.tint
+            } else {
+                TintColor::Muted
+            };
+            let show_label = !compact || (self.show_label && !loading);
+            let height = if compact {
+                sizes.font_sm * 2.1
+            } else {
+                sizes.play_button_height
+            };
+            let icon = if running {
+                IconName::StopRounded
+            } else {
+                IconName::PlayArrowRounded
+            };
+            let symbol = if loading {
+                Spinner::new()
+                    .size(IconSize::Medium)
+                    .color(Color::OnAccent)
+                    .into_any_element()
+            } else {
+                Icon::new(icon)
+                    .size(if compact {
+                        IconSize::Small
+                    } else {
+                        IconSize::Large
+                    })
+                    .color(Color::OnAccent)
+                    .into_any_element()
+            };
+            let action = ButtonLike::new_square(id)
+                .accessible_label(status)
+                .style(ButtonStyle::Solid(tint))
+                .size(ButtonSize::Compact)
+                .padding(px(0.), px(0.))
+                .full_width()
+                .disabled(!model.enabled || loading)
+                .child(
+                    h_flex()
+                        .w_full()
+                        .min_w_0()
+                        .min_h(height)
+                        .items_stretch()
+                        .child(
+                            div()
+                                .flex_none()
+                                .flex()
+                                .items_center()
+                                .justify_center()
+                                .when(!compact, |el| {
+                                    el.w(height)
+                                        .bg(theme.colors.button_text.opacity(0.10))
+                                        .border_r_1()
+                                        .border_color(theme.colors.button_text.opacity(0.35))
+                                })
+                                .when(compact, |el| el.pl(px(9.)).pr(px(3.)))
+                                .child(symbol),
+                        )
+                        .when(show_label, |row| {
+                            row.child(
+                                div()
+                                    .flex_1()
+                                    .min_w_0()
+                                    .flex()
+                                    .items_center()
+                                    .justify_center()
+                                    .px(px(if compact { 5. } else { 10. }))
+                                    .child(
+                                        Label::new(status)
+                                            .size(if compact {
+                                                LabelSize::Small
+                                            } else {
+                                                LabelSize::XLarge
+                                            })
+                                            .color(Color::OnAccent)
+                                            .semibold()
+                                            .centered(),
+                                    ),
+                            )
+                        }),
+                )
+                .when(!model.can_launch, |button| {
+                    button.tooltip(Tooltip::text(strings.play_disabled_tooltip()))
+                })
+                .when(compact && !show_label, |button| {
+                    button.tooltip(Tooltip::text(status))
+                })
+                .on_click(move |_, w, cx| activate(running, w, cx));
+            return div()
+                .min_w_0()
+                .max_w_full()
+                .when(compact, |el| el.w_full())
+                .when(!compact, |el| el.w(sizes.play_button_width))
+                .child(action)
+                .into_any_element();
+        }
         let hover_state = window.use_keyed_state(hover_id, cx, |_, _| false);
         let hovered = model.enabled && *hover_state.read(cx);
         let color = if hovered {
@@ -118,16 +221,11 @@ impl RenderOnce for PlayButton {
             } else {
                 IconName::PlayArrowRounded
             };
-            button
-                .size(ButtonSize::Medium)
-                .full_width()
-                .map(|this| {
-                    if model.is_loading() {
-                        this.child(Spinner::new().size(IconSize::Medium).color(Color::Accent))
-                    } else {
-                        this.child(
-                            Icon::new(icon).size(IconSize::Large).color(color),
-                        )
+            button.size(ButtonSize::Medium).full_width().map(|this| {
+                if model.is_loading() {
+                    this.child(Spinner::new().size(IconSize::Medium).color(Color::Accent))
+                } else {
+                    this.child(Icon::new(icon).size(IconSize::Large).color(color))
                         .when(self.show_label, |this| {
                             this.child(
                                 div()
@@ -139,8 +237,8 @@ impl RenderOnce for PlayButton {
                                     .child(label),
                             )
                         })
-                    }
-                })
+                }
+            })
         } else {
             button.size(ButtonSize::Hero).map(|this| {
                 if model.is_loading() {
@@ -178,6 +276,7 @@ impl RenderOnce for PlayButton {
             .on_hover(move |hovered, _, cx| set_hovered(&hover_state, *hovered, cx))
             .child(button)
             .child(probe)
+            .into_any_element()
     }
 }
 

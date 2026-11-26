@@ -599,9 +599,13 @@ impl Render for TexturesTab {
             let right = column(right, window, cx);
             let mut sections = schema_page::problems(SCOPE, &TAB, &self.config, cx);
             sections.push(
-                TwoColumn::new(left, right)
-                    .id("textures-columns")
-                    .into_any_element(),
+                (if cx.theme().id == ThemeId::NierNew && has_textures {
+                    TwoColumn::new(right, left).ratio(1.12, 1.)
+                } else {
+                    TwoColumn::new(left, right)
+                })
+                .id("textures-columns")
+                .into_any_element(),
             );
             column(sections, window, cx).into_any_element()
         };

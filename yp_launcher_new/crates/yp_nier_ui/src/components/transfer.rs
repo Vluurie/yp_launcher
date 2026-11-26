@@ -6,6 +6,63 @@ use gpui::{
 };
 use std::{path::PathBuf, rc::Rc};
 
+pub fn file_drop_highlight(
+    accent: gpui::Hsla,
+    foreground: gpui::Hsla,
+    label: impl Into<SharedString>,
+    accepts: impl Fn(&[PathBuf]) -> bool + 'static,
+) -> impl IntoElement {
+    let label = label.into();
+    static START: std::sync::OnceLock<std::time::Instant> = std::sync::OnceLock::new();
+    div()
+        .absolute()
+        .inset_0()
+        .flex()
+        .items_center()
+        .justify_center()
+        .overflow_hidden()
+        .opacity(0.)
+        .border_4()
+        .border_color(accent)
+        .drag_over::<ExternalPaths>(move |style, paths, w, cx| {
+            if paths.paths().is_empty() || !accepts(paths.paths()) {
+                return style;
+            }
+            let alpha = if crate::ReducedMotion::enabled(cx) {
+                0.19
+            } else {
+                w.request_animation_frame();
+                let phase = START
+                    .get_or_init(std::time::Instant::now)
+                    .elapsed()
+                    .as_secs_f32()
+                    * std::f32::consts::TAU
+                    / 1.6;
+                0.19 + 0.06 * phase.sin()
+            };
+            style.opacity(1.).bg(accent.opacity(alpha))
+        })
+        .child(
+            div()
+                .absolute()
+                .inset_0()
+                .border_1()
+                .border_color(foreground),
+        )
+        .child(
+            div()
+                .max_w_full()
+                .min_w_0()
+                .overflow_hidden()
+                .px(px(12.))
+                .py(px(4.))
+                .bg(accent)
+                .text_color(foreground)
+                .text_center()
+                .child(label),
+        )
+}
+
 type Action = Rc<dyn Fn(&mut Window, &mut App)>;
 type DropFiles = Rc<dyn Fn(&[PathBuf], &mut Window, &mut App)>;
 #[derive(IntoElement)]
@@ -80,6 +137,7 @@ impl RenderOnce for MenuDropZone {
         )
         .absolute()
         .inset_0();
+        let drop_label = self.label.clone();
         let buttons = [
             ("files", "Browse files", self.files),
             ("folder", "Browse folder", self.folder),
@@ -101,6 +159,7 @@ impl RenderOnce for MenuDropZone {
         });
         div()
             .id(self.id)
+            .relative()
             .w_full()
             .min_w_0()
             .overflow_hidden()
@@ -110,11 +169,10 @@ impl RenderOnce for MenuDropZone {
             .border_1()
             .border_color(gpui::rgba(if enabled { 0x777369ff } else { 0x77736980 }))
             .when(enabled, |el| {
-                el.drag_over::<ExternalPaths>(|style, _, _, _| style.bg(gpui::rgba(0x4e4b422b)))
-                    .on_drop(move |paths: &ExternalPaths, w, cx| {
-                        (self.drop)(paths.paths(), w, cx);
-                        cx.stop_propagation();
-                    })
+                el.on_drop(move |paths: &ExternalPaths, w, cx| {
+                    (self.drop)(paths.paths(), w, cx);
+                    cx.stop_propagation();
+                })
             })
             .child(
                 div().when(!enabled, |el| el.opacity(0.5)).child(
@@ -136,6 +194,14 @@ impl RenderOnce for MenuDropZone {
                     .child(tracker)
                     .children(buttons),
             )
+            .when(enabled, |zone| {
+                zone.child(file_drop_highlight(
+                    gpui::rgb(0x4b4940).into(),
+                    gpui::rgb(0xd9d4bb).into(),
+                    drop_label,
+                    |_| true,
+                ))
+            })
     }
 }
 #[derive(IntoElement)]

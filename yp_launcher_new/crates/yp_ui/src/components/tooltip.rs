@@ -119,6 +119,15 @@ pub fn tooltip_container(window: &Window, cx: &App) -> Div {
         .text_color(theme.colors.text_secondary)
 }
 
+pub(super) fn finish_tooltip(body: Div, cx: &App) -> Div {
+    body.when(cx.theme().id == crate::ThemeId::NierNew, |el| {
+        el.relative()
+            .rounded(px(0.))
+            .bg(cx.theme().colors.background_card)
+            .child(yp_nier_ui::menu_popup_overlay())
+    })
+}
+
 impl Render for Tooltip {
     fn render(&mut self, window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         let muted = cx.theme().colors.text_muted;
@@ -137,6 +146,6 @@ impl Render for Tooltip {
                     )
                 }),
         };
-        div().p(px(4.)).child(body)
+        div().p(px(4.)).child(finish_tooltip(body, cx))
     }
 }

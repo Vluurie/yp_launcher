@@ -54,15 +54,6 @@ fn third_party_notice(notice: &ThirdPartyNotice) -> Notice {
             NoticeKind::Migration,
             NoticeSeverity::Success,
         ),
-        ThirdPartyNotice::MigrationIncomplete { from, to } => Notice::new(
-            notice.id(),
-            Msg::NotifyThirdPartyMigrationIncomplete {
-                old_path: from.to_string_lossy().into_owned(),
-                new_path: to.to_string_lossy().into_owned(),
-            },
-            NoticeKind::Migration,
-            NoticeSeverity::Warning,
-        ),
     }
 }
 

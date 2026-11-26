@@ -15,32 +15,23 @@ use crate::runtime::{GraphicsRuntime, Runtimes, ThirdPartyStatuses};
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ThirdPartyNotice {
     Migrated { to: PathBuf },
-    MigrationIncomplete { from: PathBuf, to: PathBuf },
 }
 
 impl ThirdPartyNotice {
     pub const MIGRATED_ID: &'static str = "thirdparty_migrated";
-    pub const MIGRATION_LEFT_ID: &'static str = "thirdparty_migration_left";
 
     pub fn id(&self) -> &'static str {
         match self {
             ThirdPartyNotice::Migrated { .. } => Self::MIGRATED_ID,
-            ThirdPartyNotice::MigrationIncomplete { .. } => Self::MIGRATION_LEFT_ID,
         }
     }
 
     pub fn from_migration(result: &MigrationResult) -> Vec<ThirdPartyNotice> {
-        let mut notices = Vec::new();
         if result.moved_files > 0 {
-            notices.push(ThirdPartyNotice::Migrated { to: result.to.clone() });
+            vec![ThirdPartyNotice::Migrated { to: result.to.clone() }]
+        } else {
+            Vec::new()
         }
-        if !result.left_behind.is_empty() {
-            notices.push(ThirdPartyNotice::MigrationIncomplete {
-                from: result.from.clone(),
-                to: result.to.clone(),
-            });
-        }
-        notices
     }
 }
 

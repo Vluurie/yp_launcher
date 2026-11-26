@@ -1,9 +1,7 @@
 use gpui::{
     AnyElement, App, Context, Anchor, Entity, IntoElement, Render, SharedString, Task, Window,
 };
-use yp_core::consts::{
-    CLI_DOCS_URL, DISCORD_URL, GITHUB_URL, GUIDE_URL, NAMS_GITLAB_URL, NAO_LAUNCHER_URL,
-};
+use yp_core::consts::{DISCORD_URL, GITHUB_URL, GUIDE_URL};
 use yp_core::Os;
 use yp_i18n::{Msg, Strings};
 use yp_state::prelude::*;
@@ -107,7 +105,10 @@ pub fn launch_warnings(is_on: impl Fn(&str) -> bool, strings: &Strings) -> Vec<&
     warnings
 }
 
+mod menu;
+
 pub struct LauncherTab {
+    scroll: gpui::ScrollHandle,
     directory: Entity<DirectorySelector>,
     shortcut_task: Option<Task<()>>,
 }
@@ -115,6 +116,7 @@ pub struct LauncherTab {
 impl LauncherTab {
     pub fn new(window: &mut Window, cx: &mut Context<Self>) -> Self {
         Self {
+            scroll: gpui::ScrollHandle::new(),
             directory: cx.new(|cx| DirectorySelector::new(window, cx)),
             shortcut_task: None,
         }
@@ -163,12 +165,6 @@ impl LauncherTab {
                 GITHUB_URL,
             ))
             .child(link(
-                "shell-link-nams",
-                IconName::MergeType,
-                strings.tooltip_nams_source(),
-                NAMS_GITLAB_URL,
-            ))
-            .child(link(
                 "shell-link-guide",
                 IconName::MenuBook,
                 strings.tooltip_guide(),
@@ -200,19 +196,22 @@ impl LauncherTab {
             session.play_state(),
         );
         let multi_line = line.is_multi_line();
+        let menu = cx.theme().id == ThemeId::NierNew;
         div()
             .min_h(sizes.font_lg * 1.4)
             .when(multi_line, |this| this.max_w(metrics::STATUS_MAX_WIDTH))
             .child(
                 Label::new(line.text(strings))
-                    .size(if multi_line {
+                     .size(if menu {
+                        LabelSize::Small
+                    } else if multi_line {
                         LabelSize::Default
                     } else {
                         LabelSize::Large
                     })
                     .color(line.color())
                     .line_height(1.4)
-                    .centered(),
+                    .when(!menu, |label| label.centered()),
             )
     }
 
@@ -262,7 +261,9 @@ impl LauncherTab {
                 let dedicated_gpu = options.prefer_dedicated_gpu();
                 let vanilla = options.vanilla();
                 v_flex()
-                    .whitespace_nowrap()
+                    .when(cx.theme().id != ThemeId::NierNew, |el| {
+                        el.whitespace_nowrap()
+                    })
                     .gap(gap)
                     .when(ui_os == Os::Windows, |this| {
                         this.child(
@@ -370,21 +371,6 @@ impl LauncherTab {
         let strings = cx.t();
         let theme = cx.theme().clone();
         let sizes = window.sizes(cx);
-        let plain = |text: &'static str| {
-            Label::new(text)
-                .size(LabelSize::XSmall)
-                .color(Color::Muted)
-                .into_any_element()
-        };
-        let link = |id: &'static str, label: &'static str, url: &'static str| {
-            Link::new(id, label)
-                .on_click(move |_, _, cx| folders::open_link(url, cx))
-                .size(LabelSize::XSmall)
-                .color(Color::Accent)
-                .hover_color(Color::Default)
-                .underline()
-                .into_any_element()
-        };
         h_flex()
             .w_full()
             .flex_wrap()
@@ -393,21 +379,14 @@ impl LauncherTab {
             .py(sizes.chip_padding_v)
             .rounded(sizes.border_radius)
             .bg(theme.colors.background_card.opacity(theme.alpha.glass))
-            .child(plain(strings.help_prefix()))
-            .child(link(
-                "shell-help-nao",
-                strings.help_nao_launcher(),
-                NAO_LAUNCHER_URL,
-            ))
-            .child(plain(strings.help_or()))
-            .child(link(
-                "shell-help-cli",
-                strings.help_command_line(),
-                CLI_DOCS_URL,
-            ))
-            .child(plain(strings.help_join_discord()))
-            .child(link("shell-help-discord", strings.help_discord(), DISCORD_URL))
-            .child(plain(strings.help_suffix()))
+            .child(
+                Link::new("shell-help-discord", strings.help_on_discord())
+                    .on_click(|_, _, cx| folders::open_link(DISCORD_URL, cx))
+                    .size(LabelSize::XSmall)
+                    .color(Color::Accent)
+                    .hover_color(Color::Default)
+                    .underline(),
+            )
     }
 
     fn warnings(&self, window: &Window, cx: &mut Context<Self>) -> Option<AnyElement> {
@@ -450,6 +429,9 @@ impl Render for LauncherTab {
         let sizes = window.sizes(cx);
         let stores = cx.stores();
         let session = stores.session.read(cx);
+        if theme.id == ThemeId::NierNew {
+            return self.menu(window, cx);
+        }
         let idle = session.play_state() == PlayState::Idle;
         let can_launch = session.can_launch_game();
         let active = stores.navigation.read(cx).active() == TabId::Launcher;
@@ -524,6 +506,7 @@ impl Render for LauncherTab {
             .id("shell-launcher-background")
             .animate(animate)
             .child(content)
+            .into_any_element()
     }
 }
 

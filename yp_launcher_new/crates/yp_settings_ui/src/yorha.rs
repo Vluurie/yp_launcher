@@ -4,7 +4,7 @@ use yp_config::{Kind, Setting};
 use yp_state::prelude::*;
 use yp_state::{ConfigStore, NavigationEvent, SessionEvent};
 use yp_ui::prelude::*;
-use yp_ui::{IconName, KeyCapture, SettingRow, TwoColumn};
+use yp_ui::{IconName, KeyCapture, SettingRow};
 
 use crate::fields::{Marker, field_id};
 use crate::page::{banner, card, column, tab_page};
@@ -200,26 +200,19 @@ impl Render for YorhaProtocolTab {
         let content = if loading {
             div().into_any_element()
         } else {
-            let settings: Vec<Setting> = TAB.settings(self.config.read(cx).schema()).cloned().collect();
-            let mut left: Vec<AnyElement> = Vec::new();
-            let mut right: Vec<AnyElement> = Vec::new();
-            for (index, (group, members)) in groups(&settings).into_iter().enumerate() {
-                let card = self.group_card(&group, &members, window, cx);
-                if index % 2 == 0 {
-                    left.push(card);
-                } else {
-                    right.push(card);
-                }
-            }
+            let settings: Vec<Setting> = TAB
+                .settings(self.config.read(cx).schema())
+                .cloned()
+                .collect();
+            let cards = groups(&settings)
+                .into_iter()
+                .map(|(group, members)| self.group_card(&group, &members, window, cx))
+                .collect();
             let mut sections = schema_page::problems(SCOPE, &TAB, &self.config, cx);
             sections.push(
                 banner(IconName::InfoOutline, strings.yorha_protocol_description(), window, cx).into_any_element(),
             );
-            sections.push(
-                TwoColumn::new(column(left, window, cx), column(right, window, cx))
-                    .id("yorha-columns")
-                    .into_any_element(),
-            );
+            sections.push(schema_page::spread(cards, "yorha-columns", window, cx));
             column(sections, window, cx).into_any_element()
         };
         tab_page("yorha-scroll", header, &self.scroll, loading, content, window, cx)

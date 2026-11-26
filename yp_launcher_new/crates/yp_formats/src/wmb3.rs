@@ -1,3 +1,7 @@
+mod rig;
+
+pub use rig::{ClothPlayer, Pose, Skeleton, Weights};
+
 use std::collections::{BTreeSet, HashMap};
 
 use image::ImageFormat;
@@ -54,12 +58,21 @@ pub struct Texture {
     pub rgba: Vec<u8>,
 }
 
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub enum MaterialBlend {
+    #[default]
+    Opaque,
+    Multiply,
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub struct Mesh {
+    pub blend: MaterialBlend,
     pub id: u32,
     pub name: String,
     pub lod_name: String,
     pub lod_index: u32,
+    pub weights: Vec<Weights>,
     pub positions: Vec<[f32; 3]>,
     pub normals: Vec<[f32; 3]>,
     pub tangents: Vec<[f32; 4]>,
@@ -71,6 +84,7 @@ pub struct Mesh {
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Model {
+    pub skeleton: Skeleton,
     pub meshes: Vec<Mesh>,
     pub textures: HashMap<u32, Texture>,
     pub center: [f32; 3],
@@ -79,6 +93,7 @@ pub struct Model {
 }
 
 struct VertexGroup {
+    weights: Vec<[u8; 8]>,
     positions: Vec<[f32; 3]>,
     normals: Vec<[f32; 3]>,
     tangents: Vec<[f32; 4]>,
@@ -87,6 +102,7 @@ struct VertexGroup {
 }
 
 struct Batch {
+    palette: usize,
     index_start: usize,
     index_count: usize,
 }
@@ -104,6 +120,7 @@ struct Lod {
 }
 
 struct Material {
+    blend: MaterialBlend,
     albedo_texture_id: Option<u32>,
     normal_texture_id: Option<u32>,
 }
@@ -149,6 +166,8 @@ fn parse_model(bytes: &[u8], texture_files: Option<&TextureFiles>) -> Parsed<Mod
 
     let flags = u32::from(read_u16(bytes, 12)?);
     let vertex_groups = parse_vertex_groups(bytes, flags)?;
+    let skeleton = Skeleton::read(bytes).unwrap_or_default();
+    let palettes = rig::palettes(bytes).unwrap_or_default();
     let batches = parse_batches(bytes)?;
     let lods = parse_lods(bytes)?;
     let materials = parse_materials(bytes)?;
@@ -212,6 +231,13 @@ fn parse_model(bytes: &[u8], texture_files: Option<&TextureFiles>) -> Parsed<Mod
                 .get(minimum..vertex_end)
                 .ok_or(ModelFault::OutsideEntry)?
                 .to_vec();
+            let weights = palettes.get(batch.palette)
+                .zip(group.weights.get(minimum..vertex_end))
+                .map(|(palette, vertices)| vertices.iter().map(|v| Weights {
+                    bones: std::array::from_fn(|i| palette.get(usize::from(v[i])).copied().unwrap_or(u16::MAX)),
+                    weights: [v[4], v[5], v[6], v[7]],
+                }).collect())
+                .unwrap_or_default();
             let base = minimum as u32;
             let mut indices = Vec::with_capacity(source_indices.len());
             for triangle in source_indices.chunks_exact(3) {
@@ -225,10 +251,12 @@ fn parse_model(bytes: &[u8], texture_files: Option<&TextureFiles>) -> Parsed<Mod
                 return Err(ModelFault::TooLarge);
             }
             meshes.push(Mesh {
+                blend: material.map_or(MaterialBlend::Opaque, |value| value.blend),
                 id: meshes.len() as u32,
                 name: mesh_name,
                 lod_name: lod.name.clone(),
                 lod_index: lod_index as u32,
+                weights,
                 positions,
                 normals,
                 tangents,
@@ -250,6 +278,7 @@ fn parse_model(bytes: &[u8], texture_files: Option<&TextureFiles>) -> Parsed<Mod
     };
     let (center, radius) = bounds(&meshes);
     Ok(Model {
+        skeleton,
         meshes,
         textures,
         center,
@@ -316,12 +345,17 @@ fn parse_vertex_groups(bytes: &[u8], header_flags: u32) -> Parsed<Vec<VertexGrou
             )?;
             Some((ex_stride, vertex_ex_normal_offset(vertex_flags)?))
         };
+        let has_weights = matches!(vertex_flags, 7 | 8 | 10 | 11);
+        let mut weights = Vec::new();
         let mut positions = Vec::with_capacity(vertex_count);
         let mut normals = Vec::with_capacity(vertex_count);
         let mut tangents = Vec::with_capacity(vertex_count);
         let mut uvs = Vec::with_capacity(vertex_count);
         for vertex_index in 0..vertex_count {
             let vertex = vertex_offset + vertex_index * stride;
+            if has_weights {
+                weights.push(crate::bytes::array(bytes, vertex + 20).ok_or(ModelFault::OutsideEntry)?);
+            }
             let position = [
                 read_f32(bytes, vertex)?,
                 read_f32(bytes, vertex + 4)?,
@@ -377,6 +411,7 @@ fn parse_vertex_groups(bytes: &[u8], header_flags: u32) -> Parsed<Vec<VertexGrou
             });
         }
         groups.push(VertexGroup {
+            weights,
             positions,
             normals,
             tangents,
@@ -395,6 +430,7 @@ fn parse_batches(bytes: &[u8]) -> Parsed<Vec<Batch>> {
         .map(|index| {
             let item = offset + index * BATCH_SIZE;
             Ok(Batch {
+                palette: read_u32(bytes, item + 4)? as usize,
                 index_start: read_u32(bytes, item + 12)? as usize,
                 index_count: read_u32(bytes, item + 20)? as usize,
             })
@@ -443,6 +479,14 @@ fn parse_materials(bytes: &[u8]) -> Parsed<Vec<Material>> {
     let mut materials = Vec::with_capacity(count);
     for index in 0..count {
         let item = offset + index * MATERIAL_SIZE;
+        let technique_offset = read_u32(bytes, item + 16)? as usize;
+        let blend = if technique_offset != 0
+            && read_string(bytes, technique_offset)?.eq_ignore_ascii_case("Multiplication")
+        {
+            MaterialBlend::Multiply
+        } else {
+            MaterialBlend::Opaque
+        };
         let texture_offset = read_u32(bytes, item + 24)? as usize;
         let texture_count = read_u32(bytes, item + 28)? as usize;
         validate_table(bytes, texture_offset, texture_count, 8, MAX_MATERIALS)?;
@@ -458,6 +502,7 @@ fn parse_materials(bytes: &[u8]) -> Parsed<Vec<Material>> {
             }
         }
         materials.push(Material {
+            blend,
             albedo_texture_id,
             normal_texture_id,
         });
@@ -850,7 +895,7 @@ fn read_f32(bytes: &[u8], offset: usize) -> Parsed<f32> {
 fn vertex_stride(flags: u32) -> Parsed<usize> {
     match flags {
         1 => Ok(24),
-        0 | 4 | 5 | 7 | 10 | 11 | 12 | 14 => Ok(28),
+        0 | 4 | 5 | 7 | 8 | 10 | 11 | 12 | 14 => Ok(28),
         _ => Err(ModelFault::UnsupportedVertexFlags(flags)),
     }
 }
@@ -859,7 +904,7 @@ fn vertex_ex_stride(flags: u32) -> Parsed<usize> {
     match flags {
         1 | 4 => Ok(8),
         5 | 7 => Ok(12),
-        10 | 14 => Ok(16),
+        8 | 10 | 14 => Ok(16),
         11 | 12 => Ok(20),
         _ => Err(ModelFault::UnsupportedVertexFlags(flags)),
     }
@@ -868,7 +913,7 @@ fn vertex_ex_stride(flags: u32) -> Parsed<usize> {
 fn vertex_ex_normal_offset(flags: u32) -> Parsed<usize> {
     match flags {
         1 | 4 | 5 | 12 | 14 => Ok(0),
-        7 => Ok(4),
+        7 | 8 => Ok(4),
         10 | 11 => Ok(8),
         _ => Err(ModelFault::UnsupportedVertexFlags(flags)),
     }

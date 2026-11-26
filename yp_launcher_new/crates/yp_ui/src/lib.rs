@@ -27,6 +27,7 @@ pub use traits::{
     SelectableButton, ToggleState, Toggleable, TooltipBuilder, ValueHandler, VisibleOnHover,
 };
 pub use yp_i18n::{Locale, Msg, MsgKey, Strings};
+pub use yp_nier_ui as nier;
 
 #[doc(hidden)]
 pub use gpui as __gpui;

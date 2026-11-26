@@ -188,12 +188,12 @@ impl ModsView {
         window: &mut Window,
         cx: &mut Context<Self>,
     ) -> Option<AnyView> {
-        let key = format!("{}|{}", archive.config_root.display(), archive.stem);
+        let key = ArchivePaths::new(archive.dat_path.clone(), archive.dtt_path.clone());
         if let Some((_, view)) = self.previews.iter().find(|(existing, _)| *existing == key) {
             return Some(view.clone());
         }
         let request = ModelPreviewRequest {
-            archives: ArchivePaths::new(archive.dat_path.clone(), archive.dtt_path.clone()),
+            archives: key.clone(),
         };
         let view = Registry::model_preview(request, window, cx)?;
         self.previews.push((key, view.clone()));
@@ -329,8 +329,9 @@ impl ModsView {
         h_flex()
             .w_full()
             .gap(sizes.spacing_md)
+            .when(cx.theme().id == ThemeId::NierNew, |el| el.flex_wrap())
             .pl(sizes.padding_sm)
-            .child(div().flex_1().min_w_0().child(label))
+            .child(div().flex_1().min_w(px(70.)).child(label))
             .children(picker.map(|picker| div().flex_none().child(picker)))
             .children(kind_chip.map(|chip| div().flex_none().child(chip)))
             .child(star)
@@ -402,6 +403,7 @@ impl ModsView {
                 .min(field.min() as f32)
                 .max(field.max() as f32)
                 .step(field.step() as f32)
+                .default_mark(field.default_value() as f32)
                 .decimals(usize::try_from(field.decimals()).unwrap_or(0))
                 .description(camera_field_hint(field, strings))
                 .on_change(cx.listener(move |this, value: &f32, _, cx| {
@@ -472,10 +474,9 @@ impl ModsView {
                 }
             }
         }
-        for archive in &data.archives {
-            if let Some(preview) = self.preview_for(archive, window, cx) {
-                lines.push(div().w_full().child(preview).into_any_element());
-            }
+        if cx.theme().id != ThemeId::NierNew {
+            lines.extend(data.archives.iter().filter_map(|a| self.preview_for(a,window,cx))
+                .map(|preview| div().w_full().child(preview).into_any_element()));
         }
         for entry in &data.entries {
             if entry.category == DataCategory::Player && !data.players.is_empty() {
@@ -633,7 +634,75 @@ impl ModsView {
         let root_path = installed.root_path.clone();
         let toggle_id = installed.id.clone();
         let uninstall_id = installed.id.clone();
-        let actions = h_flex()
+        let menu = cx.theme().id == ThemeId::NierNew;
+        let actions = if menu {
+            let rename = installed.id.clone();
+            let target = cx.weak_entity();
+            let options = PopoverMenu::<ContextMenu>::new("mod-options")
+                .accessible_label(strings.menu_mod_actions())
+                .anchor(gpui::Anchor::TopRight)
+                .attach(gpui::Anchor::BottomRight)
+                .trigger(
+                    Button::new("mod-options-label", strings.menu_mod_actions())
+                        .style(ButtonStyle::Link)
+                        .end_icon(IconName::KeyboardArrowDown),
+                )
+                .menu(move |w, cx| {
+                    let path = root_path.clone();
+                    let view = target.clone();
+                    let remove = target.clone();
+                    let name = rename.clone();
+                    let id = uninstall_id.clone();
+                    let blocked = ControllerMode::is_active(cx);
+                    Some(ContextMenu::build(w, cx, move |m, _, _| {
+                        m.item(
+                            ContextMenuEntry::new(strings.mod_rename())
+                                .disabled(blocked)
+                                .handler(move |w, cx| {
+                                    view.update(cx, |v, cx| v.rename_mod(name.clone(), w, cx))
+                                        .ok();
+                                }),
+                        )
+                        .item(
+                            ContextMenuEntry::new(strings.mod_open_folder())
+                                .disabled(blocked)
+                                .handler(move |_, cx| reveal(path.clone(), false, cx)),
+                        )
+                        .separator()
+                        .icon_entry(
+                            strings.mod_uninstall(),
+                            IconName::DeleteOutline,
+                            move |w, cx| {
+                                remove
+                                    .update(cx, |v, cx| v.uninstall_mod(id.clone(), w, cx))
+                                    .ok();
+                            },
+                        )
+                    }))
+                });
+            h_flex()
+                .w_full()
+                .min_w_0()
+                .flex_wrap()
+                .justify_between()
+                .gap(px(8.))
+                .px(px(14.))
+                .py(px(6.))
+                .child(
+                    Switch::new("mod-detail-toggle", !disabled)
+                        .label(if disabled {
+                            strings.mod_disabled()
+                        } else {
+                            strings.menu_enabled()
+                        })
+                        .on_click(cx.listener(move |v, _, _, cx| {
+                            v.set_mod_disabled(&toggle_id, !disabled, cx)
+                        })),
+                )
+                .child(options)
+                .into_any_element()
+        } else {
+            h_flex()
             .flex_none()
             .gap(sizes.spacing_md)
             .px(sizes.card_padding_h)
@@ -675,9 +744,15 @@ impl ModsView {
                     .on_click(cx.listener(move |this, _, window, cx| {
                         this.uninstall_mod(uninstall_id.clone(), window, cx);
                     })),
-            );
+            )
+                .into_any_element()
+        };
 
         let mut sections: Vec<AnyElement> = Vec::new();
+        if menu && let Some(data) = &installed.data && !data.archives.is_empty() {
+            let previews: Vec<_> = data.archives.iter().filter_map(|archive| self.preview_for(archive,window,cx)).collect();
+            sections.push(v_flex().w_full().min_w_0().children(previews).into_any_element());
+        }
         if let Some(manifest) = &installed.manifest {
             let rows = [
                 ("mod-detail-author", strings.mod_author(), &manifest.author),
@@ -698,7 +773,11 @@ impl ModsView {
                                 .size(LabelSize::Small)
                                 .color(Color::Secondary),
                         )
-                        .label_width(sizes.config_input_width)
+                        .label_width(if menu {
+                            px(88.)
+                        } else {
+                            sizes.config_input_width
+                        })
                         .into_any_element(),
                     )
                 })
@@ -776,28 +855,42 @@ impl ModsView {
             sections.push(conflicts.into_any_element());
         }
 
-        Card::new()
-            .full_height()
-            .padding(CardPadding::None)
-            .header(
-                div()
-                    .id("mod-detail-name")
-                    .tooltip(Tooltip::text(
-                        installed.root_path.to_string_lossy().into_owned(),
-                    ))
-                    .child(
-                        Label::new(installed.display_name.clone())
-                            .size(LabelSize::Large)
-                            .bold()
-                            .truncate(),
-                    ),
+        let name = self
+            .stores
+            .mod_names
+            .read(cx)
+            .custom_name_of(&installed.id)
+            .unwrap_or(&installed.display_name)
+            .to_owned();
+        let paper = Card::new().full_height().padding(CardPadding::None).header(
+            div()
+                .id("mod-detail-name")
+                .tooltip(Tooltip::text(
+                    installed.root_path.to_string_lossy().into_owned(),
+                ))
+                .child(
+                    Label::new(name)
+                        .size(LabelSize::Large)
+                        .bold()
+                        .when(menu, |el| el.color(Color::OnAccent))
+                        .when(!menu, |el| el.truncate()),
+                ),
+        );
+        let paper = if menu {
+            paper.prominent_header().header_end(
+                Label::new(badge.label)
+                    .size(LabelSize::XSmall)
+                    .color(Color::OnAccent),
             )
-            .header_end(
+        } else {
+            paper.header_end(
                 Chip::new(badge.label)
                     .id("mod-detail-kind")
                     .tone(badge.tone)
                     .tooltip_text(badge.tooltip),
             )
+        };
+        paper
             .child(actions)
             .child(Divider::horizontal())
             .child(

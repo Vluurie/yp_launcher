@@ -385,6 +385,47 @@ fn direct3d_12_settings_follow_the_backend_not_lodmod(cx: &mut TestAppContext) {
 }
 
 #[gpui::test]
+fn lodmod_index_sizes_to_its_contents_and_search_opens_a_single_setting(cx: &mut TestAppContext) {
+    let sandbox = Sandbox::new();
+    let stores = boot(&sandbox, cx);
+    stores.config.update(cx, |store, cx| store.set_now(LODMOD_ENABLED_ID, json!(true), cx));
+    for theme in [yp_ui::ThemeId::Dark, yp_ui::ThemeId::NierNew] {
+        cx.update(|cx| yp_ui::theme::set_theme(theme, cx));
+        let (tab, window) = cx.add_window_view(LodModTab::new);
+        window.simulate_resize(size(px(1920.), px(1080.)));
+        settle(window);
+        let index = tab.read_with(window, |tab, _| tab.scroll_handle().clone());
+        assert_eq!(index.max_offset().y, px(0.), "{theme:?}");
+        let category = window.debug_bounds("lod-category-graphics/shadows").expect("shadow settings");
+        assert!(category.size.width <= px(380.));
+        window.simulate_click(category.center(), Modifiers::none());
+        settle(window);
+        assert!(window.debug_bounds("lod-section-title").is_some());
+        assert!(window.debug_bounds("lod-page-content").unwrap().size.width <= px(800.));
+        window.simulate_keystrokes("escape");
+        window.simulate_resize(size(px(600.), px(420.)));
+        settle(window);
+        let body = window.debug_bounds("lod-page-content").expect("compact category index");
+        assert!(index.max_offset().y <= (body.size.height - index.bounds().size.height).max(px(0.)) + px(55.));
+        index.set_offset(point(px(0.), -index.max_offset().y));
+        let search = window.debug_bounds("lod-search").unwrap().center();
+        window.simulate_click(search, Modifiers::none());
+        window.simulate_input("lodmod.shadow_resolution");
+        settle(window);
+        let found = window.debug_bounds("lod-result-lodmod.shadow_resolution").expect("matching setting");
+        assert_eq!(index.offset().y, px(0.));
+        assert_eq!(index.max_offset().y, px(0.));
+        window.simulate_click(found.center(), Modifiers::none());
+        settle(window);
+        assert!(window.debug_bounds("lod-section-title").is_some());
+        assert!(window.debug_bounds("lod-category-graphics/shadows").is_none());
+        window.simulate_keystrokes("escape");
+        settle(window);
+        assert!(window.debug_bounds("lod-result-lodmod.shadow_resolution").is_some());
+    }
+}
+
+#[gpui::test]
 fn lodmod_values_save_on_their_own(cx: &mut TestAppContext) {
     let sandbox = Sandbox::new();
     let stores = boot(&sandbox, cx);
@@ -706,6 +747,81 @@ fn inspector_opens_the_model_and_toggles_mesh_groups(cx: &mut TestAppContext) {
 }
 
 #[gpui::test]
+fn opening_an_archive_keeps_the_model_selected_in_the_mod_preview(cx: &mut TestAppContext) {
+    use crate::inspector::ModelPreview;
+    use yp_formats::dat::{DatEntry, DatKind, build};
+    use yp_formats::testing::cube_spec;
+
+    let sandbox = Sandbox::new();
+    boot(&sandbox, cx);
+    let archive = sandbox.root.path().join("models.dtt");
+    let outfits = sandbox.root.path().join("outfits");
+    std::fs::create_dir_all(&outfits).unwrap();
+    std::fs::write(outfits.join("wardrobe.json"), r#"{
+        "pl_2b_outfits": [{"outfit_id":7,"outfit_name":"Uniform","meshes":["Body"]}],
+        "pl_9s_outfits": [{"outfit_id":7,"outfit_name":"Coat","meshes":["Coat"]},
+                          {"outfit_id":7,"outfit_name":"Jacket","meshes":["Jacket"]}]
+    }"#).unwrap();
+    let bytes = build(
+        &[
+            DatEntry::new("pl000d.wmb", cube_spec(&["Body"]).build()),
+            DatEntry::new("pl020d.wmb", cube_spec(&["Coat", "Jacket"]).build()),
+        ],
+        DatKind::Dtt,
+    )
+    .unwrap();
+    std::fs::write(&archive, bytes).unwrap();
+    let archives = ArchivePaths::new(None, Some(archive));
+
+    let (preview, cx) = cx.add_window_view(|w, cx| ModelPreview::new(archives.clone(), w, cx));
+    settle(cx);
+    let model = preview.read_with(cx, |view, _| view.model().clone());
+    let second = model.read_with(cx, |model, _| model.candidates()[1].clone());
+    model.update(cx, |model, cx| model.select_candidate(second.clone(), cx));
+    settle(cx);
+    assert_eq!(model.read_with(cx, |m, _| m.presets().len()), 2);
+    model.update(cx, |m, cx| m.select_preset(1, cx));
+    settle(cx);
+    cx.update(|w, cx| preview.update(cx, |preview, cx| preview.expand(w, cx)));
+    let page = cx.update(|w, cx| cx.new(|cx| InspectorPage::new(archives, w, cx)));
+    settle(cx);
+    page.read_with(cx, |page, cx| {
+        let model = page.model().read(cx);
+        assert_eq!(model.candidate(), Some(&second));
+        assert_eq!(model.selected().unwrap().name, "Jacket");
+        let session = model.session().unwrap().read(cx);
+        assert!(session.is_ready());
+        assert!(session.meshes().iter().filter(|m| m.visible).all(|m| m.name == "Jacket"));
+    });
+    page.update(cx, |p, cx| {
+        p.model().update(cx, |m, cx| m.select_preset(0, cx));
+        p.close(cx);
+    });
+    settle(cx);
+    assert_eq!(model.read_with(cx, |m, _| m.selected().unwrap().name.clone()), "Coat");
+}
+
+#[gpui::test]
+fn model_controls_button_opens_and_closes_the_mesh_panel(cx: &mut TestAppContext) {
+    let sandbox = Sandbox::new();
+    boot(&sandbox, cx);
+    cx.update(|cx| {
+        yp_ui::theme::set_theme(yp_ui::ThemeId::NierNew, cx);
+        cx.set_global(yp_nier_ui::ReducedMotion(true));
+    });
+    let archives = sandbox.write_model("outfit", "pl000d", &["Body", "Hair"]);
+    let (_, window) = cx.add_window_view(|w, cx| InspectorPage::new(archives, w, cx));
+    window.simulate_resize(size(px(1120.), px(700.)));
+    settle(window);
+    for expected in [true, false] {
+        let trigger = window.debug_bounds("unit-controls").expect("model controls button");
+        window.simulate_click(trigger.center(), Modifiers::none());
+        settle(window);
+        assert_eq!(window.debug_bounds("unit-controls-panel").is_some(), expected);
+    }
+}
+
+#[gpui::test]
 fn inspector_infers_player_variants_and_applies_them(cx: &mut TestAppContext) {
     let sandbox = Sandbox::new();
     boot(&sandbox, cx);
@@ -843,8 +959,24 @@ fn install_texture_archive(archive: &str, cx: &mut TestAppContext) {
     let folder = sandbox.write_drop_folder("outer/Fresh Pack", &["one.dds", "two.DDS", "readme.txt"]);
     let dropped = pack_drop(&sandbox, folder.parent().unwrap(), archive);
     let (_, cx) = cx.add_window_view(TexturesTab::new);
-    model.update_in(cx, |model, window, cx| model.install(vec![dropped.clone()], window, cx));
-    assert!(model.read_with(cx, |model, _| model.is_installing()));
+    cx.simulate_resize(size(px(1100.), px(700.)));
+    settle(cx);
+    let field = cx.debug_bounds("file-drop-zone").expect("texture installation field");
+    let position = field.center();
+    cx.simulate_event(gpui::FileDropEvent::Entered {
+        position,
+        paths: gpui::ExternalPaths([dropped.clone()].into_iter().collect()),
+    });
+    let highlighted = cx.update(|window, _| {
+        let scale = window.scale_factor();
+        window.painted_quads().iter().any(|quad| {
+            quad.border_color.a > 0.8
+                && quad.border_widths.left.0 >= 4. * scale
+                && (quad.bounds.size.width.0 / scale - f32::from(field.size.width)).abs() <= 4.
+        })
+    });
+    assert!(highlighted, "the texture installation field must highlight for {archive}");
+    cx.simulate_event(gpui::FileDropEvent::Submit { position });
     settle(cx);
     assert!(!cx.update(|window, cx| window.has_modal(cx)), "{archive}");
     assert!(!model.read_with(cx, |model, _| model.is_installing()), "{archive}");

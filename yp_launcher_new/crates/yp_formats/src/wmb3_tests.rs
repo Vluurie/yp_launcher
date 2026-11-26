@@ -60,7 +60,7 @@ fn batches_are_rebased_to_their_lowest_vertex() {
 
 #[test]
 fn wide_indices_and_extended_normals() {
-    for flags in [1u32, 4, 5, 7, 10, 11, 12, 14] {
+    for flags in [1u32, 4, 5, 7, 8, 10, 11, 12, 14] {
         let mut spec = quad_spec();
         spec.vertex_flags = flags;
         spec.wide_indices = true;

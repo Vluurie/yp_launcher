@@ -1,3 +1,14 @@
+#[derive(Clone, Copy, Default)]
+pub struct ReducedMotion(pub bool);
+
+impl gpui::Global for ReducedMotion {}
+
+impl ReducedMotion {
+    pub fn enabled(cx: &gpui::App) -> bool {
+        cx.try_global::<Self>().is_some_and(|setting| setting.0)
+    }
+}
+
 pub(crate) fn next_random(state: &mut u32) -> u32 {
     *state = state.wrapping_mul(0x19660d).wrapping_add(0x3c6ef35f);
     *state

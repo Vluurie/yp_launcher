@@ -6,6 +6,7 @@ mod folders;
 mod launch_failure;
 mod launcher_tab;
 mod log_panel;
+mod menu_navigation;
 mod metrics;
 mod notify;
 pub mod onboarding;
@@ -15,6 +16,7 @@ pub mod sandbox;
 mod settings_tab;
 mod shell;
 mod sidebar;
+mod stop_game;
 #[cfg(test)]
 mod tests;
 pub mod text;
@@ -88,6 +90,7 @@ pub fn init(cx: &mut App) {
 pub fn init_with(options: ShellOptions, cx: &mut App) {
     cx.set_global(options);
     yp_state::register_default_handlers(cx);
+    stop_game::register(cx);
     cx.on_action(|_: &OpenDiagnostics, cx| {
         cx.defer(|cx| {
             let Some(handle) = cx.try_global::<ShellHandle>().cloned() else {

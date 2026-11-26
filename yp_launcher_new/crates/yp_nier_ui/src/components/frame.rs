@@ -1,5 +1,4 @@
 use super::{MenuBackdrop, borders};
-use crate::draw::ScreenArt;
 use crate::motion::{ease_out, row_alpha};
 use crate::{EffectLayer, GridNoise, Lens, MenuTitle, Rect, Surface};
 use gpui::{
@@ -25,6 +24,7 @@ pub struct MenuFrame {
     foreground: Option<Slot>,
     lens: Option<Lens>,
     noise: Option<GridNoise>,
+    screen_overlay: bool,
 }
 impl MenuFrame {
     pub const CLOSE_DURATION: Duration = Duration::from_millis(350);
@@ -44,8 +44,14 @@ impl MenuFrame {
             foreground: None,
             lens: None,
             noise: None,
+            screen_overlay: true,
         }
     }
+    pub fn screen_overlay(mut self, enabled: bool) -> Self {
+        self.screen_overlay = enabled;
+        self
+    }
+
     pub fn subtitle(mut self, text: impl Into<SharedString>) -> Self {
         self.subtitle = Some(text.into());
         self
@@ -132,8 +138,15 @@ impl RenderOnce for MenuFrame {
         });
         let scale = (area.width / px(1600.)).min(area.height / px(900.));
         let start = self.opened_at.unwrap_or(mounted);
-        let age = start.elapsed().as_secs_f32() * 60.;
-        let page_age = if mounted == page_start {
+        let reduced = crate::ReducedMotion::enabled(cx);
+        let age = if reduced {
+            120.
+        } else {
+            start.elapsed().as_secs_f32() * 60.
+        };
+        let page_age = if reduced {
+            120.
+        } else if mounted == page_start {
             (age - 20.).max(0.)
         } else {
             page_start.elapsed().as_secs_f32() * 60.
@@ -230,14 +243,19 @@ impl RenderOnce for MenuFrame {
         }
         let mut overlay = Surface::new(1600., 900.);
         if let Some(start) = self.closing_at {
-            super::backdrop::closing(&mut overlay, start.elapsed().as_secs_f32() * 60.);
-            window.request_animation_frame();
+            if !reduced {
+                super::backdrop::closing(&mut overlay, start.elapsed().as_secs_f32() * 60.);
+                window.request_animation_frame();
+            }
             face = face.child(div().absolute().inset_0().occlude());
         }
-        overlay.art(ScreenArt::Grid, Rect::new(0., 0., 1600., 900.));
-        overlay.art(ScreenArt::Vignette, Rect::new(0., 0., 1600., 900.));
-        let finish = deferred(div().absolute().inset_0().child(overlay)).with_priority(3);
-        let mut filtered = EffectLayer::new(face.child(finish));
+        if self.closing_at.is_some() {
+            face = face.child(deferred(div().absolute().inset_0().child(overlay)).with_priority(3));
+        }
+        if self.screen_overlay {
+            face = face.child(crate::menu_screen_overlay());
+        }
+        let mut filtered = EffectLayer::new(face);
         if let Some(lens) = self.lens {
             filtered = filtered.lens(lens);
         }

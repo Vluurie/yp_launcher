@@ -9,6 +9,8 @@ use super::util::{KeyboardFocus, bounds_tracker, pointer_capture};
 use crate::theme::{ActiveTheme, Sizes};
 use crate::traits::ValueHandler;
 
+mod menu;
+
 #[derive(Default)]
 struct SliderState {
     dragging: bool,
@@ -70,23 +72,70 @@ impl SliderRange {
 
     fn adjacent(&self, value: f32, forward: bool) -> f32 {
         if !self.ticks.is_empty() {
-            let next = self.ticks.iter().copied().filter(|tick| tick.is_finite()).filter(|tick| {
-                if forward { *tick > value } else { *tick < value }
-            });
+            let next = self
+                .ticks
+                .iter()
+                .copied()
+                .filter(|tick| tick.is_finite())
+                .filter(|tick| {
+                    if forward {
+                        *tick > value
+                    } else {
+                        *tick < value
+                    }
+                });
             return if forward {
                 next.min_by(f32::total_cmp)
             } else {
                 next.max_by(f32::total_cmp)
-            }.unwrap_or(value);
+            }
+            .unwrap_or(value);
         }
-        let step = if self.step.is_finite() && self.step > 0.0 { self.step } else { (self.max - self.min).abs() / 100.0 };
+        let step = if self.step.is_finite() && self.step > 0.0 {
+            self.step
+        } else {
+            (self.max - self.min).abs() / 100.0
+        };
         self.snap(value + if forward { step } else { -step })
     }
 }
 
+fn accessible_range(
+    mut el: gpui::Stateful<gpui::Div>,
+    range: Rc<SliderRange>,
+    value: f32,
+    apply: impl Fn(f32, &mut Window, &mut App) + 'static,
+) -> gpui::Stateful<gpui::Div> {
+    let apply = Rc::new(apply);
+    for action in [
+        gpui::AccessibleAction::Increment,
+        gpui::AccessibleAction::Decrement,
+        gpui::AccessibleAction::SetValue,
+    ] {
+        let range = range.clone();
+        let apply = apply.clone();
+        el = el.on_a11y_action(action, move |data, w, cx| {
+            let next = match (action, data) {
+                (
+                    gpui::AccessibleAction::SetValue,
+                    Some(gpui::accesskit::ActionData::NumericValue(n)),
+                ) if n.is_finite() => range.snap(*n as f32),
+                (gpui::AccessibleAction::Increment, _) => range.adjacent(value, true),
+                (gpui::AccessibleAction::Decrement, _) => range.adjacent(value, false),
+                _ => return,
+            };
+            apply(next, w, cx);
+        });
+    }
+    el
+}
+
 pub struct Slider {
     id: ElementId,
+    accessible_label: Option<SharedString>,
     value: f32,
+    default_mark: Option<f32>,
+    menu_row: Option<(SharedString, SharedString)>,
     range: SliderRange,
     disabled: bool,
     width: Option<DefiniteLength>,
@@ -100,7 +149,10 @@ impl Slider {
     pub fn new(id: impl Into<ElementId>) -> Self {
         Self {
             id: id.into(),
+            accessible_label: None,
             value: 0.,
+            default_mark: None,
+            menu_row: None,
             range: SliderRange {
                 min: 0.,
                 max: 1.,
@@ -114,8 +166,23 @@ impl Slider {
         }
     }
 
+    pub fn accessible_label(mut self, label: impl Into<SharedString>) -> Self {
+        self.accessible_label = Some(label.into());
+        self
+    }
+
     pub fn value(mut self, value: f32) -> Self {
         self.value = value;
+        self
+    }
+
+    pub(super) fn menu_row(mut self, label: SharedString, value_label: SharedString) -> Self {
+        self.menu_row = Some((label, value_label));
+        self
+    }
+
+    pub fn default_mark(mut self, value: f32) -> Self {
+        self.default_mark = value.is_finite().then_some(value);
         self
     }
 
@@ -173,6 +240,9 @@ fn value_for_position(range: &SliderRange, bounds: Bounds<Pixels>, x: Pixels) ->
 impl RenderOnce for Slider {
     fn render(self, window: &mut Window, cx: &mut App) -> impl IntoElement {
         let theme = cx.theme().clone();
+        if theme.id == crate::ThemeId::NierNew {
+            return menu::render(self, window, cx);
+        }
         let state = window.use_keyed_state(self.id.clone(), cx, |_, _| SliderState::default());
         let (dragging, drag_value) = {
             let state = state.read(cx);
@@ -201,6 +271,8 @@ impl RenderOnce for Slider {
         let move_range = range.clone();
         let move_change = on_change.clone();
         let up_state = state.clone();
+        let release_range = range.clone();
+        let release_change = on_change.clone();
         let fallback = self.value;
         let keyboard_range = range.clone();
         let keyboard_change = on_change.clone();
@@ -208,6 +280,27 @@ impl RenderOnce for Slider {
 
         div()
             .id(self.id)
+            .role(gpui::Role::Slider)
+            .when_some(self.accessible_label, |el, label| el.aria_label(label))
+            .aria_numeric_value(shown.into())
+            .aria_orientation(gpui::Orientation::Horizontal)
+            .when(range.step > 0., |el| {
+                el.aria_numeric_value_step(range.step.into())
+            })
+            .when(!disabled, |el| {
+                let change = on_change.clone();
+                let commit = on_commit.clone();
+                accessible_range(el, range.clone(), shown, move |next, w, cx| {
+                    if let Some(f) = &change {
+                        f(&next, w, cx);
+                    }
+                    if let Some(f) = &commit {
+                        f(&next, w, cx);
+                    }
+                })
+            })
+            .aria_min_numeric_value(range.min.min(range.max).into())
+            .aria_max_numeric_value(range.max.max(range.min).into())
             .group(group.clone())
             .relative()
             .h(Sizes::SLIDER_HIT_HEIGHT)
@@ -262,10 +355,13 @@ impl RenderOnce for Slider {
                 }
             }))
             .child(pointer_capture(
-                dragging && !disabled,
+                !disabled,
                 move |event, window, cx| {
                     let (bounds, previous) = {
                         let state = move_state.read(cx);
+                        if !state.dragging {
+                            return;
+                        }
                         (state.bounds, state.drag_value)
                     };
                     let value = value_for_position(&move_range, bounds, event.position.x);
@@ -280,14 +376,22 @@ impl RenderOnce for Slider {
                         handler(&value, window, cx);
                     }
                 },
-                move |_, window, cx| {
-                    let value = up_state.update(cx, |state, cx| {
+                move |event, window, cx| {
+                    let state = up_state.read(cx);
+                    if event.button != MouseButton::Left || !state.dragging {
+                        return;
+                    }
+                    let value = value_for_position(&release_range, state.bounds, event.position.x);
+                    let previous = up_state.update(cx, |state, cx| {
                         state.dragging = false;
                         cx.notify();
                         state.drag_value.take()
                     });
+                    if previous != Some(value) && let Some(handler) = &release_change {
+                        handler(&value, window, cx);
+                    }
                     if let Some(handler) = &on_commit {
-                        handler(&value.unwrap_or(fallback), window, cx);
+                        handler(&value, window, cx);
                     }
                 },
             ))
@@ -342,6 +446,7 @@ impl RenderOnce for Slider {
                             ),
                     ),
             )
+            .into_any_element()
     }
 }
 
@@ -382,7 +487,12 @@ mod tests {
         assert_eq!(range.adjacent(1., true), 1.5);
         assert_eq!(range.adjacent(0., false), 0.);
         assert_eq!(range.adjacent(10., true), 10.);
-        let range = SliderRange { min: 0., max: 8192., step: 0., ticks: vec![8192., 1024., 4096., f32::NAN, 2048.] };
+        let range = SliderRange {
+            min: 0.,
+            max: 8192.,
+            step: 0.,
+            ticks: vec![8192., 1024., 4096., f32::NAN, 2048.],
+        };
         assert_eq!(range.adjacent(2048., true), 4096.);
         assert_eq!(range.adjacent(2048., false), 1024.);
         assert_eq!(range.adjacent(8192., true), 8192.);

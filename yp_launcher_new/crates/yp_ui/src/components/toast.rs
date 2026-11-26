@@ -150,6 +150,7 @@ pub struct ToastStack {
     history: VecDeque<ToastRecord>,
     history_counter: u64,
     history_view: PopoverMenuHandle<ToastHistory>,
+    history_in_footer: bool,
 }
 
 impl Default for ToastStack {
@@ -168,7 +169,54 @@ impl ToastStack {
             history: VecDeque::new(),
             history_counter: 0,
             history_view: PopoverMenuHandle::new(),
+            history_in_footer: false,
         }
+    }
+
+    pub fn set_history_in_footer(&mut self, in_footer: bool, cx: &mut Context<Self>) {
+        if self.history_in_footer != in_footer {
+            self.history_in_footer = in_footer;
+            cx.notify();
+        }
+    }
+
+    pub fn has_history(&self) -> bool {
+        !self.history.is_empty()
+    }
+
+    pub fn history_button(
+        &self,
+        stack: WeakEntity<Self>,
+        cx: &App,
+        opens_up: bool,
+    ) -> Option<gpui::AnyElement> {
+        if !self.has_history() {
+            return None;
+        }
+        let (anchor, attach, gap) = if opens_up {
+            (Anchor::BottomRight, Anchor::TopRight, -Sizes::MENU_GAP)
+        } else {
+            (Anchor::TopRight, Anchor::BottomRight, Sizes::MENU_GAP)
+        };
+        let title = cx.t().toast_history_title();
+        Some(PopoverMenu::new("yp-toast-history-popover")
+            .with_handle(self.history_view.clone())
+            .anchor(anchor)
+            .attach(attach)
+            .offset(point(px(0.), gap))
+            .trigger(
+                IconButton::new("yp-toast-history-open", IconName::ListAltOutlined)
+                    .style(ButtonStyle::Transparent)
+                    .size(ButtonSize::Compact)
+                    .icon_color(Color::Muted)
+                    .accessible_label(title)
+                    .tooltip(Tooltip::text(title)),
+            )
+            .menu(move |_, cx| {
+                let stack = stack.upgrade()?;
+                Some(cx.new(|cx| ToastHistory::new(stack, cx)))
+            })
+            .into_any_element())
     }
 
     pub fn len(&self) -> usize {
@@ -386,34 +434,16 @@ impl Render for ToastStack {
             .collect::<Vec<_>>();
         div()
             .absolute()
-            .bottom(sizes.padding_lg)
+            .top(sizes.padding_lg)
             .right(sizes.padding_lg)
             .flex()
             .flex_col()
             .items_end()
             .gap(px(6.))
-            .children(toasts)
-            .when(!self.history.is_empty(), |this| {
-                let stack = cx.entity().downgrade();
-                this.child(
-                    PopoverMenu::new("yp-toast-history-popover")
-                        .with_handle(self.history_view.clone())
-                        .anchor(Anchor::BottomRight)
-                        .attach(Anchor::TopRight)
-                        .offset(point(px(0.), -Sizes::MENU_GAP))
-                        .trigger(
-                            IconButton::new("yp-toast-history-open", IconName::ListAltOutlined)
-                                .style(ButtonStyle::Transparent)
-                                .size(ButtonSize::Compact)
-                                .icon_color(Color::Muted)
-                                .tooltip(Tooltip::text(cx.t().toast_history_title())),
-                        )
-                        .menu(move |_, cx| {
-                            let stack = stack.upgrade()?;
-                            Some(cx.new(|cx| ToastHistory::new(stack, cx)))
-                        }),
-                )
+            .when(!self.history_in_footer, |el| {
+                el.children(self.history_button(cx.entity().downgrade(), cx, false))
             })
+            .children(toasts)
     }
 }
 
@@ -504,6 +534,7 @@ impl Render for ToastHistory {
         let height = px(260.).min((viewport.height - sizes.padding_lg * 2. - px(40.)).max(px(0.)));
         menu_container(window, cx)
             .id("yp-toast-history")
+            .debug_selector(|| "recent-messages-popup".to_owned())
             .relative()
             .key_context(TOAST_HISTORY_CONTEXT)
             .track_focus(&self.focus_handle)
@@ -639,7 +670,7 @@ mod tests {
         let corner = cx.update(|window, cx| {
             let margin = window.sizes(cx).padding_lg + px(8.);
             let viewport = window.viewport_size();
-            gpui::point(viewport.width - margin, viewport.height - margin)
+            gpui::point(viewport.width - margin, margin)
         });
         cx.simulate_click(corner, gpui::Modifiers::none());
         cx.run_until_parked();

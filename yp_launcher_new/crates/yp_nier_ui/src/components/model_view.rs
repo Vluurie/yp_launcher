@@ -39,9 +39,12 @@ pub struct ModelViewer {
     scene: AnyElement,
     expanded: bool,
     equipment: bool,
+    animate_viewport: bool,
     motions: Option<(usize, usize)>,
+    playback: bool,
     scale: f32,
     action: chrome::Action,
+    prompts: [SharedString; 4],
 }
 impl ModelViewer {
     pub fn new(
@@ -57,9 +60,13 @@ impl ModelViewer {
             scene: scene.into_any_element(),
             expanded: false,
             equipment: false,
+            animate_viewport: true,
             motions: None,
+            playback: false,
             scale: 1.,
             action: Rc::new(action),
+            prompts: ["Rotate", "Animation", "Change Equipment", "Back"]
+                .map(SharedString::new_static),
         }
     }
     pub fn description(mut self, text: impl Into<SharedString>) -> Self {
@@ -70,11 +77,35 @@ impl ModelViewer {
         self.expanded = open;
         self
     }
+    pub fn animate_viewport(mut self, enabled: bool) -> Self {
+        self.animate_viewport = enabled;
+        self
+    }
+    pub fn prompts(
+        mut self,
+        rotate: impl Into<SharedString>,
+        animation: impl Into<SharedString>,
+        equipment: impl Into<SharedString>,
+        back: impl Into<SharedString>,
+    ) -> Self {
+        self.prompts = [
+            rotate.into(),
+            animation.into(),
+            equipment.into(),
+            back.into(),
+        ];
+        self
+    }
     pub fn equipment(mut self, available: bool) -> Self {
         self.equipment = available;
         self
     }
+    pub fn playback(mut self, available: bool) -> Self {
+        self.playback = available;
+        self
+    }
     pub fn motions(mut self, current: usize, total: usize) -> Self {
+        self.playback |= total > 0;
         self.motions = (total > 0).then_some((current.min(total), total));
         self
     }
@@ -114,6 +145,11 @@ impl RenderOnce for ModelViewer {
                 st.focus.clone(),
             )
         });
+        let elapsed = if !self.animate_viewport || crate::ReducedMotion::enabled(cx) {
+            1.
+        } else {
+            elapsed
+        };
         let motion = motion::Motion::native();
         let rect = motion.viewport(self.expanded, elapsed);
         let transitioning = elapsed < if self.expanded { 0.5 } else { 20. / 60. };
@@ -126,21 +162,36 @@ impl RenderOnce for ModelViewer {
         let drag = state.clone();
         let key = self.action.clone();
         let open = self.expanded;
-        let mut root = div().id(self.id).relative().size_full().when(open, |el| {
-            el.track_focus(&focus)
-                .on_key_down(move |event: &KeyDownEvent, w, cx| {
-                    let action = match event.keystroke.key.as_str() {
-                        "escape" => ViewerAction::Back,
-                        "enter" | "space" if self.motions.is_some() => ViewerAction::Animation,
-                        "tab" if self.equipment => ViewerAction::Equipment,
-                        "up" => ViewerAction::Previous,
-                        "down" => ViewerAction::Next,
-                        _ => return,
-                    };
-                    key(action, w, cx);
-                    cx.stop_propagation();
-                })
-        });
+        let mut root = div()
+            .id(self.id)
+            .role(gpui::Role::Group)
+            .aria_label(self.name.clone())
+            .aria_description(self.description.clone())
+            .relative()
+            .size_full()
+            .when(open, |el| {
+                el.track_focus(&focus)
+                    .on_key_down(move |event: &KeyDownEvent, w, cx| {
+                        let action = match event.keystroke.key.as_str() {
+                            "escape" => ViewerAction::Back,
+                            "left" => ViewerAction::Rotate { dx: -12., dy: 0. },
+                            "right" => ViewerAction::Rotate { dx: 12., dy: 0. },
+                            "up" if event.keystroke.modifiers.shift => {
+                                ViewerAction::Rotate { dx: 0., dy: -12. }
+                            }
+                            "down" if event.keystroke.modifiers.shift => {
+                                ViewerAction::Rotate { dx: 0., dy: 12. }
+                            }
+                            "enter" | "space" if self.playback => ViewerAction::Animation,
+                            "e" if self.equipment => ViewerAction::Equipment,
+                            "up" => ViewerAction::Previous,
+                            "down" => ViewerAction::Next,
+                            _ => return,
+                        };
+                        key(action, w, cx);
+                        cx.stop_propagation();
+                    })
+            });
         if !open || transitioning {
             root = root.child(chrome::details(&self.name, &self.description, s));
         }
@@ -227,7 +278,9 @@ impl RenderOnce for ModelViewer {
                     opacity,
                     s,
                     self.motions,
+                    self.playback,
                     self.equipment,
+                    &self.prompts,
                     self.action,
                 ));
         }

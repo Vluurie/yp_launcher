@@ -237,6 +237,10 @@ pub fn kind_for(stem: &str, has_outfit_config: bool) -> DefaultKind {
     }
 }
 
+pub fn stem_rel_path(mod_id: &str, stem: &str) -> String {
+    format!("mods/{mod_id}/pl/{stem}")
+}
+
 pub fn initial_outfit_id(kind: DefaultKind, choices: &[OutfitChoice]) -> Option<i64> {
     if kind != DefaultKind::OutfitConfig {
         return None;

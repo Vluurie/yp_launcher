@@ -169,6 +169,7 @@ impl Color {
             Color::OnAccent => colors.button_text,
             Color::OnDark => colors.text_on_dark,
             Color::Disabled => colors.text_muted.opacity(theme.alpha.glass),
+            Color::Placeholder if theme.id == super::ThemeId::NierNew => colors.text_muted,
             Color::Placeholder => colors.text_muted.opacity(theme.alpha.glass),
             Color::LogText => colors.log_text,
             Color::LogDebug => colors.log_debug,

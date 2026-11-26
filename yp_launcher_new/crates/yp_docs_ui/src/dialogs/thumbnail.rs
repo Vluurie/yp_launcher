@@ -241,7 +241,6 @@ impl ThumbnailDialog {
         let shown_width = px(self.width as f32 * scale);
         let shown_height = px(self.height as f32 * scale);
         let accent = theme.colors.accent_primary;
-        let drag_background = accent.opacity(theme.alpha.subtle);
         let hover_border = accent.opacity(theme.alpha.half);
         let handle = px(HANDLE_SIZE);
         let resizing = self.resize.is_some();
@@ -280,6 +279,7 @@ impl ThumbnailDialog {
             .child(
                 h_flex()
                     .id("thumbnail-canvas")
+                    .relative()
                     .w(shown_width)
                     .h(shown_height)
                     .overflow_hidden()
@@ -289,14 +289,12 @@ impl ThumbnailDialog {
                     .bg(theme.colors.surface_light)
                     .cursor_pointer()
                     .hover(move |style| style.border_color(hover_border))
-                    .drag_over::<ExternalPaths>(move |style, _, _, _| {
-                        style.bg(drag_background).border_color(accent)
-                    })
                     .on_drop(cx.listener(|this, paths: &ExternalPaths, _, cx| {
                         this.accept_paths(paths.paths(), cx);
                     }))
                     .on_click(cx.listener(|this, _, _, cx| this.browse(cx)))
-                    .child(content),
+                    .child(content)
+                    .child(yp_ui::nier::file_drop_highlight(accent, theme.colors.background_primary, cx.t().drop_release_hint(), |paths| first_accepted(paths).is_some())),
             )
             .when(!fixed, |this| {
                 this.child(

@@ -293,6 +293,9 @@ impl Render for SelectMenu {
                 let group = SharedString::from(format!("yp-select-item-{index}"));
                 h_flex()
                     .id(("yp-select-item", index))
+                    .role(gpui::Role::ListBoxOption)
+                    .aria_label(entry.label.clone())
+                    .aria_selected(selected)
                     .group(group.clone())
                     .w_full()
                     .flex_none()
@@ -381,6 +384,7 @@ impl Render for SelectMenu {
             .child(
                 div()
                     .id("yp-select-items")
+                    .role(gpui::Role::ListBox)
                     .flex_1()
                     .min_h_0()
                     .flex()
@@ -454,6 +458,7 @@ pub fn place_menu(trigger: Bounds<Pixels>, viewport: Size<Pixels>) -> MenuPlacem
 pub struct Select<T: Clone + 'static> {
     id: ElementId,
     selected_label: SharedString,
+    accessible_label: Option<SharedString>,
     items: Vec<SelectItem<T>>,
     selected_index: Option<usize>,
     on_select: Option<ValueHandler<T>>,
@@ -476,6 +481,7 @@ impl<T: Clone + 'static> Select<T> {
         Self {
             id: id.into(),
             selected_label: selected_label.into(),
+            accessible_label: None,
             items: Vec::new(),
             selected_index: None,
             on_select: None,
@@ -490,6 +496,11 @@ impl<T: Clone + 'static> Select<T> {
             full_width: false,
             tooltip: None,
         }
+    }
+
+    pub fn accessible_label(mut self, label: impl Into<SharedString>) -> Self {
+        self.accessible_label = Some(label.into());
+        self
     }
 
     pub fn items(mut self, items: impl IntoIterator<Item = SelectItem<T>>) -> Self {
@@ -581,6 +592,7 @@ impl<T: Clone + 'static> RenderOnce for Select<T> {
             SelectParts {
                 id: self.id,
                 selected_label: self.selected_label,
+                accessible_label: self.accessible_label,
                 entries,
                 selected_index: self.selected_index,
                 on_pick,
@@ -604,6 +616,7 @@ impl<T: Clone + 'static> RenderOnce for Select<T> {
 struct SelectParts {
     id: ElementId,
     selected_label: SharedString,
+    accessible_label: Option<SharedString>,
     entries: Vec<SelectMenuEntry>,
     selected_index: Option<usize>,
     on_pick: Option<PickHandler>,
@@ -780,13 +793,22 @@ fn render_select(select: SelectParts, window: &mut Window, cx: &mut App) -> AnyE
         }
     };
     let trigger = trigger
+        .role(gpui::Role::ComboBox)
+        .aria_label(
+            select
+                .accessible_label
+                .unwrap_or_else(|| select.selected_label.clone()),
+        )
+        .aria_value(select.selected_label.clone())
+        .aria_expanded(open)
+        .when(!enabled, |el| el.aria_description(cx.t().mod_disabled()))
         .child(bounds_tracker(move |bounds, _, cx| {
             if bounds_state.read(cx).trigger_bounds != bounds {
                 bounds_state.update(cx, |state, _| state.trigger_bounds = bounds);
             }
         }))
         .when(enabled, |this| {
-            this.keyboard_activate(cx).on_click(move |_, window, cx| {
+            this.keyboard_activate(cx).on_disclosure_toggle(open, move |_, window, cx| {
                 cx.stop_propagation();
                 if click_state.read(cx).menu.is_some() {
                     hide_popover(&click_state.downgrade(), window, cx);
@@ -808,6 +830,9 @@ fn render_select(select: SelectParts, window: &mut Window, cx: &mut App) -> AnyE
         .when(!select.full_width, |this| this.flex_none().items_start())
         .min_w_0()
         .child(trigger)
+        .when(open && theme.id == crate::ThemeId::NierNew, |el| {
+            el.child(super::menu::menu_shade(window, cx))
+        })
         .when_some(menu, |this, menu| {
             this.child(
                 deferred(

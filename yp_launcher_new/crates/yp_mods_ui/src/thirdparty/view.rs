@@ -1344,8 +1344,14 @@ impl Render for ThirdPartyView {
                     .flex_col()
                     .gap(sizes.padding_md)
                     .p(sizes.content_padding)
-                    .child(banner)
-                    .child(TwoColumn::new(left, right).id("thirdparty-columns"))
+                    .map(|el| {
+                        let panels = TwoColumn::new(left, right).id("thirdparty-columns");
+                        if cx.theme().id == ThemeId::NierNew {
+                            el.child(panels).child(banner)
+                        } else {
+                            el.child(banner).child(panels)
+                        }
+                    })
                     .overflow_y_scrollbar(&self.scroll),
             )
     }

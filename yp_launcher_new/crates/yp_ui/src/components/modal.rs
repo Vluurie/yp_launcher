@@ -198,7 +198,8 @@ impl RenderOnce for ModalFooter {
             )
             .child(
                 h_flex()
-                    .flex_none()
+                    .min_w_0()
+                    .max_w_full()
                     .flex_wrap()
                     .justify_end()
                     .gap(sizes.spacing_sm)
@@ -275,7 +276,10 @@ impl RenderOnce for Modal {
     fn render(self, window: &mut Window, cx: &mut App) -> impl IntoElement {
         let theme = cx.theme().clone();
         let sizes = window.sizes(cx);
-        let width = self.width.pixels(&sizes);
+        let width = self
+            .width
+            .pixels(&sizes)
+            .min((sizes.window_width - Sizes::WINDOW_MARGIN * 2.).max(gpui::px(1.)));
         let max_height =
             (sizes.window_height - Sizes::TITLE_BAR_HEIGHT - Sizes::LIGHTBOX_INSET * 2.)
                 .max(Sizes::SELECT_MENU_MIN_HEIGHT);
@@ -288,6 +292,11 @@ impl RenderOnce for Modal {
         };
         v_flex()
             .id(self.id)
+            .role(gpui::Role::Dialog)
+            .when_some(
+                self.header.as_ref().and_then(|h| h.headline.clone()),
+                |el, title| el.aria_label(title),
+            )
             .w(width)
             .max_h(max_height)
             .when(self.fill_height, |this| this.h(max_height))

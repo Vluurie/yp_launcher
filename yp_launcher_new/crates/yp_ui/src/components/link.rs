@@ -127,6 +127,8 @@ impl RenderOnce for Link {
         let controller_blocked = ControllerMode::is_active(cx) && !self.controller_supported;
         h_flex()
             .id(self.id)
+            .role(gpui::Role::Link)
+            .aria_label(self.label.clone())
             .group(group.clone())
             .gap(sizes.spacing_sm)
             .when(self.truncate, |this| this.min_w_0().max_w_full())

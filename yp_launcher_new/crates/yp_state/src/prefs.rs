@@ -22,6 +22,8 @@ pub use yp_host::session::NIER_DIRECTORY;
 pub use yp_host::win10_compat::WIN10_SETUP_DONE;
 pub use yp_i18n::APP_LOCALE;
 
+const MENU_TEXT_SIZE: SettingKey<u16> = SettingKey::new("nier_text_percent", || 100);
+pub const REDUCED_MENU_MOTION: SettingKey<bool> = SettingKey::new("nier_reduce_motion", || false);
 pub const APP_THEME: SettingKey<String> = SettingKey::new("app_theme", String::new);
 pub const ONBOARDING_COMPLETE: SettingKey<bool> = SettingKey::new("onboarding_complete", || false);
 pub const MINIMIZE_ON_LAUNCH: SettingKey<bool> = SettingKey::new("minimize_on_launch", || false);
@@ -240,13 +242,27 @@ fn saved_theme_id(prefs: &Prefs) -> ThemeId {
     prefs
         .saved_theme()
         .and_then(|code| ThemeId::from_code(&code))
-        .unwrap_or_default()
+        .unwrap_or(ThemeId::NierNew)
 }
 
 pub(crate) fn bind_ui(host: &HostEnv, cx: &mut gpui::App) {
     let prefs = cx.global::<Prefs>();
     let theme = saved_theme_id(prefs);
     let locale = prefs.locale(host);
+    let reduced = prefs.get(&REDUCED_MENU_MOTION);
+    use yp_ui::theme::MenuTextSize;
+    cx.set_global(MenuTextSize::new(prefs.get(&MENU_TEXT_SIZE)));
+    cx.observe_global::<MenuTextSize>(|cx| {
+        cx.global::<Prefs>()
+            .set(&MENU_TEXT_SIZE, &MenuTextSize::percent(cx));
+    })
+    .detach();
+    cx.set_global(yp_ui::nier::ReducedMotion(reduced));
+    cx.observe_global::<yp_ui::nier::ReducedMotion>(|cx| {
+        let flag = yp_ui::nier::ReducedMotion::enabled(cx);
+        cx.global::<Prefs>().set(&REDUCED_MENU_MOTION, &flag);
+    })
+    .detach();
     if cx.try_global::<GlobalTheme>().map(|global| global.0.id) != Some(theme) {
         yp_ui::theme::set_theme(theme, cx);
     }

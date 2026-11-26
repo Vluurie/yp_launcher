@@ -18,16 +18,34 @@ use super::util::{KeyboardFocus, bounds_tracker};
 use crate::actions::{
     Cancel, Confirm, MENU_CONTEXT, SelectFirst, SelectLast, SelectNext, SelectPrevious,
 };
+use crate::i18n::ActiveStrings;
 use crate::styled_ext::{StyledExt, h_flex, v_flex};
 use crate::theme::{ActiveTheme, Color, ResponsiveExt, Sizes};
 use crate::traits::ActionHandler;
+
+pub(super) fn menu_shade(window: &Window, cx: &App) -> impl IntoElement {
+    let size = window.viewport_size();
+    deferred(
+        anchored().position(point(px(0.), px(0.))).child(
+            div()
+                .w(size.width)
+                .h(size.height)
+                .bg(cx.theme().colors.accent_primary.opacity(0.21)),
+        ),
+    )
+    .with_priority(1)
+}
 
 pub fn menu_container(window: &Window, cx: &App) -> Div {
     let theme = cx.theme();
     let sizes = window.sizes(cx);
     v_flex()
         .py(px(4.))
-        .rounded(Sizes::CONTROL_RADIUS)
+        .rounded(if theme.id == crate::ThemeId::NierNew {
+            px(0.)
+        } else {
+            Sizes::CONTROL_RADIUS
+        })
         .bg(theme.colors.background_card)
         .border_1()
         .border_color(theme.colors.border_medium)
@@ -420,6 +438,20 @@ impl Render for ContextMenu {
                     let group = SharedString::from(format!("yp-menu-item-{index}"));
                     h_flex()
                         .id(("yp-menu-item", index))
+                        .role(if entry.toggle.is_some() {
+                            gpui::Role::MenuItemCheckBox
+                        } else {
+                            gpui::Role::MenuItem
+                        })
+                        .aria_label(entry.label.clone())
+                        .when_some(entry.toggle, |el, on| {
+                            el.aria_toggled(if on {
+                                gpui::Toggled::True
+                            } else {
+                                gpui::Toggled::False
+                            })
+                        })
+                        .when(is_highlighted, |el| el.aria_active_descendant())
                         .group(group.clone())
                         .w_full()
                         .gap(px(6.))
@@ -466,7 +498,7 @@ impl Render for ContextMenu {
                             v_flex()
                                 .flex_1()
                                 .min_w_0()
-                                .truncate()
+                                .when(theme.id != crate::ThemeId::NierNew, |el| el.truncate())
                                 .child(Text::new(entry.label.clone())),
                         )
                         .when_some(entry.shortcut.clone(), |this, shortcut| {
@@ -551,6 +583,7 @@ impl Render for ContextMenu {
             .child(
                 div()
                     .id("yp-context-menu-items")
+                    .role(gpui::Role::Menu)
                     .max_h(max_height)
                     .flex()
                     .flex_col()
@@ -714,6 +747,7 @@ fn trigger_slot(open: bool, full_width: bool, trigger: Option<AnyElement>) -> im
 }
 
 pub struct PopoverMenu<M: ManagedView> {
+    accessible_label: Option<SharedString>,
     id: ElementId,
     trigger: Option<TriggerBuilder>,
     menu: Option<MenuBuilder<M>>,
@@ -728,10 +762,16 @@ pub struct PopoverMenu<M: ManagedView> {
 crate::impl_into_element!([M: ManagedView] PopoverMenu<M>);
 
 impl<M: ManagedView> PopoverMenu<M> {
+    pub fn accessible_label(mut self, label: impl Into<SharedString>) -> Self {
+        self.accessible_label = Some(label.into());
+        self
+    }
+
     pub fn new(id: impl Into<ElementId>) -> Self {
         Self {
             id: id.into(),
             trigger: None,
+            accessible_label: None,
             menu: None,
             anchor: Anchor::TopLeft,
             attach: Anchor::BottomLeft,
@@ -827,6 +867,10 @@ impl<M: ManagedView> RenderOnce for PopoverMenu<M> {
             .child(
                 div()
                     .id("yp-popover-trigger")
+                    .role(gpui::Role::Button)
+                    .aria_expanded(open)
+                    .when(disabled, |el| el.aria_description(cx.t().mod_disabled()))
+                    .when_some(self.accessible_label, |el, label| el.aria_label(label))
                     .relative()
                     .flex()
                     .flex_col()
@@ -841,7 +885,7 @@ impl<M: ManagedView> RenderOnce for PopoverMenu<M> {
                     .when(!disabled, |this| {
                         this.rounded(Sizes::CONTROL_RADIUS)
                             .keyboard_activate(cx)
-                            .on_click(move |_, window, cx| {
+                            .on_disclosure_toggle(open, move |_, window, cx| {
                                 cx.stop_propagation();
                                 if click_state.read(cx).menu.is_some() {
                                     hide_popover(&click_state.downgrade(), window, cx);
@@ -865,6 +909,9 @@ impl<M: ManagedView> RenderOnce for PopoverMenu<M> {
                         )
                     }),
             )
+            .when(open && cx.theme().id == crate::ThemeId::NierNew, |el| {
+                el.child(menu_shade(window, cx))
+            })
             .when_some(menu, |this, menu| {
                 this.child(
                     deferred(

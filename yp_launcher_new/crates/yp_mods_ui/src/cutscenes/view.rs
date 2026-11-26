@@ -313,26 +313,21 @@ impl Render for CutscenesView {
                 .into_any_element();
         }
 
-        let banner = Callout::new()
-            .id("cutscene-banner")
-            .severity(Severity::Accent)
-            .icon(IconName::InfoOutline)
-            .title(strings.cutscene_banner_title())
-            .description(strings.mods_ui_two_sentences(
-                strings.cutscene_how_it_works1(),
-                strings.cutscene_how_it_works2(),
-            ))
-            .child(
-                Label::new(strings.cutscene_structure_path())
-                    .size(LabelSize::XSmall)
-                    .color(Color::Muted)
-                    .mono(),
-            )
-            .child(
-                Label::new(strings.cutscene_folder_name_limit())
-                    .size(LabelSize::XSmall)
-                    .color(Color::Muted),
-            );
+        let menu = cx.theme().id == ThemeId::NierNew;
+        let explanation = strings.mods_ui_two_sentences(
+            strings.cutscene_how_it_works1(), strings.cutscene_how_it_works2(),
+        );
+        let path = Label::new(strings.cutscene_structure_path()).size(LabelSize::XSmall).color(Color::Secondary).mono();
+        let limit = Label::new(strings.cutscene_folder_name_limit()).size(LabelSize::XSmall).color(Color::Secondary);
+        let (banner, guide) = if menu {
+            (None, Some(CollapsibleCard::new("cutscene-install-help", strings.menu_install_help())
+                .child(Label::new(explanation).size(LabelSize::Small))
+                .child(path).child(limit)))
+        } else {
+            (Some(Callout::new().id("cutscene-banner").severity(Severity::Accent)
+                .icon(IconName::InfoOutline).title(strings.cutscene_banner_title())
+                .description(explanation).child(path).child(limit)), None)
+        };
         let migration =
             (overrides > 0).then(|| {
                 Callout::new()
@@ -405,6 +400,7 @@ impl Render for CutscenesView {
             .w_full()
             .gap(sizes.spacing_lg)
             .child(div().child(drop_zone))
+            .children(guide)
             .child(self.render_subtitle_card(cx));
 
         v_flex()
@@ -419,9 +415,16 @@ impl Render for CutscenesView {
                     .flex_col()
                     .gap(sizes.padding_md)
                     .p(sizes.content_padding)
-                    .child(banner)
+                    .children(banner)
                     .children(migration)
-                    .child(TwoColumn::new(left, installed).id("cutscenes-columns"))
+                    .child(
+                        (if cx.theme().id == ThemeId::NierNew && tile_count > 0 {
+                            TwoColumn::new(installed, left).ratio(1.12, 1.)
+                        } else {
+                            TwoColumn::new(left, installed)
+                        })
+                        .id("cutscenes-columns"),
+                    )
                     .overflow_y_scrollbar(&self.scroll),
             )
             .into_any_element()

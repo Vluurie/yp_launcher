@@ -1,4 +1,10 @@
-use std::rc::Rc;
+mod layer;
+
+pub(crate) use layer::layer;
+use std::{
+    rc::Rc,
+    time::{Duration, Instant},
+};
 
 use gpui::{
     AnyView, App, Context, CursorStyle, DismissEvent, Entity, EntityId, FocusHandle, Focusable,
@@ -29,6 +35,12 @@ struct ActiveModal {
     _subscription: Subscription,
 }
 
+struct ClosingModal {
+    view: AnyView,
+    began: Instant,
+    shade: f32,
+}
+
 struct ActiveSheet {
     id: EntityId,
     view: AnyView,
@@ -41,33 +53,46 @@ struct ActiveSheet {
 
 struct ActiveOverlay {
     key: SharedString,
+    transparent: bool,
     view: AnyView,
     focus_handle: FocusHandle,
     previous_focus: Option<FocusHandle>,
 }
 
 pub struct Root {
+    menu_page_start: std::cell::Cell<Option<Instant>>,
     title_bar: Option<AnyView>,
     content: AnyView,
     overlays: Vec<ActiveOverlay>,
     sheet: Option<ActiveSheet>,
     modals: Vec<ActiveModal>,
+    closing_modal: Option<ClosingModal>,
     toasts: Entity<ToastStack>,
     focus_handle: FocusHandle,
 }
 
 impl Root {
+    pub fn menu_page_start(&self) -> Option<Instant> {
+        self.menu_page_start.get()
+    }
+
+    pub fn set_menu_page_start(&self, time: Instant) {
+        self.menu_page_start.set(Some(time));
+    }
+
     const FOCUS_TRAP_STEPS: usize = 256;
 
     pub fn new(content: impl Into<AnyView>, window: &mut Window, cx: &mut Context<Self>) -> Self {
         let focus_handle = cx.focus_handle();
         window.focus(&focus_handle, cx);
         Self {
+            menu_page_start: Default::default(),
             title_bar: None,
             content: content.into(),
             overlays: Vec::new(),
             sheet: None,
             modals: Vec::new(),
+            closing_modal: None,
             toasts: cx.new(|_| ToastStack::new()),
             focus_handle,
         }
@@ -139,6 +164,7 @@ impl Root {
         });
         let dismiss_on_scrim_click = modal.read(cx).dismiss_on_scrim_click();
         let scrim_opacity = modal.read(cx).scrim_opacity(cx);
+        self.closing_modal = None;
         self.modals.push(ActiveModal {
             id,
             view: modal.into(),
@@ -158,6 +184,16 @@ impl Root {
         };
         let modal = self.modals.remove(index);
         let was_top = index == self.modals.len();
+        if was_top
+            && cx.theme().id == crate::ThemeId::NierNew
+            && !yp_nier_ui::ReducedMotion::enabled(cx)
+        {
+            self.closing_modal = Some(ClosingModal {
+                view: modal.view,
+                began: Instant::now(),
+                shade: modal.scrim_opacity.unwrap_or(0.22),
+            });
+        }
         if was_top {
             match self.modals.last() {
                 Some(below) => window.focus(&below.focus_handle, cx),
@@ -289,6 +325,7 @@ impl Root {
         key: SharedString,
         view: AnyView,
         focus: Option<FocusHandle>,
+        transparent: bool,
         window: &mut Window,
         cx: &mut Context<Self>,
     ) {
@@ -297,6 +334,7 @@ impl Root {
         self.overlays.retain(|overlay| overlay.key != key);
         self.overlays.push(ActiveOverlay {
             key,
+            transparent,
             view,
             focus_handle: focus_handle.clone(),
             previous_focus,
@@ -386,11 +424,25 @@ impl Render for Root {
         let theme = cx.theme().clone();
         let sizes = window.sizes(cx);
         let scrim_color = theme.colors.scrim;
-        let default_scrim = theme.alpha.vignette;
+        let menu = theme.id == crate::ThemeId::NierNew;
+        let default_scrim = if menu { 0.22 } else { theme.alpha.vignette };
+        let fade_duration = Duration::from_millis(140);
+        if self
+            .closing_modal
+            .as_ref()
+            .is_some_and(|exit| exit.began.elapsed() >= fade_duration)
+        {
+            self.closing_modal = None;
+        }
+        if self.closing_modal.is_some() {
+            window.request_animation_frame();
+        }
         let modal_count = self.modals.len();
         if window.focused(cx).is_none() {
             window.focus(&self.focus_handle, cx);
         }
+        let modal_open = modal_count > 0 || self.closing_modal.is_some();
+        let covered = modal_open || self.sheet.is_some();
         let body = div()
             .relative()
             .flex_1()
@@ -398,15 +450,15 @@ impl Render for Root {
             .w_full()
             .overflow_hidden()
             .track_focus(&self.focus_handle)
-            .child(div().absolute().inset_0().child(self.content.clone()))
-            .children(self.overlays.iter().map(|overlay| {
-                div()
+            .child(layer("content-layer", covered || !self.overlays.is_empty(), div().absolute().inset_0().child(self.content.clone())))
+            .children(self.overlays.iter().enumerate().map(|(i, overlay)| {
+                layer(("overlay-layer", i), covered || i + 1 < self.overlays.len(), div()
                     .absolute()
                     .inset_0()
                     .occlude()
-                    .bg(theme.colors.background_primary)
+                    .when(!overlay.transparent, |el| el.bg(theme.colors.background_primary))
                     .track_focus(&overlay.focus_handle)
-                    .child(overlay.view.clone())
+                    .child(overlay.view.clone()))
             }))
             .when_some(self.sheet.as_ref(), |this, sheet| {
                 this.child(
@@ -418,7 +470,7 @@ impl Render for Root {
                         .on_action(|_: &Cancel, window, cx| {
                             window.defer(cx, |window, cx| window.close_sheet(cx));
                         })
-                        .child(sheet.view.clone()),
+                        .child(layer("sheet-layer", modal_open, sheet.view.clone())),
                 )
             })
             .children(self.modals.iter().enumerate().map(|(index, modal)| {
@@ -446,9 +498,24 @@ impl Render for Root {
                     .child(
                         div()
                             .on_mouse_down(MouseButton::Left, |_, _, cx| cx.stop_propagation())
-                            .child(modal.view.clone()),
+                            .child(layer(("modal-layer", index), !is_top || self.closing_modal.is_some(), modal.view.clone())),
                     )
             }))
+            .when_some(self.closing_modal.as_ref(), |el, exit| {
+                let alpha = (1. - exit.began.elapsed().as_secs_f32() / fade_duration.as_secs_f32())
+                    .clamp(0., 1.);
+                el.child(
+                    div()
+                        .absolute()
+                        .inset_0()
+                        .flex()
+                        .items_center()
+                        .justify_center()
+                        .bg(scrim_color.opacity(exit.shade * alpha))
+                        .child(layer("outgoing-modal", true, div().opacity(alpha).child(exit.view.clone())))
+                        .child(div().absolute().inset_0().occlude()),
+                )
+            })
             .child(self.toasts.clone());
         div()
             .id("yp-root")
@@ -488,6 +555,7 @@ impl Render for Root {
             )
             .child(body)
             .children(resize_grips(window))
+            .when(menu, |el| el.child(yp_nier_ui::menu_screen_overlay()))
     }
 }
 
@@ -522,6 +590,7 @@ pub trait WindowExt {
         view: impl Into<AnyView>,
         cx: &mut App,
     );
+    fn show_transparent_overlay(&mut self, key: impl Into<SharedString>, view: impl Into<AnyView>, cx: &mut App);
     fn show_focused_overlay<V: Focusable + Render>(
         &mut self,
         key: impl Into<SharedString>,
@@ -636,7 +705,13 @@ impl WindowExt for Window {
         if let Some(root) = self.yp_root() {
             let key = key.into();
             let view = view.into();
-            root.update(cx, |root, cx| root.push_overlay(key, view, None, self, cx));
+            root.update(cx, |root, cx| root.push_overlay(key, view, None, false, self, cx));
+        }
+    }
+
+    fn show_transparent_overlay(&mut self, key: impl Into<SharedString>, view: impl Into<AnyView>, cx: &mut App) {
+        if let Some(root) = self.yp_root() {
+            root.update(cx, |root, cx| root.push_overlay(key.into(), view.into(), None, true, self, cx));
         }
     }
 
@@ -651,7 +726,7 @@ impl WindowExt for Window {
             let focus = view.focus_handle(cx);
             let view: AnyView = view.into();
             root.update(cx, |root, cx| {
-                root.push_overlay(key, view, Some(focus), self, cx)
+                root.push_overlay(key, view, Some(focus), false, self, cx)
             });
         }
     }

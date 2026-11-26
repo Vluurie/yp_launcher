@@ -63,7 +63,8 @@ impl Control {
     }
     fn render(self, kind: Kind, window: &mut Window, cx: &mut App) -> impl IntoElement {
         let state = window.use_keyed_state(self.id.clone(), cx, |_, _| ControlState::new());
-        let (focus, extent, animating) = state.update(cx, |s, _| s.update(&self, kind));
+        let reduced = crate::ReducedMotion::enabled(cx);
+        let (focus, extent, animating) = state.update(cx, |s, _| s.update(&self, kind, reduced));
         if animating {
             window.request_animation_frame();
         }
@@ -100,6 +101,14 @@ impl Control {
         };
         let target = div()
             .id("hit")
+            .role(match kind {
+                Kind::Item | Kind::Choice | Kind::ScrollChoice => gpui::Role::ListBoxOption,
+                Kind::Tab => gpui::Role::Tab,
+                _ => gpui::Role::Button,
+            })
+            .aria_label(self.label.clone())
+            .when_some(self.selected, |el, selected| el.aria_selected(selected))
+            .when_some(self.value.clone(), |el, value| el.aria_value(value))
             .absolute()
             .left(px(hit.x * self.scale))
             .top(px(hit.y * self.scale))
@@ -118,7 +127,9 @@ impl Control {
                 })
             })
             .when_some(self.click.filter(|_| self.enabled), |e, click| {
-                e.on_click(move |ev, w, cx| click(ev, w, cx))
+                e.tab_index(0)
+                    .focus(|s| s.border_2().border_color(gpui::rgb(0x48463d)))
+                    .on_click(move |ev, w, cx| click(ev, w, cx))
             });
         div()
             .id(self.id)
@@ -132,6 +143,21 @@ impl Control {
             .child(art)
             .child(target)
     }
+}
+
+pub(super) fn slider_face(
+    width: f32,
+    height: f32,
+    body_width: f32,
+    label: &SharedString,
+    enabled: bool,
+    focus: f32,
+    extent: f32,
+) -> crate::Surface {
+    let mut control = Control::new("long-slider-face", label.clone(), body_width);
+    control.enabled = enabled;
+    control.slider = Some((0, 20, None, true));
+    layout::art(&control, Kind::Setting, width, height, focus, extent, label)
 }
 
 macro_rules! control {

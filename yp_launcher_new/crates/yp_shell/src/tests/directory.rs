@@ -142,6 +142,42 @@ fn onboarding_reports_invalid_manual_selections_instead_of_discarding_them(
 }
 
 #[gpui::test]
+fn empty_auto_search_finishes_without_opening_a_path_picker(cx: &mut TestAppContext) {
+    let harness = Harness::new();
+    let stores = harness.init(cx);
+    let opened = open_main(cx);
+    let cx = opened.cx;
+    let selector = cx.update(|window, cx| cx.new(|cx| DirectorySelector::new(window, cx)));
+    selector.update_in(cx, |selector, window, cx| selector.run_auto_search(window, cx));
+    cx.run_until_parked();
+    assert_eq!(harness.platform.deep_searches.load(Ordering::SeqCst), 1);
+    assert!(has_toast("game_search_empty", cx));
+    assert!(!stores.session.read_with(cx, |session, _| session.auto_searching()));
+}
+
+#[gpui::test]
+fn cancelling_multiple_scan_results_ends_auto_search(cx: &mut TestAppContext) {
+    let harness = Harness::new();
+    harness.platform.deep_installs.lock().unwrap().extend(
+        ["first", "second"].map(|name| NierInstallation {
+            path: harness.game.root().join(name),
+            has_data: true,
+        })
+    );
+    let stores = harness.init(cx);
+    let opened = open_main(cx);
+    let cx = opened.cx;
+    let selector = cx.update(|window, cx| cx.new(|cx| DirectorySelector::new(window, cx)));
+    selector.update_in(cx, |selector, window, cx| selector.run_auto_search(window, cx));
+    cx.run_until_parked();
+    assert!(has_modal(&opened.root, cx));
+    cx.simulate_keystrokes("escape");
+    cx.run_until_parked();
+    assert!(!has_modal(&opened.root, cx));
+    assert!(!stores.session.read_with(cx, |session, _| session.auto_searching()));
+}
+
+#[gpui::test]
 fn auto_detect_scans_drives_when_fast_search_is_empty(cx: &mut TestAppContext) {
     let harness = Harness::new();
     harness

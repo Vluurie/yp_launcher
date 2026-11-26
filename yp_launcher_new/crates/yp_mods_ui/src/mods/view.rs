@@ -33,6 +33,8 @@ use crate::mods::tutorial::{
 };
 use crate::notify::{reveal, toast};
 
+mod library;
+
 const CAMERA_SAVE_DELAY: Duration = Duration::from_millis(100);
 
 pub(crate) struct CameraEditor {
@@ -67,13 +69,18 @@ pub struct ModsView {
     pub(crate) stores: Stores,
     pub(crate) selected_id: Option<String>,
     pending_selection: Option<String>,
+    compact_detail: bool,
+    inventory_focus: FocusHandle,
+    inventory_index: Option<usize>,
+    compact_detail_focus: FocusHandle,
+    library_width: Option<Pixels>,
     filter: Entity<InputState>,
     collapsed: HashSet<ModGroupKind>,
     list: ListState,
     rows: Rc<Vec<ListRow>>,
     pub(crate) detail_scroll: ScrollHandle,
     tutorial: Option<TutorialKind>,
-    pub(crate) previews: Vec<(String, AnyView)>,
+    pub(crate) previews: Vec<(yp_state::inspector::ArchivePaths, AnyView)>,
     pub(crate) camera: Option<CameraEditor>,
     camera_load: Option<Task<()>>,
     _subscriptions: Vec<Subscription>,
@@ -128,6 +135,11 @@ impl ModsView {
             stores,
             selected_id: None,
             pending_selection: None,
+            compact_detail: false,
+            inventory_focus: cx.focus_handle().tab_stop(true),
+            inventory_index: None,
+            compact_detail_focus: cx.focus_handle().tab_stop(true),
+            library_width: None,
             filter,
             collapsed: HashSet::new(),
             list: ListState::new(0, ListAlignment::Top, Sizes::SELECT_MENU_MAX_HEIGHT),
@@ -188,6 +200,8 @@ impl ModsView {
             return;
         }
         self.flush_camera(cx);
+        self.compact_detail = id.is_some();
+        self.inventory_index = None;
         self.selected_id = id;
         self.previews.clear();
         self.camera = None;
@@ -585,30 +599,44 @@ impl ModsView {
                 kind,
                 count,
                 collapsed,
-            } => v_flex()
-                .w_full()
-                .flex_none()
-                .bg(band)
-                .border_b_1()
-                .border_color(line)
-                .child(
-                    ListHeader::new(("mods-group", kind as usize), group_label(kind, strings))
-                        .count(count)
-                        .collapsible(collapsed)
-                        .start_slot(
-                            Icon::new(group_icon(kind))
-                                .size(IconSize::Small)
-                                .color(Color::Accent),
-                        )
-                        .on_toggle(cx.listener(move |this, _, _, cx| this.toggle_group(kind, cx))),
-                )
-                .into_any_element(),
+            } => {
+                let menu = cx.theme().id == ThemeId::NierNew;
+                let header = v_flex()
+                    .debug_selector(move || format!("mod-group-band-{kind:?}"))
+                    .w_full()
+                    .flex_none()
+                    .bg(band)
+                    .when(menu, |el| {
+                        el.pr(px(10.))
+                            .border_t_2()
+                            .border_l_4()
+                            .border_color(cx.theme().colors.accent_primary)
+                    })
+                    .when(!menu, |el| el.border_b_1().border_color(line))
+                    .child(
+                        ListHeader::new(("mods-group", kind as usize), group_label(kind, strings))
+                            .count(count)
+                            .collapsible(collapsed)
+                            .start_slot(
+                                Icon::new(group_icon(kind))
+                                    .size(IconSize::Small)
+                                    .color(Color::Accent),
+                            )
+                            .on_toggle(cx.listener(move |this, _, _, cx| this.toggle_group(kind, cx))),
+                    );
+                div()
+                    .w_full()
+                    .when(menu && index > 0, |el| el.pt(px(12.)))
+                    .child(header)
+                    .into_any_element()
+            }
             ListEntry::Mod(row) => v_flex()
                 .w_full()
                 .flex_none()
                 .border_b_1()
                 .border_color(line)
-                .child(self.render_row(row, &sizes, cx))
+                .when(cx.theme().id == ThemeId::NierNew, |el| el.pr(px(10.)))
+                .child(if cx.theme().id == ThemeId::NierNew { self.library_row(index, row, cx) } else { self.render_row(row, &sizes, cx) })
                 .into_any_element(),
         }
     }
@@ -746,13 +774,20 @@ impl ModsView {
         let strings = cx.t();
         let view = cx.entity().downgrade();
         PopoverMenu::<ContextMenu>::new("mods-help-menu")
+            .accessible_label(strings.menu_support())
             .anchor(Anchor::TopRight)
             .attach(Anchor::BottomRight)
-            .trigger(
+            .trigger(if cx.theme().id == ThemeId::NierNew {
+                Button::new("mods-help", strings.menu_support())
+                    .style(ButtonStyle::Link)
+                    .end_icon(IconName::KeyboardArrowDown)
+                    .into_any_element()
+            } else {
                 IconButton::new("mods-help", IconName::HelpOutline)
                     .bordered(true)
-                    .tooltip(Tooltip::text(strings.mods_tutorial_help_tooltip())),
-            )
+                    .tooltip(Tooltip::text(strings.mods_tutorial_help_tooltip()))
+                    .into_any_element()
+            })
             .menu(move |window, cx| {
                 let strings = cx.t();
                 let view = view.clone();
@@ -779,6 +814,9 @@ impl Render for ModsView {
     fn render(&mut self, window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         let strings = cx.t();
         let sizes = window.sizes(cx);
+        if cx.theme().id == ThemeId::NierNew {
+            return self.library(window, cx);
+        }
         let filter = self.filter_text(cx);
         let row_count = self.sync_rows(cx);
         let (mod_count, loading, load_failed) = {
@@ -934,5 +972,6 @@ impl Render for ModsView {
                             .ok();
                     })
             }))
+            .into_any_element()
     }
 }

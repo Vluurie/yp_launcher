@@ -4,6 +4,88 @@ use gpui::{rgb, rgba};
 
 use crate::theme::ThemeColors;
 
+pub(crate) fn menu_colors() -> ThemeColors {
+    ThemeColors {
+        background_primary: rgb(0xcac6ad).into(),
+        background_card: rgb(0xd9d5bf).into(),
+        background_secondary: rgb(0xc0bda5).into(),
+        surface_light: rgb(0xcac7b3).into(),
+        surface_medium: rgb(0xb9b59e).into(),
+        text_muted: rgb(0x454338).into(),
+        text_secondary: rgb(0x424035).into(),
+        accent_primary: rgb(0x464338).into(),
+        border_medium: rgb(0x605e50).into(),
+        success: rgb(0x214a2d).into(),
+        log_debug: rgb(0x21465e).into(),
+        text_on_dark: rgb(0xf1efdf).into(),
+        button_text: rgb(0xf1efdf).into(),
+        error: rgb(0x72301f).into(),
+        warning: rgb(0x603912).into(),
+        ..colors()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn luminance(color: gpui::Hsla) -> f32 {
+        let rgb = color.to_rgb();
+        let linear = |s: f32| {
+            if s <= 0.04045 {
+                s / 12.92
+            } else {
+                ((s + 0.055) / 1.055).powf(2.4)
+            }
+        };
+        0.2126 * linear(rgb.r) + 0.7152 * linear(rgb.g) + 0.0722 * linear(rgb.b)
+    }
+
+    #[test]
+    fn launcher_text_and_status_symbols_remain_legible_on_menu_surfaces() {
+        let p = menu_colors();
+        let contrast = |a, b| {
+            let a = luminance(a);
+            let b = luminance(b);
+            (a.max(b) + 0.05) / (a.min(b) + 0.05)
+        };
+        let focus = crate::theme::ThemeStyle::for_theme(
+            crate::ThemeId::NierNew,
+            &p,
+            &crate::theme::Alpha::default(),
+        )
+        .focus_ring;
+        assert_eq!(focus.a, 1.0);
+        for bg in [
+            p.background_primary,
+            p.background_card,
+            p.surface_medium,
+            p.input_background,
+        ] {
+            for fg in [
+                p.text_primary,
+                p.text_muted,
+                p.text_secondary,
+                p.accent_primary,
+                p.success,
+                p.error,
+                p.warning,
+                p.log_debug,
+            ] {
+                assert!(
+                    contrast(fg, bg) >= 4.5,
+                    "{fg:?} on {bg:?} has contrast {}",
+                    contrast(fg, bg)
+                );
+            }
+            assert!(contrast(p.border_medium, bg) >= 3.);
+            assert!(contrast(focus, bg) >= 3.);
+        }
+        assert!(contrast(p.button_text, p.button_background) >= 4.5);
+        assert!(contrast(p.button_text, p.success) >= 4.5);
+    }
+}
+
 pub(crate) fn colors() -> ThemeColors {
     ThemeColors {
         background_primary: rgb(0xdad4bb).into(),

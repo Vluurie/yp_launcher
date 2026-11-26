@@ -155,13 +155,13 @@ impl RenderOnce for DropZone {
         let sizes = window.sizes(cx);
         let strings = cx.t();
         let accent = theme.colors.accent_primary;
-        let group = SharedString::from(format!("yp-drop-zone-{}", self.id));
-        let interactive = !self.disabled && self.busy.is_none() && !super::util::ControllerMode::is_active(cx);
+        let interactive =
+            !self.disabled && self.busy.is_none() && !super::util::ControllerMode::is_active(cx);
         let hover_background = accent.opacity(theme.alpha.faint);
         let hover_border = accent.opacity(theme.alpha.half);
-        let drag_background = accent.opacity(theme.alpha.subtle);
         let accept = self.accept;
         let can_accept = accept.clone();
+        let highlight_filter = accept.clone();
         let on_drop = self.on_drop_paths;
         let on_browse_files = self.on_browse_files;
         let clickable = interactive && on_browse_files.is_some();
@@ -229,11 +229,7 @@ impl RenderOnce for DropZone {
                                     .path(self.icon.path())
                                     .size(sizes.icon_md)
                                     .flex_none()
-                                    .text_color(theme.colors.text_muted)
-                                    .group_drag_over::<ExternalPaths>(
-                                        group.clone(),
-                                        move |style| style.text_color(accent),
-                                    ),
+                                    .text_color(theme.colors.text_muted),
                             )
                             .child(
                                 v_flex()
@@ -242,9 +238,6 @@ impl RenderOnce for DropZone {
                                     .line_height(relative(LINE_HEIGHT_TIGHT))
                                     .font_weight(FontWeight::BOLD)
                                     .text_color(theme.colors.text_secondary)
-                                    .group_drag_over::<ExternalPaths>(group.clone(), move |style| {
-                                        style.text_color(accent)
-                                    })
                                     .child(Text::new(self.title)),
                             ),
                     )
@@ -287,7 +280,8 @@ impl RenderOnce for DropZone {
 
         div()
             .id(self.id)
-            .group(group)
+            .debug_selector(|| "file-drop-zone".to_owned())
+            .relative()
             .w_full()
             .px(sizes.card_padding_h)
             .py(sizes.drop_zone_padding_v / 2.)
@@ -296,19 +290,20 @@ impl RenderOnce for DropZone {
             .border_dashed()
             .border_color(theme.colors.border_medium)
             .bg(theme.colors.surface_light)
-            .when(self.disabled || super::util::ControllerMode::is_active(cx), |this| {
-                this.opacity(theme.alpha.half).cursor_not_allowed()
-            })
+            .when(
+                self.disabled || super::util::ControllerMode::is_active(cx),
+                |this| this.opacity(theme.alpha.half).cursor_not_allowed(),
+            )
             .when(interactive, |this| {
                 this.can_drop(move |dragged, _, _| {
                     dragged
                         .downcast_ref::<ExternalPaths>()
                         .is_some_and(|paths| {
-                            !accepted_paths(paths.paths(), can_accept.as_ref()).is_empty()
+                            !paths.paths().is_empty()
+                                && can_accept.as_ref().is_none_or(|filter| {
+                                    paths.paths().iter().any(|path| filter(path))
+                                })
                         })
-                })
-                .drag_over::<ExternalPaths>(move |style, _, _, _| {
-                    style.bg(drag_background).border_color(accent)
                 })
                 .on_drop(move |paths: &ExternalPaths, window, cx| {
                     let accepted = accepted_paths(paths.paths(), accept.as_ref());
@@ -329,6 +324,18 @@ impl RenderOnce for DropZone {
                     })
             })
             .child(body)
+            .when(interactive, |zone| {
+                zone.child(yp_nier_ui::file_drop_highlight(
+                    accent,
+                    theme.colors.background_primary,
+                    strings.drop_release_hint(),
+                    move |paths| {
+                        highlight_filter
+                            .as_ref()
+                            .is_none_or(|filter| paths.iter().any(|path| filter(path)))
+                    },
+                ))
+            })
     }
 }
 

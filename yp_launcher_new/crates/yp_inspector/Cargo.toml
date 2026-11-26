@@ -13,5 +13,6 @@ thiserror.workspace = true
 workspace = true
 
 [dev-dependencies]
+yp_mods.workspace = true
 yp_formats = { workspace = true, features = ["test-support"] }
 tempfile.workspace = true

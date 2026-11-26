@@ -6,7 +6,7 @@ use gpui::{
 };
 
 use super::icon::{Icon, IconName, IconSize};
-use super::tooltip::{Tooltip, tooltip_container};
+use super::tooltip::{Tooltip, finish_tooltip, tooltip_container};
 use crate::i18n::ActiveStrings;
 use crate::styled_ext::{h_flex, v_flex};
 use crate::theme::{ActiveTheme, Color, ResponsiveExt, Sizes};
@@ -25,7 +25,7 @@ struct SortablePreview {
 impl Render for SortablePreview {
     fn render(&mut self, window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         let sizes = window.sizes(cx);
-        tooltip_container(window, cx).child(
+        let preview = tooltip_container(window, cx).child(
             h_flex()
                 .gap(sizes.spacing_md)
                 .child(
@@ -34,7 +34,8 @@ impl Render for SortablePreview {
                         .color(Color::Accent),
                 )
                 .child(super::text::Text::new(self.label.clone())),
-        )
+        );
+        finish_tooltip(preview, cx)
     }
 }
 

@@ -104,7 +104,8 @@ fn scan_installed_mod(root_path: &Path, id: &str) -> InstalledMod {
 pub(crate) fn scan_data_if_present(content_root: &Path) -> Option<DataSummary> {
     let data_dir = content_root.join("data");
     let has_compat = has_compat_config(content_root);
-    if !data_dir.is_dir() && !has_compat {
+    let outfits = scan_outfit_choices(content_root);
+    if !data_dir.is_dir() && !has_compat && outfits.is_empty() {
         return None;
     }
     Some(scan_data(
@@ -112,7 +113,7 @@ pub(crate) fn scan_data_if_present(content_root: &Path) -> Option<DataSummary> {
         content_root,
         has_compat,
         has_outfit_config(content_root),
-        scan_outfit_choices(content_root),
+        outfits,
     ))
 }
 
@@ -322,14 +323,58 @@ pub(crate) fn scan_data(
 pub(crate) fn scan_outfit_choices(content_root: &Path) -> IndexMap<String, Vec<OutfitChoice>> {
     let mut by_stem: IndexMap<String, Vec<OutfitChoice>> = IndexMap::new();
     let mut read_dir = |root: &Path| {
+        let entities = root.join("entities");
+        if entities.is_dir() {
+            let mut files = fsx::walk_files(&entities);
+            files.sort();
+            for file in files {
+                if !fsx::file_name(&file)
+                    .to_ascii_lowercase()
+                    .starts_with("outfit_")
+                    || !fsx::lower_path_ends_with(&file, ".toml")
+                {
+                    continue;
+                }
+                let Some(text) = yp_core::fs::read_text_opt(&file).ok().flatten() else {
+                    continue;
+                };
+                let values = crate::toml_doc::read_values(&text);
+                let Some(id) = values.get("outfit_id").and_then(toml::Value::as_integer) else {
+                    continue;
+                };
+                let stems = match values.get("character").and_then(toml::Value::as_str) {
+                    Some("2B") => OUTFIT_LISTS_BY_STEM[0].1,
+                    Some("9S") => OUTFIT_LISTS_BY_STEM[1].1,
+                    Some("A2") => OUTFIT_LISTS_BY_STEM[2].1,
+                    _ => continue,
+                };
+                let choice = OutfitChoice {
+                    outfit_id: id,
+                    name: values
+                        .get("name")
+                        .and_then(toml::Value::as_str)
+                        .filter(|s| !s.is_empty())
+                        .map(str::to_owned),
+                    needs_item: values
+                        .get("item_id")
+                        .and_then(toml::Value::as_integer)
+                        .is_some(),
+                };
+                for stem in stems {
+                    by_stem
+                        .entry(stem.to_owned())
+                        .or_default()
+                        .push(choice.clone());
+                }
+            }
+        }
         let dir = root.join("outfits");
         if !dir.is_dir() {
             return;
         }
-        let mut files: Vec<PathBuf> = fsx::child_files(&dir)
+        let mut files: Vec<PathBuf> = fsx::walk_files(&dir)
             .into_iter()
-            .filter(|file| fsx::lower_path_ends_with(&file.path, ".json"))
-            .map(|file| file.path)
+            .filter(|file| fsx::lower_path_ends_with(file, ".json"))
             .collect();
         files.sort_by(|a, b| utf16_cmp(&a.to_string_lossy(), &b.to_string_lossy()));
         for file in files {
@@ -388,6 +433,7 @@ pub(crate) fn scan_outfit_choices(content_root: &Path) -> IndexMap<String, Vec<O
 
     for list in by_stem.values_mut() {
         list.sort_by_key(|choice| choice.outfit_id);
+        list.dedup();
     }
     by_stem
 }

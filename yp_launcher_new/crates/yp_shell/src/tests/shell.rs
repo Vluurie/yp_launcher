@@ -53,6 +53,154 @@ fn finished_onboarding_goes_straight_to_the_main_screen(cx: &mut TestAppContext)
 }
 
 #[gpui::test]
+fn recent_messages_have_their_own_footer_space_beneath_the_screen_effects(cx: &mut TestAppContext) {
+    let harness = Harness::new();
+    let stores = harness.start(cx);
+    cx.update(|cx| yp_ui::theme::set_theme(yp_ui::ThemeId::NierNew, cx));
+    let opened = open_main(cx);
+    let cx = opened.cx;
+    stores.navigation.update(cx, |nav, cx| nav.request_tab(TabId::LodMod, None, cx));
+    cx.update(|w, cx| { w.push_toast(yp_ui::Toast::warning("Test message"), cx); });
+    for (width, height) in [(1400., 750.), (600., 420.)] {
+        let viewport = gpui::size(gpui::px(width), gpui::px(height));
+        cx.simulate_resize(viewport);
+        cx.run_until_parked();
+        let history = cx.debug_bounds("footer-history").expect("history control");
+        let play = cx.debug_bounds("workspace-play").expect("Play control");
+        let page = cx.debug_bounds("workspace-page").expect("active page");
+        let footer = cx.debug_bounds("workspace-footer").expect("footer");
+        assert!(page.bottom() + gpui::px(13.) <= footer.top());
+        assert_eq!(footer.bottom(), viewport.height);
+        assert!(!history.intersects(&play));
+        assert!(play.right() < viewport.width / 2.);
+        let effects = cx.debug_bounds("menu-screen-overlay").expect("screen effects");
+        assert_eq!(effects.origin, gpui::point(gpui::px(0.), gpui::px(0.)));
+        assert_eq!(effects.size, viewport);
+        cx.simulate_click(history.center(), gpui::Modifiers::none());
+        assert!(cx.debug_bounds("recent-messages-popup").is_some());
+        cx.simulate_keystrokes("escape");
+    }
+}
+
+#[gpui::test]
+fn compact_sections_menu_stays_above_the_page_and_supports_keyboard_navigation(
+    cx: &mut TestAppContext,
+) {
+    use gpui::{KeyUpEvent, Keystroke, Modifiers, px, size};
+
+    let harness = Harness::new();
+    let stores = harness.start(cx);
+    cx.update(|cx| yp_ui::theme::set_theme(yp_ui::ThemeId::NierNew, cx));
+    let opened = open_main(cx);
+    let cx = opened.cx;
+    stores.navigation.update(cx, |nav, cx| nav.request_tab(TabId::LodMod, None, cx));
+    let compact = size(px(600.), px(420.));
+    cx.simulate_resize(compact);
+    cx.run_until_parked();
+    let toggle = cx.debug_bounds("sections-button").unwrap();
+    let page = cx.debug_bounds("workspace-page").unwrap();
+    assert!(toggle.top() < compact.height / 4.);
+    assert!(toggle.bottom() <= page.top());
+    assert!(page.size.height > compact.height / 2.);
+    cx.simulate_click(toggle.center(), Modifiers::none());
+    let sections = cx.debug_bounds("launcher-sections").unwrap();
+    assert!(toggle.bottom() <= sections.top());
+    assert!(cx.debug_bounds("workspace-page").is_none());
+    cx.simulate_keystrokes("tab escape");
+    assert!(cx.debug_bounds("workspace-page").is_some());
+    let enter_up = || KeyUpEvent { keystroke: Keystroke::parse("enter").unwrap() };
+    cx.simulate_keystrokes("enter");
+    cx.simulate_event(enter_up());
+    assert!(cx.debug_bounds("launcher-sections").is_some());
+    cx.simulate_keystrokes("tab enter");
+    cx.simulate_event(enter_up());
+    cx.run_until_parked();
+    assert_eq!(active(&stores, cx), TabId::Launcher);
+    assert!(cx.debug_bounds("launcher-sections").is_none());
+
+    cx.simulate_click(toggle.center(), Modifiers::none());
+    cx.simulate_resize(size(px(1400.), px(750.)));
+    cx.run_until_parked();
+    assert!(cx.debug_bounds("sections-button").is_none());
+    assert!(cx.debug_bounds("launcher-sections").is_some());
+    assert!(cx.debug_bounds("workspace-page").is_some());
+    cx.simulate_resize(compact);
+    cx.run_until_parked();
+    assert!(cx.debug_bounds("launcher-sections").is_none());
+    assert!(cx.debug_bounds("workspace-page").is_some());
+}
+
+#[gpui::test]
+fn stopping_the_game_requires_an_explicit_yes(cx: &mut TestAppContext) {
+    use std::sync::atomic::Ordering;
+    use gpui::Modifiers;
+
+    let harness = Harness::new();
+    let stores = harness.start(cx);
+    cx.update(|cx| {
+        yp_ui::theme::set_theme(yp_ui::ThemeId::NierNew, cx);
+        cx.set_global(yp_ui::nier::ReducedMotion(true));
+    });
+    let opened = open_main(cx);
+    let cx = opened.cx;
+    stores.navigation.update(cx, |nav, cx| nav.request_tab(TabId::LodMod, None, cx));
+    cx.simulate_resize(gpui::size(gpui::px(850.), gpui::px(530.)));
+    cx.update(|w, cx| w.dispatch_action(Box::new(yp_state::Stop), cx));
+    cx.run_until_parked();
+    assert!(!has_modal(&opened.root, cx));
+
+    harness.platform.running.store(true, Ordering::SeqCst);
+    stores.session.update(cx, |session, cx| session.sync_game_running(cx));
+    cx.run_until_parked();
+    let stop = cx.debug_bounds("workspace-play").unwrap().center();
+    cx.simulate_click(stop, Modifiers::none());
+    assert!(has_modal(&opened.root, cx));
+    cx.update(|w, cx| w.dispatch_action(Box::new(yp_state::Stop), cx));
+    cx.run_until_parked();
+    assert_eq!(opened.root.read_with(cx, |r, _| r.modal_count()), 1);
+    cx.simulate_keystrokes("enter");
+    assert!(!has_modal(&opened.root, cx));
+
+    cx.simulate_click(stop, Modifiers::none());
+    cx.simulate_keystrokes("left escape");
+    assert!(!has_modal(&opened.root, cx));
+
+    cx.simulate_click(stop, Modifiers::none());
+    let no = cx.debug_bounds("system-dialog-no").unwrap().center();
+    cx.simulate_click(no, Modifiers::none());
+    assert!(!has_modal(&opened.root, cx));
+    assert!(harness.platform.running.load(Ordering::SeqCst));
+    assert_eq!(harness.platform.terminations.load(Ordering::SeqCst), 0);
+
+    cx.simulate_click(stop, Modifiers::none());
+    harness.platform.running.store(false, Ordering::SeqCst);
+    stores.session.update(cx, |session, cx| session.sync_game_running(cx));
+    cx.run_until_parked();
+    assert!(!has_modal(&opened.root, cx));
+    assert_eq!(harness.platform.terminations.load(Ordering::SeqCst), 0);
+
+    harness.platform.running.store(true, Ordering::SeqCst);
+    stores.session.update(cx, |session, cx| session.sync_game_running(cx));
+    cx.run_until_parked();
+    cx.simulate_click(stop, Modifiers::none());
+    let yes = cx.debug_bounds("system-dialog-yes").unwrap().center();
+    cx.simulate_click(yes, Modifiers::none());
+    cx.run_until_parked();
+    assert!(!has_modal(&opened.root, cx));
+    assert!(!harness.platform.running.load(Ordering::SeqCst));
+    assert_eq!(harness.platform.terminations.load(Ordering::SeqCst), 1);
+
+    harness.platform.running.store(true, Ordering::SeqCst);
+    stores.session.update(cx, |session, cx| session.sync_game_running(cx));
+    cx.run_until_parked();
+    cx.simulate_click(stop, Modifiers::none());
+    cx.simulate_keystrokes("left enter");
+    cx.run_until_parked();
+    assert!(!has_modal(&opened.root, cx));
+    assert_eq!(harness.platform.terminations.load(Ordering::SeqCst), 2);
+}
+
+#[gpui::test]
 fn failed_runtime_setup_is_reported_as_a_toast(cx: &mut TestAppContext) {
     let harness = Harness::new();
     let stores = harness.start(cx);

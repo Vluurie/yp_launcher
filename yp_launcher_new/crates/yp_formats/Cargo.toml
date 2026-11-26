@@ -5,6 +5,7 @@ edition.workspace = true
 license.workspace = true
 
 [dependencies]
+glam = "=0.30.5"
 image.workspace = true
 texpresso.workspace = true
 thiserror.workspace = true

@@ -1,4 +1,6 @@
 pub mod model;
+mod motion;
+mod transition;
 mod unit_data;
 
 use std::collections::HashMap;
@@ -22,26 +24,30 @@ pub const KEY_CONTEXT: &str = "YpInspector";
 const PREVIEW_ASPECT: f32 = 16. / 9.;
 
 #[derive(Default)]
-pub struct PendingInspectorOutfits(HashMap<ArchivePaths, i64>);
+struct PreviewSelection {
+    outfit: Option<i64>,
+    preset: Option<String>,
+    candidate: Option<yp_inspector::CandidateId>,
+    single: bool,
+    preview: Option<gpui::WeakEntity<InspectorModel>>,
+}
+
+#[derive(Default)]
+pub struct PendingInspectorOutfits(HashMap<ArchivePaths, PreviewSelection>);
 
 impl Global for PendingInspectorOutfits {}
 
-pub fn remember_outfit(archives: &ArchivePaths, outfit_id: Option<i64>, cx: &mut App) {
-    let pending = cx.default_global::<PendingInspectorOutfits>();
-    match outfit_id {
-        Some(outfit_id) => {
-            pending.0.insert(archives.clone(), outfit_id);
-        }
-        None => {
-            pending.0.remove(archives);
-        }
+pub fn remember_outfit(archives: &ArchivePaths, outfit: Option<i64>, cx: &mut App) {
+    let pending = &mut cx.default_global::<PendingInspectorOutfits>().0;
+    if let Some(outfit) = outfit {
+        pending.entry(archives.clone()).or_default().outfit = Some(outfit);
+    } else {
+        pending.remove(archives);
     }
 }
 
 pub fn take_outfit(archives: &ArchivePaths, cx: &mut App) -> Option<i64> {
-    cx.default_global::<PendingInspectorOutfits>()
-        .0
-        .remove(archives)
+    cx.default_global::<PendingInspectorOutfits>().0.remove(archives)?.outfit
 }
 
 fn viewport(
@@ -56,6 +62,9 @@ fn viewport(
     let failed = state.error_text(cx).is_some();
     let loading = !failed && (state.is_loading(cx) || frame.is_none());
     let measure_model = model.downgrade();
+    let scene_bounds = state.scene_bounds.clone();
+    let animated = session.map(Entity::downgrade);
+    let embedded = state.mode() == ViewMode::Preview;
     let orbit_model = model.clone();
     let zoom_model = model.clone();
     let view = FrameViewport::new(id)
@@ -72,8 +81,21 @@ fn viewport(
         .overlay(
             canvas(
                 move |bounds, window, cx| {
+                    scene_bounds.set(Some(bounds));
                     let width = f32::from(bounds.size.width);
                     let height = f32::from(bounds.size.height);
+                    let covered = embedded && cx.stores().navigation.read(cx).top_overlay().is_some();
+                    if !covered && window.is_window_active() && bounds.intersects(&window.content_mask().bounds)
+                        && let Some(session) = animated.as_ref().and_then(|weak| weak.upgrade())
+                        && session.read(cx).motion_playing(cx)
+                    {
+                        window.request_animation_frame();
+                        if session.read(cx).tick_due(cx) {
+                            window.defer(cx, move |_, cx| session.update(cx, |state, cx| {
+                                if state.tick_due(cx) { state.request_render(cx); }
+                            }));
+                        }
+                    }
                     let model = measure_model.clone();
                     let unchanged = model
                         .read_with(cx, |model, _| model.viewport() == Some((width, height)))
@@ -194,14 +216,47 @@ pub struct InspectorPage {
     state_scroll: ScrollHandle,
     focus_requested: bool,
     unit_view: Option<bool>,
+    single_preview: bool,
+    preview: Option<gpui::WeakEntity<InspectorModel>>,
+    transition: Option<transition::ViewportTransition>,
+    controls_open: bool,
+    returning: bool,
+    origin: Option<SharedString>,
     unit_scroll: gpui::UniformListScrollHandle,
     _subscriptions: Vec<Subscription>,
 }
 
 impl InspectorPage {
     pub fn new(archives: ArchivePaths, _window: &mut Window, cx: &mut Context<Self>) -> Self {
-        let initial_outfit = take_outfit(&archives, cx);
-        let model = cx.new(|cx| InspectorModel::new(archives, ViewMode::Page, initial_outfit, cx));
+        let selection = cx
+            .default_global::<PendingInspectorOutfits>()
+            .0
+            .remove(&archives)
+            .unwrap_or_default();
+        let stores = cx.stores();
+        let origin = archives.dat.as_ref().or(archives.dtt.as_ref()).and_then(|path| {
+            let installed = stores
+                .mods
+                .read(cx)
+                .mods()
+                .iter()
+                .find(|entry| path.starts_with(&entry.root_path))?;
+            let name = stores
+                .mod_names
+                .read(cx)
+                .custom_name_of(&installed.id)
+                .unwrap_or(&installed.display_name);
+            Some(SharedString::from(name.to_owned()))
+        });
+        let model = cx.new(|cx| {
+            let mut model = InspectorModel::new(archives, ViewMode::Page, selection.outfit, cx);
+            model.initial_candidate = selection.candidate;
+            model.initial_preset = selection.preset;
+            model.initial_camera = selection.preview.as_ref().and_then(|source| source.upgrade()).and_then(|source| {
+                source.read(cx).session().map(|session| *session.read(cx).camera())
+            });
+            model
+        });
         let subscriptions = vec![cx.observe(&model, |_, _, cx| cx.notify())];
         Self {
             model,
@@ -210,6 +265,12 @@ impl InspectorPage {
             state_scroll: ScrollHandle::new(),
             focus_requested: false,
             unit_view: None,
+            single_preview: selection.single,
+            preview: selection.preview,
+            transition: None,
+            controls_open: false,
+            returning: false,
+            origin,
             unit_scroll: Default::default(),
             _subscriptions: subscriptions,
         }
@@ -219,18 +280,28 @@ impl InspectorPage {
         &self.model
     }
 
+    fn sync_preview_outfit(&self, cx: &mut Context<Self>) {
+        let Some(preview) = self.preview.as_ref().and_then(|p| p.upgrade()) else { return };
+        let state = self.model.read(cx);
+        let Some(candidate) = state.candidate().cloned() else { return };
+        let preset = state.selected().cloned();
+        preview.update(cx, |p, cx| p.restore_selection(candidate, preset.as_ref(), cx));
+    }
+
     pub fn close(&mut self, cx: &mut Context<Self>) {
+        self.sync_preview_outfit(cx);
         let navigation = cx.stores().navigation.clone();
         navigation.update(cx, |navigation, cx| {
             navigation.close_overlay(OverlayId::Inspector, cx)
         });
     }
 
-    fn toolbar(&self, window: &mut Window, cx: &mut Context<Self>) -> AnyElement {
+    fn toolbar(&self, window: &Window, cx: &mut Context<Self>) -> AnyElement {
         let strings = cx.t();
         let theme = cx.theme().clone();
         let sizes = window.sizes(cx);
         let state = self.model.read(cx);
+        let in_drawer = self.controls_open && theme.id == ThemeId::NierNew;
         let title = state.title();
         let session = state.session().cloned();
         let summary = session
@@ -283,19 +354,20 @@ impl InspectorPage {
             .border_1()
             .border_color(theme.colors.border_medium)
             .bg(theme.colors.background_card.opacity(theme.alpha.tooltip))
-            .child(
+            .flex_wrap().min_w_0()
+            .when(!in_drawer, |bar| bar.child(
                 IconButton::new("inspector-close", IconName::Close)
                     .icon_size(IconSize::Small)
                     .icon_color(Color::Secondary)
                     .bordered(true)
                     .tooltip(Tooltip::text(strings.three_d_inspector_close()))
                     .on_click(cx.listener(|this, _, _, cx| this.close(cx))),
-            )
+            ))
             .child(div().flex_1().min_w_0().child(match candidates {
                 Some(select) => h_flex().child(select).into_any_element(),
                 None => Label::new(title).semibold().truncate().into_any_element(),
             }))
-            .when(!state.candidates().is_empty(), |bar| {
+            .when(!in_drawer && !state.candidates().is_empty(), |bar| {
                 bar.child(
                     IconButton::new("inspector-unit-data", IconName::OpenInFull)
                         .icon_size(IconSize::Small)
@@ -324,7 +396,7 @@ impl InspectorPage {
                         )),
                 )
             })
-            .when_some(stats, |this, stats| {
+            .when_some(stats.filter(|_| !in_drawer), |this, stats| {
                 this.child(
                     Label::new(stats)
                         .size(LabelSize::XSmall)
@@ -336,6 +408,7 @@ impl InspectorPage {
                     .icon_size(IconSize::Small)
                     .icon_color(Color::Accent)
                     .bordered(true)
+                    .accessible_label(strings.three_d_inspector_reset_camera())
                     .tooltip(Tooltip::text(strings.three_d_inspector_reset_camera()))
                     .on_click(move |_, _, cx| {
                         reset_model.update(cx, |model, cx| model.reset_camera(cx));
@@ -344,7 +417,7 @@ impl InspectorPage {
             .into_any_element()
     }
 
-    fn mesh_panel(&self, window: &mut Window, cx: &mut Context<Self>) -> Option<AnyElement> {
+    fn mesh_panel(&self, window: &Window, cx: &mut Context<Self>) -> Option<AnyElement> {
         let strings = cx.t();
         let theme = cx.theme().clone();
         let sizes = window.sizes(cx);
@@ -369,7 +442,9 @@ impl InspectorPage {
             .rounded(sizes.border_radius)
             .border_1()
             .border_color(theme.colors.border_medium)
-            .bg(theme.colors.background_card.opacity(theme.alpha.tooltip));
+            .bg(theme.colors.background_card.opacity(theme.alpha.tooltip))
+            .children(motion::controls("inspector-motion", &self.model, cx))
+            .child(Divider::horizontal());
         if let (Some(preset), Some(picker)) = (preset.as_ref(), preset_picker) {
             let heading = if is_vanilla(preset) {
                 strings.three_d_inspector_variant()
@@ -478,9 +553,14 @@ impl Render for InspectorPage {
         if !self.focus_requested {
             self.focus_requested = true;
             window.focus(&self.focus_handle, cx);
+            if theme.id == ThemeId::NierNew {
+                self.set_unit_view(Some(self.single_preview), window, cx);
+                if self.single_preview { self.start_transition(true, cx); }
+            }
         }
         if let Some(expanded) = self.unit_view {
-            return self.unit_data(expanded, cx);
+            let content = self.unit_data(expanded, window, cx);
+            return self.transition_view(content, window, cx);
         }
         let state = self.model.read(cx);
         let session = state.session().cloned();
@@ -566,11 +646,19 @@ impl ModelPreview {
         &self.model
     }
 
-    fn expand(&mut self, window: &mut Window, cx: &mut Context<Self>) {
+    pub(super) fn expand(&mut self, window: &mut Window, cx: &mut Context<Self>) {
         let state = self.model.read(cx);
         let archives = state.archives().clone();
-        let outfit = state.selected().map(|preset| preset.outfit_id);
-        remember_outfit(&archives, outfit, cx);
+        let selection = PreviewSelection {
+            outfit: state.selected().map(|preset| preset.outfit_id),
+            preset: state.selected().map(|preset| preset.id.clone()),
+            candidate: state.candidate().map(|candidate| candidate.id),
+            single: state.candidates().len() == 1,
+            preview: Some(self.model.downgrade()),
+        };
+        cx.default_global::<PendingInspectorOutfits>()
+            .0
+            .insert(archives.clone(), selection);
         window.dispatch_action(
             Box::new(OpenThreeDInspector {
                 data: archives.dat.clone(),
@@ -602,8 +690,7 @@ impl Render for ModelPreview {
         let has_frame = session
             .as_ref()
             .is_some_and(|session| session.read(cx).latest_frame().is_some());
-        let show_presets = state.presets().len() > 1
-            && state.selected().is_some_and(|preset| !is_vanilla(preset));
+        let show_presets = state.presets().len() > 1;
         let candidates = candidate_select("model-preview-candidate", &self.model, cx);
         let presets = show_presets
             .then(|| preset_select("model-preview-preset", &self.model, cx))
@@ -625,7 +712,7 @@ impl Render for ModelPreview {
                     .gap(sizes.spacing_sm)
                     .px(sizes.padding_sm)
                     .py(sizes.padding_xs)
-                    .bg(theme.colors.surface_medium)
+                    .bg(theme.colors.surface_medium).min_w_0().flex_wrap()
                     .child(div().flex_1().min_w_0().child(match candidates {
                         Some(select) => h_flex().child(select).into_any_element(),
                         None => Label::new(label)
@@ -635,14 +722,16 @@ impl Render for ModelPreview {
                             .into_any_element(),
                     }))
                     .children(presets)
-                    .child(
+                    .child(if theme.id == ThemeId::NierNew {
+                        Button::new("model-preview-expand",strings.three_d_inspector_open())
+                            .style(ButtonStyle::Outlined).start_icon(IconName::OpenInFull)
+                            .on_click(cx.listener(|this,_,w,cx|this.expand(w,cx))).into_any_element()
+                    } else {
                         IconButton::new("model-preview-expand", IconName::OpenInFull)
-                            .icon_size(IconSize::Small)
-                            .icon_color(Color::Accent)
-                            .size(ButtonSize::Compact)
+                            .icon_size(IconSize::Small).icon_color(Color::Accent).size(ButtonSize::Compact)
                             .tooltip(Tooltip::text(strings.three_d_inspector_expand()))
-                            .on_click(cx.listener(|this, _, window, cx| this.expand(window, cx))),
-                    ),
+                            .on_click(cx.listener(|this,_,w,cx|this.expand(w,cx))).into_any_element()
+                    }),
             )
             .child(
                 frame
@@ -651,6 +740,7 @@ impl Render for ModelPreview {
                         this.child(error_layer(error, true, window, cx))
                     }),
             )
+            .children(motion::controls("preview-motion", &self.model, cx))
             .into_any_element()
     }
 }

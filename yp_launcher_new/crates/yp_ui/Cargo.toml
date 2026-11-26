@@ -12,6 +12,7 @@ docs-library = []
 [dependencies]
 gpui.workspace = true
 yp_i18n.workspace = true
+yp_nier_ui.workspace = true
 rust-embed.workspace = true
 unicode-segmentation.workspace = true
 image.workspace = true

@@ -314,6 +314,63 @@ impl RenderOnce for ProfileSelector {
         } else {
             names.first().cloned().unwrap_or_default()
         };
+        if cx.theme().id == ThemeId::NierNew {
+            let trigger = Button::new(
+                "library-profile-label",
+                format!("{}  ·  {}", strings.mod_profile_label(), shown),
+            )
+            .style(ButtonStyle::Subtle)
+            .end_icon(IconName::KeyboardArrowDown)
+            .truncate()
+            .tooltip(Tooltip::text(shown.clone()));
+            let w = sizes.window_width;
+            return div()
+                .relative()
+                .max_w(w * 0.45)
+                .child(
+                    PopoverMenu::<ContextMenu>::new("library-profiles")
+                        .accessible_label(format!("{} · {shown}", strings.mod_profile_label()))
+                        .anchor(gpui::Anchor::TopRight)
+                        .attach(gpui::Anchor::BottomRight)
+                        .trigger(div().max_w(w * 0.43).child(trigger))
+                        .menu(move |window, cx| {
+                            let names = names.clone();
+                            let active = shown.clone();
+                            let blocked = ControllerMode::is_active(cx);
+                            Some(ContextMenu::build(window, cx, move |mut menu, _, _| {
+                                menu = menu.header(strings.mod_profile_label());
+                                for name in names {
+                                    menu = menu.item(
+                                        ContextMenuEntry::new(name.clone())
+                                            .selected(active == name)
+                                            .disabled(!actions.can_switch)
+                                            .handler(move |w, cx| {
+                                                switch_profile(name.clone(), w, cx)
+                                            }),
+                                    );
+                                }
+                                menu.separator()
+                                    .item(
+                                        ContextMenuEntry::new(strings.mod_profile_new_button())
+                                            .disabled(blocked || !actions.can_create)
+                                            .handler(create_profile),
+                                    )
+                                    .item(
+                                        ContextMenuEntry::new(strings.mod_profile_rename_button())
+                                            .disabled(blocked || !actions.can_rename)
+                                            .handler(rename_profile),
+                                    )
+                                    .item(
+                                        ContextMenuEntry::new(strings.mod_profile_delete_button())
+                                            .disabled(!actions.can_delete)
+                                            .handler(delete_profile),
+                                    )
+                            }))
+                        }),
+                )
+                .tour_anchor(ANCHOR_PROFILES)
+                .into_any_element();
+        }
         let locked = strings.mod_profile_locked_running();
         let tooltip = |unlocked: &'static str| {
             Tooltip::text(if actions.game_running {
@@ -381,6 +438,7 @@ impl RenderOnce for ProfileSelector {
                     .on_click(|_, window, cx| delete_profile(window, cx)),
             )
             .tour_anchor(ANCHOR_PROFILES)
+            .into_any_element()
     }
 }
 

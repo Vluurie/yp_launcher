@@ -315,6 +315,13 @@ impl RenderOnce for ListHeader {
         let open = !self.collapsed;
         h_flex()
             .id(self.id)
+            .role(if collapsible {
+                gpui::Role::Button
+            } else {
+                gpui::Role::Heading
+            })
+            .aria_label(self.label.clone())
+            .when(collapsible, |el| el.aria_expanded(open))
             .w_full()
             .gap(sizes.spacing_md)
             .px(sizes.card_padding_h)
@@ -324,12 +331,15 @@ impl RenderOnce for ListHeader {
             .line_height(relative(LINE_HEIGHT_TIGHT))
             .font_weight(FontWeight::BOLD)
             .text_color(theme.colors.text_muted)
+            .when(theme.id == crate::ThemeId::NierNew && collapsible, |el| {
+                el.rounded_none().text_size(sizes.font_sm).text_color(theme.colors.text_primary).min_h(px(36.))
+            })
             .when(collapsible, |this| {
                 this.cursor_pointer()
-                    .keyboard_focus(cx)
+                    .keyboard_activate(cx)
                     .hover(move |style| style.bg(hover_background).text_color(hover_color))
                     .when_some(on_toggle, |this, handler| {
-                        this.on_click(move |event, window, cx| {
+                        this.on_disclosure_toggle(open, move |event, window, cx| {
                             cx.stop_propagation();
                             handler(event, window, cx);
                         })
@@ -345,7 +355,7 @@ impl RenderOnce for ListHeader {
                 v_flex()
                     .flex_1()
                     .min_w_0()
-                    .truncate()
+                    .when(theme.id != crate::ThemeId::NierNew, |el| el.truncate())
                     .child(Text::new(self.label.to_uppercase())),
             )
             .when_some(self.count, |this, count| this.child(CountBadge::new(count)))

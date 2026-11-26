@@ -187,6 +187,8 @@ impl RenderOnce for Label {
             .group_hover
             .map(|(group, color)| (group, color.color(cx)));
         v_flex()
+            .min_w_0()
+            .max_w_full()
             .text_size(self.size.pixels(&sizes))
             .line_height(relative(self.line_height))
             .text_color(color)
@@ -417,6 +419,8 @@ impl RenderOnce for HighlightedLabel {
             .map(|range| (range, style))
             .collect();
         v_flex()
+            .min_w_0()
+            .max_w_full()
             .text_size(self.size.pixels(&sizes))
             .line_height(relative(LINE_HEIGHT_BODY))
             .text_color(self.color.color(cx))

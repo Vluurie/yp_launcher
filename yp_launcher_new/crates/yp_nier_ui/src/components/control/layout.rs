@@ -44,19 +44,22 @@ impl ControlState {
             extent: Transition::new(false),
         }
     }
-    pub fn update(&mut self, control: &Control, kind: Kind) -> (f32, f32, bool) {
+    pub fn update(&mut self, control: &Control, kind: Kind, reduced: bool) -> (f32, f32, bool) {
         let focused = (control.enabled || kind.tracks_unavailable_cursor())
             && (control.selected.unwrap_or(self.hovered) || (kind == Kind::Tab && self.hovered));
+        let expanded = control.expanded || (kind == Kind::Setting && control.editing);
+        if reduced {
+            self.focus = Transition::new(focused);
+            self.extent = Transition::new(expanded);
+            return (self.focus.to, self.extent.to, false);
+        }
         let frames = match (focused, kind) {
             (true, Kind::Row | Kind::Setting | Kind::Item) => 26.,
             (true, Kind::Tab) => 20.,
             _ => 10.,
         };
         let (focus, a) = self.focus.approach(focused, frames, 4);
-        let (extent, b) = self.extent.sample(
-            control.expanded || (kind == Kind::Setting && control.editing),
-            10.,
-        );
+        let (extent, b) = self.extent.sample(expanded, 10.);
         (focus, extent, a || b)
     }
 }
@@ -153,11 +156,9 @@ pub(super) fn art(
                 for i in 0..max {
                     let x = first + 8. * i as f32;
                     let height = if i < n { 16. } else { 3. };
-                    art.fill(Rect::new(x, center - height / 2., 4., height), content, 255);
+                    crate::components::slider::track::stem(art, x + 2., center, height, content);
                     if mark.is_some_and(|v| v.saturating_sub(1) == i) {
-                        for y in [center - 19., center + 17.] {
-                            art.fill(Rect::new(x, y, 4., 2.), content, 255);
-                        }
+                        crate::components::slider::track::default_mark(art, x + 2., center, false, content);
                     }
                 }
             }

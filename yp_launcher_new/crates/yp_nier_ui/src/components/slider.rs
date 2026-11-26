@@ -1,6 +1,8 @@
 mod input;
-use super::control::{SettingRow, layout::Transition};
-use crate::{LIGHT, Rect, Surface};
+pub(super) mod track;
+pub use track::MenuSliderTrack;
+use super::control::SettingRow;
+use crate::{LIGHT, Surface};
 use gpui::{
     App, ElementId, FocusHandle, IntoElement, KeyDownEvent, Pixels, RenderOnce, SharedString,
     Window, div, prelude::*, px,
@@ -47,21 +49,16 @@ struct Step {
 impl RenderOnce for Step {
     fn render(self, w: &mut Window, cx: &mut App) -> impl IntoElement {
         let state = w.use_keyed_state(("step", self.index), cx, |_, _| {
-            (Transition::new(self.filled), Transition::new(self.active))
+            track::SegmentMotion::new(self.filled, self.active)
         });
-        let ((fill, a), (active, b)) = state.update(cx, |s, _| {
-            (s.0.sample(self.filled, 5.), s.1.sample(self.active, 4.))
-        });
-        if a || b {
+        let (height, animating) = state.update(cx, |s, _| s.sample(self.filled, self.active, true));
+        if animating {
             w.request_animation_frame();
         }
         let mut art = Surface::new(12., 64.);
-        let height = 4. + 12. * fill + 6. * active;
-        art.fill(Rect::new(4., 32. - height / 2., 4., height), LIGHT, 255);
+        track::stem(&mut art, 6., 32., height, LIGHT);
         if self.marked {
-            for y in [14., 47.] {
-                art.fill(Rect::new(3., y, 6., 3.), LIGHT, 255);
-            }
+            track::default_mark(&mut art, 6., 32., true, LIGHT);
         }
         div()
             .w(px(12. * self.scale))

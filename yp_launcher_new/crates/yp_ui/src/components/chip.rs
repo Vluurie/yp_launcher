@@ -226,8 +226,13 @@ impl RenderOnce for Chip {
             .py(sizes.chip_padding_v)
             .rounded(Sizes::CONTROL_RADIUS)
             .border_1()
-            .border_color(border)
-            .bg(background)
+            .map(|el| {
+                if theme.id == crate::ThemeId::NierNew && !clickable && !self.selected {
+                    el.border_color(theme.colors.transparent)
+                } else {
+                    el.border_color(border).bg(background)
+                }
+            })
             .text_size(font)
             .line_height(relative(LINE_HEIGHT_TIGHT))
             .font_weight(FontWeight::SEMIBOLD)
@@ -237,6 +242,7 @@ impl RenderOnce for Chip {
             })
             .child(
                 v_flex()
+                    .min_w_0()
                     .when(self.truncate, |this| this.min_w_0().truncate())
                     .child(Text::new(label)),
             )
@@ -250,7 +256,7 @@ impl RenderOnce for Chip {
             })
             .when(clickable, |this| {
                 this.cursor_pointer()
-                    .keyboard_focus(cx)
+                    .keyboard_activate(cx)
                     .hover(move |style| style.bg(hover_background).border_color(hover_border))
                     .when_some(on_click, |this, handler| {
                         this.on_click(move |event, window, cx| {

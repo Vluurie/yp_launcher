@@ -80,10 +80,6 @@ pub fn register_default_handlers(cx: &mut App) {
             .session
             .update(cx, |session, cx| session.launch(request, cx));
     });
-    cx.on_action(|_: &Stop, cx| {
-        let session = cx.stores().session.clone();
-        session.update(cx, |session, cx| session.stop(cx));
-    });
     cx.on_action(|_: &RefreshDetections, cx| {
         let stores = cx.stores().clone();
         match stores.session.read(cx).game() {

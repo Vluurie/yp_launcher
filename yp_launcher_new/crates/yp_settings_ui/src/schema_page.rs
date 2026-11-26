@@ -376,6 +376,7 @@ pub fn spread(cards: Vec<AnyElement>, id: &str, window: &Window, cx: &App) -> An
     }
     TwoColumn::new(column(left, window, cx), column(right, window, cx))
         .id(ElementId::Name(SharedString::from(id.to_owned())))
+        .breakpoint((window.sizes(cx).font_md * 64.).max(px(820.)))
         .into_any_element()
 }
 

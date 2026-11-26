@@ -18,7 +18,8 @@ pub(super) fn details(title: &str, description: &str, s: f32) -> impl IntoElemen
     paper.fill(Rect::new(0., 0., 956., 40.), PANEL, 255);
     paper.fill(Rect::new(0., 40., 956., 440.), LIGHT, 255);
     paper.sprite("panel", Rect::new(6., 6., 28., 28.), INK);
-    paper.text(title, 36, 0.8, 35., 20., INK);
+    let header = fit_name(title, 0.8, 906.);
+    paper.text(&header, 36, 0.8, 35., 20., INK);
     for y in [45., 473.] {
         paper.fill(Rect::new(10., y, 914., 2.), PANEL, 255);
     }
@@ -33,6 +34,8 @@ pub(super) fn details(title: &str, description: &str, s: f32) -> impl IntoElemen
         .child(
             div()
                 .id("unit-description")
+                .role(gpui::Role::Label)
+                .aria_label(description.replace('\n', ", "))
                 .absolute()
                 .left(px(449. * s))
                 .top(px(53. * s))
@@ -47,7 +50,25 @@ pub(super) fn details(title: &str, description: &str, s: f32) -> impl IntoElemen
         )
 }
 
+fn fit_name(label: &str, scale: f32, available: f32) -> std::borrow::Cow<'_, str> {
+    let theme = Theme::bundled();
+    let line = label.lines().next().unwrap_or_default();
+    if line == label && theme.measure(line, 36, scale)[0] <= available {
+        return line.into();
+    }
+    let room = available - theme.measure("…", 36, scale)[0] - 4.;
+    let end = theme
+        .caret_positions(line, 36, scale)
+        .into_iter()
+        .take_while(|(_, x)| *x <= room)
+        .last()
+        .map_or(0, |(index, _)| index);
+    format!("{}…", &line[..end]).into()
+}
+
 pub(super) fn title(label: &str, x: f32, alpha: f32, s: f32) -> impl IntoElement {
+    let fitted = fit_name(label, 1., 1420.);
+    let label = fitted.as_ref();
     let text_width = Theme::bundled().measure(label, 36, 1.)[0];
     let width = 102. + text_width;
     let mut title = Surface::new(width, 82.);
@@ -69,17 +90,23 @@ pub(super) fn footer(
     alpha: f32,
     s: f32,
     motions: Option<(usize, usize)>,
+    playback: bool,
     equipment: bool,
+    prompts: &[gpui::SharedString; 4],
     emit: Action,
 ) -> impl IntoElement {
-    let mut actions = vec![("rotate", "Rotate", None)];
-    if motions.is_some() {
-        actions.push(("confirm", "Animation", Some(ViewerAction::Animation)));
+    let mut actions = vec![("rotate", prompts[0].as_ref(), None)];
+    if playback {
+        actions.push((
+            "confirm",
+            prompts[1].as_ref(),
+            Some(ViewerAction::Animation),
+        ));
     }
     if equipment {
-        actions.push(("tab", "Change Equipment", Some(ViewerAction::Equipment)));
+        actions.push(("equipment", prompts[2].as_ref(), Some(ViewerAction::Equipment)));
     }
-    actions.push(("back", "Back", Some(ViewerAction::Back)));
+    actions.push(("back", prompts[3].as_ref(), Some(ViewerAction::Back)));
     let mut art = Surface::new(1600., 150.);
     let mut right = 1519.;
     let mut regions = Vec::new();
@@ -94,7 +121,11 @@ pub(super) fn footer(
         right -= w + 5.;
         ink.sprite(key, Rect::new(right, 84. - h / 2., w, h), INK);
         if let Some(action) = action {
-            regions.push((action, Rect::new(right, 55., end - right, 56.)));
+            regions.push((
+                action,
+                label.to_owned(),
+                Rect::new(right, 55., end - right, 56.),
+            ));
         }
         right -= 31.;
     }
@@ -124,16 +155,27 @@ pub(super) fn footer(
             regions
                 .into_iter()
                 .enumerate()
-                .map(move |(i, (action, r))| {
+                .map(move |(i, (action, label, r))| {
                     let emit = emit.clone();
+                    let activate = emit.clone();
                     place(
                         r,
                         s,
                         div()
                             .id(("viewer-prompt", i))
+                            .role(gpui::Role::Button)
+                            .aria_label(label)
+                            .tab_index(0)
+                            .focus(|s| s.border_2().border_color(gpui::rgb(0x48463d)))
                             .size_full()
                             .occlude()
                             .cursor_pointer()
+                            .on_key_down(move |event: &gpui::KeyDownEvent, w, cx| {
+                                if matches!(event.keystroke.key.as_str(), "enter" | "space") {
+                                    activate(action, w, cx);
+                                    cx.stop_propagation();
+                                }
+                            })
                             .on_mouse_down(gpui::MouseButton::Left, |_, _, cx| {
                                 cx.stop_propagation()
                             })

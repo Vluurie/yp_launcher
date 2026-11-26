@@ -159,6 +159,9 @@ impl RenderOnce for SettingRow {
             .my(px(2.))
             .rounded(Sizes::ROW_RADIUS)
             .when(self.disabled, |this| this.opacity(theme.alpha.half))
+            .when(theme.id == crate::ThemeId::NierNew, |el| {
+                el.border_b_1().border_color(theme.colors.border_light)
+            })
             .when(self.hoverable && !self.disabled, |this| {
                 this.hover(move |style| style.bg(hover_background))
             })
@@ -170,7 +173,12 @@ impl RenderOnce for SettingRow {
             .child(
                 h_flex()
                     .w_full()
+                    .min_w_0()
                     .items_start()
+                    .when(
+                        sizes.is_compact() && self.control.is_some(),
+                        |el| el.flex_col(),
+                    )
                     .gap(px(12.))
                     .when_some(self.leading, |this, leading| {
                         this.child(div().flex_none().pt(px(2.)).child(leading))
@@ -211,6 +219,8 @@ impl RenderOnce for SettingRow {
                         this.child(
                             v_flex()
                                 .flex_none()
+                                .max_w_full()
+                                .min_w_0()
                                 .items_end()
                                 .gap(px(3.))
                                 .child(control)
@@ -288,6 +298,7 @@ impl RenderOnce for SettingSwitch {
         let row_handler = self.on_change.clone();
         let switch_handler = self.on_change;
         let switch = Switch::new((self.id.clone(), "switch"), self.value)
+            .accessible_label(self.label.clone())
             .disabled(self.disabled)
             .when_some(switch_handler, |this, handler| {
                 this.on_click(move |state: &ToggleState, window, cx| {
@@ -440,6 +451,7 @@ pub struct SettingSlider {
     min: f32,
     max: f32,
     step: f32,
+    default_mark: Option<f32>,
     decimals: usize,
     ticks: Vec<f32>,
     value_label: Option<SharedString>,
@@ -462,6 +474,7 @@ impl SettingSlider {
             min: 0.,
             max: 1.,
             step: 0.01,
+            default_mark: None,
             decimals: 2,
             ticks: Vec::new(),
             value_label: None,
@@ -491,6 +504,11 @@ impl SettingSlider {
 
     pub fn decimals(mut self, decimals: usize) -> Self {
         self.decimals = decimals;
+        self
+    }
+
+    pub fn default_mark(mut self, value: f32) -> Self {
+        self.default_mark = Some(value);
         self
     }
 
@@ -536,7 +554,7 @@ impl SettingSlider {
 }
 
 impl RenderOnce for SettingSlider {
-    fn render(self, _window: &mut Window, _cx: &mut App) -> impl IntoElement {
+    fn render(self, window: &mut Window, cx: &mut App) -> impl IntoElement {
         let (low, high) = if self.min <= self.max {
             (self.min, self.max)
         } else {
@@ -551,11 +569,13 @@ impl RenderOnce for SettingSlider {
             .value_label
             .unwrap_or_else(|| SharedString::from(format!("{clamped:.*}", self.decimals)));
         let slider = Slider::new((self.id.clone(), "slider"))
+            .accessible_label(self.label.clone())
             .value(clamped)
             .min(self.min)
             .max(self.max)
             .step(self.step)
             .ticks(self.ticks)
+            .when_some(self.default_mark, |slider, value| slider.default_mark(value))
             .disabled(self.disabled)
             .when_some(self.on_change, |this, handler| {
                 this.on_change(move |value, window, cx| handler(value, window, cx))
@@ -563,6 +583,30 @@ impl RenderOnce for SettingSlider {
             .when_some(self.on_commit, |this, handler| {
                 this.on_commit(move |value, window, cx| handler(value, window, cx))
             });
+        let theme = cx.theme();
+        if theme.id == crate::ThemeId::NierNew {
+            let sizes = window.sizes(cx);
+            let marker_id = ElementId::from((self.id.clone(), "apply"));
+            return v_flex()
+                .id(self.id)
+                .w_full().min_w_0()
+                .gap(px(1.))
+                .child(
+                    h_flex().w_full().min_w_0().max_w(px(304.)).items_center().gap(px(4.))
+                        .child(div().flex_1().min_w_0().child(slider.menu_row(self.label, value_label)))
+                        .when_some(self.apply_marker, |row, kind| row.child(ApplyMarker::new(kind).id(marker_id)))
+                        .when(self.changed, |row| row.child(Indicator::dot().tone(ChipTone::Success)))
+                )
+                .when_some(self.description, |row, description| {
+                    row.child(
+                        div().w_full().min_w_0().pl(px(8.))
+                            .text_size(sizes.font_xs).line_height(relative(1.3))
+                            .text_color(theme.colors.text_muted)
+                            .child(super::text::Text::new(description))
+                    )
+                })
+                .into_any_element();
+        }
         SettingRow::new(self.id, self.label)
             .description_opt(self.description)
             .apply_marker(self.apply_marker)
@@ -571,6 +615,7 @@ impl RenderOnce for SettingSlider {
             .hoverable(false)
             .value_label(value_label)
             .below(slider)
+            .into_any_element()
     }
 }
 
@@ -662,6 +707,7 @@ impl<T: Clone + 'static> SettingSelect<T> {
 impl<T: Clone + 'static> RenderOnce for SettingSelect<T> {
     fn render(self, _window: &mut Window, _cx: &mut App) -> impl IntoElement {
         let select = Select::new((self.id.clone(), "select"), self.selected_label)
+            .accessible_label(self.label.clone())
             .items(self.items)
             .selected_index(self.selected_index)
             .max_width(self.max_width)

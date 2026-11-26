@@ -1740,6 +1740,8 @@ impl RenderOnce for Input {
         let menu_state = state.clone();
         let move_state = state.downgrade();
         let up_state = state.downgrade();
+        let accessible_state = state.clone();
+        let placeholder = state.read(cx).placeholder.clone();
         let text_element = TextElement {
             state: state.clone(),
             text_color: if disabled {
@@ -1753,6 +1755,24 @@ impl RenderOnce for Input {
         };
         h_flex()
             .id(("yp-input", state.entity_id()))
+            .role(if multi_line {
+                gpui::Role::MultilineTextInput
+            } else {
+                gpui::Role::TextInput
+            })
+            .aria_value(state.read(cx).text.clone())
+            .aria_label(placeholder.clone())
+            .aria_placeholder(placeholder)
+            .when(!disabled && !state.read(cx).read_only, |el| {
+                el.on_a11y_action(gpui::AccessibleAction::SetValue, move |data, w, cx| {
+                    if let Some(gpui::accesskit::ActionData::Value(text)) = data {
+                        accessible_state.update(cx, |input, cx| {
+                            input.select_all(w, cx);
+                            input.replace_selection(text, cx);
+                        });
+                    }
+                })
+            })
             .key_context(INPUT_CONTEXT)
             .track_focus(&focus_handle)
             .map(|this| match self.width {
@@ -1847,6 +1867,7 @@ impl RenderOnce for Input {
                         .icon_size(IconSize::XSmall)
                         .icon_color(Color::Muted)
                         .size(ButtonSize::Compact)
+                        .accessible_label(clear_tooltip)
                         .tooltip(Tooltip::text(clear_tooltip))
                         .on_click(move |_, window, cx| {
                             clear_state.update(cx, |state, cx| {

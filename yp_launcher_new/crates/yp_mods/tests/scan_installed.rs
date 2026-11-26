@@ -191,3 +191,34 @@ fn texture_packs_are_labelled_by_their_named_folder() {
     put_bytes(&with_payload, "textures/x.dds", 4, 0);
     assert!(detect_texture_packs(&with_payload).is_empty());
 }
+
+#[test]
+fn every_native_outfit_is_indexed_even_without_a_data_archive() {
+    let dir = temp("yp_multiple_native_outfits_");
+    let game = GamePaths::new(dir.path());
+    let entities = game.mods_dir().join("wardrobe").join("entities");
+    std::fs::create_dir_all(entities.join("alternate")).unwrap();
+    for (file, id, name) in [
+        ("outfit_base.toml", 7, "Uniform"),
+        ("alternate/outfit_alt.toml", 15, "Evening Dress"),
+    ] {
+        std::fs::write(
+            entities.join(file),
+            format!("character = \"2B\"\noutfit_id = {id}\nname = \"{name}\"\n"),
+        )
+        .unwrap();
+    }
+    let listed = list_installed(&game).unwrap();
+    let choices = &find(&listed, "wardrobe")
+        .data
+        .as_ref()
+        .unwrap()
+        .outfits_by_stem["pl000d"];
+    assert_eq!(
+        choices
+            .iter()
+            .map(|o| (o.outfit_id, o.name.as_deref()))
+            .collect::<Vec<_>>(),
+        [(7, Some("Uniform")), (15, Some("Evening Dress"))]
+    );
+}

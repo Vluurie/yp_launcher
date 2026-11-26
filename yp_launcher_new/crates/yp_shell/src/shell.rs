@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-use std::time::Duration;
+use std::time::{Duration, Instant};
 
 use gpui::{
     AnyElement, AnyView, AnyWindowHandle, App, Context, Entity, Global, IntoElement, Render,
@@ -78,6 +78,7 @@ pub fn close_prompt(guard: CloseGuard, cx: &App) -> Option<ClosePrompt> {
 pub struct ShellView {
     stage: Stage,
     tabs: HashMap<TabId, AnyView>,
+    menu_page: Option<(TabId, Instant)>,
     onboarding: Option<Entity<OnboardingWizard>>,
     log_panel: Option<WeakEntity<LogPanelView>>,
     force_close: bool,
@@ -122,6 +123,7 @@ impl ShellView {
         Self {
             stage: Stage::Splash,
             tabs: HashMap::new(),
+            menu_page: None,
             onboarding: None,
             log_panel: None,
             force_close: false,
@@ -302,6 +304,9 @@ impl ShellView {
 
     fn open_overlay(&mut self, request: &OverlayRequest, window: &mut Window, cx: &mut Context<Self>) {
         match Registry::build_overlay(request, window, cx) {
+            Some(view) if request.id() == OverlayId::Inspector && cx.theme().id == ThemeId::NierNew => {
+                window.show_transparent_overlay(overlay_key(request.id()), view, cx)
+            }
             Some(view) => window.show_overlay(overlay_key(request.id()), view, cx),
             None => {
                 let strings = cx.t();
@@ -459,6 +464,14 @@ impl ShellView {
             return;
         };
         self.toasts_bound = true;
+        let mut had_history = stack.read(cx).has_history();
+        cx.observe(&stack, move |_, stack, cx| {
+            let populated = stack.read(cx).has_history();
+            if populated != had_history {
+                had_history = populated;
+                cx.notify();
+            }
+        }).detach();
         self.toast_subscription = Some(cx.subscribe(&stack, |_, _, event: &ToastEvent, cx| {
             let ToastEvent::Dismissed(id) = event;
             let notifications = cx.stores().notifications.clone();
@@ -521,6 +534,26 @@ impl ShellView {
         let has_directory = stores.session.read(cx).is_directory_selected();
         let active = stores.navigation.read(cx).active();
         let content = self.tab_view(active, window, cx);
+        if theme.id == ThemeId::NierNew {
+            if self.menu_page.is_none_or(|(tab, _)| tab != active) {
+                let start = Instant::now();
+                self.menu_page = Some((active, start));
+                if let Some(root) = window.yp_root() {
+                    root.read(cx).set_menu_page_start(start);
+                }
+            }
+            let start = self.menu_page.unwrap().1;
+            let (body, footer) = crate::menu_navigation::workspace(
+                active,
+                has_directory,
+                content,
+                start,
+                window,
+                cx,
+            );
+            return Self::menu_workspace(body).footer(footer).into_any_element();
+        }
+        self.menu_page = None;
         div()
             .size_full()
             .flex()
@@ -541,19 +574,31 @@ impl ShellView {
             )
             .into_any_element()
     }
+
+    fn menu_workspace(body: AnyElement) -> yp_ui::nier::MenuWorkspace {
+        yp_ui::nier::MenuWorkspace::new("launcher-workspace", body).screen_overlay(false)
+    }
 }
 
 impl Render for ShellView {
     fn render(&mut self, window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         self.bind_toasts(window, cx);
+        let footer_history = self.stage == Stage::Main && cx.theme().id == ThemeId::NierNew;
+        if let Some(stack) = window.toast_stack(cx) {
+            stack.update(cx, |stack, cx| stack.set_history_in_footer(footer_history, cx));
+        }
         let body = match self.stage {
             Stage::Splash => self.splash(window, cx),
             Stage::Onboarding => match self.onboarding.clone() {
                 Some(wizard) => wizard.into_any_element(),
                 None => self.splash(window, cx),
             },
-            Stage::Main => self.main(window, cx),
+            Stage::Main => return self.main(window, cx),
         };
-        v_flex().size_full().child(body)
+        if cx.theme().id == ThemeId::NierNew {
+            Self::menu_workspace(body).into_any_element()
+        } else {
+            v_flex().size_full().child(body).into_any_element()
+        }
     }
 }

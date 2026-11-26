@@ -1,6 +1,6 @@
 use std::sync::Mutex;
 
-use yp_formats::wmb3::{Mesh, Model, Texture};
+use yp_formats::wmb3::{MaterialBlend, Mesh, Model, Pose, Texture};
 
 use crate::error::{InspectorError, Result};
 
@@ -257,6 +257,7 @@ fn sampled(low: f32, high: f32, (first, last): (f32, f32)) -> Option<(u32, u32)>
 }
 
 struct Projection<'a> {
+    blend: MaterialBlend,
     vertices: &'a [Projected],
     indices: &'a [u32],
     extents: &'a [Extent],
@@ -291,15 +292,19 @@ pub fn render(
     height: u32,
     style: &RenderStyle,
 ) -> Result<RenderFrame> {
-    render_in_bands(
-        model,
-        visible,
-        lod,
-        camera,
-        (width, height),
-        style,
-        band_count(height),
-    )
+    render_pose(model, visible, lod, camera, (width, height), style, None)
+}
+
+pub(crate) fn render_pose(
+    model: &Model,
+    visible: &[bool],
+    lod: u32,
+    camera: &Camera,
+    size: (u32, u32),
+    style: &RenderStyle,
+    pose: Option<&Pose>,
+) -> Result<RenderFrame> {
+    render_in_bands(model, visible, lod, camera, size, style, band_count(size.1), pose)
 }
 
 fn render_in_bands(
@@ -310,11 +315,12 @@ fn render_in_bands(
     (width, height): (u32, u32),
     style: &RenderStyle,
     bands: u32,
+    pose: Option<&Pose>,
 ) -> Result<RenderFrame> {
     let pixel_count = validate_size(width, height)?;
     let threads = thread_count();
     let view = View::new(model, camera, width, height);
-    let shown: Vec<&Mesh> = model
+    let mut shown: Vec<&Mesh> = model
         .meshes
         .iter()
         .enumerate()
@@ -323,13 +329,15 @@ fn render_in_bands(
         })
         .map(|(_, mesh)| mesh)
         .collect();
-    let vertices = project_vertices(&shown, &view, threads);
+    shown.sort_by_key(|mesh| mesh.blend == MaterialBlend::Multiply);
+    let vertices = project_vertices(&shown, &view, threads, pose);
     let extents = measure_batches(&shown, &vertices, threads);
     let projections: Vec<Projection<'_>> = shown
         .iter()
         .zip(&vertices)
         .zip(&extents)
         .map(|((mesh, vertices), extents)| Projection {
+            blend: mesh.blend,
             vertices,
             indices: &mesh.indices,
             extents,
@@ -375,7 +383,7 @@ fn render_in_bands(
     })
 }
 
-fn project_vertices(shown: &[&Mesh], view: &View, threads: usize) -> Vec<Vec<Projected>> {
+fn project_vertices(shown: &[&Mesh], view: &View, threads: usize, pose: Option<&Pose>) -> Vec<Vec<Projected>> {
     let mut buffers: Vec<Vec<Projected>> = shown
         .iter()
         .map(|mesh| {
@@ -391,18 +399,20 @@ fn project_vertices(shown: &[&Mesh], view: &View, threads: usize) -> Vec<Vec<Pro
         .iter_mut()
         .zip(shown)
         .flat_map(|(buffer, mesh)| {
-            buffer
-                .chunks_mut(VERTEX_CHUNK)
-                .zip(mesh.positions.chunks(VERTEX_CHUNK))
-                .zip(mesh.normals.chunks(VERTEX_CHUNK))
-                .zip(mesh.uvs.chunks(VERTEX_CHUNK))
+            buffer.chunks_mut(VERTEX_CHUNK).enumerate().map(move |(chunk, slots)| {
+                (slots, *mesh, chunk * VERTEX_CHUNK)
+            })
         })
         .collect();
-    run_jobs(jobs, threads, |(((slots, positions), normals), uvs)| {
-        for (((slot, position), normal), uv) in
-            slots.iter_mut().zip(positions).zip(normals).zip(uvs)
-        {
-            *slot = view.project(position, normal, uv);
+    run_jobs(jobs, threads, |(slots, mesh, start)| {
+        for (offset, slot) in slots.iter_mut().enumerate() {
+            let i = start + offset;
+            let (position, normal) = (mesh.positions[i], mesh.normals[i]);
+            let (position, normal) = match pose {
+                Some(pose) => pose.vertex(mesh.weights.get(i), position, normal),
+                None => (position, normal),
+            };
+            *slot = view.project(&position, &normal, &mesh.uvs[i]);
         }
     });
     buffers
@@ -503,15 +513,17 @@ struct Surface<'a> {
 }
 
 impl Surface<'_> {
-    fn shade(&self, weights: [f32; 3], inverse_depth: f32) -> Option<[u8; 4]> {
+    fn shade(&self, weights: [f32; 3], inverse_depth: f32, mode: MaterialBlend) -> Option<[u8; 4]> {
         let sampled = match self.texture {
             Some(texture) => {
                 let depth = inverse_depth.recip();
                 let [u, v] = blend(weights, &self.uvs);
                 sample_texture(texture, u * depth, v * depth, self.untextured)
             }
+            None if mode == MaterialBlend::Multiply => [255; 4],
             None => self.untextured,
         };
+        if mode == MaterialBlend::Multiply { return Some(sampled); }
         if sampled[3] < ALPHA_CUTOFF {
             return None;
         }
@@ -551,13 +563,13 @@ impl Target<'_> {
             }
             for triangle in batch.chunks_exact(3) {
                 if let Some(corners) = corners(projection.vertices, triangle) {
-                    self.draw_triangle(corners, projection.texture);
+                    self.draw_triangle(corners, projection.texture, projection.blend);
                 }
             }
         }
     }
 
-    fn draw_triangle(&mut self, [a, b, c]: [Corner; 3], texture: Option<&Texture>) {
+    fn draw_triangle(&mut self, [a, b, c]: [Corner; 3], texture: Option<&Texture>, mode: MaterialBlend) {
         let top = a.y.min(b.y).min(c.y);
         let bottom = a.y.max(b.y).max(c.y);
         let Some((first_row, last_row)) = sampled(top, bottom, self.rows) else {
@@ -614,16 +626,40 @@ impl Target<'_> {
                 }
                 let weights = [weight_a, weight_b, weight_c];
                 let [inverse_depth] = blend(weights, &inverse_depths);
-                let nearer = inverse_depth > *depth;
-                if !nearer {
-                    continue;
-                }
-                if let Some(pixel) = surface.shade(weights, inverse_depth) {
-                    *depth = inverse_depth;
-                    color.copy_from_slice(&pixel);
+                let visible = match mode {
+                    MaterialBlend::Opaque => opaque_visible(inverse_depth, *depth, area < 0.),
+                    MaterialBlend::Multiply => *depth != 0. && inverse_depth >= depth.abs(),
+                };
+                if !visible { continue; }
+                if let Some(pixel) = surface.shade(weights, inverse_depth, mode) {
+                    match mode {
+                        MaterialBlend::Opaque => {
+                            *depth = if area < 0. { inverse_depth } else { -inverse_depth };
+                            color.copy_from_slice(&pixel);
+                        }
+                        MaterialBlend::Multiply => multiply(color, pixel),
+                    }
                 }
             }
         }
+    }
+}
+
+fn opaque_visible(incoming: f32, stored: f32, front: bool) -> bool {
+    let distance = stored.abs();
+    if stored != 0. && stored.is_sign_positive() != front
+        && incoming.to_bits().abs_diff(distance.to_bits()) <= 4
+    {
+        return front;
+    }
+    incoming > distance
+}
+
+fn multiply(destination: &mut [u8], source: [u8; 4]) {
+    let alpha = u32::from(source[3]);
+    for (dst, src) in destination[..3].iter_mut().zip(source) {
+        let factor = 255 * (255 - alpha) + u32::from(src) * alpha;
+        *dst = ((u32::from(*dst) * factor + 32_512) / 65_025) as u8;
     }
 }
 
@@ -674,11 +710,11 @@ mod tests {
         close.pan(-30.0, 12.0);
         let size = (200, 150);
         for camera in [turned, close] {
-            let single = render_in_bands(&model, &visible, 0, &camera, size, &style, 1).unwrap();
+            let single = render_in_bands(&model, &visible, 0, &camera, size, &style, 1, None).unwrap();
             assert!(single.rgba.chunks_exact(4).any(|pixel| pixel != style.background));
             for bands in [2, 3, 4, 7, 8, 150, 1000] {
                 let banded =
-                    render_in_bands(&model, &visible, 0, &camera, size, &style, bands).unwrap();
+                    render_in_bands(&model, &visible, 0, &camera, size, &style, bands, None).unwrap();
                 assert_eq!(banded.rgba, single.rgba, "{bands} bands");
             }
         }

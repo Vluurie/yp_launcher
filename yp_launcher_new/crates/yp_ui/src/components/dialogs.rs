@@ -109,7 +109,12 @@ impl Focusable for ConfirmDialog {
     }
 }
 
-impl ModalView for ConfirmDialog {}
+impl ModalView for ConfirmDialog {
+    fn on_before_dismiss(&mut self, _: &mut Window, _: &mut Context<Self>) -> bool {
+        self.sender.take();
+        true
+    }
+}
 
 impl Render for ConfirmDialog {
     fn render(&mut self, window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
@@ -137,6 +142,9 @@ impl Render for ConfirmDialog {
                     .footer(
                         ModalFooter::new().start_slot(
                             h_flex()
+                                .min_w_0()
+                                .max_w_full()
+                                .flex_wrap()
                                 .gap(sizes.spacing_sm)
                                 .child(
                                     Button::new("yp-confirm-cancel", cancel)
@@ -310,7 +318,12 @@ impl Focusable for PromptDialog {
     }
 }
 
-impl ModalView for PromptDialog {}
+impl ModalView for PromptDialog {
+    fn on_before_dismiss(&mut self, _: &mut Window, _: &mut Context<Self>) -> bool {
+        self.sender.take();
+        true
+    }
+}
 
 impl Render for PromptDialog {
     fn render(&mut self, window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
@@ -525,7 +538,12 @@ impl Focusable for PickDialog {
     }
 }
 
-impl ModalView for PickDialog {}
+impl ModalView for PickDialog {
+    fn on_before_dismiss(&mut self, _: &mut Window, _: &mut Context<Self>) -> bool {
+        self.sender.take();
+        true
+    }
+}
 
 impl Render for PickDialog {
     fn render(&mut self, window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {

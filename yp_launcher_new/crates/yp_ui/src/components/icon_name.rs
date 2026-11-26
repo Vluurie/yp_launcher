@@ -100,6 +100,7 @@ pub enum IconName {
     MapOutlined,
     MedicalInformationOutlined,
     Memory,
+    Menu,
     MenuBook,
     MenuBookOutlined,
     MergeType,
@@ -169,7 +170,7 @@ pub enum IconName {
 }
 
 impl IconName {
-    pub const ALL: [IconName; 164] = [
+    pub const ALL: [IconName; 165] = [
         IconName::Add,
         IconName::AddBoxOutlined,
         IconName::AddPhotoAlternateOutlined,
@@ -268,6 +269,7 @@ impl IconName {
         IconName::MapOutlined,
         IconName::MedicalInformationOutlined,
         IconName::Memory,
+        IconName::Menu,
         IconName::MenuBook,
         IconName::MenuBookOutlined,
         IconName::MergeType,
@@ -436,6 +438,7 @@ impl IconName {
             IconName::MapOutlined => "map_outlined",
             IconName::MedicalInformationOutlined => "medical_information_outlined",
             IconName::Memory => "memory",
+            IconName::Menu => "menu",
             IconName::MenuBook => "menu_book",
             IconName::MenuBookOutlined => "menu_book_outlined",
             IconName::MergeType => "merge_type",
@@ -647,6 +650,7 @@ impl IconName {
                 SharedString::new_static("icons/medical_information_outlined.svg")
             }
             IconName::Memory => SharedString::new_static("icons/memory.svg"),
+            IconName::Menu => SharedString::new_static("icons/menu.svg"),
             IconName::MenuBook => SharedString::new_static("icons/menu_book.svg"),
             IconName::MenuBookOutlined => SharedString::new_static("icons/menu_book_outlined.svg"),
             IconName::MergeType => SharedString::new_static("icons/merge_type.svg"),

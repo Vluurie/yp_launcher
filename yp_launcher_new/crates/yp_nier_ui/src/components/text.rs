@@ -96,12 +96,19 @@ impl RenderOnce for GameText {
 #[derive(IntoElement)]
 pub struct MenuTitle {
     text: SharedString,
+    page_start: Option<Option<std::time::Instant>>,
     scale: f32,
 }
 impl MenuTitle {
+    pub fn for_page(mut self, start: Option<std::time::Instant>) -> Self {
+        self.page_start = Some(start);
+        self
+    }
+
     pub fn new(text: impl Into<SharedString>) -> Self {
         Self {
             text: text.into(),
+            page_start: None,
             scale: 1.,
         }
     }
@@ -114,14 +121,22 @@ impl RenderOnce for MenuTitle {
     fn render(self, window: &mut Window, cx: &mut App) -> impl IntoElement {
         use gpui::{div, prelude::*, px};
         let [width, height] = Theme::bundled().measure_spaced(&self.text, 2, 10.);
-        let shown = crate::text_reveal::display(
-            &self.text,
-            "title-letters",
-            0,
-            crate::text_reveal::Cadence::Title,
-            window,
-            cx,
-        );
+        let shown = match self.page_start {
+            Some(start) => crate::text_reveal::page_start(cx).or(start)
+                .filter(|_| !crate::ReducedMotion::enabled(cx))
+                .and_then(|started| {
+                    crate::text_reveal::reveal_since(&self.text, started.elapsed(), window)
+                })
+                .unwrap_or_else(|| self.text.clone()),
+            None => crate::text_reveal::display(
+                &self.text,
+                "title-letters",
+                0,
+                crate::text_reveal::Cadence::Title,
+                window,
+                cx,
+            ),
+        };
         let mut surface = Surface::new(width.ceil() + 15., height.ceil() + 7.);
         for (offset, tint, alpha) in [(6., [89, 87, 78], 100), (0., crate::INK, 255)] {
             surface.lettering(

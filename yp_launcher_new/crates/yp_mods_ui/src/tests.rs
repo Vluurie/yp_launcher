@@ -167,7 +167,7 @@ fn init_registers_the_tabs_and_the_install_flow(cx: &mut TestAppContext) {
 }
 
 #[gpui::test]
-fn every_tab_draws_in_both_themes_down_to_the_smallest_window(cx: &mut TestAppContext) {
+fn every_tab_draws_in_all_themes_down_to_the_smallest_window(cx: &mut TestAppContext) {
     let sandbox = Sandbox::new();
     library(&sandbox);
     sandbox.add_requirements("gold_sword", &["missing_core"], &["missing_plugin"]);
@@ -180,7 +180,7 @@ fn every_tab_draws_in_both_themes_down_to_the_smallest_window(cx: &mut TestAppCo
     sandbox.add_graphic_mod("ColorWrapper", "d3d11.dll", 4096);
     boot(&sandbox, cx);
     let sizes = [(1280., 720.), (1000., 680.), (780., 560.), (600., 420.)];
-    for theme in [ThemeId::Dark, ThemeId::Nier] {
+    for theme in ThemeId::ALL {
         cx.update(|cx| yp_ui::theme::set_theme(theme, cx));
 
         let (mods, cx) = open_tab::<ModsView>(TabId::Mods, cx);
@@ -213,6 +213,119 @@ fn every_tab_draws_in_both_themes_down_to_the_smallest_window(cx: &mut TestAppCo
             settle(cx);
         }
     }
+}
+
+#[gpui::test]
+fn file_drag_over_a_mod_row_highlights_the_workspace(cx: &mut TestAppContext) {
+    let sandbox = Sandbox::new();
+    library(&sandbox);
+    boot(&sandbox, cx);
+    cx.update(|cx| {
+        yp_ui::theme::set_theme(ThemeId::NierNew, cx);
+        cx.set_global(yp_ui::nier::ReducedMotion(true));
+    });
+    let (_, cx) = open_tab::<ModsView>(TabId::Mods, cx);
+    cx.simulate_resize(size(px(1100.), px(670.)));
+    settle(cx);
+    let row = cx.debug_bounds("library-item-grain_removal").unwrap();
+    let outlined = |cx: &mut VisualTestContext| {
+        cx.update(|window, _| {
+            window.painted_quads().iter().any(|quad| {
+                let scale = window.scale_factor();
+                quad.border_color.a > 0.8
+                    && quad.border_widths.left.0 >= 4. * scale
+                    && quad.bounds.size.width.0 > 900. * scale
+                    && quad.bounds.size.height.0 > 500. * scale
+            })
+        })
+    };
+    assert!(!outlined(cx));
+    cx.simulate_event(gpui::FileDropEvent::Entered {
+        position: row.center(),
+        paths: gpui::ExternalPaths([PathBuf::from("outfit.zip")].into_iter().collect()),
+    });
+    assert!(outlined(cx));
+    cx.simulate_event(gpui::FileDropEvent::Exited);
+    assert!(!outlined(cx));
+}
+
+#[gpui::test]
+fn nier_library_rows_remain_visible_and_selectable_after_resize(cx: &mut TestAppContext) {
+    let sandbox = Sandbox::new();
+    library(&sandbox);
+    sandbox.add_native_mod("long_name", &"非常に長い Mod name ".repeat(6), "1.2");
+    boot(&sandbox, cx);
+    cx.update(|cx| yp_ui::theme::set_theme(ThemeId::NierNew, cx));
+    let (mods, cx) = open_tab::<ModsView>(TabId::Mods, cx);
+    for (width, height) in [(1097., 668.), (600., 420.)] {
+        cx.simulate_resize(size(px(width), px(height)));
+        settle(cx);
+        let row = cx
+            .debug_bounds("library-item-grain_removal")
+            .expect("visible populated inventory");
+        assert!(row.size.height >= px(30.) && row.right() <= px(width));
+        cx.simulate_click(row.center(), Default::default());
+        settle(cx);
+        assert_eq!(selected(&mods, cx).as_deref(), Some("grain_removal"));
+        if width < 740. {
+            let back = cx
+                .debug_bounds("library-back")
+                .expect("return to inventory");
+            cx.simulate_click(back.center(), Default::default());
+            settle(cx);
+            assert!(cx.debug_bounds("library-item-grain_removal").is_some());
+        } else {
+            mods.update(cx, |v, cx| v.select(None, cx));
+            settle(cx);
+        }
+    }
+}
+
+#[gpui::test]
+fn outfit_group_band_ends_before_its_first_mod(cx: &mut TestAppContext) {
+    let sandbox = Sandbox::new();
+    library(&sandbox);
+    boot(&sandbox, cx);
+    cx.update(|cx| yp_ui::theme::set_theme(ThemeId::NierNew, cx));
+    let (_, cx) = open_tab::<ModsView>(TabId::Mods, cx);
+    let selector = "mod-group-band-Outfit2b";
+    for (width, height) in [(1200., 900.), (600., 680.)] {
+        cx.simulate_resize(size(px(width), px(height)));
+        settle(cx);
+        let header = cx.debug_bounds(selector).expect("visible outfit group");
+        let first = cx.debug_bounds("library-item-kimono").expect("first outfit");
+        assert!(header.bottom() <= first.top(), "header {header:?}, mod {first:?}");
+        cx.simulate_click(header.center(), Default::default());
+        settle(cx);
+        let header = cx.debug_bounds(selector).unwrap();
+        cx.simulate_click(header.center(), Default::default());
+        settle(cx);
+        let header = cx.debug_bounds(selector).unwrap();
+        let first = cx.debug_bounds("library-item-kimono").unwrap();
+        assert!(header.bottom() <= first.top(), "expanded group overlaps its first mod");
+    }
+}
+
+#[gpui::test]
+fn keyboard_reaches_virtual_inventory_rows(cx: &mut TestAppContext) {
+    let sandbox = Sandbox::new();
+    for i in 0..40 {
+        sandbox.add_native_mod(&format!("kbd_{i:02}"), &format!("Keyboard package {i:02}"), "1.0");
+    }
+    boot(&sandbox, cx);
+    cx.update(|cx| yp_ui::theme::set_theme(ThemeId::NierNew, cx));
+    let (mods, cx) = open_tab::<ModsView>(TabId::Mods, cx);
+    cx.simulate_resize(size(px(1097.), px(580.)));
+    settle(cx);
+    let first = cx.debug_bounds("library-item-kbd_00").expect("first entry");
+    cx.simulate_click(first.center(), Default::default());
+    cx.simulate_keystrokes("end");
+    settle(cx);
+    assert_eq!(selected(&mods, cx).as_deref(), Some("kbd_39"));
+    assert!(cx.debug_bounds("library-item-kbd_39").is_some());
+    cx.simulate_keystrokes("home down");
+    settle(cx);
+    assert_eq!(selected(&mods, cx).as_deref(), Some("kbd_01"));
 }
 
 #[gpui::test]

@@ -14,7 +14,8 @@ use yp_state::SessionEvent;
 use yp_state::prelude::*;
 use yp_ui::prelude::*;
 use yp_ui::{
-    ActiveTheme, ConfirmOptions, ConfirmTone, Sizes, Thumbnail, TintColor, Tooltip, confirm,
+    ActiveTheme, ConfirmOptions, ConfirmTone, ContextMenu, ContextMenuEntry, PopoverMenu, Sizes,
+    Thumbnail, TintColor, Tooltip, confirm,
 };
 
 use crate::builders::forms::{ConvertForm, ThumbnailChoice, inspect_weapon_model};
@@ -517,8 +518,56 @@ impl ToolsView {
                 )
                 .into_any_element(),
         };
+        let menu = cx.theme().id == ThemeId::NierNew;
+        let path = entry.dat_path.clone();
+        let view = cx.weak_entity();
+        let actions = PopoverMenu::<ContextMenu>::new(("tools-icon-actions", index))
+            .accessible_label(format!(
+                "{} · {}",
+                strings.menu_icon_actions(),
+                entry.file_stem()
+            ))
+            .anchor(gpui::Anchor::TopRight)
+            .attach(gpui::Anchor::BottomRight)
+            .trigger(
+                Button::new("icon-actions-label", strings.menu_icon_actions())
+                    .style(ButtonStyle::Link)
+                    .end_icon(IconName::KeyboardArrowDown),
+            )
+            .menu(move |w, cx| {
+                let view = view.clone();
+                let path = path.clone();
+                Some(ContextMenu::build(w, cx, move |mut menu, _, cx| {
+                    let busy = view.read_with(cx, |v, _| v.icon_busy).unwrap_or(true);
+                    for (label, remove) in [
+                        (strings.tools_icons_replace(), false),
+                        (strings.tools_icons_delete(), true),
+                    ] {
+                        let view = view.clone();
+                        let path = path.clone();
+                        menu = menu.item(ContextMenuEntry::new(label).disabled(busy).handler(
+                            move |w, cx| {
+                                view.update(cx, |v, cx| {
+                                    if let Some(i) =
+                                        v.icons.iter().position(|entry| entry.dat_path == path)
+                                    {
+                                        if remove {
+                                            v.delete_icon(i, w, cx)
+                                        } else {
+                                            v.replace_icon(i, w, cx)
+                                        }
+                                    }
+                                })
+                                .ok();
+                            },
+                        ));
+                    }
+                    menu
+                }))
+            });
         h_flex()
             .w_full()
+            .min_w_0()
             .gap(sizes.spacing_lg)
             .py(sizes.spacing_md)
             .border_t_1()
@@ -533,16 +582,17 @@ impl ToolsView {
                         Label::new(SharedString::from(entry.file_stem()))
                             .size(LabelSize::Small)
                             .mono()
-                            .truncate(),
+                            .when(!menu, |el| el.truncate()),
                     )
                     .child(
                         Label::new(SharedString::from(detail))
                             .size(LabelSize::XSmall)
                             .color(Color::Muted)
-                            .truncate(),
+                            .when(!menu, |el| el.truncate()),
                     ),
             )
-            .child(
+            .when(menu, |el| el.child(actions))
+            .when(!menu, |el| el.child(
                 tint_button(
                     SharedString::from(format!("tools-icon-replace-{index}")),
                     strings.tools_icons_replace(),
@@ -563,7 +613,7 @@ impl ToolsView {
                 .on_click(cx.listener(move |this, _, window, cx| {
                     this.delete_icon(index, window, cx);
                 })),
-            )
+            ))
     }
 
     fn icons_card(&self, window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement + use<> {
@@ -624,6 +674,8 @@ impl ToolsView {
                     )
                     .child(
                         h_flex()
+                            .min_w_0()
+                            .flex_wrap()
                             .gap(sizes.spacing_lg)
                             .child(
                                 tint_button(
@@ -631,6 +683,9 @@ impl ToolsView {
                                     strings.tools_icons_convert(),
                                     TintColor::Accent,
                                 )
+                                .when(cx.theme().id == ThemeId::NierNew, |el| {
+                                    el.style(ButtonStyle::Filled)
+                                })
                                 .loading(self.icon_busy)
                                 .disabled(self.icon_busy)
                                 .on_click(cx.listener(|this, _, window, cx| {
@@ -644,10 +699,15 @@ impl ToolsView {
                                     TintColor::Accent,
                                 )
                                 .disabled(self.icon_busy)
+                                .when(cx.theme().id == ThemeId::NierNew, |el| {
+                                    el.style(ButtonStyle::Link)
+                                })
                                 .controller_support(false)
-                                .on_click(cx.listener(|this, _, window, cx| {
-                                    this.adjust_icon(window, cx);
-                                })),
+                                .on_click(cx.listener(
+                                    |this, _, window, cx| {
+                                        this.adjust_icon(window, cx);
+                                    },
+                                )),
                             ),
                     )
                     .children(self.icon_error.clone().map(error_line))
@@ -837,7 +897,9 @@ impl Render for ToolsView {
         };
         v_flex()
             .size_full()
-            .bg(colors.background_primary)
+            .when(cx.theme().id != ThemeId::NierNew, |el| {
+                el.bg(colors.background_primary)
+            })
             .child(PageHeader::new(SharedString::from(
                 strings.tab_tools().to_uppercase(),
             )))

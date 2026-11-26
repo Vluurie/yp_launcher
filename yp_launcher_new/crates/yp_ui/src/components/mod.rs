@@ -94,7 +94,7 @@ pub use label::{
 };
 pub use language_selector::{LanguageSelector, ThemeToggle};
 pub use layout::{
-    DescriptionList, EmptyState, KeyValueRow, PageHeader, Resizable, ResizablePanel, StepButton,
+    DescriptionList, EmptyState, KeyValueRow, PageHeader, Resizable, ResizablePanel, ResponsiveGrid, StepButton,
     StepDots, Tab, TabBar, TwoColumn, clamp_panel_size, h_resizable, resizable_panel, v_resizable,
 };
 pub use link::Link;
@@ -136,5 +136,6 @@ pub use tour::{
     place_tour_card,
 };
 pub use util::{
-    ControllerMode, FocusVisible, HoverState, hover_probe, open_link, set_link_opener, use_hover_state,
+    ControllerMode, FocusVisible, HoverState, KeyboardFocus, hover_probe, menu_hover_fill, open_link,
+    set_link_opener, use_hover_state,
 };

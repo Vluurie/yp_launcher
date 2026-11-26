@@ -1,4 +1,4 @@
-use crate::{INK, Rect, Surface};
+use crate::{INK, Rect, Surface, Tint};
 use gpui::{App, ElementId, IntoElement, RenderOnce, Window, div, prelude::*, px};
 use std::time::Instant;
 
@@ -6,6 +6,7 @@ use std::time::Instant;
 pub struct LoadingIcon {
     id: ElementId,
     active: bool,
+    tint: Tint,
     saving: bool,
     scale: f32,
 }
@@ -14,9 +15,14 @@ impl LoadingIcon {
         Self {
             id: id.into(),
             active: true,
+            tint: INK,
             saving: false,
             scale: 1.,
         }
+    }
+    pub fn tint(mut self, tint: Tint) -> Self {
+        self.tint = tint;
+        self
     }
     pub fn active(mut self, active: bool) -> Self {
         self.active = active;
@@ -41,14 +47,20 @@ impl RenderOnce for LoadingIcon {
             s.1.elapsed().as_secs_f32()
         });
         let dim = if self.saving { 52. } else { 48. };
-        let alpha = if self.active {
+        let reduced = crate::ReducedMotion::enabled(cx);
+        let alpha = if reduced {
+            if self.active { 1. } else { 0. }
+        } else if self.active {
             crate::motion::ease_out(elapsed * 6.)
         } else {
             (1. - elapsed * 6.).max(0.)
         };
         let mut art = Surface::new(dim, dim);
         if alpha > 0. || self.active {
-            w.request_animation_frame();
+            if !reduced {
+                w.request_animation_frame();
+            }
+            let elapsed = if reduced { 0. } else { elapsed };
             let phase = (elapsed * 10.) as usize;
             let center = dim * 0.5;
             for i in 0..12 {
@@ -61,7 +73,7 @@ impl RenderOnce for LoadingIcon {
                 let side = if age == 0 { 5.5 } else { 3.5 };
                 art.fill(
                     Rect::new(x - side / 2., y - side / 2., side, side),
-                    INK,
+                    self.tint,
                     (255. * a) as u8,
                 );
             }
@@ -69,7 +81,7 @@ impl RenderOnce for LoadingIcon {
                 let pulse = (elapsed * 3.).sin().abs();
                 art.fill(
                     Rect::new(center - 5., center - 5., 10., 10.),
-                    INK,
+                    self.tint,
                     ((70. + 160. * pulse) * alpha) as u8,
                 );
             }

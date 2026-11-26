@@ -29,6 +29,8 @@ use crate::{ShellOptions, ShellView};
 pub(crate) struct TestPlatform {
     host: HostEnv,
     pub can_launch: AtomicBool,
+    pub running: AtomicBool,
+    pub terminations: AtomicUsize,
     pub fast_installs: Mutex<Vec<NierInstallation>>,
     pub deep_installs: Mutex<Vec<NierInstallation>>,
     pub deep_searches: AtomicUsize,
@@ -68,11 +70,12 @@ impl PlatformAdapter for TestPlatform {
     }
 
     fn is_game_running(&self) -> bool {
-        false
+        self.running.load(Ordering::SeqCst)
     }
 
     fn terminate_game(&self) -> bool {
-        true
+        self.terminations.fetch_add(1, Ordering::SeqCst);
+        self.running.swap(false, Ordering::SeqCst)
     }
 
     fn discover_fast(&self) -> Vec<NierInstallation> {
@@ -141,6 +144,8 @@ impl Harness {
         let platform = Arc::new(TestPlatform {
             host: host.clone(),
             can_launch: AtomicBool::new(true),
+            running: AtomicBool::new(false),
+            terminations: AtomicUsize::new(0),
             fast_installs: Mutex::new(Vec::new()),
             deep_installs: Mutex::new(Vec::new()),
             deep_searches: AtomicUsize::new(0),

@@ -1,7 +1,10 @@
 mod bytes;
+pub mod cloth;
+pub mod cpk;
 pub mod dat;
 pub mod error;
 pub mod files;
+pub mod mot;
 pub mod texture;
 pub mod usm;
 pub mod weapon;

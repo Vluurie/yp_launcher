@@ -66,15 +66,23 @@ pub fn tab_page(
             .flex_1()
             .min_h_0()
             .w_full()
-            .p(sizes.content_padding)
-            .child(content)
+            .map(|el| {
+                if cx.theme().id == ThemeId::NierNew {
+                    el.pb(sizes.content_padding)
+                } else {
+                    el.p(sizes.content_padding)
+                }
+            })
+            .child(v_flex().w_full().items_center().child(
+                div().w_full().min_w_0().max_w(px(1160.)).child(content),
+            ))
             .overflow_y_scrollbar(scroll)
             .into_any_element()
     };
     v_flex()
         .relative()
         .size_full()
-        .bg(background)
+        .when(cx.theme().id != ThemeId::NierNew, |el| el.bg(background))
         .child(header)
         .child(body)
 }

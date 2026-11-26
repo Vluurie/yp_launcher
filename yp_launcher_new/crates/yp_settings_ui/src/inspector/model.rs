@@ -3,7 +3,7 @@ use std::collections::{BTreeSet, HashMap};
 use gpui::{EventEmitter, Subscription, Task};
 use yp_i18n::Strings;
 use yp_mods::inspector_presets::{
-    self, InspectorOutfitPreset, STATE_COMBAT, STATE_EYEMASK, STATE_HOLY, STATE_NO_RIGHT,
+    self, Character, InspectorOutfitPreset, STATE_COMBAT, STATE_EYEMASK, STATE_HOLY, STATE_NO_RIGHT,
     STATE_PROLOGUE, STATE_SELF_DESTRUCTED, STATE_TOWER, STATE_WIG,
 };
 use yp_mods::{DataArchivePair, InstalledMod};
@@ -125,6 +125,11 @@ pub fn is_vanilla(preset: &InspectorOutfitPreset) -> bool {
     preset.id.starts_with(VANILLA_PREFIX)
 }
 
+fn outfit_stem<'a>(candidate: &'a ModelCandidate, pair: &'a DataArchivePair) -> &'a str {
+    let name = candidate.name.rsplit_once('.').map_or(candidate.name.as_str(), |(stem, _)| stem);
+    if Character::for_stem(name).is_some() { name } else { &pair.stem }
+}
+
 pub fn preset_index_for(presets: &[InspectorOutfitPreset], outfit_id: Option<i64>) -> Option<usize> {
     if presets.is_empty() {
         return None;
@@ -240,10 +245,15 @@ pub struct InspectorModel {
     render_error: Option<InspectorError>,
     candidate: Option<ModelCandidate>,
     session: Option<Entity<ModelSession>>,
+    presets_by_character: HashMap<Character, Vec<InspectorOutfitPreset>>,
     presets: Vec<InspectorOutfitPreset>,
     selected_preset: Option<usize>,
     state_values: HashMap<String, bool>,
     initial_outfit: Option<i64>,
+    pub(super) initial_preset: Option<String>,
+    pub(super) initial_candidate: Option<yp_inspector::CandidateId>,
+    pub(super) initial_camera: Option<Camera>,
+    pub(super) scene_bounds: std::rc::Rc<std::cell::Cell<Option<gpui::Bounds<Pixels>>>>,
     viewport: Option<(f32, f32)>,
     probe_task: Option<Task<()>>,
     session_subscription: Option<Subscription>,
@@ -259,7 +269,14 @@ impl InspectorModel {
         cx: &mut Context<Self>,
     ) -> Self {
         let stores = cx.stores().clone();
-        let pair = archive_pair(&archives, stores.mods.read(cx).mods());
+        let mods = stores.mods.read(cx).mods();
+        let pair = archive_pair(&archives, mods);
+        let initial_outfit = initial_outfit.or_else(|| {
+            let path = archives.dat.as_ref().or(archives.dtt.as_ref())?;
+            let installed = mods.iter().find(|m| path.starts_with(&m.root_path))?;
+            let key = yp_mods::defaults::stem_rel_path(&installed.id, &pair.stem);
+            stores.default_mods.read(cx).outfit_id_of(&key)
+        });
         let mut this = Self {
             mode,
             style: Default::default(),
@@ -272,10 +289,15 @@ impl InspectorModel {
             render_error: None,
             candidate: None,
             session: None,
+            presets_by_character: HashMap::new(),
             presets: Vec::new(),
             selected_preset: None,
             state_values: HashMap::new(),
             initial_outfit,
+            initial_candidate: None,
+            initial_preset: None,
+            initial_camera: None,
+            scene_bounds: Default::default(),
             viewport: None,
             probe_task: None,
             session_subscription: None,
@@ -286,14 +308,22 @@ impl InspectorModel {
 
     fn start(&mut self, cx: &mut Context<Self>) {
         let pair = self.pair.clone();
-        let presets = cx.background_spawn(async move { inspector_presets::load(&pair) });
+        let executor = cx.background_executor().clone();
         let archives = self.archives.clone();
         let probe = self
             .service
             .update(cx, |service, cx| service.probe(archives, cx));
         self.probe_task = Some(cx.spawn(async move |this, cx| {
-            let presets = presets.await;
             let probe = probe.await;
+            let characters: Vec<_> = probe.as_ref().ok().into_iter().flat_map(|p| &p.candidates)
+                .filter_map(|c| Character::for_stem(outfit_stem(c, &pair))).collect();
+            let presets = executor.spawn(async move {
+                let mut presets = HashMap::new();
+                for character in characters {
+                    presets.entry(character).or_insert_with(|| inspector_presets::load_character(&pair.config_root, character));
+                }
+                presets
+            }).await;
             this.update(cx, |this, cx| this.finish_probe(presets, probe, cx))
                 .ok();
         }));
@@ -301,19 +331,22 @@ impl InspectorModel {
 
     fn finish_probe(
         &mut self,
-        presets: Vec<InspectorOutfitPreset>,
+        presets: HashMap<Character, Vec<InspectorOutfitPreset>>,
         probe: Result<ArchiveProbe, InspectorError>,
         cx: &mut Context<Self>,
     ) {
         self.probing = false;
-        self.presets = presets;
-        self.selected_preset = preset_index_for(&self.presets, self.initial_outfit);
-        self.refresh_state_values();
+        self.presets_by_character = presets;
         match probe {
             Ok(probe) => {
-                let first = probe.candidates.first().cloned();
+                let selected = probe
+                    .candidates
+                    .iter()
+                    .find(|candidate| Some(candidate.id) == self.initial_candidate)
+                    .or_else(|| probe.candidates.first())
+                    .cloned();
                 self.probe = Some(probe);
-                match first {
+                match selected {
                     Some(candidate) => self.open_candidate(candidate, cx),
                     None => self.probe_error = Some(InspectorError::NoArchives),
                 }
@@ -427,13 +460,31 @@ impl InspectorModel {
         }
     }
 
+    fn preferred_preset(&self) -> Option<usize> {
+        self.initial_preset.as_deref().and_then(|id| self.presets.iter().position(|p| p.id == id))
+            .or_else(|| preset_index_for(&self.presets, self.initial_outfit))
+    }
+
+    pub(super) fn restore_selection(&mut self, candidate: ModelCandidate, preset: Option<&InspectorOutfitPreset>, cx: &mut Context<Self>) {
+        self.initial_preset = preset.map(|p| p.id.clone());
+        self.initial_outfit = preset.map(|p| p.outfit_id);
+        if self.candidate.as_ref().map(|c| c.id) != Some(candidate.id) {
+            self.open_candidate(candidate, cx);
+        } else if let Some(index) = self.preferred_preset() {
+            self.select_preset(index, cx);
+        }
+    }
+
     pub fn open_candidate(&mut self, candidate: ModelCandidate, cx: &mut Context<Self>) {
+        self.presets = Character::for_stem(outfit_stem(&candidate, &self.pair))
+            .and_then(|c| self.presets_by_character.get(&c)).cloned().unwrap_or_default();
+        self.selected_preset = self.preferred_preset();
+        self.refresh_state_values();
         let archives = self.archives.clone();
         let id = candidate.id;
-        let session = self
-            .service
-            .update(cx, |service, cx| service.open_session(archives, id, cx));
-        let camera = self.mode.camera();
+        let sources = super::motion::sources(&archives, cx);
+        let session = self.service.update(cx, |service, cx| service.open_with_sources(archives, id, sources, cx));
+        let camera = self.initial_camera.take().unwrap_or_else(|| self.mode.camera());
         session.update(cx, |session, cx| {
             session.set_style(self.style, cx);
             session.set_camera(camera, cx);
@@ -478,11 +529,12 @@ impl InspectorModel {
                 .iter()
                 .map(|mesh| mesh.name.clone())
                 .collect();
-            self.presets = inspector_presets::infer_vanilla_variants(&self.pair.stem, names);
-            self.selected_preset = preset_index_for(&self.presets, None);
+            let stem = self.candidate.as_ref().map_or(self.pair.stem.as_str(), |c| outfit_stem(c, &self.pair));
+            self.presets = inspector_presets::infer_vanilla_variants(stem, names);
+            self.selected_preset = self.preferred_preset();
             self.refresh_state_values();
         } else if self.selected().is_none() {
-            self.selected_preset = preset_index_for(&self.presets, self.initial_outfit);
+            self.selected_preset = self.preferred_preset();
             self.refresh_state_values();
         }
         self.apply_preset(cx);
@@ -506,6 +558,8 @@ impl InspectorModel {
             return;
         }
         self.selected_preset = Some(index);
+        self.initial_outfit = Some(self.presets[index].outfit_id);
+        self.initial_preset = Some(self.presets[index].id.clone());
         self.refresh_state_values();
         self.apply_preset(cx);
         cx.notify();

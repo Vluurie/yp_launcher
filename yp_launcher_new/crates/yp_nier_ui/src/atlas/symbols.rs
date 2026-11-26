@@ -14,6 +14,7 @@ pub(super) const SYMBOLS: &[(&str, [u32; 2])] = &[
     ("install", [40, 40]),
     ("back", [58, 40]),
     ("tab", [59, 40]),
+    ("equipment", [40, 40]),
     ("up", [40, 40]),
     ("left", [40, 40]),
     ("down", [40, 40]),
@@ -70,6 +71,7 @@ pub(super) fn draw(name: &str, tint: Tint) -> Option<RgbaImage> {
     let key = match name {
         "back" => Some("Esc"),
         "tab" => Some("Tab"),
+        "equipment" => Some("E"),
         "up" => Some("W"),
         "left" => Some("A"),
         "down" => Some("S"),

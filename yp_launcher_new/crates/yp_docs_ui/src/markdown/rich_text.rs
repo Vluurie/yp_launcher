@@ -2,9 +2,9 @@ use std::ops::Range;
 use std::rc::Rc;
 
 use gpui::{
-    App, ClipboardItem, CursorStyle, DispatchPhase, ElementId, Entity, FocusHandle, Hsla,
+    App, ClipboardItem, ContentMask, CursorStyle, DispatchPhase, ElementId, Entity, FocusHandle, Hsla,
     IntoElement, KeyBinding, MouseButton, MouseMoveEvent, MouseUpEvent, Pixels, Point,
-    RenderOnce, SharedString, StyledText, TextLayout, TextRun, UnderlineStyle, Window, canvas,
+    RenderOnce, SharedString, StyledText, TextAlign, TextLayout, TextRun, UnderlineStyle, Window, canvas,
     prelude::*, px,
 };
 use yp_ui::input_actions::{Copy, SelectAll};
@@ -85,6 +85,24 @@ pub fn runs_cover(runs: &[TextRun], text: &str) -> bool {
         }
     }
     offset == text.len()
+}
+
+fn reveal_runs(runs: &mut Vec<TextRun>, prefix_len: usize, text_len: usize) -> Option<TextRun> {
+    let mut end = 0;
+    let edge = runs
+        .iter()
+        .find(|run| {
+            end += run.len;
+            prefix_len < end
+        })
+        .cloned();
+    *runs = restyle_range(runs, prefix_len..text_len, |run| {
+        run.color.a = 0.;
+        run.background_color = None;
+        run.underline = None;
+        run.strikethrough = None;
+    });
+    edge
 }
 
 struct TextState {
@@ -285,6 +303,24 @@ impl RenderOnce for RichBlock {
                 run.background_color = Some(selection_color);
             });
         }
+        let edge = yp_ui::nier::page_text_frame(&self.text, window, cx).and_then(|frame| {
+            if runs.is_empty() {
+                runs.push(window.text_style().to_run(self.text.len()));
+            }
+            let mut run = reveal_runs(&mut runs, frame.prefix_len, self.text.len())?;
+            if window.text_style().text_align != TextAlign::Left
+                || frame.glyph.trim().is_empty()
+                || self.text[frame.prefix_len..].starts_with(char::is_whitespace)
+            {
+                return None;
+            }
+            run.len = frame.glyph.len();
+            Some((
+                frame.prefix_len,
+                SharedString::from(frame.glyph.to_owned()),
+                run,
+            ))
+        });
         let styled = if runs.is_empty() {
             StyledText::new(self.text.clone())
         } else {
@@ -410,6 +446,26 @@ impl RenderOnce for RichBlock {
                 });
             })
             .child(styled)
+            .children(edge.map(|(index, glyph, run)| {
+                canvas(
+                    |_, _, _| {},
+                    move |bounds, _, window, cx| {
+                        if bounds.intersects(&window.content_mask().bounds)
+                            && let Some(origin) = layout.position_for_index(index)
+                        {
+                            window.with_content_mask(Some(ContentMask { bounds }), |window| {
+                                let size = window.text_style().font_size.to_pixels(window.rem_size());
+                                let line = window.text_system().shape_line(glyph, size, &[run], None);
+                                let _ = line.paint(
+                                    origin, layout.line_height(), TextAlign::Left, None, window, cx,
+                                );
+                            });
+                        }
+                    },
+                )
+                .absolute()
+                .inset_0()
+            }))
             .child(pointer_capture(
                 selecting,
                 move |event, _, cx| {
@@ -479,6 +535,57 @@ mod tests {
     fn a_range_inside_one_run_splits_it_in_three() {
         let runs = restyle_range(&[run(10)], 3..6, mark);
         assert_eq!(marked(&runs), vec![(3, false), (3, true), (4, false)]);
+    }
+
+    #[test]
+    fn typing_masks_only_the_suffix_and_keeps_link_and_selection_offsets() {
+        let text = "Aé界";
+        let mut link = run("é界".len());
+        link.color = gpui::rgb(0x123456).into();
+        mark(&mut link);
+        let mut runs = vec![run(1), link.clone()];
+        let index = "Aé".len();
+        let edge = reveal_runs(&mut runs, index, text.len()).unwrap();
+        assert_eq!(edge.color, link.color);
+        assert!(runs_cover(&runs, text));
+        assert_eq!(marked(&runs), vec![(1, false), (2, true), (3, false)]);
+        assert_eq!(runs[1].color, link.color);
+        assert_eq!(runs[2].color.a, 0.);
+        assert_eq!(selected_text(text, 1..text.len()), "é界");
+    }
+
+    #[gpui::test]
+    fn inline_code_appears_with_its_text_and_is_immediately_visible_with_reduced_motion(
+        cx: &mut gpui::TestAppContext,
+    ) {
+        struct Article;
+        impl gpui::Render for Article {
+            fn render(&mut self, window: &mut Window, _: &mut gpui::Context<Self>) -> impl IntoElement {
+                let prefix = "An article paragraph with inline code at the end. ";
+                let mut code = window.text_style().to_run(4);
+                code.background_color = Some(gpui::rgb(0x6839bd).into());
+                let block = RichBlock::new(
+                    "article-text",
+                    format!("{prefix}code"),
+                    vec![window.text_style().to_run(prefix.len()), code],
+                );
+                yp_ui::nier::page_text_scope(block, std::time::Instant::now())
+            }
+        }
+        cx.update(yp_ui::init_for_tests);
+        let (article, cx) = cx.add_window_view(|_, _| Article);
+        cx.run_until_parked();
+        let code_visible = |cx: &mut gpui::VisualTestContext| cx.update(|window, _| {
+            let color: gpui::Background = gpui::rgb(0x6839bd).into();
+            window.painted_quads().iter().any(|quad| quad.background == color)
+        });
+        assert!(!code_visible(cx));
+        article.update(cx, |_, cx| {
+            cx.set_global(yp_ui::nier::ReducedMotion(true));
+            cx.notify();
+        });
+        cx.run_until_parked();
+        assert!(code_visible(cx));
     }
 
     #[test]

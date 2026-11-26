@@ -45,6 +45,19 @@ impl Spinner {
 impl RenderOnce for Spinner {
     fn render(self, window: &mut Window, cx: &mut App) -> impl IntoElement {
         let size = self.size.pixels(window, cx);
+        if cx.theme().id == crate::ThemeId::NierNew {
+            let color = self.color.color(cx).to_rgb();
+            let tint = [color.r, color.g, color.b].map(|channel| (channel * 255.).round() as u8);
+            return div()
+                .flex_none()
+                .size(size)
+                .child(
+                    yp_nier_ui::LoadingIcon::new("yp-spinner")
+                        .scale(f32::from(size) / 48.)
+                        .tint(tint),
+                )
+                .into_any_element();
+        }
         let duration = cx.theme().motion.spin;
         svg()
             .path(IconName::ProgressRing.path())
@@ -56,6 +69,7 @@ impl RenderOnce for Spinner {
                 Animation::new(duration).repeat(),
                 |this, delta| this.with_transformation(Transformation::rotate(percentage(delta))),
             )
+            .into_any_element()
     }
 }
 

@@ -6,8 +6,6 @@ pub const MAX_ENTRIES_PER_TAB: usize = 5000;
 pub const LOG_LEVELS: [LogLevel; 4] = [LogLevel::Error, LogLevel::Warn, LogLevel::Info, LogLevel::Debug];
 pub const DEFAULT_HIDDEN_LEVELS: [LogLevel; 2] = [LogLevel::Info, LogLevel::Debug];
 
-const MODLOADER_MODULE_PREFIXES: [&str; 5] = ["modloader", "nams", "nier", "wgpu", "naga"];
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
 pub enum LogTab {
     #[default]
@@ -25,8 +23,7 @@ impl LogTab {
 }
 
 pub fn is_modloader_module(module: &str) -> bool {
-    let lower = module.to_lowercase();
-    MODLOADER_MODULE_PREFIXES.iter().any(|prefix| lower.starts_with(prefix))
+    !module.split("::").next().is_some_and(|root| root.eq_ignore_ascii_case("yorha_protocol"))
 }
 
 pub fn append_capped(current: &mut Vec<LogEntry>, added: Vec<LogEntry>) {
@@ -106,6 +103,18 @@ impl LogPanel {
     pub fn reset(&mut self) {
         self.modloader_entries.clear();
         self.yorha_entries.clear();
+    }
+
+    pub fn apply_from(&mut self, tab: LogTab, update: TailUpdate) {
+        let entries = match tab {
+            LogTab::Modloader => &mut self.modloader_entries,
+            LogTab::Yorha => &mut self.yorha_entries,
+        };
+        match update {
+            TailUpdate::Unchanged => {}
+            TailUpdate::Reset => entries.clear(),
+            TailUpdate::Appended(added) => append_capped(entries, added),
+        }
     }
 
     pub fn apply(&mut self, update: TailUpdate) {

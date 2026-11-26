@@ -160,7 +160,7 @@ fn hero(open: &OpenFile, window: &mut Window, cx: &mut App) -> gpui::Div {
                             .size(IconSize::Medium)
                             .color(Color::OnAccent),
                     )
-                    .child(strings.docs_hero_cta())
+                    .child(Text::new(strings.docs_hero_cta()))
                     .child(
                         div()
                             .px(sizes.chip_padding_h)
@@ -168,7 +168,7 @@ fn hero(open: &OpenFile, window: &mut Window, cx: &mut App) -> gpui::Div {
                             .rounded(sizes.font_md)
                             .bg(theme.colors.button_text.opacity(theme.alpha.line))
                             .text_size(sizes.font_xs)
-                            .child(strings.docs_hero_time()),
+                            .child(Text::new(strings.docs_hero_time())),
                     ),
             ),
         )

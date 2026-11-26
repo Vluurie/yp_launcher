@@ -286,8 +286,24 @@ impl ResponsiveExt for Window {
 
     fn sizes(&self, cx: &App) -> Sizes {
         let viewport = self.viewport_size();
-        cx.theme()
-            .sizes
-            .resolve(self.breakpoint(cx), viewport.width, viewport.height)
+        let mut sizes =
+            cx.theme()
+                .sizes
+                .resolve(self.breakpoint(cx), viewport.width, viewport.height);
+        let factor = super::MenuTextSize::factor(cx);
+        for font in [
+            &mut sizes.font_xs,
+            &mut sizes.font_sm,
+            &mut sizes.font_md,
+            &mut sizes.font_lg,
+            &mut sizes.font_xl,
+            &mut sizes.font_xxl,
+        ] {
+            *font *= factor;
+        }
+        if factor > 1. {
+            sizes.play_button_height = sizes.play_button_height.max(sizes.font_xl * 1.7);
+        }
+        sizes
     }
 }

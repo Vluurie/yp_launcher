@@ -147,7 +147,12 @@ impl Focusable for InstallChoiceDialog {
     }
 }
 
-impl ModalView for InstallChoiceDialog {}
+impl ModalView for InstallChoiceDialog {
+    fn on_before_dismiss(&mut self, _: &mut Window, _: &mut Context<Self>) -> bool {
+        self.sender.take();
+        true
+    }
+}
 
 impl Render for InstallChoiceDialog {
     fn render(&mut self, window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
@@ -457,7 +462,13 @@ async fn deep_search(cx: &mut AsyncWindowContext) -> Option<PathBuf> {
         .ok()?
         .await;
     match found.len() {
-        0 => select_manually(ManualRejection::ShowAsError, cx).await,
+        0 => {
+            cx.update(|window, cx| {
+                let message = cx.t().fail_title_install_not_found();
+                window.push_toast(yp_ui::Toast::warning(message).id("game_search_empty"), cx);
+            }).ok();
+            None
+        }
         1 => match ask_install(InstallDialogKind::ConfirmSingle, found, cx).await {
             InstallChoice::Selected(dir) => {
                 apply_directory(dir, ManualRejection::ShowAsError, cx).await
@@ -469,9 +480,8 @@ async fn deep_search(cx: &mut AsyncWindowContext) -> Option<PathBuf> {
             InstallChoice::Selected(dir) => {
                 apply_directory(dir, ManualRejection::ShowAsError, cx).await
             }
-            InstallChoice::Manual | InstallChoice::Cancelled | InstallChoice::DeepSearch => {
-                select_manually(ManualRejection::ShowAsError, cx).await
-            }
+            InstallChoice::Manual => select_manually(ManualRejection::ShowAsError, cx).await,
+            InstallChoice::Cancelled | InstallChoice::DeepSearch => None,
         },
     }
 }
@@ -630,6 +640,51 @@ impl Render for DirectorySelector {
         let session = cx.stores().session.read(cx);
         let selected = session.is_directory_selected();
         let searching = session.auto_searching();
+        if theme.id == ThemeId::NierNew {
+            let path = if searching {
+                strings.searching_for_nier().to_owned()
+            } else if selected {
+                session.selected_directory().to_owned()
+            } else {
+                strings.no_file_selected().to_owned()
+            };
+            return v_flex()
+                .id("shell-directory-selector")
+                .w_full()
+                .min_w_0()
+                .gap(px(6.))
+                .child(SelectableText::new("installed-game-path", path).size(LabelSize::Small))
+                .child(
+                    h_flex()
+                        .w_full()
+                        .min_w_0()
+                        .flex_wrap()
+                        .gap(px(12.))
+                        .child(
+                            Button::new(
+                                "shell-directory-select",
+                                if selected {
+                                    strings.menu_change_installation()
+                                } else {
+                                    strings.select_manually()
+                                },
+                            )
+                            .style(ButtonStyle::Link)
+                            .start_icon(IconName::FolderOpen)
+                            .controller_support(false)
+                            .disabled(searching)
+                            .on_click(cx.listener(|v, _, w, cx| v.run_manual_select(w, cx))),
+                        )
+                        .child(
+                            Button::new("shell-directory-auto", strings.auto_button())
+                                .style(ButtonStyle::Link)
+                                .start_icon(IconName::Search)
+                                .disabled(searching)
+                                .on_click(cx.listener(|v, _, w, cx| v.run_auto_search(w, cx))),
+                        ),
+                )
+                .into_any_element();
+        }
         let hover_border = theme.colors.border_medium;
         let field = h_flex()
             .flex_1()
@@ -704,5 +759,6 @@ impl Render for DirectorySelector {
                         this.run_manual_select(window, cx);
                     })),
             )
+            .into_any_element()
     }
 }

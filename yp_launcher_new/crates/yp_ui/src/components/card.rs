@@ -41,6 +41,7 @@ pub struct Card {
     header_end: Option<AnyElement>,
     elevation: Elevation,
     translucent: bool,
+    prominent_header: bool,
     padding: CardPadding,
     full_height: bool,
     accent: Option<Color>,
@@ -63,6 +64,7 @@ impl Card {
             header_end: None,
             elevation: Elevation::None,
             translucent: false,
+            prominent_header: false,
             padding: CardPadding::default(),
             full_height: false,
             accent: None,
@@ -87,6 +89,11 @@ impl Card {
 
     pub fn elevation(mut self, elevation: Elevation) -> Self {
         self.elevation = elevation;
+        self
+    }
+
+    pub fn prominent_header(mut self) -> Self {
+        self.prominent_header = true;
         self
     }
 
@@ -134,8 +141,13 @@ impl RenderOnce for Card {
         let has_header = self.title.is_some() || self.header.is_some() || self.header_end.is_some();
         v_flex()
             .w_full()
-            .when(self.full_height, |this| this.h_full())
-            .rounded(sizes.border_radius)
+            .min_w_0()
+            .when(self.full_height, |this| this.h_full().min_h_0())
+            .rounded(if theme.id == crate::ThemeId::NierNew {
+                px(0.)
+            } else {
+                sizes.border_radius
+            })
             .bg(background)
             .border_1()
             .border_color(border)
@@ -147,8 +159,16 @@ impl RenderOnce for Card {
                         .gap(sizes.spacing_md)
                         .px(sizes.card_padding_h)
                         .py(sizes.card_padding_v)
-                        .rounded_t(sizes.border_radius)
-                        .bg(theme.colors.surface_medium)
+                        .when(theme.id != crate::ThemeId::NierNew, |el| {
+                            el.rounded_t(sizes.border_radius)
+                                .bg(theme.colors.surface_medium)
+                        })
+                        .when(theme.id == crate::ThemeId::NierNew, |el| {
+                            el.border_b_1().border_color(theme.colors.border_medium)
+                        })
+                        .when(self.prominent_header, |el| {
+                            el.bg(theme.colors.accent_primary)
+                        })
                         .when_some(self.title, |this, title| {
                             this.child(
                                 v_flex()
@@ -157,7 +177,11 @@ impl RenderOnce for Card {
                                     .text_size(sizes.font_sm)
                                     .line_height(relative(LINE_HEIGHT_TIGHT))
                                     .font_weight(FontWeight::BOLD)
-                                    .text_color(theme.colors.accent_primary)
+                                    .text_color(if self.prominent_header {
+                                        theme.colors.button_text
+                                    } else {
+                                        theme.colors.accent_primary
+                                    })
                                     .child(Text::new(title)),
                             )
                         })
@@ -172,6 +196,7 @@ impl RenderOnce for Card {
             .child(
                 v_flex()
                     .w_full()
+                    .min_w_0()
                     .when(self.full_height, |this| this.flex_1().min_h_0())
                     .px(padding_h)
                     .py(padding_v)
@@ -383,19 +408,27 @@ impl RenderOnce for CollapsibleCard {
         let toggle_state = state.clone();
         let header = h_flex()
             .id((self.id.clone(), "header"))
+            .role(gpui::Role::Button)
+            .aria_label(self.title.clone())
+            .aria_expanded(open)
             .w_full()
             .gap(sizes.spacing_md)
             .px(sizes.card_padding_h)
             .py(sizes.card_padding_v)
             .rounded_t(radius)
             .when(!open, |this| this.rounded_b(radius))
-            .bg(theme.colors.surface_medium)
+            .when(theme.id != crate::ThemeId::NierNew, |el| {
+                el.bg(theme.colors.surface_medium)
+            })
+            .when(theme.id == crate::ThemeId::NierNew && open, |el| {
+                el.border_b_1().border_color(theme.colors.border_medium)
+            })
             .border_l(Sizes::ACCENT_BAR_WIDTH)
             .border_color(theme.colors.transparent)
             .cursor_pointer()
-            .keyboard_focus(cx)
+            .keyboard_activate(cx)
             .hover(move |style| style.bg(hover_background).border_color(accent))
-            .on_click(move |_, window, cx| {
+            .on_disclosure_toggle(open, move |_, window, cx| {
                 let next = toggle_state.update(cx, |state, cx| {
                     state.open = !state.open;
                     state.generation += 1;

@@ -31,10 +31,14 @@ impl ThemeStyle {
                 button_hover: ButtonHover::Tint,
                 focus_ring: colors.accent_primary.opacity(alpha.vignette),
             },
-            ThemeId::Nier => Self {
+            ThemeId::Nier | ThemeId::NierNew => Self {
                 nav_hover: NavHover::InkSweep,
                 button_hover: ButtonHover::Invert,
-                focus_ring: colors.accent_primary.opacity(alpha.vignette),
+                focus_ring: if id == ThemeId::NierNew {
+                    colors.accent_primary
+                } else {
+                    colors.accent_primary.opacity(alpha.vignette)
+                },
             },
         }
     }

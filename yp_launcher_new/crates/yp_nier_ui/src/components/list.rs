@@ -95,7 +95,9 @@ impl RenderOnce for MenuList {
         let step = if self.item_layout { 50. } else { 64. };
         let row_height = px(step * scale);
         let slots = current.opening.as_ref().map_or(1, |(_, rows)| rows.len());
-        if !current.scrolled
+        let reduced = crate::ReducedMotion::enabled(cx);
+        if !reduced
+            && !current.scrolled
             && start.elapsed().as_secs_f32() * 60. < 30. + 2. * slots.min(self.count) as f32
         {
             window.request_animation_frame();
@@ -110,7 +112,11 @@ impl RenderOnce for MenuList {
         let row = self.row;
         let row_scroll = handle.clone();
         let list = uniform_list(self.id, self.count, move |range, w, cx| {
-            let opening = state.update(cx, |list, _| list.opening_rows(&row_scroll, row_height));
+            let opening = if reduced {
+                None
+            } else {
+                state.update(cx, |list, _| list.opening_rows(&row_scroll, row_height))
+            };
             let now = Instant::now();
             range
                 .map(|i| {
@@ -160,7 +166,7 @@ impl RenderOnce for MenuList {
                         .absolute()
                         .left_0()
                         .top(px(15. * scale))
-                        .w(px(449. * scale))
+                        .w(px(440. * scale))
                         .h(px(450. * scale))
                         .child(list),
                 )
@@ -191,6 +197,8 @@ impl RenderOnce for MenuList {
                     .absolute()
                     .inset_0()
                     .left(px(6. * self.scale))
+                    .right(px(40. * scale))
+                    .overflow_hidden()
                     .child(list),
             )
             .child(

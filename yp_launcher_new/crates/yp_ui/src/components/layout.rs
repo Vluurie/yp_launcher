@@ -97,25 +97,60 @@ impl RenderOnce for PageHeader {
         let accent = theme.colors.accent_primary;
         let info_hover = accent.opacity(theme.alpha.subtle);
         let show_save = self.dirty;
+        let menu = theme.id == crate::ThemeId::NierNew;
+        let heading_name = self.title.clone();
+        let heading = if menu {
+            let scale = (f32::from(sizes.window_width) / 1840.).clamp(0.43, 0.74);
+            let title = self.title.to_uppercase();
+            let width = yp_nier_ui::Theme::bundled().measure(&title, 2, scale)[0]
+                + title.chars().count() as f32 * 10. * scale;
+            if crate::theme::MenuTextSize::percent(cx) == 100
+                && width <= f32::from(sizes.window_width) * 0.52
+            {
+                yp_nier_ui::MenuTitle::new(title)
+                    .for_page(super::WindowExt::yp_root(window).and_then(|root| root.read(cx).menu_page_start()))
+                    .scale(scale)
+                    .into_any_element()
+            } else {
+                Label::new(self.title)
+                    .size(LabelSize::XLarge)
+                    .semibold()
+                    .into_any_element()
+            }
+        } else {
+            v_flex()
+                .min_w_0()
+                .truncate()
+                .text_size(sizes.font_xl)
+                .line_height(relative(LINE_HEIGHT_TIGHT))
+                .font_weight(FontWeight::BOLD)
+                .text_color(theme.colors.text_primary)
+                .child(Text::new(self.title))
+                .into_any_element()
+        };
         h_flex()
             .w_full()
             .flex_none()
             .gap(sizes.spacing_md)
-            .px(sizes.card_padding_h)
-            .py(sizes.card_padding_v)
-            .bg(theme.colors.surface_medium)
-            .border_b_1()
-            .border_color(theme.colors.border_light)
+            .min_w_0()
+            .when(menu, |el| el.flex_wrap().gap_y(px(6.)).py(px(12.)))
+            .when(!menu, |el| {
+                el.px(sizes.card_padding_h)
+                    .py(sizes.card_padding_v)
+                    .bg(theme.colors.surface_medium)
+                    .border_b_1()
+                    .border_color(theme.colors.border_light)
+            })
             .children(self.start_slot)
             .child(
-                v_flex()
+                div()
+                    .id("page-heading")
+                    .role(gpui::Role::Heading)
+                    .aria_level(1)
+                    .aria_label(heading_name)
                     .min_w_0()
-                    .truncate()
-                    .text_size(sizes.font_xl)
-                    .line_height(relative(LINE_HEIGHT_TIGHT))
-                    .font_weight(FontWeight::BOLD)
-                    .text_color(theme.colors.text_primary)
-                    .child(Text::new(self.title)),
+                    .max_w_full()
+                    .child(heading),
             )
             .when_some(self.info, |this, (tooltip, on_reveal)| {
                 let clickable = on_reveal.is_some();
@@ -128,6 +163,12 @@ impl RenderOnce for PageHeader {
                 this.child(
                     div()
                         .id("yp-page-header-info")
+                        .role(if clickable {
+                            gpui::Role::Button
+                        } else {
+                            gpui::Role::Note
+                        })
+                        .aria_label(tooltip.clone())
                         .group("yp-page-header-info")
                         .flex_none()
                         .p(px(2.))
@@ -136,7 +177,9 @@ impl RenderOnce for PageHeader {
                             this.opacity(theme.alpha.half).cursor_not_allowed()
                         })
                         .when(clickable && !controller_blocked, |this| {
-                            this.cursor_pointer().hover(move |style| style.bg(info_hover))
+                            this.keyboard_activate(cx)
+                                .cursor_pointer()
+                                .hover(move |style| style.bg(info_hover))
                         })
                         .child(
                             Icon::new(IconName::InfoOutline)
@@ -197,6 +240,71 @@ struct MeasuredWidth {
     width: Option<Pixels>,
 }
 
+fn measured_width(id: ElementId, window: &mut Window, cx: &mut App) -> (Pixels, AnyElement) {
+    let state = window.use_keyed_state(id, cx, |_, _| MeasuredWidth::default());
+    let measured = state.read(cx).width;
+    let width = measured.unwrap_or(window.sizes(cx).window_width);
+    let tracker = bounds_tracker(move |bounds, window, cx| {
+        let width = bounds.size.width;
+        let changed = state.read(cx).width != Some(width);
+        if changed {
+            let state = state.clone();
+            window.defer(cx, move |_, cx| {
+                state.update(cx, |state, cx| {
+                    state.width = Some(width);
+                    cx.notify();
+                });
+            });
+        }
+    });
+    (width, tracker.into_any_element())
+}
+
+pub struct ResponsiveGrid {
+    id: ElementId,
+    item_width: Pixels,
+    max_columns: u16,
+    children: Vec<AnyElement>,
+}
+
+crate::impl_into_element!(ResponsiveGrid);
+
+impl ResponsiveGrid {
+    pub fn new(id: impl Into<ElementId>, item_width: Pixels, max_columns: u16) -> Self {
+        Self {
+            id: id.into(),
+            item_width,
+            max_columns: max_columns.max(1),
+            children: Vec::new(),
+        }
+    }
+}
+
+impl ParentElement for ResponsiveGrid {
+    fn extend(&mut self, children: impl IntoIterator<Item = AnyElement>) {
+        self.children.extend(children);
+    }
+}
+
+impl RenderOnce for ResponsiveGrid {
+    fn render(self, window: &mut Window, cx: &mut App) -> impl IntoElement {
+        let gap = window.sizes(cx).spacing_md;
+        let (width, tracker) = measured_width(self.id, window, cx);
+        let columns = (f32::from(width + gap) / f32::from(self.item_width + gap).max(1.))
+            .floor()
+            .clamp(1., f32::from(self.max_columns)) as u16;
+        div().relative().w_full().min_w_0().child(tracker).child(
+            div()
+                .w_full()
+                .min_w_0()
+                .grid()
+                .grid_cols(columns)
+                .gap(gap)
+                .children(self.children),
+        )
+    }
+}
+
 pub struct TwoColumn {
     id: ElementId,
     left: AnyElement,
@@ -244,24 +352,9 @@ impl TwoColumn {
 impl RenderOnce for TwoColumn {
     fn render(self, window: &mut Window, cx: &mut App) -> impl IntoElement {
         let sizes = window.sizes(cx);
-        let state = window.use_keyed_state(self.id, cx, |_, _| MeasuredWidth::default());
-        let measured = state.read(cx).width;
-        let width = measured.unwrap_or(sizes.window_width);
+        let (width, tracker) = measured_width(self.id, window, cx);
         let stack = width < self.breakpoint;
         let fill = self.fill_height;
-        let tracker = bounds_tracker(move |bounds, window, cx| {
-            let width = bounds.size.width;
-            let changed = state.read(cx).width != Some(width);
-            if changed {
-                let state = state.clone();
-                window.defer(cx, move |_, cx| {
-                    state.update(cx, |state, cx| {
-                        state.width = Some(width);
-                        cx.notify();
-                    });
-                });
-            }
-        });
         let total = self.ratio.0 + self.ratio.1;
         let container = div()
             .relative()

@@ -4,7 +4,7 @@ use std::time::Duration;
 
 use gpui::{Context, EventEmitter, Task};
 use yp_core::GamePaths;
-use yp_core::consts::NAMS_LOG_NAME;
+use yp_core::consts::{NAMS_LOG_NAME, YORHA_LOG_NAME};
 use yp_host::launch::nams_dll;
 use yp_host::nams_log::{LogTail, POLL_INTERVAL_MS, TailUpdate};
 
@@ -24,21 +24,33 @@ pub enum LogEvent {
 }
 
 struct Tailing {
-    tail: LogTail,
-    pending: Vec<TailUpdate>,
+    nams: LogTail,
+    yorha: LogTail,
+    separate_files: Option<bool>,
+    pending: Vec<(Option<LogTab>, TailUpdate)>,
 }
 
 impl Tailing {
     fn new(log_file: PathBuf) -> Self {
         Self {
-            tail: LogTail::new(log_file),
+            yorha: LogTail::new(log_file.with_file_name(YORHA_LOG_NAME)),
+            nams: LogTail::new(log_file),
+            separate_files: None,
             pending: Vec::new(),
         }
     }
 
     fn poll(&mut self) {
-        let update = self.tail.poll();
-        self.pending.push(update);
+        let separate = self.yorha.path().is_file();
+        if self.separate_files.replace(separate).is_some_and(|old| old != separate) {
+            self.nams = LogTail::new(self.nams.path().to_owned());
+            self.yorha = LogTail::new(self.yorha.path().to_owned());
+            self.pending.push((None, TailUpdate::Reset));
+        }
+        self.pending.push((separate.then_some(LogTab::Modloader), self.nams.poll()));
+        if separate {
+            self.pending.push((Some(LogTab::Yorha), self.yorha.poll()));
+        }
     }
 }
 
@@ -161,11 +173,13 @@ impl LogStore {
         self.filtered = self.panel.filtered_entries().into_iter().cloned().collect();
     }
 
-    fn apply(&mut self, update: TailUpdate, cx: &mut Context<Self>) {
-        self.panel.is_loading = false;
+    fn apply(&mut self, source: Option<LogTab>, update: TailUpdate, cx: &mut Context<Self>) {
+        let was_loading = std::mem::take(&mut self.panel.is_loading);
         match &update {
             TailUpdate::Unchanged => {
-                cx.notify();
+                if was_loading {
+                    cx.notify();
+                }
                 return;
             }
             TailUpdate::Reset => cx.emit(LogEvent::Reset),
@@ -176,7 +190,11 @@ impl LogStore {
             self.panel.yorha_entries.len(),
         );
         let appended = matches!(update, TailUpdate::Appended(_));
-        self.panel.apply(update);
+        if let Some(tab) = source {
+            self.panel.apply_from(tab, update);
+        } else {
+            self.panel.apply(update);
+        }
         if appended {
             cx.emit(LogEvent::Appended {
                 modloader: self.panel.modloader_entries.len().saturating_sub(before.0),
@@ -194,8 +212,8 @@ impl LogStore {
         else {
             return;
         };
-        for update in updates {
-            self.apply(update, cx);
+        for (source, update) in updates {
+            self.apply(source, update, cx);
         }
     }
 

@@ -1,10 +1,9 @@
-use crate::atlas::{Theme, Tint, image};
+use crate::atlas::{Theme, Tint};
 use crate::{GridNoise, Lens};
 use gpui::{
     App, Bounds, ContentMask, Global, IntoElement, Pixels, RenderImage, RenderOnce, Window, canvas,
     fill, point, prelude::*, px, rgba, size,
 };
-use image::{Rgba, RgbaImage};
 use std::collections::HashMap;
 use std::sync::Arc;
 
@@ -55,42 +54,6 @@ impl Rect {
 enum Asset {
     Sprite(String, Tint),
     Text(String, u16, Tint, u32, u8),
-    Screen(ScreenArt),
-}
-
-#[derive(Clone, Copy, Hash, Eq, PartialEq)]
-pub(crate) enum ScreenArt {
-    Vignette,
-    Grid,
-}
-
-fn screen_art(kind: ScreenArt) -> Arc<RenderImage> {
-    let (w, h) = if kind == ScreenArt::Grid {
-        (140, 140)
-    } else {
-        (256, 144)
-    };
-    image(RgbaImage::from_fn(w, h, |x, y| {
-        let alpha = match kind {
-            ScreenArt::Grid => {
-                if x % 7 == 0 || y % 7 == 0 {
-                    5
-                } else {
-                    0
-                }
-            }
-            ScreenArt::Vignette => {
-                let u = 2. * x as f32 / (w - 1) as f32 - 1.;
-                let v = 2. * y as f32 / (h - 1) as f32 - 1.;
-                {
-                    let side = ((u.abs() - 0.50) / 0.50).clamp(0., 1.);
-                    (side.powf(2.15) * (45. + 43. * v.abs().powf(2.2)) + 3. * v.abs().powi(6))
-                        .round() as u8
-                }
-            }
-        };
-        Rgba([26, 25, 18, alpha])
-    }))
 }
 
 #[derive(Default)]
@@ -115,7 +78,6 @@ fn texture(key: Asset, cx: &mut App) -> Option<Arc<RenderImage>> {
         Asset::Text(text, font, tint, spacing, alpha) => {
             Theme::bundled().run_image(text, *font, *tint, f32::from_bits(*spacing), *alpha)?
         }
-        Asset::Screen(kind) => screen_art(*kind),
     };
     let old = if cache.entries.len() >= 256 {
         let lru = cache
@@ -206,27 +168,6 @@ impl Surface {
             rect,
             Brush::Image(Asset::Sprite(name.to_owned(), tint), None),
         );
-    }
-    pub(crate) fn art(&mut self, kind: ScreenArt, rect: Rect) {
-        if kind == ScreenArt::Grid {
-            self.clip(rect, |s| {
-                for y in 0..(rect.h / 140.).ceil() as usize {
-                    for x in 0..(rect.w / 140.).ceil() as usize {
-                        s.push(
-                            Rect::new(
-                                rect.x + x as f32 * 140.,
-                                rect.y + y as f32 * 140.,
-                                140.,
-                                140.,
-                            ),
-                            Brush::Image(Asset::Screen(kind), None),
-                        );
-                    }
-                }
-            });
-        } else {
-            self.push(rect, Brush::Image(Asset::Screen(kind), None));
-        }
     }
     pub fn text(&mut self, text: &str, font: u16, scale: f32, x: f32, center_y: f32, tint: Tint) {
         self.lettering(

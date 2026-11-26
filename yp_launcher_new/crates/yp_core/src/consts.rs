@@ -1,13 +1,9 @@
 pub const APP_VERSION: &str = concat!("v", env!("CARGO_PKG_VERSION"));
 
 pub const GITHUB_URL: &str = "https://github.com/Vluurie/yp_launcher";
-pub const NAMS_GITLAB_URL: &str =
-    "https://gitlab.yasupa.de/nams/nams-rs/-/tree/master/mods/yorha_protocol?ref_type=heads";
 pub const GUIDE_URL: &str =
     "https://gitlab.yasupa.de/nams/yp-docs/-/blob/master/YoRHa_Protocol_Documentation.md";
 pub const DISCORD_URL: &str = "https://discord.gg/Z5spWtF8qs";
-pub const NAO_LAUNCHER_URL: &str = "https://www.nexusmods.com/nierautomata/mods/772?tab=files";
-pub const CLI_DOCS_URL: &str = "https://gitlab.yasupa.de/nams/yp-docs/-/blob/master/YorHa_Protocol_Documentation.md#how-to-start-via-command-line";
 pub const MULTI_OUTFIT_NPC_URL: &str = "https://www.nexusmods.com/nierautomata/mods/789";
 pub const RESHADE_ME_URL: &str = "https://reshade.me";
 pub const MIGOTO_URL: &str = "https://github.com/bo3b/3Dmigoto";
@@ -25,6 +21,7 @@ pub const PLUGINS_DIR_NAME: &str = "plugins";
 pub const PLUGINS_DISABLED_DIR_NAME: &str = "plugins_disabled";
 pub const LOGS_DIR_NAME: &str = "logs";
 pub const NAMS_LOG_NAME: &str = "nams.log";
+pub const YORHA_LOG_NAME: &str = "yorha_protocol.log";
 
 pub const THIRD_PARTY_DIR_NAME: &str = "thirdparty";
 pub const RESHADE_DIR_NAME: &str = "reshade";

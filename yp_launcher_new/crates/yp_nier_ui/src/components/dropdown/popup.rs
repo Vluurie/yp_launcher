@@ -29,7 +29,7 @@ impl RenderOnce for Popup {
         let scale = drop.scale;
         let large = self.large;
         let (width, paper, height, row_h, viewport_top, first_center, left) = if large {
-            (380., 328., 506., 53., 10., 44., 26.)
+            (380., 328., 506., 53., 10., 44., 33.)
         } else {
             (
                 289.,
@@ -92,6 +92,7 @@ impl RenderOnce for Popup {
                 let choices = drop.choices.clone();
                 let button = PulldownOption::new(("choice", idx), item.label.clone())
                     .scrolling(large)
+                    .when(large, |option| option.width(paper - left))
                     .scale(scale)
                     .selected(selection == idx)
                     .enabled(item.enabled)

@@ -101,6 +101,7 @@ fn a_file_whose_new_copy_differs_is_kept_in_the_old_folder() {
 
     let old = setup.legacy.join("game").join("celestial.dll");
     assert_eq!(result.left_behind, std::slice::from_ref(&old));
+    assert!(yp_thirdparty::ThirdPartyNotice::from_migration(&result).is_empty());
     assert_eq!(std::fs::read_to_string(&old).unwrap(), "old build");
     assert_eq!(std::fs::read_to_string(&newer).unwrap(), "new build");
 }

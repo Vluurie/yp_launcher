@@ -208,6 +208,8 @@ pub fn hidden_on_player_by_default(mesh_name: &str) -> bool {
 #[derive(Debug, Clone, PartialEq)]
 pub struct Session {
     model: Model,
+    motion: crate::motion::Library,
+    cloth: wmb3::ClothPlayer,
     visible: Vec<bool>,
     default_visible: BTreeSet<u32>,
     selected_lod: u32,
@@ -215,6 +217,10 @@ pub struct Session {
 
 impl Session {
     pub fn open(paths: &ArchivePaths, candidate: CandidateId) -> Result<Self> {
+        Self::open_with_sources(paths, candidate, &crate::MotionSources::default())
+    }
+
+    pub fn open_with_sources(paths: &ArchivePaths, candidate: CandidateId, sources: &crate::MotionSources) -> Result<Self> {
         let mut dat = paths.dat.as_deref().map(DatArchive::open).transpose()?;
         let mut dtt = paths.dtt.as_deref().map(DatArchive::open).transpose()?;
         let archive = match candidate.side {
@@ -234,7 +240,12 @@ impl Session {
         let stem = entry_stem(&entry);
         let textures = load_texture_files(&mut dat, &mut dtt, &stem)?;
         let model = Model::parse(&bytes, textures.as_ref())?;
-        Ok(Self::from_model(model, is_player_stem(&stem)))
+        let cloth = crate::cloth::load(&mut dat, &mut dtt, &stem, &model.skeleton);
+        let motion = crate::motion::Library::open(paths, sources, &stem, &model.skeleton);
+        let mut session = Self::from_model(model, is_player_stem(&stem));
+        session.motion = motion;
+        session.cloth = cloth;
+        Ok(session)
     }
 
     pub fn from_model(model: Model, is_player: bool) -> Self {
@@ -252,10 +263,56 @@ impl Session {
             .collect();
         Self {
             model,
+            motion: Default::default(),
+            cloth: Default::default(),
             visible,
             default_visible,
             selected_lod: 0,
         }
+    }
+
+    pub fn motion_names(&self) -> impl Iterator<Item = &str> {
+        self.motion.names()
+    }
+
+    pub fn selected_motion(&self) -> Option<usize> {
+        self.motion.selected.as_ref().map(|(index, _)| *index)
+    }
+
+    pub fn select_motion(&mut self, index: usize) -> bool {
+        if self.selected_motion() == Some(index) { return true; }
+        if !self.motion.choose(index, &self.model.skeleton) { return false; }
+        self.cloth.reset();
+        true
+    }
+
+    pub fn render_at(&self, seconds: f32, camera: &Camera, width: u32, height: u32, style: &RenderStyle) -> Result<RenderFrame> {
+        let mut cloth = self.cloth.clone();
+        cloth.reset();
+        let motion = self.motion.selected.as_ref().map(|(_, clip)| clip);
+        let pose = Self::sample_pose(&self.model.skeleton, motion, &mut cloth, seconds);
+        self.draw_pose(pose, camera, width, height, style)
+    }
+
+    pub fn cloth_bone_count(&self) -> usize { self.cloth.bone_count() }
+    pub fn cloth_group_count(&self) -> usize { self.cloth.group_count() }
+
+    fn sample_pose(skeleton: &wmb3::Skeleton, motion: Option<&yp_formats::mot::Motion>, cloth: &mut wmb3::ClothPlayer, seconds: f32) -> Option<wmb3::Pose> {
+        if cloth.group_count() > 0 && let Some(pose) = cloth.pose(skeleton, motion, seconds) {
+            return Some(pose);
+        }
+        motion.and_then(|clip| skeleton.try_pose(clip, seconds))
+    }
+
+    pub fn render_playback(&mut self, seconds: f32, camera: &Camera, width: u32, height: u32, style: &RenderStyle) -> Result<RenderFrame> {
+        let motion = self.motion.selected.as_ref().map(|(_, clip)| clip);
+        let pose = Self::sample_pose(&self.model.skeleton, motion, &mut self.cloth, seconds);
+        if pose.is_none() && motion.is_some() { self.motion.selected = None; }
+        self.draw_pose(pose, camera, width, height, style)
+    }
+
+    fn draw_pose(&self, pose: Option<wmb3::Pose>, camera: &Camera, width: u32, height: u32, style: &RenderStyle) -> Result<RenderFrame> {
+        cpu::render_pose(&self.model, &self.visible, self.selected_lod, camera, (width, height), style, pose.as_ref())
     }
 
     pub fn model(&self) -> &Model {

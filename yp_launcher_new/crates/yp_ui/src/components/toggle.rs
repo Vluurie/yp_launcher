@@ -78,7 +78,11 @@ impl RenderOnce for Checkbox {
         let sizes = window.sizes(cx);
         let box_size = sizes.checkbox_size - px(4.);
         let checked = self.state != ToggleState::Unselected;
-        let accent = theme.colors.accent_primary;
+        let accent = if theme.id == crate::ThemeId::NierNew {
+            theme.colors.success
+        } else {
+            theme.colors.accent_primary
+        };
         let group = SharedString::from(format!("yp-checkbox-{}", self.id));
         let next = self.state.inverse();
         let on_click = self.on_click;
@@ -88,6 +92,13 @@ impl RenderOnce for Checkbox {
         let label_color = self.label_color.color(cx);
         h_flex()
             .id(self.id)
+            .role(gpui::Role::CheckBox)
+            .aria_toggled(match self.state {
+                ToggleState::Selected => gpui::Toggled::True,
+                ToggleState::Unselected => gpui::Toggled::False,
+                ToggleState::Indeterminate => gpui::Toggled::Mixed,
+            })
+            .when_some(self.label.clone(), |el, label| el.aria_label(label))
             .group(group.clone())
             .gap(sizes.spacing_md)
             .when_some(self.tooltip, |this, tooltip| {
@@ -99,7 +110,7 @@ impl RenderOnce for Checkbox {
             .when(!disabled, |this| {
                 this.cursor_pointer()
                     .rounded(Sizes::CONTROL_RADIUS)
-                    .keyboard_focus(cx)
+                    .keyboard_activate(cx)
                     .when_some(on_click, |this, handler| {
                         this.on_click(move |_, window, cx| {
                             cx.stop_propagation();
@@ -169,6 +180,7 @@ pub enum SwitchSize {
 
 pub struct Switch {
     id: ElementId,
+    accessible_label: Option<SharedString>,
     state: ToggleState,
     label: Option<SharedString>,
     size: SwitchSize,
@@ -179,12 +191,18 @@ pub struct Switch {
 crate::impl_into_element!(Switch);
 
 impl Switch {
+    pub fn accessible_label(mut self, label: impl Into<SharedString>) -> Self {
+        self.accessible_label = Some(label.into());
+        self
+    }
+
     pub fn new(id: impl Into<ElementId>, state: impl Into<ToggleState>) -> Self {
         Self {
             id: id.into(),
             state: state.into(),
             label: None,
             size: SwitchSize::default(),
+            accessible_label: None,
             disabled: false,
             on_click: None,
         }
@@ -223,9 +241,18 @@ impl RenderOnce for Switch {
             SwitchSize::Small => (px(28.), px(16.)),
             SwitchSize::Default => (Sizes::SWITCH_WIDTH, Sizes::SWITCH_HEIGHT),
         };
-        let accent = theme.colors.accent_primary;
+        let accent = if theme.id == crate::ThemeId::NierNew {
+            theme.colors.success
+        } else {
+            theme.colors.accent_primary
+        };
         let thumb = if on { height * 0.6 } else { height * 0.5 };
         let inset = (height - thumb) / 2.;
+        let radius = if theme.id == crate::ThemeId::NierNew {
+            px(0.)
+        } else {
+            height
+        };
         let track = if on { accent } else { theme.colors.transparent };
         let track_border = if on { accent } else { theme.colors.text_muted };
         let thumb_color = if on {
@@ -239,6 +266,16 @@ impl RenderOnce for Switch {
         let disabled = self.disabled;
         h_flex()
             .id(self.id)
+            .role(gpui::Role::Switch)
+            .aria_toggled(match self.state {
+                ToggleState::Selected => gpui::Toggled::True,
+                ToggleState::Unselected => gpui::Toggled::False,
+                ToggleState::Indeterminate => gpui::Toggled::Mixed,
+            })
+            .when_some(
+                self.accessible_label.or_else(|| self.label.clone()),
+                |el, label| el.aria_label(label),
+            )
             .group(group.clone())
             .gap(sizes.spacing_lg)
             .when(disabled, |this| {
@@ -246,8 +283,8 @@ impl RenderOnce for Switch {
             })
             .when(!disabled, |this| {
                 this.cursor_pointer()
-                    .rounded(height)
-                    .keyboard_focus(cx)
+                    .rounded(radius)
+                    .keyboard_activate(cx)
                     .when_some(on_click, |this, handler| {
                         this.on_click(move |_, window, cx| {
                             cx.stop_propagation();
@@ -261,13 +298,13 @@ impl RenderOnce for Switch {
                     .flex_none()
                     .w(width)
                     .h(height)
-                    .rounded(height)
+                    .rounded(radius)
                     .bg(track)
                     .border_1()
                     .border_color(track_border)
                     .when(!disabled, |this| {
                         let hover_track = if on {
-                            theme.colors.accent_highlight
+                            accent
                         } else {
                             accent.opacity(theme.alpha.hover)
                         };
@@ -285,7 +322,7 @@ impl RenderOnce for Switch {
                                 inset
                             })
                             .size(thumb)
-                            .rounded(thumb)
+                            .rounded(radius.min(thumb))
                             .bg(thumb_color),
                     ),
             )
@@ -399,7 +436,7 @@ impl RenderOnce for RadioGroup {
                     })
                     .when(!disabled, |this| {
                         this.cursor_pointer()
-                            .keyboard_focus(cx)
+                            .keyboard_activate(cx)
                             .hover(move |style| style.bg(hover_background))
                             .when_some(handler, |this, handler| {
                                 this.on_click(move |_, window, cx| {

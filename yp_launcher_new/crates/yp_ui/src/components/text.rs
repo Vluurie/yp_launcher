@@ -236,17 +236,21 @@ impl Shaper {
 
 pub struct TextFrame {
     shaper: Shaper,
+    revealed: Option<SharedString>,
     cache: Rc<RefCell<Measurements>>,
 }
 
 pub struct Text {
+    origin: &'static std::panic::Location<'static>,
     text: SharedString,
     highlights: Vec<(Range<usize>, HighlightStyle)>,
 }
 
 impl Text {
+    #[track_caller]
     pub fn new(text: impl Into<SharedString>) -> Self {
         Self {
+            origin: std::panic::Location::caller(),
             text: text.into(),
             highlights: Vec::new(),
         }
@@ -267,7 +271,18 @@ impl Element for Text {
     type PrepaintState = ();
 
     fn id(&self) -> Option<ElementId> {
-        None
+        Some(ElementId::NamedChild(
+            std::sync::Arc::new(self.origin.into()),
+            self.text.clone(),
+        ))
+    }
+
+    fn a11y_role(&self) -> Option<gpui::Role> {
+        Some(gpui::Role::Label)
+    }
+
+    fn write_a11y_info(&self, node: &mut gpui::accesskit::Node) {
+        node.set_value(self.text.to_string());
     }
 
     fn source_location(&self) -> Option<&'static core::panic::Location<'static>> {
@@ -279,8 +294,13 @@ impl Element for Text {
         _id: Option<&GlobalElementId>,
         _inspector_id: Option<&InspectorElementId>,
         window: &mut Window,
-        _cx: &mut App,
+        cx: &mut App,
     ) -> (LayoutId, Self::RequestLayoutState) {
+        let revealed = self
+            .highlights
+            .is_empty()
+            .then(|| yp_nier_ui::page_text(&self.text, window, cx))
+            .flatten();
         let style = window.text_style();
         let font_size = style.font_size.to_pixels(window.rem_size());
         let line_height = style
@@ -307,7 +327,14 @@ impl Element for Text {
                 )
             }
         });
-        (layout_id, TextFrame { shaper, cache })
+        (
+            layout_id,
+            TextFrame {
+                shaper,
+                cache,
+                revealed,
+            },
+        )
     }
 
     fn prepaint(
@@ -338,7 +365,14 @@ impl Element for Text {
             shaper.natural(&mut cache, window, cx);
             shaper.paint_limit(&cache, bounds.size)
         };
-        let lines = shaper.lines(&decoration, limit, window, cx);
+        let revealed = frame.revealed.as_ref().map(|text| Shaper {
+            text: text.clone(),
+            ..shaper.clone()
+        });
+        let lines = revealed
+            .as_ref()
+            .unwrap_or(shaper)
+            .lines(&decoration, limit, window, cx);
         #[cfg(test)]
         probe::record(&shaper.text, &lines, bounds, decoration.color);
         let align = shaper.style.text_align;
