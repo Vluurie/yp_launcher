@@ -23,6 +23,14 @@ use model::{
 pub const KEY_CONTEXT: &str = "YpInspector";
 const PREVIEW_ASPECT: f32 = 16. / 9.;
 
+fn model_style(transparent: bool) -> yp_inspector::RenderStyle {
+    let mut style = yp_inspector::RenderStyle::default();
+    if transparent {
+        style.background = [0; 4];
+    }
+    style
+}
+
 #[derive(Default)]
 struct PreviewSelection {
     outfit: Option<i64>,
@@ -55,6 +63,7 @@ fn viewport(
     model: &Entity<InspectorModel>,
     session: Option<&Entity<ModelSession>>,
     allow_pan: bool,
+    resize: bool,
     cx: &App,
 ) -> FrameViewport {
     let state = model.read(cx);
@@ -100,7 +109,7 @@ fn viewport(
                     let unchanged = model
                         .read_with(cx, |model, _| model.viewport() == Some((width, height)))
                         .unwrap_or(true);
-                    if unchanged {
+                    if !resize || unchanged {
                         return;
                     }
                     window.defer(cx, move |_, cx| {
@@ -220,6 +229,7 @@ pub struct InspectorPage {
     preview: Option<gpui::WeakEntity<InspectorModel>>,
     transition: Option<transition::ViewportTransition>,
     controls_open: bool,
+    controls_slide: Option<transition::Slide>,
     returning: bool,
     origin: Option<SharedString>,
     unit_scroll: gpui::UniformListScrollHandle,
@@ -269,6 +279,7 @@ impl InspectorPage {
             preview: selection.preview,
             transition: None,
             controls_open: false,
+            controls_slide: None,
             returning: false,
             origin,
             unit_scroll: Default::default(),
@@ -301,7 +312,7 @@ impl InspectorPage {
         let theme = cx.theme().clone();
         let sizes = window.sizes(cx);
         let state = self.model.read(cx);
-        let in_drawer = self.controls_open && theme.id == ThemeId::NierNew;
+        let in_drawer = self.unit_view.is_some() && theme.id == ThemeId::NierNew;
         let title = state.title();
         let session = state.session().cloned();
         let summary = session
@@ -555,7 +566,7 @@ impl Render for InspectorPage {
             window.focus(&self.focus_handle, cx);
             if theme.id == ThemeId::NierNew {
                 self.set_unit_view(Some(self.single_preview), window, cx);
-                if self.single_preview { self.start_transition(true, cx); }
+                self.start_transition(true, cx);
             }
         }
         if let Some(expanded) = self.unit_view {
@@ -568,7 +579,7 @@ impl Render for InspectorPage {
         let has_frame = session
             .as_ref()
             .is_some_and(|session| session.read(cx).latest_frame().is_some());
-        let view = viewport("inspector-viewport", &self.model, session.as_ref(), true, cx);
+        let view = viewport("inspector-viewport", &self.model, session.as_ref(), true, true, cx);
         let toolbar = self.toolbar(window, cx);
         let panel = self.mesh_panel(window, cx);
         let inset = sizes.padding_lg;
@@ -634,8 +645,19 @@ pub struct ModelPreview {
 
 impl ModelPreview {
     pub fn new(archives: ArchivePaths, _window: &mut Window, cx: &mut Context<Self>) -> Self {
-        let model = cx.new(|cx| InspectorModel::new(archives, ViewMode::Preview, None, cx));
-        let subscriptions = vec![cx.observe(&model, |_, _, cx| cx.notify())];
+        let model = cx.new(|cx| {
+            let mut model = InspectorModel::new(archives, ViewMode::Preview, None, cx);
+            model.set_style(model_style(cx.theme().id == ThemeId::NierNew), cx);
+            model
+        });
+        let subscriptions = vec![
+            cx.observe(&model, |_, _, cx| cx.notify()),
+            cx.observe_global::<yp_ui::theme::GlobalTheme>(|this, cx| {
+                let style = model_style(cx.theme().id == ThemeId::NierNew);
+                this.model.update(cx, |model, cx| model.set_style(style, cx));
+                cx.notify();
+            }),
+        ];
         Self {
             model,
             _subscriptions: subscriptions,
@@ -695,8 +717,12 @@ impl Render for ModelPreview {
         let presets = show_presets
             .then(|| preset_select("model-preview-preset", &self.model, cx))
             .flatten();
-        let view = viewport("model-preview-viewport", &self.model, session.as_ref(), false, cx);
+        let mut view = viewport("model-preview-viewport", &self.model, session.as_ref(), false, true, cx);
         let mut frame = div().relative().w_full().overflow_hidden();
+        if theme.id == ThemeId::NierNew {
+            view = view.transparent();
+            frame = frame.bg(yp_nier_ui::ModelViewer::background());
+        }
         frame.style().aspect_ratio = Some(PREVIEW_ASPECT);
         v_flex()
             .w_full()

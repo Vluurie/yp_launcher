@@ -10,6 +10,10 @@ pub(crate) fn le_u16(bytes: &[u8], offset: usize) -> Option<u16> {
     array(bytes, offset).map(u16::from_le_bytes)
 }
 
+pub(crate) fn le_i16(bytes: &[u8], offset: usize) -> Option<i16> {
+    array(bytes, offset).map(i16::from_le_bytes)
+}
+
 pub(crate) fn le_u32(bytes: &[u8], offset: usize) -> Option<u32> {
     array(bytes, offset).map(u32::from_le_bytes)
 }

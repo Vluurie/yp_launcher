@@ -1,7 +1,7 @@
 mod chrome;
 mod motion;
 
-use crate::{INK, Rect, Surface};
+use crate::INK;
 use gpui::{
     AnyElement, App, ElementId, FocusHandle, IntoElement, KeyDownEvent, MouseButton,
     MouseMoveEvent, MouseUpEvent, Pixels, Point, RenderOnce, SharedString, Window, canvas, div,
@@ -47,6 +47,11 @@ pub struct ModelViewer {
     prompts: [SharedString; 4],
 }
 impl ModelViewer {
+    pub fn background() -> gpui::Rgba {
+        let [r, g, b] = INK;
+        gpui::rgb(u32::from_be_bytes([0, r, g, b]))
+    }
+
     pub fn new(
         id: impl Into<ElementId>,
         name: impl Into<SharedString>,
@@ -195,15 +200,13 @@ impl RenderOnce for ModelViewer {
         if !open || transitioning {
             root = root.child(chrome::details(&self.name, &self.description, s));
         }
-        let mut bg = Surface::new(1., 1.);
-        bg.fill(Rect::new(0., 0., 1., 1.), INK, 255);
         let mut scene = div()
             .id("model-surface")
             .relative()
             .size_full()
             .occlude()
             .overflow_hidden()
-            .child(div().absolute().inset_0().child(bg))
+            .bg(Self::background())
             .child(self.scene);
         if open {
             scene = scene.child(

@@ -152,6 +152,12 @@ pub enum FormatError {
     Model(ModelFault),
     #[error("{0}")]
     Usm(UsmFault),
+    #[error("{name} is not in the game archives")]
+    GameFileMissing { name: String },
+    #[error("{name} could not be read: {detail}")]
+    GameFileDamaged { name: String, detail: &'static str },
+    #[error("the font cache is damaged")]
+    FontCacheDamaged,
     #[error("{op} failed for {}: {source}", path.display())]
     Io {
         op: FileOp,
@@ -192,6 +198,9 @@ impl FormatError {
             FormatError::Dat(_) => 1220,
             FormatError::Model(_) => 1230,
             FormatError::Usm(_) => 1240,
+            FormatError::GameFileMissing { .. } => 1250,
+            FormatError::GameFileDamaged { .. } => 1251,
+            FormatError::FontCacheDamaged => 1252,
             FormatError::Io {
                 op: FileOp::Read, ..
             } => 1300,

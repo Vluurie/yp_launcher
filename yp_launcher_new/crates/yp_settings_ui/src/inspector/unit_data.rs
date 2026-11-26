@@ -14,14 +14,7 @@ impl InspectorPage {
         cx: &mut Context<Self>,
     ) {
         if self.unit_view.is_some() != view.is_some() {
-            let style = if view.is_some() {
-                yp_inspector::RenderStyle {
-                    background: [0; 4],
-                    ..Default::default()
-                }
-            } else {
-                Default::default()
-            };
+            let style = super::model_style(view.is_some());
             self.model
                 .update(cx, |model, cx| model.set_style(style, cx));
         }
@@ -48,9 +41,8 @@ impl InspectorPage {
         match action {
             ViewerAction::Open => self.set_unit_view(Some(true), w, cx),
             ViewerAction::Back if self.controls_open => {
-                self.controls_open = false;
+                self.toggle_controls(cx);
                 self.focus_handle.focus(w, cx);
-                cx.notify();
             }
             ViewerAction::Back
                 if cx.theme().id == ThemeId::NierNew
@@ -129,19 +121,25 @@ impl InspectorPage {
         description.join("\n")
     }
 
-    fn unit_scene(&self, scale: f32, expanded: bool, cx: &mut Context<Self>) -> ModelViewer {
+    fn unit_frame(&self, cx: &App) -> Option<std::sync::Arc<gpui::RenderImage>> {
+        let model = self.model.read(cx);
+        model.session().and_then(|s| s.read(cx).latest_frame()).or_else(|| {
+            let preview = self.preview.as_ref()?.upgrade()?;
+            let source = preview.read(cx);
+            let selected = model.candidate().map(|c| c.id).or(model.initial_candidate)?;
+            if source.candidate()?.id != selected {
+                return None;
+            }
+            source.session()?.read(cx).latest_frame()
+        })
+    }
+
+    fn unit_scene(&self, scale: f32, expanded: bool, resize: bool, cx: &mut Context<Self>) -> ModelViewer {
         let model = self.model.read(cx);
         let name = self.model_caption(cx);
         let strings = cx.t();
         let session = model.session();
-        let frame = session.and_then(|s| s.read(cx).latest_frame()).or_else(|| {
-            let preview = self.preview.as_ref()?.upgrade()?;
-            let source = preview.read(cx);
-            if source.candidate()?.id != model.candidate()?.id {
-                return None;
-            }
-            source.session()?.read(cx).latest_frame()
-        });
+        let frame = self.unit_frame(cx);
         let equip = model.presets().len() > 1;
         let playback = session.map(|s| s.read(cx));
         let motion =
@@ -152,8 +150,9 @@ impl InspectorPage {
             .relative()
             .size_full()
             .child(
-                viewport("unit-model-frame", &self.model, session, true, cx)
+                viewport("unit-model-frame", &self.model, session, true, resize, cx)
                     .frame(frame.clone())
+                    .fit(if expanded { gpui::ObjectFit::Contain } else { gpui::ObjectFit::Cover })
                     .transparent()
                     .loading(false),
             )
@@ -204,11 +203,12 @@ impl InspectorPage {
     }
 
     pub(super) fn unit_data(
-        &self,
+        &mut self,
         expanded: bool,
-        window: &Window,
+        window: &mut Window,
         cx: &mut Context<Self>,
     ) -> AnyElement {
+        let (drawer_progress, drawer_moving) = self.controls_progress(window, cx);
         let strings = cx.t();
         let controls = || {
             let open = self.controls_open;
@@ -233,9 +233,8 @@ impl InspectorPage {
                 .on_disclosure_toggle(
                     open,
                     cx.listener(|v, _, _, cx| {
-                        v.controls_open = !v.controls_open;
+                        v.toggle_controls(cx);
                         cx.stop_propagation();
-                        cx.notify();
                     }),
                 )
                 .child(Icon::new(IconName::Tune).size(IconSize::Small))
@@ -255,40 +254,16 @@ impl InspectorPage {
         };
         if Self::responsive_unit(window, cx) {
             let model = self.model.read(cx);
-            let viewer = viewport("compact-unit-model", &self.model, model.session(), true, cx);
+            let frame = self.unit_frame(cx);
+            let viewer = viewport("compact-unit-model", &self.model, model.session(), true, true, cx)
+                .loading(frame.is_none() && model.error_text(cx).is_none())
+                .frame(frame)
+                .transparent();
             let pick = (!expanded)
                 .then(|| super::candidate_select("compact-unit-picker", &self.model, cx))
                 .flatten();
             let name = self.model_caption(cx);
             let description = self.unit_description(cx);
-            if self.controls_open {
-                return v_flex()
-                    .size_full()
-                    .min_h_0()
-                    .bg(cx.theme().colors.background_primary)
-                    .track_focus(&self.focus_handle)
-                    .on_key_down(cx.listener(|v, k: &KeyDownEvent, w, cx| {
-                        if k.keystroke.key == "escape" {
-                            v.unit_action(ViewerAction::Back, w, cx);
-                            cx.stop_propagation();
-                        }
-                    }))
-                    .child(
-                        h_flex()
-                            .flex_none()
-                            .justify_end()
-                            .p(px(8.))
-                            .child(controls()),
-                    )
-                    .child(self.toolbar(window, cx))
-                    .child(
-                        div()
-                            .flex_1()
-                            .min_h_0()
-                            .children(self.mesh_panel(window, cx)),
-                    )
-                    .into_any_element();
-            }
             let panel = v_flex()
                 .id("unit-data-inspector")
                 .role(gpui::Role::Group)
@@ -302,6 +277,9 @@ impl InspectorPage {
                 .bg(cx.theme().colors.background_primary)
                 .track_focus(&self.focus_handle)
                 .on_key_down(cx.listener(|v, k: &KeyDownEvent, w, cx| {
+                    if v.controls_open && k.keystroke.key != "escape" {
+                        return;
+                    }
                     let action = match k.keystroke.key.as_str() {
                         "escape" => ViewerAction::Back,
                         "left" => ViewerAction::Rotate { dx: -12., dy: 0. },
@@ -329,7 +307,11 @@ impl InspectorPage {
                                 })),
                         )
                         .when(!self.returning, |el| el.child(controls())),
-                )
+                );
+            let body = v_flex()
+                .absolute()
+                .inset_0()
+                .gap(px(5.))
                 .child(
                     div()
                         .id("compact-unit-caption")
@@ -345,6 +327,7 @@ impl InspectorPage {
                         .flex_1()
                         .min_h_0()
                         .w_full()
+                        .bg(ModelViewer::background())
                         .child(div().absolute().inset_0().child(viewer)),
                 )
                 .when(!self.returning, |el| {
@@ -381,6 +364,27 @@ impl InspectorPage {
                             ),
                     )
                 });
+            let details = (drawer_progress > 0.).then(|| {
+                v_flex()
+                    .id("unit-controls-panel")
+                    .debug_selector(|| "unit-controls-panel".into())
+                    .role(gpui::Role::Group)
+                    .aria_label(strings.menu_model_controls())
+                    .absolute()
+                    .top_0()
+                    .bottom_0()
+                    .w_full()
+                    .left(relative(1. - drawer_progress))
+                    .occlude()
+                    .bg(cx.theme().colors.background_primary)
+                    .child(self.toolbar(window, cx))
+                    .child(div().flex_1().min_h_0().children(self.mesh_panel(window, cx)))
+            });
+            let panel = panel.child(
+                div().relative().w_full().flex_1().min_h_0().overflow_hidden()
+                    .when(drawer_progress < 1., |el| el.child(body))
+                    .children(details)
+            );
             if self.preview.is_some() || yp_nier_ui::ReducedMotion::enabled(cx) {
                 return panel.into_any_element();
             }
@@ -450,7 +454,7 @@ impl InspectorPage {
             .scale(scale)
             .into_any_element()
         })
-        .foreground(move |scale, cx| scene.update(cx, |v, cx| v.unit_scene(scale, expanded, cx)))
+        .foreground(move |scale, cx| scene.update(cx, |v, cx| v.unit_scene(scale, expanded, !drawer_moving, cx)))
         .footer(move |_, _| {
             if expanded || returning {
                 return gpui::Empty.into_any_element();
@@ -469,7 +473,7 @@ impl InspectorPage {
                 ])
                 .into_any_element()
         });
-        let frame = if self.single_preview && self.preview.is_some() {
+        let frame = if self.preview.is_some() {
             frame.opened_at(std::time::Instant::now() - std::time::Duration::from_secs(2))
         } else {
             frame
@@ -487,14 +491,14 @@ impl InspectorPage {
                 .bg(appearance.colors.background_card)
                 .child(controls())
         });
-        let drawer = self.controls_open.then(|| {
-            v_flex()
+        let drawer = (drawer_progress > 0.).then(|| {
+            let width = px(320.).min(window.viewport_size().width * 0.45);
+            let panel = v_flex()
                 .id("unit-controls-panel")
                 .debug_selector(|| "unit-controls-panel".into())
                 .role(gpui::Role::Group)
                 .aria_label(strings.menu_model_controls())
-                .w(px(320.))
-                .max_w(relative(0.45))
+                .w(width)
                 .h_full()
                 .flex_none()
                 .min_w_0()
@@ -505,7 +509,8 @@ impl InspectorPage {
                         .flex_1()
                         .min_h_0()
                         .children(self.mesh_panel(window, cx)),
-                )
+                );
+            div().flex_none().h_full().w(width * drawer_progress).overflow_hidden().child(panel)
         });
         v_flex()
             .id("unit-data-inspector")

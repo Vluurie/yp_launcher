@@ -4,7 +4,7 @@ use gpui::{
     App, ElementId, ExternalPaths, IntoElement, RenderOnce, SharedString, Window, canvas, div,
     prelude::*, px,
 };
-use std::{path::PathBuf, rc::Rc};
+use std::{cell::Cell, path::PathBuf, rc::Rc};
 
 pub fn file_drop_highlight(
     accent: gpui::Hsla,
@@ -12,8 +12,28 @@ pub fn file_drop_highlight(
     label: impl Into<SharedString>,
     accepts: impl Fn(&[PathBuf]) -> bool + 'static,
 ) -> impl IntoElement {
-    let label = label.into();
-    static START: std::sync::OnceLock<std::time::Instant> = std::sync::OnceLock::new();
+    drop_highlight(accent, foreground, label.into(), true, accepts)
+}
+
+pub fn workspace_drop_highlight(
+    accent: gpui::Hsla,
+    foreground: gpui::Hsla,
+    label: impl Into<SharedString>,
+) -> impl IntoElement {
+    drop_highlight(accent, foreground, label.into(), false, |_| true)
+}
+
+fn drop_highlight(
+    accent: gpui::Hsla,
+    foreground: gpui::Hsla,
+    label: SharedString,
+    outlined: bool,
+    accepts: impl Fn(&[PathBuf]) -> bool + 'static,
+) -> impl IntoElement {
+    let color = gpui::Rgba::from(accent);
+    let tint = [color.r, color.g, color.b].map(|channel| (channel * 255.).round() as u8);
+    let hint_bounds = Rc::new(Cell::new(None::<gpui::Bounds<gpui::Pixels>>));
+    let measured_hint = hint_bounds.clone();
     div()
         .absolute()
         .inset_0()
@@ -21,36 +41,55 @@ pub fn file_drop_highlight(
         .items_center()
         .justify_center()
         .overflow_hidden()
-        .opacity(0.)
-        .border_4()
-        .border_color(accent)
-        .drag_over::<ExternalPaths>(move |style, paths, w, cx| {
+        .invisible()
+        .when(outlined, |target| target.border_4().border_color(accent))
+        .drag_over::<ExternalPaths>(move |style, paths, _, _| {
             if paths.paths().is_empty() || !accepts(paths.paths()) {
                 return style;
             }
-            let alpha = if crate::ReducedMotion::enabled(cx) {
-                0.19
-            } else {
-                w.request_animation_frame();
-                let phase = START
-                    .get_or_init(std::time::Instant::now)
-                    .elapsed()
-                    .as_secs_f32()
-                    * std::f32::consts::TAU
-                    / 1.6;
-                0.19 + 0.06 * phase.sin()
-            };
-            style.opacity(1.).bg(accent.opacity(alpha))
+            style.visible().bg(accent.opacity(0.19))
         })
         .child(
-            div()
+            canvas(|_, _, _| (), move |bounds, _, window, cx| {
+                if crate::ReducedMotion::enabled(cx) || bounds.is_empty() {
+                    return;
+                }
+                let state = window.use_keyed_state("drop-hacking-static", cx, |_, _| {
+                    crate::static_noise::HackingStatic::new(1)
+                });
+                let width = f32::from(bounds.size.width);
+                let height = f32::from(bounds.size.height);
+                let mut surface = Surface::new(width, height);
+                if outlined {
+                    for x in [width * 0.05, width * 0.95 - 2.] {
+                        surface.fill(Rect::new(x, 4., 2., (height - 8.).max(0.)), tint, 170);
+                    }
+                } else if let Some(hint) = hint_bounds.get() {
+                    let origin = hint.origin - bounds.origin;
+                    let plate = Rect::new(
+                        origin.x.into(), origin.y.into(),
+                        hint.size.width.into(), hint.size.height.into(),
+                    );
+                    surface.fill(plate, tint, 255);
+                }
+                surface.static_blocks = Some(state.update(cx, |effect, _| effect.advance()));
+                surface.paint(bounds, window, cx);
+                window.request_animation_frame();
+            })
+            .absolute()
+            .inset_0()
+            .size_full()
+        )
+        .when(outlined, |target| {
+            target.child(div()
                 .absolute()
                 .inset_0()
                 .border_1()
-                .border_color(foreground),
-        )
+                .border_color(foreground))
+        })
         .child(
             div()
+                .relative()
                 .max_w_full()
                 .min_w_0()
                 .overflow_hidden()
@@ -59,6 +98,10 @@ pub fn file_drop_highlight(
                 .bg(accent)
                 .text_color(foreground)
                 .text_center()
+                .when(!outlined, |hint| hint.child(
+                    canvas(move |bounds, _, _| measured_hint.set(Some(bounds)), |_, _, _, _| {})
+                        .absolute().inset_0()
+                ))
                 .child(label),
         )
 }

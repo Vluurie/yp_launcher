@@ -5,6 +5,7 @@ use yp_ui::I18n;
 
 use crate::Stores;
 use crate::config::{ConfigEvent, DEFAULT_OUTFITS_ID};
+use crate::game_font;
 use crate::launch_options::LaunchOptionsEvent;
 use crate::mods::{ModsEvent, ProfilesEvent};
 use crate::notifications::{Notice, NoticeKind, NoticeSeverity, NotificationsEvent};
@@ -73,6 +74,7 @@ pub(crate) fn wire(stores: &Stores, cx: &mut App) {
     cx.subscribe(&stores.session, move |_, event, cx| match event {
         SessionEvent::DirectoryChanged { game, change } => {
             bind_game(&all, Some(game.clone()), cx);
+            game_font::refresh(game, cx);
             all.notifications.update(cx, |store, cx| match change {
                 DirectoryChange::Restored => store.run_detections(game, cx),
                 DirectoryChange::Selected => store.refresh_detections(game, cx),

@@ -14,7 +14,7 @@ mod model_view;
 pub use model_view::{ModelViewer, ViewerAction};
 mod panel;
 mod transfer;
-pub use transfer::{MenuDropZone, MenuProgress, file_drop_highlight};
+pub use transfer::{MenuDropZone, MenuProgress, file_drop_highlight, workspace_drop_highlight};
 mod scrollbar;
 mod slider;
 pub use scrollbar::MenuScrollbar;

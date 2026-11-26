@@ -802,6 +802,59 @@ fn opening_an_archive_keeps_the_model_selected_in_the_mod_preview(cx: &mut TestA
 }
 
 #[gpui::test]
+fn model_preview_frames_pick_up_theme_changes_without_baking_in_the_inspector_backdrop(cx: &mut TestAppContext) {
+    let sandbox = Sandbox::new();
+    boot(&sandbox, cx);
+    let archive = sandbox.write_model("outfit", "pl000d", &["Body"]);
+    let (preview, window) = cx.add_window_view(|w, cx| crate::inspector::ModelPreview::new(archive, w, cx));
+    for (id, corner) in [
+        (yp_ui::ThemeId::NierNew, [0, 0, 0, 0]),
+        (yp_ui::ThemeId::Dark, [26, 27, 25, 255]),
+        (yp_ui::ThemeId::NierNew, [0, 0, 0, 0]),
+    ] {
+        window.update(|_, cx| yp_ui::theme::set_theme(id, cx));
+        settle(window);
+        preview.read_with(window, |view, cx| {
+            let frame = view.model().read(cx).session().unwrap().read(cx).latest_frame().unwrap();
+            let pixels = frame.as_bytes(0).unwrap();
+            assert_eq!(&pixels[..4], &corner);
+            assert!(pixels.chunks_exact(4).any(|p| p[3] > 0 && p != corner));
+        });
+    }
+}
+
+#[gpui::test]
+fn model_controls_slide_in_and_reverse_from_the_current_position(cx: &mut TestAppContext) {
+    let sandbox = Sandbox::new();
+    boot(&sandbox, cx);
+    cx.update(|cx| {
+        yp_ui::theme::set_theme(yp_ui::ThemeId::NierNew, cx);
+        cx.set_global(yp_nier_ui::ReducedMotion(false));
+    });
+    let archive = sandbox.write_model("outfit", "pl000d", &["Body"]);
+    let (_, window) = cx.add_window_view(|w, cx| InspectorPage::new(archive, w, cx));
+    for width in [1120., 640.] {
+        window.simulate_resize(size(px(width), px(700.)));
+        settle(window);
+        let trigger = window.debug_bounds("unit-controls").unwrap().center();
+        let advance = |window: &mut VisualTestContext, ms| {
+            window.executor().advance_clock(Duration::from_millis(ms));
+            window.update(|w, _| w.refresh());
+            window.run_until_parked();
+        };
+        window.simulate_click(trigger, Modifiers::none());
+        advance(window, 120);
+        let midway = window.debug_bounds("unit-controls-panel").unwrap().origin.x;
+        assert!(midway > px(width * 0.45) && midway < px(width - 24.));
+        window.simulate_click(trigger, Modifiers::none());
+        advance(window, 50);
+        assert!(window.debug_bounds("unit-controls-panel").unwrap().origin.x > midway);
+        advance(window, 240);
+        assert!(window.debug_bounds("unit-controls-panel").is_none());
+    }
+}
+
+#[gpui::test]
 fn model_controls_button_opens_and_closes_the_mesh_panel(cx: &mut TestAppContext) {
     let sandbox = Sandbox::new();
     boot(&sandbox, cx);

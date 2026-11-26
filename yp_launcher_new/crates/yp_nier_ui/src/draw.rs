@@ -63,6 +63,29 @@ struct Images {
 }
 impl Global for Images {}
 
+pub(crate) fn forget_text(cx: &mut App) {
+    if !cx.has_global::<Images>() {
+        return;
+    }
+    let cache = cx.global_mut::<Images>();
+    let stale: Vec<Asset> = cache
+        .entries
+        .keys()
+        .filter(|key| matches!(key, Asset::Text(..)))
+        .cloned()
+        .collect();
+    let dropped: Vec<Arc<RenderImage>> = stale
+        .iter()
+        .filter_map(|key| cache.entries.remove(key))
+        .map(|(image, _)| image)
+        .collect();
+    cx.defer(move |cx| {
+        for image in dropped {
+            cx.drop_image(image, None);
+        }
+    });
+}
+
 fn texture(key: Asset, cx: &mut App) -> Option<Arc<RenderImage>> {
     if !cx.has_global::<Images>() {
         cx.set_global(Images::default());
@@ -174,7 +197,7 @@ impl Surface {
             text,
             font,
             scale,
-            Theme::tracking(font),
+            0.,
             [x, center_y],
             tint,
             255,

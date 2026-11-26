@@ -450,8 +450,8 @@ impl ModsView {
                         ),
                 )
             })
-            .child(yp_ui::nier::file_drop_highlight(
-                colors.accent_primary, colors.background_primary, s.drop_to_install(), |_| true,
+            .child(yp_ui::nier::workspace_drop_highlight(
+                colors.accent_primary, colors.background_primary, s.drop_to_install(),
             ))
             .on_drop(cx.listener(|v, paths: &ExternalPaths, w, cx| {
                 v.install_paths(paths.paths().to_vec(), ModInstallMode::Guided, w, cx)

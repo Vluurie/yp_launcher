@@ -22,6 +22,7 @@ pub struct MenuFieldState {
     head: usize,
     mark: Option<Range<usize>>,
     stops: Vec<(usize, f32)>,
+    measured: u64,
     scroll: f32,
     scale: f32,
     bounds: Bounds<Pixels>,
@@ -38,12 +39,14 @@ impl MenuFieldState {
     pub fn new(value: impl Into<String>, cx: &mut Context<Self>) -> Self {
         let value = Self::single_line(&value.into());
         let stops = Theme::bundled().caret_positions(&value, 36, 0.8);
+        let measured = Theme::bundled().generation();
         Self {
             anchor: value.len(),
             head: value.len(),
             value,
             mark: None,
             stops,
+            measured,
             scroll: 0.,
             scale: 1.,
             bounds: Default::default(),
@@ -76,11 +79,15 @@ impl MenuFieldState {
         self.anchor = end;
         self.head = end;
         self.mark = None;
-        self.stops = Theme::bundled().caret_positions(&self.value, 36, 0.8);
+        self.measure();
         w.notify_text_input_changed(&self.focus);
         cx.emit(FieldEvent::Edited);
         cx.notify();
         range.start..end
+    }
+    fn measure(&mut self) {
+        self.stops = Theme::bundled().caret_positions(&self.value, 36, 0.8);
+        self.measured = Theme::bundled().generation();
     }
     fn x(&self, byte: usize) -> f32 {
         self.stops[self
@@ -225,6 +232,9 @@ impl MenuTextField {
 }
 impl RenderOnce for MenuTextField {
     fn render(self, w: &mut Window, cx: &mut App) -> impl IntoElement {
+        if self.state.read(cx).measured != Theme::bundled().generation() {
+            self.state.update(cx, |state, _| state.measure());
+        }
         let focus = self.state.read(cx).focus.clone();
         let enabled = self.enabled;
         if !enabled && focus.is_focused(w) {

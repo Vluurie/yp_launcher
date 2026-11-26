@@ -7185,13 +7185,15 @@ dependencies = [
 name = "yp_nier_ui"
 version = "4.0.1"
 dependencies = [
+ "cosmic-text",
+ "flate2",
  "gpui",
- "gpui_apple",
  "gpui_platform",
  "image 0.25.99",
  "serde",
  "serde_json",
  "unicode-segmentation",
+ "yp_formats",
 ]
 
 [[package]]

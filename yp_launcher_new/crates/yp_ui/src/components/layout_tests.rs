@@ -168,7 +168,7 @@ fn labelled_menu_slider_accepts_single_clicks_across_its_full_width(cx: &mut Tes
     assert_eq!(saved.get(), -3.);
 
     assert!(face.size.width <= px(364.));
-    cx.simulate_keystrokes("tab ctrl-a");
+    cx.simulate_keystrokes("tab secondary-a");
     cx.simulate_input("-1.25");
     cx.simulate_keystrokes("enter");
     assert_eq!(saved.get(), -1.25);
@@ -764,13 +764,30 @@ fn external_file_drag_highlights_only_an_accepting_target(cx: &mut TestAppContex
         highlighted(cx),
         "accepted file should outline the entire target"
     );
+    let hacking_static = |cx: &mut VisualTestContext| {
+        let shades = [0x738d920f, 0x9f776811].map(|value| gpui::Hsla::from(gpui::rgba(value)));
+        cx.update(|w, _| {
+            w.painted_quads().iter().any(|q| {
+                q.background.as_solid().is_some_and(|color| shades.contains(&color))
+            })
+        })
+    };
+    assert!(!hacking_static(cx));
+    cx.update(|w, cx| {
+        cx.set_global(yp_nier_ui::ReducedMotion(false));
+        w.refresh();
+    });
+    cx.run_until_parked();
+    assert!(hacking_static(cx));
     cx.simulate_event(FileDropEvent::Pending { position: outside });
     assert!(!highlighted(cx));
+    assert!(!hacking_static(cx));
     cx.simulate_event(FileDropEvent::Pending { position: inside });
     assert!(highlighted(cx));
     cx.simulate_event(FileDropEvent::Submit { position: inside });
     assert_eq!(drops.get(), 1);
     assert!(!highlighted(cx));
+    assert!(!hacking_static(cx));
     assert_eq!(browses.get(), 0);
     cx.simulate_click(inside, Modifiers::default());
     assert_eq!(browses.get(), 1);

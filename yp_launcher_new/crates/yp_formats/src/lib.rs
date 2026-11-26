@@ -4,6 +4,7 @@ pub mod cpk;
 pub mod dat;
 pub mod error;
 pub mod files;
+pub mod font;
 pub mod mot;
 pub mod texture;
 pub mod usm;

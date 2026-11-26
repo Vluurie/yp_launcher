@@ -193,6 +193,25 @@ impl<R: Read + Seek> DatArchive<R> {
         Ok(bytes)
     }
 
+    pub fn read_entry_range(
+        &mut self,
+        entry: &ArchiveEntry,
+        start: u64,
+        len: u64,
+    ) -> Result<Vec<u8>> {
+        if start.checked_add(len).is_none_or(|end| end > entry.size) {
+            return Err(DatFault::RangeOutsideFile.into());
+        }
+        if len > MAX_ENTRY_SIZE {
+            return Err(DatFault::EntryTooLarge.into());
+        }
+        let offset = entry.offset + start;
+        validate_range(offset, len, self.length)?;
+        let mut bytes = vec![0_u8; usize::try_from(len).map_err(|_| DatFault::EntryTooLarge)?];
+        read_at(&mut self.reader, &self.origin, offset, &mut bytes)?;
+        Ok(bytes)
+    }
+
     pub fn read_entry(&mut self, entry: &ArchiveEntry) -> Result<Vec<u8>> {
         if entry.size > MAX_ENTRY_SIZE {
             return Err(DatFault::EntryTooLarge.into());
@@ -463,6 +482,7 @@ pub fn build(entries: &[DatEntry], kind: DatKind) -> Result<Vec<u8>> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::io::Cursor;
 
     #[test]
     fn crc_matches_the_standard_check_value() {
@@ -481,6 +501,17 @@ mod tests {
         assert_eq!(entry.stem(), "pl0000");
         assert!(entry.has_extension("wta"));
         assert!(!entry.has_extension("wtp"));
+    }
+
+    #[test]
+    fn ranges_inside_an_entry_read_only_that_slice() {
+        let bytes = build(&[DatEntry::new("a.wtp", (0..32).collect())], DatKind::Dtt).unwrap();
+        let mut archive = DatArchive::from_reader(Cursor::new(bytes)).unwrap();
+        let entry = archive.find("a.wtp").cloned().unwrap();
+        assert_eq!(archive.read_entry_range(&entry, 4, 3).unwrap(), [4, 5, 6]);
+        assert!(archive.read_entry_range(&entry, 32, 0).unwrap().is_empty());
+        assert!(archive.read_entry_range(&entry, 30, 3).is_err());
+        assert!(archive.read_entry_range(&entry, u64::MAX, 2).is_err());
     }
 
     #[test]

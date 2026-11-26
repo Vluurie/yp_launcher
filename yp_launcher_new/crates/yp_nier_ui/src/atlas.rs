@@ -1,8 +1,11 @@
+mod bitmap_font;
+mod fallback;
 mod symbols;
 mod typography;
 
 use gpui::{PlatformTextSystem, RenderImage};
-use image::{Frame, RgbaImage};
+use image::{Frame, GrayImage, RgbaImage};
+use std::io::Read;
 use std::sync::{Arc, OnceLock};
 use typography::Typography;
 
@@ -12,6 +15,14 @@ pub const PAPER: Tint = [202, 198, 173];
 pub const PANEL: Tint = [179, 175, 152];
 pub const LIGHT: Tint = [217, 212, 187];
 pub const WHITE: Tint = [255; 3];
+
+fn unpack_gzip(bytes: &[u8]) -> Vec<u8> {
+    let mut unpacked = Vec::new();
+    flate2::read::GzDecoder::new(bytes)
+        .read_to_end(&mut unpacked)
+        .expect("bundled font data");
+    unpacked
+}
 
 pub(crate) fn image(mut pixels: RgbaImage) -> Arc<RenderImage> {
     for p in pixels.pixels_mut() {
@@ -27,31 +38,34 @@ static THEME: OnceLock<Theme> = OnceLock::new();
 
 impl Theme {
     pub fn with_text_system(system: Arc<dyn PlatformTextSystem>) -> &'static Self {
-        THEME.get_or_init(|| Self {
-            text: Typography::new(system),
-        })
+        let fonts = fallback::fonts()
+            .iter()
+            .map(|font| std::borrow::Cow::Borrowed(font.as_slice()))
+            .collect();
+        if let Err(error) = system.add_fonts(fonts) {
+            eprintln!("Could not register localized fonts with GPUI: {error}");
+        }
+        Self::bundled()
     }
     pub fn bundled() -> &'static Self {
-        THEME.get_or_init(|| {
-            #[cfg(target_os = "macos")]
-            let system = Arc::new(gpui_apple::AppleTextSystem::new());
-            #[cfg(not(target_os = "macos"))]
-            let system = gpui_platform::current_platform(true).text_system();
-            Self {
-                text: Typography::new(system),
-            }
+        THEME.get_or_init(|| Self {
+            text: Typography::new(),
         })
     }
-    pub(crate) fn tracking(font: u16) -> f32 {
-        match font {
-            1 => 2.,
-            36 => 1.6,
-            6 => 0.7,
-            _ => 0.,
-        }
-    }
     pub fn font_height(&self, font: u16) -> f32 {
-        typography::dimensions(font).1
+        bitmap_font::metrics(font)[1]
+    }
+    pub fn use_bitmap_font(
+        &self,
+        coverage: GrayImage,
+        glyphs: impl IntoIterator<Item = ((u16, u16), [u16; 4], f32)>,
+        kerning: impl IntoIterator<Item = ([u16; 3], i16)>,
+    ) {
+        self.text
+            .replace(bitmap_font::Atlas::new(coverage, glyphs, kerning));
+    }
+    pub fn generation(&self) -> u64 {
+        self.text.generation()
     }
     pub fn sprite_names(&self) -> impl Iterator<Item = &str> {
         symbols::SYMBOLS.iter().map(|&(n, _)| n)
@@ -63,8 +77,7 @@ impl Theme {
         symbols::draw(name, tint).map(image)
     }
     pub fn measure(&self, text: &str, font: u16, scale: f32) -> [f32; 2] {
-        self.measure_spaced(text, font, Self::tracking(font))
-            .map(|x| x * scale)
+        self.measure_spaced(text, font, 0.).map(|x| x * scale)
     }
     pub(crate) fn measure_spaced(&self, text: &str, font: u16, spacing: f32) -> [f32; 2] {
         self.text.measure(text, font, spacing)

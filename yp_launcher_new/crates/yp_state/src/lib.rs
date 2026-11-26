@@ -1,4 +1,5 @@
 mod cell;
+mod game_font;
 mod health;
 #[cfg(test)]
 mod tests;
@@ -140,6 +141,7 @@ pub fn init_with(env: AppEnv, cx: &mut App) {
     })
     .detach();
     cx.default_global::<Registry>();
+    game_font::restore(&env, cx);
     cx.set_global(env.clone());
 
     let busy = cx.new(BusyTracker::new);

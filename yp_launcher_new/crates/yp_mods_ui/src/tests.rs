@@ -228,25 +228,32 @@ fn file_drag_over_a_mod_row_highlights_the_workspace(cx: &mut TestAppContext) {
     cx.simulate_resize(size(px(1100.), px(670.)));
     settle(cx);
     let row = cx.debug_bounds("library-item-grain_removal").unwrap();
-    let outlined = |cx: &mut VisualTestContext| {
+    let workspace_feedback = |cx: &mut VisualTestContext| {
         cx.update(|window, _| {
-            window.painted_quads().iter().any(|quad| {
-                let scale = window.scale_factor();
-                quad.border_color.a > 0.8
-                    && quad.border_widths.left.0 >= 4. * scale
-                    && quad.bounds.size.width.0 > 900. * scale
+            let scale = window.scale_factor();
+            let quads = window.painted_quads();
+            let workspace = quads.iter().filter(|quad| {
+                quad.bounds.size.width.0 > 900. * scale
                     && quad.bounds.size.height.0 > 500. * scale
-            })
+            });
+            let outlined = workspace.clone().any(|quad| {
+                quad.border_color.a > 0.8 && quad.border_widths.left.0 >= 4. * scale
+            });
+            let tinted = workspace.into_iter().any(|quad| {
+                quad.border_widths.left.0 == 0.
+                    && quad.background.as_solid().is_some_and(|color| (color.a - 0.19).abs() < 0.005)
+            });
+            (tinted, outlined)
         })
     };
-    assert!(!outlined(cx));
+    assert_eq!(workspace_feedback(cx), (false, false));
     cx.simulate_event(gpui::FileDropEvent::Entered {
         position: row.center(),
         paths: gpui::ExternalPaths([PathBuf::from("outfit.zip")].into_iter().collect()),
     });
-    assert!(outlined(cx));
+    assert_eq!(workspace_feedback(cx), (true, false));
     cx.simulate_event(gpui::FileDropEvent::Exited);
-    assert!(!outlined(cx));
+    assert_eq!(workspace_feedback(cx), (false, false));
 }
 
 #[gpui::test]

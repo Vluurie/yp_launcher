@@ -4,7 +4,7 @@ version = "4.0.1"
 edition = "2024"
 license = "CC-BY-NC-SA-4.0"
 description = "Composable launcher controls with a monochrome science-fiction theme for GPUI"
-include = ["Cargo.toml", "README.md", "src/**/*.rs", "examples/**/*.rs", "tests/**/*.rs"]
+include = ["Cargo.toml", "README.md", "src/**/*.rs", "assets/type/*", "examples/**/*.rs", "tests/**/*.rs"]
 
 [features]
 uid-debug = ["image/dds", "dep:serde", "dep:serde_json"]
@@ -14,17 +14,16 @@ name = "uid_view"
 required-features = ["uid-debug"]
 
 [dependencies]
+cosmic-text = "0.19"
+flate2 = "1"
 gpui = { git = "https://github.com/longbridge/gpui-fast", rev = "2002081b4a61249a1cef2b8a552f6ba0998d9f52" }
 image = { version = "0.25.10", default-features = false, features = ["png"] }
 serde = { version = "1", features = ["derive"], optional = true }
 serde_json = { version = "1", optional = true }
 unicode-segmentation = "1"
-gpui_platform = { git = "https://github.com/longbridge/gpui-fast", rev = "2002081b4a61249a1cef2b8a552f6ba0998d9f52", features = ["font-kit", "wayland", "x11"] }
-
-[target.'cfg(target_os = "macos")'.dependencies]
-gpui_apple = { git = "https://github.com/longbridge/gpui-fast", rev = "2002081b4a61249a1cef2b8a552f6ba0998d9f52", features = ["font-kit"] }
 
 [dev-dependencies]
+yp_formats.workspace = true
 gpui_platform = { git = "https://github.com/longbridge/gpui-fast", rev = "2002081b4a61249a1cef2b8a552f6ba0998d9f52", features = ["font-kit", "wayland", "x11", "test-support"] }
 
 [lints.rust]
