@@ -185,7 +185,11 @@ pub fn build_proton(ctx: &WineContext, launch: &ProtonLaunch<'_>, invocation: Na
     let client_root = steam_root(ctx, Some(launch.game_exe));
     let steam_home = steam_home_for_client(ctx, &client_root);
 
-    let mut args = vec!["run".to_owned(), launch.nams_exe.to_owned()];
+    let verb = match invocation {
+        NamsInvocation::Run { .. } | NamsInvocation::Game { .. } => "run",
+        NamsInvocation::Verify | NamsInvocation::Config(_) => "runinprefix",
+    };
+    let mut args = vec![verb.to_owned(), launch.nams_exe.to_owned()];
     args.extend(invocation_args(invocation, &to_wine_path(launch.game_dir)));
     let mut env = base_wine_env(ctx);
     env.insert(CLIENT_INSTALL_VAR.to_owned(), client_root);
