@@ -7186,6 +7186,7 @@ name = "yp_nier_ui"
 version = "4.0.1"
 dependencies = [
  "gpui",
+ "gpui_apple",
  "gpui_platform",
  "image 0.25.99",
  "serde",

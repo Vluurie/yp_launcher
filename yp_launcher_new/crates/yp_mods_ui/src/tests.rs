@@ -430,6 +430,32 @@ fn selection_follows_navigation_requests_and_drops_removed_mods(cx: &mut TestApp
 }
 
 #[gpui::test]
+fn a_filtered_library_keeps_the_selection_clear_until_the_next_search(cx: &mut TestAppContext) {
+    let sandbox = Sandbox::new();
+    sandbox.add_native_mod("first", "Shared first", "1.0");
+    sandbox.add_native_mod("second", "Shared second", "1.0");
+    let stores = boot(&sandbox, cx);
+    cx.update(|cx| yp_ui::theme::set_theme(ThemeId::NierNew, cx));
+    let (view, cx) = open_tab::<ModsView>(TabId::Mods, cx);
+    cx.simulate_resize(size(px(1100.), px(670.)));
+    settle(cx);
+    assert_eq!(selected(&view, cx).as_deref(), Some("first"));
+    view.update_in(cx, |view, window, cx| view.set_filter("shared", window, cx));
+    settle(cx);
+
+    std::fs::remove_dir_all(sandbox.mod_dir("first")).unwrap();
+    let reload = stores.mods.update(cx, |mods, cx| mods.reload(cx));
+    settle(cx);
+    drop(reload);
+    assert_eq!(row_ids(&rows(&view, cx)), vec!["second"]);
+    assert_eq!(selected(&view, cx), None);
+
+    view.update_in(cx, |view, window, cx| view.set_filter("second", window, cx));
+    settle(cx);
+    assert_eq!(selected(&view, cx).as_deref(), Some("second"));
+}
+
+#[gpui::test]
 fn rows_disable_rename_and_uninstall_mods(cx: &mut TestAppContext) {
     let sandbox = Sandbox::new();
     library(&sandbox);

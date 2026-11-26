@@ -897,25 +897,39 @@ fn inspector_viewport_follows_the_window_size_without_input(cx: &mut TestAppCont
     let sandbox = Sandbox::new();
     boot(&sandbox, cx);
     let archives = sandbox.write_model("prop", "wp0003", &["Blade", "Grip"]);
-    let (page, cx) = cx.add_window_view(|window, cx| InspectorPage::new(archives, window, cx));
-    cx.simulate_resize(size(px(900.), px(600.)));
-    settle(cx);
-    let session = page
-        .read_with(cx, |page, cx| page.model().read(cx).session().cloned())
-        .expect("a session is open");
-    let frame_size = |cx: &mut VisualTestContext| {
-        session.read_with(cx, |session, _| {
-            let frame = session.latest_frame().expect("a frame was rendered");
-            let size = frame.size(0);
-            (i32::from(size.width), i32::from(size.height))
-        })
-    };
-    assert_eq!(session.read_with(cx, |session, _| session.viewport()), (900, 600));
-    assert_eq!(frame_size(cx), (900, 600));
-    cx.simulate_resize(size(px(640.), px(480.)));
-    settle(cx);
-    assert_eq!(session.read_with(cx, |session, _| session.viewport()), (640, 480));
-    assert_eq!(frame_size(cx), (640, 480));
+    for theme in [yp_ui::ThemeId::Dark, yp_ui::ThemeId::NierNew] {
+        cx.update(|cx| {
+            yp_ui::theme::set_theme(theme, cx);
+            cx.set_global(yp_nier_ui::ReducedMotion(true));
+        });
+        let (page, cx) =
+            cx.add_window_view(|window, cx| InspectorPage::new(archives.clone(), window, cx));
+        let mut previous = None;
+        for (width, height) in [(900., 600.), (640., 480.)] {
+            cx.simulate_resize(size(px(width), px(height)));
+            settle(cx);
+            let rendered = page.read_with(cx, |page, cx| {
+                let model = page.model().read(cx);
+                let (w, h) = model.viewport().expect("the viewer measured its bounds");
+                if theme == yp_ui::ThemeId::Dark {
+                    assert_eq!((w, h), (width, height));
+                } else {
+                    assert!(w > 0. && w <= width && h > 0. && h < height);
+                }
+                let expected = ViewMode::Page.render_size(w, h);
+                let session = model.session().expect("a session is open").read(cx);
+                assert_eq!(session.viewport(), expected);
+                let frame = session.latest_frame().expect("a frame was rendered").size(0);
+                assert_eq!(
+                    (i32::from(frame.width), i32::from(frame.height)),
+                    (expected.0 as i32, expected.1 as i32)
+                );
+                expected
+            });
+            assert_ne!(previous, Some(rendered), "{theme:?} viewport did not resize");
+            previous = Some(rendered);
+        }
+    }
 }
 
 #[gpui::test]

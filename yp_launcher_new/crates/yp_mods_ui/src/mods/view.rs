@@ -69,6 +69,7 @@ pub struct ModsView {
     pub(crate) stores: Stores,
     pub(crate) selected_id: Option<String>,
     pending_selection: Option<String>,
+    cleared_selection_filter: Option<String>,
     compact_detail: bool,
     inventory_focus: FocusHandle,
     inventory_index: Option<usize>,
@@ -135,6 +136,7 @@ impl ModsView {
             stores,
             selected_id: None,
             pending_selection: None,
+            cleared_selection_filter: None,
             compact_detail: false,
             inventory_focus: cx.focus_handle().tab_stop(true),
             inventory_index: None,
@@ -196,6 +198,7 @@ impl ModsView {
     }
 
     pub fn select(&mut self, id: Option<String>, cx: &mut Context<Self>) {
+        self.cleared_selection_filter = id.is_none().then(|| self.filter_text(cx));
         if self.selected_id == id {
             return;
         }

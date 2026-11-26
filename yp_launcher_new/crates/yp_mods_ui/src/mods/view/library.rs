@@ -236,12 +236,13 @@ impl ModsView {
                 .iter()
                 .any(|r| matches!(r,ListRow::Mod{id: visible,..} if visible == id))
         };
+        let needs_selection = match self.selected_id.as_deref() {
+            Some(id) => !filter.is_empty() && !visible(id) && mods.find(id).is_some(),
+            None => self.cleared_selection_filter.as_deref() != Some(filter.as_str()),
+        };
         if !compact
             && self.pending_selection.is_none()
-            && self
-                .selected_id
-                .as_deref()
-                .is_none_or(|id| !filter.is_empty() && !visible(id))
+            && needs_selection
             && let Some(id) = self.rows.iter().find_map(|r| match r {
                 ListRow::Mod { id, .. } => Some(id.clone()),
                 _ => None,

@@ -32,8 +32,14 @@ impl Theme {
         })
     }
     pub fn bundled() -> &'static Self {
-        THEME.get_or_init(|| Self {
-            text: Typography::new(gpui_platform::current_platform(true).text_system()),
+        THEME.get_or_init(|| {
+            #[cfg(target_os = "macos")]
+            let system = Arc::new(gpui_apple::AppleTextSystem::new());
+            #[cfg(not(target_os = "macos"))]
+            let system = gpui_platform::current_platform(true).text_system();
+            Self {
+                text: Typography::new(system),
+            }
         })
     }
     pub(crate) fn tracking(font: u16) -> f32 {
